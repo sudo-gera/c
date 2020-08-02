@@ -1,9 +1,0 @@
-class d
-
-def d(a):
- f=new(d)
- f.f=a
- return f
-
-
-
