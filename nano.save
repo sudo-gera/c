@@ -1,0 +1,26 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+const int INF = 1e9;
+
+struct node{
+
+node left, "right;
+int value;
+int priority;
+int size;
+node(int n_value = ) [
+
+left = nullptr;
+right = nullptr;
+value = n value;
+size = 1;
+priority = ((rand() << 16) ^ rand();
+
+int size(node *v) {
+if (V == nullptr) {
+
+return ;
+
+return v->size;

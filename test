@@ -1,0 +1,8 @@
+int w
+scan(w)
+mnew int q[w]
+for w in q:
+ scan(w)
+sort(q,q+len_q)
+for w in q:
+ print(w)

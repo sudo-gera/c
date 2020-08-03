@@ -1,0 +1,7 @@
+new int q
+for w <10:
+ push q[w]
+for w in q:
+ w=11
+for w in q: 
+ print(w)

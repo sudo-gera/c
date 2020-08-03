@@ -1,0 +1,26 @@
+mnew int a[0]
+int q,w,e
+scan(q)
+for w<q:
+ scan(e)
+ add a[e]
+q=a[0]
+for w in a:
+ q=q>w?w:q
+for w in a:
+ w-=q
+e=a[0]
+for w in a:
+ e=w>e?w:e
+cnew int d[e+1]
+for w in a:
+ d[w]++
+e=0
+for w<len_d:
+ while d[w]:
+  d[w]--
+  a[e++]=w
+for w in a:
+ w+=q
+for w in a:
+ print(w)

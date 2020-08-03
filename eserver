@@ -1,0 +1,67 @@
+#!/data/data/com.termux/files/usr/bin/python
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import time
+from urllib.request import urlopen as u
+from urllib.parse import unquote as uqu
+from json import loads as l
+from sys import argv
+import os
+import random
+
+#os.chdir('/'.join(argv[0].split('/')[:-1]))
+q=[w.split() for w in os.popen('ifconfig').read().split('\n')]
+q=[w[1].split(':')[1] for w in q if len(w) and w[0] == 'inet']
+print('='*10,*enumerate(q),sep='\n')
+if len(argv) > 1:
+ argv1=argv[1]
+ if argv1 in [w[:len(argv1)] for w in q]:
+  q=[w for w in q if w[:len(argv1)] == argv1]
+print('='*10,*enumerate(q),sep='\n')
+if len(argv) > 2:
+ port=int(argv[2])
+else:
+ port=9000
+if len(q) > 1:
+ e=int(input())
+else:
+ e=0
+q=q[e]
+hostName = q
+hostPort = port
+admin=0
+
+class MyServer(BaseHTTPRequestHandler):
+ def do_GET(self):
+  self.send_response(200)
+  self.send_header("Content-type", "text/html; charset=utf-8")
+  self.end_headers()
+  self.wfile.write(bytes('<a href='+str(time.time())+'>'+('#'*20+'<br>')*10+'</a>'+u('https://sudo-gera.github.io/easyscript').read().decode(), "utf-8"))
+
+ def do_POST(self):
+  lenn=int(self.headers['Content-Length'])
+  data=self.rfile.read(lenn)
+  dec=data.decode()
+  print(dec)
+  self.send_response(200)
+  self.send_header("Content-type", "text/html; charset=utf-8")
+  self.end_headers()
+  self.wfile.write(bytes('''
+    ''', "utf-8"))
+
+st=1
+while st:
+ try:
+  myServer = HTTPServer((hostName, hostPort), MyServer)
+  st=0
+ except:
+  hostPort+=1
+print(time.asctime(), "Server Starts - %s:%s" % (hostName, hostPort))
+
+try:
+    myServer.serve_forever()
+except KeyboardInterrupt:
+    pass
+
+myServer.server_close()
+print()
+print(time.asctime(), "Server Stops - %s:%s" % (hostName, hostPort))

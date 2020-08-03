@@ -1,0 +1,7 @@
+q='0'
+a=open('rewr').read().split("'")
+a[1]=str(int(a[1])+1)
+open('rewr','w').write("'".join(a))
+from os import system as s
+if int(q) < 100:
+ s('python3 rewr &')

@@ -1,0 +1,23 @@
+int q,w,e
+scan(q)
+if q<2:
+ print('0')
+else:
+ e=q
+ if q%2==0:
+  e/=2
+ while q%2==0:
+  q/=2
+ w=3
+ while w*w<=q:
+  if q%w==0:
+   e/=w
+   e*=w-1
+  while q%w==0:
+   q/=w
+  w+=2
+ if q!=1:
+  e/=q
+  e*=q-1
+ print(e)
+ 

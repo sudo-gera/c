@@ -1,0 +1,4 @@
+int q
+scan(q)
+q++
+print(q)

@@ -1,0 +1,4 @@
+#!/data/data/com.termux/files/usr/bin/python
+from os import system as sh
+from os import popen as pp
+print(pp('tsudo ./sudo1').read())

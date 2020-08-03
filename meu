@@ -1,0 +1,56 @@
+#!/usr/bin/env python3
+import os
+import urllib.request
+import http.client
+import sys
+import time
+sh=os.system
+arg=sys.argv
+def on():
+ if os.path.exists('/tmp/.X1-lock'):
+  sh('rm /tmp/.X1-lock')
+ if os.path.exists('/tmp/.X11-unix/X1'):
+  sh('rm /tmp/.X11-unix/X1')
+ sh('vncserver-start')
+ sh('cp /root/.vnc/localhost\:1.pid /root/.vnc/.___vnc_start_file')
+def off():
+ sh('cp /root/.vnc/.___vnc_start_file /root/.vnc/localhost\:1.pid')
+ sh('vncserver-stop')
+def ist():
+ try:
+  urllib.request.urlopen('http://127.0.0.1:5901',timeout=10)
+ except http.client.BadStatusLine:
+  return 1
+ except urllib.error.URLError:
+  return 0
+if len(arg) == 1:
+ if ist():
+  off()
+ else:
+  on()
+else:
+ q=arg[1]
+ if q == 'is':
+  if ist():
+   print('on')
+  else:
+   print('off')
+ elif q == 'on':
+  if ist():
+   pass
+  else:
+   on()
+ elif q == 'off':
+  if ist():
+   off()
+ elif q == 'vi':
+  if not(ist()):
+   on()
+  print('started')
+  while not(os.path.exists('/root/exv')):
+   time.sleep(1)
+  print('exiting')
+  sh('rm /root/exv')
+  off()
+ else:
+  print(q)

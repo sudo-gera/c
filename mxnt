@@ -1,0 +1,14 @@
+llint q,w,e
+q=1
+while q>0:
+ w=q
+ q<<=1
+q=w
+q--
+q<<=1
+q++
+w=0
+while q>0:
+ w++
+ q/=10
+print(w)
