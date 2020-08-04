@@ -3,7 +3,7 @@ if [ $# -lt 1 ]
 then 
 echo "usage: git-send \"comment\""
 else 
-git add * ; git commit -qam "$0" ; d=$?
-git pull -q
+git add * ; git commit -qam "$1" ; d=$?
+git pull -q --no-edit
 [ $d -eq 0 ] && git push -q
 fi
