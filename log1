@@ -1,0 +1,664 @@
+.
+./tlauncher_profiles.json
+./launcher_profiles.json
+./TlauncherProfiles.json
+./server-resource-packs
+./mods
+./assets
+./assets/indexes
+./assets/indexes/1.15.json
+./assets/indexes/1.14.json
+./assets/objects
+./versions
+./versions/1.15.2
+./versions/1.15.2/natives
+./versions/1.15.2/natives/META-INF
+./versions/1.15.2/natives/META-INF/MANIFEST.MF
+./versions/1.15.2/natives/META-INF/versions
+./versions/1.15.2/natives/META-INF/versions/9
+./versions/1.15.2/natives/META-INF/versions/9/module-info.class
+./versions/1.15.2/natives/META-INF/INDEX.LIST
+./versions/1.15.2/natives/lwjgl.dll
+./versions/1.15.2/natives/lwjgl.dll.git
+./versions/1.15.2/natives/lwjgl.dll.sha1
+./versions/1.15.2/natives/lwjgl32.dll
+./versions/1.15.2/natives/lwjgl32.dll.git
+./versions/1.15.2/natives/lwjgl32.dll.sha1
+./versions/1.15.2/natives/jemalloc.dll
+./versions/1.15.2/natives/jemalloc.dll.git
+./versions/1.15.2/natives/jemalloc.dll.sha1
+./versions/1.15.2/natives/jemalloc32.dll
+./versions/1.15.2/natives/jemalloc32.dll.git
+./versions/1.15.2/natives/jemalloc32.dll.sha1
+./versions/1.15.2/natives/OpenAL.dll
+./versions/1.15.2/natives/OpenAL.dll.git
+./versions/1.15.2/natives/OpenAL.dll.sha1
+./versions/1.15.2/natives/OpenAL32.dll
+./versions/1.15.2/natives/OpenAL32.dll.git
+./versions/1.15.2/natives/OpenAL32.dll.sha1
+./versions/1.15.2/natives/lwjgl_opengl.dll
+./versions/1.15.2/natives/lwjgl_opengl.dll.sha1
+./versions/1.15.2/natives/lwjgl_opengl32.dll
+./versions/1.15.2/natives/lwjgl_opengl32.dll.sha1
+./versions/1.15.2/natives/glfw.dll
+./versions/1.15.2/natives/glfw.dll.git
+./versions/1.15.2/natives/glfw.dll.sha1
+./versions/1.15.2/natives/glfw32.dll
+./versions/1.15.2/natives/glfw32.dll.git
+./versions/1.15.2/natives/glfw32.dll.sha1
+./versions/1.15.2/natives/lwjgl_tinyfd.dll
+./versions/1.15.2/natives/lwjgl_tinyfd.dll.sha1
+./versions/1.15.2/natives/lwjgl_tinyfd32.dll
+./versions/1.15.2/natives/lwjgl_tinyfd32.dll.sha1
+./versions/1.15.2/natives/lwjgl_stb.dll
+./versions/1.15.2/natives/lwjgl_stb.dll.sha1
+./versions/1.15.2/natives/lwjgl_stb32.dll
+./versions/1.15.2/natives/lwjgl_stb32.dll.sha1
+./versions/1.15.2/natives/SAPIWrapper_x86.dll
+./versions/1.15.2/natives/SAPIWrapper_x64.dll
+./versions/1.15.2/natives/liblwjgl.so
+./versions/1.15.2/natives/liblwjgl.so.git
+./versions/1.15.2/natives/liblwjgl.so.sha1
+./versions/1.15.2/natives/libjemalloc.so
+./versions/1.15.2/natives/libjemalloc.so.git
+./versions/1.15.2/natives/libjemalloc.so.sha1
+./versions/1.15.2/natives/libopenal.so
+./versions/1.15.2/natives/libopenal.so.git
+./versions/1.15.2/natives/libopenal.so.sha1
+./versions/1.15.2/natives/liblwjgl_opengl.so
+./versions/1.15.2/natives/liblwjgl_opengl.so.sha1
+./versions/1.15.2/natives/libglfw.so
+./versions/1.15.2/natives/libglfw.so.git
+./versions/1.15.2/natives/libglfw.so.sha1
+./versions/1.15.2/natives/libglfw_wayland.so
+./versions/1.15.2/natives/libglfw_wayland.so.git
+./versions/1.15.2/natives/libglfw_wayland.so.sha1
+./versions/1.15.2/natives/liblwjgl_tinyfd.so
+./versions/1.15.2/natives/liblwjgl_tinyfd.so.sha1
+./versions/1.15.2/natives/liblwjgl_stb.so
+./versions/1.15.2/natives/liblwjgl_stb.so.sha1
+./versions/1.15.2/natives/libfliteWrapper.so
+./versions/1.15.2/1.15.2.jar
+./versions/1.15.2/1.15.2.jar.bak
+./versions/1.15.2/1.15.2.json
+./versions/1.14.4
+./versions/1.14.4/1.14.4.jar
+./versions/1.14.4/1.14.4.jar.bak
+./versions/1.14.4/1.14.4.json
+./versions/1.14.4/natives
+./versions/1.14.4/natives/glfw.dll
+./versions/1.14.4/natives/glfw.dll.git
+./versions/1.14.4/natives/glfw.dll.sha1
+./versions/1.14.4/natives/glfw32.dll
+./versions/1.14.4/natives/glfw32.dll.git
+./versions/1.14.4/natives/glfw32.dll.sha1
+./versions/1.14.4/natives/jemalloc.dll
+./versions/1.14.4/natives/jemalloc.dll.git
+./versions/1.14.4/natives/jemalloc.dll.sha1
+./versions/1.14.4/natives/jemalloc32.dll
+./versions/1.14.4/natives/jemalloc32.dll.git
+./versions/1.14.4/natives/jemalloc32.dll.sha1
+./versions/1.14.4/natives/libfliteWrapper.so
+./versions/1.14.4/natives/libglfw.so
+./versions/1.14.4/natives/libglfw.so.git
+./versions/1.14.4/natives/libglfw.so.sha1
+./versions/1.14.4/natives/libglfw_wayland.so
+./versions/1.14.4/natives/libglfw_wayland.so.git
+./versions/1.14.4/natives/libglfw_wayland.so.sha1
+./versions/1.14.4/natives/libjemalloc.so
+./versions/1.14.4/natives/libjemalloc.so.git
+./versions/1.14.4/natives/libjemalloc.so.sha1
+./versions/1.14.4/natives/liblwjgl.so
+./versions/1.14.4/natives/liblwjgl.so.git
+./versions/1.14.4/natives/liblwjgl.so.sha1
+./versions/1.14.4/natives/liblwjgl_opengl.so
+./versions/1.14.4/natives/liblwjgl_opengl.so.sha1
+./versions/1.14.4/natives/liblwjgl_stb.so
+./versions/1.14.4/natives/liblwjgl_stb.so.sha1
+./versions/1.14.4/natives/libopenal.so
+./versions/1.14.4/natives/libopenal.so.git
+./versions/1.14.4/natives/libopenal.so.sha1
+./versions/1.14.4/natives/lwjgl.dll
+./versions/1.14.4/natives/lwjgl.dll.git
+./versions/1.14.4/natives/lwjgl.dll.sha1
+./versions/1.14.4/natives/lwjgl32.dll
+./versions/1.14.4/natives/lwjgl32.dll.git
+./versions/1.14.4/natives/lwjgl32.dll.sha1
+./versions/1.14.4/natives/lwjgl_opengl.dll
+./versions/1.14.4/natives/lwjgl_opengl.dll.sha1
+./versions/1.14.4/natives/lwjgl_opengl32.dll
+./versions/1.14.4/natives/lwjgl_opengl32.dll.sha1
+./versions/1.14.4/natives/lwjgl_stb.dll
+./versions/1.14.4/natives/lwjgl_stb.dll.sha1
+./versions/1.14.4/natives/lwjgl_stb32.dll
+./versions/1.14.4/natives/lwjgl_stb32.dll.sha1
+./versions/1.14.4/natives/OpenAL.dll
+./versions/1.14.4/natives/OpenAL.dll.git
+./versions/1.14.4/natives/OpenAL.dll.sha1
+./versions/1.14.4/natives/OpenAL32.dll
+./versions/1.14.4/natives/OpenAL32.dll.git
+./versions/1.14.4/natives/OpenAL32.dll.sha1
+./versions/1.14.4/natives/SAPIWrapper_x64.dll
+./versions/1.14.4/natives/SAPIWrapper_x86.dll
+./versions/1.14.4/natives/META-INF
+./versions/1.14.4/natives/META-INF/INDEX.LIST
+./versions/1.14.4/natives/META-INF/MANIFEST.MF
+./versions/1.14.4/natives/META-INF/versions
+./versions/1.14.4/natives/META-INF/versions/9
+./versions/1.14.4/natives/META-INF/versions/9/module-info.class
+./Old-TLauncher.exe
+./options.txt
+./servers.dat
+./TempOptifineStore-1.0.json
+./TLauncher.exe
+./usercache.json
+./CustomSkinLoader
+./CustomSkinLoader/Tweaker.log
+./libraries
+./libraries/minecraft.ico
+./libraries/com
+./libraries/com/google
+./libraries/com/google/code
+./libraries/com/google/code/gson
+./libraries/com/google/code/gson/gson
+./libraries/com/google/code/gson/gson/2.8.0
+./libraries/com/google/code/gson/gson/2.8.0/gson-2.8.0.jar
+./libraries/com/google/guava
+./libraries/com/google/guava/guava
+./libraries/com/google/guava/guava/21.0
+./libraries/com/google/guava/guava/21.0/guava-21.0.jar
+./libraries/com/ibm
+./libraries/com/ibm/icu
+./libraries/com/ibm/icu/icu4j-core-mojang
+./libraries/com/ibm/icu/icu4j-core-mojang/51.2
+./libraries/com/ibm/icu/icu4j-core-mojang/51.2/icu4j-core-mojang-51.2.jar
+./libraries/com/mojang
+./libraries/com/mojang/authlib
+./libraries/com/mojang/authlib/1.5.25
+./libraries/com/mojang/authlib/1.5.25/authlib-1.5.25.jar
+./libraries/com/mojang/brigadier
+./libraries/com/mojang/brigadier/1.0.17
+./libraries/com/mojang/brigadier/1.0.17/brigadier-1.0.17.jar
+./libraries/com/mojang/datafixerupper
+./libraries/com/mojang/datafixerupper/2.0.24
+./libraries/com/mojang/datafixerupper/2.0.24/datafixerupper-2.0.24.jar
+./libraries/com/mojang/javabridge
+./libraries/com/mojang/javabridge/1.0.22
+./libraries/com/mojang/javabridge/1.0.22/javabridge-1.0.22.jar
+./libraries/com/mojang/patchy
+./libraries/com/mojang/patchy/1.1
+./libraries/com/mojang/patchy/1.1/patchy-1.1.jar
+./libraries/com/mojang/text2speech
+./libraries/com/mojang/text2speech/1.11.3
+./libraries/com/mojang/text2speech/1.11.3/text2speech-1.11.3-natives-linux.jar
+./libraries/com/mojang/text2speech/1.11.3/text2speech-1.11.3-natives-windows.jar
+./libraries/com/mojang/text2speech/1.11.3/text2speech-1.11.3.jar
+./libraries/commons-codec
+./libraries/commons-codec/commons-codec
+./libraries/commons-codec/commons-codec/1.10
+./libraries/commons-codec/commons-codec/1.10/commons-codec-1.10.jar
+./libraries/commons-io
+./libraries/commons-io/commons-io
+./libraries/commons-io/commons-io/2.5
+./libraries/commons-io/commons-io/2.5/commons-io-2.5.jar
+./libraries/commons-logging
+./libraries/commons-logging/commons-logging
+./libraries/commons-logging/commons-logging/1.1.3
+./libraries/commons-logging/commons-logging/1.1.3/commons-logging-1.1.3.jar
+./libraries/customskinloader
+./libraries/customskinloader/CustomSkinLoader_1.14.4
+./libraries/customskinloader/CustomSkinLoader_1.14.4/1.6
+./libraries/customskinloader/CustomSkinLoader_1.14.4/1.6/CustomSkinLoader_1.14.4-1.6.jar
+./libraries/customskinloader/CustomSkinLoader_1.14.4/1.8
+./libraries/customskinloader/CustomSkinLoader_1.14.4/1.8/CustomSkinLoader_1.14.4-1.8.jar
+./libraries/customskinloader/CustomSkinLoader_1.14.4/1.8d
+./libraries/customskinloader/CustomSkinLoader_1.14.4/1.8d/CustomSkinLoader_1.14.4-1.8d.jar
+./libraries/io
+./libraries/io/netty
+./libraries/io/netty/netty-all
+./libraries/io/netty/netty-all/4.1.25.Final
+./libraries/io/netty/netty-all/4.1.25.Final/netty-all-4.1.25.Final.jar
+./libraries/it
+./libraries/it/unimi
+./libraries/it/unimi/dsi
+./libraries/it/unimi/dsi/fastutil
+./libraries/it/unimi/dsi/fastutil/8.2.1
+./libraries/it/unimi/dsi/fastutil/8.2.1/fastutil-8.2.1.jar
+./libraries/net
+./libraries/net/java
+./libraries/net/java/dev
+./libraries/net/java/dev/jna
+./libraries/net/java/dev/jna/jna
+./libraries/net/java/dev/jna/jna/4.4.0
+./libraries/net/java/dev/jna/jna/4.4.0/jna-4.4.0.jar
+./libraries/net/java/dev/jna/platform
+./libraries/net/java/dev/jna/platform/3.4.0
+./libraries/net/java/dev/jna/platform/3.4.0/platform-3.4.0.jar
+./libraries/net/java/jinput
+./libraries/net/java/jinput/jinput
+./libraries/net/java/jinput/jinput/2.0.5
+./libraries/net/java/jinput/jinput/2.0.5/jinput-2.0.5.jar
+./libraries/net/java/jutils
+./libraries/net/java/jutils/jutils
+./libraries/net/java/jutils/jutils/1.0.0
+./libraries/net/java/jutils/jutils/1.0.0/jutils-1.0.0.jar
+./libraries/net/minecraft
+./libraries/net/minecraft/launchwrapper
+./libraries/net/minecraft/launchwrapper/1.12
+./libraries/net/minecraft/launchwrapper/1.12/launchwrapper-1.12.jar
+./libraries/net/sf
+./libraries/net/sf/jopt-simple
+./libraries/net/sf/jopt-simple/jopt-simple
+./libraries/net/sf/jopt-simple/jopt-simple/5.0.3
+./libraries/net/sf/jopt-simple/jopt-simple/5.0.3/jopt-simple-5.0.3.jar
+./libraries/org
+./libraries/org/apache
+./libraries/org/apache/commons
+./libraries/org/apache/commons/commons-compress
+./libraries/org/apache/commons/commons-compress/1.8.1
+./libraries/org/apache/commons/commons-compress/1.8.1/commons-compress-1.8.1.jar
+./libraries/org/apache/commons/commons-lang3
+./libraries/org/apache/commons/commons-lang3/3.5
+./libraries/org/apache/commons/commons-lang3/3.5/commons-lang3-3.5.jar
+./libraries/org/apache/httpcomponents
+./libraries/org/apache/httpcomponents/httpclient
+./libraries/org/apache/httpcomponents/httpclient/4.3.3
+./libraries/org/apache/httpcomponents/httpclient/4.3.3/httpclient-4.3.3.jar
+./libraries/org/apache/httpcomponents/httpcore
+./libraries/org/apache/httpcomponents/httpcore/4.3.2
+./libraries/org/apache/httpcomponents/httpcore/4.3.2/httpcore-4.3.2.jar
+./libraries/org/apache/logging
+./libraries/org/apache/logging/log4j
+./libraries/org/apache/logging/log4j/log4j-api
+./libraries/org/apache/logging/log4j/log4j-api/2.8.1
+./libraries/org/apache/logging/log4j/log4j-api/2.8.1/log4j-api-2.8.1.jar
+./libraries/org/apache/logging/log4j/log4j-core
+./libraries/org/apache/logging/log4j/log4j-core/2.8.1
+./libraries/org/apache/logging/log4j/log4j-core/2.8.1/log4j-core-2.8.1.jar
+./libraries/org/lwjgl
+./libraries/org/lwjgl/lwjgl
+./libraries/org/lwjgl/lwjgl/3.2.2
+./libraries/org/lwjgl/lwjgl/3.2.2/lwjgl-3.2.2-natives-linux.jar
+./libraries/org/lwjgl/lwjgl/3.2.2/lwjgl-3.2.2-natives-windows.jar
+./libraries/org/lwjgl/lwjgl/3.2.2/lwjgl-3.2.2.jar
+./libraries/org/lwjgl/lwjgl-glfw
+./libraries/org/lwjgl/lwjgl-glfw/3.2.2
+./libraries/org/lwjgl/lwjgl-glfw/3.2.2/lwjgl-glfw-3.2.2-natives-linux.jar
+./libraries/org/lwjgl/lwjgl-glfw/3.2.2/lwjgl-glfw-3.2.2-natives-windows.jar
+./libraries/org/lwjgl/lwjgl-glfw/3.2.2/lwjgl-glfw-3.2.2.jar
+./libraries/org/lwjgl/lwjgl-jemalloc
+./libraries/org/lwjgl/lwjgl-jemalloc/3.2.2
+./libraries/org/lwjgl/lwjgl-jemalloc/3.2.2/lwjgl-jemalloc-3.2.2-natives-linux.jar
+./libraries/org/lwjgl/lwjgl-jemalloc/3.2.2/lwjgl-jemalloc-3.2.2-natives-windows.jar
+./libraries/org/lwjgl/lwjgl-jemalloc/3.2.2/lwjgl-jemalloc-3.2.2.jar
+./libraries/org/lwjgl/lwjgl-openal
+./libraries/org/lwjgl/lwjgl-openal/3.2.2
+./libraries/org/lwjgl/lwjgl-openal/3.2.2/lwjgl-openal-3.2.2-natives-linux.jar
+./libraries/org/lwjgl/lwjgl-openal/3.2.2/lwjgl-openal-3.2.2-natives-windows.jar
+./libraries/org/lwjgl/lwjgl-openal/3.2.2/lwjgl-openal-3.2.2.jar
+./libraries/org/lwjgl/lwjgl-opengl
+./libraries/org/lwjgl/lwjgl-opengl/3.2.2
+./libraries/org/lwjgl/lwjgl-opengl/3.2.2/lwjgl-opengl-3.2.2-natives-linux.jar
+./libraries/org/lwjgl/lwjgl-opengl/3.2.2/lwjgl-opengl-3.2.2-natives-windows.jar
+./libraries/org/lwjgl/lwjgl-opengl/3.2.2/lwjgl-opengl-3.2.2.jar
+./libraries/org/lwjgl/lwjgl-stb
+./libraries/org/lwjgl/lwjgl-stb/3.2.2
+./libraries/org/lwjgl/lwjgl-stb/3.2.2/lwjgl-stb-3.2.2-natives-linux.jar
+./libraries/org/lwjgl/lwjgl-stb/3.2.2/lwjgl-stb-3.2.2-natives-windows.jar
+./libraries/org/lwjgl/lwjgl-stb/3.2.2/lwjgl-stb-3.2.2.jar
+./libraries/org/lwjgl/lwjgl-tinyfd
+./libraries/org/lwjgl/lwjgl-tinyfd/3.2.2
+./libraries/org/lwjgl/lwjgl-tinyfd/3.2.2/lwjgl-tinyfd-3.2.2-natives-linux.jar
+./libraries/org/lwjgl/lwjgl-tinyfd/3.2.2/lwjgl-tinyfd-3.2.2.jar
+./libraries/org/lwjgl/lwjgl-tinyfd/3.2.2/lwjgl-tinyfd-3.2.2-natives-windows.jar
+./libraries/org/ow2
+./libraries/org/ow2/asm
+./libraries/org/ow2/asm/asm
+./libraries/org/ow2/asm/asm/6.2
+./libraries/org/ow2/asm/asm/6.2/asm-6.2.jar
+./libraries/org/ow2/asm/asm-commons
+./libraries/org/ow2/asm/asm-commons/6.2
+./libraries/org/ow2/asm/asm-commons/6.2/asm-commons-6.2.jar
+./libraries/org/ow2/asm/asm-tree
+./libraries/org/ow2/asm/asm-tree/6.2
+./libraries/org/ow2/asm/asm-tree/6.2/asm-tree-6.2.jar
+./libraries/org/tlauncher
+./libraries/org/tlauncher/authlib
+./libraries/org/tlauncher/authlib/1.5.25
+./libraries/org/tlauncher/authlib/1.5.25/authlib-1.5.25.jar
+./libraries/org/tlauncher/authlib/1.6.25
+./libraries/org/tlauncher/authlib/1.6.25/authlib-1.6.25.jar
+./libraries/org/tlauncher/patchy
+./libraries/org/tlauncher/patchy/1.1
+./libraries/org/tlauncher/patchy/1.1/patchy-1.1.jar
+./libraries/oshi-project
+./libraries/oshi-project/oshi-core
+./libraries/oshi-project/oshi-core/1.1
+./libraries/oshi-project/oshi-core/1.1/oshi-core-1.1.jar
+./logs
+./logs/2019-08-13-1.log.gz
+./logs/2019-08-13-2.log.gz
+./logs/2019-08-13-3.log.gz
+./logs/2019-08-14-1.log.gz
+./logs/2019-08-14-2.log.gz
+./logs/2019-08-14-3.log.gz
+./logs/2019-08-16-1.log.gz
+./logs/2019-08-16-2.log.gz
+./logs/2019-08-16-3.log.gz
+./logs/2019-08-17-1.log.gz
+./logs/2019-08-18-1.log.gz
+./logs/2019-08-18-2.log.gz
+./logs/2019-08-19-1.log.gz
+./logs/2019-08-19-2.log.gz
+./logs/2019-08-22-1.log.gz
+./logs/2019-08-22-2.log.gz
+./logs/2019-08-26-1.log.gz
+./logs/2019-08-26-2.log.gz
+./logs/2019-08-26-3.log.gz
+./logs/2019-08-26-4.log.gz
+./logs/2019-08-26-5.log.gz
+./logs/2019-08-26-6.log.gz
+./logs/2019-08-29-1.log.gz
+./logs/2019-08-29-2.log.gz
+./logs/2019-09-01-1.log.gz
+./logs/2019-09-01-2.log.gz
+./logs/2019-11-30-1.log.gz
+./logs/2019-12-01-1.log.gz
+./logs/2019-12-03-1.log.gz
+./logs/2019-12-04-1.log.gz
+./logs/2019-12-05-1.log.gz
+./logs/2019-12-05-2.log.gz
+./logs/2019-12-06-1.log.gz
+./logs/2019-12-13-1.log.gz
+./logs/2019-12-13-2.log.gz
+./logs/2019-12-19-1.log.gz
+./logs/2019-12-19-2.log.gz
+./logs/tlauncher
+./logs/tlauncher/boot0.log
+./logs/tlauncher/boot1.log
+./logs/tlauncher/boot10.log
+./logs/tlauncher/boot2.log
+./logs/tlauncher/boot3.log
+./logs/tlauncher/boot4.log
+./logs/tlauncher/boot5.log
+./logs/tlauncher/boot6.log
+./logs/tlauncher/boot7.log
+./logs/tlauncher/boot8.log
+./logs/tlauncher/boot9.log
+./logs/tlauncher/dxdiag.txt
+./logs/tlauncher/tlauncher0.log
+./logs/tlauncher/tlauncher1.log
+./logs/tlauncher/tlauncher10.log
+./logs/tlauncher/tlauncher2.log
+./logs/tlauncher/tlauncher3.log
+./logs/tlauncher/tlauncher4.log
+./logs/tlauncher/tlauncher5.log
+./logs/tlauncher/tlauncher6.log
+./logs/tlauncher/tlauncher7.log
+./logs/tlauncher/tlauncher8.log
+./logs/tlauncher/tlauncher9.log
+./logs/2019-12-21-1.log.gz
+./logs/latest.log
+./logs/2019-12-21-2.log.gz
+./logs/2020-02-02-1.log.gz
+./logs/2020-02-02-2.log.gz
+./resourcepacks
+./saves
+./saves/????? ???
+./saves/????? ???/icon.png
+./saves/????? ???/level.dat
+./saves/????? ???/level.dat_old
+./saves/????? ???/session.lock
+./saves/????? ???/advancements
+./saves/????? ???/advancements/00000000-0000-0000-0000-000000000000.json
+./saves/????? ???/advancements/41716c94-b77e-329e-9bff-213bd78879df.json
+./saves/????? ???/data
+./saves/????? ???/data/raids.dat
+./saves/????? ???/datapacks
+./saves/????? ???/DIM-1
+./saves/????? ???/DIM-1/data
+./saves/????? ???/DIM-1/data/raids_nether.dat
+./saves/????? ???/DIM-1/poi
+./saves/????? ???/DIM-1/poi/r.-1.-1.mca
+./saves/????? ???/DIM-1/poi/r.-1.-2.mca
+./saves/????? ???/DIM-1/poi/r.-1.0.mca
+./saves/????? ???/DIM-1/poi/r.-1.1.mca
+./saves/????? ???/DIM-1/poi/r.-2.-1.mca
+./saves/????? ???/DIM-1/poi/r.-2.-2.mca
+./saves/????? ???/DIM-1/poi/r.-2.0.mca
+./saves/????? ???/DIM-1/poi/r.-2.1.mca
+./saves/????? ???/DIM-1/poi/r.0.-1.mca
+./saves/????? ???/DIM-1/poi/r.0.-2.mca
+./saves/????? ???/DIM-1/poi/r.0.0.mca
+./saves/????? ???/DIM-1/poi/r.0.1.mca
+./saves/????? ???/DIM-1/poi/r.1.-1.mca
+./saves/????? ???/DIM-1/poi/r.1.-2.mca
+./saves/????? ???/DIM-1/poi/r.1.0.mca
+./saves/????? ???/DIM-1/poi/r.1.1.mca
+./saves/????? ???/DIM-1/region
+./saves/????? ???/DIM-1/region/r.-1.-1.mca
+./saves/????? ???/DIM-1/region/r.-1.-2.mca
+./saves/????? ???/DIM-1/region/r.-1.0.mca
+./saves/????? ???/DIM-1/region/r.-1.1.mca
+./saves/????? ???/DIM-1/region/r.-2.-1.mca
+./saves/????? ???/DIM-1/region/r.-2.-2.mca
+./saves/????? ???/DIM-1/region/r.-2.0.mca
+./saves/????? ???/DIM-1/region/r.-2.1.mca
+./saves/????? ???/DIM-1/region/r.0.-1.mca
+./saves/????? ???/DIM-1/region/r.0.-2.mca
+./saves/????? ???/DIM-1/region/r.0.0.mca
+./saves/????? ???/DIM-1/region/r.0.1.mca
+./saves/????? ???/DIM-1/region/r.1.-1.mca
+./saves/????? ???/DIM-1/region/r.1.-2.mca
+./saves/????? ???/DIM-1/region/r.1.0.mca
+./saves/????? ???/DIM-1/region/r.1.1.mca
+./saves/????? ???/DIM1
+./saves/????? ???/DIM1/data
+./saves/????? ???/DIM1/data/raids_end.dat
+./saves/????? ???/playerdata
+./saves/????? ???/playerdata/00000000-0000-0000-0000-000000000000.dat
+./saves/????? ???/playerdata/41716c94-b77e-329e-9bff-213bd78879df.dat
+./saves/????? ???/poi
+./saves/????? ???/poi/r.-1.-1.mca
+./saves/????? ???/poi/r.-1.-2.mca
+./saves/????? ???/poi/r.-1.0.mca
+./saves/????? ???/poi/r.-1.1.mca
+./saves/????? ???/poi/r.-2.-1.mca
+./saves/????? ???/poi/r.-2.-2.mca
+./saves/????? ???/poi/r.-2.0.mca
+./saves/????? ???/poi/r.-2.1.mca
+./saves/????? ???/poi/r.0.-1.mca
+./saves/????? ???/poi/r.0.-2.mca
+./saves/????? ???/poi/r.0.0.mca
+./saves/????? ???/poi/r.0.1.mca
+./saves/????? ???/poi/r.1.-1.mca
+./saves/????? ???/poi/r.1.-2.mca
+./saves/????? ???/poi/r.1.0.mca
+./saves/????? ???/poi/r.1.1.mca
+./saves/????? ???/region
+./saves/????? ???/region/r.-1.-1.mca
+./saves/????? ???/region/r.-1.-2.mca
+./saves/????? ???/region/r.-1.0.mca
+./saves/????? ???/region/r.-1.1.mca
+./saves/????? ???/region/r.-1.2.mca
+./saves/????? ???/region/r.-2.-1.mca
+./saves/????? ???/region/r.-2.-2.mca
+./saves/????? ???/region/r.-2.0.mca
+./saves/????? ???/region/r.-2.1.mca
+./saves/????? ???/region/r.-2.2.mca
+./saves/????? ???/region/r.-3.-1.mca
+./saves/????? ???/region/r.-3.-2.mca
+./saves/????? ???/region/r.-3.0.mca
+./saves/????? ???/region/r.-3.1.mca
+./saves/????? ???/region/r.0.-1.mca
+./saves/????? ???/region/r.0.-2.mca
+./saves/????? ???/region/r.0.0.mca
+./saves/????? ???/region/r.0.1.mca
+./saves/????? ???/region/r.0.2.mca
+./saves/????? ???/region/r.1.-1.mca
+./saves/????? ???/region/r.1.-2.mca
+./saves/????? ???/region/r.1.0.mca
+./saves/????? ???/region/r.1.1.mca
+./saves/????? ???/region/r.1.2.mca
+./saves/????? ???/region/r.2.-1.mca
+./saves/????? ???/region/r.2.-2.mca
+./saves/????? ???/region/r.2.0.mca
+./saves/????? ???/region/r.2.1.mca
+./saves/????? ???/region/r.2.2.mca
+./saves/????? ???/stats
+./saves/????? ???/stats/00000000-0000-0000-0000-000000000000.json
+./saves/????? ???/stats/41716c94-b77e-329e-9bff-213bd78879df.json
+./saves/????? ??? (1)
+./saves/????? ??? (1)/icon.png
+./saves/????? ??? (1)/level.dat
+./saves/????? ??? (1)/level.dat_old
+./saves/????? ??? (1)/session.lock
+./saves/????? ??? (1)/advancements
+./saves/????? ??? (1)/advancements/00000000-0000-0000-0000-000000000000.json
+./saves/????? ??? (1)/data
+./saves/????? ??? (1)/data/raids.dat
+./saves/????? ??? (1)/datapacks
+./saves/????? ??? (1)/DIM-1
+./saves/????? ??? (1)/DIM-1/data
+./saves/????? ??? (1)/DIM-1/data/raids_nether.dat
+./saves/????? ??? (1)/DIM1
+./saves/????? ??? (1)/DIM1/data
+./saves/????? ??? (1)/DIM1/data/raids_end.dat
+./saves/????? ??? (1)/playerdata
+./saves/????? ??? (1)/playerdata/00000000-0000-0000-0000-000000000000.dat
+./saves/????? ??? (1)/poi
+./saves/????? ??? (1)/poi/r.-1.-1.mca
+./saves/????? ??? (1)/poi/r.-1.0.mca
+./saves/????? ??? (1)/poi/r.0.-1.mca
+./saves/????? ??? (1)/poi/r.0.-2.mca
+./saves/????? ??? (1)/poi/r.0.-3.mca
+./saves/????? ??? (1)/poi/r.0.0.mca
+./saves/????? ??? (1)/poi/r.1.-1.mca
+./saves/????? ??? (1)/poi/r.1.-2.mca
+./saves/????? ??? (1)/poi/r.1.-3.mca
+./saves/????? ??? (1)/poi/r.1.0.mca
+./saves/????? ??? (1)/poi/r.2.-1.mca
+./saves/????? ??? (1)/poi/r.2.-4.mca
+./saves/????? ??? (1)/poi/r.3.-1.mca
+./saves/????? ??? (1)/poi/r.3.-2.mca
+./saves/????? ??? (1)/poi/r.3.-3.mca
+./saves/????? ??? (1)/poi/r.3.-4.mca
+./saves/????? ??? (1)/poi/r.4.-1.mca
+./saves/????? ??? (1)/poi/r.4.-2.mca
+./saves/????? ??? (1)/poi/r.4.-3.mca
+./saves/????? ??? (1)/poi/r.4.-4.mca
+./saves/????? ??? (1)/poi/r.5.-1.mca
+./saves/????? ??? (1)/poi/r.5.-2.mca
+./saves/????? ??? (1)/poi/r.5.-3.mca
+./saves/????? ??? (1)/poi/r.5.-4.mca
+./saves/????? ??? (1)/poi/r.6.-1.mca
+./saves/????? ??? (1)/poi/r.6.-2.mca
+./saves/????? ??? (1)/poi/r.6.-3.mca
+./saves/????? ??? (1)/poi/r.6.-4.mca
+./saves/????? ??? (1)/region
+./saves/????? ??? (1)/region/r.-1.-1.mca
+./saves/????? ??? (1)/region/r.-1.-2.mca
+./saves/????? ??? (1)/region/r.-1.-3.mca
+./saves/????? ??? (1)/region/r.-1.-4.mca
+./saves/????? ??? (1)/region/r.-1.0.mca
+./saves/????? ??? (1)/region/r.-1.1.mca
+./saves/????? ??? (1)/region/r.0.-1.mca
+./saves/????? ??? (1)/region/r.0.-2.mca
+./saves/????? ??? (1)/region/r.0.-3.mca
+./saves/????? ??? (1)/region/r.0.-4.mca
+./saves/????? ??? (1)/region/r.0.0.mca
+./saves/????? ??? (1)/region/r.0.1.mca
+./saves/????? ??? (1)/region/r.1.-1.mca
+./saves/????? ??? (1)/region/r.1.-2.mca
+./saves/????? ??? (1)/region/r.1.-3.mca
+./saves/????? ??? (1)/region/r.1.-4.mca
+./saves/????? ??? (1)/region/r.1.0.mca
+./saves/????? ??? (1)/region/r.1.1.mca
+./saves/????? ??? (1)/region/r.2.-1.mca
+./saves/????? ??? (1)/region/r.2.-2.mca
+./saves/????? ??? (1)/region/r.2.-3.mca
+./saves/????? ??? (1)/region/r.2.-4.mca
+./saves/????? ??? (1)/region/r.2.0.mca
+./saves/????? ??? (1)/region/r.3.-1.mca
+./saves/????? ??? (1)/region/r.3.-2.mca
+./saves/????? ??? (1)/region/r.3.-3.mca
+./saves/????? ??? (1)/region/r.3.-4.mca
+./saves/????? ??? (1)/region/r.3.0.mca
+./saves/????? ??? (1)/region/r.4.-1.mca
+./saves/????? ??? (1)/region/r.4.-2.mca
+./saves/????? ??? (1)/region/r.4.-3.mca
+./saves/????? ??? (1)/region/r.4.-4.mca
+./saves/????? ??? (1)/region/r.4.0.mca
+./saves/????? ??? (1)/region/r.5.-1.mca
+./saves/????? ??? (1)/region/r.5.-2.mca
+./saves/????? ??? (1)/region/r.5.-3.mca
+./saves/????? ??? (1)/region/r.5.-4.mca
+./saves/????? ??? (1)/region/r.6.-1.mca
+./saves/????? ??? (1)/region/r.6.-2.mca
+./saves/????? ??? (1)/region/r.6.-3.mca
+./saves/????? ??? (1)/region/r.6.-4.mca
+./saves/????? ??? (1)/stats
+./saves/????? ??? (1)/stats/00000000-0000-0000-0000-000000000000.json
+./tlauncher_libraries
+./tlauncher_libraries/aopalliance
+./tlauncher_libraries/aopalliance/aopalliance
+./tlauncher_libraries/aopalliance/aopalliance/1.0
+./tlauncher_libraries/aopalliance/aopalliance/1.0/aopalliance-1.0.jar
+./tlauncher_libraries/com
+./tlauncher_libraries/com/github
+./tlauncher_libraries/com/github/junrar
+./tlauncher_libraries/com/github/junrar/junrar
+./tlauncher_libraries/com/github/junrar/junrar/0.7
+./tlauncher_libraries/com/github/junrar/junrar/0.7/junrar-0.7.jar
+./tlauncher_libraries/com/google
+./tlauncher_libraries/com/google/guava
+./tlauncher_libraries/com/google/guava/guava
+./tlauncher_libraries/com/google/guava/guava/19.0
+./tlauncher_libraries/com/google/guava/guava/19.0/guava-19.0.jar
+./tlauncher_libraries/com/google/inject
+./tlauncher_libraries/com/google/inject/extensions
+./tlauncher_libraries/com/google/inject/extensions/guice-assistedinject
+./tlauncher_libraries/com/google/inject/extensions/guice-assistedinject/4.1.0
+./tlauncher_libraries/com/google/inject/extensions/guice-assistedinject/4.1.0/guice-assistedinject-4.1.0.jar
+./tlauncher_libraries/com/google/inject/guice
+./tlauncher_libraries/com/google/inject/guice/4.1.0
+./tlauncher_libraries/com/google/inject/guice/4.1.0/guice-4.1.0.jar
+./tlauncher_libraries/dnsjava
+./tlauncher_libraries/dnsjava/dnsjava
+./tlauncher_libraries/dnsjava/dnsjava/2.1.8
+./tlauncher_libraries/dnsjava/dnsjava/2.1.8/dnsjava-2.1.8.jar
+./tlauncher_libraries/javax
+./tlauncher_libraries/javax/inject
+./tlauncher_libraries/javax/inject/javax.inject
+./tlauncher_libraries/javax/inject/javax.inject/1
+./tlauncher_libraries/javax/inject/javax.inject/1/javax.inject-1.jar
+./tlauncher_libraries/log4j
+./tlauncher_libraries/log4j/log4j
+./tlauncher_libraries/log4j/log4j/1.2.17
+./tlauncher_libraries/log4j/log4j/1.2.17/log4j-1.2.17.jar
+./tlauncher_libraries/net
+./tlauncher_libraries/net/sf
+./tlauncher_libraries/net/sf/jopt-simple
+./tlauncher_libraries/net/sf/jopt-simple/jopt-simple
+./tlauncher_libraries/net/sf/jopt-simple/jopt-simple/4.9
+./tlauncher_libraries/net/sf/jopt-simple/jopt-simple/4.9/jopt-simple-4.9.jar
+./tlauncher_libraries/org
+./tlauncher_libraries/org/apache
+./tlauncher_libraries/org/apache/commons
+./tlauncher_libraries/org/apache/commons/commons-lang3
+./tlauncher_libraries/org/apache/commons/commons-lang3/3.4
+./tlauncher_libraries/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar
+./tlauncher_libraries/org/tlauncher
+./tlauncher_libraries/org/tlauncher/picture-bundle
+./tlauncher_libraries/org/tlauncher/picture-bundle/2.8
+./tlauncher_libraries/org/tlauncher/picture-bundle/2.8/picture-bundle-2.8.jar
+./tlauncher_libraries/org/tlauncher/skin-server-API
+./tlauncher_libraries/org/tlauncher/skin-server-API/1.0
+./tlauncher_libraries/org/tlauncher/skin-server-API/1.0/skin-server-API-1.0.jar
+./tlauncher_libraries/org/tlauncher/tlauncher-resource
+./tlauncher_libraries/org/tlauncher/tlauncher-resource/1.4
+./tlauncher_libraries/org/tlauncher/tlauncher-resource/1.4/tlauncher-resource-1.4.jar
+./tlauncher_libraries/org/tukaani
+./tlauncher_libraries/org/tukaani/xz
+./tlauncher_libraries/org/tukaani/xz/1.5
+./tlauncher_libraries/org/tukaani/xz/1.5/xz-1.5.jar

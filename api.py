@@ -7,21 +7,24 @@ from urllib.parse import quote
 from time import sleep
 from time import time
 from time import asctime
-from traceback import format_exc as error
+from traceback import format_exc as fo
 from os import popen
-from random import shuffle
+from webbrowser import open as webopen
+from sys import argv
 
-token=open('url').read()
-token=token[token.index('token')+6:token.index('&')]
+url=open('url').read()
+token=url.split('#')[1].split('&')[0].split('=')[1]
 
 def api(path,data=''):
- sleep(1/3)
- if path and path[-1] not in '?&':
+ if path and path[-1] not in '&?':
   if '?' in path:
    path+='&'
   else:
    path+='?'
+ sleep(1/6)
  data=data.encode()
  global token
  ret= loads(urlopen('https://api.vk.com/method/'+path+'v=5.101&access_token='+token,data=data).read().decode())
  return ret
+
+

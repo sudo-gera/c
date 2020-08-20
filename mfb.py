@@ -33,3 +33,5 @@ def api(path,data=''):
  global token
  ret= loads(urlopen('https://api.vk.com/method/'+path+'v=5.101&access_token='+token,data=data).read().decode())
  return ret
+
+

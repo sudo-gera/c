@@ -82,7 +82,7 @@ def file_load(file_text):
        line_count+=1
        objects[-1].text+='\\n'
        file_text=file_text[1:]
-      elif file_text[:1]=='\':
+      elif file_text[:1]=='\\':
        if backslash!=1:
         backslash=2
        objects[-1].text+=file_text[:1]
@@ -164,7 +164,9 @@ def file_load(file_text):
   for _ in range(objects[obj-1].space-objects[obj].space)
    objects.insert(obj,object(space=objects[obj].space,type='operator',text='block_end'))
 
- for obj in objects:
-  if obj.text in word_operators and obj.type='text':
-   obj.type='operator'
+# for obj in objects:
+ # if obj.text in word_operators and obj.type='text':
+  # obj.type='operator'
+
+ return objects
 

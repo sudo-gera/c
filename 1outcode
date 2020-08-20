@@ -1,0 +1,51 @@
+////64656275673a0a20696f6c6f636b3d300a207072696e746c696d69743d32300a696d706f727420616c676f726974686d0a6e616d65207374640a7363616e28696e74206e2c6b290a696e7420615b3230303030305d0a666f7220773c6e2b6b3a0a207363616e28696e742074290a20615b775d3d740a696e7420655b3230303030305d0a666f7220773c3230303030303a0a20655b775d3d2d320a666f7220723c6b2b313a0a20666f7220743c6b2b313a0a2020733d615b745d2b615b6e2b6b2d312d725d0a2020783d6e2b6b2d312d720a2020793d740a20206c3d300a20207768696c65206c3c6e20616e6420783e7420616e6420793c6e2b6b2d312d723a0a202020696620615b785d2b615b795d3d3d733a0a20202020655b6c2b2b5d3d782d2d0a20202020655b6c2b2b5d3d792b2b0a202020656c696620615b785d2b615b795d3c733a0a20202020792b2b0a202020656c696620615b785d2b615b795d3e733a0a20202020782d2d0a20206966206c3e3d6e2f323a0a202020736f727428652c652b6e290a202020666f7220773c6e3a0a20202020703d615b655b775d5d0a202020207072696e7428702c27272c3d6e6f656e64290a2020207072696e7428290a20202072657475726e20300a
+#include <stdio.h>
+#include <algorithm>
+using namespace std;;
+#define getchar_fast() getchar()
+long long int ___input2___,___input1___=getchar_fast();
+#define putchar_fast(_ch) putchar(_ch)
+long long int ___print1___,___print2___;
+int main(){
+ long long int debug_iolock = 0;
+ long long int debug_printlimit = 20;
+ 
+ 
+ long long int n;n=0;while(___input1___!=45&&(48>___input1___||___input1___>57)){___input1___=getchar_fast();};if(___input1___==45){n=0;___input1___=getchar_fast();while(___input1___>47 && ___input1___<58){n=10*n-___input1___+48;___input1___=getchar_fast();}}else{while(___input1___>47 && ___input1___<58){n=10*n+___input1___-48;___input1___=getchar_fast();}}
+long long int k;k=0;while(___input1___!=45&&(48>___input1___||___input1___>57)){___input1___=getchar_fast();};if(___input1___==45){k=0;___input1___=getchar_fast();while(___input1___>47 && ___input1___<58){k=10*k-___input1___+48;___input1___=getchar_fast();}}else{while(___input1___>47 && ___input1___<58){k=10*k+___input1___-48;___input1___=getchar_fast();}}
+
+ long long int a [ 200000 ];
+ long long int w ;
+ for(w =0;w < n + k;w ++){
+  long long int t;t=0;while(___input1___!=45&&(48>___input1___||___input1___>57)){___input1___=getchar_fast();};if(___input1___==45){t=0;___input1___=getchar_fast();while(___input1___>47 && ___input1___<58){t=10*t-___input1___+48;___input1___=getchar_fast();}}else{while(___input1___>47 && ___input1___<58){t=10*t+___input1___-48;___input1___=getchar_fast();}}
+
+  a [ w ] = t;}
+ long long int e [ 200000 ];
+ for(w =0;w < 200000;w ++){
+  e [ w ] = - 2;}
+ long long int r ;
+ for(r =0;r < k + 1;r ++){
+  long long int t ;
+  for(t =0;t < k + 1;t ++){
+   long long int s = a [ t ] + a [ n + k - 1 - r ];
+   long long int x = n + k - 1 - r;
+   long long int y = t;
+   long long int l = 0;
+   while(l < n && x > t && y < n + k - 1 - r ){
+    if(a [ x ] + a [ y ] == s ){
+     e [ l ++ ] = x --;
+     e [ l ++ ] = y ++;}
+    else if(a [ x ] + a [ y ] < s ){
+     y ++;}
+    else if(a [ x ] + a [ y ] > s ){
+     x --;}}
+   if(l >= n / 2 ){
+    sort ( e , e + n );
+    for(w =0;w < n;w ++){
+     long long int p = a [ e [ w ] ];
+     ___print2___=p;if(___print2___==0){putchar_fast(48);}else{if(___print2___>0){___print1___=1;while(___print1___<=___print2___){___print1___*=10;}while(___print1___>1){___print1___/=10;putchar_fast(___print2___/___print1___%10+48);}}else{putchar_fast(45);___print1___=-1;while(___print1___>=___print2___){___print1___*=10;}while(___print1___<-1){___print1___/=10;putchar_fast(48+___print2___/___print1___%10);}}}
+putchar_fast(32);___print1___=0;while(""[___print1___]!=0){putchar_fast(""[___print1___++]);}
+}
+    putchar_fast(10);
+    return 0;}}}
+ }

@@ -1,0 +1,3 @@
+uses graphabc;
+begin
+end.

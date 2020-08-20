@@ -1,9 +1,11 @@
-d=0
 if [ $# -lt 1 ]
 then 
 echo "usage: git-send \"comment\""
 else 
-git add * ; git commit -qam "$0" ; d=$?
-git pull -q
-[ $d -eq 0 ] && git push -q
+git add *
+git commit -qam "$1"
+git pull -q --no-edit
+git add *
+git commit -qam "$1"
+git push -q
 fi
