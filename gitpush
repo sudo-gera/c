@@ -1,11 +1,12 @@
 if [ $# -lt 1 ]
-then 
-echo "usage: git-send \"comment\""
-else 
+then
+	d="receiveing..."
+else
+	d="$1"
+fi
 git add *
-git commit -qam "$1"
+git commit -qam "$d"
 git pull -q --no-edit
 git add *
-git commit -qam "$1"
+git commit -qam "$d"
 git push -q
-fi
