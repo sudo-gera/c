@@ -1,6 +1,7 @@
 if [ $# -lt 1 ]
 then
 	echo "usage: git-send \"comment\""
+
 else 
 	git add *
 	if [ $? -ne 0]
