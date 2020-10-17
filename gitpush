@@ -1,11 +1,15 @@
 if [ $# -lt 1 ]
-then 
-echo "usage: git-send \"comment\""
+then
+	echo "usage: git-send \"comment\""
 else 
-git add *
-git commit -qam "$1"
-git pull -q --no-edit
-git add *
-git commit -qam "$1"
-git push -q
+	git add *
+	if [ $? -ne 0]
+	then
+		echo "do you want to continue?"
+	fi
+	git commit -qam "$1"
+	git pull -q --no-edit
+	git add *
+	git commit -qam "$1"
+	git push -q
 fi
