@@ -1,4 +1,4 @@
-def shakersort(q):
+Tdef shakersort(q):
 	q=q[:]
 	for w in range(len(q)):
 		for e in range(w,len(q)-1-w):
