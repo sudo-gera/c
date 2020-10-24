@@ -1,4 +1,8 @@
-#include <bits/stdc++.h>
+//#include <bits/stdc++.h>
+#include <string>
+#include <iostream>
+#include <stdio.h>
+#include <algorithm>
 using namespace std;
 struct Ninf{
 	std::string digits;
