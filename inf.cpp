@@ -65,7 +65,7 @@ struct Ninf{
 	Ninf operator+(Ninf o){
 		Ninf a;
 		int n=0;
-		for (size_t t=0; t<digits.size() || t<o.digits.size() || n; t++){
+		for (long long int t=0; t<digits.size() || t<o.digits.size() || n; t++){
 			if (t<digits.size()){
 				n+=digits[t];
 			}
@@ -81,7 +81,7 @@ struct Ninf{
 	Ninf operator-(Ninf o){
 		Ninf a;
 		int n=0;
-		for (size_t t=0; t<digits.size() || t<o.digits.size() || n; t++){
+		for (long long int t=0; t<digits.size() || t<o.digits.size() || n; t++){
 			if (t<digits.size()){
 				n+=digits[t];
 			}
@@ -103,7 +103,7 @@ struct Ninf{
 		if (digits.size()>o.digits.size()){
 			return 1;
 		}
-		for (size_t t=digits.size()-1;t>-1;t--){
+		for (long long int t=digits.size()-1;t>=0;t--){
 			if(digits[t]<o.digits[t]){
 				return -1;
 			}
@@ -133,10 +133,10 @@ struct Ninf{
 	}
 	Ninf operator*(Ninf o){
 		Ninf a;
-		for (size_t u=0;u<digits.size();u++){
-			for (size_t i=0;i<o.digits.size();i++){
+		for (long long int u=0;u<digits.size();u++){
+			for (long long int i=0;i<o.digits.size();i++){
 				Ninf s(digits[u]*o.digits[i]);
-				for (size_t w=0;w<i+u;w++){
+				for (long long int w=0;w<i+u;w++){
 					s.digits='\0'+s.digits;
 				}
 				a+=s;
@@ -203,8 +203,10 @@ struct inf{
 	int sign;
 	void norm(){
 		mod.norm();
-		if (sign==0){
-			mod=Ninf(0);
+		if (mod==Ninf(0)){
+			sign=0;
+		}else if(sign==0){
+			sign=1;
 		}
 	}
 	string tostring(){
@@ -285,6 +287,7 @@ struct inf{
 				a.sign=o.sign;
 			}else{
 				a=inf(0);
+				cout<<';'<<endl;
 			}
 		}
 		return a;
@@ -342,7 +345,8 @@ struct inf{
 	inf operator/(inf o){
 		inf a;
 		a.mod=mod/o.mod;
-		a.sign=sign*o.sign;
+		a.sign=sign/o.sign;
+		a.norm();
 		return a;
 	}
 	inf operator%(inf o){
@@ -404,7 +408,7 @@ struct inf{
 };
 
 int main(){
-	Ninf s,d;
+	inf s,d;
 	cin>>s>>d;
 	cout<<(s/d)<<endl;
 }
