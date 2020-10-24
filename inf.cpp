@@ -19,9 +19,6 @@ struct Ninf{
 		}
 		return e;
 	}
-	long long int toint(){
-		return stoi(this->tostring());
-	}
 	Ninf(string o){
 		for (auto &d:o){
 			d-='0';
@@ -122,9 +119,6 @@ struct Ninf{
 		b.norm();
 		return b;
 	}
-	Ninf operator%(Ninf o){
-		return *this-*this/o*o;
-	}
 };
 
 struct inf{
@@ -153,7 +147,11 @@ struct inf{
 		return e;
 	}
 	long long int toint(){
-		return mod.toint()*sign;
+		if (sign){
+			return stoll(mod.tostring())*sign;
+		}else{
+			return 0LL;
+		}
 	}
 	inf(string o){
 		sign=1;
@@ -167,7 +165,9 @@ struct inf{
 			sign=0;
 		}
 	}
-	inf(){};
+	inf(){
+		sign=0;
+	};
 	inf(long long int o){
 		string t=to_string(o);
 		inf m(t);
@@ -339,6 +339,7 @@ struct inf{
 
 int main(){
 	inf s,d;
-	cin>>s>>d;
-	cout<<(s/d)<<endl;
+	s=3;
+	d=1;
+	cout<<(s/d).toint()<<endl;
 }
