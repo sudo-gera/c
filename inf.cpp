@@ -340,6 +340,7 @@ struct inf{
 		inf a;
 		a.mod=mod*o.mod;
 		a.sign=sign*o.sign;
+		a.norm();
 		return a;
 	}
 	inf operator/(inf o){
