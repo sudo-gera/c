@@ -22,7 +22,8 @@ struct Ninf{
 	}
 	long long int toint(){
 		long long int a=0;
-		sscanf(this->tostring().c_str(),"%Li",&a);
+//		sscanf(this->tostring().c_str(),"%Li",&a);
+		a=stoi(this->tostring());
 		return a;
 	}
 	Ninf(string o){
@@ -35,8 +36,9 @@ struct Ninf{
 	}
 	Ninf(){};
 	Ninf(long long int o){
-		char t[99];
-		sprintf(t,"%Li",o);
+//		char t[99];
+//		sprintf(t,"%Li",o);
+		string t=to_string(o);
 		digits=Ninf(t).digits;
 		this->norm();
 	}
@@ -234,8 +236,9 @@ struct inf{
 	}
 	inf(){};
 	inf(long long int o){
-		char t[99];
-		sprintf(t,"%Li",o);
+//		char t[99];
+//		sprintf(t,"%Li",o);
+		string t=to_string(o);
 		inf m(t);
 		mod=m.mod;
 		sign=m.sign;
@@ -401,7 +404,7 @@ struct inf{
 };
 
 int main(){
-	inf s,d;
+	Ninf s,d;
 	cin>>s>>d;
-	cout<<(s*d)<<endl;
+	cout<<(s*d).toint()<<endl;
 }
