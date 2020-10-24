@@ -31,6 +31,7 @@ struct Ninf{
 		this->norm();
 	}
 	Ninf(){};
+/*
 	Ninf(long long int o){
 		string t=to_string(o);
 		digits=Ninf(t).digits;
@@ -56,6 +57,7 @@ struct Ninf{
 		i.norm();
 		return is;
 	}
+*/
 	Ninf operator+(Ninf o){
 		Ninf a;
 		int n=0;
@@ -107,24 +109,6 @@ struct Ninf{
 		}
 		return 0;
 	}
-	bool operator<(Ninf o){
-		return this->diff(o)==-1;
-	}
-	bool operator>(Ninf o){
-		return this->diff(o)==1;
-	}
-	bool operator==(Ninf o){
-		return this->diff(o)==0;
-	}
-	bool operator<=(Ninf o){
-		return this->diff(o)!=1;
-	}
-	bool operator>=(Ninf o){
-		return this->diff(o)!=-1;
-	}
-	bool operator!=(Ninf o){
-		return this->diff(o)!=0;
-	}
 	Ninf operator*(Ninf o){
 		Ninf a;
 		for (long long int u=0;u<digits.size();u++){
@@ -162,6 +146,7 @@ struct Ninf{
 	Ninf operator%(Ninf o){
 		return *this-*this/o*o;
 	}
+/*
 	Ninf operator+=(Ninf o){
 		Ninf a;
 		a=*this+o;
@@ -192,6 +177,7 @@ struct Ninf{
 		digits=a.digits;
 		return a;
 	}
+*/
 };
 
 struct inf{
