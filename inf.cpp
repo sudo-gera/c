@@ -31,33 +31,6 @@ struct Ninf{
 		this->norm();
 	}
 	Ninf(){};
-/*
-	Ninf(long long int o){
-		string t=to_string(o);
-		digits=Ninf(t).digits;
-		this->norm();
-	}
-	friend Ninf Ninf(string o){
-		Ninf a(o);
-		return a;
-	}
-	friend Ninf Ninf(long long int o){
-		Ninf a(o);
-		return a;
-	}
-	friend ostream& operator<<(ostream& os,Ninf i){
-		os<<i.tostring();
-		return os;
-	}
-	friend istream& operator>>(istream& is,Ninf&i){
-		string o;
-		is>>o;
-		Ninf t(o);
-		i=o;
-		i.norm();
-		return is;
-	}
-*/
 	Ninf operator+(Ninf o){
 		Ninf a;
 		int n=0;
@@ -113,29 +86,35 @@ struct Ninf{
 		Ninf a;
 		for (long long int u=0;u<digits.size();u++){
 			for (long long int i=0;i<o.digits.size();i++){
-				Ninf s(digits[u]*o.digits[i]);
+				Ninf s;
+				int d=digits[u]*o.digits[i];
+				s.digits.push_back(d%10);
+				s.digits.push_back(d/10);
 				for (long long int w=0;w<i+u;w++){
 					s.digits='\0'+s.digits;
 				}
-				a+=s;
+				a=a+s;
 			}
 		}
 		a.norm();
 		return a;
 	}
 	Ninf operator/(Ninf o){
-		Ninf b(0);
-		Ninf e=*this+Ninf(1);
-		while (e-b>1){
-			Ninf c=(e+b)*Ninf(5);
+		Ninf b("0");
+		Ninf one("1");
+		Ninf five("5");
+		Ninf e=*this+one;
+		while ((e-b).diff(one)==1){
+//			cout<<e<<' '<<b<<endl;
+			Ninf c=(e+b)*five;
 			c.digits=string(c.digits.begin()+1, c.digits.end());
-			if (c*o<*this){
+			if ((c*o).diff(*this)==-1){
 				b=c;
 			}
-			if (c*o>*this){
+			if ((c*o).diff(*this)==1){
 				e=c;
 			}
-			if (c*o==*this){
+			if ((c*o).diff(*this)==0){
 				b=c;
 				e=c;
 			}
@@ -146,38 +125,6 @@ struct Ninf{
 	Ninf operator%(Ninf o){
 		return *this-*this/o*o;
 	}
-/*
-	Ninf operator+=(Ninf o){
-		Ninf a;
-		a=*this+o;
-		digits=a.digits;
-		return a;
-	}
-	Ninf operator-=(Ninf o){
-		Ninf a;
-		a=*this-o;
-		digits=a.digits;
-		return a;
-	}
-	Ninf operator*=(Ninf o){
-		Ninf a;
-		a=*this*o;
-		digits=a.digits;
-		return a;
-	}
-	Ninf operator/=(Ninf o){
-		Ninf a;
-		a=*this/o;
-		digits=a.digits;
-		return a;
-	}
-	Ninf operator%=(Ninf o){
-		Ninf a;
-		a=*this%o;
-		digits=a.digits;
-		return a;
-	}
-*/
 };
 
 struct inf{
@@ -185,7 +132,8 @@ struct inf{
 	int sign;
 	void norm(){
 		mod.norm();
-		if (mod==Ninf(0)){
+		Ninf zero("0");
+		if (mod.diff(zero)==0){
 			sign=0;
 		}else if(sign==0){
 			sign=1;
@@ -209,12 +157,13 @@ struct inf{
 	}
 	inf(string o){
 		sign=1;
+		Ninf zero("0");
 		if (o[0]=='-'){
 			sign=-1;
 			o=string(o.begin()+1, o.end());
 		}
 		mod=Ninf(o);
-		if (mod==Ninf(0)){
+		if (mod.diff(zero)==0){
 			sign=0;
 		}
 	}
@@ -259,10 +208,10 @@ struct inf{
 			a.sign=sign;
 		}
 		else{
-			if (mod > o.mod){
+			if (mod.diff(o.mod)==1){
 				a.mod=mod-o.mod;
 				a.sign=sign;
-			}else if (mod < o.mod){
+			}else if (mod.diff(o.mod)==-1){
 				a.mod=o.mod-mod;
 				a.sign=o.sign;
 			}else{
