@@ -22,11 +22,7 @@ struct Ninf{
 	}
 	long long int toint(){
 		long long int a=0;
-		long long int t=1;
-		for (size_t w=0;w<digits.size();w++){
-			a+=digits[w]*t;
-			t*=10;
-		}
+		sscanf(this->tostring().c_str(),"%Li",&a);
 		return a;
 	}
 	Ninf(string o){
@@ -407,5 +403,5 @@ struct inf{
 int main(){
 	inf s,d;
 	cin>>s>>d;
-	cout<<(s*d)<<endl;
+	cout<<(s*d).toint()<<endl;
 }
