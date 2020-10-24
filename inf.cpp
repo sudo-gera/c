@@ -406,5 +406,5 @@ struct inf{
 int main(){
 	Ninf s,d;
 	cin>>s>>d;
-	cout<<(s*d).toint()<<endl;
+	cout<<(s/d)<<endl;
 }
