@@ -403,5 +403,5 @@ struct inf{
 int main(){
 	inf s,d;
 	cin>>s>>d;
-	cout<<(s*d).toint()<<endl;
+	cout<<(s*d)<<endl;
 }
