@@ -1,7 +1,6 @@
 //#include <bits/stdc++.h>
 #include <string>
 #include <iostream>
-#include <stdio.h>
 #include <algorithm>
 using namespace std;
 struct Ninf{
@@ -21,10 +20,7 @@ struct Ninf{
 		return e;
 	}
 	long long int toint(){
-		long long int a=0;
-//		sscanf(this->tostring().c_str(),"%Li",&a);
-		a=stoi(this->tostring());
-		return a;
+		return stoi(this->tostring());
 	}
 	Ninf(string o){
 		for (auto &d:o){
@@ -36,8 +32,6 @@ struct Ninf{
 	}
 	Ninf(){};
 	Ninf(long long int o){
-//		char t[99];
-//		sprintf(t,"%Li",o);
 		string t=to_string(o);
 		digits=Ninf(t).digits;
 		this->norm();
@@ -240,8 +234,6 @@ struct inf{
 	}
 	inf(){};
 	inf(long long int o){
-//		char t[99];
-//		sprintf(t,"%Li",o);
 		string t=to_string(o);
 		inf m(t);
 		mod=m.mod;
