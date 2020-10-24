@@ -142,6 +142,7 @@ struct Ninf{
 				a+=s;
 			}
 		}
+		a.norm();
 		return a;
 	}
 	Ninf operator/(Ninf o){
@@ -161,6 +162,7 @@ struct Ninf{
 				e=c;
 			}
 		}
+		b.norm();
 		return b;
 	}
 	Ninf operator%(Ninf o){
