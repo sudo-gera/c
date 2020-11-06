@@ -1,127 +1,111 @@
-//#include <bits/stdc++.h>
 #include <string>
 #include <iostream>
 #include <algorithm>
-using namespace std;
-struct Ninf{
-	std::string digits;
-	void norm(){
-		while (digits.size() && digits[digits.size()-1]==0){
-			digits.pop_back();
-		}
-	}
-	string tostring(){
-		string e;
-		e=digits;
-		reverse(e.begin(),e.end());
-		for (auto& d : e){
-			d+='0';
-		}
-		return e;
-	}
-	Ninf(string o){
-		for (auto &d:o){
-			d-='0';
-		}
-		reverse(o.begin(),o.end());
-		digits=o;
-		this->norm();
-	}
-	Ninf(){};
-	Ninf operator+(Ninf o){
-		Ninf a;
-		int n=0;
-		for (long long int t=0; t<digits.size() || t<o.digits.size() || n; t++){
-			if (t<digits.size()){
-				n+=digits[t];
+	
+class inf{
+private:
+	struct Ninf{
+	public:
+		std::string digits;
+		void norm(){
+			while (digits.size() && digits[digits.size()-1]==0){
+				digits.pop_back();
 			}
-			if (t<o.digits.size()){
-				n+=o.digits[t];
+		}
+		std::string tostring(){
+			std::string e;
+			e=digits;
+			reverse(e.begin(),e.end());
+			for (auto& d : e){
+				d+='0';
 			}
-			a.digits.push_back(n%10);
-			n/=10;
+			return e;
 		}
-		a.norm();
-		return a;
-	}
-	Ninf operator-(Ninf o){
-		Ninf a;
-		int n=0;
-		for (long long int t=0; t<digits.size() || t<o.digits.size() || n; t++){
-			if (t<digits.size()){
-				n+=digits[t];
+		Ninf(std::string o){
+			for (auto &d:o){
+				d-='0';
 			}
-			if (t<o.digits.size()){
-				n-=o.digits[t];
+			reverse(o.begin(),o.end());
+			digits=o;
+			this->norm();
+		}
+		Ninf(){};
+		Ninf add(Ninf o,int s){
+			Ninf a;
+			int n=0;
+			for (long long int t=0; t<digits.size() || t<o.digits.size() || n; t++){
+				if (t<digits.size()){
+					n+=digits[t];
+				}
+				if (t<o.digits.size()){
+					n+=s*o.digits[t];
+				}
+				a.digits.push_back((n+10)%10);
+				n+=10;
+				n/=10;
+				n-=1;
 			}
-			a.digits.push_back((n+10)%10);
-			n+=10;
-			n/=10;
-			n-=1;
+			a.norm();
+			return a;		
 		}
-		a.norm();
-		return a;
-	}
-	int diff(Ninf o){
-		if (digits.size()<o.digits.size()){
-			return -1;
-		}
-		if (digits.size()>o.digits.size()){
-			return 1;
-		}
-		for (long long int t=digits.size()-1;t>=0;t--){
-			if(digits[t]<o.digits[t]){
+		int diff(Ninf o){
+			if (digits.size()<o.digits.size()){
 				return -1;
 			}
-			if(digits[t]>o.digits[t]){
+			if (digits.size()>o.digits.size()){
 				return 1;
 			}
-		}
-		return 0;
-	}
-	Ninf operator*(Ninf o){
-		Ninf a;
-		for (long long int u=0;u<digits.size();u++){
-			for (long long int i=0;i<o.digits.size();i++){
-				Ninf s;
-				int d=digits[u]*o.digits[i];
-				s.digits.push_back(d%10);
-				s.digits.push_back(d/10);
-				for (long long int w=0;w<i+u;w++){
-					s.digits='\0'+s.digits;
+			for (long long int t=digits.size()-1;t>=0;t--){
+				if(digits[t]<o.digits[t]){
+					return -1;
 				}
-				a=a+s;
+				if(digits[t]>o.digits[t]){
+					return 1;
+				}
 			}
+			return 0;
 		}
-		a.norm();
-		return a;
-	}
-	Ninf operator/(Ninf o){
-		Ninf b("0");
-		Ninf one("1");
-		Ninf five("5");
-		Ninf e=*this+one;
-		while ((e-b).diff(one)==1){
-//			cout<<e<<' '<<b<<endl;
-			Ninf c=(e+b)*five;
-			c.digits=string(c.digits.begin()+1, c.digits.end());
-			if ((c*o).diff(*this)==-1){
-				b=c;
+		Ninf operator*(Ninf o){
+			Ninf a;
+			for (long long int u=0;u<digits.size();u++){
+				for (long long int i=0;i<o.digits.size();i++){
+					Ninf s;
+					int d=digits[u]*o.digits[i];
+					s.digits.push_back(d%10);
+					s.digits.push_back(d/10);
+					for (long long int w=0;w<i+u;w++){
+						s.digits='\0'+s.digits;
+					}
+					a=a.add(s,1);
+				}
 			}
-			if ((c*o).diff(*this)==1){
-				e=c;
-			}
-			if ((c*o).diff(*this)==0){
-				b=c;
-				e=c;
-			}
+			a.norm();
+			return a;
 		}
-		b.norm();
-		return b;
-	}
-};
-
-struct inf{
+		Ninf operator/(Ninf o){
+			Ninf b("0");
+			Ninf one("1");
+			Ninf five("5");
+			Ninf e=this->add(one,1);
+			while ((e.add(b,-1)).diff(one)==1){
+	//			cout<<e<<' '<<b<<endl;
+				Ninf c=(e.add(b,1))*five;
+				c.digits=std::string(c.digits.begin()+1, c.digits.end());
+				if ((c*o).diff(*this)==-1){
+					b=c;
+				}
+				if ((c*o).diff(*this)==1){
+					e=c;
+				}
+				if ((c*o).diff(*this)==0){
+					b=c;
+					e=c;
+				}
+			}
+			b.norm();
+			return b;
+		}
+	};
 	Ninf mod;
 	int sign;
 	void norm(){
@@ -133,8 +117,26 @@ struct inf{
 			sign=1;
 		}
 	}
-	string tostring(){
-		string e;
+	int diff(inf o){
+		if (sign < o.sign){
+			return -1;
+		}
+		if (sign > o.sign){
+			return 1;
+		}
+		if (sign==0 && 0==o.sign){
+			return 0;
+		}
+		if (sign==1){
+			return mod.diff(o.mod);
+		}
+		if (sign==-1){
+			return -mod.diff(o.mod);
+		}
+	}
+public:
+	std::string tostring(){
+		std::string e;
 		if (sign==0){
 			e="0";
 		}
@@ -153,12 +155,12 @@ struct inf{
 			return 0LL;
 		}
 	}
-	inf(string o){
+	inf(std::string o){
 		sign=1;
 		Ninf zero("0");
 		if (o[0]=='-'){
 			sign=-1;
-			o=string(o.begin()+1, o.end());
+			o=std::string(o.begin()+1, o.end());
 		}
 		mod=Ninf(o);
 		if (mod.diff(zero)==0){
@@ -169,13 +171,13 @@ struct inf{
 		sign=0;
 	};
 	inf(long long int o){
-		string t=to_string(o);
+		std::string t=std::to_string(o);
 		inf m(t);
 		mod=m.mod;
 		sign=m.sign;
 		this->norm();
 	}
-	friend inf inf(string o){
+	friend inf inf(std::string o){
 		inf a(o);
 		return a;
 	}
@@ -183,12 +185,12 @@ struct inf{
 		inf a(o);
 		return a;
 	}
-	friend ostream& operator<<(ostream& os,inf i){
+	friend std::ostream& operator<<(std::ostream& os,inf i){
 		os<<i.tostring();
 		return os;
 	}
-	friend istream& operator>>(istream& is,inf&i){
-		string o;
+	friend std::istream& operator>>(std::istream& is,inf&i){
+		std::string o;
 		is>>o;
 		inf t(o);
 		i=o;
@@ -204,19 +206,18 @@ struct inf{
 	inf operator+(inf o){
 		inf a;
 		if (sign==o.sign){
-			a.mod=mod+o.mod;
+			a.mod=mod.add(o.mod,1);
 			a.sign=sign;
 		}
 		else{
 			if (mod.diff(o.mod)==1){
-				a.mod=mod-o.mod;
+				a.mod=mod.add(o.mod,-1);
 				a.sign=sign;
 			}else if (mod.diff(o.mod)==-1){
-				a.mod=o.mod-mod;
+				a.mod=o.mod.add(mod,-1);
 				a.sign=o.sign;
 			}else{
 				a=inf(0);
-				cout<<';'<<endl;
 			}
 		}
 		return a;
@@ -229,23 +230,6 @@ struct inf{
 	}
 	inf operator-(inf o){
 		return *this+(-o);
-	}
-	int diff(inf o){
-		if (sign < o.sign){
-			return -1;
-		}
-		if (sign > o.sign){
-			return 1;
-		}
-		if (sign==0 && 0==o.sign){
-			return 0;
-		}
-		if (sign==1){
-			return mod.diff(o.mod);
-		}
-		if (sign==-1){
-			return -mod.diff(o.mod);
-		}
 	}
 	bool operator<(inf o){
 		return this->diff(o)==-1;
