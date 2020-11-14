@@ -1,12 +1,12 @@
 #include <string>
+#include <vector>
 #include <iostream>
 #include <algorithm>
-	
 class inf{
 private:
 	struct Ninf{
 	public:
-		std::string digits;
+		std::vector<unsigned int> digits;
 		void norm(){
 			while (digits.size() && digits[digits.size()-1]==0){
 				digits.pop_back();
@@ -14,41 +14,75 @@ private:
 		}
 		std::string tostring(){
 			std::string e;
-			e=digits;
-			reverse(e.begin(),e.end());
-			for (auto& d : e){
-				d+='0';
+			Ninf t=*this;
+			Ninf m,n;
+			Ninf zero(0);
+			while (t.diff(zero)){
+				for (auto o:digits){
+				}
+				n=t/10;
+				m=(t.add(n*10,-1));
+				if (m.digits.size()){
+					e.push_back(m.digits[0]+'0');
+				}else{
+					e.push_back('0');
+				}
+				t=n;
 			}
+			reverse(e.begin(), e.end());
 			return e;
 		}
-		Ninf(std::string o){
-			for (auto &d:o){
-				d-='0';
+		unsigned long long int toint(){
+			unsigned long long int f=0;
+			for (unsigned long long int i=0;i<digits.size();i++){
+				f+=(unsigned long long int)(digits[i]<<(sizeof(int)*8*i));
 			}
-			reverse(o.begin(),o.end());
-			digits=o;
-			this->norm();
+			return f;
+		}
+		Ninf(unsigned long long int o){
+			digits.clear();
+			while (o){
+				digits.push_back(o);
+				o>>=8*sizeof(int);
+			}
+		}
+		Ninf(std::string o){
+			digits.clear();
+			Ninf dp(1);
+			Ninf ten(10);
+			reverse(o.begin(), o.end());
+			for (unsigned long long int i=0;i<o.size();i++){
+				Ninf t(o[i]-'0');
+				*this=this->add(t*dp,1);
+				dp=dp*ten;
+			}
 		}
 		Ninf(){};
 		Ninf add(Ninf o,int s){
 			Ninf a;
-			int n=0;
-			for (long long int t=0; t<digits.size() || t<o.digits.size() || n; t++){
+			unsigned long long int n=0;
+			for (unsigned long long int t=0; t<digits.size() || t<o.digits.size() || n; t++){
+				n+=1LL<<(sizeof(int)*8);
 				if (t<digits.size()){
 					n+=digits[t];
 				}
 				if (t<o.digits.size()){
-					n+=s*o.digits[t];
+					if (s>0){
+						n+=o.digits[t];
+					}else{
+						n-=o.digits[t];
+					}
 				}
-				a.digits.push_back((n+10)%10);
-				n+=10;
-				n/=10;
+				a.digits.push_back(n);
+				n>>=8*sizeof(int);
 				n-=1;
 			}
 			a.norm();
 			return a;		
 		}
 		int diff(Ninf o){
+			o.norm();
+			this->norm();
 			if (digits.size()<o.digits.size()){
 				return -1;
 			}
@@ -67,15 +101,16 @@ private:
 		}
 		Ninf operator*(Ninf o){
 			Ninf a;
-			for (long long int u=0;u<digits.size();u++){
-				for (long long int i=0;i<o.digits.size();i++){
+			for (unsigned long long int u=0;u<digits.size();u++){
+				for (unsigned long long int i=0;i<o.digits.size();i++){
 					Ninf s;
-					int d=digits[u]*o.digits[i];
-					s.digits.push_back(d%10);
-					s.digits.push_back(d/10);
+					unsigned long long int d=(unsigned long long int)(digits[u])*(unsigned long long int)(o.digits[i]);
 					for (long long int w=0;w<i+u;w++){
-						s.digits='\0'+s.digits;
+						s.digits.push_back(0);
 					}
+					s.digits.push_back(d);
+					s.digits.push_back(d>>8*sizeof(int));
+					s.norm();
 					a=a.add(s,1);
 				}
 			}
@@ -83,21 +118,25 @@ private:
 			return a;
 		}
 		Ninf operator/(Ninf o){
-			Ninf b("0");
-			Ninf one("1");
-			Ninf five("5");
+//			print(digits);
+//			print(o.digits);
+			Ninf b(0);
+			Ninf one(1);
+			Ninf five(1LL<<(8*sizeof(int)-1));
 			Ninf e=this->add(one,1);
 			while ((e.add(b,-1)).diff(one)==1){
-	//			cout<<e<<' '<<b<<endl;
+//				print(b.digits);
+//				print(e.digits);
 				Ninf c=(e.add(b,1))*five;
-				c.digits=std::string(c.digits.begin()+1, c.digits.end());
-				if ((c*o).diff(*this)==-1){
+				c.digits=std::vector<unsigned int>(c.digits.begin()+1, c.digits.end());
+				int d=(c*o).diff(*this);
+				if (d==-1){
 					b=c;
 				}
-				if ((c*o).diff(*this)==1){
+				if (d==1){
 					e=c;
 				}
-				if ((c*o).diff(*this)==0){
+				if (d==0){
 					b=c;
 					e=c;
 				}
@@ -110,7 +149,7 @@ private:
 	int sign;
 	void norm(){
 		mod.norm();
-		Ninf zero("0");
+		Ninf zero(0);
 		if (mod.diff(zero)==0){
 			sign=0;
 		}else if(sign==0){
@@ -149,15 +188,11 @@ public:
 		return e;
 	}
 	long long int toint(){
-		if (sign){
-			return stoll(mod.tostring())*sign;
-		}else{
-			return 0LL;
-		}
+		return sign*mod.toint();
 	}
 	inf(std::string o){
 		sign=1;
-		Ninf zero("0");
+		Ninf zero(0);
 		if (o[0]=='-'){
 			sign=-1;
 			o=std::string(o.begin()+1, o.end());
@@ -171,11 +206,12 @@ public:
 		sign=0;
 	};
 	inf(long long int o){
-		std::string t=std::to_string(o);
-		inf m(t);
-		mod=m.mod;
-		sign=m.sign;
-		this->norm();
+		sign=(!!o)*(o<0?-1:1);
+		if (o<0){
+			o=-o;
+		}
+		Ninf t(o);
+		mod=t;
 	}
 	friend inf inf(std::string o){
 		inf a(o);
@@ -210,10 +246,11 @@ public:
 			a.sign=sign;
 		}
 		else{
-			if (mod.diff(o.mod)==1){
+			int d=mod.diff(o.mod);
+			if (d==1){
 				a.mod=mod.add(o.mod,-1);
 				a.sign=sign;
-			}else if (mod.diff(o.mod)==-1){
+			}else if (d==-1){
 				a.mod=o.mod.add(mod,-1);
 				a.sign=o.sign;
 			}else{
@@ -258,8 +295,8 @@ public:
 	}
 	inf operator/(inf o){
 		inf a;
-		a.mod=mod/o.mod;
 		a.sign=sign/o.sign;
+		a.mod=mod/o.mod;
 		a.norm();
 		return a;
 	}
