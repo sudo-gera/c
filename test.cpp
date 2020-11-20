@@ -1,7 +1,7 @@
-#include "inf.hpp"
 //#include <bits/stdc++.h>
+#include "pony.hpp"
 #include <iostream>
 using namespace std;
-int main(){
-	cout<<inf((1LL<<32)-1)*inf((1LL<<32)-1);
-}
+do_it
+
+done

@@ -118,15 +118,11 @@ private:
 			return a;
 		}
 		Ninf operator/(Ninf o){
-//			print(digits);
-//			print(o.digits);
 			Ninf b(0);
 			Ninf one(1);
 			Ninf five(1LL<<(8*sizeof(int)-1));
 			Ninf e=this->add(one,1);
 			while ((e.add(b,-1)).diff(one)==1){
-//				print(b.digits);
-//				print(e.digits);
 				Ninf c=(e.add(b,1))*five;
 				c.digits=std::vector<unsigned int>(c.digits.begin()+1, c.digits.end());
 				int d=(c*o).diff(*this);
