@@ -1,3 +1,4 @@
+#define inf_included
 #include <string>
 #include <vector>
 #include <iostream>
@@ -6,13 +7,13 @@ class inf{
 private:
 	struct Ninf{
 	public:
-		std::vector<unsigned int> digits;
-		void norm(){
+		std::vector<uint32_t> digits;
+		inline void norm(){
 			while (digits.size() && digits[digits.size()-1]==0){
 				digits.pop_back();
 			}
 		}
-		std::string tostring(){
+		inline std::string tostring(){
 			std::string e;
 			Ninf t=*this;
 			Ninf m,n;
@@ -32,37 +33,37 @@ private:
 			reverse(e.begin(), e.end());
 			return e;
 		}
-		unsigned long long int toint(){
-			unsigned long long int f=0;
-			for (unsigned long long int i=0;i<digits.size();i++){
-				f+=(unsigned long long int)(digits[i]<<(sizeof(int)*8*i));
+		inline uint_least64_t toint(){
+			uint_least64_t f=0;
+			for (uint_least64_t i=0;i<digits.size();i++){
+				f+=(uint_least64_t)(digits[i]<<(sizeof(int32_t)*8*i));
 			}
 			return f;
 		}
-		Ninf(unsigned long long int o){
+		inline Ninf(uint_least64_t o){
 			digits.clear();
 			while (o){
 				digits.push_back(o);
-				o>>=8*sizeof(int);
+				o>>=8*sizeof(int32_t);
 			}
 		}
-		Ninf(std::string o){
+		inline Ninf(std::string o){
 			digits.clear();
 			Ninf dp(1);
 			Ninf ten(10);
 			reverse(o.begin(), o.end());
-			for (unsigned long long int i=0;i<o.size();i++){
+			for (uint_least64_t i=0;i<o.size();i++){
 				Ninf t(o[i]-'0');
 				*this=this->add(t*dp,1);
 				dp=dp*ten;
 			}
 		}
-		Ninf(){};
-		Ninf add(Ninf o,int s){
+		inline Ninf(){};
+		inline Ninf add(Ninf o,int32_t s){
 			Ninf a;
-			unsigned long long int n=0;
-			for (unsigned long long int t=0; t<digits.size() || t<o.digits.size() || n; t++){
-				n+=1LL<<(sizeof(int)*8);
+			uint_least64_t n=0;
+			for (uint_least64_t t=0; t<digits.size() || t<o.digits.size() || n; t++){
+				n+=1LL<<(sizeof(int32_t)*8);
 				if (t<digits.size()){
 					n+=digits[t];
 				}
@@ -74,13 +75,13 @@ private:
 					}
 				}
 				a.digits.push_back(n);
-				n>>=8*sizeof(int);
+				n>>=8*sizeof(int32_t);
 				n-=1;
 			}
 			a.norm();
 			return a;		
 		}
-		int diff(Ninf o){
+		inline int32_t diff(Ninf o){
 			o.norm();
 			this->norm();
 			if (digits.size()<o.digits.size()){
@@ -89,7 +90,7 @@ private:
 			if (digits.size()>o.digits.size()){
 				return 1;
 			}
-			for (long long int t=digits.size()-1;t>=0;t--){
+			for (uint_least64_t t=digits.size()-1;t>=0;t--){
 				if(digits[t]<o.digits[t]){
 					return -1;
 				}
@@ -99,17 +100,17 @@ private:
 			}
 			return 0;
 		}
-		Ninf operator*(Ninf o){
+		inline Ninf operator*(Ninf o){
 			Ninf a;
-			for (unsigned long long int u=0;u<digits.size();u++){
-				for (unsigned long long int i=0;i<o.digits.size();i++){
+			for (uint_least64_t u=0;u<digits.size();u++){
+				for (uint_least64_t i=0;i<o.digits.size();i++){
 					Ninf s;
-					unsigned long long int d=(unsigned long long int)(digits[u])*(unsigned long long int)(o.digits[i]);
-					for (long long int w=0;w<i+u;w++){
+					uint_least64_t d=(uint_least64_t)(digits[u])*(uint_least64_t)(o.digits[i]);
+					for (uint_least64_t w=0;w<i+u;w++){
 						s.digits.push_back(0);
 					}
 					s.digits.push_back(d);
-					s.digits.push_back(d>>8*sizeof(int));
+					s.digits.push_back(d>>8*sizeof(int32_t));
 					s.norm();
 					a=a.add(s,1);
 				}
@@ -117,15 +118,15 @@ private:
 			a.norm();
 			return a;
 		}
-		Ninf operator/(Ninf o){
+		inline Ninf operator/(Ninf o){
 			Ninf b(0);
 			Ninf one(1);
-			Ninf five(1LL<<(8*sizeof(int)-1));
+			Ninf five(1LL<<(8*sizeof(int32_t)-1));
 			Ninf e=this->add(one,1);
 			while ((e.add(b,-1)).diff(one)==1){
 				Ninf c=(e.add(b,1))*five;
-				c.digits=std::vector<unsigned int>(c.digits.begin()+1, c.digits.end());
-				int d=(c*o).diff(*this);
+				c.digits=std::vector<uint32_t>(c.digits.begin()+1, c.digits.end());
+				int32_t d=(c*o).diff(*this);
 				if (d==-1){
 					b=c;
 				}
@@ -142,8 +143,8 @@ private:
 		}
 	};
 	Ninf mod;
-	int sign;
-	void norm(){
+	int32_t sign;
+	inline void norm(){
 		mod.norm();
 		Ninf zero(0);
 		if (mod.diff(zero)==0){
@@ -152,7 +153,7 @@ private:
 			sign=1;
 		}
 	}
-	int diff(inf o){
+	inline int32_t diff(inf o){
 		if (sign < o.sign){
 			return -1;
 		}
@@ -170,23 +171,23 @@ private:
 		}
 	}
 public:
-	std::string tostring(){
+	friend inline std::string::string(inf o){
 		std::string e;
-		if (sign==0){
+		if (o.sign==0){
 			e="0";
 		}
-		if (sign==1){
-			e=mod.tostring();
+		if (o.sign==1){
+			e=o.mod.tostring();
 		}
-		if (sign==-1){
-			e="-"+mod.tostring();
+		if (o.sign==-1){
+			e="-"+o.mod.tostring();
 		}
-		return e;
+		(*this)=e;
 	}
-	long long int toint(){
+	friend inline int_least64_t operator(int_least64_t)(inf o){
 		return sign*mod.toint();
 	}
-	inf(std::string o){
+	inline inf(std::string o){
 		sign=1;
 		Ninf zero(0);
 		if (o[0]=='-'){
@@ -198,10 +199,10 @@ public:
 			sign=0;
 		}
 	}
-	inf(){
+	inline inf(){
 		sign=0;
 	};
-	inf(long long int o){
+	inline inf(int_least64_t o){
 		sign=(!!o)*(o<0?-1:1);
 		if (o<0){
 			o=-o;
@@ -209,19 +210,19 @@ public:
 		Ninf t(o);
 		mod=t;
 	}
-	friend inf inf(std::string o){
+	friend inline inf inf(std::string o){
 		inf a(o);
 		return a;
 	}
-	friend inf inf(long long int o){
+	friend inline inf inf(int_least64_t o){
 		inf a(o);
 		return a;
 	}
-	friend std::ostream& operator<<(std::ostream& os,inf i){
+	friend inline std::ostream& operator<<(std::ostream& os,inf i){
 		os<<i.tostring();
 		return os;
 	}
-	friend std::istream& operator>>(std::istream& is,inf&i){
+	friend inline std::istream& operator>>(std::istream& is,inf&i){
 		std::string o;
 		is>>o;
 		inf t(o);
@@ -229,20 +230,20 @@ public:
 		i.norm();
 		return is;
 	}
-	inf operator+(){
+	inline inf operator+(){
 		inf a;
 		a.sign=sign;
 		a.mod=mod;
 		return a;
 	}
-	inf operator+(inf o){
+	inline inf operator+(inf o){
 		inf a;
 		if (sign==o.sign){
 			a.mod=mod.add(o.mod,1);
 			a.sign=sign;
 		}
 		else{
-			int d=mod.diff(o.mod);
+			int32_t d=mod.diff(o.mod);
 			if (d==1){
 				a.mod=mod.add(o.mod,-1);
 				a.sign=sign;
@@ -255,101 +256,105 @@ public:
 		}
 		return a;
 	}
-	inf operator-(){
+	inline inf operator-(){
 		inf a;
 		a.mod=mod;
 		a.sign=-sign;
 		return a;
 	}
-	inf operator-(inf o){
+	inline inf operator-(inf o){
 		return *this+(-o);
 	}
-	bool operator<(inf o){
+	inline bool operator<(inf o){
 		return this->diff(o)==-1;
 	}
-	bool operator>(inf o){
+	inline bool operator>(inf o){
 		return this->diff(o)==1;
 	}
-	bool operator==(inf o){
+	inline bool operator==(inf o){
 		return this->diff(o)==0;
 	}
-	bool operator<=(inf o){
+	inline bool operator<=(inf o){
 		return this->diff(o)!=1;
 	}
-	bool operator>=(inf o){
+	inline bool operator>=(inf o){
 		return this->diff(o)!=-1;
 	}
-	bool operator!=(inf o){
+	inline bool operator!=(inf o){
 		return this->diff(o)!=0;
 	}
-	inf operator*(inf o){
+	inline inf operator*(inf o){
 		inf a;
 		a.mod=mod*o.mod;
 		a.sign=sign*o.sign;
 		a.norm();
 		return a;
 	}
-	inf operator/(inf o){
+	inline inf operator/(inf o){
 		inf a;
 		a.sign=sign/o.sign;
 		a.mod=mod/o.mod;
 		a.norm();
 		return a;
 	}
-	inf operator%(inf o){
+	inline inf operator%(inf o){
 		return *this-*this/o*o;
 	}
-	inf operator+=(inf o){
+	inline inf operator+=(inf o){
 		inf a;
 		a=*this+o;
 		mod=a.mod;
 		sign=a.sign;
 		return a;
 	}
-	inf operator-=(inf o){
+	inline inf operator-=(inf o){
 		inf a;
 		a=*this-o;
 		mod=a.mod;
 		sign=a.sign;
 		return a;
 	}
-	inf operator*=(inf o){
+	inline inf operator*=(inf o){
 		inf a;
 		a=*this*o;
 		mod=a.mod;
 		sign=a.sign;
 		return a;
 	}
-	inf operator/=(inf o){
+	inline inf operator/=(inf o){
 		inf a;
 		a=*this/o;
 		mod=a.mod;
 		sign=a.sign;
 		return a;
 	}
-	inf operator%=(inf o){
+	inline inf operator%=(inf o){
 		inf a;
 		a=*this%o;
 		mod=a.mod;
 		sign=a.sign;
 		return a;
 	}
-	inf operator++(){
+	inline inf operator++(){
 		*this+=1;
 		return *this;
 	}
-	inf operator--(){
+	inline inf operator--(){
 		*this-=1;
 		return *this;
 	}
-	inf operator++(int){
+	inline inf operator++(int32_t){
 		inf a=*this;
 		*this+=1;
 		return a;
 	}
-	inf operator--(int){
+	inline inf operator--(int32_t){
 		inf a=*this;
 		*this-=1;
 		return a;
 	}
 };
+#ifdef replace_int
+	using old_int = int;
+	#define int = inf
+#endif

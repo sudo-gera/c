@@ -1,7 +1,7 @@
-//#include <bits/stdc++.h>
+#pragma GCC optimize("Ofast")
+#define fast_int
 #include "pony.hpp"
-#include <iostream>
 using namespace std;
-do_it
-
-done
+___main main(){
+	cout<<*(range(inf(12)).begin())<<endl;
+}

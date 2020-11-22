@@ -1,11 +1,14 @@
+#ifndef other_int
+#define other_int int
+#endif
 struct range{
 	struct range_iterator{
-		int val, step;
-		range_iterator(int v,int s){
+		other_int val, step;
+		inline range_iterator(other_int v,other_int s){
 			val=v;
 			step=s;
 		}
-		bool operator!=(range_iterator o){
+		inline bool operator!=(range_iterator o){
 			if (step>0 and val>=o.val){
 				return false;
 			}
@@ -17,37 +20,37 @@ struct range{
 			}
 			return true;
 		}
-		void operator++(){
+		inline void operator++(){
 			val+=step;
 		}
-		int operator*(){
+		inline other_int operator*(){
 			return val;
 		}
 	};
-	int start, stop, step;
-	range(int a,int o,int e=1){
+	other_int start, stop, step;
+	inline range(other_int a,other_int o,other_int e=1){
 		start=a;
 		stop=o;
 		step=e;
 	}
-	range(int o){
+	inline range(other_int o){
 		start=0;
 		stop=o;
 		step=1;
 	}
-	friend range range(int a,int o,int e=1){
+	friend inline range range(other_int a,other_int o,other_int e=1){
 		range r(a,o,e);
 		return r;
 	}
-	friend range range(int o){
+	friend inline range range(other_int o){
 		range r(0,o,1);
 		return r;
 	}
-	range_iterator begin(){
+	inline range_iterator begin(){
 		range_iterator r(start,step);
 		return r;
 	}
-	range_iterator end(){
+	inline range_iterator end(){
 		range_iterator r(stop,step);
 		return r;
 	}
