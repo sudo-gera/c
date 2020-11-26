@@ -1,0 +1,34 @@
+class _module:
+	def _import(s):
+		n=s.n
+		mn=n.replace('___','.')
+		try:
+			exec('import '+mn)
+			m=eval(mn)
+		except:
+			m=None
+		try:
+			ms=open('/home/gera.python_modules_db').read().split()
+		except:
+			ms=[]
+		if n in ms and m==None:
+			ms=[w for w in ms if w!=n]
+		if n not in ms and m!= None:
+			ms.append(n)
+		open('/home/gera/.python_modules_db','w').write(' '.join(ms))
+		exec('import '+mn)
+		return eval(mn)
+	def __init__(s,n=None):
+		if n!=None:
+			s.n=n
+		else:
+			try:
+				_db=open('/home/gera/.python_modules_db').read().split()
+			except:
+				_db=[]
+			for w in _db:
+				exec('s.'+w+'=_module(w)')
+	def __getattr__(s,n):
+		exec('s.'+n+'=_module(n)')
+		return eval('s.'+n)
+modules=_module()

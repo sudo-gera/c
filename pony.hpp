@@ -1,10 +1,11 @@
 #include <bits/stdc++.h>
+#ifndef fast_int
+	#define replace_int
+#endif
 #include "inf.hpp"
-#define int inf
+#ifndef fast_int
+	#define other_int inf
+#endif
+#include "frag.hpp"
 #include "range.hpp"
-#define let auto
-#define var auto
-#define of :
-#define for for(
-#define while while(
-#define do )
+#include "synt.hpp"
