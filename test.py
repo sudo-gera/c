@@ -1,3 +1,3 @@
-from tkinter import *
+from tkinter import filedialog
 s=filedialog.askopenfilename()
 print(s)
