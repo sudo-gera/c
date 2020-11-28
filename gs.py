@@ -1,4 +1,4 @@
-task=4
+task=2
 if task==1:
 	a=0
 	from math import factorial
@@ -12,7 +12,7 @@ if task==2:
 				for d in range(60):
 					if 40<=a+b+c+d<=60:
 						if 3*a==2*b:
-							if 4*d==c:
+							if 4*d==3*c:
 								if a+c-1==b+d:
 									print(a,b,c,d)
 if task==3:
