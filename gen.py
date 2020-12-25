@@ -1,20 +1,12 @@
-from random import randint
-from os import popen
-from time import time
-l=m=0
-while 1:
- t=[str(randint(-2**17,2**17)) for w in range(randint(0,2**19))]
- open('in','w').write(str(len(t))+'\n'+'\n'.join(t))
- y=time()
- a=popen('./a.out<in').read().split()
- u=time()
- b=popen('./b.out<in').read().split()
- i=time()
- if a!=b:
-  print(-1)
-  exit()
- else:
-  k=(u-i)/(y-u)
-  l=(l*m+k)/(m+1)
-  m+=1
-  print(l)
+q=[1,1,2,5,14,42,132,429,1430,4862,16796,58786,
+ 208012,742900,2674440,9694845,35357670,129644790,
+ 477638700,1767263190,6564120420,24466267020,
+ 91482563640,343059613650,1289904147324,
+ 4861946401452,18367353072152,69533550916004,
+ 263747951750360,1002242216651368,3814986502092304]
+from os import *
+for w in range(len(q)):
+	a=popen('echo '+str(w*2)+' | python3 mpp.py').read()
+	a=int(a)
+	if (q[w]-a)%(10**9+7)!=0 or a%(10**9+7)!=a:
+		print(w)

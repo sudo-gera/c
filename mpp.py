@@ -1,7 +1,9 @@
-n,k=list(map(int,input().split()))
-from math import factorial
-def ff(q):
-	if q>10:
-		return 0
-	return factorial(q)
-print((ff(n)-ff(k))%10)
+n=int(input())
+n//=2
+k=0
+c=1
+m=10**9+7
+while k<n:
+	k+=1
+	c=2*(2*k-1)*c*pow(k+1,m-2,m)%m
+print(c%m)
