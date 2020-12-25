@@ -6,7 +6,7 @@ else
 fi
 git add *
 git commit -qam "$d"
-git pull -q --no-edit
+git pull origin $(git branch --show-current) -q --no-edit
 git add *
 git commit -qam "$d"
-git push -q
+git push origin $(git branch --show-current) -q
