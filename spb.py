@@ -1,31 +1,12 @@
-scan(int k,int n,int m,int b,int e)
-struct nex:
- int n,w,h
-new nex q[100000]
-new int a[100000]
-nex t
-for w<m:
- scan(int p,int s,int r)
- if r<k:
-  t.n=s
-  t.w=r
-  t.h=0
-  push q[p][t]
-  t.n=p
-  t.w=r
-  t.h=0
-  push q[s][t]
-int f[10000]
-for w<10000:
- f[w]=0
-scan(int l)
-for w<l:
- scan(f[w])
-new int i
-for w<n:
- i.clear()
- for e in q[n]:
-  push i[e]
- now=0
- while now<i.size():
-  
+from math import factorial
+def c(n,k):
+	if n>=0 and k>=0 and n-k>=0:
+		return factorial(n)//factorial(k)//factorial(n-k)
+	else:
+		return 0
+for n in range(300):
+	e=0
+	for k in range(2,n+1):
+		e+=c(n,2)/c(k,2)
+	if (n-1)**2<e:
+		print(n,(n-1)**2,e)
