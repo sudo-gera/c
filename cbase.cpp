@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #include <stdio.h>
 #include <stdlib.h>
 #define int int64_t
@@ -19,18 +18,3 @@ decltype(0) main(){
 		print(q[w]);
 	}
 }
-=======
-#include <iostream>
-#define int int64_t
-struct a{
- char d[7];
-};
-decltype(0) main(){
- a* d=0;
- std::cout<<(int)(d)<<'\n';
- d++;
- std::cout<<(int)(d)<<'\n';
- d+=3;
- std::cout<<(int)(d)<<'\n';
-}
->>>>>>> 8b44a6a500e903736a3fa73be40feb3017180c27
