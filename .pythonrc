@@ -1,5 +1,6 @@
 class _module:
 	def _import(s):
+		from pathlib import Path
 		n=s.n
 		mn=n.replace('___','.')
 		try:
@@ -8,22 +9,23 @@ class _module:
 		except:
 			m=None
 		try:
-			ms=open('/home/gera/.python_modules_db').read().split()
+			ms=open(str(Path.home())+'/.python_modules_db').read().split()
 		except:
 			ms=[]
 		if n in ms and m==None:
 			ms=[w for w in ms if w!=n]
 		if n not in ms and m!= None:
 			ms.append(n)
-		open('/home/gera/.python_modules_db','w').write(' '.join(ms))
+		open(str(Path.home())+'/.python_modules_db','w').write(' '.join(ms))
 		exec('import '+mn)
 		return eval(mn)
 	def __init__(s,n=None):
+		from pathlib import Path
 		if n!=None:
 			s.n=n
 		else:
 			try:
-				_db=open('/home/gera/.python_modules_db').read().split()
+				_db=open(str(Path.home())+'/.python_modules_db').read().split()
 			except:
 				_db=[]
 			for w in _db:
