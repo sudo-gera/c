@@ -12,6 +12,7 @@ from os import popen
 from webbrowser import open as webopen
 from sys import argv
 from pathlib import Path
+from pprint import pprint
 
 url=open(str(Path.home())+'/url').read()
 token=url.split('#')[1].split('&')[0].split('=')[1]
@@ -38,13 +39,14 @@ def api(path,data=''):
 	sleep(1/6)
 	data=data.encode()
 	global token
-	ret= loads(urlopen('https://api.vk.com/method/'+path+'v=5.101&access_token='+token,data=data).read().decode())
+	ret=loads(urlopen('https://api.vk.com/method/'+path+'v=5.101&access_token='+token,data=data).read().decode())
+	try:
+		if 'error' in ret.keys():
+			print(ret['error']['error_msg'])
+	except:
+		pprint(ret)
 	try:
 		return items(ret['response'])
 	except:
 		pass
-	try:
-		print(ret['error']['error_msg'])
-	except:
-		print(ret)
 

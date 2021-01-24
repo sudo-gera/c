@@ -8,7 +8,7 @@ class _module:
 		except:
 			m=None
 		try:
-			ms=open('/home/gera.python_modules_db').read().split()
+			ms=open('/home/gera/.python_modules_db').read().split()
 		except:
 			ms=[]
 		if n in ms and m==None:
