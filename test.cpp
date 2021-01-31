@@ -5,7 +5,6 @@
 #include <type_traits>
 #define int int64_t
 #define print(q) printf("%li\n",(q));
-template<typename t>
 #define _o(name) (((int*)(name))-1)
 #define _c(type,name) ((type)(((int*)(name))+1))
 #define _si (sizeof(int))
