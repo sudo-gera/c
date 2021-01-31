@@ -2,7 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <type_traits>
-#include <vector>
+template<typename r>
+struct rr{
+	typedef r e;
+}
 #define int int64_t
 #define print(q) printf("%li\n",int64_t(q));
 #define prints(q) printf("%li ",int64_t(q));
@@ -13,7 +16,8 @@
 #define _c(type,name) ((type)(((int*)(name))+1))
 #define _si (sizeof(int))
 #if 1
-#define _dt(name) std::remove_reference<decltype(name)>::type
+//#define _dt(name) std::remove_reference<decltype(name)>::type
+#define _dt(name) rr<decltype(name)>::e
 #else
 #define _dt(name) decltype(name)
 #endif
