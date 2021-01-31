@@ -1,11 +1,18 @@
 #pragma GCC optimize("Ofast")
 #include <stdio.h>
 #include <stdlib.h>
-#include <type_traits>
 template<typename r>
 struct rr{
 	typedef r e;
-}
+};
+template<typename r>
+struct rr<r&>{
+	typedef r e;
+};
+template<typename r>
+struct rr<r&&>{
+	typedef r e;
+};
 #define int int64_t
 #define print(q) printf("%li\n",int64_t(q));
 #define prints(q) printf("%li ",int64_t(q));
@@ -15,8 +22,7 @@ struct rr{
 #define _o(name) (((int*)(name))-1)
 #define _c(type,name) ((type)(((int*)(name))+1))
 #define _si (sizeof(int))
-#if 1
-//#define _dt(name) std::remove_reference<decltype(name)>::type
+#if 01
 #define _dt(name) rr<decltype(name)>::e
 #else
 #define _dt(name) decltype(name)
@@ -36,19 +42,26 @@ int scan(){int64_t q;scanf("%li",&(q));return q;}
 #define l(q,w) auto (q)=(w);
 
 decltype(0) main(){
-	l(q,vect(int*))
-	ff(w,4){
-		push(q,vect(int))
-	}
-	ff(w,len(q)){
-		ff(e,7){
-			push(q[w],w*7+e);
+	l(q,vect(int8_t***))
+	ff(w,2){
+		push(q,vect(int8_t**))
+		ff(e,2){
+			push(q[w],vect(int8_t*))
+			ff(r,2){
+				push(q[w][e],vect(int8_t))
+				ff(t,2){
+					push(q[w][e][r],w*8+e*4+r*2+t)
+				}
+			}
 		}
 	}
 	ff(w,len(q)){
 		ff(e,len(q[w])){
-			printt(q[w][e])
+			ff(r,len(q[w][e])){
+				ff(t,len(q[w][e][r])){
+					print(q[w][e][r][t])
+				}
+			}
 		}
-		printf("\n");
 	}
 }
