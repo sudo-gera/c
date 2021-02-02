@@ -19,17 +19,23 @@ struct rr<r&&>{
 #define printt(q) printf("%li\t",int64_t(q));
 #define printn(q) printf("%li",int64_t(q));
 #define printc(q) printf("%c",char(c));
-#define _o(name) (((int*)(name))-1)
-#define _c(type,name) ((type)(((int*)(name))+1))
+#define _o(name) (((int*)(name))-2)
+#define _c(type,name) ((type)(((int*)(name))+2))
 #define _si (sizeof(int))
 #if 01
 #define _dt(name) rr<decltype(name)>::e
 #else
 #define _dt(name) decltype(name)
 #endif
-#define vect(vtype) (_c(vtype*,calloc(1,_si)))
-#define len(name) (*_o(name))
-#define push(name,val) (name)=_c(_dt(name),realloc(_o(name),_si+(len(name)+1)*sizeof(*name)));(name)[len(name)++]=(val);
+#define vect(vtype) (_c(vtype*,calloc(1,2*_si)))
+#define len(name) (_o(name)[0])
+#define _len(name) (_o(name)[1])
+template<typename y>
+y lp(y j){
+	print(int64_t(j))
+	return j;
+}
+#define push(name,val) if(len(name)==_len(name)){(name)=_c(_dt(name),realloc(_o(name),lp(2*_si+(_len(name)*2)*sizeof(*name))));_len(name)=_len(name)?_len(name)<<1:1;}(name)[len(name)++]=(val);
 int scan(){int64_t q;scanf("%li",&(q));return q;}
 #define ff(w,q) for(int w=0;w<(q);++w)
 #define fd(w,q) for(int w=0;w>(q);--w)
@@ -39,29 +45,21 @@ int scan(){int64_t q;scanf("%li",&(q));return q;}
 #define fffd(w,e,q,h) for(int w=(e);w>(q);w-=(h))
 #define let auto
 #define s(q,w) (q)=(w);
+#define as(q,w) (q)+=(w);
+#define ss(q,w) (q)-=(w);
+#define ms(q,w) (q)*=(w);
+#define ds(q,w) (q)/=(w);
+#define ps(q,w) (q)%=(w);
 #define l(q,w) auto (q)=(w);
 
 decltype(0) main(){
-	l(q,vect(int8_t***))
-	ff(w,2){
-		push(q,vect(int8_t**))
-		ff(e,2){
-			push(q[w],vect(int8_t*))
-			ff(r,2){
-				push(q[w][e],vect(int8_t))
-				ff(t,2){
-					push(q[w][e][r],w*8+e*4+r*2+t)
-				}
-			}
-		}
+	l(q,vect(int))
+	ff(w,100000000){
+		push(q,w)
 	}
+	l(c,0)
 	ff(w,len(q)){
-		ff(e,len(q[w])){
-			ff(r,len(q[w][e])){
-				ff(t,len(q[w][e][r])){
-					print(q[w][e][r][t])
-				}
-			}
-		}
+		as(c,w)
 	}
+	print(c)
 }
