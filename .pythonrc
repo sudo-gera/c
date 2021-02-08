@@ -3,6 +3,21 @@ class _module:
 		from pathlib import Path
 		n=s.n
 		mn=n.replace('___','.')
+		if mn=='.':
+			from subprocess import run
+			from subprocess import PIPE
+			try:
+				s=run(['pip3','freeze'],stdout=PIPE)
+			except:
+				s=run(['pip3','freeze'],stdout=PIPE)
+			s=s.stdout.decode()
+			s=[w.split('==')[0] for w in s.split('\n')]
+			for w in s:
+				try:
+					w=eval('modules.'+w+'._')
+				except:
+					pass
+			return
 		try:
 			exec('import '+mn)
 			m=eval(mn)
