@@ -1,12 +1,18 @@
-q=[1,1,2,5,14,42,132,429,1430,4862,16796,58786,
- 208012,742900,2674440,9694845,35357670,129644790,
- 477638700,1767263190,6564120420,24466267020,
- 91482563640,343059613650,1289904147324,
- 4861946401452,18367353072152,69533550916004,
- 263747951750360,1002242216651368,3814986502092304]
-from os import *
-for w in range(len(q)):
-	a=popen('echo '+str(w*2)+' | python3 mpp.py').read()
-	a=int(a)
-	if (q[w]-a)%(10**9+7)!=0 or a%(10**9+7)!=a:
-		print(w)
+from random import randint
+from os import system
+from time import *
+c=0
+while 1:
+	a=open('stdin','wb')
+#	[a.write(chr(randint(0,255))) for w in range(randint(0,255))]
+	a.write(bytes([randint(0,255) for w in range(randint(0,255))]))
+	a.write(b'\n')
+#	[a.write(chr(randint(0,255))) for w in range(randint(0,255))]
+#	a.write('\n')
+	a.close()
+	if system('python3 mhw.py < stdin > stdout'):
+		print([open('stdin','rb').read()])
+		sleep(0.4)
+	c+=1
+	if c%1234==0:
+		print(asctime(),c)
