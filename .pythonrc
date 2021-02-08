@@ -31,7 +31,7 @@ class _module:
 			for w in _db:
 				exec('s.'+w+'=_module(w)')
 	def __getattr__(s,n):
-		if n=='_imp':
+		if n=='_':
 			return s._import()
 		exec('s.'+n+'=_module(n)')
 		return eval('s.'+n)
