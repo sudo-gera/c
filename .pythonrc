@@ -3,6 +3,21 @@ class _module:
 		from pathlib import Path
 		n=s.n
 		mn=n.replace('___','.')
+		if mn=='.':
+			from subprocess import run
+			from subprocess import PIPE
+			try:
+				s=run(['pip3','freeze'],stdout=PIPE)
+			except:
+				s=run(['pip3','freeze'],stdout=PIPE)
+			s=s.stdout.decode()
+			s=[w.split('==')[0] for w in s.split('\n')]
+			for w in s:
+				try:
+					w=eval('modules.'+w+'._')
+				except:
+					pass
+			return
 		try:
 			exec('import '+mn)
 			m=eval(mn)
@@ -31,7 +46,7 @@ class _module:
 			for w in _db:
 				exec('s.'+w+'=_module(w)')
 	def __getattr__(s,n):
-		if n=='_imp':
+		if n=='_':
 			return s._import()
 		exec('s.'+n+'=_module(n)')
 		return eval('s.'+n)

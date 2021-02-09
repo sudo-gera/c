@@ -1,4 +1,18 @@
+<<<<<<< HEAD
 //#pragma GCC optimize("Ofast")
+=======
+<<<<<<< HEAD
+#include <bits/stdc++.h>
+using namespace std;
+int main(int argc,char ** argv){
+	vector<string> arg(argv,argv+argc);
+	for(auto j:arg){
+		cout<<j<<'\n';
+	}
+}
+=======
+#pragma GCC optimize("Ofast")
+>>>>>>> bb62dd0d84c17609fa6c851f0765d2e593b377cb
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
@@ -71,4 +85,10 @@ decltype(0) main(decltype(0) argc,char**argv){
 		}
 		print(c)
 	}
+<<<<<<< HEAD
 }
+=======
+	del(q)
+}
+>>>>>>> ecf269ba7419be6c5a059ff4b5966bbc048770f6
+>>>>>>> bb62dd0d84c17609fa6c851f0765d2e593b377cb
