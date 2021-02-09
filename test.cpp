@@ -1,3 +1,13 @@
+<<<<<<< HEAD
+#include <bits/stdc++.h>
+using namespace std;
+int main(int argc,char ** argv){
+	vector<string> arg(argv,argv+argc);
+	for(auto j:arg){
+		cout<<j<<'\n';
+	}
+}
+=======
 #pragma GCC optimize("Ofast")
 #include <stdio.h>
 #include <stdlib.h>
@@ -75,3 +85,4 @@ decltype(0) main(){
 	}
 	del(q)
 }
+>>>>>>> ecf269ba7419be6c5a059ff4b5966bbc048770f6
