@@ -1,12 +1,9 @@
-from sys import stdin
-q=bytearray(stdin.buffer.readline()[:-1])
-a=bytearray(stdin.buffer.readline()[:-1])
-c=1
-for w in range(len(q)):
-	if q[w:w+len(a)]==a:
-		print(w+1,end=' ')
-		c=0
-if c:
-	print(0)
+q=input()
+from re import *
+e=r'\s*'
+v=r'[\-!-(:-~]\S*'
+n=r'\d+'
+if fullmatch(e+v+e+':='+e+v+e,q) or fullmatch(e+v+e+':='+e+n+e,q):
+	print('YES')
 else:
-	print()
+	print('NO')

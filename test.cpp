@@ -1,6 +1,7 @@
-#pragma GCC optimize("Ofast")
+//#pragma GCC optimize("Ofast")
 #include <stdio.h>
 #include <stdlib.h>
+#include <vector>
 #define int int64_t
 #define print(q) printf("%li\n",int64_t(q));
 #define prints(q) printf("%li ",int64_t(q));
@@ -25,7 +26,6 @@ struct rr<r&&>{
 #if 01
 #define _dt(name) rr<decltype(name)>::e
 #else
-#define _dt(name) decltype(name)
 #endif
 #define vect(vtype) (_c(vtype*,calloc(1,2*_si)))
 #define len(name) (_o(name)[0])
@@ -49,29 +49,26 @@ int scan(){int64_t q;scanf("%li",&(q));return q;}
 #define l(q,w) auto (q)=(w);
 #define i(q,w) int (q)=(w);
 
-decltype(0) main(){
-	l(q,vect(int**))
-	ff(w,2){
-		push(q,vect(int*))
-		ff(e,2){
-			push(q[w],vect(int))
-			ff(r,2){
-				push(q[w][e],r+e*2+w*4)
-			}
+decltype(0) main(decltype(0) argc,char**argv){
+	if (argc==2){
+		l(q,std::vector<int>());
+		ff(w,100000000){
+			q.push_back(w);
 		}
-	}
-	ff(w,len(q)){
-		ff(e,len(q[w])){
-			ff(r,len(q[w][e])){
-				print(q[w][e][r])
-			}
+		i(c,0)
+		ff(w,q.size()){
+			as(c,q[w])
 		}
-	}
-	ff(w,len(q)){
-		ff(e,len(q[w])){
-			del(q[w][e])
+		print(c)
+	}else{
+		l(q,vect(int));
+		ff(w,100000000){
+			push(q,w);
 		}
-		del(q[w])
+		i(c,0)
+		ff(w,len(q)){
+			as(c,q[w])
+		}
+		print(c)
 	}
-	del(q)
 }
