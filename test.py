@@ -1,5 +1,5 @@
-from tkinter import filedialog
-from tkinter import *
-Tk().withdraw()
-s=filedialog.askopenfilename()
-print(s)
+a=open('std','r+')
+print(a.read())
+.write('123')
+a.seek(0)
+print(a.read())
