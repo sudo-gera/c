@@ -11,25 +11,54 @@ from importlib.util import spec_from_file_location
 from importlib.util import module_from_spec
 home=str(Path.home())+'/'
 
+sidedef='''
+#instructions how to run different files
+#return format: array of comands, each comand is array with executable and arguments
+def execute(filename):
+	if filename.endswith('.py'):
+		return [
+			['python3',filename]
+		]
+	if filename.endswith('.rb'):
+		return [
+			['ruby',filename]
+		]
+	if filename.endswith('.js'):
+		return [
+			['node',filename]
+		]
+	if filename.endswith('.cpp'):
+		return [
+			['g++','-Wfatal-errors',filename],
+			['a.out']
+		]
+'''
+
 class Handler(FileSystemEventHandler):
 	def run(self,event):
+		global sidedef
 		if not event.is_directory:
-			if not exists(home+'.side'):
-				open(home+'.side','w').write('def execute(filename):\n\tpass\n')
+			if not exists(home+'.side.py'):
+				open(home+'.side.py','w').write(sidedef)
 			try:
 				file=event.src_path
 				if file.endswith('.stdin'):
 					file=file[:-6]
 				a=[]
-				exec(open(home+'.side').read()+'\na.append(execute)')
+				exec(open(home+'.side.py').read()+'\na.append(execute)')
 				ex=a[0]
 				ex=ex(file)
-				open(file+'.stdout','w')
-				for w in ex:
-					if run(w,stdin=open(file+'.stdin'),stdout=open(file+'.stdout','a'),stderr=open(file+'.stdout','a')).returncode:
-						break
+				if ex==None:
+					print('file ~/.side.py has no instructions for running',file)
+					print('if you want to add instructions, edit ~/.side.py')
+				else:
+					open(file+'.stdout','w')
+					for w in ex:
+						if run(w,stdin=open(file+'.stdin'),stdout=open(file+'.stdout','a'),stderr=open(file+'.stdout','a')).returncode:
+							break
 			except:
-				print('failed to exec ~/.side:\n'+format_exc())
+				print('failed to exec ~/.side.py')
+				print(format_exc())
 	on_created=on_deleted=on_moved=on_modified=run
 
 class ev:
@@ -57,6 +86,9 @@ for file in argv[1:]:
 	obss.append(observer)
 	run(['subl',file+'.stdout'])
 
+print('started tracking:')
+print(*argv[1:])
+print('press ctrl+c to stop')
 try:
 	while True:
 		sleep(0.1)
