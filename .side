@@ -1,0 +1,10 @@
+def execute(filename):
+	if filename.endswith('.py'):
+		return [
+			['python3',filename]
+		]
+	if filename.endswith('.cpp'):
+		return [
+			['g++','-Wfatal-errors',filename],
+			['a.out']
+		]
