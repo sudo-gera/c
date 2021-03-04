@@ -833,6 +833,26 @@
 									}
 								],
 								"type": "basic"
+							},
+							{
+								"from": {
+									"key_code": "right_command",
+									"modifiers": {
+										"mandatory": [
+											"right_option"
+										],
+										"optional": [
+											"any"
+										]
+									}
+								},
+								"to": [
+									{
+										"key_code": "fn",
+										"modifiers": []
+									}
+								],
+								"type": "basic"
 							}
 						]
 					}
