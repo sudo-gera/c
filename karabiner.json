@@ -836,10 +836,10 @@
 							},
 							{
 								"from": {
-									"key_code": "right_command",
+									"key_code": "right_option",
 									"modifiers": {
 										"mandatory": [
-											"right_option"
+											"right_command"
 										],
 										"optional": [
 											"any"
