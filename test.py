@@ -15,4 +15,9 @@ class typed:
 	def __repr__(s):
 		return repr(s.v)
 ''')
+q=typed(list)
+w=typed(list)
+e=typed(list)
+q<<[]
+
 
