@@ -5,10 +5,8 @@ for y in range(n):
 		b=(x-y-n//2)-m*(n-3)
 		m%=n
 		b%=n
-		if b%2:
-			b+=n
+		b+=b%2*n
 		b//=2
 		e=m*n+b+1
 		print(e,end='\t')
 	print()
-
