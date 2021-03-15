@@ -1,9 +1,7 @@
-def f(n):
-	if n==0:
-		return 0
-	if n%3:
-		return n+f(n-n%3)
-	return n+f(n-3)
-
-for w in range(23):
-	print(w,f(w))
+c=0
+m=98765432
+for w in range(11000,22001):
+	if len(set([e for e in range(1,w+1) if w%e==0])&set([11,13,17,19]))==2:
+		c+=1
+		m=min(m,w)
+print(c,m)
