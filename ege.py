@@ -1,5 +1,9 @@
-def d(a,s):
-	return a%s==0
-for a in range(1,91):
-	if all([d(90,a) and (  d(x,a) or ( not d(x,15) or not d(x,20) ) ) for x in range(1,1000000)]):
-		print(a)
+def f(n):
+	if n==0:
+		return 0
+	if n%3:
+		return n+f(n-n%3)
+	return n+f(n-3)
+
+for w in range(23):
+	print(w,f(w))
