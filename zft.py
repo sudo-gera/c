@@ -22,12 +22,38 @@ if task==3:
 	from sys import stdin
 	from json import loads
 	s=''
+	l=0
+	ic=0
 	while 1:
+		ic+=1
+		if ic==1000:
+			print('inf loop')
+			exit()
 		try:
-			d=loads(s)
+			d=loads(s)[::-1]
 			break
 		except:
-			print('s')
 			s+=stdin.read(1)
-			print('e')
-	
+			if len(s)==l:
+				print('err')
+				exit()
+			l=len(s)
+	from functools import lru_cache
+	@lru_cache
+	def s(x,y):
+		if x==0==y:
+			return [d[x][y],None]
+		if x==0:
+			return [d[x][y]+s(x,y-1)[0],[x,y-1]]
+		if y==0:
+			return [d[x][y]+s(x-1,y)[0],[x-1,y]]
+		a=min([s(x-1,y)+[[x-1,y]],s(x,y-1)+[[x,y-1]]])
+		return [d[x][y]+a[0],a[2]]
+	p=[len(d)-1,len(d[0])-1]
+	ext=[]
+	while p!=None:
+		ext.append(p)
+		p=s(*p)[1]
+	ext=ext[::-1]
+	for w in ext:
+		print(*w)

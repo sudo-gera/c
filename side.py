@@ -3,7 +3,7 @@ from sys import argv
 from time import sleep
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-from subprocess import run
+from subprocess import run as subrun
 from pathlib import Path
 from traceback import format_exc
 from os.path import exists
@@ -54,7 +54,7 @@ class Handler(FileSystemEventHandler):
 				else:
 					open(file+'.stdout','w')
 					for w in ex:
-						if run(w,stdin=open(file+'.stdin'),stdout=open(file+'.stdout','a'),stderr=open(file+'.stdout','a')).returncode:
+						if subrun(w,stdin=open(file+'.stdin'),stdout=open(file+'.stdout','a'),stderr=open(file+'.stdout','a')).returncode:
 							break
 			except:
 				print('failed to exec ~/.side.py')
@@ -74,17 +74,17 @@ for file in argv[1:]:
 	if not exists(file+'.stdin'):
 		open(file+'.stdin','w')
 	Handler().run(ev(file))
-	run(['subl',file])
+	subrun(['subl',file])
 	observer = Observer()
 	observer.schedule(Handler(), path=file, recursive=True)
 	observer.start()
 	obss.append(observer)
-	run(['subl',file+'.stdin'])
+	subrun(['subl',file+'.stdin'])
 	observer = Observer()
 	observer.schedule(Handler(), path=file+'.stdin', recursive=True)
 	observer.start()
 	obss.append(observer)
-	run(['subl',file+'.stdout'])
+	subrun(['subl',file+'.stdout'])
 
 print('started tracking:')
 print(*argv[1:])
