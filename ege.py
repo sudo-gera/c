@@ -5,14 +5,24 @@ def run(z):
 			c=0
 			r=int(q**0.5)
 			while 1:
-				if q%r==0 and q//r-r<=100:
+				if q%r==0 and abs(q//r-r)<=100:
+					#print(q,r,q//r)
 					c+=1
 				if c>=3:
 					break
 				if q-r*r>100*r:
 					break
+				r-=1
 			if c==3:
 				print(q)
 
-from multiprocessing import Pool
-Pool().map(run,range(1000,1001))
+if __name__ == '__main__':
+	if 0:
+
+		from multiprocessing import Process
+		from functools import partial
+		for w in range(1000,2001):
+			Process(target=partial(run,w)).start()
+	else:
+		for w in range(1000,2001):
+			run(w)

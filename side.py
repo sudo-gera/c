@@ -42,7 +42,7 @@ class Handler(FileSystemEventHandler):
 				open(home+'.side.py','w').write(sidedef)
 			try:
 				file=event.src_path
-				if file.endswith('.stdin'):
+				if str(file).endswith('.stdin'):
 					file=file[:-6]
 				a=[]
 				exec(open(home+'.side.py').read()+'\na.append(execute)')
