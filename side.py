@@ -41,8 +41,8 @@ class Handler(FileSystemEventHandler):
 			if not exists(home+'.side.py'):
 				open(home+'.side.py','w').write(sidedef)
 			try:
-				file=event.src_path
-				if str(file).endswith('.stdin'):
+				file=str(event.src_path)
+				if file.endswith('.stdin'):
 					file=file[:-6]
 				a=[]
 				exec(open(home+'.side.py').read()+'\na.append(execute)')

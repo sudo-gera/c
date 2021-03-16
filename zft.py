@@ -27,5 +27,7 @@ if task==3:
 			d=loads(s)
 			break
 		except:
+			print('s')
 			s+=stdin.read(1)
-	print(d)
+			print('e')
+	
