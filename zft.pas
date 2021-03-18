@@ -1,4 +1,4 @@
-function len(q:string):integer;
+  function len(q:string):integer;
 begin
 	len:=q.length;
 end;
@@ -8,21 +8,71 @@ begin
 	if not(integer.tryparse(q,e)) then println('error in int');
 	int:=e;
 end;
+procedure push_back(var a: array of integer; value: integer);
+begin
+	 SetLength(a, length(a) + 1);
+	 a[length(a) - 1]:= value;
+end;
 procedure push_back(var a: array of array of integer; value: array of integer);
 begin
-   SetLength(a, length(a) + 1);
-   a[length(a) - 1]:= value; // тут делаем так, потому как дин. и открытые массивы с 0 начинаются и последний элемент  у нас имеет индекс lenght -1
+	 SetLength(a, length(a) + 1);
+	 a[length(a) - 1]:= value;
+end;
+procedure push_back(var a: array of array of array of integer; value: array of array of integer);
+begin
+	 SetLength(a, length(a) + 1);
+	 a[length(a) - 1]:= value;
 end;
 procedure push_back(var a: array of string; value: string);
 begin
-   SetLength(a, length(a) + 1);
-   a[length(a) - 1]:= value; // тут делаем так, потому как дин. и открытые массивы с 0 начинаются и последний элемент  у нас имеет индекс lenght -1
+	 SetLength(a, length(a) + 1);
+	 a[length(a) - 1]:= value;
+end;
+procedure push_back(var a: array of array of string; value: array of string);
+begin
+	 SetLength(a, length(a) + 1);
+	 a[length(a) - 1]:= value;
+end;
+procedure push_back(var a: array of array of array of string; value: array of array of string);
+begin
+	 SetLength(a, length(a) + 1);
+	 a[length(a) - 1]:= value;
 end;
 var cache: array of string;
 function tocache(q:string):integer;
 begin
 	push_back(cache,q);
 	tocache:=len(q)-1;
+end;
+function stoa(a:sequence of integer): array of integer;
+begin
+	foreach var w in a do
+		push_back(result,w);
+end;
+function stoa(a:sequence of array of integer): array of array of integer;
+begin
+	foreach var w in a do
+		push_back(result,w);
+end;
+function stoa(a:sequence of array of array of integer): array of array of array of integer;
+begin
+	foreach var w in a do
+		push_back(result,w);
+end;
+function stoa(a:sequence of string): array of string;
+begin
+	foreach var w in a do
+		push_back(result,w);
+end;
+function stoa(a:sequence of array of string): array of array of string;
+begin
+	foreach var w in a do
+		push_back(result,w);
+end;
+function stoa(a:sequence of array of array of string): array of array of array of string;
+begin
+	foreach var w in a do
+		push_back(result,w);
 end;
 begin
 	var task:=1;
@@ -31,22 +81,25 @@ begin
 		var q0:='';
 		read(q0);
 		var q1:=q0[2:len(q0)].split(')(');
-		var q2:=q1.select(w->w.split('+'));
-		var q3:=q2.select(w->w.select(e->arr(e.split('x^')[0],e.split('x^')[1].split('y^')[0],e.split('y^')[1])));
-		var q4:=q3.select(w->w.select(e->e.select(r->int(r))));
-
-		var a: array of array of integer;
+		var q2:=stoa(q1.select(w->w.split('+')));
+		var q3:=stoa(q2.select(w->stoa(w.select(e->arr(e.split('x^')[0],e.split('x^')[1].split('y^')[0],e.split('y^')[1])))));
+		var q:=stoa(q3.select(w->stoa(w.select(e->stoa(e.select(r->int(r)))))));
+		var a:array of array of integer;
 		foreach w: array of integer in q[0] do
 			foreach e: array of integer in q[1] do
 				push_back(a,arr(w[0]*e[0],w[1]+e[1],w[2]+e[2]));
-		a:=a.select(w->arr(w[0],tocache('x^'+w[1]+'y^'+w[2])));
+		var a1:=stoa(a.select(w->arr(w[0],tocache('x^'+w[1]+'y^'+w[2]))));
 		var d:dictionary<string,integer>;
-		foreach w:array of integer in a do
+		var dk:set of string;
+		foreach w:array of integer in a1 do
+		begin
 			d[cache[w[1]]]:=0;
+			dk+=[cache[w[1]]];
+		end;
 		foreach w:array of integer in a do
 			d[cache[w[1]]]+=w[0];
 		var s:array of string;
-		foreach w:string in d do
+		foreach w:string in dk do
 			push_back(s,d[w]+w);
 		println(string.join('+',a));
 	end;{
