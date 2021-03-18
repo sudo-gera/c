@@ -1,5 +1,2 @@
-a=open('std','r+')
-print(a.read())
-.write('123')
-a.seek(0)
-print(a.read())
+#!/usr/bin/env python3
+print(10)
