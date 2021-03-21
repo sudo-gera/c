@@ -1005,7 +1005,7 @@
                             },
                             "to": [
                                 {
-                                    "key_code": "right_shift"
+                                    "key_code": "left_shift"
                                 }
                             ]
                         },
