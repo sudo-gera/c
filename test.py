@@ -23,8 +23,13 @@ if 0:
 
 def df(q):
 	sz=6
-	q=round(q*10**sz)
 	q=str(q)
+	if '.' in q:
+		q=q[::-1]
+		a=q.index('.')
+		
+
+
 	q=q[:-sz]+'.'+q[-sz:]
 	while q[-1]=='0':
 		q=q[:-1]

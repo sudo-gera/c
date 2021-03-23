@@ -1,4 +1,4 @@
-task=2
+task=3
 if task==1:
 	q=input().strip()
 	q=q[1:-1].split(')(')
