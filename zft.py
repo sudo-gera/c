@@ -1,4 +1,4 @@
-task=3
+task=2
 if task==1:
 	q=input().strip()
 	q=q[1:-1].split(')(')
@@ -23,12 +23,7 @@ if task==3:
 	from json import loads
 	s=''
 	l=0
-	ic=0
 	while 1:
-		ic+=1
-		if ic==1000:
-			print('inf loop')
-			exit()
 		try:
 			d=loads(s)[::-1]
 			break
@@ -58,3 +53,46 @@ if task==3:
 	ext=ext[::-1]
 	for w in ext:
 		print(w[1]+1,w[0]+1)
+if task==2:
+	from math import *
+	def makesum(d1,d2):
+		a,b,c,d=d1+d2
+		j=1000
+		a=max([[a*cos(w/j+b)+c*cos(w/j+d),2*pi-w/j] for w in range(int(j*pi*2))])
+		return a
+	from pprint import pprint
+	from sys import stdin
+	from json import loads
+	from functools import reduce
+	s=''
+	l=0
+	while 1:
+		try:
+			d=loads(s)
+			break
+		except:
+			s+=stdin.read(1)
+			if len(s)==l:
+				print('err')
+				exit()
+			l=len(s)
+	from math import atan2
+	from math import pi
+	d=[[w[0]*w[0]+w[1]*w[1],pi-atan2(w[1],w[0])*2] for w in d]
+	f=reduce(makesum,d)
+	print(f'y={1/tan(f[1]/2)}*x')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
