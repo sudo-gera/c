@@ -38,6 +38,7 @@ if task==3:
 				print('err')
 				exit()
 			l=len(s)
+##########
 	from functools import lru_cache
 	@lru_cache
 	def s(x,y):
@@ -56,4 +57,4 @@ if task==3:
 		p=s(*p)[1]
 	ext=ext[::-1]
 	for w in ext:
-		print(*w)
+		print(w[1]+1,w[0]+1)
