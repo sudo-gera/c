@@ -1,13 +1,6 @@
-def makesum():
-	j=1000
-	a=max([[ff(w/j),2*pi-w/j] for w in range(int(j*pi*2))])
-	return a
-
-def lprint(q):
-	print(q)
-	return q
-
-def makesum2():
+from math import *
+def makesum(d1,d2):
+	ff=lambda x:d1[0]*cos(x+d1[1])+d2[0]*cos(x+d2[1])
 	j=16
 	k=4
 	aa=([[ff(w/j),w/j] for w in range(int(j*pi*4))])
@@ -28,19 +21,5 @@ def makesum2():
 	res=(fi+st)/2
 	res=res%(pi*2)
 	return [ff(cl),2*pi-res]
-								
 
-
-from math import *
-from random import *
-for w in range(10000):
-	a=randint(1,99)/100+1
-	b=randint(1,99)/100+1
-	c=randint(1,99)/100+1
-	d=randint(1,99)/100+1
-	ff=lambda x:a*cos(x+b)+c*cos(x+d)
-	e,f=makesum2()
-	j=100
-#	print([a*cos(g/j+b)+c*cos(g/j+d)-e*cos(g/j+f) for g in range(int(j*pi*2))])
-	if not all([0.000000001>ff(g/j)-e*cos(g/j+f) for g in range(int(j*pi*2))]):
-		print(a,b,c,d)
+print(makesum([1,1],[8,-1.5707963267949]))
