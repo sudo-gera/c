@@ -462,16 +462,12 @@ begin
 
 
 
-		var f1:=d[0];
+		var f1:=d1[0];
 		foreach w:array of real in d1[1:] do
 		begin
-			println(f1,w);
 			f1:=makesum(f1,w);
-			println(f1);
 		end;
-		println(f1[1]);
 		var f:=f1[1]/2;
-		println(f);
 		if (pi/4<f) and (f<3*pi/4) then
 			println('y='+tan(pi/2-f)+'*x')
 		else

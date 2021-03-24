@@ -102,9 +102,7 @@ if task==2:
 	from math import pi
 	d=[[w[0]*w[0]+w[1]*w[1],pi-atan2(w[1],w[0])*2] for w in d]
 	f=reduce(makesum,d)[1]/2
-	print(reduce(makesum,d)[1])
 	f%=pi
-	print(f)
 	if pi/4<f<3*pi/4:
 		print(f'y={tan(pi/2-f)}*x')
 	else:
