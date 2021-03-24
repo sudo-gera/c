@@ -101,9 +101,12 @@ if task==2:
 	from math import atan2
 	from math import pi
 	d=[[w[0]*w[0]+w[1]*w[1],pi-atan2(w[1],w[0])*2] for w in d]
-	f=reduce(makesum,d)
-	print(f'y={1/tan(f[1]/2)}*x')
-
+	f=reduce(makesum,d)[1]/2
+	f%=pi
+	if pi/4<f<3*pi/4:
+		print(f'y={tan(pi/2-f)}*x')
+	else:
+		print(f'x={tan(f)}*y')
 
 
 
