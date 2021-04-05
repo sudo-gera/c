@@ -474,44 +474,72 @@ begin
 	end;
 	// полученный максимум записываем
 	var res:=(fi+st)/2;
-	// приводим в полуинт
+	// приводим в отрезок [0;pi]
 	while res>pi*2 do res-=pi*2;
-	while res<=0 do res+=pi*2;
+	while res<0 do res+=pi*2;
+	// так как максимальное значение cos
+	// равно 1, то значение e
+	// в представлении e*cos(x+f)
+	// равно ff(res)
+	// так же f=2*pi-res
+	// возвращаем массив с e и f
 	makesum:= arr(ff(res),2*pi-res);
 end;
 begin
+	// определяем номер задания для работы
 	var task:=2;
 	if task=1 then
 	begin
+		// создаём и считываем строку
 		var q0:='';
 		read(q0);
+		// обрезаем по 1 символу с начала и с конца и делим последовательностью )(
+		// теперь в q1 массив двух строк, каждая являет собой одно из двух выражений
 		var q1:=q0[2:len(q0)].split(')(');
+		// делим выражение знаком + на члены
 		var q2:=stoa(q1.select(w->w.split('+')));
+		// делим каждый член на коэффициенты
 		var q3:=stoa(q2.select(w->stoa(w.select(e->arr(e.split('x^')[0],e.split('x^')[1].split('y^')[0],e.split('y^')[1])))));
+		// преобразуем коэффициенты из строк в числа
 		var q:=stoa(q3.select(w->stoa(w.select(e->stoa(e.select(r->int(r)))))));
+		// перемножим выражения
+		// для этого каждый член первого перемножим с каждым
+		// при этом коэффициенты перемножаются, а степени складываются
+		// в a запишем полученные произведения
 		var a:array of array of integer;
 		foreach w: array of integer in q[0] do
 			foreach e: array of integer in q[1] do
 				push_back(a,arr(w[0]*e[0],w[1]+e[1],w[2]+e[2]));
+		// степени соберём в выражения вида x^...y^...
 		var a1:=stoa(a.select(w->arr(w[0],tocache('x^'+w[1]+'y^'+w[2]))));
-		// var d:dictionary<string,integer>;
+		// далее идёт удаление членов с одинаковым набором степеней переменных x и y
+		// создаём множество для хранения возможных степеней (строки вида x^...y^...)
 		var dk:set of string;
+		// заполняем множество
 		foreach w:array of integer in a1 do
 		begin
 			dk+=[cache[w[1]]];
 		end;
+		// создаём словарь, где будут храниться коэффициенты перед каждым членом
+		// сначала заполняем его 0
 		var d:=stoa(dk).todictionary(x->x,x->0);
+		// далее идём по массиву членов и для каждого коэффициент
+		// прибавляем к коэффициенту у этого члена в словаре
 		foreach w:array of integer in a1 do
 			d[cache[w[1]]]+=w[0];
+		// преобразуем члены в строки и запишем их в массив s
 		var s:array of string;
+		// в множестве dk хранятся ключи массива
 		foreach w:string in dk do
 		begin
 			push_back(s,d[w].tostring()+w);
 		end;
+		// соединяем элементы массива s через +
 		println(string.join('+',s));
 	end;
 	if task=3 then
 	begin
+		// создаём и считываем ширину и высоту поля
 		var he:=0;
 		var wi:=0;
 		read(wi,he);
