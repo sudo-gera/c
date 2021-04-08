@@ -977,7 +977,6 @@
                                     "key_code": "left_option",
                                     "modifiers": {
                                         "mandatory": [
-                                            "left_shift",
                                             "left_command",
                                             "left_control"
                                         ],

@@ -4,7 +4,7 @@ from time import *
 scs=[1440,900]
 rect=[6,
 	5,	5,
-	  6]
+	  0]
 while 1:
 #	print(list(map(lambda x:str(10**9+round(x,4))[6:],a.position)),end='\n',sep='\t')
 	if a.position[1]<rect[0]:

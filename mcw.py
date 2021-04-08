@@ -42,10 +42,8 @@ if task==2:
 		mg[q%d]=max(mg[q%d],[q,w])
 		if q%7==0:
 			me[q%d]=max(me[q%d],[q,w])
-	from pprint import pprint
 	mg=[w for w in mg if w!=[-float('inf'),-float('inf')]]
 	me=[w for w in me if w!=[-float('inf'),-float('inf')]]
-	pprint([mg,me])
 	a=[[
 				w[0]*e[0]
 			for e in me
