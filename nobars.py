@@ -3,7 +3,7 @@ a=Controller()
 from time import *
 scs=[1440,900]
 rect=[6,
-	5,	5,
+	0,	0,
 	  0]
 while 1:
 #	print(list(map(lambda x:str(10**9+round(x,4))[6:],a.position)),end='\n',sep='\t')
