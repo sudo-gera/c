@@ -4,7 +4,7 @@ asm=asm.split('\n')
 asm=[w.split() for w in asm]
 asm=[w if w else [''] for w in asm]
 i=0
-a=[0]*2**6
+a=[0]*2**10
 while -1<i<len(asm):
 	try:
 		if asm[i][0]=='inc':
@@ -31,14 +31,24 @@ while -1<i<len(asm):
 				a[int(asm[i][1])]=1
 		if asm[i][0]=='jnz':
 			if a[int(asm[i][2])]:
-				i=a[int(asm[i][1])]-2
+				asm[i+a[int(asm[i][1])]-1]
+				i+=a[int(asm[i][1])]-1
+		if asm[i][0]=='gnz':
+			if a[int(asm[i][2])]:
+				asm[i+a[int(asm[i][1])]-1]
+				i-=a[int(asm[i][1])]-2
 		if asm[i][0]=='put':
 			print(a[int(asm[i][1])])
 		if asm[i][0]=='get':
 			a[int(asm[i][1])]=int(input())
 		if asm[i][0]=='set':
 			a[int(asm[i][1])]=int(asm[i][2])
+		if asm[i][0]=='scl':
+			a[int(asm[i][1])]=i+1
+		if asm[i][0]=='gba':
+			a[int(asm[i][1])]=a[a[int(asm[i][1])]]
+		if asm[i][0]=='pba':
+			a[a[int(asm[i][1])]]=a[int(asm[i][2])]
 	except:
 		print('error in line',i+1)
-	print(i,asm[i][0],sep='\t')
 	i+=1
