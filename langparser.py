@@ -5,7 +5,7 @@ from keyword import kwlist
 from pprint import pprint
 def error(l,q):
 	print('\x1b[31m[error line '+str(l)+']\x1b[0m',q)
-	exit()
+	exit(1)
 def lprint(q):
 	print('lprint',q)
 	return q
@@ -90,9 +90,9 @@ for w in range(1,len(text_list)):
 	text_list[w][0]=text_list[w-1][2]
 text_list=[[bw,'string_generator('+','.join([str(ord(q)) for q in eval(w)])+')' if any([w.startswith(_w[0]) for _w in strings]) else '' if any([w.startswith(_w[0]) for _w in comments]) else w,ew] for bw,w,ew in text_list]
 text_list=['"'+str(w[0])+'"'+w[1]+'"'+str(w[2])+'"' for w in text_list]
-text=''.join(text_list)
+text=''.join(text_list)+'\n'
 #########################
-specials=['%=', '&=', '*=', '+=', '-=', '/=', '<=', '>=', '|=', '~=', '**', '//', '<<', '==', '>>', '%', '&', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '@', '@=', '[', ']', '^', '{', '|', '}', '~', '>>=', '<<=']
+specials=['%=', '&=', '*=', '+=', '-=', '/=', '<=', '>=', '|=', '~=', '**', '//', '<<', '==', '>>', '%', '&', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '@', '@=', '[', ']', '^', '{', '|', '}', '~', '>>=', '<<=', '!=']
 specials.sort(key=len,reverse=1)
 name_start='qwertyuioplkjhgfdsaszxcvbnm_QWERTYUIOPLKJHGFDSASZXCVBNM'
 name_contain='qwertyuioplkjhgfdsaszxcvbnm_QWERTYUIOPLKJHGFDSASZXCVBNM1234567890'
@@ -204,48 +204,56 @@ while text_list_before:
 		text_list_before=text_list_before[1:]
 text_list=text_list_after[:]
 ############################
-def handle_parentheses(a):
+def handle_parentheses(a,insi=[0,-1]):
 	s=[]
+	pairs={1:{'(':')','[':']','{':'}'},0:{'(':')','[':']','{':'}','begin':'end'}}
 	while a:
-		if a[0]['type']=='oper' and a[0]['name'] in ['(','[','{']:
+		if a[0]['type']=='oper' and a[0]['name'] in pairs[insi[0]].keys():
 			s.append({'type':'seq','name':a[0]['name'],'line':a[0]['line'],'cont':[]})
 			a=a[1:]
 			opened=[]
 			if len(a)==0:
 				error(s[-1]['line'],'unmatched '+str(s[-1]['name']))
-			while opened==[] and not(a[0]['type']=='oper' and a[0]['name']=={'(':')','[':']','{':'}'}[s[-1]['name']]):
-				if a[0]['type']=='oper' and a[0]['name']==s[-1]['name']:
+			while opened or not(a[0]['type']=='oper' and a[0]['name']==pairs[insi[0]][s[-1]['name']]):
+				if a[0]['type']=='oper' and a[0]['name'] in pairs[insi[0]].keys():
 					opened.append(a[0])
-				if a[0]['type']=='oper' and a[0]['name']=={'(':')','[':']','{':'}'}[s[-1]['name']]:
+					if a[0]['name'] in pairs[1].keys() and insi[0]==0:
+						insi[0]=1
+						insi[1]=len(opened)-1
+				if opened and a[0]['type']=='oper' and a[0]['name']==pairs[insi[0]][opened[-1]['name']]:
+					if len(opened)-1==insi[1]:
+						insi[0]=0
+						insi[1]=-1
 					opened.pop()
 				s[-1]['cont'].append(a[0])
 				a=a[1:]
 				if len(a)==0:
 					error(s[-1]['line'],'unmatched '+str(s[-1]['name']))
 			a=a[1:]
-			s[-1]['cont']=handle_parentheses(s[-1]['cont'])
-		elif a[0]['type']=='oper' and a[0]['name'] in [')',']','}']:
+			s[-1]['cont']=handle_parentheses(s[-1]['cont'],[1,-1])
+		elif a[0]['type']=='oper' and a[0]['name'] in pairs[insi[0]].values():
 			error(a[0]['line'],'unmatched '+str(a[0]['name']))
 		else:
 			s.append(a[0])
 			a=a[1:]
 	return s
 def handle_calls(a):
-	s=[]
-	while a:
-		if len(a)>1 and a[0]['type']!='oper' and a[1]['type']=='seq' and a[1]['name'] in '[(':
-			s.append({'type':'seq','name':{'(':'call','[':'getitem'}[a[1]['name']],'line':a[0]['line'],'cont':[]})
-			if a[0]['type']=='seq':
-				a[0]['cont']=handle_calls(a[0]['cont'])
-			s[-1]['cont'].append(a[0])
-			s[-1]['cont']+=handle_calls(a[1]['cont'])
-			a=a[2:]
+	wi=0
+	while wi<len(a):
+		if len(a)>1+wi and a[wi+0]['type']!='oper' and a[wi+1]['type']=='seq' and a[wi+1]['name'] in '[(':
+			s=a[wi:wi+2]
+			a[wi:wi+2]=[{'type':'seq','name':{'(':'call','[':'getitem'}[a[wi+1]['name']],'line':a[wi+0]['line'],'cont':[]}]
+
+
+			if s[0]['type']=='seq':
+				s[0]['cont']=handle_calls(s[0]['cont'])
+			a[wi]['cont'].append(s[0])
+			a[wi]['cont']+=handle_calls(s[1]['cont'])
 		else:
-			if a[0]['type']=='seq':
-				a[0]['cont']=handle_calls(a[0]['cont'])
-			s.append(a[0])
-			a=a[1:]
-	return s
+			if a[wi+0]['type']=='seq':
+				a[wi+0]['cont']=handle_calls(a[wi+0]['cont'])
+			wi+=1
+	return a
 def handle_opers_l2r(a,_ops):
 	ops=[operators[w] for w in _ops]
 	wi=0
@@ -253,7 +261,8 @@ def handle_opers_l2r(a,_ops):
 		if wi+2<len(a) and a[wi+1]['type']=='oper' and a[wi+0]['type']!='oper' and\
 				[w for w in ops if w['type']=='binary' and w['sign']==a[wi+1]['name']] and a[wi+2]['type']!='oper':
 			s=a[wi:wi+3]
-			a=a[:wi]+[{'type':'seq','name':[w for w in ops if w['type']=='binary' and w['sign']==a[wi+1]['name']][0]['name'],'line':a[wi+1]['line'],'cont':[]}]+a[wi+3:]
+			a[wi:wi+3]=[{'type':'seq','name':[w for w in ops if w['type']=='binary' and w['sign']==a[wi+1]['name']][0]['name'],'line':a[wi+1]['line'],'cont':[]}]
+			# a=a[:wi]+[{'type':'seq','name':[w for w in ops if w['type']=='binary' and w['sign']==a[wi+1]['name']][0]['name'],'line':a[wi+1]['line'],'cont':[]}]+a[wi+3:]
 			if s[-3]['type']=='seq':
 				s[-3]['cont']=handle_opers_l2r(s[-3]['cont'],_ops)
 			a[wi]['cont'].append(s[-3])
@@ -275,7 +284,8 @@ def handle_opers_r2l(a,_ops):
 
 			if  [w for w in ops if w['type']=='binary' and w['sign']==a[wi-2]['name']]:
 				s=a[wi-3:wi]
-				a=a[:wi-3]+[{'type':'seq','name':[w for w in ops if w['type']=='binary' and w['sign']==a[wi-2]['name']][0]['name'],'line':a[wi-2]['line'],'cont':[]}]+a[wi:]
+				# a=a[:wi-3]+[{'type':'seq','name':[w for w in ops if w['type']=='binary' and w['sign']==a[wi-2]['name']][0]['name'],'line':a[wi-2]['line'],'cont':[]}]+a[wi:]
+				a[wi-3:wi]=[{'type':'seq','name':[w for w in ops if w['type']=='binary' and w['sign']==a[wi-2]['name']][0]['name'],'line':a[wi-2]['line'],'cont':[]}]
 				wi-=2
 				if s[-3]['type']=='seq':
 					s[-3]['cont']=handle_opers_r2l(s[-3]['cont'],_ops)
@@ -285,7 +295,8 @@ def handle_opers_r2l(a,_ops):
 				a[wi-1]['cont'].append(s[-1])
 			else:
 				s=a[wi-2:wi]
-				a=a[:wi-2]+[{'type':'seq','name':[w for w in ops if w['type']=='unary' and w['sign']==a[wi-2]['name']][0]['name'],'line':a[wi-2]['line'],'cont':[]}]+a[wi:]
+				a[wi-2:wi]=[{'type':'seq','name':[w for w in ops if w['type']=='unary' and w['sign']==a[wi-2]['name']][0]['name'],'line':a[wi-2]['line'],'cont':[]}]
+				# a=a[:wi-2]+[{'type':'seq','name':[w for w in ops if w['type']=='unary' and w['sign']==a[wi-2]['name']][0]['name'],'line':a[wi-2]['line'],'cont':[]}]+a[wi:]
 				wi-=1
 				if s[-1]['type']=='seq':
 					s[-1]['cont']=handle_opers_r2l(s[-1]['cont'],_ops)
@@ -295,9 +306,59 @@ def handle_opers_r2l(a,_ops):
 				a[wi-1]['cont']=handle_opers_r2l(a[wi-1]['cont'],_ops)
 			wi-=1
 	return a
+def handle_expr_if(a):
+	wi=0
+	while wi<len(a):
+		if wi+4<len(a)  and a[wi+0]['type']!='oper' and a[wi+1]['type']=='oper' and a[wi+1]['name']=='if'\
+						and a[wi+2]['type']!='oper' and a[wi+3]['type']=='oper' and a[wi+3]['name']=='else'\
+						and a[wi+4]['type']!='oper':
+			s=a[wi:wi+5]
+			a[wi:wi+5]=[{'type':'seq','name':'expr_if','line':a[wi+1]['line'],'cont':[]}]
+			if s[0]['type']=='seq':
+				s[0]['cont']=handle_expr_if(s[0]['cont'])
+			a[wi]['cont'].append(s[0])
+			if s[2]['type']=='seq':
+				s[2]['cont']=handle_expr_if(s[2]['cont'])
+			a[wi]['cont'].append(s[2])
+			if s[4]['type']=='seq':
+				s[4]['cont']=handle_expr_if(s[4]['cont'])
+			a[wi]['cont'].append(s[4])
+		else:
+			if a[wi]['type']=='seq':
+				a[wi]['cont']=handle_expr_if(a[wi]['cont'])
+			wi+=1
+	return a
+def handle_lambda(a):
+	lop=-1
+	wi=0
+	while wi<len(a):
+		if a[wi]['type']=='oper' and a[wi]['name']=='lambda':
+			lop=wi
+			wi+=1
+		elif wi+1<len(a) and lop>-1 and a[wi]['type']=='oper' and a[wi]['name']==':':
+			s=a[lop:wi+2]
+			a[lop:wi+2]=[{'type':'seq','name':'lambda','line':a[lop]['line'],'cont':[]}]
+			wi=lop
+			s[1:-2]=handle_args(s[1:-2])
+			a[wi]['cont'].append(s[1])
+			if s[3]['type']=='seq':
+				s[3]['cont']=handle_lambda(s[3]['cont'])
+			a[wi]['cont'].append(s[3])
+			lop=-1
+		else:
+			if a[wi]['type']=='seq':
+				a[wi]['cont']=handle_lambda(a[wi]['cont'])
+			wi+=1
+	return a
+def lvalue2rvalue(a):
+	
+def handle_args(a):
+	a={'type':'seq','name':'args','line':a[0]['line'],'cont':a}
+	a['cont']=[w for w in a['cont'] if not(w['type']=='oper' and w['name']==',')]
+	return [a]
 
 text_list=handle_parentheses(text_list)
-operators={'getattr': {'sign': '.', 'name': 'getattr', 'type': 'binary'}, 'pow': {'sign': '**', 'name': 'pow', 'type': 'binary'}, 'mul': {'sign': '*', 'name': 'mul', 'type': 'binary'}, 'matmul': {'sign': '@', 'name': 'matmul', 'type': 'binary'}, 'truediv': {'sign': '/', 'name': 'truediv', 'type': 'binary'}, 'floordiv': {'sign': '//', 'name': 'floordiv', 'type': 'binary'}, 'mod': {'sign': '%', 'name': 'mod', 'type': 'binary'}, 'add': {'sign': '+', 'name': 'add', 'type': 'binary'}, 'sub': {'sign': '-', 'name': 'sub', 'type': 'binary'}, 'lshift': {'sign': '<<', 'name': 'lshift', 'type': 'binary'}, 'rshift': {'sign': '>>', 'name': 'rshift', 'type': 'binary'}, 'and': {'sign': '&', 'name': 'and', 'type': 'binary'}, 'xor': {'sign': '^', 'name': 'xor', 'type': 'binary'}, 'or': {'sign': '|', 'name': 'or', 'type': 'binary'}, 'in': {'sign': 'in', 'name': 'contains', 'type': 'binary'}, 'not_in': {'sign': 'not_in', 'name': 'not_in', 'type': 'binary'}, 'is': {'sign': 'is', 'name': 'is', 'type': 'binary'}, 'is_not': {'sign': 'is_not', 'name': 'is_not', 'type': 'binary'}, 'lt': {'sign': '<', 'name': 'lt', 'type': 'binary'}, 'le': {'sign': '<=', 'name': 'le', 'type': 'binary'}, 'gt': {'sign': '>', 'name': 'gt', 'type': 'binary'}, 'ge': {'sign': '>=', 'name': 'ge', 'type': 'binary'}, 'ne': {'sign': '!=', 'name': 'ne', 'type': 'binary'}, 'eq': {'sign': '==', 'name': 'eq', 'type': 'binary'}, 'bool_and': {'sign': 'and', 'name': 'bool_and', 'type': 'binary'}, 'bool_or': {'sign': 'or', 'name': 'bool_or', 'type': 'binary'}, 'await': {'sign': 'await', 'name': 'await', 'type': 'unary'}, 'neg': {'sign': '-', 'name': 'neg', 'type': 'unary'}, 'pos': {'sign': '+', 'name': 'pos', 'type': 'unary'}, 'inv': {'sign': '~', 'name': 'inv', 'type': 'unary'}, 'not': {'sign': 'not', 'name': 'not', 'type': 'unary'}}
+operators={'getattr': {'sign': '.', 'name': 'getattr', 'type': 'binary'}, 'comma': {'sign': ',', 'name': 'comma', 'type': 'binary'}, 'pow': {'sign': '**', 'name': 'pow', 'type': 'binary'}, 'mul': {'sign': '*', 'name': 'mul', 'type': 'binary'}, 'matmul': {'sign': '@', 'name': 'matmul', 'type': 'binary'}, 'truediv': {'sign': '/', 'name': 'truediv', 'type': 'binary'}, 'floordiv': {'sign': '//', 'name': 'floordiv', 'type': 'binary'}, 'mod': {'sign': '%', 'name': 'mod', 'type': 'binary'}, 'add': {'sign': '+', 'name': 'add', 'type': 'binary'}, 'sub': {'sign': '-', 'name': 'sub', 'type': 'binary'}, 'lshift': {'sign': '<<', 'name': 'lshift', 'type': 'binary'}, 'rshift': {'sign': '>>', 'name': 'rshift', 'type': 'binary'}, 'and': {'sign': '&', 'name': 'and', 'type': 'binary'}, 'xor': {'sign': '^', 'name': 'xor', 'type': 'binary'}, 'or': {'sign': '|', 'name': 'or', 'type': 'binary'}, 'in': {'sign': 'in', 'name': 'contains', 'type': 'binary'}, 'not_in': {'sign': 'not_in', 'name': 'not_in', 'type': 'binary'}, 'is': {'sign': 'is', 'name': 'is', 'type': 'binary'}, 'is_not': {'sign': 'is_not', 'name': 'is_not', 'type': 'binary'}, 'lt': {'sign': '<', 'name': 'lt', 'type': 'binary'}, 'le': {'sign': '<=', 'name': 'le', 'type': 'binary'}, 'gt': {'sign': '>', 'name': 'gt', 'type': 'binary'}, 'ge': {'sign': '>=', 'name': 'ge', 'type': 'binary'}, 'ne': {'sign': '!=', 'name': 'ne', 'type': 'binary'}, 'eq': {'sign': '==', 'name': 'eq', 'type': 'binary'}, 'bool_and': {'sign': 'and', 'name': 'bool_and', 'type': 'binary'}, 'bool_or': {'sign': 'or', 'name': 'bool_or', 'type': 'binary'}, 'await': {'sign': 'await', 'name': 'await', 'type': 'unary'}, 'neg': {'sign': '-', 'name': 'neg', 'type': 'unary'}, 'pos': {'sign': '+', 'name': 'pos', 'type': 'unary'}, 'inv': {'sign': '~', 'name': 'inv', 'type': 'unary'}, 'not': {'sign': 'not', 'name': 'not', 'type': 'unary'}}
 text_list=handle_opers_l2r(text_list,['getattr'])
 text_list=handle_calls(text_list)
 text_list=handle_opers_r2l(text_list,['await'])
@@ -312,7 +373,11 @@ text_list=handle_opers_l2r(text_list,['in','not_in','is','is_not','lt','le','gt'
 text_list=handle_opers_r2l(text_list,['not'])
 text_list=handle_opers_l2r(text_list,['bool_and'])
 text_list=handle_opers_l2r(text_list,['bool_or'])
-
+text_list=handle_expr_if(text_list)
+text_list=handle_lambda(text_list)
+text_list=handle_opers_l2r(text_list,['comma'])
+text_list=handle_opers_r2l(text_list,['asign','imul','imatmul','itruediv','ifloordiv','imod','iadd','isub','ilshift','irshift'])
+text_list=handle_opers_l2r(text_list,[';',':','\n'])
 
 
 

@@ -11,6 +11,7 @@ operators=[
 	{'name':'+',		'prior':7},
 	{'name':'-',		'prior':7},
 	{'name':'==',		'prior':6},
+	{'name':'!=',		'prior':6},
 	{'name':'<<',		'prior':5},
 	{'name':'>>',		'prior':5},
 	{'name':'&',		'prior':1},
