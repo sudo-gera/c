@@ -1,4 +1,4 @@
-class _module:
+class Module:
 	def __dir__(s):
 		from pathlib import Path
 		try:
@@ -25,4 +25,4 @@ class _module:
 		open(str(Path.home())+'/.python_modules_db','w').write(' '.join(ms))
 		exec('import '+mn)
 		return eval(mn)
-modules=_module()
+modules=Module()
