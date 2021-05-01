@@ -637,12 +637,12 @@
                             {
                                 "conditions": [
                                     {
-                                      "type": "input_source_if",
-                                      "input_sources": [
-                                        {
-                                          "language": "en"
-                                        }
-                                      ]
+                                        "input_sources": [
+                                            {
+                                                "language": "en"
+                                            }
+                                        ],
+                                        "type": "input_source_if"
                                     }
                                 ],
                                 "from": {
@@ -673,12 +673,12 @@
                             {
                                 "conditions": [
                                     {
-                                      "type": "input_source_if",
-                                      "input_sources": [
-                                        {
-                                          "language": "en"
-                                        }
-                                      ]
+                                        "input_sources": [
+                                            {
+                                                "language": "en"
+                                            }
+                                        ],
+                                        "type": "input_source_if"
                                     }
                                 ],
                                 "from": {
@@ -709,12 +709,12 @@
                             {
                                 "conditions": [
                                     {
-                                      "type": "input_source_if",
-                                      "input_sources": [
-                                        {
-                                          "language": "en"
-                                        }
-                                      ]
+                                        "input_sources": [
+                                            {
+                                                "language": "en"
+                                            }
+                                        ],
+                                        "type": "input_source_if"
                                     }
                                 ],
                                 "from": {
@@ -741,12 +741,12 @@
                             {
                                 "conditions": [
                                     {
-                                      "type": "input_source_if",
-                                      "input_sources": [
-                                        {
-                                          "language": "en"
-                                        }
-                                      ]
+                                        "input_sources": [
+                                            {
+                                                "language": "en"
+                                            }
+                                        ],
+                                        "type": "input_source_if"
                                     }
                                 ],
                                 "from": {
@@ -777,12 +777,12 @@
                             {
                                 "conditions": [
                                     {
-                                      "type": "input_source_if",
-                                      "input_sources": [
-                                        {
-                                          "language": "en"
-                                        }
-                                      ]
+                                        "input_sources": [
+                                            {
+                                                "language": "en"
+                                            }
+                                        ],
+                                        "type": "input_source_if"
                                     }
                                 ],
                                 "from": {
@@ -813,12 +813,12 @@
                             {
                                 "conditions": [
                                     {
-                                      "type": "input_source_if",
-                                      "input_sources": [
-                                        {
-                                          "language": "en"
-                                        }
-                                      ]
+                                        "input_sources": [
+                                            {
+                                                "language": "en"
+                                            }
+                                        ],
+                                        "type": "input_source_if"
                                     }
                                 ],
                                 "from": {
@@ -845,12 +845,12 @@
                             {
                                 "conditions": [
                                     {
-                                      "type": "input_source_if",
-                                      "input_sources": [
-                                        {
-                                          "language": "en"
-                                        }
-                                      ]
+                                        "input_sources": [
+                                            {
+                                                "language": "en"
+                                            }
+                                        ],
+                                        "type": "input_source_if"
                                     }
                                 ],
                                 "from": {
@@ -881,12 +881,12 @@
                             {
                                 "conditions": [
                                     {
-                                      "type": "input_source_if",
-                                      "input_sources": [
-                                        {
-                                          "language": "en"
-                                        }
-                                      ]
+                                        "input_sources": [
+                                            {
+                                                "language": "en"
+                                            }
+                                        ],
+                                        "type": "input_source_if"
                                     }
                                 ],
                                 "from": {
@@ -971,6 +971,47 @@
                                     }
                                 ],
                                 "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "left_option",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "left_command",
+                                            "left_control"
+                                        ],
+                                        "optional": [
+                                            "any"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "fn",
+                                        "modifiers": []
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "fn",
+                                    "modifiers": {
+                                        "mandatory": [],
+                                        "optional": [
+                                            "any"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "left_command",
+                                        "modifiers": [
+                                            "left_control"
+                                        ]
+                                    }
+                                ],
+                                "type": "basic"
                             }
                         ]
                     }
@@ -1025,7 +1066,7 @@
                             },
                             "to": [
                                 {
-                                    "apple_vendor_top_case_key_code": "keyboard_fn"
+                                    "key_code": "left_control"
                                 }
                             ]
                         },
@@ -1035,7 +1076,7 @@
                             },
                             "to": [
                                 {
-                                    "key_code": "left_control"
+                                    "apple_vendor_top_case_key_code": "keyboard_fn"
                                 }
                             ]
                         },
@@ -1169,7 +1210,7 @@
                     },
                     "to": [
                         {
-                            "consumer_key_code": "volume_decrement"
+                            "consumer_key_code": "volume_increment"
                         }
                     ]
                 },
@@ -1179,7 +1220,7 @@
                     },
                     "to": [
                         {
-                            "consumer_key_code": "volume_increment"
+                            "consumer_key_code": "volume_decrement"
                         }
                     ]
                 },

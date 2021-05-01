@@ -1,3 +1,5 @@
+#include "/Users/gera/pony/pony.hpp"
+using namespace std;
 pony_run{
 	let a=str("qweйцу");
 	let d=vect(a[0],a[1],a[2],a[3],a[4],a[5]);

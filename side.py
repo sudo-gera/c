@@ -93,7 +93,8 @@ try:
 	while True:
 		sleep(0.1)
 except KeyboardInterrupt:
-	pass
+	print()
+	print('exiting...')
 
 print()
 
