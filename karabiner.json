@@ -1206,7 +1206,11 @@
                                 },
                                 "to": [
                                     {
-                                        "consumer_key_code": "volume_decrement"
+                                        "consumer_key_code": "volume_decrement",
+                                        "modifiers": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
                                     }
                                 ],
                                 "type": "basic"
@@ -1224,7 +1228,11 @@
                                 },
                                 "to": [
                                     {
-                                        "consumer_key_code": "volume_increment"
+                                        "consumer_key_code": "volume_increment",
+                                        "modifiers": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
                                     }
                                 ],
                                 "type": "basic"
