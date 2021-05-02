@@ -1012,7 +1012,226 @@
                                     }
                                 ],
                                 "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "f1"
+                                },
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    }
+                                ],
+                                "type": "basic",
+                                "to": [
+                                    {
+                                        "consumer_key_code": "display_brightness_decrement"
+                                    }
+                                ]
+                            },
+                            {
+                                "from": {
+                                    "key_code": "f2"
+                                },
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    }
+                                ],
+                                "type": "basic",
+                                "to": [
+                                    {
+                                        "consumer_key_code": "display_brightness_increment"
+                                    }
+                                ]
+                            },
+                            {
+                                "from": {
+                                    "key_code": "f3"
+                                },
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    }
+                                ],
+                                "type": "basic",
+                                "to": [
+                                    {
+                                        "apple_vendor_keyboard_key_code": "mission_control"
+                                    }
+                                ]
+                            },
+                            {
+                                "from": {
+                                    "key_code": "f4"
+                                },
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    }
+                                ],
+                                "type": "basic",
+                                "to": [
+                                    {
+                                        "apple_vendor_keyboard_key_code": "spotlight"
+                                    }
+                                ]
+                            },
+                            {
+                                "from": {
+                                    "key_code": "f5"
+                                },
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    }
+                                ],
+                                "type": "basic",
+                                "to": [
+                                    {
+                                        "consumer_key_code": "dictation"
+                                    }
+                                ]
+                            },
+                            {
+                                "from": {
+                                    "key_code": "f6"
+                                },
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    }
+                                ],
+                                "type": "basic",
+                                "to": [
+                                    {
+                                        "key_code": "f6"
+                                    }
+                                ]
+                            },
+                            {
+                                "from": {
+                                    "key_code": "f7"
+                                },
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    }
+                                ],
+                                "type": "basic",
+                                "to": [
+                                    {
+                                        "consumer_key_code": "rewind"
+                                    }
+                                ]
+                            },
+                            {
+                                "from": {
+                                    "key_code": "f8"
+                                },
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    }
+                                ],
+                                "type": "basic",
+                                "to": [
+                                    {
+                                        "consumer_key_code": "play_or_pause"
+                                    }
+                                ]
+                            },
+                            {
+                                "from": {
+                                    "key_code": "f9"
+                                },
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    }
+                                ],
+                                "type": "basic",
+                                "to": [
+                                    {
+                                        "consumer_key_code": "fast_forward"
+                                    }
+                                ]
+                            },
+                            {
+                                "from": {
+                                    "key_code": "f10"
+                                },
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    }
+                                ],
+                                "type": "basic",
+                                "to": [
+                                    {
+                                        "consumer_key_code": "mute"
+                                    }
+                                ]
+                            },
+                            {
+                                "from": {
+                                    "key_code": "f11"
+                                },
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    }
+                                ],
+                                "type": "basic",
+                                "to": [
+                                    {
+                                        "consumer_key_code": "volume_decrement"
+                                    }
+                                ]
+                            },
+                            {
+                                "from": {
+                                    "key_code": "f12"
+                                },
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    }
+                                ],
+                                "type": "basic",
+                                "to": [
+                                    {
+                                        "consumer_key_code": "volume_increment"
+                                    }
+                                ]
                             }
+
+
+
                         ]
                     }
                 ]
