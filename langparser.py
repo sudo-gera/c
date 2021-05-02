@@ -92,7 +92,9 @@ text_list=[[bw,'string_generator('+','.join([str(ord(q)) for q in eval(w)])+')' 
 text_list=['"'+str(w[0])+'"'+w[1]+'"'+str(w[2])+'"' for w in text_list]
 text=''.join(text_list)+'\n'
 #########################
-specials=['%=', '&=', '*=', '+=', '-=', '/=', '<=', '>=', '|=', '~=', '**', '//', '<<', '==', '>>', '%', '&', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '@', '@=', '[', ']', '^', '{', '|', '}', '~', '>>=', '<<=', '!=']
+specials=['%=', '&=', ':=', '*=', '+=', '-=', '/=', '<=', '>=', '|=', '~=', '**', '//', '<<', '==', '>>', '%', '&', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '@', '@=', '[', ']', '^', '{', '|', '}', '~', '>>=', '<<=', '!=']
+operators={'getattr': {'sign': '.', 'name': 'getattr', 'type': 'binary'}, 'd_unpack': {'sign': '**', 'name': 'd_unpack', 'type': 'unary'}, 'a_unpack': {'sign': '*', 'name': 'a_unpack', 'type': 'unary'}, 'expr_asign': {'sign': ':=', 'name': 'expr_asign', 'type': 'binary'}, 'asign': {'sign': '=', 'name': 'asign', 'type': 'binary'}, 'comma': {'sign': ',', 'name': 'comma', 'type': 'binary'}, 'pow': {'sign': '**', 'name': 'pow', 'type': 'binary'}, 'mul': {'sign': '*', 'name': 'mul', 'type': 'binary'}, 'matmul': {'sign': '@', 'name': 'matmul', 'type': 'binary'}, 'truediv': {'sign': '/', 'name': 'truediv', 'type': 'binary'}, 'floordiv': {'sign': '//', 'name': 'floordiv', 'type': 'binary'}, 'mod': {'sign': '%', 'name': 'mod', 'type': 'binary'}, 'add': {'sign': '+', 'name': 'add', 'type': 'binary'}, 'sub': {'sign': '-', 'name': 'sub', 'type': 'binary'}, 'lshift': {'sign': '<<', 'name': 'lshift', 'type': 'binary'}, 'rshift': {'sign': '>>', 'name': 'rshift', 'type': 'binary'}, 'ipow': {'sign': '**=', 'name': 'ipow', 'type': 'binary'}, 'imul': {'sign': '*=', 'name': 'imul', 'type': 'binary'}, 'imatmul': {'sign': '@=', 'name': 'imatmul', 'type': 'binary'}, 'itruediv': {'sign': '/=', 'name': 'itruediv', 'type': 'binary'}, 'ifloordiv': {'sign': '//=', 'name': 'ifloordiv', 'type': 'binary'}, 'imod': {'sign': '%=', 'name': 'imod', 'type': 'binary'}, 'iadd': {'sign': '+=', 'name': 'iadd', 'type': 'binary'}, 'isub': {'sign': '-=', 'name': 'isub', 'type': 'binary'}, 'ilshift': {'sign': '<<=', 'name': 'ilshift', 'type': 'binary'}, 'irshift': {'sign': '>>=', 'name': 'irshift', 'type': 'binary'}, 'and': {'sign': '&', 'name': 'and', 'type': 'binary'}, 'xor': {'sign': '^', 'name': 'xor', 'type': 'binary'}, 'or': {'sign': '|', 'name': 'or', 'type': 'binary'}, 'in': {'sign': 'in', 'name': 'contains', 'type': 'binary'}, 'not_in': {'sign': 'not_in', 'name': 'not_in', 'type': 'binary'}, 'is': {'sign': 'is', 'name': 'is', 'type': 'binary'}, 'is_not': {'sign': 'is_not', 'name': 'is_not', 'type': 'binary'}, 'lt': {'sign': '<', 'name': 'lt', 'type': 'binary'}, 'le': {'sign': '<=', 'name': 'le', 'type': 'binary'}, 'gt': {'sign': '>', 'name': 'gt', 'type': 'binary'}, 'ge': {'sign': '>=', 'name': 'ge', 'type': 'binary'}, 'ne': {'sign': '!=', 'name': 'ne', 'type': 'binary'}, 'eq': {'sign': '==', 'name': 'eq', 'type': 'binary'}, 'bool_and': {'sign': 'and', 'name': 'bool_and', 'type': 'binary'}, 'bool_or': {'sign': 'or', 'name': 'bool_or', 'type': 'binary'}, 'await': {'sign': 'await', 'name': 'await', 'type': 'unary'}, 'neg': {'sign': '-', 'name': 'neg', 'type': 'unary'}, 'pos': {'sign': '+', 'name': 'pos', 'type': 'unary'}, 'inv': {'sign': '~', 'name': 'inv', 'type': 'unary'}, 'not': {'sign': 'not', 'name': 'not', 'type': 'unary'}}
+specials+=[operators[w]['sign'] for w in operators]
 specials.sort(key=len,reverse=1)
 name_start='qwertyuioplkjhgfdsaszxcvbnm_QWERTYUIOPLKJHGFDSASZXCVBNM'
 name_contain='qwertyuioplkjhgfdsaszxcvbnm_QWERTYUIOPLKJHGFDSASZXCVBNM1234567890'
@@ -350,19 +352,42 @@ def handle_lambda(a):
 				a[wi]['cont']=handle_lambda(a[wi]['cont'])
 			wi+=1
 	return a
+def handle_comma(a):
+	wi=0
+	while wi<len(a):
+		if wi+1<len(a) and a[wi+1]['type']=='oper' and a[wi+0]['type']!='oper' and a[wi+1]['name']==',':
+			s=a[wi:wi+3]
+			a[wi:wi+3]=[{'type':'seq','name':[w for w in ops if w['type']=='binary' and w['sign']==a[wi+1]['name']][0]['name'],'line':a[wi+1]['line'],'cont':[]}]
+			# a=a[:wi]+[{'type':'seq','name':[w for w in ops if w['type']=='binary' and w['sign']==a[wi+1]['name']][0]['name'],'line':a[wi+1]['line'],'cont':[]}]+a[wi+3:]
+			if s[-3]['type']=='seq':
+				s[-3]['cont']=handle_opers_l2r(s[-3]['cont'],_ops)
+			a[wi]['cont'].append(s[-3])
+			if s[-1]['type']=='seq':
+				s[-1]['cont']=handle_opers_l2r(s[-1]['cont'],_ops)
+			a[wi]['cont'].append(s[-1])
+		else:
+			if a[wi]['type']=='seq':
+				a[wi]['cont']=handle_opers_l2r(a[wi]['cont'],_ops)
+			wi+=1
+	return a
+
+
 def lvalue2rvalue(a):
-	
+	if a['type']=='seq' and a['name']=='getitem':
+		a['name']='setitem'
+	if a['type']=='seq' and a['name']=='getattr':
+		a['name']='setattr'
+	return a
 def handle_args(a):
 	a={'type':'seq','name':'args','line':a[0]['line'],'cont':a}
-	a['cont']=[w for w in a['cont'] if not(w['type']=='oper' and w['name']==',')]
+	a['cont']=[lvalue2rvalue(w) for w in a['cont'] if not(w['type']=='oper' and w['name']==',')]
 	return [a]
 
 text_list=handle_parentheses(text_list)
-operators={'getattr': {'sign': '.', 'name': 'getattr', 'type': 'binary'}, 'comma': {'sign': ',', 'name': 'comma', 'type': 'binary'}, 'pow': {'sign': '**', 'name': 'pow', 'type': 'binary'}, 'mul': {'sign': '*', 'name': 'mul', 'type': 'binary'}, 'matmul': {'sign': '@', 'name': 'matmul', 'type': 'binary'}, 'truediv': {'sign': '/', 'name': 'truediv', 'type': 'binary'}, 'floordiv': {'sign': '//', 'name': 'floordiv', 'type': 'binary'}, 'mod': {'sign': '%', 'name': 'mod', 'type': 'binary'}, 'add': {'sign': '+', 'name': 'add', 'type': 'binary'}, 'sub': {'sign': '-', 'name': 'sub', 'type': 'binary'}, 'lshift': {'sign': '<<', 'name': 'lshift', 'type': 'binary'}, 'rshift': {'sign': '>>', 'name': 'rshift', 'type': 'binary'}, 'and': {'sign': '&', 'name': 'and', 'type': 'binary'}, 'xor': {'sign': '^', 'name': 'xor', 'type': 'binary'}, 'or': {'sign': '|', 'name': 'or', 'type': 'binary'}, 'in': {'sign': 'in', 'name': 'contains', 'type': 'binary'}, 'not_in': {'sign': 'not_in', 'name': 'not_in', 'type': 'binary'}, 'is': {'sign': 'is', 'name': 'is', 'type': 'binary'}, 'is_not': {'sign': 'is_not', 'name': 'is_not', 'type': 'binary'}, 'lt': {'sign': '<', 'name': 'lt', 'type': 'binary'}, 'le': {'sign': '<=', 'name': 'le', 'type': 'binary'}, 'gt': {'sign': '>', 'name': 'gt', 'type': 'binary'}, 'ge': {'sign': '>=', 'name': 'ge', 'type': 'binary'}, 'ne': {'sign': '!=', 'name': 'ne', 'type': 'binary'}, 'eq': {'sign': '==', 'name': 'eq', 'type': 'binary'}, 'bool_and': {'sign': 'and', 'name': 'bool_and', 'type': 'binary'}, 'bool_or': {'sign': 'or', 'name': 'bool_or', 'type': 'binary'}, 'await': {'sign': 'await', 'name': 'await', 'type': 'unary'}, 'neg': {'sign': '-', 'name': 'neg', 'type': 'unary'}, 'pos': {'sign': '+', 'name': 'pos', 'type': 'unary'}, 'inv': {'sign': '~', 'name': 'inv', 'type': 'unary'}, 'not': {'sign': 'not', 'name': 'not', 'type': 'unary'}}
 text_list=handle_opers_l2r(text_list,['getattr'])
 text_list=handle_calls(text_list)
 text_list=handle_opers_r2l(text_list,['await'])
-text_list=handle_opers_r2l(text_list,['pow','await','neg','pos','inv'])
+text_list=handle_opers_r2l(text_list,['pow','await','neg','pos','inv','a_unpack','d_unpack'])
 text_list=handle_opers_l2r(text_list,['mul','matmul','truediv','floordiv','mod'])
 text_list=handle_opers_l2r(text_list,['add','sub'])
 text_list=handle_opers_l2r(text_list,['lshift','rshift'])
@@ -375,9 +400,11 @@ text_list=handle_opers_l2r(text_list,['bool_and'])
 text_list=handle_opers_l2r(text_list,['bool_or'])
 text_list=handle_expr_if(text_list)
 text_list=handle_lambda(text_list)
-text_list=handle_opers_l2r(text_list,['comma'])
-text_list=handle_opers_r2l(text_list,['asign','imul','imatmul','itruediv','ifloordiv','imod','iadd','isub','ilshift','irshift'])
-text_list=handle_opers_l2r(text_list,[';',':','\n'])
+text_list=handle_opers_r2l(text_list,['expr_asign'])
+
+# text_list=handle_opers_l2r(text_list,['comma'])
+# text_list=handle_opers_r2l(text_list,['asign','imul','ipow','imatmul','itruediv','ifloordiv','imod','iadd','isub','ilshift','irshift'])
+# text_list=handle_opers_l2r(text_list,[';',':','\n'])
 
 
 

@@ -1210,7 +1210,7 @@
                     },
                     "to": [
                         {
-                            "consumer_key_code": "volume_increment"
+                            "consumer_key_code": "mute"
                         }
                     ]
                 },
@@ -1230,7 +1230,7 @@
                     },
                     "to": [
                         {
-                            "consumer_key_code": "mute"
+                            "consumer_key_code": "volume_increment"
                         }
                     ]
                 }
