@@ -1236,6 +1236,24 @@
                                     }
                                 ],
                                 "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "delete_or_backspace"
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "delete_forward"
+                                    }
+                                ],
+                                "type": "basic"
                             }
                         ]
                     }
