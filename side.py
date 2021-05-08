@@ -33,6 +33,16 @@ except:
 	except:
 		print(format_exc())
 	try:
+		subrun(['python3-pip','install','watchdog'])
+		c=1
+	except:
+		print(format_exc())
+	try:
+		subrun(['python-pip','install','watchdog'])
+		c=1
+	except:
+		print(format_exc())
+	try:
 		subrun(['pip','install','watchdog'])
 		c=1
 	except:
