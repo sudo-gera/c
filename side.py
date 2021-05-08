@@ -4,13 +4,6 @@ from time import *
 from subprocess import run
 from sys import executable
 from subprocess import run as subrun
-try:
-	from watchdog.observers import Observer
-	from watchdog.events import FileSystemEventHandler
-except:
-	subrun([executable,'-m','pip','install','watchdog'])
-	from watchdog.observers import Observer
-	from watchdog.events import FileSystemEventHandler
 from pathlib import Path
 from traceback import format_exc
 from os.path import exists
@@ -23,6 +16,22 @@ from os import listdir
 from os import getenv
 from importlib.util import spec_from_file_location
 from importlib.util import module_from_spec
+
+try:
+	from watchdog.observers import Observer
+	from watchdog.events import FileSystemEventHandler
+except:
+	subrun([executable,'-m','pip','install','watchdog'])
+	try:
+		subrun(['pip3','install','watchdog'])
+		subrun(['pip','install','watchdog'])
+		subrun([dirname(executable)+'/pip','install','watchdog'])
+		subrun([dirname(executable)+'/pip3','install','watchdog'])
+	except:
+		print(format_exc())
+	from watchdog.observers import Observer
+	from watchdog.events import FileSystemEventHandler
+
 home=str(Path.home())+'/'
 
 if argv:
