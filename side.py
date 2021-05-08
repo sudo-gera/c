@@ -1,15 +1,46 @@
 #!/usr/bin/env python3
 from sys import argv
 from time import *
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
+from subprocess import run
+from sys import executable
 from subprocess import run as subrun
+try:
+	from watchdog.observers import Observer
+	from watchdog.events import FileSystemEventHandler
+except:
+	subrun([executable,'-m','pip','install','watchdog'])
+	from watchdog.observers import Observer
+	from watchdog.events import FileSystemEventHandler
 from pathlib import Path
 from traceback import format_exc
 from os.path import exists
+from os.path import expanduser
+from os.path import isdir
+from os.path import dirname
+from os.path import normpath
+from os.path import abspath
+from os import listdir
+from os import getenv
 from importlib.util import spec_from_file_location
 from importlib.util import module_from_spec
 home=str(Path.home())+'/'
+
+if argv:
+	subrun(['chmod','777',__file__])
+	# path=getenv('PATH')
+	# if path==None or normpath(dirname(__file__)) not in sum([[abspath(w),normpath(w)] for w in path.split(':')],[]):
+	# 	print('copy this file to PATH')
+	# 	print('you can copy it to any of this directries:')
+	# 	for w in path.split(':'):
+	# 		print('\t'+w)
+	# 	if argv:
+	# 		print('to copy run command:')
+	# 		print('')
+	# 	print('or you can add line to rc file of your shell')
+	# 	print(f'PATH="$PATH:{dirname(__file__)}"')
+
+
+
 
 sidedef='''
 #instructions how to run different files
@@ -75,37 +106,40 @@ class ev:
 
 obss=[]
 
-for file in argv[1:]:
-	if not exists(file):
-		open(file,'w')
-	if not exists(file+'.stdin'):
-		open(file+'.stdin','w')
-	Handler().run(ev(file))
-	subrun(['subl',file])
-	observer = Observer()
-	observer.schedule(Handler(), path=file, recursive=True)
-	observer.start()
-	obss.append(observer)
-	subrun(['subl',file+'.stdin'])
-	observer = Observer()
-	observer.schedule(Handler(), path=file+'.stdin', recursive=True)
-	observer.start()
-	obss.append(observer)
-	subrun(['subl',file+'.stdout'])
+if len(argv)<2:
+	print('nothing to track')
+else:
+	for file in argv[1:]:
+		if not exists(file):
+			open(file,'w')
+		if not exists(file+'.stdin'):
+			open(file+'.stdin','w')
+		Handler().run(ev(file))
+		subrun(['subl',file])
+		observer = Observer()
+		observer.schedule(Handler(), path=file, recursive=True)
+		observer.start()
+		obss.append(observer)
+		subrun(['subl',file+'.stdin'])
+		observer = Observer()
+		observer.schedule(Handler(), path=file+'.stdin', recursive=True)
+		observer.start()
+		obss.append(observer)
+		subrun(['subl',file+'.stdout'])
 
-print('started tracking:')
-print(*argv[1:])
-print('press enter to stop')
-# try:
-# 	while True:
-# 		sleep(0.01)
-# except KeyboardInterrupt:
-# 	print()
-# 	print('exiting...')
-input()
-print('exiting...')
-# print()
+	print('started tracking:')
+	print(*argv[1:])
+	print('press enter to stop')
+	# try:
+	# 	while True:
+	# 		sleep(0.01)
+	# except KeyboardInterrupt:
+	# 	print()
+	# 	print('exiting...')
+	input()
+	print('exiting...')
+	# print()
 
-for observer in obss:
-	observer.stop()
-	observer.join()
+	for observer in obss:
+		observer.stop()
+		observer.join()
