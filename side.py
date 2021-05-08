@@ -24,8 +24,17 @@ except:
 	subrun([executable,'-m','pip','install','watchdog'])
 	try:
 		subrun(['pip3','install','watchdog'])
+	except:
+		print(format_exc())
+	try:
 		subrun(['pip','install','watchdog'])
+	except:
+		print(format_exc())
+	try:
 		subrun([dirname(executable)+'/pip','install','watchdog'])
+	except:
+		print(format_exc())
+	try:
 		subrun([dirname(executable)+'/pip3','install','watchdog'])
 	except:
 		print(format_exc())
