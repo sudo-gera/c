@@ -16,7 +16,7 @@ from os import listdir
 from os import getenv
 from importlib.util import spec_from_file_location
 from importlib.util import module_from_spec
-
+from threading import Thread
 try:
 	from watchdog.observers import Observer
 	from watchdog.events import FileSystemEventHandler
@@ -160,7 +160,9 @@ else:
 		subrun(['subl',file])
 		subrun(['subl',file+'.stdin'])
 		subrun(['subl',file+'.stdout'])
-		Handler().run(ev(file))
+		observer=Thread(target=Handler().run,args=(ev(file),))
+		observer.start()
+		obss.append(observer)
 		observer = Observer()
 		observer.schedule(Handler(), path=file, recursive=True)
 		observer.start()
@@ -169,7 +171,6 @@ else:
 		observer.schedule(Handler(), path=file+'.stdin', recursive=True)
 		observer.start()
 		obss.append(observer)
-
 	print('started tracking:')
 	print(*argv[1:])
 	print('press enter to stop')
@@ -177,9 +178,12 @@ else:
 		input()
 	except KeyboardInterrupt:
 		print()
-	print('exiting...')
+	print('exiting, wait 4 seconds... press ctrl+c then enter if you are waiting more than 4 seconds')
 	# print()
 
 	for observer in obss:
-		observer.stop()
+		try:
+			observer.stop()
+		except:
+			pass
 		observer.join()

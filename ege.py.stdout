@@ -1,5 +1,8 @@
-||| execution start at 1620509833.450194000 (Sun May  9 00:37:13 2021)
+||| execution start at 1620511386.971447000 (Sun May  9 01:03:06 2021)
 Traceback (most recent call last):
-  File "/Users/gera/c/ege.py", line 5, in <module>
-    for e in range(1,w+1):
+  File "/Users/gera/c/ege.py", line 13, in <module>
+    ns=[w*e for w in ns for e in ps]
+  File "/Users/gera/c/ege.py", line 13, in <listcomp>
+    ns=[w*e for w in ns for e in ps]
 KeyboardInterrupt
+||| execution stop  at 1620511392.866234800 (Sun May  9 01:03:12 2021)
