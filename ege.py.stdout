@@ -1,0 +1,5 @@
+||| execution start at 1620509833.450194000 (Sun May  9 00:37:13 2021)
+Traceback (most recent call last):
+  File "/Users/gera/c/ege.py", line 5, in <module>
+    for e in range(1,w+1):
+KeyboardInterrupt
