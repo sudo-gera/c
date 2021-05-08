@@ -130,13 +130,10 @@ else:
 	print('started tracking:')
 	print(*argv[1:])
 	print('press enter to stop')
-	# try:
-	# 	while True:
-	# 		sleep(0.01)
-	# except KeyboardInterrupt:
-	# 	print()
-	# 	print('exiting...')
-	input()
+	try:
+		input()
+	except KeyboardInterrupt:
+		print()
 	print('exiting...')
 	# print()
 

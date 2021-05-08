@@ -1,1 +1,1 @@
-print(__file__)
+print(input())
