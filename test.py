@@ -1,1 +1,1 @@
-lambda a=1,s=0:1
+print(12)

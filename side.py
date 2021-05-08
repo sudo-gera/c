@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from sys import argv
-from time import sleep
+from time import *
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from subprocess import run as subrun
@@ -40,25 +40,32 @@ class Handler(FileSystemEventHandler):
 		if not event.is_directory:
 			if not exists(home+'.side.py'):
 				open(home+'.side.py','w').write(sidedef)
-			try:
-				file=str(event.src_path)
-				if file.endswith('.stdin'):
-					file=file[:-6]
-				a=[]
-				exec(open(home+'.side.py').read()+'\na.append(execute)')
-				ex=a[0]
+			file=str(event.src_path)
+			if file.endswith('.stdin'):
+				file=file[:-6]
+			open(file+'.stdout','w').close()
+			with open(file+'.stdout','a') as a:
+				_a=[]
+				try:
+					exec(open(home+'.side.py').read()+'\n_a.append(execute)')
+					ex=_a[0]
+				except:
+					print('failed to exec ~/.side.py',file=a)
+					print(format_exc(),file=a)
 				ex=ex(file)
 				if ex==None:
-					print('file ~/.side.py has no instructions for running',file)
-					print('if you want to add instructions, edit ~/.side.py')
+					print('file ~/.side.py has no instructions for running',file,file=a)
+					print('if you want to add instructions, edit ~/.side.py',file=a)
 				else:
-					open(file+'.stdout','w')
+					print(f'||| execution start at {(str(time())+"0"*20)[:20]} ({asctime()})',file=a)
+					a.flush()
 					for w in ex:
 						if subrun(w,stdin=open(file+'.stdin'),stdout=open(file+'.stdout','a'),stderr=open(file+'.stdout','a')).returncode:
 							break
-			except:
-				print('failed to exec ~/.side.py')
-				print(format_exc())
+					if open(file+'.stdout').read()[-1]!='\n':
+						print(file=a)
+					print(f'||| execution stop  at {(str(time())+"0"*20)[:20]} ({asctime()})',file=a)
+			a.close()
 	on_created=on_deleted=on_moved=on_modified=run
 
 class ev:
@@ -88,15 +95,16 @@ for file in argv[1:]:
 
 print('started tracking:')
 print(*argv[1:])
-print('press ctrl+c to stop')
-try:
-	while True:
-		sleep(0.1)
-except KeyboardInterrupt:
-	print()
-	print('exiting...')
-
-print()
+print('press enter to stop')
+# try:
+# 	while True:
+# 		sleep(0.01)
+# except KeyboardInterrupt:
+# 	print()
+# 	print('exiting...')
+input()
+print('exiting...')
+# print()
 
 for observer in obss:
 	observer.stop()
