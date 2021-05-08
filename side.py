@@ -21,23 +21,38 @@ try:
 	from watchdog.observers import Observer
 	from watchdog.events import FileSystemEventHandler
 except:
-	subrun([executable,'-m','pip','install','watchdog'])
+	c=0
+	try:
+		subrun([executable,'-m','pip','install','watchdog'])
+		c=1
+	except:
+		print(format_exc())
 	try:
 		subrun(['pip3','install','watchdog'])
+		c=1
 	except:
 		print(format_exc())
 	try:
 		subrun(['pip','install','watchdog'])
+		c=1
 	except:
 		print(format_exc())
 	try:
 		subrun([dirname(executable)+'/pip','install','watchdog'])
+		c=1
 	except:
 		print(format_exc())
 	try:
 		subrun([dirname(executable)+'/pip3','install','watchdog'])
+		c=1
 	except:
 		print(format_exc())
+	if c==0:
+		print('looks like installation failed, try to run:')
+		print('\tsudo apt update')
+		print('\tsudo apt -f install')
+		print('\tsudo apt install python3-pip')
+		print('and then run this file again')
 	from watchdog.observers import Observer
 	from watchdog.events import FileSystemEventHandler
 
