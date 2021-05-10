@@ -1254,6 +1254,42 @@
                                     }
                                 ],
                                 "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "up_arrow"
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "page_up"
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "down_arrow"
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "page_down"
+                                    }
+                                ],
+                                "type": "basic"
                             }
                         ]
                     }
