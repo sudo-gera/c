@@ -1026,7 +1026,11 @@
                                 },
                                 "to": [
                                     {
-                                        "consumer_key_code": "display_brightness_decrement"
+                                        "consumer_key_code": "display_brightness_decrement",
+                                        "modifiers": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
                                     }
                                 ],
                                 "type": "basic"
@@ -1044,7 +1048,11 @@
                                 },
                                 "to": [
                                     {
-                                        "consumer_key_code": "display_brightness_increment"
+                                        "consumer_key_code": "display_brightness_increment",
+                                        "modifiers": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
                                     }
                                 ],
                                 "type": "basic"
@@ -1098,7 +1106,11 @@
                                 },
                                 "to": [
                                     {
-                                        "apple_vendor_top_case_key_code": "illumination_down"
+                                        "apple_vendor_top_case_key_code": "illumination_down",
+                                        "modifiers": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
                                     }
                                 ],
                                 "type": "basic"
@@ -1116,7 +1128,11 @@
                                 },
                                 "to": [
                                     {
-                                        "apple_vendor_top_case_key_code": "illumination_up"
+                                        "apple_vendor_top_case_key_code": "illumination_up",
+                                        "modifiers": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
                                     }
                                 ],
                                 "type": "basic"
