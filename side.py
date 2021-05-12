@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 from sys import argv
 from time import *
-from subprocess import run
 from sys import executable
 from subprocess import run as subrun
 from pathlib import Path
@@ -14,9 +13,15 @@ from os.path import normpath
 from os.path import abspath
 from os import listdir
 from os import getenv
+from os import getpid
 from importlib.util import spec_from_file_location
 from importlib.util import module_from_spec
 from threading import Thread
+from multiprocessing import Process
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from signal import SIGKILL
+from os import kill
+from urllib.request import urlopen
 try:
 	from watchdog.observers import Observer
 	from watchdog.events import FileSystemEventHandler
@@ -82,8 +87,20 @@ if argv:
 	# 	print('or you can add line to rc file of your shell')
 	# 	print(f'PATH="$PATH:{dirname(__file__)}"')
 
-
-
+import json
+import binascii
+def dump(a):
+	a=json.dumps(a)
+	a=a.encode()
+	a=binascii.hexlify(a)
+	a=a.decode()
+	return a
+def load(a):
+	a=a.encode()
+	a=binascii.unhexlify(a)
+	a=a.decode()
+	a=json.loads(a)
+	return a
 
 sidedef='''
 #instructions how to run different files
@@ -109,7 +126,10 @@ def execute(filename):
 '''
 
 class Handler(FileSystemEventHandler):
-	def run(self,event):
+	def run(self,event,mul=1):
+		if mul:
+			Process(target=self.run,args=(event,0)).start()
+			return
 		global sidedef
 		if not event.is_directory:
 			if not exists(home+'.side.py'):
@@ -131,6 +151,7 @@ class Handler(FileSystemEventHandler):
 					print('file ~/.side.py has no instructions for running',file,file=a)
 					print('if you want to add instructions, edit ~/.side.py',file=a)
 				else:
+					urlopen(f'http://{hostname}:{hostport}/{dump(["start",file,getpid()])}').read()
 					print(f'||| execution start at {(str(time())+"0"*20)[:20]} ({asctime()})',file=a)
 					a.flush()
 					for w in ex:
@@ -139,6 +160,7 @@ class Handler(FileSystemEventHandler):
 					if open(file+'.stdout').read()[-1]!='\n':
 						print(file=a)
 					print(f'||| execution stop  at {(str(time())+"0"*20)[:20]} ({asctime()})',file=a)
+					urlopen(f'http://{hostname}:{hostport}/{dump(["stop",file,getpid()])}').read()
 			a.close()
 	on_created=on_deleted=on_moved=on_modified=run
 
@@ -149,41 +171,94 @@ class ev:
 
 obss=[]
 
-if len(argv)<2:
-	print('nothing to track')
-else:
-	for file in argv[1:]:
-		if not exists(file):
-			open(file,'w')
-		if not exists(file+'.stdin'):
-			open(file+'.stdin','w')
-		subrun(['subl',file])
-		subrun(['subl',file+'.stdin'])
-		subrun(['subl',file+'.stdout'])
-		observer=Thread(target=Handler().run,args=(ev(file),))
-		observer.start()
-		obss.append(observer)
-		observer = Observer()
-		observer.schedule(Handler(), path=file, recursive=True)
-		observer.start()
-		obss.append(observer)
-		observer = Observer()
-		observer.schedule(Handler(), path=file+'.stdin', recursive=True)
-		observer.start()
-		obss.append(observer)
-	print('started tracking:')
-	print(*argv[1:])
-	print('press enter to stop')
-	try:
-		input()
-	except KeyboardInterrupt:
-		print()
-	print('exiting, wait 4 seconds... press ctrl+c then enter if you are waiting more than 4 seconds')
-	# print()
 
-	for observer in obss:
+hostname = '127.0.0.1'
+hostport = 14267
+
+
+def runserver():
+	pids={}
+	class MyServer(BaseHTTPRequestHandler):
+		def do_GET(self):
+			path=self.path[1:]
+			path=load(path)
+			self.send_response(200)
+			self.send_header("Content-type", "text/html; charset=utf-8")
+			self.end_headers()
+			if path[0]=='start':
+				if path[1] in pids:
+					kill(pids[path[1]],SIGKILL)
+				pids[path[1]]=path[2]
+			elif path[0]=='stop':
+				if path[1] in pids:
+					del(pids[path[1]])
+			elif path[0]=='exit':
+				for w in pids:
+					kill(pids[w],SIGKILL)
+				raise KeyboardInterrupt	
+			# self.wfile.write('hello'.encode())
+		def log_message(self, *args):
+			return
+
+	try:
+		myServer = HTTPServer((hostname, hostport), MyServer)
+	except:
+		pass
+
+	try:
+	    myServer.serve_forever()
+	except KeyboardInterrupt:
+	    pass
+
+	myServer.server_close()
+
+
+
+
+
+
+if __name__ == '__main__':
+	observer=Process(target=runserver)
+	observer.start()
+	obss.append(observer)
+
+
+	if len(argv)<2:
+		print('nothing to track')
+	else:
+		for file in argv[1:]:
+			if not exists(file):
+				open(file,'w')
+			if not exists(file+'.stdin'):
+				open(file+'.stdin','w')
+			subrun(['subl',file])
+			subrun(['subl',file+'.stdin'])
+			subrun(['subl',file+'.stdout'])
+			observer=Thread(target=Handler().run,args=(ev(file),))
+			observer.start()
+			obss.append(observer)
+			observer = Observer()
+			observer.schedule(Handler(), path=file, recursive=True)
+			observer.start()
+			obss.append(observer)
+			observer = Observer()
+			observer.schedule(Handler(), path=file+'.stdin', recursive=True)
+			observer.start()
+			obss.append(observer)
+		print('started tracking:')
+		print(*argv[1:])
+		print('press enter to stop')
 		try:
-			observer.stop()
-		except:
-			pass
-		observer.join()
+			input()
+		except KeyboardInterrupt:
+			print()
+		print('exiting, wait 4 seconds... press ctrl+c then enter if you are waiting more than 4 seconds')
+		# print()
+
+		urlopen(f'http://{hostname}:{hostport}/{dump(["exit"])}').read()
+		for observer in obss:
+			try:
+				observer.stop()
+			except:
+				pass
+			observer.join()
