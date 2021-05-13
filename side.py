@@ -215,13 +215,13 @@ def runserver():
 
 
 def update():
-	urlopen(f'http://{hostname}:{hostport}/{dump(["start","update",getpid()])}').read()
+	urlopen(f'http://{hostname}:{hostport}/{dump(["start","///////////////update",getpid()])}').read()
 	try:
 		a=urlopen('https://raw.githubusercontent.com/sudo-gera/c/master/side.py').read().decode()
 		open(__file__,'w').write(a)
 	except:
 		pass
-	urlopen(f'http://{hostname}:{hostport}/{dump(["stop","update",getpid()])}').read()
+	urlopen(f'http://{hostname}:{hostport}/{dump(["stop","///////////////update",getpid()])}').read()
 
 
 
