@@ -214,6 +214,14 @@ def runserver():
 
 
 
+def update():
+	urlopen(f'http://{hostname}:{hostport}/{dump(["start","update",getpid()])}').read()
+	try:
+		a=urlopen('https://raw.githubusercontent.com/sudo-gera/c/master/side.py').read().decode()
+		open(__file__,'w').write(a)
+	except:
+		pass
+	urlopen(f'http://{hostname}:{hostport}/{dump(["stop","update",getpid()])}').read()
 
 
 
@@ -221,15 +229,12 @@ if __name__ == '__main__':
 	observer=Process(target=runserver)
 	observer.start()
 	obss.append(observer)
-
-
+	observer=Process(target=update)
+	observer.start()
+	obss.append(observer)
 	if len(argv)<2:
-		try:
-			a=urlopen('https://raw.githubusercontent.com/sudo-gera/c/master/side.py').read().decode()
-			open(__file__,'w').write(a)
-		except:
-			pass
 		print('nothing to track')
+		sleep(0.1)
 	else:
 		for file in argv[1:]:
 			if not exists(file):
@@ -258,7 +263,6 @@ if __name__ == '__main__':
 		except KeyboardInterrupt:
 			print()
 	# print('exiting, wait 4 seconds... press ctrl+c then enter if you are waiting more than 4 seconds')
-
 	urlopen(f'http://{hostname}:{hostport}/{dump(["exit"])}').read()
 	for observer in obss:
 		try:
