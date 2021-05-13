@@ -225,40 +225,39 @@ if __name__ == '__main__':
 
 	if len(argv)<2:
 		print('nothing to track')
-	else:
-		for file in argv[1:]:
-			if not exists(file):
-				open(file,'w')
-			if not exists(file+'.stdin'):
-				open(file+'.stdin','w')
-			subrun(['subl',file])
-			subrun(['subl',file+'.stdin'])
-			subrun(['subl',file+'.stdout'])
-			observer=Thread(target=Handler().run,args=(ev(file),))
-			observer.start()
-			obss.append(observer)
-			observer = Observer()
-			observer.schedule(Handler(), path=file, recursive=True)
-			observer.start()
-			obss.append(observer)
-			observer = Observer()
-			observer.schedule(Handler(), path=file+'.stdin', recursive=True)
-			observer.start()
-			obss.append(observer)
-		print('started tracking:')
-		print(*argv[1:])
-		print('press enter to stop')
-		try:
-			input()
-		except KeyboardInterrupt:
-			print()
-		print('exiting, wait 4 seconds... press ctrl+c then enter if you are waiting more than 4 seconds')
-		# print()
+	for file in argv[1:]:
+		if not exists(file):
+			open(file,'w')
+		if not exists(file+'.stdin'):
+			open(file+'.stdin','w')
+		subrun(['subl',file])
+		subrun(['subl',file+'.stdin'])
+		subrun(['subl',file+'.stdout'])
+		observer=Thread(target=Handler().run,args=(ev(file),))
+		observer.start()
+		obss.append(observer)
+		observer = Observer()
+		observer.schedule(Handler(), path=file, recursive=True)
+		observer.start()
+		obss.append(observer)
+		observer = Observer()
+		observer.schedule(Handler(), path=file+'.stdin', recursive=True)
+		observer.start()
+		obss.append(observer)
+	print('started tracking:')
+	print(*argv[1:])
+	print('press enter to stop')
+	try:
+		input()
+	except KeyboardInterrupt:
+		print()
+	print('exiting, wait 4 seconds... press ctrl+c then enter if you are waiting more than 4 seconds')
+	# print()
 
-		urlopen(f'http://{hostname}:{hostport}/{dump(["exit"])}').read()
-		for observer in obss:
-			try:
-				observer.stop()
-			except:
-				pass
-			observer.join()
+	urlopen(f'http://{hostname}:{hostport}/{dump(["exit"])}').read()
+	for observer in obss:
+		try:
+			observer.stop()
+		except:
+			pass
+		observer.join()
