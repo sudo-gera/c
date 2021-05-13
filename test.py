@@ -1,2 +1,5 @@
-a=lambda ar:[ar:=list(ar),exec('''''')][0][0]
-print(a(3,2))
+a=[
+	[1,2,3,4],
+	[11,22,33,44]]
+s=list(zip(*a))
+print(s)
