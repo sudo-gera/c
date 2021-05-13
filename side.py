@@ -257,7 +257,7 @@ if __name__ == '__main__':
 			input()
 		except KeyboardInterrupt:
 			print()
-	print('exiting, wait 4 seconds... press ctrl+c then enter if you are waiting more than 4 seconds')
+	# print('exiting, wait 4 seconds... press ctrl+c then enter if you are waiting more than 4 seconds')
 
 	urlopen(f'http://{hostname}:{hostport}/{dump(["exit"])}').read()
 	for observer in obss:
