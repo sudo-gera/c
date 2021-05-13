@@ -1,6 +1,6 @@
-q=0
-# q=1
-if q:
-	while 1:
-		pass
-print(q)
+print(1)
+print(2)
+print(2)
+print(1)
+print(2)
+print(2)
