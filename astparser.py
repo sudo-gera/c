@@ -16,7 +16,10 @@ else:
 	from sys import stdin
 	text=stdin.read()
 
-body=parse(text).body
+# body=parse(text).body
+# print(*[dump(w,indent=4) for w in body],sep='\n')
 
-print(*[dump(w,indent=4) for w in body],sep='\n')
+par=parse(text)
+print(dump(par,indent=4))
+
 
