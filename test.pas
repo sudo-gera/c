@@ -1,3 +1,19 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+uses system.io;
 begin
-	print(1);
+	foreach var a in directory.getfiles('/Users/gera') do
+		print(a);
 end.
