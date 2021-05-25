@@ -1,19 +1,5 @@
-class a{
-public:
-	int g;
-	a(){
-		g=rand();
-		print('c',g);
-	}
-	~a(){
-		print('d',g);
-	}
-};
-
-pony_run{
-	print(1);
-	let d=a();
-	print(2);
-	let f=a();
-	print(3);
+#include <bits/stdc++.h>
+using namespace std;
+int main(){
+	[n=0](){}();
 }
