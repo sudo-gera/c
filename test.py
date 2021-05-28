@@ -1,1 +1,2 @@
-q=1
+for w in a:
+	pass

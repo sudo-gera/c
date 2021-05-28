@@ -18,8 +18,7 @@ if len(argv)>1:
 else:
 	from sys import stdin
 	text=stdin.read()
-
-print()
+	print()
 
 # body=parse(text).body
 # print(*[dump(w,indent=4) for w in body],sep='\n')
@@ -47,6 +46,8 @@ def generate(astobj):
 		ret=indent_sign*indent+'/*pass*/'
 	elif astobj.__class__.__name__=='Global':
 		ret=indent_sign*indent+'python_global('+','.join(astobj.names)+')'
+	elif astobj.__class__.__name__=='For':
+		ret=indent_sign*indent+'for('+generate(astobj.target)+':python_iterate('+generate(astobj.iter)+')){\n'+''.join([generate(w)+'\n' for w in astobj.body])+indent_sign*indent+'}'
 	elif astobj.__class__.__name__=='Nonlocal':
 		ret=indent_sign*indent+'python_nonlocal('+','.join(astobj.names)+')'
 	elif astobj.__class__.__name__=='Return':
@@ -104,18 +105,10 @@ headers={
 	'levels':{
 		'code':
 			r'''
-				#define python_set(q)\
-				 	if (globals[globals.size()-1].find(q) == globals[globals.size()-1].end()){\
-						locals[q]=0;\
-						globals[globals.size()-1][q]=&(locals[q]);\
-					}else{\
-						*(globals[globals.size()-1][q])=0;\
-					}*(globals[globals.size()-1][q])
-
 				#define python_global(q)\
-				 	if (globals[globals.size()-1].find(q) == globals[globals.size()-1].end()){\
-						locals[q]=0;\
-						globals[globals.size()-1][q]=&(locals[q]);\
+				 	if (python_globals[python_globals.size()-1].find(q) == python_globals[python_globals.size()-1].end()){\
+						python_locals[q]=0;\
+						python_globals[python_globals.size()-1][q]=&(python_locals[q]);\
 					}\
 					globals[globals.size()-1][q]=globals[0][q];\
 					
@@ -126,6 +119,14 @@ headers={
 					}\
 					globals[globals.size()-1][q]=globals[globals.size()-2][q];
 					
+				any& python_set(string q){
+					if (globals[globals.size()-1].find(q) == globals[globals.size()-1].end()){
+						locals[q]=0;
+						globals[globals.size()-1][q]=&(locals[q]);
+					}
+					return *(globals[globals.size()-1][q])
+				}
+
 				#define python_get(q) (*(globals[globals.size()-1][q]))
 
 				#define python_create_level()\

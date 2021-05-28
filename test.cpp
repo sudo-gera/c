@@ -1,37 +1,39 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define python_set(q)\
- 	if (globals[globals.size()-1].find(q) == globals[globals.size()-1].end()){\
-		locals[q]=0;\
-		globals[globals.size()-1][q]=&(locals[q]);\
-	}else{\
-		*(globals[globals.size()-1][q])=0;\
-	}*(globals[globals.size()-1][q])
-
+vector<map<int,int*>> python_globals;
 #define python_global(q)\
- 	if (globals[globals.size()-1].find(q) == globals[globals.size()-1].end()){\
-		locals[q]=0;\
-		globals[globals.size()-1][q]=&(locals[q]);\
+ 	if (python_globals[python_globals.size()-1].find(q) == python_globals[python_globals.size()-1].end()){\
+		python_locals[q]=0;\
+		python_globals[python_globals.size()-1][q]=&(python_locals[q]);\
 	}\
-	globals[globals.size()-1][q]=globals[0][q];\
+	python_globals[python_globals.size()-1][q]=python_globals[0][q];\
 	
 #define python_nonlocal(q)\
- 	if (globals[globals.size()-1].find(q) == globals[globals.size()-1].end()){\
-		locals[q]=0;\
-		globals[globals.size()-1][q]=&(locals[q]);\
+ 	if (python_globals[python_globals.size()-1].find(q) == python_globals[python_globals.size()-1].end()){\
+		python_locals[q]=0;\
+		python_globals[python_globals.size()-1][q]=&(python_locals[q]);\
 	}\
-	globals[globals.size()-1][q]=globals[globals.size()-2][q];
+	python_globals[python_globals.size()-1][q]=python_globals[python_globals.size()-2][q];
 	
-#define python_get(q) (*(globals[globals.size()-1][q]))
+#define python_get(q) (*(python_globals[python_globals.size()-1][q]))
+
+#define python_set(q) python_set_(q,&python_locals)
+
+int& python_set_(int q,map<int,int> *python_locals_pointer){
+	if (python_globals[python_globals.size()-1].find(q) == python_globals[python_globals.size()-1].end()){
+		(*python_locals_pointer)[q]=0;
+		python_globals[python_globals.size()-1][q]=&((*python_locals_pointer)[q]);
+	}
+	return *(python_globals[python_globals.size()-1][q]);
+}
 
 #define python_create_level()\
-	globals.emplace_back();\
-	map<int,int> locals;
+	python_globals.emplace_back();\
+	map<int,int> python_locals;
 
 #define python_delete_level()\
-	globals.pop_back();
+	python_globals.pop_back();
 
-vector<map<int,int*>> globals;
 int main(){
 	python_create_level()
 
