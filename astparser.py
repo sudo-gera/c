@@ -27,24 +27,28 @@ print()
 text=parse(text)
 print(dump(text,indent=4))
 
-indent_sign='+'
+indent_sign='`'
 indent=0
 
-to_include=['stdc++']
+to_include=['stdc++','levels']
 
 def generate(astobj):
 	global indent
 	indent+=1
 	if astobj.__class__.__name__=='Module':
-		ret=indent_sign*indent+'int main(int argc,char **argv){\n'+''.join([generate(w)+'\n' for w in astobj.body])+indent_sign*indent+'}'
+		ret=indent_sign*indent+'int main(int argc,char **argv){\n'+indent_sign*indent+'python_create_level()\n'+''.join([generate(w)+'\n' for w in astobj.body])+indent_sign*indent+'python_delete_level()}'
 	elif astobj.__class__.__name__=='Expr':
 		ret=indent_sign*indent+generate(astobj.value)+';\n'
 	elif astobj.__class__.__name__=='FunctionDef':
-		ret=indent_sign*indent+'any name_'+astobj.name+'(any args, any kwargs){\n'+''.join([generate(w)+'\n' for w in astobj.body])+indent_sign*indent+'}\n'+''.join([generate(Assign(targets=[Name(id=astobj.name,ctx=Store())],value=Call(func=w,args=[Name(id=astobj.name,ctx=Load())],keywords=[])))+'\n' for w in astobj.decorator_list[::-1]])
+		ret=indent_sign*indent+'any name_'+astobj.name+'(any args, any kwargs){\n'+indent_sign*indent+indent_sign+'python_create_level()\n'+''.join([generate(w)+'\n' for w in astobj.body])+indent_sign*indent+indent_sign+'python_delete_level()}\n'+''.join([generate(Assign(targets=[Name(id=astobj.name,ctx=Store())],value=Call(func=w,args=[Name(id=astobj.name,ctx=Load())],keywords=[])))+'\n' for w in astobj.decorator_list[::-1]])
 	elif astobj.__class__.__name__=='If':
 		ret=indent_sign*indent+'if(any_cast<boolean>('+generate(Call(func=Name(id='python_bool',ctx=Load()),args=[astobj.test],keywords=[]))+')){\n'+''.join([generate(w)+'\n' for w in astobj.body])+indent_sign*indent+'}else{\n'+''.join([indent_sign*indent+generate(w)+'\n' for w in astobj.orelse])+indent_sign*indent+'}'
 	elif astobj.__class__.__name__=='Pass':
 		ret=indent_sign*indent+'/*pass*/'
+	elif astobj.__class__.__name__=='Global':
+		ret=indent_sign*indent+'python_global('+','.join(astobj.names)+')'
+	elif astobj.__class__.__name__=='Nonlocal':
+		ret=indent_sign*indent+'python_nonlocal('+','.join(astobj.names)+')'
 	elif astobj.__class__.__name__=='Return':
 		ret=indent_sign*indent+'return '+(generate(astobj.value) if astobj.value!=None else generate(Constant(value=None)))+';'
 	elif astobj.__class__.__name__=='Delete':
@@ -58,7 +62,7 @@ def generate(astobj):
 	elif astobj.__class__.__name__=='List':
 		ret='python_list_generator('+','.join([generate(w) for w in astobj.elts])+')'
 	elif astobj.__class__.__name__=='Name':
-		ret='name_'+astobj.id
+		ret=('python_get(' if astobj.ctx==Load() else 'python_set(')+generate(Constant(value=astobj.id))+')'
 	elif astobj.__class__.__name__=='Constant':
 		if type(astobj.value)==type(None):
 			ret='python_None'
@@ -75,9 +79,9 @@ print()
 
 
 text=generate(text)
-print(text)
+# print(text)
 
-print()
+# print()
 
 
 headers={
@@ -93,6 +97,45 @@ headers={
 		'code':
 			'''
 				#include<bits/stdc++.h>
+			''',
+		'depends':
+			[]
+	},
+	'levels':{
+		'code':
+			r'''
+				#define python_set(q)\
+				 	if (globals[globals.size()-1].find(q) == globals[globals.size()-1].end()){\
+						locals[q]=0;\
+						globals[globals.size()-1][q]=&(locals[q]);\
+					}else{\
+						*(globals[globals.size()-1][q])=0;\
+					}*(globals[globals.size()-1][q])
+
+				#define python_global(q)\
+				 	if (globals[globals.size()-1].find(q) == globals[globals.size()-1].end()){\
+						locals[q]=0;\
+						globals[globals.size()-1][q]=&(locals[q]);\
+					}\
+					globals[globals.size()-1][q]=globals[0][q];\
+					
+				#define python_nonlocal(q)\
+				 	if (globals[globals.size()-1].find(q) == globals[globals.size()-1].end()){\
+						locals[q]=0;\
+						globals[globals.size()-1][q]=&(locals[q]);\
+					}\
+					globals[globals.size()-1][q]=globals[globals.size()-2][q];
+					
+				#define python_get(q) (*(globals[globals.size()-1][q]))
+
+				#define python_create_level()\
+					globals.emplace_back();\
+					map<string,any> locals;
+
+				#define python_delete_level()\
+					globals.pop_back();
+
+				vector<map<string,any*>> globals;
 			''',
 		'depends':
 			[]
