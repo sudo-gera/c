@@ -38,6 +38,7 @@ int main(){
 	set(1,10)
 	set(2,20)
 	set(3,30)
+	set(4,40)
 
 	{
 		init()
@@ -45,6 +46,7 @@ int main(){
 		set(1,11)
 		set(2,21)
 		set(3,31)
+		set(4,41)
 
 		{
 			init()
@@ -52,6 +54,7 @@ int main(){
 			set(1,12)
 			set(2,22)
 			set(3,32)
+			set(4,42)
 
 			{
 				init()
@@ -61,6 +64,7 @@ int main(){
 				set(1,13)
 				set(2,23)
 				set(3,33)
+				set(4,43)
 
 				{
 					init()
@@ -72,10 +76,12 @@ int main(){
 					set(1,14)
 					set(2,24)
 					set(3,34)
+					set(4,44)
 
 					cout<<get(1)<<endl;
 					cout<<get(2)<<endl;
 					cout<<get(3)<<endl;
+					cout<<get(4)<<endl;
 					cout<<"--"<<endl;
 
 					uninit()
@@ -84,6 +90,7 @@ int main(){
 				cout<<get(1)<<endl;
 				cout<<get(2)<<endl;
 				cout<<get(3)<<endl;
+				cout<<get(4)<<endl;
 				cout<<"--"<<endl;
 
 				uninit()
@@ -92,6 +99,7 @@ int main(){
 			cout<<get(1)<<endl;
 			cout<<get(2)<<endl;
 			cout<<get(3)<<endl;
+			cout<<get(4)<<endl;
 			cout<<"--"<<endl;
 
 			uninit()
@@ -101,6 +109,7 @@ int main(){
 	cout<<get(1)<<endl;
 	cout<<get(2)<<endl;
 	cout<<get(3)<<endl;
+	cout<<get(4)<<endl;
 	cout<<"--"<<endl;
 	uninit()
 }
