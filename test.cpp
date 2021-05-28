@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
-vector<map<int,int*>> python_globals;
+#define python_level_type_first int
+#define python_level_type_second int
+vector<map<python_level_type_first,python_level_type_second*>> python_globals;
 #define python_global(q)\
  	if (python_globals[python_globals.size()-1].find(q) == python_globals[python_globals.size()-1].end()){\
 		python_locals[q]=0;\
@@ -19,7 +21,7 @@ vector<map<int,int*>> python_globals;
 
 #define python_set(q) python_set_(q,&python_locals)
 
-int& python_set_(int q,map<int,int> *python_locals_pointer){
+int& python_set_(int q,map<python_level_type_first,python_level_type_second> *python_locals_pointer){
 	if (python_globals[python_globals.size()-1].find(q) == python_globals[python_globals.size()-1].end()){
 		(*python_locals_pointer)[q]=0;
 		python_globals[python_globals.size()-1][q]=&((*python_locals_pointer)[q]);
@@ -29,7 +31,7 @@ int& python_set_(int q,map<int,int> *python_locals_pointer){
 
 #define python_create_level()\
 	python_globals.emplace_back();\
-	map<int,int> python_locals;
+	map<python_level_type_first,python_level_type_second> python_locals;
 
 #define python_delete_level()\
 	python_globals.pop_back();
