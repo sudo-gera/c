@@ -24,11 +24,13 @@ print()
 # body=parse(text).body
 # print(*[dump(w,indent=4) for w in body],sep='\n')
 
-par=parse(text)
-print(dump(par,indent=4))
+text=parse(text)
+print(dump(text,indent=4))
 
 indent_sign='+'
 indent=0
+
+to_include=['stdc++']
 
 def generate(astobj):
 	global indent
@@ -53,6 +55,8 @@ def generate(astobj):
 	# 	ret=indent_sign*indent+generate(Call(func=Name(id='',ctx=Load()),args=[],keywords=[]))
 	elif astobj.__class__.__name__=='Call':
 		ret=generate(astobj.func)+'('+generate(List(elts=astobj.args,ctx=Load()))+','+generate(Dict(keys=[Name(id=w.arg,ctx=Load()) for w in astobj.keywords],values=[w.value for w in astobj.keywords]))+')'
+	elif astobj.__class__.__name__=='List':
+		ret='python_list_generator('+','.join([generate(w) for w in astobj.elts])+')'
 	elif astobj.__class__.__name__=='Name':
 		ret='name_'+astobj.id
 	elif astobj.__class__.__name__=='Constant':
@@ -69,6 +73,37 @@ def generate(astobj):
 
 print()
 
-print(generate(par))
+
+text=generate(text)
+print(text)
 
 print()
+
+
+headers={
+	'print':{
+		'code':
+			'''
+
+			''',
+		'depends':
+			[]
+	},
+	'stdc++':{
+		'code':
+			'''
+				#include<bits/stdc++.h>
+			''',
+		'depends':
+			[]
+	},
+}
+
+
+for w in to_include:
+	to_include+=headers[w]['depends']
+to_include=to_include[::-1]
+to_include=reduce(lambda a,s:a+[s] if s not in a else a,to_include,[])
+to_include=''.join(['\n'+'/'*80+'\n//defining '+w+'\n'+headers[w]['code']+'\n' for w in to_include])
+text=to_include+'\n'+'/'*80+'\n//main code\n'+text
+print(text)
