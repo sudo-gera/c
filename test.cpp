@@ -119,4 +119,10 @@ int main(){
 	cout<<python_get(4)<<endl;
 	cout<<"--"<<endl;
 	python_delete_level()
+
+	
+	
+	for(python_set(5):vector<int>({1,2,3,4,5})){
+		cout<<python_get(5)<<endl;
+	}
 }

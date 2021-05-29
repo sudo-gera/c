@@ -1,115 +1,127 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define set(q,w)\
- 	if (globals[globals.size()-1].find(q) == globals[globals.size()-1].end()){\
-		locals[q]=w;\
-		globals[globals.size()-1][q]=&(locals[q]);\
-	}else{\
-		*(globals[globals.size()-1][q])=w;\
+#define python_level_type_first int
+#define python_level_type_second int
+std::vector<std::map<python_level_type_first,python_level_type_second*>> python_globals;
+#define python_global(q)\
+ 	if (python_globals[python_globals.size()-1].find(q) == python_globals[python_globals.size()-1].end()){\
+		python_locals[q]=0;\
+		python_globals[python_globals.size()-1][q]=&(python_locals[q]);\
+	}\
+	python_globals[python_globals.size()-1][q]=python_globals[0][q];\
+	
+#define python_nonlocal(q)\
+ 	if (python_globals[python_globals.size()-1].find(q) == python_globals[python_globals.size()-1].end()){\
+		python_locals[q]=0;\
+		python_globals[python_globals.size()-1][q]=&(python_locals[q]);\
+	}\
+	python_globals[python_globals.size()-1][q]=python_globals[python_globals.size()-2][q];
+	
+#define python_get(q) (*(python_globals[python_globals.size()-1][q]))
+
+#define python_set(q) python_set_(q,&python_locals)
+
+python_level_type_second& python_set_(python_level_type_first q,std::map<python_level_type_first,python_level_type_second> *python_locals_pointer){
+	if (python_globals[python_globals.size()-1].find(q) == python_globals[python_globals.size()-1].end()){
+		(*python_locals_pointer)[q]=0;
+		python_globals[python_globals.size()-1][q]=&((*python_locals_pointer)[q]);
 	}
+	return *(python_globals[python_globals.size()-1][q]);
+}
 
-#define global(q)\
- 	if (globals[globals.size()-1].find(q) == globals[globals.size()-1].end()){\
-		locals[q]=0;\
-		globals[globals.size()-1][q]=&(locals[q]);\
-	}\
-	globals[globals.size()-1][q]=globals[0][q];
-	
-#define nonlocal(q)\
- 	if (globals[globals.size()-1].find(q) == globals[globals.size()-1].end()){\
-		locals[q]=0;\
-		globals[globals.size()-1][q]=&(locals[q]);\
-	}\
-	globals[globals.size()-1][q]=globals[globals.size()-2][q];
-	
-#define get(q) (*(globals[globals.size()-1][q]))
+#define python_create_level()\
+	python_globals.emplace_back();\
+	std::map<python_level_type_first,python_level_type_second> python_locals;
 
-#define init()\
-	globals.emplace_back();\
-	map<int,int> locals;
-
-#define uninit()\
-	globals.pop_back();
-
-vector<map<int,int*>> globals;
+#define python_delete_level()\
+	python_globals.pop_back();
 int main(){
-	init()
+	python_create_level()
 
-	set(1,10)
-	set(2,20)
-	set(3,30)
-	set(4,40)
+	python_set(1)=10;
+	python_set(2)=20;
+	python_set(3)=30;
+	python_set(4)=40;
 
 	{
-		init()
+		python_create_level()
 
-		set(1,11)
-		set(2,21)
-		set(3,31)
-		set(4,41)
+		python_set(1)=11;
+		python_set(2)=21;
+		python_set(3)=31;
+		python_set(4)=41;
 
 		{
-			init()
+			python_create_level()
 
-			set(1,12)
-			set(2,22)
-			set(3,32)
-			set(4,42)
+			python_set(1)=12;
+			python_set(2)=22;
+			python_set(3)=32;
+			python_set(4)=42;
 
 			{
-				init()
+				python_create_level()
 
-				nonlocal(3)
+				python_nonlocal(3)
 
-				set(1,13)
-				set(2,23)
-				set(3,33)
-				set(4,43)
+				python_set(1)=13;
+				python_set(2)=23;
+				python_set(3)=33;
+				python_set(4)=43;
 
 				{
-					init()
+					python_create_level()
 
-					global(1)
-					nonlocal(2)
-					nonlocal(3)
+					python_global(1)
+					python_nonlocal(2)
+					python_nonlocal(3)
 
-					set(1,14)
-					set(2,24)
-					set(3,34)
-					set(4,44)
+					python_set(1)=14;
+					python_set(2)=24;
+					python_set(3)=34;
+					python_set(4)=44;
 
-					cout<<get(1)<<endl;
-					cout<<get(2)<<endl;
-					cout<<get(3)<<endl;
-					cout<<get(4)<<endl;
+					cout<<python_get(1)<<endl;
+					cout<<python_get(2)<<endl;
+					cout<<python_get(3)<<endl;
+					cout<<python_get(4)<<endl;
 					cout<<"--"<<endl;
 
-					uninit()
+					python_delete_level()
 				}
 
-				cout<<get(1)<<endl;
-				cout<<get(2)<<endl;
-				cout<<get(3)<<endl;
-				cout<<get(4)<<endl;
+				cout<<python_get(1)<<endl;
+				cout<<python_get(2)<<endl;
+				cout<<python_get(3)<<endl;
+				cout<<python_get(4)<<endl;
 				cout<<"--"<<endl;
 
-				uninit()
+				python_delete_level()
 			}
-
-			cout<<get(1)<<endl;
-			cout<<get(2)<<endl;
-			cout<<get(3)<<endl;
-			cout<<get(4)<<endl;
+			cout<<python_get(1)<<endl;
+			cout<<python_get(2)<<endl;
+			cout<<python_get(3)<<endl;
+			cout<<python_get(4)<<endl;
 			cout<<"--"<<endl;
-
-			uninit()
+			python_delete_level()
 		}
-		uninit()
+		cout<<python_get(1)<<endl;
+		cout<<python_get(2)<<endl;
+		cout<<python_get(3)<<endl;
+		cout<<python_get(4)<<endl;
+		cout<<"--"<<endl;
+		python_delete_level()
 	}
-	cout<<get(1)<<endl;
-	cout<<get(2)<<endl;
-	cout<<get(3)<<endl;
-	cout<<get(4)<<endl;
+	cout<<python_get(1)<<endl;
+	cout<<python_get(2)<<endl;
+	cout<<python_get(3)<<endl;
+	cout<<python_get(4)<<endl;
 	cout<<"--"<<endl;
-	uninit()
+	python_delete_level()
+
+	
+	
+	// for(python_set(5):vector<int>({1,2,3,4,5})){
+	// 	cout<<python_get(5)<<endl;
+	// }
 }
