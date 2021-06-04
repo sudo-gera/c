@@ -23,6 +23,11 @@ def execute(filename):
 			['g++','-std=c++17','-Wfatal-errors',filename],
 			['a.out']
 		]
+	if filename.endswith('.c'):
+		return [
+			['cc','-Wfatal-errors',filename],
+			['a.out']
+		]
 	if filename.endswith('.pas'):
 		stdin=open(filename+'.stdin').read()
 		if not stdin.endswith('\n'):

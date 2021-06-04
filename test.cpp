@@ -1,15 +1,12 @@
 #include <bits/stdc++.h>
-// #include <iostream>
-// #include <cmath>
 using namespace std;
 
 
 
-class python_object_pointer{
-
-}
-
 
 
 int main(){
+	for (int64_t w=0;w<1000000000;++w){
+		
+	}
 }
