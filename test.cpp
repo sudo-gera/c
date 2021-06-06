@@ -6,7 +6,6 @@ using namespace std;
 
 
 int main(){
-	for (int64_t w=0;w<1000000000;++w){
-		
-	}
+	auto a=vector<int>({1,2,3});
+
 }
