@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+<<<<<<< HEAD
 #include <string.h>
 #include <tgmath.h>
 #include <stdarg.h>
@@ -40,3 +41,11 @@ int main(){
 	print(len(a),a[0],a[1]);
 	del(a);
 }
+=======
+#include <math.h>
+
+
+int main(){
+	
+}
+>>>>>>> 08bb394a4325c84bfa4b71fdc49ddb31b2cbcb54

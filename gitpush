@@ -1,6 +1,6 @@
 if [ $# -lt 1 ]
 then
-	d="receiveing..."
+	d="*interesting commit message*"
 else
 	d="$1"
 fi

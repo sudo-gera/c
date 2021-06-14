@@ -1,23 +1,14 @@
-class _module:
-	def _import(s):
+class Module:
+	def __dir__(s):
 		from pathlib import Path
-		n=s.n
+		try:
+			ms=open(str(Path.home())+'/.python_modules_db').read().split()
+		except:
+			ms=[]
+		return ms
+	def __getattr__(s,n):
+		from pathlib import Path
 		mn=n.replace('___','.')
-		if mn=='.':
-			from subprocess import run
-			from subprocess import PIPE
-			try:
-				s=run(['pip3','freeze'],stdout=PIPE)
-			except:
-				s=run(['pip3','freeze'],stdout=PIPE)
-			s=s.stdout.decode()
-			s=[w.split('==')[0] for w in s.split('\n')]
-			for w in s:
-				try:
-					w=eval('modules.'+w+'._')
-				except:
-					pass
-			return
 		try:
 			exec('import '+mn)
 			m=eval(mn)
@@ -34,20 +25,4 @@ class _module:
 		open(str(Path.home())+'/.python_modules_db','w').write(' '.join(ms))
 		exec('import '+mn)
 		return eval(mn)
-	def __init__(s,n=None):
-		from pathlib import Path
-		if n!=None:
-			s.n=n
-		else:
-			try:
-				_db=open(str(Path.home())+'/.python_modules_db').read().split()
-			except:
-				_db=[]
-			for w in _db:
-				exec('s.'+w+'=_module(w)')
-	def __getattr__(s,n):
-		if n=='_':
-			return s._import()
-		exec('s.'+n+'=_module(n)')
-		return eval('s.'+n)
-modules=_module()
+modules=Module()
