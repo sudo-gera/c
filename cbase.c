@@ -1,15 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-<<<<<<< HEAD
-#include <tgmath.h>
-#include <string.h>
-
-
-int main(){
-
-}
-=======
-<<<<<<< HEAD
 #include <string.h>
 #include <tgmath.h>
 #include <stdarg.h>
@@ -50,12 +40,3 @@ int main(){
 	print(len(a),a[0],a[1]);
 	del(a);
 }
-=======
-#include <math.h>
-
-
-int main(){
-	
-}
->>>>>>> 08bb394a4325c84bfa4b71fdc49ddb31b2cbcb54
->>>>>>> c627fcfedcd689accb57dfa5bb267d1bbc114416
