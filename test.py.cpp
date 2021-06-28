@@ -1,21 +1,23 @@
 
 /******************************************************************************/
+/*defining numeric*/
+#include<numeric>
+
+/******************************************************************************/
+/*defining vector*/
+#include<vector>
+
+/******************************************************************************/
 /*defining string*/
 #include<string>
 
 /******************************************************************************/
-/*defining Ellipsis*/
-
-				class python_ellipsis{};
-				python_ellipsis python_Ellipsis;
-			
+/*defining stdc++*/
+#include<bits/stdc++.h>
 
 /******************************************************************************/
-/*defining None*/
-
-				class python_NoneType{};
-				python_NoneType python_None;
-			
+/*defining initializer_list*/
+#include<initializer_list>
 
 /******************************************************************************/
 /*defining complex*/
@@ -55,13 +57,18 @@
 				}
 
 				std::string filt(std::string q){
-					return exec(std::string("c++filt -t ")+q);
+					auto a=exec(std::string("c++filt -t ")+q);
+					auto symbs=std::vector<char>(33);
+					iota(symbs.begin(),symbs.end(),0);
+					while(count(symbs.begin(),symbs.end(),a[0])){
+						a=std::string(a.begin()+1,a.end());
+					}
+					while(count(symbs.begin(),symbs.end(),a[a.size()-1])){
+						a=std::string(a.begin(),a.end()-1);
+					}
+					return a;
 				}
 			
-
-/******************************************************************************/
-/*defining vector*/
-#include<vector>
 
 /******************************************************************************/
 /*defining iostream*/
@@ -75,11 +82,26 @@
 /*defining python_variable*/
 
 
+
+				#define fend(q) std::cout<<"line "<<__LINE__<<":\n\tunexpected exit from function"<<std::endl;return make_value(q);
+
+				class python_NoneType{};
+				python_NoneType python_None;
+
+				class python_ellipsis{};
+				python_ellipsis python_Ellipsis;
+
+				template <typename T=python_NoneType>
+				auto make_value(T a=python_None){
+					return a;
+				}
+
 				#define python_complex				std::complex<double>
 				#define python_float				double
 				#define python_int					int64_t
 				#define python_bool					bool
 				#define python_bytearray			std::string
+				#define python_bytes				std::string
 				#define python_str					std::u32string
 				#define python_list					std::vector<var>
 				#define python_set					std::set<var>
@@ -97,6 +119,8 @@
 					if (var(a).type()==typeid(std::declval<python_variable<__VA_ARGS__>>()))
 
 				#define cast(q,...) (var(q).cast_with_line<__VA_ARGS__>(__LINE__))
+
+				#define super_cast(q,...) cast(__python__##__VA_ARGS__(q),python_##__VA_ARGS__)
 
 				#define print_line() std::cout<<__LINE__<<std::endl;
 
@@ -219,21 +243,30 @@
 						var orig;
 						var iter;
 						iterator(var q):orig(q),iter(q){
+							int64_t c=0;
 							{python_iftype(orig,python_list){
 								iter=cast(orig,decltype(s)).begin();
+								c=1;
 							}}
 							{python_iftype(orig,python_set){
 								iter=cast(orig,decltype(s)).begin();
+								c=1;
 							}}
 							{python_iftype(orig,python_dict){
 								iter=cast(orig,decltype(s)).begin();
+								c=1;
 							}}
 							{python_iftype(orig,python_str){
 								iter=cast(orig,decltype(s)).begin();
+								c=1;
 							}}
 							{python_iftype(orig,python_bytearray){
 								iter=cast(orig,decltype(s)).begin();
+								c=1;
 							}}
+							if(!c){
+								std::cout<<filt(orig.type().name())<<" is not iterable"<<std::endl;
+							}
 						}
 						
 						void operator++(){
@@ -269,7 +302,7 @@
 							{python_iftype(orig,python_bytearray){
 								return cast(iter,decltype(s)::iterator)!=cast(orig,decltype(s)).end();
 							}}
-							return python_int(0);
+							fend(0)
 						}
 						var operator*(){
 							{python_iftype(orig,python_list){
@@ -287,7 +320,7 @@
 							{python_iftype(orig,python_bytearray){
 								return python_bytearray({*cast(iter,decltype(s)::iterator)});
 							}}
-							return python_int(0);
+							fend();
 						}
 					};
 					iterator begin(){
@@ -297,34 +330,6 @@
 						return iterator(orig);
 					}
 				};
-			
-
-/******************************************************************************/
-/*defining builtins_float*/
-
-				var __python__float(var q=python_int(0)){
-				//	{python_iftype(q,python_str){
-				//		return s;
-				//	}
-				//	}
-				//	{python_iftype(q,python_bytearray){
-				//		return to_u32(s);
-				//	}
-				//	}
-					{python_iftype(q,python_int){
-						return (python_float)(s);
-					}
-					}
-					{python_iftype(q,python_float){
-						return s;
-					}
-					}
-					{python_iftype(q,int){
-						return (python_float)(s);
-					}
-					}
-					return python_int(0);
-				}
 			
 
 /******************************************************************************/
@@ -407,8 +412,99 @@
 			
 
 /******************************************************************************/
-/*defining unordered_map*/
-#include<unordered_map>
+/*defining builtins_float*/
+
+				var __python__float(var q=python_int(0)){
+				//	{python_iftype(q,python_str){
+				//		return s;
+				//	}
+				//	}
+				//	{python_iftype(q,python_bytearray){
+				//		return to_u32(s);
+				//	}
+				//	}
+					{python_iftype(q,python_int){
+						return (python_float)(s);
+					}
+					}
+					{python_iftype(q,python_float){
+						return s;
+					}
+					}
+					{python_iftype(q,int){
+						return (python_float)(s);
+					}
+					}
+					fend()
+				}
+			
+
+/******************************************************************************/
+/*defining builtins_str*/
+
+				var __python__str(var q=python_str()){
+					{python_iftype(q,python_str){
+						return s;
+					}
+					}
+					{python_iftype(q,python_bytearray){
+						python_bytes r="b'";
+						for (auto _w:s){
+							auto w=(unsigned char)(_w);
+							if(w==9){
+								r+="\\t";
+							}else if(w==10){
+								r+="\\n";
+							}else if(w==13){
+								r+="\\r";
+							}else if(w==76){
+								r+="\\\\";
+							}else if(w>126 or w<32){
+								r+=python_bytes({'\\','x',python_bytes("0123456789abcdef")[w/16],python_bytes("0123456789abcdef")[w%16]});
+							}else{
+								r+=python_bytes({_w});
+							}
+						}
+						r+="'";
+						return to_u32(r);
+					}
+					}
+					{python_iftype(q,python_int){
+						return to_u32(std::to_string(s));
+					}
+					}
+					{python_iftype(q,python_float){
+						return to_u32(std::to_string(s));
+					}
+					}
+					{python_iftype(q,python_complex){
+						if (s.imag()<0){
+							return to_u32(std::to_string(s.real())+std::to_string(s.imag())+"j");
+						}else{
+							return to_u32(std::to_string(s.real())+"+"+std::to_string(s.imag())+"j");
+						}
+					}
+					}
+					{python_iftype(q,int){
+						return to_u32(std::to_string(s));
+					}
+					}
+					{python_iftype(q,python_bool){
+						return to_u32(s?"True":"False");
+					}
+					}
+					{python_iftype(q,python_NoneType){
+						return to_u32("None");
+					}
+					}
+					{python_iftype(q,python_ellipsis){
+						return to_u32("Ellipsis");
+					}
+					}
+
+					fend()
+				}
+			
 
 /******************************************************************************/
 /*defining builtins_complex*/
@@ -429,64 +525,28 @@
 			
 
 /******************************************************************************/
-/*defining levels*/
+/*defining unordered_map*/
+#include<unordered_map>
 
-				#define python_level_type_first python_str
-				#define python_level_type_second var
-				#define convert_first_type to_u8
-				std::vector<std::unordered_map<python_level_type_first,python_level_type_second*>> python_globals;
-				std::vector<std::unordered_map<python_level_type_first,python_level_type_second>*> python_locals_pointers;
-				#define python_global(q)\
-				 	if (!python_globals[0].count(q)){\
-						(*(python_locals_pointers[0]))[q]=int64_t(0);\
-						python_globals[0][q]=&((*(python_locals_pointers[0]))[q]);\
-					}\
-					python_globals[python_globals.size()-1][q]=python_globals[0][q];
+/******************************************************************************/
+/*defining builtins_print*/
 
-				#define python_nonlocal(q)\
-				 	if (!python_globals[python_globals.size()-2].count(q)){\
-						(*(python_locals_pointers[python_locals_pointers.size()-2]))[q]=int64_t(0);\
-						python_globals[python_globals.size()-2][q]=&((*(python_locals_pointers[python_locals_pointers.size()-2]))[q]);\
-					}\
-					python_globals[python_globals.size()-1][q]=python_globals[python_globals.size()-2][q];
-					
-				#define python_level_get(...) python_level_get_with_line(__VA_ARGS__,__LINE__)
-
-				python_level_type_second& python_level_get_with_line(python_level_type_first q,int64_t line){
-					for (int64_t w=python_globals.size()-1;w>=0;--w){
-						if (python_globals[w].count(q)){
-							return *(python_globals[w][q]);
-						}
+				var __python__print(var q=python_list(),var sep=python_str({' '}),var end=python_str({'\n'})){
+					auto s=python_str();
+					auto _end=cast(__python__str(end),python_str);
+					auto _sep=cast(__python__str(sep),python_str);
+					auto c=python_int(0);
+					{python_iftype(q,python_list){}else{
+						q=python_list({q});
+					}}
+					for (var w:python_iterate(q)){
+						s+=(c?_sep:python_str())+cast(__python__str(w),python_str);
+						c=c?c:1;
 					}
-					std::cout<<std::string("line ")<<line<<std::string("\nname ")+convert_first_type(q)+std::string(" is undefined")<<std::endl;
-					return *(python_globals[0][q]);
+					s+=_end;
+					std::cout<<to_u8(s);
+					return python_None;
 				}
-
-				bool __python__isdefined(python_level_type_first q){
-					for (auto w=python_globals.size()-1;w>=0;--w){
-						if (python_globals[w].count(q)){
-							return true;
-						}
-					}
-					return false;
-				}
-
-				python_level_type_second& python_level_set(python_level_type_first q){
-					if (!python_globals[python_globals.size()-1].count(q)) {
-						(*(python_locals_pointers[python_locals_pointers.size()-1]))[q]=int64_t(0);
-						python_globals[python_globals.size()-1][q]=&((*(python_locals_pointers[python_locals_pointers.size()-1]))[q]);
-					}
-					return *(python_globals[python_globals.size()-1][q]);
-				}
-
-				#define python_create_level()\
-					python_globals.emplace_back();\
-					std::unordered_map<python_level_type_first,python_level_type_second> python_locals;\
-					python_locals_pointers.push_back(&python_locals);
-
-				#define python_delete_level()\
-					python_globals.pop_back();\
-					python_locals_pointers.pop_back();
 			
 
 /******************************************************************************/
@@ -780,7 +840,7 @@
 					}}
 
 					std::cout<<"failed to compare "<<q.type().name()<<" and "<<w.type().name()<<std::endl;
-					return python_int(0);
+					fend(0)
 				}
 
 				bool var::operator<(const var o) const{
@@ -788,6 +848,126 @@
 						var w=o;
 						return cmp(q,w)<0;
 					}
+			
+
+/******************************************************************************/
+/*defining builtins_list*/
+
+				var __python__list(var q=python_list()){
+					auto s=python_list();
+					for (var w:python_iterate(q)){
+						s.push_back(w);
+					}
+					return s;
+				}
+			
+
+/******************************************************************************/
+/*defining builtins_dict*/
+
+				var __python__dict(var q=python_dict()){
+					auto s=python_dict();
+					return s;
+				}
+			
+
+/******************************************************************************/
+/*defining builtins_type*/
+
+				var __python__type(var q){
+					return to_u32(filt(q.type().name()));
+				}
+			
+
+/******************************************************************************/
+/*defining levels*/
+
+				#define python_level_type_first python_str
+				#define python_level_type_second var
+				#define convert_first_type to_u8
+				std::vector<std::unordered_map<python_level_type_first,python_level_type_second*>> python_globals;
+				std::vector<std::unordered_map<python_level_type_first,python_level_type_second>*> python_locals_pointers;
+				#define python_global(q)\
+				 	if (!python_globals[0].count(q)){\
+						(*(python_locals_pointers[0]))[q]=int64_t(0);\
+						python_globals[0][q]=&((*(python_locals_pointers[0]))[q]);\
+					}\
+					python_globals[python_globals.size()-1][q]=python_globals[0][q];
+
+				#define python_nonlocal(q)\
+				 	if (!python_globals[python_globals.size()-2].count(q)){\
+						(*(python_locals_pointers[python_locals_pointers.size()-2]))[q]=int64_t(0);\
+						python_globals[python_globals.size()-2][q]=&((*(python_locals_pointers[python_locals_pointers.size()-2]))[q]);\
+					}\
+					python_globals[python_globals.size()-1][q]=python_globals[python_globals.size()-2][q];
+					
+				#define python_level_get(...) python_level_get_with_line(__VA_ARGS__,__LINE__)
+
+				python_level_type_second& python_level_get_with_line(python_level_type_first q,int64_t line){
+					for (int64_t w=python_globals.size()-1;w>=0;--w){
+						if (python_globals[w].count(q)){
+							return *(python_globals[w][q]);
+						}
+					}
+					std::cout<<std::string("line ")<<line<<std::string("\nname ")+convert_first_type(q)+std::string(" is undefined")<<std::endl;
+					return *(python_globals[0][q]);
+				}
+
+				bool __python__isdefined(python_level_type_first q){
+					for (auto w=python_globals.size()-1;w>=0;--w){
+						if (python_globals[w].count(q)){
+							return true;
+						}
+					}
+					return false;
+				}
+
+				python_level_type_second& python_level_set(python_level_type_first q){
+					if (!python_globals[python_globals.size()-1].count(q)) {
+						(*(python_locals_pointers[python_locals_pointers.size()-1]))[q]=int64_t(0);
+						python_globals[python_globals.size()-1][q]=&((*(python_locals_pointers[python_locals_pointers.size()-1]))[q]);
+					}
+					return *(python_globals[python_globals.size()-1][q]);
+				}
+
+				#define python_create_level()\
+					python_globals.emplace_back();\
+					std::unordered_map<python_level_type_first,python_level_type_second> python_locals;\
+					python_locals_pointers.push_back(&python_locals);
+
+				#define python_delete_level()\
+					python_globals.pop_back();\
+					python_locals_pointers.pop_back();
+			
+
+/******************************************************************************/
+/*defining func_example*/
+
+				var func_example(var args,var kwargs){fend()}
+			
+
+/******************************************************************************/
+/*defining builtins_int*/
+
+			var __python__int(var q=python_int(0),var w=python_int(0)){
+				{python_iftype(w,python_int){	
+				}else{
+					w=__python__int(w);					
+				}}
+								{python_iftype(q,python_int){auto qs=s;
+					return python_int(qs);
+				}}
+
+				{python_iftype(q,python_float){auto qs=s;
+					return python_int(qs);
+				}}
+
+				{python_iftype(q,python_bool){auto qs=s;
+					return python_int(qs);
+				}}
+
+				fend()
+			}
 			
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -804,18 +984,96 @@ var _1000000000000000001(var args, var kwargs){
 	python_delete_level()
 	return to_return;};
 }
-/*complex*/
-var _1000000000000000002;
-var _1000000000000000003;
-var _1000000000000000004(var args, var kwargs){
+/*str*/
+var _1000000000000000002(var args, var kwargs){
 	python_create_level()
-	python_level_set(std::u32string({120})/*x*/)=_1000000000000000002;
-	python_level_set(std::u32string({121})/*y*/)=_1000000000000000003;
+	if(cast(kwargs,python_dict).count(std::u32string({120})/*x*/)){python_level_set(std::u32string({120})/*x*/)=cast(kwargs,python_dict)[std::u32string({120})/*x*/];}
+	if(cast(args,python_list).size()>0){python_level_set(std::u32string({120})/*x*/)=cast(args,python_list)[0];}
+	{var to_return=__python__str(python_level_get(std::u32string({120})/*x*/));
+	python_delete_level()
+	return to_return;}
+	{var to_return=python_None;
+	python_delete_level()
+	return to_return;};
+}
+/*complex*/
+var _1000000000000000003;
+var _1000000000000000004;
+var _1000000000000000005(var args, var kwargs){
+	python_create_level()
+	python_level_set(std::u32string({120})/*x*/)=_1000000000000000003;
+	python_level_set(std::u32string({121})/*y*/)=_1000000000000000004;
 	if(cast(kwargs,python_dict).count(std::u32string({120})/*x*/)){python_level_set(std::u32string({120})/*x*/)=cast(kwargs,python_dict)[std::u32string({120})/*x*/];}
 	if(cast(kwargs,python_dict).count(std::u32string({121})/*y*/)){python_level_set(std::u32string({121})/*y*/)=cast(kwargs,python_dict)[std::u32string({121})/*y*/];}
 	if(cast(args,python_list).size()>0){python_level_set(std::u32string({120})/*x*/)=cast(args,python_list)[0];}
 	if(cast(args,python_list).size()>1){python_level_set(std::u32string({121})/*y*/)=cast(args,python_list)[1];}
 	{var to_return=__python__complex(python_level_get(std::u32string({120})/*x*/),python_level_get(std::u32string({121})/*y*/));
+	python_delete_level()
+	return to_return;}
+	{var to_return=python_None;
+	python_delete_level()
+	return to_return;};
+}
+/*print*/
+var _1000000000000000006;
+var _1000000000000000007;
+var _1000000000000000008(var args, var kwargs){
+	python_create_level()
+	python_level_set(std::u32string({115,101,112})/*sep*/)=_1000000000000000006;
+	python_level_set(std::u32string({101,110,100})/*end*/)=_1000000000000000007;
+	if(cast(kwargs,python_dict).count(std::u32string({115,101,112})/*sep*/)){python_level_set(std::u32string({115,101,112})/*sep*/)=cast(kwargs,python_dict)[std::u32string({115,101,112})/*sep*/];}
+	if(cast(kwargs,python_dict).count(std::u32string({101,110,100})/*end*/)){python_level_set(std::u32string({101,110,100})/*end*/)=cast(kwargs,python_dict)[std::u32string({101,110,100})/*end*/];}
+	python_level_set(std::u32string({113})/*q*/)=python_list();
+	if(cast(args,python_list).size()>0){python_level_set(std::u32string({113})/*q*/)=python_list(cast(args,python_list).begin()+0,cast(args,python_list).end());}
+	{var to_return=__python__print(python_level_get(std::u32string({113})/*q*/),python_level_get(std::u32string({115,101,112})/*sep*/),python_level_get(std::u32string({101,110,100})/*end*/));
+	python_delete_level()
+	return to_return;}
+	{var to_return=python_None;
+	python_delete_level()
+	return to_return;};
+}
+/*list*/
+var _1000000000000000009(var args, var kwargs){
+	python_create_level()
+	if(cast(kwargs,python_dict).count(std::u32string({120})/*x*/)){python_level_set(std::u32string({120})/*x*/)=cast(kwargs,python_dict)[std::u32string({120})/*x*/];}
+	if(cast(args,python_list).size()>0){python_level_set(std::u32string({120})/*x*/)=cast(args,python_list)[0];}
+	{var to_return=__python__list(python_level_get(std::u32string({120})/*x*/));
+	python_delete_level()
+	return to_return;}
+	{var to_return=python_None;
+	python_delete_level()
+	return to_return;};
+}
+/*dict*/
+var _1000000000000000010(var args, var kwargs){
+	python_create_level()
+	if(cast(kwargs,python_dict).count(std::u32string({120})/*x*/)){python_level_set(std::u32string({120})/*x*/)=cast(kwargs,python_dict)[std::u32string({120})/*x*/];}
+	if(cast(args,python_list).size()>0){python_level_set(std::u32string({120})/*x*/)=cast(args,python_list)[0];}
+	{var to_return=__python__dict(python_level_get(std::u32string({120})/*x*/));
+	python_delete_level()
+	return to_return;}
+	{var to_return=python_None;
+	python_delete_level()
+	return to_return;};
+}
+/*type*/
+var _1000000000000000011(var args, var kwargs){
+	python_create_level()
+	if(cast(kwargs,python_dict).count(std::u32string({120})/*x*/)){python_level_set(std::u32string({120})/*x*/)=cast(kwargs,python_dict)[std::u32string({120})/*x*/];}
+	if(cast(args,python_list).size()>0){python_level_set(std::u32string({120})/*x*/)=cast(args,python_list)[0];}
+	{var to_return=__python__type(python_level_get(std::u32string({120})/*x*/));
+	python_delete_level()
+	return to_return;}
+	{var to_return=python_None;
+	python_delete_level()
+	return to_return;};
+}
+/*int*/
+var _1000000000000000012(var args, var kwargs){
+	python_create_level()
+	if(cast(kwargs,python_dict).count(std::u32string({120})/*x*/)){python_level_set(std::u32string({120})/*x*/)=cast(kwargs,python_dict)[std::u32string({120})/*x*/];}
+	if(cast(args,python_list).size()>0){python_level_set(std::u32string({120})/*x*/)=cast(args,python_list)[0];}
+	{var to_return=__python__int(python_level_get(std::u32string({120})/*x*/));
 	python_delete_level()
 	return to_return;}
 	{var to_return=python_None;
@@ -828,17 +1086,27 @@ int main(int argc,char **argv){
 python_create_level()
 
 /******************************************************************************/
+/*defining numeric*/
+
+
+
+/******************************************************************************/
+/*defining vector*/
+
+
+
+/******************************************************************************/
 /*defining string*/
 
 
 
 /******************************************************************************/
-/*defining Ellipsis*/
-python_level_set(std::u32string({69,108,108,105,112,115,105,115})/*Ellipsis*/)=python_Ellipsis;
+/*defining stdc++*/
+
 
 
 /******************************************************************************/
-/*defining None*/
+/*defining initializer_list*/
 
 
 
@@ -863,11 +1131,6 @@ python_level_set(std::u32string({69,108,108,105,112,115,105,115})/*Ellipsis*/)=p
 
 
 /******************************************************************************/
-/*defining vector*/
-
-
-
-/******************************************************************************/
 /*defining iostream*/
 
 
@@ -879,6 +1142,11 @@ python_level_set(std::u32string({69,108,108,105,112,115,105,115})/*Ellipsis*/)=p
 
 /******************************************************************************/
 /*defining python_variable*/
+python_level_set(std::u32string({69,108,108,105,112,115,105,115})/*Ellipsis*/)=python_Ellipsis;
+
+
+/******************************************************************************/
+/*defining unicode_convert*/
 
 
 
@@ -890,7 +1158,18 @@ python_level_set(std::u32string({69,108,108,105,112,115,105,115})/*Ellipsis*/)=p
 
 
 /******************************************************************************/
-/*defining unicode_convert*/
+/*defining builtins_str*/
+	python_level_set(std::u32string({115,116,114})/*str*/)=_1000000000000000002;
+
+
+
+
+/******************************************************************************/
+/*defining builtins_complex*/
+_1000000000000000003=python_int(0);
+_1000000000000000004=python_int(0);
+	python_level_set(std::u32string({99,111,109,112,108,101,120})/*complex*/)=_1000000000000000005;
+
 
 
 
@@ -900,10 +1179,37 @@ python_level_set(std::u32string({69,108,108,105,112,115,105,115})/*Ellipsis*/)=p
 
 
 /******************************************************************************/
-/*defining builtins_complex*/
-_1000000000000000002=python_int(0);
-_1000000000000000003=python_int(0);
-	python_level_set(std::u32string({99,111,109,112,108,101,120})/*complex*/)=_1000000000000000004;
+/*defining builtins_print*/
+_1000000000000000006=std::u32string({32})/* */;
+_1000000000000000007=std::u32string({10})/*
+*/;
+	python_level_set(std::u32string({112,114,105,110,116})/*print*/)=_1000000000000000008;
+
+
+
+
+/******************************************************************************/
+/*defining cmp*/
+
+
+
+/******************************************************************************/
+/*defining builtins_list*/
+	python_level_set(std::u32string({108,105,115,116})/*list*/)=_1000000000000000009;
+
+
+
+
+/******************************************************************************/
+/*defining builtins_dict*/
+	python_level_set(std::u32string({100,105,99,116})/*dict*/)=_1000000000000000010;
+
+
+
+
+/******************************************************************************/
+/*defining builtins_type*/
+	python_level_set(std::u32string({116,121,112,101})/*type*/)=_1000000000000000011;
 
 
 
@@ -914,23 +1220,26 @@ _1000000000000000003=python_int(0);
 
 
 /******************************************************************************/
-/*defining cmp*/
+/*defining func_example*/
+
+
+
+/******************************************************************************/
+/*defining builtins_int*/
+	python_level_set(std::u32string({105,110,116})/*int*/)=_1000000000000000012;
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
 //main code
-/*ListComp(
-    elt=Name(id='w', ctx=Load()),
-    generators=[
-        comprehension(
-            target=Name(id='w', ctx=Store()),
-            iter=Name(id='a', ctx=Load()),
-            ifs=[],
-            is_async=0),
-        comprehension(
-            target=Name(id='w', ctx=Store()),
-            iter=Name(id='a', ctx=Load()),
-            ifs=[],
-            is_async=0)])*/;
+(*cast(python_level_get(std::u32string({112,114,105,110,116})/*print*/),decltype(&func_example)))(python_list({var((*cast(python_level_get(std::u32string({105,110,116})/*int*/),decltype(&func_example)))(python_list({var(python_int(1))}),python_dict({})))}),python_dict({}));
+
+(*cast(python_level_get(std::u32string({116,121,112,101})/*type*/),decltype(&func_example)))(python_list({var(python_int(9))}),python_dict({}));
+
+var f=bool(1);
+var g=super_cast(f,int);
+std::cout<<to_u8(cast(__python__type(f),python_str))<<std::endl;
+std::cout<<to_u8(cast(__python__type(g),python_str))<<std::endl;
+
 
 python_delete_level()}

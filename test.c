@@ -1,15 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-<<<<<<< HEAD
 #include <tgmath.h>
 #include <string.h>
-
-
-int main(){
-
-}
-=======
-<<<<<<< HEAD
 #include <string.h>
 #include <tgmath.h>
 #include <stdarg.h>
@@ -42,20 +34,8 @@ int input(){
 #define push(n,q) (n)=(int*)(realloc(&len(n),len(n)*4+8))+1;(n)[len(n)++]=q;
 #define del(n) free(&len(n));
 
-int main(){
-	int* a=list();
-	print_nn(len(a));
-	push(a,input());
-	push(a,input());
-	print(len(a),a[0],a[1]);
-	del(a);
-}
-=======
-#include <math.h>
 
 
-int main(){
-	
+int main(int argc, char const *argv[])
+{
 }
->>>>>>> 08bb394a4325c84bfa4b71fdc49ddb31b2cbcb54
->>>>>>> c627fcfedcd689accb57dfa5bb267d1bbc114416
