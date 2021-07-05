@@ -7,21 +7,14 @@ exit
 
 
 
-class lancom:
+def __lancom__():
 	class Server:
-		class running:
-			def __init__(s,ms):
-				s.ms=ms
-
-			def __enter__(s):
-				return s
-
-			def __exit__(s):
-				myServer.server_close()
-
 		def run_server(server_self,myServer):
-			with server_self.running(myServer) as d:
-				d.ms.serve_forever()
+			try:
+				myServer.serve_forever()
+			except:
+				print('server_stop')
+				myServer.server_close()
 
 		def do(server_self,self,data=None):
 			path=self.path
@@ -35,7 +28,7 @@ class lancom:
 				server_self.s2u.put([path,data])
 				ret=server_self.u2s.get()
 			else:
-				ret=server_self.call(path,data)
+				ret=server_self.call(path,data,server_self)
 
 			ct='file/file'
 			while type(ret)!=bytes:
@@ -48,14 +41,13 @@ class lancom:
 					ret=repr(ret)
 			return ret,ct
 
-
 		def __bool__(s):
 			return s.has()
 
-
-
 		def __init__(server_self,call=None,port=None,):
 			server_self.call=call
+			from time import time
+			server_self.id=int(time()*2**64)
 			from queue import Queue
 			server_self.u2s=Queue()
 			server_self.s2u=Queue()
@@ -99,11 +91,13 @@ class lancom:
 				hostPort=12345
 			hostName='0.0.0.0'
 			class ThreadingSimpleServer(ThreadingMixIn, HTTPServer):
-			    pass
+				pass
+			server_to_run=ThreadingSimpleServer
+			# server_to_run=HTTPServer
 			st=1
 			while st:
 				try:
-					myServer = ThreadingSimpleServer((hostName, hostPort), MyServer)
+					myServer = server_to_run((hostName, hostPort), MyServer)
 					st=0
 				except:
 					if port==None:
@@ -111,12 +105,13 @@ class lancom:
 					else:
 						BaseException(f'port {port} is used')
 			server_self.port=hostPort
-			from threading import Thread
-			server_self.thread=Thread(target=partial(server_self.run_server,myServer))
-			server_self.thread.start()
+			from threading import Thread as bg
+			# from multiprocessing import Process as bg
+			server_self.bg=bg(target=partial(server_self.run_server,myServer))
+			server_self.bg.start()
 
 	qs=[]
-	def call(qs,path,data):
+	def call(qs,path,data,server_self):
 		from queue import Queue
 		from json import loads,dumps
 		try:
@@ -130,16 +125,23 @@ class lancom:
 			elif path.startswith('has'):
 				path=int(path[3:])
 				return dumps(qs[path].qsize())
+			elif path.startswith('id'):
+				return dumps(server_self.id)
 			elif path.startswith('new'):
+				path=int(path[3:])
 				qs.append(Queue())
 				qs.append(Queue())
-				auto_connected.append(Connection('127.0.0.1:'+str(server.port),len(qs)-1,len(qs)-2))
+				auto_connected.append(Connection('127.0.0.1:'+str(server.port),len(qs)-1,len(qs)-2,path))
 				return dumps([len(qs)-2,len(qs)-1])
+			elif path.startswith('kill'):
+				raise KeyboardInterrupt
+		except KeyboardInterrupt:
+			raise KeyboardInterrupt
 		except:
 			from traceback import format_exc
 			print(format_exc())
-		from functools import partial
-		call=partial(call,qs)
+	from functools import partial
+	call=partial(call,qs)
 
 
 	server=Server(call=call)
@@ -159,48 +161,94 @@ class lancom:
 		return q
 
 
-def get_port():
-	return lancom.server.port
+	def get_port():
+		return server.port
+	# get_port=partial(get_port,server)
 
-def get_ips():
-	from os import popen
-	a=popen('ifconfig 2>&1').read().split()+popen('ipconfig 2>&1').read().split()
-	a=[a[w:w+2] for w in range(len(a))]
-	a=[w[1] for w in a if w[0].lower()=='inet']
-	return a
 
-auto_connected=[]
-
-class Connection:
-	def __init__(s,q,w=None,e=None):
-		q=lancom.makeurl(q)
-		s.url=q
-		if w==None:
-			w,e=s.req('new')
-		s.r2s=w
-		s.s2r=e
-
-	def req(s,q,w=None,e=None):
+	def req(q='',w='',e=get_port,url='http://127.0.0.1:'+str(get_port())+'/'):
 		from json import loads,dumps
 		from urllib.request import urlopen
-		if w==None:
-			return loads(urlopen(s.url+str(q)).read().decode())
-		elif e==None:
-			return loads(urlopen(s.url+str(q)+str(w)).read().decode())
+		if e==get_port:
+			return loads(urlopen(str(url)+str(q)+str(w)).read().decode())
 		else:
-			return loads(urlopen(s.url+str(q)+str(w),data=dumps(e).encode()).read().decode())
+			return loads(urlopen(str(url)+str(q)+str(w),data=dumps(e).encode()).read().decode())
 
-	def get(s):
-		return s.req('get',s.r2s)
+	def get_id():
+		return req('id')
 
-	def has(s):
-		return s.req('has',s.r2s)
+	def get_ips():
+		from os import popen
+		a=['ifconfig','ipconfig','ip a','wsl ifconfig','wsl ip a','wine ipconfig']
+		a=[[w+' 2>&1'] for w in a]
+		for w in a:
+			try:
+				w[0]=popen(w[0]).read()
+			except:
+				w[0]=''
+		a=sum(a,[])
+		a=' '+' '.join(a)+' 127.0.0.1 '
+		# a=' '+popen('ifconfig 2>&1').read()+' '+popen('ip a 2>&1').read()+' '+popen('ipconfig 2>&1').read()+' '+popen('wine ipconfig 2>&1').read()+' 127.0.0.1 '
+		import re
+		a=re.findall(r'\s\d+\.\d+\.\d+\.\d+\s',a)
+		a=[w.strip() for w in a]
+		a=[w for w in a if all([int(e)<256 for e in w.split('.')])]
+		from functools import reduce
+		a.sort()
+		a=reduce(lambda a,s:a if a and a[-1]==s else a+[s],a,[])
+		a=[w+':'+str(get_port()) for w in a]
+		a=[[w] for w in a]
+		from urllib.request import urlopen
+		rid=req('id')
+		for w in a:
+			try:
+				t=req('id',url=makeurl(w[0]))
+				if rid!=t:
+					w.pop()
+			except:
+				from traceback import format_exc
+				w.pop()
+		a=sum(a,[])
+		from difflib import ndiff
+		a.sort(key=lambda a:len(list(filter(lambda a:a.startswith(' '),ndiff(a,'127.0.0.1:'+str(get_port()))))),reverse=1)
+		return a
 
-	def put(s,d):
-		return s.req('put',s.s2r,d)
+	def stop_connections():
+		from urllib.request import urlopen
+		try:
+			req('kill')
+		except:
+			pass
+		try:
+			server.bg.join()
+		except:
+			pass
 
+	auto_connected=[]
 
+	class Connection:
+		def __init__(s,q,w=None,e=None,r=None):
+			q=makeurl(q)
+			s.url=q
+			if w==None:
+				w,e=req('new',req('id'),url=s.url)
+				r=req('id',url=s.url)
+			s.r2s=w
+			s.s2r=e
+			s.id=r
 
+		def get(s):
+			return req('get',s.r2s,url=s.url)
+
+		def has(s):
+			return req('has',s.r2s,url=s.url)
+
+		def put(s,d):
+			return req('put',s.s2r,d,url=s.url)
+
+	return get_ips,stop_connections,auto_connected,Connection,get_id
+
+get_ips,stop_connections,auto_connected,Connection,get_id=__lancom__()
 
 
 
