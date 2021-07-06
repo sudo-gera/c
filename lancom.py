@@ -107,6 +107,7 @@ def __lancom__():
 			server_self.port=hostPort
 			from threading import Thread as bg
 			# from multiprocessing import Process as bg
+			server_self.ms=MyServer
 			server_self.bg=bg(target=partial(server_self.run_server,myServer))
 			server_self.bg.start()
 
@@ -121,7 +122,7 @@ def __lancom__():
 			elif path.startswith('put'):
 				path=int(path[3:])
 				qs[path].put(data)
-				return dumps(None)
+				return data
 			elif path.startswith('has'):
 				path=int(path[3:])
 				return dumps(qs[path].qsize())
@@ -214,9 +215,12 @@ def __lancom__():
 		return a
 
 	def stop_connections():
-		from urllib.request import urlopen
+		# try:
+		# 	req('kill')
+		# except:
+		# 	pass
 		try:
-			req('kill')
+			server.ms.server_close()
 		except:
 			pass
 		try:
@@ -246,9 +250,9 @@ def __lancom__():
 		def put(s,d):
 			return req('put',s.s2r,d,url=s.url)
 
-	return get_ips,stop_connections,auto_connected,Connection,get_id
+	return get_ips,auto_connected,Connection,get_id
 
-get_ips,stop_connections,auto_connected,Connection,get_id=__lancom__()
+get_ips,auto_connected,Connection,get_id=__lancom__()
 
 
 
