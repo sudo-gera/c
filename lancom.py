@@ -8,7 +8,7 @@ exit
 
 
 def __lancom__():
-	class Server:
+	class real_server:
 		def run_server(server_self,myServer):
 			try:
 				myServer.serve_forever()
@@ -132,7 +132,15 @@ def __lancom__():
 				path=int(path[3:])
 				qs.append(Queue())
 				qs.append(Queue())
-				auto_connected.append(Connection('127.0.0.1:'+str(server.port),len(qs)-1,len(qs)-2,path))
+				d=Connection('127.0.0.1:'+str(server.port),len(qs)-1,len(qs)-2,path)
+				auto_connected.append(d)
+				if hasattr(userver,'on_connection'):
+					try:
+						userver.on_connection(d)
+					except:
+						from traceback import format_exc 
+						from sys import stderr
+						print(format_exc(),file=stderr)
 				return dumps([len(qs)-2,len(qs)-1])
 			elif path.startswith('kill'):
 				raise KeyboardInterrupt
@@ -140,12 +148,13 @@ def __lancom__():
 			raise KeyboardInterrupt
 		except:
 			from traceback import format_exc
-			print(format_exc())
+			from sys import stderr
+			print(format_exc(),file=stderr)
 	from functools import partial
 	call=partial(call,qs)
 
 
-	server=Server(call=call)
+	server=real_server(call=call)
 	# print(server.port)
 
 	def makeurl(q):
@@ -174,9 +183,6 @@ def __lancom__():
 			return loads(urlopen(str(url)+str(q)+str(w)).read().decode())
 		else:
 			return loads(urlopen(str(url)+str(q)+str(w),data=dumps(e).encode()).read().decode())
-
-	def get_id():
-		return req('id')
 
 	def get_ips():
 		from os import popen
@@ -207,7 +213,6 @@ def __lancom__():
 				if rid!=t:
 					w.pop()
 			except:
-				from traceback import format_exc
 				w.pop()
 		a=sum(a,[])
 		from difflib import ndiff
@@ -233,26 +238,60 @@ def __lancom__():
 	class Connection:
 		def __init__(s,q,w=None,e=None,r=None):
 			q=makeurl(q)
-			s.url=q
+			s.serverurl=q
 			if w==None:
 				w,e=req('new',req('id'),url=s.url)
 				r=req('id',url=s.url)
 			s.r2s=w
 			s.s2r=e
 			s.id=r
-
-		def get(s):
-			return req('get',s.r2s,url=s.url)
+			from queue import Queue
+			s.gq=Queue()
+			from threading import Thread
+			s.bg=Thread(target=s._autoget)
+			s.bg.start()
 
 		def has(s):
 			return req('has',s.r2s,url=s.url)
 
+		def get(s):
+			return s.gq.get()
+
 		def put(s,d):
 			return req('put',s.s2r,d,url=s.url)
 
-	return get_ips,auto_connected,Connection,get_id
+		def _autoget(s):
+			while 1:
+				try:
+					d=req('get',s.r2s,url=s.url)
+					if hasattr(s,'on_message'):
+						s.on_message(d)
+					else:
+						s.gq.put(d)
+				except:
+					from traceback import format_exc
+					from sys import stderr
+					print(format_exc(),file=stderr)
 
-get_ips,auto_connected,Connection,get_id=__lancom__()
+	class user_server:
+		@property
+		def id(s):
+			return s._id
+		@property
+		def ip(s):
+			return s._ip()
+		@property
+		def connected(s):
+			return s._connected[:]
 
+	userver=user_server()
+	userver._id=req('id')
+	userver._ip=get_ips	
+	userver._connected=auto_connected
+
+	return userver,Connection
+
+server,connect=__lancom__()
+del(__lancom__)
 
 
