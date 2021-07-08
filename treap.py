@@ -118,7 +118,7 @@ def supertree(s,p=0):
 		for e in range(len(r)):
 			r[e][w]=(r[e][w]+' '*ml)[:ml]
 	r=[''.join(w) for w in r]
-	r='\n'.join(r)
+	r='\n'.join(r)+'\n'
 	return r
 
 def get_by_index(s,n):
@@ -168,6 +168,36 @@ def count(s,v):
 	if s==None:
 		return 0
 	return count(s.z,v)+(s.v==v)+count(s.x,v)
+
+def part_f(s,f,b,e):
+	# print(supertree(s),b,e)
+	if b==0 and e==s.s:
+		return s.r[s.f.index(f)]
+	if s.z==None:
+		if b<1:
+			if s.x!=None:
+				return f([s.v,part_f(s.x,f,b,e-1)])
+			else:
+				return s.v
+		else:
+			return part_f(s.x,f,b-1,e-1)
+	if e<=s.z.s:
+		return part_f(s.z,f,b,e)
+	if s.z.s==e-1:
+		if b<s.z.s:
+			return f([part_f(s.z,f,b,s.z.s),s.v])
+		else:
+			return s.v
+	if b<s.z.s<e-1:
+		return f([part_f(s.z,f,b,s.z.s),s.v,part_f(s.x,f,0,e-s.z.s-1)])
+	if s.z.s==b:
+		if s.z.s+1<e:
+			return f([s.v,part_f(s.x,f,0,e-s.z.s-1)])
+		else:
+			return s.v
+	if s.z.s<b:
+		return part_f(s.x,f,b-s.z.s-1,e-s.z.s-1)
+
 
 def to_list(s):
 	if s==None:
@@ -250,7 +280,7 @@ class treap:
 		return s.e.s if s.e!=None else 0
 
 	def __str__(s):
-		return '<'+str(s.to_list())[1:-1]+'>'
+		return '<'+repr(s.to_list())[1:-1]+'>'
 
 	def __getitem__(s,n):
 		if type(n)==slice:
@@ -258,18 +288,19 @@ class treap:
 				n=slice(0,n.stop,n.step)
 			if n.stop==None:
 				n=slice(n.start,len(s),n.step)
-			q,e=split(s.e,max(n.start,n.stop))
-			q,w=split(q,min(n.start,n.stop))
 			if n.step in s.f:
-				r=w.r[s.f.index(n.step)]
-			elif n.step==0:
-				r=treap(w)
-				w=None
+				return part_f(s.e,n.step,n.start,n.stop)
 			else:
-				r=treap(treap(w).to_list()[::n.step])
-			w=merge(w,e)
-			s.e=merge(q,w)
-			return r
+				q,e=split(s.e,max(n.start,n.stop))
+				q,w=split(q,min(n.start,n.stop))
+				if n.step==0:
+					r=treap(w)
+					w=None
+				else:
+					r=treap(treap(w).to_list()[::n.step])
+				w=merge(w,e)
+				s.e=merge(q,w)
+				return r
 		else:
 			if n<0:
 				n+=len(s)
@@ -363,15 +394,23 @@ class treap:
 	def count(s,v):
 		return count(s.e,v)
 
-	def extend(s,v):
-		s+=v
+	def extend(s,*v):
+		for w in v:
+			s+=w
 		return s
 
 	merge=extend
 
-	def split(n):
-		s.e,r=split(s.e,n)
-		return [s,treap(r)]
+	def split(s,*n):
+		q=s.e
+		s.e=None
+		r=[]
+		for w in n[::-1]:
+			r.append(0)
+			q,r[-1]=split(q,w)
+		r.append(q)
+		r=[treap(w) for w in r[::-1]]
+		return r
 
 	def index(s,v):
 		return index(s.e,v)
@@ -406,6 +445,6 @@ class treap:
 		return s.e.r
 
 prod=lambda a:a[0]*(a+[1,1])[1]*(a+[1,1])[2]
-a=treap([1,2,3,4,5,6,7],f=[sum,max,min,prod])
+a=treap([1,2,3,4,5,6,7],f=[sum])
 
-print(a[::prod])
+print(part_f(a.e,sum,2,5))
