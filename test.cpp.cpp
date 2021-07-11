@@ -1,9 +1,21 @@
 #include "/Users/gera/pony/pony.hpp"
 using namespace std;
+class a{
+public:
+	int g;
+	a(){
+		g=rand();
+		print('c',g);
+	}
+	~a(){
+		print('d',g);
+	}
+};
+
 pony_run{
-	let a=str("qweйцу");
-	let d=vect(a[0],a[1],a[2],a[3],a[4],a[5]);
-	let f=vect(ord(a[0]),ord(a[1]),ord(a[2]),ord(a[3]),ord(a[4]),ord(a[5]));
-	print(d);
-	print(f);
+	print(1);
+	let d=a();
+	print(2);
+	let f=a();
+	print(3);
 }
