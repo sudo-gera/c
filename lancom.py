@@ -238,7 +238,7 @@ def __lancom__():
 	class Connection:
 		def __init__(s,q,w=None,e=None,r=None):
 			q=makeurl(q)
-			s.serverurl=q
+			s.url=q
 			if w==None:
 				w,e=req('new',req('id'),url=s.url)
 				r=req('id',url=s.url)

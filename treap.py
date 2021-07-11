@@ -2,7 +2,7 @@ from icecream import *
 class treap_el:
 	def __init__(s,v,f=[]):
 		s.f=f
-		s.r=[f[w]([v]) for w in range(len(f))]
+		s.r=[v for w in range(len(f))]
 		s.v=v
 		from random import random
 		s.w=random()
@@ -32,6 +32,9 @@ class treap_el:
 		return '\x1b[32m<\x1b[0m'+str(to_list(s))[1:-1]+'\x1b[32m>\x1b[0m'
 		# return '\x1b[32m|\x1b[0m'+str(to_list(s))[1:-1]+'\x1b[32m\x1b[0m'
 
+def repr_el(q):
+	return repr([q.v]+q.f)
+
 
 def tree(s,q=0):
 	if s==None:
@@ -41,6 +44,8 @@ def tree(s,q=0):
 	return ret
 
 def supertree(s,p=0):
+	if isinstance(s,treap):
+		return supertree(s.e,p)
 	if s==None:
 		r=[[]]
 	elif s.z!=None and s.x!=None:
@@ -58,9 +63,9 @@ def supertree(s,p=0):
 			if r[q] and r[q][0]==' ':
 				if u%2:
 					if q==len(z):
-						r[q]=[repr(s.v),'┫']+r[q]						
+						r[q]=[repr_el(s),'┫']+r[q]						
 					else:
-						r[q]=[' ','|']+r[q]
+						r[q]=[' ','┃']+r[q]
 				else:
 					r[q]=[' ',' ']+r[q]
 			elif u==0:
@@ -78,9 +83,9 @@ def supertree(s,p=0):
 			if r[q] and r[q][0]==' ':
 				if u%2:
 					if q==len(z):
-						r[q]=[repr(s.v),'┛']+r[q]
+						r[q]=[repr_el(s),'┛']+r[q]
 					else:
-						r[q]=[' ','|']+r[q]
+						r[q]=[' ','┃']+r[q]
 				else:
 					r[q]=[' ',' ']+r[q]
 			elif u==0:
@@ -98,9 +103,9 @@ def supertree(s,p=0):
 			if r[q] and r[q][0]==' ':
 				if u%2:
 					if q==len(z):
-						r[q]=[repr(s.v),'┓']+r[q]
+						r[q]=[repr_el(s),'┓']+r[q]
 					else:
-						r[q]=[' ','|']+r[q]
+						r[q]=[' ','┃']+r[q]
 				else:
 					r[q]=[' ',' ']+r[q]
 			elif u==0:
@@ -110,7 +115,7 @@ def supertree(s,p=0):
 				u+=1
 				r[q]=[' ','┗']+r[q]
 	else:
-		r=[[repr(s.v)]]
+		r=[[repr_el(s)]]
 	if p:
 		return r
 	for w in range(len(r[0])):
@@ -170,9 +175,13 @@ def count(s,v):
 	return count(s.z,v)+(s.v==v)+count(s.x,v)
 
 def part_f(s,f,b,e):
-	# print(supertree(s),b,e)
 	if b==0 and e==s.s:
-		return s.r[s.f.index(f)]
+		if f not in s.f:
+			add_f(s,f)
+		try:
+			return s.r[s.f.index(f)]
+		except:
+			print(s.f,f)
 	if s.z==None:
 		if b<1:
 			if s.x!=None:
@@ -198,6 +207,14 @@ def part_f(s,f,b,e):
 	if s.z.s<b:
 		return part_f(s.x,f,b-s.z.s-1,e-s.z.s-1)
 
+def add_f(t,f):
+	if t==None:
+		return
+	if f not in t.f:
+		t.f.append(f)
+		add_f(t.z,f)
+		add_f(t.x,f)
+		update(t)
 
 def to_list(s):
 	if s==None:
@@ -226,9 +243,16 @@ def update(t):
 def merge(t1,t2):
 	if t1==None:
 		return t2
-	elif t2==None:
+	if t2==None:
 		return t1
-	elif t1.w<t2.w:
+	if t1.f!=t2.f:
+		f=[]
+		for w in t1+t2:
+			if w not in f:
+				f.append(w)
+		t1=treap(treap(t1,f=f)).e
+		t2=treap(treap(f2,f=f)).e
+	if t1.w<t2.w:
 		t2.z=merge(t1,t2.z)
 		return t2
 	else:
@@ -236,7 +260,6 @@ def merge(t1,t2):
 		return t1
 
 def split(t,n):
-	# print(supertree(t),n)
 	if t==None:
 		return [None,None]
 	elif t.z==None:
@@ -264,10 +287,10 @@ from functools import total_ordering
 @total_ordering
 class treap:
 	def __init__(s,l=[],f=[]):
-		s.f=f
 		if isinstance(l,treap_el):
 			s.e=l
 		else:
+			s.f=f
 			l=list(l)
 			s.e=None
 			for w in l:
@@ -379,7 +402,15 @@ class treap:
 		else:
 			s+=treap(a)
 
+	def __add__(s,d):
+		a=treap(s)
+		a+=d
+		return a
+
 	def __mul__(s,a):
+		return treap(s.to_list()*a)
+
+	def __imul__(s,a):
 		return treap(s.to_list()*a)
 
 	def clear(s):
@@ -445,6 +476,20 @@ class treap:
 		return s.e.r
 
 prod=lambda a:a[0]*(a+[1,1])[1]*(a+[1,1])[2]
-a=treap([1,2,3,4,5,6,7],f=[sum])
+a=treap([1,2,3,4,5,6,7])
 
-print(part_f(a.e,sum,2,5))
+print(supertree(a))
+
+try:
+	print(part_f(a.e,sum,2,5))
+except:
+	pass
+
+print(supertree(a))
+
+
+
+
+
+
+
