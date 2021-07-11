@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+<<<<<<< HEAD
+=======
 // #define for for (int iterator=0,int&
 // #define in  =iterator,int iterend=
 // #define range(q) q ;iterator<iterend;++iterator)
@@ -13,3 +15,4 @@ int main(){
 		printf("%i\n",iterator);
 	}
 }
+>>>>>>> 958edbffff45f5181ed6079b76bc214c68e40101
