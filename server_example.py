@@ -117,4 +117,26 @@ class Server:
 		server_self.thread.start()
 
 
+def get_ips():
+	from os import popen
+	a=['ifconfig','ipconfig','ip a','wsl ifconfig','wsl ip a','wine ipconfig']
+	a=[[w+' 2>&1'] for w in a]
+	for w in a:
+		try:
+			w[0]=popen(w[0]).read()
+		except:
+			w[0]=''
+	a=sum(a,[])
+	a=' '+' '.join(a)+' 127.0.0.1 '
+	# a=' '+popen('ifconfig 2>&1').read()+' '+popen('ip a 2>&1').read()+' '+popen('ipconfig 2>&1').read()+' '+popen('wine ipconfig 2>&1').read()+' 127.0.0.1 '
+	import re
+	a=re.findall(r'\s\d+\.\d+\.\d+\.\d+\s',a)
+	a=[w.strip() for w in a]
+	a=[w for w in a if all([int(e)<256 for e in w.split('.')])]
+	from functools import reduce
+	a.sort()
+	a=reduce(lambda a,s:a if a and a[-1]==s else a+[s],a,[])
+	from difflib import ndiff
+	a.sort(key=lambda a:len(list(filter(lambda a:a.startswith(' '),ndiff(a,'127.0.0.1')))),reverse=1)
+	return a
 
