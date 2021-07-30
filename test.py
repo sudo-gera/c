@@ -31,6 +31,7 @@ from fractions import Fraction
 @lru_cache(maxsize=None)
 def fr(q):
 	return Fraction(q).limit_denominator()
+
 def froot(x,n):
 	b=fr(0)
 	e=fr(x+1)
