@@ -11,19 +11,96 @@ template <typename...t>
 void print_f(t...a){int s[]={1,print_ff(a)...};}
 
 
-class a{
+
+template<typename T>
+class linked{
 public:
-	a(){
-		print("con");
+	int *count=nullptr;
+	T *value=nullptr;
+	void __init__(T&q){
+		value=new T(q);
+		count=new int(1);
 	}
-	~a(){
-		print("des");
+	linked(T q=T()){
+		this->__init__(q);
+	}
+	void __init__(const linked& o){
+		value=o.value;
+		count=o.count;
+		*count+=1;
+	}
+	linked(const linked& o){
+		this->__init__(o);
+	}
+	linked&operator=(T q){
+		this->__del__();
+		this->__init__(q);
+		return *this;
+	}
+	linked&operator=(const linked&q){
+		this->__del__();
+		this->__init__(q);
+		return *this;
+	}
+	void __del__(){
+		if(count){
+			*count-=1;
+			if (*count==0){
+				delete count;
+				count=nullptr;
+				delete value;
+				value=nullptr;
+			}
+		}
+	}
+	~linked(){
+		this->__del__();
 	}
 };
 
+int qq=0;
+
+class test{
+public:
+	int q;
+	test(){
+		q=++qq;
+		print("con",q);
+	}
+	template<typename T>
+	test(T o){
+		q=++qq;
+		print("con",q,"with",o);
+	}
+	test(const test&w){
+		q=++qq;
+		print("con",q,"from",w.q);
+	}
+	~test(){
+		print("des",q);
+	}
+	template<typename T>
+	int operator=(T o){
+		print("set",q,"with",o);
+		return 0;
+	}
+	int operator=(const test&o){
+		print("set",q,"from",o.q);
+		return 0;
+	}
+};
 
 int main(){
-	auto q=a();
-	*(int*)0 = 0;
-	print(999)
+	{
+		print()
+		linked<test> q;
+		print()
+		auto w=test();
+		print()
+		q=w;
+		print()
+		auto e=q;
+		print()
+	}
+	print()
 }

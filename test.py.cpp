@@ -1,6 +1,36 @@
 
 #include <bits/stdc++.h>
 using namespace std;
+
+#define print(...) cout<<"[32m"<<__LINE__<<"[0m"<<": ";print_f(__VA_ARGS__);cout<<endl;
+template <typename t>
+int print_ff(t a){cout<<a<<' ';return 1;}
+template <typename...t>
+void print_f(t...a){int s[]={1,print_ff(a)...};}
+
+template<typename T>
+class linked{
+public:
+	int *count=nullptr;
+	T *value=nullptr;
+	linked(){}
+	linked(T q){
+		value=new T(q);
+		count=new int(1);
+	}
+	linked(const linked& o){
+		value=o.value;
+		count=o.count;
+		*count+=1;
+	}
+	~linked(){
+		*count-=1;
+		if (*count==0){
+			delete count;
+			delete value;
+		}
+	}
+};
 #define u32string string
 
 				#define to_u8
@@ -9,20 +39,9 @@ using namespace std;
 				#define ord
 			
 
-			
-
-vector<int64_t> q____list_L_int_J;
-int64_t w____int;
-bool any____callable_L__J(vector<int64_t> arg0_____list_L_int_J){
-							q____list_L_int_J=arg0_____list_L_int_J;
-							for (auto iterator:q____list_L_int_J){
-								w____int=iterator;
-								if (bool(w____int)){
-									return true;
-								}else{
-								}							}							return false;
-}
+linked<vector<u32string>> q____list_L_str_J;
 int main(){
-	cout<<to_u8(to_u32((any____callable_L__J(vector<int64_t>({int64_t(0),int64_t(0)})))?"True":"False"))<<"\n";
+	q____list_L_str_J=linked<vector<u32string>>({u32string("1")});
+	cout<<to_u8((((*(q____list_L_str_J.value))[int64_t(0)])))<<"\n";
 
 }
