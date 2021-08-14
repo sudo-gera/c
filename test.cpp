@@ -56,6 +56,10 @@ public:
 	~linked(){
 		this->__del__();
 	}
+	template <typename Y>
+	bool operator<(const linked<Y> o)const{
+		return (*value)<(*o.value);
+	}
 };
 
 int qq=0;
@@ -91,16 +95,11 @@ public:
 };
 
 int main(){
-	{
-		print()
-		linked<test> q;
-		print()
-		auto w=test();
-		print()
-		q=w;
-		print()
-		auto e=q;
-		print()
+	set<linked<int>>q;
+	q.insert(1);
+	q.insert(2);
+	q.insert(0);
+	for (auto w:q){
+		print(*w.value);
 	}
-	print()
 }
