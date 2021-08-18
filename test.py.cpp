@@ -56,24 +56,26 @@ public:
 	bool operator<(const linked<Y> o)const{
 		return (*value)<(*o.value);
 	}
+	T read(){
+		return *value;
+	}
 };
 #define u32string string
 
-				#define to_u8
-				#define to_u32
-				#define chr
-				#define ord
+				linked<vector<int64_t>> range(int64_t q,int64_t w,int64_t e=1){
+					vector<int64_t> res;
+					for (;e>0 and q<w or e<0 and q>w;q+=e){
+						res.push_back(q);
+					}
+					return res;
+				}
 			
 
-int64_t w____int;
-linked<vector<int64_t>> run____callable_L__J(){
-		cout<<to_u8((u32string("run")))<<"\n";
-		return linked<vector<int64_t>>({int64_t(1),int64_t(2),int64_t(3)});
-cout<<"unexpected exit from run____callable_L__J"<<endl;}
+int64_t q____int;
 int main(){
-	for (auto iterator:*(run____callable_L__J()).value){
-		w____int=iterator;
-		cout<<to_u8(to_u32(to_string(w____int)))<<"\n";
+	for (auto iterator:(range(int64_t(0),int64_t(999999999))).read()){
+		q____int=iterator;
+		 /*pass*/ 
 	}
 
 return 0;}

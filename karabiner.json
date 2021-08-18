@@ -1404,9 +1404,6 @@
                                         "mandatory": [
                                             "left_command",
                                             "left_control"
-                                        ],
-                                        "optional": [
-                                            "any"
                                         ]
                                     }
                                 },
@@ -1428,9 +1425,6 @@
                                         "mandatory": [
                                             "left_command",
                                             "left_control"
-                                        ],
-                                        "optional": [
-                                            "any"
                                         ]
                                     }
                                 },
