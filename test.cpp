@@ -94,12 +94,14 @@ public:
 	}
 };
 
+class range{
+public:
+	int64_t start;
+	int64_t stop;
+	int64_t step;
+};
+
 int main(){
-	set<linked<int>>q;
-	q.insert(1);
-	q.insert(2);
-	q.insert(0);
-	for (auto w:q){
-		print(*w.value);
-	}
+	auto q=range({3,4,5});
+	print(q.start,q.stop,q.step);
 }

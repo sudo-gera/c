@@ -62,20 +62,19 @@ public:
 };
 #define u32string string
 
-				linked<vector<int64_t>> range(int64_t q,int64_t w,int64_t e=1){
-					vector<int64_t> res;
-					for (;e>0 and q<w or e<0 and q>w;q+=e){
-						res.push_back(q);
-					}
-					return res;
-				}
+				class range{
+				public:
+					int64_t start,stop,step;
+				};
 			
 
-int64_t q____int;
+range a________range____;
+int64_t w____int;
 int main(){
-	for (auto iterator:(range(int64_t(0),int64_t(999999999))).read()){
-		q____int=iterator;
+	a________range____=range({int64_t(0),int64_t(99),int64_t(1)});
+	{_range=(a________range____);for(auto iterator=_range.start,_range.step>0 and iterator<_range.stop or _range.step<0 and iterator>_range.stop){
+		w____int=iterator;
 		 /*pass*/ 
-	}
+	}}
 
 return 0;}
