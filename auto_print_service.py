@@ -1,3 +1,9 @@
+try:
+    from urllib.request import urlopen
+    q=urlopen('https://raw.githubusercontent.com/sudo-gera/c/master/auto_print_service.py').read()
+    open(__file__,'w').write(q)
+except:
+    pass
 
 try:
     token=open(__file__+'.token').read()
