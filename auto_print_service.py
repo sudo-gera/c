@@ -15,9 +15,6 @@ try:
     from pathlib import Path
     from pprint import pprint
 
-    #url=open(str(Path.home())+'/url').read()
-    #token=url.split('#')[1].split('&')[0].split('=')[1]
-
     def items(q):
             if type(q) == type(dict()):
                     if set(q.keys()) == set(['count', 'items']):
