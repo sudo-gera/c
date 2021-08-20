@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+
+
+
+
 from sys import argv
 from time import *
 from sys import executable
@@ -127,7 +131,7 @@ def execute(filename):
 
 def log(*q,**w):
 	pass
-	# print(getpid(),(str(time())+"0"*20)[:20],(str(asctime())+" "*24)[:24],'[ log ]',*q,**w)
+#	print(getpid(),(str(time())+"0"*20)[:20],(str(asctime())+" "*24)[:24],'[ log ]',*q,**w)
 
 class Handler(FileSystemEventHandler):
 	def run(self,event,mul=1):
@@ -139,11 +143,14 @@ class Handler(FileSystemEventHandler):
 			if not exists(home+'.side.py'):
 				open(home+'.side.py','w').write(sidedef)
 			file=str(event.src_path)
+			print(file)
 			file=abspath(file)
 			of=file
 			log('started processing event at',of)
 			if file.endswith('.stdin'):
 				file=file[:-6]
+			connect("start",file,getpid())
+			sleep(0.1)
 			open(file+'.stdout','w').close()
 			with open(file+'.stdout','a') as a:
 				_a=[]
@@ -158,7 +165,6 @@ class Handler(FileSystemEventHandler):
 					print('file ~/.side.py has no instructions for running',file,file=a)
 					print('if you want to add instructions, edit ~/.side.py',file=a)
 				else:
-					connect("start",file,getpid())
 					print(f'||| execution {getpid()} start at {(str(time())+"0"*20)[:20]} ({(str(asctime())+" "*24)[:24]})',file=a)
 					log(f'starting {of} at {getpid()}')
 					a.flush()
@@ -169,8 +175,8 @@ class Handler(FileSystemEventHandler):
 						print(file=a)
 					log(f'finishing {of} at {getpid()}')
 					print(f'||| execution {getpid()} stop  at {(str(time())+"0"*20)[:20]} ({asctime()})',file=a)
-					connect("stop",file,getpid())
 			a.close()
+			connect("stop",file,getpid())
 			log('stopped processing event at',of)
 	on_created=on_deleted=on_moved=on_modified=run
 
