@@ -1,5 +1,4 @@
 try:
-	#123456789
 	token=open(__file__+'.token').read()
 
 	from urllib.request import urlopen
