@@ -8,8 +8,6 @@ except:
 try:
     token=open(__file__+'.token').read()
 
-
-
     from urllib.request import urlopen
     from json import loads
     from json import dumps
