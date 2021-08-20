@@ -1,2 +1,2 @@
-for w in range(19):
+for w in range(49):
 	print(w)

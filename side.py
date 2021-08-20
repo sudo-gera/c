@@ -143,7 +143,6 @@ class Handler(FileSystemEventHandler):
 			if not exists(home+'.side.py'):
 				open(home+'.side.py','w').write(sidedef)
 			file=str(event.src_path)
-			print(file)
 			file=abspath(file)
 			of=file
 			log('started processing event at',of)
