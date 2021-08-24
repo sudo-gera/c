@@ -13,7 +13,29 @@ class pointer{
 		count=o.count;
 		*count+=1;
 	}
-	void __del__(){
+public:
+	pointer(){
+	}
+	pointer(const T&q){
+		this->__init__(q);
+	}
+	pointer(const pointer& o){
+		this->__init__(o);
+	}
+	pointer&operator=(const T&q){
+		this->clear();
+		this->__init__(q);
+		return *this;
+	}
+	pointer&operator=(const pointer&q){
+		this->clear();
+		this->__init__(q);
+		return *this;
+	}
+	operator bool(){
+		return count;
+	}
+	void clear(){
 		if(count){
 			*count-=1;
 			if (*count==0){
@@ -24,25 +46,8 @@ class pointer{
 			}
 		}
 	}
-public:
-	pointer(const T&q=T()){
-		this->__init__(q);
-	}
-	pointer(const pointer& o){
-		this->__init__(o);
-	}
-	pointer&operator=(const T&q){
-		this->__del__();
-		this->__init__(q);
-		return *this;
-	}
-	pointer&operator=(const pointer&q){
-		this->__del__();
-		this->__init__(q);
-		return *this;
-	}
 	~pointer(){
-		this->__del__();
+		this->clear();
 	}
 	template <typename Y>
 	bool operator<(const pointer<Y> o)const{
@@ -54,57 +59,44 @@ public:
 	operator T*(){
 		return value;
 	}
-};
-
-int qq=0;
-class test{
-public:
-	int q;
-	test(){
-		q=++qq;
-		cout<<"constructor "<<q<<endl;
+	friend ostream&operator<<(ostream&q,const pointer&w){
+		q<<w.value;
+		return q;
 	}
-	template<typename T>
-	test(T w){
-		q=++qq;
-		cout<<"constructor "<<q<<" with "<<w<<endl;
-	}
-	test(const test&w){
-		q=++qq;
-		cout<<"constructor "<<q<<" from "<<w.q<<endl;
-	}
-	template<typename T>
-	void operator=(T w){
-		cout<<"assign "<<q<<" with "<<w<<endl;
-	}
-	void operator=(const test&w){
-		cout<<"assign "<<q<<" from "<<w.q<<endl;
-	}
-	~test(){
-		cout<<"destructor "<<q<<endl;		
+	friend istream&operator>>(istream&q,pointer&w){
+		T e;
+		q>>e;
+		w=e;
+		return q;
 	}
 };
 
+// int qq=0;
+// class test{
+// public:
+// 	int q;
+// 	test(){
+// 		q=++qq;
+// 		cout<<"constructor "<<q<<endl;
+// 	}
+// 	template<typename T>
+// 	test(T w){
+// 		q=++qq;
+// 		cout<<"constructor "<<q<<" with "<<w<<endl;
+// 	}
+// 	test(const test&w){
+// 		q=++qq;
+// 		cout<<"constructor "<<q<<" from "<<w.q<<endl;
+// 	}
+// 	template<typename T>
+// 	void operator=(T w){
+// 		cout<<"assign "<<q<<" with "<<w<<endl;
+// 	}
+// 	void operator=(const test&w){
+// 		cout<<"assign "<<q<<" from "<<w.q<<endl;
+// 	}
+// 	~test(){
+// 		cout<<"destructor "<<q<<endl;		
+// 	}
+// };
 
-int run(){
-	return 12;
-}
-
-int main(){
-	cout<<__LINE__<<endl;
-	{
-	cout<<__LINE__<<endl;
-		const test q;
-	cout<<__LINE__<<endl;
-		pointer w=q;
-	cout<<__LINE__<<endl;
-		w=test();
-	cout<<__LINE__<<endl;
-	}
-	cout<<__LINE__<<endl;
-
-
-	pointer r=run();
-
-
-}
