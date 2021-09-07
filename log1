@@ -1,664 +1,343 @@
-.
-./tlauncher_profiles.json
-./launcher_profiles.json
-./TlauncherProfiles.json
-./server-resource-packs
-./mods
-./assets
-./assets/indexes
-./assets/indexes/1.15.json
-./assets/indexes/1.14.json
-./assets/objects
-./versions
-./versions/1.15.2
-./versions/1.15.2/natives
-./versions/1.15.2/natives/META-INF
-./versions/1.15.2/natives/META-INF/MANIFEST.MF
-./versions/1.15.2/natives/META-INF/versions
-./versions/1.15.2/natives/META-INF/versions/9
-./versions/1.15.2/natives/META-INF/versions/9/module-info.class
-./versions/1.15.2/natives/META-INF/INDEX.LIST
-./versions/1.15.2/natives/lwjgl.dll
-./versions/1.15.2/natives/lwjgl.dll.git
-./versions/1.15.2/natives/lwjgl.dll.sha1
-./versions/1.15.2/natives/lwjgl32.dll
-./versions/1.15.2/natives/lwjgl32.dll.git
-./versions/1.15.2/natives/lwjgl32.dll.sha1
-./versions/1.15.2/natives/jemalloc.dll
-./versions/1.15.2/natives/jemalloc.dll.git
-./versions/1.15.2/natives/jemalloc.dll.sha1
-./versions/1.15.2/natives/jemalloc32.dll
-./versions/1.15.2/natives/jemalloc32.dll.git
-./versions/1.15.2/natives/jemalloc32.dll.sha1
-./versions/1.15.2/natives/OpenAL.dll
-./versions/1.15.2/natives/OpenAL.dll.git
-./versions/1.15.2/natives/OpenAL.dll.sha1
-./versions/1.15.2/natives/OpenAL32.dll
-./versions/1.15.2/natives/OpenAL32.dll.git
-./versions/1.15.2/natives/OpenAL32.dll.sha1
-./versions/1.15.2/natives/lwjgl_opengl.dll
-./versions/1.15.2/natives/lwjgl_opengl.dll.sha1
-./versions/1.15.2/natives/lwjgl_opengl32.dll
-./versions/1.15.2/natives/lwjgl_opengl32.dll.sha1
-./versions/1.15.2/natives/glfw.dll
-./versions/1.15.2/natives/glfw.dll.git
-./versions/1.15.2/natives/glfw.dll.sha1
-./versions/1.15.2/natives/glfw32.dll
-./versions/1.15.2/natives/glfw32.dll.git
-./versions/1.15.2/natives/glfw32.dll.sha1
-./versions/1.15.2/natives/lwjgl_tinyfd.dll
-./versions/1.15.2/natives/lwjgl_tinyfd.dll.sha1
-./versions/1.15.2/natives/lwjgl_tinyfd32.dll
-./versions/1.15.2/natives/lwjgl_tinyfd32.dll.sha1
-./versions/1.15.2/natives/lwjgl_stb.dll
-./versions/1.15.2/natives/lwjgl_stb.dll.sha1
-./versions/1.15.2/natives/lwjgl_stb32.dll
-./versions/1.15.2/natives/lwjgl_stb32.dll.sha1
-./versions/1.15.2/natives/SAPIWrapper_x86.dll
-./versions/1.15.2/natives/SAPIWrapper_x64.dll
-./versions/1.15.2/natives/liblwjgl.so
-./versions/1.15.2/natives/liblwjgl.so.git
-./versions/1.15.2/natives/liblwjgl.so.sha1
-./versions/1.15.2/natives/libjemalloc.so
-./versions/1.15.2/natives/libjemalloc.so.git
-./versions/1.15.2/natives/libjemalloc.so.sha1
-./versions/1.15.2/natives/libopenal.so
-./versions/1.15.2/natives/libopenal.so.git
-./versions/1.15.2/natives/libopenal.so.sha1
-./versions/1.15.2/natives/liblwjgl_opengl.so
-./versions/1.15.2/natives/liblwjgl_opengl.so.sha1
-./versions/1.15.2/natives/libglfw.so
-./versions/1.15.2/natives/libglfw.so.git
-./versions/1.15.2/natives/libglfw.so.sha1
-./versions/1.15.2/natives/libglfw_wayland.so
-./versions/1.15.2/natives/libglfw_wayland.so.git
-./versions/1.15.2/natives/libglfw_wayland.so.sha1
-./versions/1.15.2/natives/liblwjgl_tinyfd.so
-./versions/1.15.2/natives/liblwjgl_tinyfd.so.sha1
-./versions/1.15.2/natives/liblwjgl_stb.so
-./versions/1.15.2/natives/liblwjgl_stb.so.sha1
-./versions/1.15.2/natives/libfliteWrapper.so
-./versions/1.15.2/1.15.2.jar
-./versions/1.15.2/1.15.2.jar.bak
-./versions/1.15.2/1.15.2.json
-./versions/1.14.4
-./versions/1.14.4/1.14.4.jar
-./versions/1.14.4/1.14.4.jar.bak
-./versions/1.14.4/1.14.4.json
-./versions/1.14.4/natives
-./versions/1.14.4/natives/glfw.dll
-./versions/1.14.4/natives/glfw.dll.git
-./versions/1.14.4/natives/glfw.dll.sha1
-./versions/1.14.4/natives/glfw32.dll
-./versions/1.14.4/natives/glfw32.dll.git
-./versions/1.14.4/natives/glfw32.dll.sha1
-./versions/1.14.4/natives/jemalloc.dll
-./versions/1.14.4/natives/jemalloc.dll.git
-./versions/1.14.4/natives/jemalloc.dll.sha1
-./versions/1.14.4/natives/jemalloc32.dll
-./versions/1.14.4/natives/jemalloc32.dll.git
-./versions/1.14.4/natives/jemalloc32.dll.sha1
-./versions/1.14.4/natives/libfliteWrapper.so
-./versions/1.14.4/natives/libglfw.so
-./versions/1.14.4/natives/libglfw.so.git
-./versions/1.14.4/natives/libglfw.so.sha1
-./versions/1.14.4/natives/libglfw_wayland.so
-./versions/1.14.4/natives/libglfw_wayland.so.git
-./versions/1.14.4/natives/libglfw_wayland.so.sha1
-./versions/1.14.4/natives/libjemalloc.so
-./versions/1.14.4/natives/libjemalloc.so.git
-./versions/1.14.4/natives/libjemalloc.so.sha1
-./versions/1.14.4/natives/liblwjgl.so
-./versions/1.14.4/natives/liblwjgl.so.git
-./versions/1.14.4/natives/liblwjgl.so.sha1
-./versions/1.14.4/natives/liblwjgl_opengl.so
-./versions/1.14.4/natives/liblwjgl_opengl.so.sha1
-./versions/1.14.4/natives/liblwjgl_stb.so
-./versions/1.14.4/natives/liblwjgl_stb.so.sha1
-./versions/1.14.4/natives/libopenal.so
-./versions/1.14.4/natives/libopenal.so.git
-./versions/1.14.4/natives/libopenal.so.sha1
-./versions/1.14.4/natives/lwjgl.dll
-./versions/1.14.4/natives/lwjgl.dll.git
-./versions/1.14.4/natives/lwjgl.dll.sha1
-./versions/1.14.4/natives/lwjgl32.dll
-./versions/1.14.4/natives/lwjgl32.dll.git
-./versions/1.14.4/natives/lwjgl32.dll.sha1
-./versions/1.14.4/natives/lwjgl_opengl.dll
-./versions/1.14.4/natives/lwjgl_opengl.dll.sha1
-./versions/1.14.4/natives/lwjgl_opengl32.dll
-./versions/1.14.4/natives/lwjgl_opengl32.dll.sha1
-./versions/1.14.4/natives/lwjgl_stb.dll
-./versions/1.14.4/natives/lwjgl_stb.dll.sha1
-./versions/1.14.4/natives/lwjgl_stb32.dll
-./versions/1.14.4/natives/lwjgl_stb32.dll.sha1
-./versions/1.14.4/natives/OpenAL.dll
-./versions/1.14.4/natives/OpenAL.dll.git
-./versions/1.14.4/natives/OpenAL.dll.sha1
-./versions/1.14.4/natives/OpenAL32.dll
-./versions/1.14.4/natives/OpenAL32.dll.git
-./versions/1.14.4/natives/OpenAL32.dll.sha1
-./versions/1.14.4/natives/SAPIWrapper_x64.dll
-./versions/1.14.4/natives/SAPIWrapper_x86.dll
-./versions/1.14.4/natives/META-INF
-./versions/1.14.4/natives/META-INF/INDEX.LIST
-./versions/1.14.4/natives/META-INF/MANIFEST.MF
-./versions/1.14.4/natives/META-INF/versions
-./versions/1.14.4/natives/META-INF/versions/9
-./versions/1.14.4/natives/META-INF/versions/9/module-info.class
-./Old-TLauncher.exe
-./options.txt
-./servers.dat
-./TempOptifineStore-1.0.json
-./TLauncher.exe
-./usercache.json
-./CustomSkinLoader
-./CustomSkinLoader/Tweaker.log
-./libraries
-./libraries/minecraft.ico
-./libraries/com
-./libraries/com/google
-./libraries/com/google/code
-./libraries/com/google/code/gson
-./libraries/com/google/code/gson/gson
-./libraries/com/google/code/gson/gson/2.8.0
-./libraries/com/google/code/gson/gson/2.8.0/gson-2.8.0.jar
-./libraries/com/google/guava
-./libraries/com/google/guava/guava
-./libraries/com/google/guava/guava/21.0
-./libraries/com/google/guava/guava/21.0/guava-21.0.jar
-./libraries/com/ibm
-./libraries/com/ibm/icu
-./libraries/com/ibm/icu/icu4j-core-mojang
-./libraries/com/ibm/icu/icu4j-core-mojang/51.2
-./libraries/com/ibm/icu/icu4j-core-mojang/51.2/icu4j-core-mojang-51.2.jar
-./libraries/com/mojang
-./libraries/com/mojang/authlib
-./libraries/com/mojang/authlib/1.5.25
-./libraries/com/mojang/authlib/1.5.25/authlib-1.5.25.jar
-./libraries/com/mojang/brigadier
-./libraries/com/mojang/brigadier/1.0.17
-./libraries/com/mojang/brigadier/1.0.17/brigadier-1.0.17.jar
-./libraries/com/mojang/datafixerupper
-./libraries/com/mojang/datafixerupper/2.0.24
-./libraries/com/mojang/datafixerupper/2.0.24/datafixerupper-2.0.24.jar
-./libraries/com/mojang/javabridge
-./libraries/com/mojang/javabridge/1.0.22
-./libraries/com/mojang/javabridge/1.0.22/javabridge-1.0.22.jar
-./libraries/com/mojang/patchy
-./libraries/com/mojang/patchy/1.1
-./libraries/com/mojang/patchy/1.1/patchy-1.1.jar
-./libraries/com/mojang/text2speech
-./libraries/com/mojang/text2speech/1.11.3
-./libraries/com/mojang/text2speech/1.11.3/text2speech-1.11.3-natives-linux.jar
-./libraries/com/mojang/text2speech/1.11.3/text2speech-1.11.3-natives-windows.jar
-./libraries/com/mojang/text2speech/1.11.3/text2speech-1.11.3.jar
-./libraries/commons-codec
-./libraries/commons-codec/commons-codec
-./libraries/commons-codec/commons-codec/1.10
-./libraries/commons-codec/commons-codec/1.10/commons-codec-1.10.jar
-./libraries/commons-io
-./libraries/commons-io/commons-io
-./libraries/commons-io/commons-io/2.5
-./libraries/commons-io/commons-io/2.5/commons-io-2.5.jar
-./libraries/commons-logging
-./libraries/commons-logging/commons-logging
-./libraries/commons-logging/commons-logging/1.1.3
-./libraries/commons-logging/commons-logging/1.1.3/commons-logging-1.1.3.jar
-./libraries/customskinloader
-./libraries/customskinloader/CustomSkinLoader_1.14.4
-./libraries/customskinloader/CustomSkinLoader_1.14.4/1.6
-./libraries/customskinloader/CustomSkinLoader_1.14.4/1.6/CustomSkinLoader_1.14.4-1.6.jar
-./libraries/customskinloader/CustomSkinLoader_1.14.4/1.8
-./libraries/customskinloader/CustomSkinLoader_1.14.4/1.8/CustomSkinLoader_1.14.4-1.8.jar
-./libraries/customskinloader/CustomSkinLoader_1.14.4/1.8d
-./libraries/customskinloader/CustomSkinLoader_1.14.4/1.8d/CustomSkinLoader_1.14.4-1.8d.jar
-./libraries/io
-./libraries/io/netty
-./libraries/io/netty/netty-all
-./libraries/io/netty/netty-all/4.1.25.Final
-./libraries/io/netty/netty-all/4.1.25.Final/netty-all-4.1.25.Final.jar
-./libraries/it
-./libraries/it/unimi
-./libraries/it/unimi/dsi
-./libraries/it/unimi/dsi/fastutil
-./libraries/it/unimi/dsi/fastutil/8.2.1
-./libraries/it/unimi/dsi/fastutil/8.2.1/fastutil-8.2.1.jar
-./libraries/net
-./libraries/net/java
-./libraries/net/java/dev
-./libraries/net/java/dev/jna
-./libraries/net/java/dev/jna/jna
-./libraries/net/java/dev/jna/jna/4.4.0
-./libraries/net/java/dev/jna/jna/4.4.0/jna-4.4.0.jar
-./libraries/net/java/dev/jna/platform
-./libraries/net/java/dev/jna/platform/3.4.0
-./libraries/net/java/dev/jna/platform/3.4.0/platform-3.4.0.jar
-./libraries/net/java/jinput
-./libraries/net/java/jinput/jinput
-./libraries/net/java/jinput/jinput/2.0.5
-./libraries/net/java/jinput/jinput/2.0.5/jinput-2.0.5.jar
-./libraries/net/java/jutils
-./libraries/net/java/jutils/jutils
-./libraries/net/java/jutils/jutils/1.0.0
-./libraries/net/java/jutils/jutils/1.0.0/jutils-1.0.0.jar
-./libraries/net/minecraft
-./libraries/net/minecraft/launchwrapper
-./libraries/net/minecraft/launchwrapper/1.12
-./libraries/net/minecraft/launchwrapper/1.12/launchwrapper-1.12.jar
-./libraries/net/sf
-./libraries/net/sf/jopt-simple
-./libraries/net/sf/jopt-simple/jopt-simple
-./libraries/net/sf/jopt-simple/jopt-simple/5.0.3
-./libraries/net/sf/jopt-simple/jopt-simple/5.0.3/jopt-simple-5.0.3.jar
-./libraries/org
-./libraries/org/apache
-./libraries/org/apache/commons
-./libraries/org/apache/commons/commons-compress
-./libraries/org/apache/commons/commons-compress/1.8.1
-./libraries/org/apache/commons/commons-compress/1.8.1/commons-compress-1.8.1.jar
-./libraries/org/apache/commons/commons-lang3
-./libraries/org/apache/commons/commons-lang3/3.5
-./libraries/org/apache/commons/commons-lang3/3.5/commons-lang3-3.5.jar
-./libraries/org/apache/httpcomponents
-./libraries/org/apache/httpcomponents/httpclient
-./libraries/org/apache/httpcomponents/httpclient/4.3.3
-./libraries/org/apache/httpcomponents/httpclient/4.3.3/httpclient-4.3.3.jar
-./libraries/org/apache/httpcomponents/httpcore
-./libraries/org/apache/httpcomponents/httpcore/4.3.2
-./libraries/org/apache/httpcomponents/httpcore/4.3.2/httpcore-4.3.2.jar
-./libraries/org/apache/logging
-./libraries/org/apache/logging/log4j
-./libraries/org/apache/logging/log4j/log4j-api
-./libraries/org/apache/logging/log4j/log4j-api/2.8.1
-./libraries/org/apache/logging/log4j/log4j-api/2.8.1/log4j-api-2.8.1.jar
-./libraries/org/apache/logging/log4j/log4j-core
-./libraries/org/apache/logging/log4j/log4j-core/2.8.1
-./libraries/org/apache/logging/log4j/log4j-core/2.8.1/log4j-core-2.8.1.jar
-./libraries/org/lwjgl
-./libraries/org/lwjgl/lwjgl
-./libraries/org/lwjgl/lwjgl/3.2.2
-./libraries/org/lwjgl/lwjgl/3.2.2/lwjgl-3.2.2-natives-linux.jar
-./libraries/org/lwjgl/lwjgl/3.2.2/lwjgl-3.2.2-natives-windows.jar
-./libraries/org/lwjgl/lwjgl/3.2.2/lwjgl-3.2.2.jar
-./libraries/org/lwjgl/lwjgl-glfw
-./libraries/org/lwjgl/lwjgl-glfw/3.2.2
-./libraries/org/lwjgl/lwjgl-glfw/3.2.2/lwjgl-glfw-3.2.2-natives-linux.jar
-./libraries/org/lwjgl/lwjgl-glfw/3.2.2/lwjgl-glfw-3.2.2-natives-windows.jar
-./libraries/org/lwjgl/lwjgl-glfw/3.2.2/lwjgl-glfw-3.2.2.jar
-./libraries/org/lwjgl/lwjgl-jemalloc
-./libraries/org/lwjgl/lwjgl-jemalloc/3.2.2
-./libraries/org/lwjgl/lwjgl-jemalloc/3.2.2/lwjgl-jemalloc-3.2.2-natives-linux.jar
-./libraries/org/lwjgl/lwjgl-jemalloc/3.2.2/lwjgl-jemalloc-3.2.2-natives-windows.jar
-./libraries/org/lwjgl/lwjgl-jemalloc/3.2.2/lwjgl-jemalloc-3.2.2.jar
-./libraries/org/lwjgl/lwjgl-openal
-./libraries/org/lwjgl/lwjgl-openal/3.2.2
-./libraries/org/lwjgl/lwjgl-openal/3.2.2/lwjgl-openal-3.2.2-natives-linux.jar
-./libraries/org/lwjgl/lwjgl-openal/3.2.2/lwjgl-openal-3.2.2-natives-windows.jar
-./libraries/org/lwjgl/lwjgl-openal/3.2.2/lwjgl-openal-3.2.2.jar
-./libraries/org/lwjgl/lwjgl-opengl
-./libraries/org/lwjgl/lwjgl-opengl/3.2.2
-./libraries/org/lwjgl/lwjgl-opengl/3.2.2/lwjgl-opengl-3.2.2-natives-linux.jar
-./libraries/org/lwjgl/lwjgl-opengl/3.2.2/lwjgl-opengl-3.2.2-natives-windows.jar
-./libraries/org/lwjgl/lwjgl-opengl/3.2.2/lwjgl-opengl-3.2.2.jar
-./libraries/org/lwjgl/lwjgl-stb
-./libraries/org/lwjgl/lwjgl-stb/3.2.2
-./libraries/org/lwjgl/lwjgl-stb/3.2.2/lwjgl-stb-3.2.2-natives-linux.jar
-./libraries/org/lwjgl/lwjgl-stb/3.2.2/lwjgl-stb-3.2.2-natives-windows.jar
-./libraries/org/lwjgl/lwjgl-stb/3.2.2/lwjgl-stb-3.2.2.jar
-./libraries/org/lwjgl/lwjgl-tinyfd
-./libraries/org/lwjgl/lwjgl-tinyfd/3.2.2
-./libraries/org/lwjgl/lwjgl-tinyfd/3.2.2/lwjgl-tinyfd-3.2.2-natives-linux.jar
-./libraries/org/lwjgl/lwjgl-tinyfd/3.2.2/lwjgl-tinyfd-3.2.2.jar
-./libraries/org/lwjgl/lwjgl-tinyfd/3.2.2/lwjgl-tinyfd-3.2.2-natives-windows.jar
-./libraries/org/ow2
-./libraries/org/ow2/asm
-./libraries/org/ow2/asm/asm
-./libraries/org/ow2/asm/asm/6.2
-./libraries/org/ow2/asm/asm/6.2/asm-6.2.jar
-./libraries/org/ow2/asm/asm-commons
-./libraries/org/ow2/asm/asm-commons/6.2
-./libraries/org/ow2/asm/asm-commons/6.2/asm-commons-6.2.jar
-./libraries/org/ow2/asm/asm-tree
-./libraries/org/ow2/asm/asm-tree/6.2
-./libraries/org/ow2/asm/asm-tree/6.2/asm-tree-6.2.jar
-./libraries/org/tlauncher
-./libraries/org/tlauncher/authlib
-./libraries/org/tlauncher/authlib/1.5.25
-./libraries/org/tlauncher/authlib/1.5.25/authlib-1.5.25.jar
-./libraries/org/tlauncher/authlib/1.6.25
-./libraries/org/tlauncher/authlib/1.6.25/authlib-1.6.25.jar
-./libraries/org/tlauncher/patchy
-./libraries/org/tlauncher/patchy/1.1
-./libraries/org/tlauncher/patchy/1.1/patchy-1.1.jar
-./libraries/oshi-project
-./libraries/oshi-project/oshi-core
-./libraries/oshi-project/oshi-core/1.1
-./libraries/oshi-project/oshi-core/1.1/oshi-core-1.1.jar
-./logs
-./logs/2019-08-13-1.log.gz
-./logs/2019-08-13-2.log.gz
-./logs/2019-08-13-3.log.gz
-./logs/2019-08-14-1.log.gz
-./logs/2019-08-14-2.log.gz
-./logs/2019-08-14-3.log.gz
-./logs/2019-08-16-1.log.gz
-./logs/2019-08-16-2.log.gz
-./logs/2019-08-16-3.log.gz
-./logs/2019-08-17-1.log.gz
-./logs/2019-08-18-1.log.gz
-./logs/2019-08-18-2.log.gz
-./logs/2019-08-19-1.log.gz
-./logs/2019-08-19-2.log.gz
-./logs/2019-08-22-1.log.gz
-./logs/2019-08-22-2.log.gz
-./logs/2019-08-26-1.log.gz
-./logs/2019-08-26-2.log.gz
-./logs/2019-08-26-3.log.gz
-./logs/2019-08-26-4.log.gz
-./logs/2019-08-26-5.log.gz
-./logs/2019-08-26-6.log.gz
-./logs/2019-08-29-1.log.gz
-./logs/2019-08-29-2.log.gz
-./logs/2019-09-01-1.log.gz
-./logs/2019-09-01-2.log.gz
-./logs/2019-11-30-1.log.gz
-./logs/2019-12-01-1.log.gz
-./logs/2019-12-03-1.log.gz
-./logs/2019-12-04-1.log.gz
-./logs/2019-12-05-1.log.gz
-./logs/2019-12-05-2.log.gz
-./logs/2019-12-06-1.log.gz
-./logs/2019-12-13-1.log.gz
-./logs/2019-12-13-2.log.gz
-./logs/2019-12-19-1.log.gz
-./logs/2019-12-19-2.log.gz
-./logs/tlauncher
-./logs/tlauncher/boot0.log
-./logs/tlauncher/boot1.log
-./logs/tlauncher/boot10.log
-./logs/tlauncher/boot2.log
-./logs/tlauncher/boot3.log
-./logs/tlauncher/boot4.log
-./logs/tlauncher/boot5.log
-./logs/tlauncher/boot6.log
-./logs/tlauncher/boot7.log
-./logs/tlauncher/boot8.log
-./logs/tlauncher/boot9.log
-./logs/tlauncher/dxdiag.txt
-./logs/tlauncher/tlauncher0.log
-./logs/tlauncher/tlauncher1.log
-./logs/tlauncher/tlauncher10.log
-./logs/tlauncher/tlauncher2.log
-./logs/tlauncher/tlauncher3.log
-./logs/tlauncher/tlauncher4.log
-./logs/tlauncher/tlauncher5.log
-./logs/tlauncher/tlauncher6.log
-./logs/tlauncher/tlauncher7.log
-./logs/tlauncher/tlauncher8.log
-./logs/tlauncher/tlauncher9.log
-./logs/2019-12-21-1.log.gz
-./logs/latest.log
-./logs/2019-12-21-2.log.gz
-./logs/2020-02-02-1.log.gz
-./logs/2020-02-02-2.log.gz
-./resourcepacks
-./saves
-./saves/????? ???
-./saves/????? ???/icon.png
-./saves/????? ???/level.dat
-./saves/????? ???/level.dat_old
-./saves/????? ???/session.lock
-./saves/????? ???/advancements
-./saves/????? ???/advancements/00000000-0000-0000-0000-000000000000.json
-./saves/????? ???/advancements/41716c94-b77e-329e-9bff-213bd78879df.json
-./saves/????? ???/data
-./saves/????? ???/data/raids.dat
-./saves/????? ???/datapacks
-./saves/????? ???/DIM-1
-./saves/????? ???/DIM-1/data
-./saves/????? ???/DIM-1/data/raids_nether.dat
-./saves/????? ???/DIM-1/poi
-./saves/????? ???/DIM-1/poi/r.-1.-1.mca
-./saves/????? ???/DIM-1/poi/r.-1.-2.mca
-./saves/????? ???/DIM-1/poi/r.-1.0.mca
-./saves/????? ???/DIM-1/poi/r.-1.1.mca
-./saves/????? ???/DIM-1/poi/r.-2.-1.mca
-./saves/????? ???/DIM-1/poi/r.-2.-2.mca
-./saves/????? ???/DIM-1/poi/r.-2.0.mca
-./saves/????? ???/DIM-1/poi/r.-2.1.mca
-./saves/????? ???/DIM-1/poi/r.0.-1.mca
-./saves/????? ???/DIM-1/poi/r.0.-2.mca
-./saves/????? ???/DIM-1/poi/r.0.0.mca
-./saves/????? ???/DIM-1/poi/r.0.1.mca
-./saves/????? ???/DIM-1/poi/r.1.-1.mca
-./saves/????? ???/DIM-1/poi/r.1.-2.mca
-./saves/????? ???/DIM-1/poi/r.1.0.mca
-./saves/????? ???/DIM-1/poi/r.1.1.mca
-./saves/????? ???/DIM-1/region
-./saves/????? ???/DIM-1/region/r.-1.-1.mca
-./saves/????? ???/DIM-1/region/r.-1.-2.mca
-./saves/????? ???/DIM-1/region/r.-1.0.mca
-./saves/????? ???/DIM-1/region/r.-1.1.mca
-./saves/????? ???/DIM-1/region/r.-2.-1.mca
-./saves/????? ???/DIM-1/region/r.-2.-2.mca
-./saves/????? ???/DIM-1/region/r.-2.0.mca
-./saves/????? ???/DIM-1/region/r.-2.1.mca
-./saves/????? ???/DIM-1/region/r.0.-1.mca
-./saves/????? ???/DIM-1/region/r.0.-2.mca
-./saves/????? ???/DIM-1/region/r.0.0.mca
-./saves/????? ???/DIM-1/region/r.0.1.mca
-./saves/????? ???/DIM-1/region/r.1.-1.mca
-./saves/????? ???/DIM-1/region/r.1.-2.mca
-./saves/????? ???/DIM-1/region/r.1.0.mca
-./saves/????? ???/DIM-1/region/r.1.1.mca
-./saves/????? ???/DIM1
-./saves/????? ???/DIM1/data
-./saves/????? ???/DIM1/data/raids_end.dat
-./saves/????? ???/playerdata
-./saves/????? ???/playerdata/00000000-0000-0000-0000-000000000000.dat
-./saves/????? ???/playerdata/41716c94-b77e-329e-9bff-213bd78879df.dat
-./saves/????? ???/poi
-./saves/????? ???/poi/r.-1.-1.mca
-./saves/????? ???/poi/r.-1.-2.mca
-./saves/????? ???/poi/r.-1.0.mca
-./saves/????? ???/poi/r.-1.1.mca
-./saves/????? ???/poi/r.-2.-1.mca
-./saves/????? ???/poi/r.-2.-2.mca
-./saves/????? ???/poi/r.-2.0.mca
-./saves/????? ???/poi/r.-2.1.mca
-./saves/????? ???/poi/r.0.-1.mca
-./saves/????? ???/poi/r.0.-2.mca
-./saves/????? ???/poi/r.0.0.mca
-./saves/????? ???/poi/r.0.1.mca
-./saves/????? ???/poi/r.1.-1.mca
-./saves/????? ???/poi/r.1.-2.mca
-./saves/????? ???/poi/r.1.0.mca
-./saves/????? ???/poi/r.1.1.mca
-./saves/????? ???/region
-./saves/????? ???/region/r.-1.-1.mca
-./saves/????? ???/region/r.-1.-2.mca
-./saves/????? ???/region/r.-1.0.mca
-./saves/????? ???/region/r.-1.1.mca
-./saves/????? ???/region/r.-1.2.mca
-./saves/????? ???/region/r.-2.-1.mca
-./saves/????? ???/region/r.-2.-2.mca
-./saves/????? ???/region/r.-2.0.mca
-./saves/????? ???/region/r.-2.1.mca
-./saves/????? ???/region/r.-2.2.mca
-./saves/????? ???/region/r.-3.-1.mca
-./saves/????? ???/region/r.-3.-2.mca
-./saves/????? ???/region/r.-3.0.mca
-./saves/????? ???/region/r.-3.1.mca
-./saves/????? ???/region/r.0.-1.mca
-./saves/????? ???/region/r.0.-2.mca
-./saves/????? ???/region/r.0.0.mca
-./saves/????? ???/region/r.0.1.mca
-./saves/????? ???/region/r.0.2.mca
-./saves/????? ???/region/r.1.-1.mca
-./saves/????? ???/region/r.1.-2.mca
-./saves/????? ???/region/r.1.0.mca
-./saves/????? ???/region/r.1.1.mca
-./saves/????? ???/region/r.1.2.mca
-./saves/????? ???/region/r.2.-1.mca
-./saves/????? ???/region/r.2.-2.mca
-./saves/????? ???/region/r.2.0.mca
-./saves/????? ???/region/r.2.1.mca
-./saves/????? ???/region/r.2.2.mca
-./saves/????? ???/stats
-./saves/????? ???/stats/00000000-0000-0000-0000-000000000000.json
-./saves/????? ???/stats/41716c94-b77e-329e-9bff-213bd78879df.json
-./saves/????? ??? (1)
-./saves/????? ??? (1)/icon.png
-./saves/????? ??? (1)/level.dat
-./saves/????? ??? (1)/level.dat_old
-./saves/????? ??? (1)/session.lock
-./saves/????? ??? (1)/advancements
-./saves/????? ??? (1)/advancements/00000000-0000-0000-0000-000000000000.json
-./saves/????? ??? (1)/data
-./saves/????? ??? (1)/data/raids.dat
-./saves/????? ??? (1)/datapacks
-./saves/????? ??? (1)/DIM-1
-./saves/????? ??? (1)/DIM-1/data
-./saves/????? ??? (1)/DIM-1/data/raids_nether.dat
-./saves/????? ??? (1)/DIM1
-./saves/????? ??? (1)/DIM1/data
-./saves/????? ??? (1)/DIM1/data/raids_end.dat
-./saves/????? ??? (1)/playerdata
-./saves/????? ??? (1)/playerdata/00000000-0000-0000-0000-000000000000.dat
-./saves/????? ??? (1)/poi
-./saves/????? ??? (1)/poi/r.-1.-1.mca
-./saves/????? ??? (1)/poi/r.-1.0.mca
-./saves/????? ??? (1)/poi/r.0.-1.mca
-./saves/????? ??? (1)/poi/r.0.-2.mca
-./saves/????? ??? (1)/poi/r.0.-3.mca
-./saves/????? ??? (1)/poi/r.0.0.mca
-./saves/????? ??? (1)/poi/r.1.-1.mca
-./saves/????? ??? (1)/poi/r.1.-2.mca
-./saves/????? ??? (1)/poi/r.1.-3.mca
-./saves/????? ??? (1)/poi/r.1.0.mca
-./saves/????? ??? (1)/poi/r.2.-1.mca
-./saves/????? ??? (1)/poi/r.2.-4.mca
-./saves/????? ??? (1)/poi/r.3.-1.mca
-./saves/????? ??? (1)/poi/r.3.-2.mca
-./saves/????? ??? (1)/poi/r.3.-3.mca
-./saves/????? ??? (1)/poi/r.3.-4.mca
-./saves/????? ??? (1)/poi/r.4.-1.mca
-./saves/????? ??? (1)/poi/r.4.-2.mca
-./saves/????? ??? (1)/poi/r.4.-3.mca
-./saves/????? ??? (1)/poi/r.4.-4.mca
-./saves/????? ??? (1)/poi/r.5.-1.mca
-./saves/????? ??? (1)/poi/r.5.-2.mca
-./saves/????? ??? (1)/poi/r.5.-3.mca
-./saves/????? ??? (1)/poi/r.5.-4.mca
-./saves/????? ??? (1)/poi/r.6.-1.mca
-./saves/????? ??? (1)/poi/r.6.-2.mca
-./saves/????? ??? (1)/poi/r.6.-3.mca
-./saves/????? ??? (1)/poi/r.6.-4.mca
-./saves/????? ??? (1)/region
-./saves/????? ??? (1)/region/r.-1.-1.mca
-./saves/????? ??? (1)/region/r.-1.-2.mca
-./saves/????? ??? (1)/region/r.-1.-3.mca
-./saves/????? ??? (1)/region/r.-1.-4.mca
-./saves/????? ??? (1)/region/r.-1.0.mca
-./saves/????? ??? (1)/region/r.-1.1.mca
-./saves/????? ??? (1)/region/r.0.-1.mca
-./saves/????? ??? (1)/region/r.0.-2.mca
-./saves/????? ??? (1)/region/r.0.-3.mca
-./saves/????? ??? (1)/region/r.0.-4.mca
-./saves/????? ??? (1)/region/r.0.0.mca
-./saves/????? ??? (1)/region/r.0.1.mca
-./saves/????? ??? (1)/region/r.1.-1.mca
-./saves/????? ??? (1)/region/r.1.-2.mca
-./saves/????? ??? (1)/region/r.1.-3.mca
-./saves/????? ??? (1)/region/r.1.-4.mca
-./saves/????? ??? (1)/region/r.1.0.mca
-./saves/????? ??? (1)/region/r.1.1.mca
-./saves/????? ??? (1)/region/r.2.-1.mca
-./saves/????? ??? (1)/region/r.2.-2.mca
-./saves/????? ??? (1)/region/r.2.-3.mca
-./saves/????? ??? (1)/region/r.2.-4.mca
-./saves/????? ??? (1)/region/r.2.0.mca
-./saves/????? ??? (1)/region/r.3.-1.mca
-./saves/????? ??? (1)/region/r.3.-2.mca
-./saves/????? ??? (1)/region/r.3.-3.mca
-./saves/????? ??? (1)/region/r.3.-4.mca
-./saves/????? ??? (1)/region/r.3.0.mca
-./saves/????? ??? (1)/region/r.4.-1.mca
-./saves/????? ??? (1)/region/r.4.-2.mca
-./saves/????? ??? (1)/region/r.4.-3.mca
-./saves/????? ??? (1)/region/r.4.-4.mca
-./saves/????? ??? (1)/region/r.4.0.mca
-./saves/????? ??? (1)/region/r.5.-1.mca
-./saves/????? ??? (1)/region/r.5.-2.mca
-./saves/????? ??? (1)/region/r.5.-3.mca
-./saves/????? ??? (1)/region/r.5.-4.mca
-./saves/????? ??? (1)/region/r.6.-1.mca
-./saves/????? ??? (1)/region/r.6.-2.mca
-./saves/????? ??? (1)/region/r.6.-3.mca
-./saves/????? ??? (1)/region/r.6.-4.mca
-./saves/????? ??? (1)/stats
-./saves/????? ??? (1)/stats/00000000-0000-0000-0000-000000000000.json
-./tlauncher_libraries
-./tlauncher_libraries/aopalliance
-./tlauncher_libraries/aopalliance/aopalliance
-./tlauncher_libraries/aopalliance/aopalliance/1.0
-./tlauncher_libraries/aopalliance/aopalliance/1.0/aopalliance-1.0.jar
-./tlauncher_libraries/com
-./tlauncher_libraries/com/github
-./tlauncher_libraries/com/github/junrar
-./tlauncher_libraries/com/github/junrar/junrar
-./tlauncher_libraries/com/github/junrar/junrar/0.7
-./tlauncher_libraries/com/github/junrar/junrar/0.7/junrar-0.7.jar
-./tlauncher_libraries/com/google
-./tlauncher_libraries/com/google/guava
-./tlauncher_libraries/com/google/guava/guava
-./tlauncher_libraries/com/google/guava/guava/19.0
-./tlauncher_libraries/com/google/guava/guava/19.0/guava-19.0.jar
-./tlauncher_libraries/com/google/inject
-./tlauncher_libraries/com/google/inject/extensions
-./tlauncher_libraries/com/google/inject/extensions/guice-assistedinject
-./tlauncher_libraries/com/google/inject/extensions/guice-assistedinject/4.1.0
-./tlauncher_libraries/com/google/inject/extensions/guice-assistedinject/4.1.0/guice-assistedinject-4.1.0.jar
-./tlauncher_libraries/com/google/inject/guice
-./tlauncher_libraries/com/google/inject/guice/4.1.0
-./tlauncher_libraries/com/google/inject/guice/4.1.0/guice-4.1.0.jar
-./tlauncher_libraries/dnsjava
-./tlauncher_libraries/dnsjava/dnsjava
-./tlauncher_libraries/dnsjava/dnsjava/2.1.8
-./tlauncher_libraries/dnsjava/dnsjava/2.1.8/dnsjava-2.1.8.jar
-./tlauncher_libraries/javax
-./tlauncher_libraries/javax/inject
-./tlauncher_libraries/javax/inject/javax.inject
-./tlauncher_libraries/javax/inject/javax.inject/1
-./tlauncher_libraries/javax/inject/javax.inject/1/javax.inject-1.jar
-./tlauncher_libraries/log4j
-./tlauncher_libraries/log4j/log4j
-./tlauncher_libraries/log4j/log4j/1.2.17
-./tlauncher_libraries/log4j/log4j/1.2.17/log4j-1.2.17.jar
-./tlauncher_libraries/net
-./tlauncher_libraries/net/sf
-./tlauncher_libraries/net/sf/jopt-simple
-./tlauncher_libraries/net/sf/jopt-simple/jopt-simple
-./tlauncher_libraries/net/sf/jopt-simple/jopt-simple/4.9
-./tlauncher_libraries/net/sf/jopt-simple/jopt-simple/4.9/jopt-simple-4.9.jar
-./tlauncher_libraries/org
-./tlauncher_libraries/org/apache
-./tlauncher_libraries/org/apache/commons
-./tlauncher_libraries/org/apache/commons/commons-lang3
-./tlauncher_libraries/org/apache/commons/commons-lang3/3.4
-./tlauncher_libraries/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar
-./tlauncher_libraries/org/tlauncher
-./tlauncher_libraries/org/tlauncher/picture-bundle
-./tlauncher_libraries/org/tlauncher/picture-bundle/2.8
-./tlauncher_libraries/org/tlauncher/picture-bundle/2.8/picture-bundle-2.8.jar
-./tlauncher_libraries/org/tlauncher/skin-server-API
-./tlauncher_libraries/org/tlauncher/skin-server-API/1.0
-./tlauncher_libraries/org/tlauncher/skin-server-API/1.0/skin-server-API-1.0.jar
-./tlauncher_libraries/org/tlauncher/tlauncher-resource
-./tlauncher_libraries/org/tlauncher/tlauncher-resource/1.4
-./tlauncher_libraries/org/tlauncher/tlauncher-resource/1.4/tlauncher-resource-1.4.jar
-./tlauncher_libraries/org/tukaani
-./tlauncher_libraries/org/tukaani/xz
-./tlauncher_libraries/org/tukaani/xz/1.5
-./tlauncher_libraries/org/tukaani/xz/1.5/xz-1.5.jar
+00507b21a9daab19732598c0d7e9765b34c72dd2
+00883c1ae1edbbd4e13abe24f1066bed56c55c51
+00ca65fc5865432fbfb7571904b11cec728ccd37
+0255daac1131e0c2362d1567fa377d3e0487cdf3
+026390968306ae1c49b9854c916fc2aab5d02128
+0274c1426a546f4db777e190db245ceeabeefd12
+02d21a27053f0f68ba87a6e8204def694855bbdf
+038ba0d9c659ed94c426429bd1b639627238835d
+03c04a3a0a7e446547bef6d8744b7b97fea811c1
+04746bf04004c6f3d45ede687ec81433bc66ace6
+06352d6df45adfdb0c19afe028e5aaa78ee77c2b
+06e828f8e2b9a852649ee0a3ea07f8fd50d81976
+078851e0254cc1990c74f153daa57d9d8a29a43d
+0af11de4067e13d82180f400af9057c9f0dd61ab
+0b57dcbef295aea566165c72cc7e7b063b52cf5a
+0c81976b4d94b9d3c0d6ae54a1adfb46da56ee06
+0d980af91190d29b43596ab54db003146483df85
+0da12203128de6a0313316d20726cdb36b6dcf78
+0e265394e4629f2f0ed12e3816d86a1cab9d7d75
+0e33a6fafb732c9d3a75a40d9454620c7f374850
+0ed0fd478aa5e8a763ed7a5f204d0b2c50ce1808
+101dc78135c740bfdb1cfb93007dde25c179ad70
+10607ab33b1b96061fb6db7d0e28792a57d05c99
+11329d7d82c47656011bc3ca2f5472ebe3c9299c
+1163d1fa6b101ba0ede8f52f26587ac3e2845ec8
+11e82ab02a0c9c2de48c6876097a6a06094ac4b2
+12ce23899db671162121e872b86bc08156d80e58
+12f661b3a3bc9d988c2dab084ee6c3c663c28b0a
+13bfb46a9b836542a87159faae4a730952775017
+13d6756ddcf33d7051956ffcf9186b50d894d1eb
+14b1f41c7f7c9405497df2ddd29c88e72b49e5b2
+14b94f6188617e844c5de356c9e282c361d6e3c7
+1582cfc8600bc405e386800c98b997d05723ea2d
+15a6250a0051d5ce60f8bd72b51e7e1090bf1326
+17657ba95110239e758f82defbd25a6e0c30a11d
+17dd6c65a797f43a7aa2ef875031a8868393cebe
+186e5f65889a803022f53c2bd05e24642f97f4ff
+1a45d3cd91b71fc6abaa3936fb00c80ba01af38d
+1ae7434de64adb4d5ff3d0d0425c5770a8c57569
+1af1b5709738ce9ce1ed8ec4358f5839ee8adeac
+1b4a945f91a77fbbf44862c7e99de92dd0640da4
+1b5a865c2b437a9e5f4b515919c98599b44bd669
+1c7e5d96ef8d59629419bc836ddc908775404d11
+1da7f9c069e9812cc516eed8f843543c9ca0d676
+1da9c7ec9fc73b5e883a0887825dc143feff38f9
+1de40c62857056e307d1d470d7a1b9766d951211
+1e7491ba2f73415a0bdb5e0b310e517c9684a6ca
+1eca115d6e11114bf1572267e23241829a79c962
+1ecac3a5621b255418624204ddd23b58d4798b7d
+1ecb3b06e01977998624961c8f4c62d680671c00
+20029ad5a3480ac2e98aba4ea33dcd6bfeb9f242
+20867090521a67f68dc3eb4a42ea2a5c5864aa64
+211f30ae78ada66346844f9313d4d6e3e8e0d136
+212a7a94014f398fe5bb2173c64314b6ae73f939
+219b690fae3189051b7f3943352d20d6794ec95e
+2254ac00cca27af9bf98357076bc5fc2c4a666a7
+23648383c112030d82f1d4a885ecf81e0255f818
+241025c33ac468f836c0b9f4eeaf45d1d4c82c11
+261c77870becabadd4e6c3566994888b05dafa91
+26bc266faf9b1d6a2c2318b7c31245df4f749438
+274da00ecd733e7b44100088450223aef567134a
+279e561479a6527977191ffc8bf6516dcdb51253
+2878869f1946a73384b36a48d3ebe6f152e68676
+287f75b8cb61cccbcd2b0ab81ba1bfc628981642
+28aa17d95ae581a749ce3d6bb153bb302691661f
+28c7562b7ded1eeda8a4d6d46126583b72316663
+2993675efc10ab6819fc28769add9bd4a720e023
+2996074a1df15c4ce1172e2ded0e3f058481b647
+2bc6344a26e8e88021032195679668e7b862a313
+2c8aa69ebcbeb108f52cf0e7f8ebf5ec47a97050
+2d4ad6f93199d9314bc5ab6ecdc360d0e926b911
+2d75ceaa4a6079263a0bfc0bc6a0fe1f53042b64
+2e7014c73d9f83feb933962e01ebec1910d066d2
+302c5660c0475d703ec3330acd208839b8d1b1fb
+3072a0db2fc1bfb84a262faba72851c9744cb3fa
+310d80a856ebdc530fb46b080a70c9055a65f32e
+3141f50ef0994f3d55c5cd9359ba35989c1a3158
+31b1a1164f3d142512c11cc035ad924748c3b9a0
+32fc394619d85db6f473e8f68e98d2d1a5e29352
+3474452d6715baae74780ee3a8f0f7988c5faef9
+3528b3cc40b1c773bc2c627cd49d10b40e32a988
+3666314da46922e180c0cd9eaa7e807b0934598c
+387e40d4c15877530c9e1e73009b20f8542c386b
+3922eae3809292a85560f1104af6c9be602b8c24
+3b307d0f3a467d0e249b70ee961ee991ce2c4b9c
+3c23d2dd40465e348ff4eaa80b5502ae9431142a
+3c45b4efa94da57588c448516d72202af172d8ce
+3cea5fd18a8081fe42910319a89bca0559cea511
+40a5564d1ae64975523cedf093c162111d2edf84
+40c100ad90624e1ef302cfd6cc28b8f4a5ca45d6
+426b2006d7f6169cbcdede7d7813dcdf05b58524
+436be79e4ee452a7b6f1d1e158a11b27e27e49d0
+438a1f6a6061e9f53e88629d2bae994db53d772c
+454a9e6182b99524b4e83d4cc444d86350f18cfd
+45f774533070e3a4d02127ac47199b96071d1737
+471ddc74fda3e8588da5a94883dc54ca1c34b439
+4751182ec0b3b0ff5e642360cb82adacacf2dc12
+480125e03be421e123c1da41815c39c3dc38803b
+4824d6a41088228c15d385862a9b0d060e7abeec
+490e9409ac0ecd68f960ed53b2f28b3b6f04b718
+4976fb1b5f8a22d4f187bd873478d5e6ca9d1842
+49a2bf4aa4e3e7e8621f2f819dbe41c3d66e5d1c
+4ac4e883ac477e0e9841650dd674eab00d19eccf
+4b6c170cd4d876717c2185400dfa86ed07d3cf77
+4c4fab0b9fb1224cdcf76523ef40eaa3aa5a2b57
+4ef739f9c35e801b574feb8eac351e0f1a4bf28d
+5015e42b45b419bd16f35565d3921bd2237c0775
+50444ddf740a031625cf00b4ed933998b8db72f0
+50a3d97557d44ff808224a079c0de79703a64d2f
+5138fd80c25e05a60cb573b02f41e8f342324dee
+519f6771cd31c7e699e6d7ade596c51f046545ba
+51bb51f438c8950dc3096daa0a341dbf2abf2cb1
+52732bba8b5d5666f4ced7fc9bde8643f2c8f9b3
+5304c70df830e9303c39629a6b699a9fdf6413de
+530c29d64ce99881ff785eff4c10a65be5267f7b
+536a96ac62a26d04452d1cc663a339cca45221e1
+5393b50d79a92396cb56648bd7655f7507f8319a
+53feec40a8d8c0efef80440df5ce89e3d879378d
+5725f2cdca78d64a44e798d65a3506272a841f24
+5737dd38b3e8b71cf9d5445f281fb451a8417304
+573aa5dfd8b90995c27c815c352d410cc96ebebe
+59660aab53a0a16fc70dfcb1d3aa6982e119de38
+5a41885160aaa20010269edf75cec521fe3668f2
+5b22e3823c05b5588f2eaed661c1d8eb54be31b6
+5cb49a7807db863906260a5ef7f65c8335f2867e
+5cc76d60c74e07cdfdbd6cb9cb82b88a513dc639
+5d97d99dca33e1c68a9fa83dcc45ea34214262d4
+5e48e221bcca567164c51350a2fdd5cc2407acdf
+5f67dbbe43b6872f40d9a94b8d924a1b73680de8
+609eba57f0ed423f502bd9be010d58cc98c09951
+60c888ecf1d5dafe9207b5aa6e6538940b47f287
+60ff1ec330c4b95682b545e1b5080395fdf17bd2
+61953519293628961372a725322a8c19370a79e0
+61cf9e1770204ced0fe147a153386070d3f95f6a
+63118c6da9baaa6fd8ef1211c19b1e4dfd13fc3d
+63ef713542dbe952445642414bd2f1f8df93c7f2
+6535077dd4f7355a85991593da215c98fa2f8797
+66d9dc312e3af63002c275b4ee9098c40454ed05
+66f6cb50668a215f469bc0514258e266971b9883
+674e1adc55f10c4a340d1a9360a39e8d840dc7ad
+67ad1b5d81fb2a689ace88e01efe503cc7dce957
+68e2fc32d70aa1c5697903cff68fffb45d1113cd
+6933144a8aad4b09c627ce5d579ff20738a132e2
+69a9248d05aec34aafd54b3c2ceb12929e67ac77
+6b8f505cac171e85963d7d61d1a1115ef05ff482
+6b9b46cc35810ccc5892b64d689bde23abaff1d6
+6d40006abeb1db13b8dfc920cb6a556e83e13ce5
+6e4bd4499cf35f6bf29e5c0617058627238336de
+6e72eb2b43b0903ec3d46a759b8ac55edf9a2ada
+6e7765815ac85dd2095f6f1e6af67f2f0e23aee3
+6f34c6902a7da031398e0e69b3a0e01fac0417b0
+6f3f9d6775723a59075bbad3c7b432c2f8bec6bc
+6fb995cd255c0e05d793de8ebf9951c23309e4c1
+70b71c26b72a152ba04282efa3606bbef04ab2d0
+714aa2f6ba4d0da1598cd044d24aaece54736890
+72433f3bdf3382ea002b26ddcfc733bc051087f1
+729c3fc69286b92826a6ee9e0d03b3432298174d
+731fa4864c2296cfa7f824f38e08b2217001432f
+746601cb86ab11a5db45cb9332d998a71fce5064
+749e56fc7912ddb516c323574a2fdff71fc0c7a9
+75a89bf2269848239ef7e41d6335643c0d98abb6
+77992e95654920084b990e71dce3877a0894c8e3
+77a16b08560859fc624593d44f45d5d4b7bc050b
+78578a0b6b9d693681c7ee10657e5336301a5185
+78765810c6431e50903987d9279f0573094057e9
+78d01ba8a6b3ff54d8a186ef0f438d11d4170d40
+7996d5d1d51cd7a8598fb2fc415afa074a1e3f23
+7b99977e73544f03ae78f3eff0ec0c541806e236
+7c09119251e2fa92f9204086a49df28bf1938e1a
+7d626546e737c6395ee2053a47c2638bf0db6c1d
+7e614e59b03402e82d52dcc1c7ab82d5895aebde
+7fa888ca278658218d474e40a38221b7beaa260a
+816b2175fec7ae8b6c25debd7247cc9fe63d8732
+823a6c1ee0ec652ee9fa54be54c447caf5374831
+82957055f2384f74c926db84c5e588a1c767f259
+82b7f33df654417ca59cbccd777d8fd894cc2031
+82d264ee33a1b8b97456f156a980efff01e6b6de
+835da4e210b74aface22cfacc1d57e2173c68cf3
+8433af0adc980470fb58cad1bed2645eb55999a8
+850f5275b1f54203d0d10f89461baf8521998e69
+86140ae9262681b286b6a6161ebaee3978321c79
+8721f2d86d28bed181bd104f33e4e9823618ed48
+872e6d01fa100903ff14d92a43cf7ce460f9a838
+87aa00437e51fe300a269c4e6789d582f4e212a5
+88dfd4e166f695b7a2ee7a4b5fc21a4f0a51de2a
+88efa4b28d23ee10a9cc09758c678d1b03bcac1d
+8939976986a501219db63ea0d1bc6d90dceb0ee2
+89ce2c63b2d1c323ad35b94698fe9b6c4e732c77
+8a502fb27e0a82e86a70c06cdd5c22e8065c296e
+8aa4a05ea37fd5e24a326e4b7752d5d143c17e04
+8ab7d145218e851083f944a09e89d0d2fe7af890
+8bf2b5f9a0f240c877a12fbacd3122634438d292
+8c991816d85acf0119d41840e105059eeb47f2f2
+8e47d8bff469e08a787986a5173e5644dd657fe5
+8f083211440ec91269e20548455fa9dceef5a1a1
+8fa00dab0d400e003aa96ec3a60128c7c9112032
+8fda0c0c26722c78bca1a92f341824369f76239c
+902b081af81bbd94584e94c9e5e017d10242b3c7
+910dbffed7b35bb624392cf2fee126b4761bf997
+912df291e98e725adb110179450db0e9364c60c6
+91fc33623938fb7069288b35b9b5c710faaab647
+924fb81b19664cc8f1a68f2032c250e3217cfc19
+92fdf3002fce93af5fb815911ea5bf196d76a3ae
+940777f13970ee09c87c717cf963747e9dba7537
+942485de3901fca4e4435cfe86710bf7ce0d52b6
+94eeafb016b16e1aa25490c5b2cab5a7e60d914b
+952f124dde8c55ce0b59aaa4367576767011c355
+968ccbb3965469822fdf62aaac7ca4cd2845a854
+971955c7c45e5eee5681401408eb53648505f80f
+98d71785bd2a474a0bac72f93b9ba05eb5f92724
+991e67033bd1111fe2ca9688b107e44b68a7b84b
+9a74cade91035c979dfeb81225a5ab0c53ca1a02
+9cc6f5b0dc4ca08bc33bd23c8ca93edae2878b51
+9d19ad883462a025c7bd9da998b4bfe8a846335f
+9d281e091b7f7519a8011ea22c98272c24316c79
+9d2c4a14f82e6ce176a465246b12e645be5748d2
+9f1c6d3951b168f584916b36b145b8ad2436b0ce
+9f216941e961f251ff6c2a80b29279e70b7ba783
+9f7a0893981442246d76fcb2477b3bbe35e3cc35
+a0abdcc9cbbfb23111f9bfb43496ca2c0ddfc0b6
+a0d130164fa87d0b991e73a708f49779ffa959f3
+a0f9044fbe4c2db8e81e124e23e8d1f2b79bf8d7
+a12a41a31f42d5942449bec5b6a462d77f67db11
+a15a511a9bea5e9973e87ab17a5f7567cdace770
+a1fcef3d92d9248a80fe77f31695d3c814836ad5
+a39747d55be1399279b3be3a25d23e52af841dcc
+a451db4697693f9cf7cd41489229502fa628f52a
+a5e01b3f6d044e0bedc8029934b3b0a479b56d61
+a68e8682100af93f3e653e19c28395b8e8b897c2
+a701270a83821da0785caccdbc4f2ecf5c5c817a
+a9733c9bd539213834e10e9c419797e917b638e3
+a97af7934d07c200f162f12f6a0fbcaa6b26da11
+aaa21656637a32523e47e93fa8e70a51a0542a6c
+ab9ecdc682ac460ef0bba2cbdefa0f3545cae3ac
+abb5d8dcac3c28295a5b41c5a121a3264dc6f8e0
+ac7320a19149916814214a2aa74b680bf70d5d91
+add743fe75cbfef1718a01da4ed2b85664c5c170
+adf9c91c93cf1dcada1d83fb0bfc132fc481cb6e
+af739beb4cf1537c258eb4bc561ab11e7b100cca
+af927af702caf2e22d477b657dfce04869ee402a
+b1158bee46042c256bfee36ee482353bfb2e8d81
+b41ff5edb0927303d82c00ff6ad88d170cde7d0f
+b495d1a5d0dfd7d52dfa67a3b7f19239d1f7fa09
+b497ab2513f6233467541589a41c39b69cf6be86
+b6017273d08cfd2960442bcee6b817b22f0c2c8e
+b60dd3b4bd33520fd4b503463e3ef865992b717f
+b65c9ad9c359eb456664fe58bcf78973a52217c4
+b6692fa61044a5ea624a00b8f44f76ee1f3073af
+b68b382ff49d3cddf0aa56186265774a2e57b6c0
+b7049af41485cf4d0dd0d49d0736692d60065a21
+b7c99774c96ec54bee4c4a97fce66ff41a547a43
+b800bb69326ba8c1cf50f49289731323fce9a6b1
+b86da3e77b08cfc627cde04e1e7dfd4c12191acd
+b914b417298e59483c9e758071d02d29053be5d2
+b9da2b9d85675001b3e1487da1fe835e775262fc
+ba1c31e37febd7f33b9bb822ebe5f72098529067
+ba99601b68a8402226685b10c22dc85810dd5ca1
+baa6677a156b9b7309decad7a7f4725ce6d03b59
+bab374cf0bff7e5d918fe6c2a2f973115acfd486
+bbb3ca8291193ee567b1ff7a84e207d3f1612e70
+bbdd3b7011266bdf87e491707582429a4e598bb5
+bc5600005cbcb3b1053f8cf0234d055ff7a3ca13
+bccfe9fd6f31f3744ca2796ce4df88ca697cb966
+bd71472ef256523ff0bf6268eeebbd33eeed0ca2
+bdf90a9ed79f5bf6271bd7466fb5cb1ac498a306
+be265314ad48686ffbc2d45264c7c8c0e7ebe48b
+be7d0322ef775c61555d93577c5b419ae914995f
+bf41b521fdced23cd1e4f29032ec11ac94f4428a
+c11b12948b1e906e141fb452086c94daa171f0a4
+c18e73badf8f302b4b0f56253cd50c4f4d9ae16e
+c1e0256cc81785cb5947c47e5ba0de90262e98cd
+c28a4e9d697d691a57c7023afc776bce44729c3d
+c34878ab304a0f164ebb897e05619fd540dbe9d9
+c42837432d16d1d650f104caf5d21c723c335ef4
+c4ddeb1e1b550faa39cd30b804fce06f450fa1a2
+c6728bc553bd4529d188e7c865aee6c28cdf1f1c
+c70d83d00e9c91eefdba8c9deb593f7b3babbe04
+c846004178514e92945c2ca97f919414a68e1820
+c88b043c313a92a827ea0595779ffc5a016a958a
+c8da8424fa92154e1909a4f0274906441c0c1ef0
+c9d327c2f43a496f3de5ed3954062b8d25de5f9b
+ca8bf6dd3093defb707193c4926c2863acb45705
+ca90e4a8461e3f05c25b6dcf84b7f543e73d0e93
+caf0c34d4e79455dd9560206dc305134f98fd1ca
+cc71b5bd0dc1573a5a0649232013a0e27fb7e1bf
+cce622249bb857c2f23719aae7094d322dee1922
+cec11f0e9c27a518f3e48b68407b12e15c3b9ae1
+d01d96ccba9f5cd7b909a018db398031be37ae2a
+d0dd634e4ecda154b509f15b1a36a5882aad6bf1
+d1871651ac77f8d27800e44c88e8aeb0e0d8830d
+d27204e803c2f54e9da917b850c9d0c5a8f314a7
+d3199f6d32a9abb1fe1e3787ce72f34852d4e9f5
+d42cd0e84c4b17046119de917cee2be7f09eef14
+d431606e852fe599a6c4032f93ea082c07495342
+d49d955a9d9440bf0ed198c9a08479fc52915534
+d504bbd7050b47ceb0fedb008fee702bbee1e2c9
+d655002453e5737fab1aa1b03d5d347803a4af47
+d8088dab83ae2e07b478874f2bcd739828b9e900
+d83336299ae1f7f59ddf6b9604ed63ce39e1a30a
+d88c550802122122f3b2232cad05fc60f1ae8942
+da24103d9ea7099dc998b443e1f325d15d743e01
+dbc0ddc49f0d0e2b1e1a006e3ec368024cc033cf
+dc8af909d296a5e3c13df09aabba4c5996369151
+ddd9b2ff70e23488c93da48e43bc1d88010a531b
+de50cb693e85117eb5166a448217f5638a6e6b49
+e0e2bcf2c3d827e9b7333e3c54bcaee59bfd03cd
+e18ab79af045b87412d29a06093dff162de2aa69
+e31bea11d75b76bcfd7b1127730096a7a190cb76
+e3d9cb168751290df3ba8268e6677ec009e00f07
+e4c56bfa5f6ce0a4dc03a812f376182912c3c157
+e69f7ce43a39cb9edf024d8b0f8bcf83d1379629
+e7a0a20d254a9cecd7142474c4d98bf5147438d4
+e842b1ae27f30326d954cd1049935aca2a441d0b
+e93caaa89c966565ae22519ca6564fcdedbf78a7
+e9fff21567fab68a619aaa65b845556afb0f9096
+ebed9e9c22abd4a6b2f95eae00a3b74a5aa1c552
+ecbf9f80b387c5c059a62e6ade731bf25fcecc75
+ed093a7622e8c86fed5fd656055ca2a4306c90e8
+ed57b7ac90107e7106917f5cd0b84cea13cd3c69
+ef11363f8ed8e43801bef9900b7ba82ebab38a3b
+efe4b6f7aeaa72bc4b7a54d4ead541180e50ba3e
+f092ffa5e37ff5433541aee97ecbf48fa20515ed
+f0a4c67b29f937e1cf8b2abf8df5ca97a0ae19a8
+f348dbfcf3ac6e607b047f3ab5044bd0fea44270
+f3b287f2cbe3db0cbf62ef00ff4421fa3a37728a
+f5a59c3e7623ec46307055ca144750812cf3c341
+f780c556f80cac1b78e55e032ab0e23a9c5d4494
+f8d56811c9370fc99ab2b87adc6095cfd453cf40
+f927de3732cf0dd9d0619d0766c74d610439a572
+f98808882fba96ad4bc39b4113bb1b8a4f1f03fc
+f9d6579131fa3c873e28d387ac22519f231be7a2
+fa7d264194bcdb7f3dfe0821549f31ce0d5e4663
+faf0e7d0d1b6bec542993758706c69169d7fb7b4
+fb321ee7d2e5aee24c81de9e56a94951682aa5e0
+fb428f45a13291430a07a8145d407a0bd2b33729
+fb5818fcfde8f9f29f7a5e56d22c5e8f621e205f
+fc6bcfd65e588b199db6d249dfd6b3855d36b4a9
+fc848eddcacee5228d925a9dcbce1c9083760fc6
+fc8cea184af6507197c2748cb078233303cc8926
+fcf619bf945b9e4523d05bc51cb2a1d7e066cfb6
+fdc496fffa6f014acac3cce86bd1e5fe3c9295b5
+fe7cbb73028b4d1519f2c2f94a5646b16cc05da4
+fe888cb61eea026fec85d2bb7a348f8113f5212e

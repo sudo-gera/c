@@ -44,10 +44,11 @@ def __lancom__():
 		def __bool__(s):
 			return s.has()
 
-		def __init__(server_self,call=None,port=None,):
+		def constructor(server_self,_id,call=None,port=None,):
 			server_self.call=call
 			from time import time
-			server_self.id=int(time()*2**64)
+			server_self._id=_id
+			# server_self._id=int(time()*2**64)
 			from queue import Queue
 			server_self.u2s=Queue()
 			server_self.s2u=Queue()
@@ -132,7 +133,7 @@ def __lancom__():
 				path=int(path[3:])
 				qs.append(Queue())
 				qs.append(Queue())
-				d=Connection('127.0.0.1:'+str(server.port),len(qs)-1,len(qs)-2,path)
+				d=Connection('127.0.0.1:'+str(rserver.port),len(qs)-1,len(qs)-2,path)
 				auto_connected.append(d)
 				if hasattr(userver,'on_connection'):
 					try:
@@ -154,8 +155,42 @@ def __lancom__():
 	call=partial(call,qs)
 
 
-	server=real_server(call=call)
-	# print(server.port)
+	_id=int(time()*2**64)
+	rserver=real_server()
+
+	class user_server:
+		def __init__(s):
+			from queue import Queue
+			s._w=Queue()
+		def wait(s):
+			s._w.get()
+		@property
+		def id(s):
+			return s._id
+		@property
+		def ip(s):
+			return s._ip()
+		@property
+		def port(s):
+			return s._port
+		@property
+		def connected(s):
+			return s._connected[:]
+
+	userver=user_server()
+
+	def create_server(rserver=rserver):
+		from time import sleep
+		sleep(0.001)
+		rserver.constructor(call=call,_id=_id)
+		userver._id=_id
+		userver._port=rserver.port
+		userver._ip=get_ips	
+		userver._connected=auto_connected
+		userver._w.put(0)
+
+	from threading import Thread
+	Thread(target=create_server).start()
 
 	def makeurl(q):
 		q=q.strip()
@@ -170,16 +205,10 @@ def __lancom__():
 			q+='/'
 		return q
 
-
-	def get_port():
-		return server.port
-	# get_port=partial(get_port,server)
-
-
-	def req(q='',w='',e=get_port,url='http://127.0.0.1:'+str(get_port())+'/'):
+	def req(q='',w='',e=makeurl,url='http://127.0.0.1:'+str(rserver.port)+'/'):
 		from json import loads,dumps
 		from urllib.request import urlopen
-		if e==get_port:
+		if e==makeurl:
 			return loads(urlopen(str(url)+str(q)+str(w)).read().decode())
 		else:
 			return loads(urlopen(str(url)+str(q)+str(w),data=dumps(e).encode()).read().decode())
@@ -203,7 +232,7 @@ def __lancom__():
 		from functools import reduce
 		a.sort()
 		a=reduce(lambda a,s:a if a and a[-1]==s else a+[s],a,[])
-		a=[w+':'+str(get_port()) for w in a]
+		a=[w+':'+str(rserver.port) for w in a]
 		a=[[w] for w in a]
 		from urllib.request import urlopen
 		rid=req('id')
@@ -216,7 +245,7 @@ def __lancom__():
 				w.pop()
 		a=sum(a,[])
 		from difflib import ndiff
-		a.sort(key=lambda a:len(list(filter(lambda a:a.startswith(' '),ndiff(a,'127.0.0.1:'+str(get_port()))))),reverse=1)
+		a.sort(key=lambda a:len(list(filter(lambda a:a.startswith(' '),ndiff(a,'127.0.0.1:'+str(rserver.port))))),reverse=1)
 		return a
 
 	def stop_connections():
@@ -225,11 +254,11 @@ def __lancom__():
 		# except:
 		# 	pass
 		try:
-			server.ms.server_close()
+			rserver.ms.server_close()
 		except:
 			pass
 		try:
-			server.bg.join()
+			rserver.bg.join()
 		except:
 			pass
 
@@ -246,19 +275,24 @@ def __lancom__():
 			s.s2r=e
 			s.id=r
 			from queue import Queue
+			s.bgq=Queue()
 			s.gq=Queue()
 			from threading import Thread
-			s.bg=Thread(target=s._autoget)
+			s.bg=Thread(target=s._spawner)
 			s.bg.start()
 
+
 		def has(s):
-			return req('has',s.r2s,url=s.url)
+			return s.gq.qsize()+req('has',s.r2s,url=s.url)
 
 		def get(s):
 			return s.gq.get()
 
 		def put(s,d):
-			return req('put',s.s2r,d,url=s.url)
+			Thread(target=s._put,args=(d,)).start()
+
+		def _put(s,d):
+			req('put',s.s2r,d,url=s.url)
 
 		def _autoget(s):
 			while 1:
@@ -268,26 +302,22 @@ def __lancom__():
 						s.on_message(d)
 					else:
 						s.gq.put(d)
+					s.bgq.put(0)
 				except:
 					from traceback import format_exc
 					from sys import stderr
 					print(format_exc(),file=stderr)
 
-	class user_server:
-		@property
-		def id(s):
-			return s._id
-		@property
-		def ip(s):
-			return s._ip()
-		@property
-		def connected(s):
-			return s._connected[:]
+		def _spawner(s):
+			from time import sleep
+			from threading import Thread
+			while 1:
+				sleep(0.001)
+				if s.bgq.qsize()==0:
+					Thread(target=s._autoget).start()
+				while s.bgq.qsize():
+					s.bgq.get()
 
-	userver=user_server()
-	userver._id=req('id')
-	userver._ip=get_ips	
-	userver._connected=auto_connected
 
 	return userver,Connection
 

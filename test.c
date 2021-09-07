@@ -1,18 +1,19 @@
 #include <stdio.h>
 
-<<<<<<< HEAD
-=======
-// #define for for (int iterator=0,int&
-// #define in  =iterator,int iterend=
-// #define range(q) q ;iterator<iterend;++iterator)
+
+int inc(int q){
+	q+=1;
+}
+
+int inc_p(int *q){
+	*q+=1;
+}
 
 
 int main(){
-	// for (int iterator=0,int& w =iterator,int iterend= 10 ;iterator<iterend;++iterator)
-	int iterend=10;
-	for (int iterator=0,int iterend=10;iterator<iterend;++iterator)
-	{
-		printf("%i\n",iterator);
-	}
+	int a=0; // в a 0
+	inc(a); //копирует содержимое в функцию, а там меняется уже копия, значение a не меняется
+	inc_p(&a); //отправляет адрес переменной a в функцию, само содержисое a не меняется и не копируется. Функция изменяет саму переменную
+
+
 }
->>>>>>> 958edbffff45f5181ed6079b76bc214c68e40101
