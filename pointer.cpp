@@ -56,6 +56,9 @@ public:
 	T&operator*(){
 		return *value;
 	}
+	T*operator->(){
+		return value;
+	}
 	operator T*(){
 		return value;
 	}
