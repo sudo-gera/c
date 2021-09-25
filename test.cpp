@@ -3,8 +3,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-
-
 int main(int argc, char **argv) {
 	int step = argc > 1 ? atoi(argv[1]) : 1;
 	int size = argc > 2 ? atoi(argv[2]) : 1024*1024*512;
