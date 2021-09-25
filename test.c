@@ -28,7 +28,7 @@ void run(int n,int k,node** a){
 int main(){
 	int n,k;
 	scanf("%i%i",&n,&k);
-	node* a[n];
+	node* a[100000];
 	for (int w=0;w<n;++w){
 		a[w]=0;
 	}

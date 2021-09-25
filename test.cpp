@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -33,3 +34,11 @@ int main(int argc, char **argv) {
 	}
 	delete [] a;
 }
+=======
+#include "header.hpp"
+using namespace std;
+#include <ext/rope>
+int main(){
+	system("arch");
+}
+>>>>>>> 50fa3d2340f173272a3efbda26f2962492826c02
