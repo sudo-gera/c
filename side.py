@@ -191,9 +191,9 @@ def connect(*q,default=None):
 	while 1:
 		try:
 			return urlopen(f'http://{host[0]}:{host[1]}/{dump(list(q))}').read().decode()
+		except:
 			sleep(0.1)
 			x+=1
-		except:
 			if default!=None:
 				return default
 			if x>8:
@@ -239,6 +239,7 @@ def runserver():
 		def log_message(self, *args):
 			return
 
+	from icecream import ic
 	myServer = HTTPServer((host[0], host[1]), MyServer)
 
 
@@ -279,7 +280,7 @@ def update():
 		pass
 	connect("stop","///////////////update",getpid())
 
-host=['127.0.0.1',14271]
+host=['127.0.0.1',14272]
 
 if __name__ == '__main__':
 	logging=0

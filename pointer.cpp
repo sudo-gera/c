@@ -1,60 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
-template<typename T>
-class pointer{
-	int64_t *count=nullptr;
-	T *value=nullptr;
-	void __init__(const T&q){
-		value=new T(q);
-		count=new int64_t(1);
-	}
-	void __init__(const pointer& o){
-		value=o.value;
-		count=o.count;
-		*count+=1;
-	}
-	void __del__(){
-		if(count){
-			*count-=1;
-			if (*count==0){
-				delete count;
-				count=nullptr;
-				delete value;
-				value=nullptr;
-			}
-		}
-	}
-public:
-	pointer(const T&q=T()){
-		this->__init__(q);
-	}
-	pointer(const pointer& o){
-		this->__init__(o);
-	}
-	pointer&operator=(const T&q){
-		this->__del__();
-		this->__init__(q);
-		return *this;
-	}
-	pointer&operator=(const pointer&q){
-		this->__del__();
-		this->__init__(q);
-		return *this;
-	}
-	~pointer(){
-		this->__del__();
-	}
-	template <typename Y>
-	bool operator<(const pointer<Y> o)const{
-		return (*value)<(*o.value);
-	}
-	T&operator*(){
-		return *value;
-	}
-	operator T*(){
-		return value;
-	}
-};
+#include "pointer.hpp"
+
 
 int qq=0;
 class test{
@@ -85,26 +32,53 @@ public:
 	}
 };
 
-
-int run(){
-	return 12;
+template <typename Y>
+void ___mergesort(Y qb,Y qe,pointer<vector<typename Y::value_type>> _a=nullptr){
+	using T=typename Y::value_type;
+	// using T=vector<decltype(qb[0])>;
+	// T*a=(T*)_a;
+	if (qe-qb<2){
+		return;
+	}
+	bool outs=0;
+	if (!_a){
+		// a=new T[qe-qb];
+		_a=vector<T>(qe-qb);
+		outs=1;
+	}
+	vector<T>&a=*_a;
+	___mergesort(qb,qb+(qe-qb)/2,_a);
+	___mergesort(qb+(qe-qb)/2,qe,_a);
+	size_t asize=0;
+	size_t lp=0;
+	size_t rp=(qe-qb)/2;
+	while (lp<(qe-qb)/2 or rp<(qe-qb)){
+		if (lp==(qe-qb)/2){
+			a[asize++]=qb[rp++];
+		}else
+		if (rp==(qe-qb)){
+			a[asize++]=qb[lp++];
+		}else
+		if (qb[lp]>qb[rp]){
+			a[asize++]=qb[rp++];
+		}else{
+			a[asize++]=qb[lp++];
+		}
+	}
+	for (size_t w=0;w<asize;++w){
+		qb[w]=a[w];
+	}
+	if (outs){
+		// delete a;
+	}
 }
 
+
 int main(){
-	cout<<__LINE__<<endl;
-	{
-	cout<<__LINE__<<endl;
-		const test q;
-	cout<<__LINE__<<endl;
-		pointer w=q;
-	cout<<__LINE__<<endl;
-		w=test();
-	cout<<__LINE__<<endl;
+	vector<int> a({1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0});
+	___mergesort(a.begin(),a.end());
+	for (auto w:a){
+		cout<<w<<' ';
 	}
-	cout<<__LINE__<<endl;
-
-
-	pointer r=run();
-
-
+	cout<<'\n';
 }

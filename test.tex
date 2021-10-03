@@ -1,0 +1,71 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage[a4paper,top=1.5cm, bottom=1.5cm, left=1cm, right=1cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{mathtext}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{textcomp}
+\usepackage[english, russian]{babel}
+\usepackage{indentfirst}
+\usepackage{fixltx2e}
+\usepackage{longtable}
+\usepackage{graphicx}
+\graphicspath{{pictures/}}
+\DeclareGraphicsExtensions{.pdf,.png,.jpg}
+\usepackage{natbib}
+\usepackage{mathrsfs}
+\usepackage[europeanresistors, americaninductors]{circuitikz}
+
+\title{АЛКТГ дз 2}
+\author{Татаринов Георгий}
+\date{\today}
+
+\begin{document}
+	\maketitle
+	\section*{Задание 1}
+		$(A\setminus B)\bigcap((A\bigcup B)\setminus (A\bigcap B))=(A\setminus B)\bigcap((A\setminus B)\bigcup (B\setminus A))=A\setminus B$\par
+		Ответ: верно
+	\section*{Задание 2}
+		Пусть $A=\{0\}=B,C=\varnothing$\par
+		$((A\setminus B)\bigcup(A\setminus C))\bigcap (A\setminus (B\bigcap C))=
+		((\{0\}\setminus \{0\})\bigcup(\{0\}\setminus \{\}))\bigcap (\{0\}\setminus (\{0\}\bigcap \{\}))
+		=(\{\}\bigcup\{0\})\bigcap (\{0\}\setminus \{\})
+		=\{0\}\bigcap \{0\}
+		=\{0\}$\par
+		$A\setminus (B\bigcup C)=\{0\}\setminus (\{0\}\bigcup \{\})=\{0\}\setminus \{0\}=\{\}$\par
+		$\{0\}\neq\{\}$ из чего следует, что утверждение не всегда верно.\par
+		Ответ: не верно.
+	\section*{Задание 3}
+		Пусть $A(x)$ верно если $x$ принадлежит $A$, иначе неверно.\par
+		Аналогично для $B$ и $C$.\par
+		$\forall x : (A(x)\land B(x)) \land \lnot C(x)  =  (A(x) \land \lnot C(x)) \land (B(x) \land \lnot C(x))$\par
+		$(A\bigcap B)\setminus C  =  (A \setminus C) \bigcap (B \setminus C)$\par
+		Ответ: верно.
+	\section*{Задание 4}
+		Пусть $A(x)$ верно если $x$ принадлежит $A$, иначе неверно.\par
+		Аналогично для $B$.\par
+		$(A\bigcup B) \setminus (A \setminus B) \subseteq B$\par
+		$\forall x : (A(x)\lor B(x)) \land \lnot (A(x) \land \lnot B(x)) \to B(x)$\par
+		$\forall x : (A(x)\lor B(x)) \land (\lnot A(x) \lor  B(x)) \to B(x)$\par
+		$\forall x : (A(x)) \land (\lnot A(x)) \lor B(x) \to B(x)$\par
+		$\forall x : B(x) \to B(x)$\par
+		Ответ: верно.
+	\section*{Задание 5}
+		Пусть $A(x)$ верно если $x$ принадлежит $A$, иначе неверно.\par
+		Аналогично для $P$ и $Q$.\par
+		$\forall x : ((A(x) \to P(x)) \land (Q(x)) \to (A(x)))$\par
+		$\forall x : (A(x) \to P(x)) \land \forall x :(Q(x)) \to (A(x))$\par
+		$A \subseteq P \land Q \subseteq A$\par
+		Ответ: минимально возможной длины: $[20,30]$ максимально возможной длины: $[10,40]$
+	\section*{Задание 6}
+		$A \bigcap X = B \bigcap X$\par
+		$A \bigcup Y = B \bigcup Y$\par
+		$(A \bigcup Y) \setminus X = (B \bigcup Y) \setminus X$\par
+		$(A\bigcap X) \bigcup ((A \bigcup Y)\setminus X) = (B\bigcap X) \bigcup ((B \bigcup Y)\setminus X)$\par
+		$(A\bigcap X) \bigcup (A\setminus X) \bigcup (Y\setminus X) = (B\bigcap X) \bigcup (B\setminus X) \bigcup (Y\setminus X)$\par
+		$A \bigcup (Y\setminus X) = B \bigcup (Y\setminus X)$\par
+		Ответ: верно.
+	\section*{Задание 7}
+		Пусть $x$ принадлежит $A_6\setminus A_9$. Тогда $x$ принадлежит $A_6$. Тогда так как $A_6 \subseteq A_5 \subseteq A_4$, имеем, что $x$ принадлежит $A_4$, а значит, не принадлежит $A_1 \setminus A_4$. Противоречие. Значит, множество $A_6\setminus A_9$ пустое, и множество $A_1 \setminus A_4$ пустое. Это значит, что $A_1=A_2=A_3=A_4$ и $A_6=A_7=A_8=A_9$, из чего следует, что $A_2\setminus A_7=A_3\setminus A_8$.
+\end{document}

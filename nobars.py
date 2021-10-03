@@ -9,10 +9,15 @@ while 1:
 #	print(list(map(lambda x:str(10**9+round(x,4))[6:],a.position)),end='\n',sep='\t')
 	if a.position[1]<rect[0]:
 		a.position=(a.position[0],rect[0])
-	if a.position[0]+a.position[1]*2<32:
-		a.position=(a.position[0],(32-a.position[0])/2)
-	if a.position[0]*2+a.position[1]<32:
-		a.position=((32-a.position[1])/2,a.position[1])
+	if a.position[1]<45 and a.position[1]*20>a.position[0]*45:
+		a.position=[20,45]
+	# if a.position[0]+a.position[1]*2<80:
+	# 	a.position=(a.position[0],(80-a.position[0])/2)
+	# if a.position[0]*2+a.position[1]<64:
+	# 	a.position=((64-a.position[1])/2,a.position[1])
+
+
+
 
 	# if a.position[1]>scs[1]-rect[3]:
 	# 	a.position=(a.position[0],scs[1]-rect[3])
