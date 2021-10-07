@@ -1,36 +1,14 @@
 #include <stdio.h>
 
-typedef struct node{
-	int value;
-	struct node *prev;
-} node;
-
-void run(int n,int k,node** a){
-	if (k){
-		node f;
-		int g;
-		scanf("%i%i",&g,&(f.value));
-		f.prev=a[g];
-		a[g]=&f;
-		run(n,k-1,a);
-	}else{
-		for (int w=0;w<n;++w){
-			while (a[w]){
-				printf("%i ",a[w]->value);
-				a[w]=a[w]->prev;
-			}
-			printf("\n");
-		}
-	}
-}
+struct{}__cpp__;
+const int is_cpp=sizeof(__cpp__);
 
 
 int main(){
-	int n,k;
-	scanf("%i%i",&n,&k);
-	node* a[100000];
-	for (int w=0;w<n;++w){
-		a[w]=0;
+	if (is_cpp){
+		printf("it is c++\n");
+	}else{
+		printf("it is c\n");
 	}
-	run(n,k,a);
 }
+
