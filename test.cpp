@@ -1,54 +1,24 @@
-<<<<<<< HEAD
-#include "header.hpp"
-_main{
-	for (q:arr(1,2)){
-		print(q);
-	}
+#include <stdio.h>
+
+template<int q>
+struct sized_data{char e[q];};
+
+
+template<typename T>
+char return_char(const T&q){
+	return '0';
 }
-=======
-#include <bits/stdc++.h>
-<<<<<<< HEAD
-using namespace std;
+
+template<typename...T>
+auto count_args_as_data(const T&...a){
+	char t[]={return_char(a)...};
+	sized_data<sizeof(t)> f;
+	return f;
+}
+
+#define count_args(...) sizeof(count_args_as_data(__VA_ARGS__))
 
 int main(){
-	auto a=new int[12];
-
+	printf("%i\n",count_args(1,2L,3U,"4",'5'));
 }
-=======
-// using namespace std;
 
-// template <typename T>
-// string binstr(T q){
-// 	string res;
-// 	for (int w=0;w<sizeof(q);++w){
-// 		auto g=*((uint8_t*)(&q)+w);
-// 		res+=string({
-// 			char('0'+((g&(1<<0))>>0)),
-// 			char('0'+((g&(1<<1))>>1)),
-// 			char('0'+((g&(1<<2))>>2)),
-// 			char('0'+((g&(1<<3))>>3)),
-// 			char('0'+((g&(1<<4))>>4)),
-// 			char('0'+((g&(1<<5))>>5)),
-// 			char('0'+((g&(1<<6))>>6)),
-// 			char('0'+((g&(1<<7))>>7)),
-// 		});
-// 	}
-// 	reverse(res.begin(),res.end());
-// 	return res;
-// }
-
-
-int main(int argc,char**argv){
-	// void *p=0;
-	// cout<<p<<endl;
-	// int *i=0;
-	// cout<<p-i<<endl;
-
-	std::printf("333");
-
-	// long double f;
-	// sscanf(argv[1],"%Lf",&f);
-	// cout<<binstr(f)<<endl;
-}
->>>>>>> abd783f8008c93f96dd84635bb701ea7e1c5bd52
->>>>>>> 89c2f767f828243a911f55753620f11b7a52f242
