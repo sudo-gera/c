@@ -44,7 +44,7 @@ public:
 		}
 		return *this;
 	}
-	operator bool(){
+	operator bool()const{
 		return count;
 	}
 	void clear(){
@@ -68,7 +68,7 @@ public:
 	T &operator*(){
 		return *value;
 	}
-	T *operator->(){
+	T *operator->()const{
 		return value;
 	}
 	operator T*(){

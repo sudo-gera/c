@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-// #include "pointer.cpp"
+#include "pointer.hpp"
 using namespace std;
 #define elif else if
 #define int int64_t
@@ -8,15 +8,15 @@ template <typename t>
 struct el{
 	t v;
 	int w;
-	el* _z=nullptr;
-	el* _x=nullptr;
+	pointer<el> _z=nullptr;
+	pointer<el> _x=nullptr;
 	int s=1;
 	el(t _v){
 		v=_v;
 		w=rand();
 	}
 
-	el* z(){
+	pointer<el> z(){
 		return _z;
 	}
 	template<typename y>
@@ -25,7 +25,7 @@ struct el{
 		update(this);
 	}
 
-	el* x(){
+	pointer<el> x(){
 		return _x;
 	}
 	template<typename y>
@@ -36,10 +36,10 @@ struct el{
 };
 
 template<typename T>
-el<T>* get_by_index(el<T>* s,int n){
+pointer<el<T>> get_by_index(pointer<el<T>> s,int n){
 	if (!s){
 		cout<<__LINE__<<" ValueError"<<endl;
-		return (el<T>*)(0);
+		return (pointer<el<T>>)(nullptr);
 	}
 	if (!(s->z())){
 		if (n==0){
@@ -61,28 +61,9 @@ el<T>* get_by_index(el<T>* s,int n){
 		}
 	}
 	cout<<__LINE__<<" unexpected exit"<<endl;
-	return (el<T>*)(0);
+	return (pointer<el<T>>)(nullptr);
 }
 
-
-// def init(l,b,e,f,w=1):
-// 	if b==e:
-// 		return None
-// 	else:
-// 		c=(b+e)//2
-// 		from random import random
-// 		r=el(l[c],w=(1000-w)/(1000)+random()/1000,f=f[:])
-// 		r.z=init(l,b,c,f,w+1)
-// 		r.x=init(l,c+1,e,f,w+1)
-// 		return r
-
-// def to_list(s):
-// 	if s==None:
-// 		return []
-// 	a=to_list(s.z)
-// 	a.append(s.v)
-// 	a+=to_list(s.x)
-// 	return a
 
 template <typename T>
 void update(el<T>*t){
@@ -100,7 +81,7 @@ void update(el<T>*t){
 }
 
 template<typename T>
-vector<T> to_list(el<T>* q){
+vector<T> to_list(pointer<el<T>> q){
 	if (!q){
 		return vector<T>();
 	}
@@ -113,7 +94,7 @@ vector<T> to_list(el<T>* q){
 }
 
 // template<typename T>
-// void print(el<T>* q){
+// void print(pointer<el<T>> q){
 // 	auto w=to_list(q);
 // 	for (auto w:w){
 // 		cout<<w<<" ";
@@ -122,7 +103,7 @@ vector<T> to_list(el<T>* q){
 // }
 
 template<typename T>
-el<T>* merge(el<T>* t1,el<T>* t2){
+pointer<el<T>> merge(pointer<el<T>> t1,pointer<el<T>> t2){
 
 	if (!t1){
 		return t2;
@@ -140,13 +121,13 @@ el<T>* merge(el<T>* t1,el<T>* t2){
 }
 
 template <typename T>
-pair<el<T>*,el<T>*> split(el<T>* t,int n){
+pair<pointer<el<T>>,pointer<el<T>>> split(pointer<el<T>> t,int n){
 	if (!t){
-		return {(el<T>*)(0),(el<T>*)(0)};
+		return {(pointer<el<T>>)(nullptr),(pointer<el<T>>)(nullptr)};
 	}
 	elif (!(t->z())){
 		if (n<1){
-			return {(el<T>*)(0),t};
+			return {(pointer<el<T>>)(nullptr),t};
 		}
 		else{
 			auto tmp=split(t->x(),n-1);
@@ -156,11 +137,11 @@ pair<el<T>*,el<T>*> split(el<T>* t,int n){
 		}
 	}elif (t->z()->s==n){
 		auto t1=t->z();
-		t->z((el<T>*)(0));
+		t->z((pointer<el<T>>)(0));
 		return {t1,t};
 	}elif (t->z()->s+1==n){
 		auto t2=t->x();
-		t->x((el<T>*)(0));
+		t->x((pointer<el<T>>)(nullptr));
 		return {t,t2};
 	}elif (t->z()->s+1<n){
 		auto tmp=split(t->x(),n-t->z()->s-1);
@@ -174,33 +155,33 @@ pair<el<T>*,el<T>*> split(el<T>* t,int n){
 		return {t1,t};
 	}
 	cout<<__LINE__<<" unexpected exit"<<endl;
-	return {(el<T>*)(0),(el<T>*)(0)};
+	return {(pointer<el<T>>)(0),(pointer<el<T>>)(0)};
 }
 
 
 template <typename T>
 struct treap{
-	el<T>* e=nullptr;
+	pointer<el<T>> e=nullptr;
 	template <typename y=vector<T>>
 	treap(y l=vector<T>()){
 		for (auto w:l){
-			e=merge(e,new el(w));
+			e=merge(e,pointer(el(w)));
 		}
 	}
 	treap(int l){
 		for (int w=0;w<l;++w){
-			e=merge(e,new el(T()));
+			e=merge(e,pointerel(T()));
 		}
 	}
 	treap(const treap&l){
 		for (int w=0;w<l.size();++w){
-			e=merge(e,new el(l[w]));
+			e=merge(e,pointer(el(l[w])));
 		}
 	}
 	void operator=(const treap&l){
 		e=nullptr;
 		for (int w=0;w<l.size();++w){
-			e=merge(e,new el(l[w]));
+			e=merge(e,pointer(el(l[w])));
 		}
 	}
 	// def __init__(s,l=[],f=[]):
@@ -264,7 +245,7 @@ struct treap{
 	}
 
 	void push_back(T a){
-		e=merge(e,new el(a));
+		e=merge(e,pointer(el(a)));
 	}
 
 
@@ -295,7 +276,9 @@ struct treap{
 
 
 signed main(){
+	cout<<__LINE__<<endl;
 	auto q=treap<int>();
+	cout<<__LINE__<<endl;
 	q.push_back(1);
 	q.push_back(2);
 	q.push_back(3);

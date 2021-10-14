@@ -1,5 +1,10 @@
-#include <bits/stdc++.h>
+#include "header.hpp"
 
-int main(){
-	auto q=new int[222];
+
+
+
+
+_main{
+	print(type(cout));
 }
+

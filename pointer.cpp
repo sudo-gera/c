@@ -75,10 +75,13 @@ void ___mergesort(Y qb,Y qe,pointer<vector<typename Y::value_type>> _a=nullptr){
 
 
 int main(){
-	vector<int> a({1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0});
-	___mergesort(a.begin(),a.end());
-	for (auto w:a){
-		cout<<w<<' ';
-	}
-	cout<<'\n';
+	// vector<int> a({1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0});
+	// ___mergesort(a.begin(),a.end());
+	// for (auto w:a){
+	// 	cout<<w<<' ';
+	// }
+	// cout<<'\n';
+	pointer<int> q;
+	q=pointer(12);
+	cout<<*q<<endl;
 }
