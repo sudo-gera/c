@@ -4,6 +4,10 @@
 #include <utility>
 
 
+#if __has_include("h")
+#include "h"
+#endif
+
 int main(){
 	size_t n,k;
 	scanf("%zi%zi",&n,&k);
@@ -13,13 +17,13 @@ int main(){
 		int64_t w;
 		scanf("%lli",&w);
 		if (s>k){
-			if (s>k+1){
-				size_t p=1;
+			size_t p=1;
+			if (w>a[1]){
 				a[1]=w;
 				while(p<s){
 					if (2*p>=s){
 						break;
-					}
+					}else
 					if (2*p+1>=s){
 						if (a[p]>a[2*p]){
 							std::swap(a[p],a[2*p]);
@@ -40,7 +44,6 @@ int main(){
 						}
 					}
 				}
-				s-=1;
 			}
 		}else{
 			a[s]=w;
@@ -54,6 +57,15 @@ int main(){
 				}
 			}
 		}
+
+		printf("\x1b[32m");
+		for (size_t q=0;q<k*8;++q){
+			if (q==s){
+				printf("\x1b[0m");
+			}
+			printf("%lli ",a[q]);
+		}
+		printf("\n");
 
 		// a[s]=w;
 		// size_t p=s++;
