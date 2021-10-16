@@ -2,9 +2,16 @@
 
 
 
+struct q{
+	char a[0];
+};
+
+struct w{
+};
 
 
-_main{
-	print(type(cout));
+int main(){
+	std::cout<<"sizeof char[0] (q) "<<sizeof(q)<<std::endl;
+	std::cout<<"sizeof empty   (w) "<<sizeof(w)<<std::endl;
 }
 

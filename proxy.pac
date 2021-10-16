@@ -7,7 +7,7 @@ function FindProxyForURL(url, host){
 		if (isResolvable('google.com')){
 			return "DIRECT; PROXY 192.168.49.1:8282; SOCKS 192.168.49.1:8181";
 		}else{
-			return "PROXY 192.168.49.1:8282; SOCKS 192.168.49.1:8181; DIRECT";
+			return "SOCKS 192.168.49.1:8181; PROXY 192.168.49.1:8282; DIRECT";
 		}
 		// alert(isResolvable('192.168.49.1:8282/proxy.pac'));
 		// return "DIRECT; PROXY 192.168.49.1:8282; SOCKS 192.168.49.1:8181";
