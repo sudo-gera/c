@@ -39,7 +39,7 @@ int main(){
 							std::swap(a[p],a[2*p+1]);
 							p*=2;
 							p+=1;
-						}else {
+						}else{
 							break;
 						}
 					}
@@ -58,55 +58,14 @@ int main(){
 			}
 		}
 
-		printf("\x1b[32m");
-		for (size_t q=0;q<k*8;++q){
-			if (q==s){
-				printf("\x1b[0m");
-			}
-			printf("%lli ",a[q]);
-		}
-		printf("\n");
-
-		// a[s]=w;
-		// size_t p=s++;
-		// while (p>1){
-		// 	if (a[p/2]>a[p]){
-		// 		std::swap(a[p],a[p/2]);
-		// 		p/=2;
-		// 	}else{
-		// 		break;
+		// printf("\x1b[32m");
+		// for (size_t q=0;q<k*8;++q){
+		// 	if (q==s){
+		// 		printf("\x1b[0m");
 		// 	}
+		// 	printf("%lli ",a[q]);
 		// }
-
-		// if (s>k+1){
-		// 	p=1;
-		// 	a[1]=a[s-1];
-		// 	while(p<s){
-		// 		if (2*p>=s){
-		// 			break;
-		// 		}
-		// 		if (2*p+1>=s){
-		// 			if (a[p]>a[2*p]){
-		// 				std::swap(a[p],a[2*p]);
-		// 				p*=2;
-		// 			}else{
-		// 				break;
-		// 			}
-		// 		}else{
-		// 			if (a[p]>a[2*p] and a[2*p]<=a[2*p+1]){
-		// 				std::swap(a[p],a[2*p]);
-		// 				p*=2;
-		// 			}else if (a[p]>a[2*p+1] and a[2*p+1]<a[2*p]){
-		// 				std::swap(a[p],a[2*p+1]);
-		// 				p*=2;
-		// 				p+=1;
-		// 			}else {
-		// 				break;
-		// 			}
-		// 		}
-		// 	}
-		// 	s-=1;
-		// }
+		// printf("\n");
 
 	}
 	auto d=(int64_t*)malloc(sizeof(int64_t)*50000);

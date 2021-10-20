@@ -1,8 +1,14 @@
 #include "h"
 
+struct a{
+	int a;
+	double s;
+	int d;
+};
 
-
-µ{
-	print(type(qw))
+int main(){
+	print(sizeof(a));
 }
+
+
 
