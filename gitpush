@@ -9,5 +9,4 @@ git commit -qam "$d"
 git pull -q --no-edit
 git add *
 git commit -qam "$d" >/dev/null 2>/dev/null
-
 git push -q
