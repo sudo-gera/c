@@ -1,5 +1,5 @@
 #include <stdio.h>
 
 int main(){
-	printf("%i\n",);
+	printf("%i\n",sizeof('c'));
 }
