@@ -1,5 +1,7 @@
 #include "/Users/gera/pony/pony.hpp"
+#ifndef DEBUG
 #define int int64_t
+#endif
 #define _main µ
 #define intmain µ
 #define ima µ
@@ -13,5 +15,5 @@
 #define MACRO_TO_STR(...) TO_STR(__VA_ARGS__)
 using namespace std;
 #define print(...) print(__VA_ARGS__);
+#define write(...) write(__VA_ARGS__);
 #define def auto
-#define ic(...) _ic("\x1b[93m",#__VA_ARGS__,"\x1b[0m",__VA_ARGS__);

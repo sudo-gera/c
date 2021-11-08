@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include <tgmath.h>
 
 int main(){
-	printf("%i\n",sizeof('c'));
+	const int d=0;
+	printf("%i\n",d);
 }
