@@ -1,11 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <iso646.h>
 #include <stdint.h>
 
 #if __has_include("h") && __cplusplus
 #define CPP_R
 #endif
+
+#ifdef TMUX
+#include "bn.h"
+//#include "d"
+using namespace std;
+#endif
+
+
 
 #ifdef CPP_R
 #include "bn.h"
@@ -131,9 +138,20 @@ int bn_init_str(bn *q,string e){
 			e=string(e.begin()+1,e.end());
 		}
 		for (auto&w:e){
+#ifndef TMUX
 			w="\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x24\x25\x26\x27\x28\x29\x2a\x2b\x2c\x2d\x2e\x2f\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x3a\x3b\x3c\x3d\x3e\x3f\x40\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x5b\x5c\x5d\x5e\x5f\x60\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x7b\x7c\x7d\x7e\x7f"[w];
+#endif
+
+#ifdef TMUX
+
+if ('0'<=w and w<='9'){w-='0';} else
+	if ('a'<=w and w<='z'){w-='a';} else
+		if ('A'<=w and w<='Z'){w-='A';}
+   
+#endif
+
 		}
-		for (auto w:range(e.size())){
+			for (auto w:range(e.size())){
 			q->vect[w/8]|=uint32_t(uint8_t(e.end()[-1-w]))<<(w%8)*4;
 		}
 	}
@@ -235,6 +253,7 @@ int bn_delete(bn *q){
 // 	return BN_OK;
 // }
 
+#ifndef TMUX
 
 int bn_P_add_to(bn *q, bn const *e){
 	if (!q){
@@ -244,7 +263,7 @@ int bn_P_add_to(bn *q, bn const *e){
 		return BN_NULL_OBJECT;
 	}
 	q->size=(q->size>e->size?q->size:e->size)+1;
-	q->vect=(uint32_t*)realloc(q->vect,q->size*sizeof(uint32_t));
+	q->vect=realloc(q->vect,q->size*sizeof(uint32_t));
 #if ERRORS
 	if(!q->vect){
 		return BN_NO_MEMORY;
@@ -261,22 +280,16 @@ int bn_P_add_to(bn *q, bn const *e){
 		q->vect[w]=buff&0b11111111111111111111111111111111;
 		buff>>=32;
 	}
-	return BN_OK;
+	return BN_OK
 }
+#endif
 
-int bn_cmp(bn const *q, bn const *e){
-	if (q->sign!=e->sign){
-		return q->sign-e->sign;
-	}
-	for (ssize_t c=(q->size>e->size?q->size:e->size)-1;c>0;--c){
-		auto a=q->size<c?q->vect[c]:0;
-		auto s=e->size<c?q->vect[c]:0;
-		if (a!=s){
-			return a-s;
-		}
-	}
-	return 0;
+#ifndef TMUX
+int bn_cmp(bn const *left, bn const *right){
+	
 }
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifdef CPP_R
@@ -311,77 +324,51 @@ public:
 	}
 	template <typename T>
 	friend auto &operator<<(T& q,BigInteger f){
-		char b[99999];
-		b[0]=0;
-		sprintf(b,"%s\x1b[92m%c\x1b[0m",b,1==f.q->sign?'+':-1==f.q->sign?'-':'0');
+		printf("\x1b[92m%c\x1b[0m",1==f.q->sign?'+':-1==f.q->sign?'-':'0');
 		int c=0;
 		for (int t=f.q->size-1;t>-1;--t){
 			if (c%2){
-				sprintf(b,"%s\x1b[92m",b);
+				printf("\x1b[92m");
 			}
-			sprintf(b,"%s%0*x",b,8,f.q->vect[t]);
+			printf("%0*x",8,f.q->vect[t]);
 			if (c%2){
-				sprintf(b,"%s\x1b[0m",b);
+				printf("\x1b[0m");
 			}
 			++c;
 		}
-		q<<b;
 		return q;
 	}
-	// BigInteger&operator+=(BigInteger const&q){
-	// 	this->q+=q.q;
-	// 	return *this;
-	// }
-	bool operator<(BigInteger const&q){
-		return bn_cmp(this->q,q.q)<0;
+#ifndef TMUX
+	BigInteger&operator+=(BigInteger const&q){
+		this->q+=q.q;
+		return *this;
 	}
-	bool operator==(BigInteger const&q){
-		return bn_cmp(this->q,q.q)==0;
-	}
-	bool operator>(BigInteger const&q){
-		return bn_cmp(this->q,q.q)>0;
-	}
-	bool operator<=(BigInteger const&q){
-		return bn_cmp(this->q,q.q)<=0;
-	}
-	bool operator!=(BigInteger const&q){
-		return bn_cmp(this->q,q.q)!=0;
-	}
-	bool operator>=(BigInteger const&q){
-		return bn_cmp(this->q,q.q)>=0;
-	}
+#endif
 	~BigInteger(){
 		bn_delete(q);
 	}
 };
 
 
-µ{
-	test(BigInteger("1"),"\x1b[92m+\x1b[0m00000001");
-	test(BigInteger("-1"),"\x1b[92m-\x1b[0m00000001");
-	test(BigInteger("1234"),"\x1b[92m+\x1b[0m00001234");
-	test(BigInteger("-1234"),);
-	test(BigInteger("12345678"));
-	test(BigInteger("-12345678"));
-	test(BigInteger("012345678"));
-	test(BigInteger("-012345678"));
-	test(BigInteger("876543210"));
-	test(BigInteger("-876543210"));
-	test(BigInteger("fedcba9876543210"));
-	test(BigInteger("-fedcba9876543210"));
-	test(BigInteger("1234567898765432123456789876543212345678987654321234567"));
-	test(BigInteger("0"));
-	test(BigInteger(4294967296));
-	test(BigInteger(4294967295));
-	test(BigInteger(-2147483648));
-	test(BigInteger(0));
-	test(BigInteger(0));
-	test(BigInteger(0)==BigInteger(0));
-	test(BigInteger(0)==BigInteger("0"));
-	test(BigInteger(1)==BigInteger(0));
-	test(BigInteger(1)==BigInteger(-1));
-	test(BigInteger(1)==BigInteger("1"));
-	test(BigInteger(-1)==BigInteger("-1"));
+Micro{
+	print(BigInteger("1"));
+	print(BigInteger("-1"));
+	print(BigInteger("1234"));
+	print(BigInteger("-1234"));
+	print(BigInteger("12345678"));
+	print(BigInteger("-12345678"));
+	print(BigInteger("012345678"));
+	print(BigInteger("-012345678"));
+	print(BigInteger("876543210"));
+	print(BigInteger("-876543210"));
+	print(BigInteger("fedcba9876543210"));
+	print(BigInteger("-fedcba9876543210"));
+	print(BigInteger("fffffffffffffffffffffffffffffffffffffffffffffffffffffffff"));
+	print(BigInteger("0"));
+	print(BigInteger(4294967296));
+	print(BigInteger(4294967295));
+	print(BigInteger(-2147483648));
+	print(BigInteger(0));
 }
 
 #endif
