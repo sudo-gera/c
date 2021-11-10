@@ -1,5 +1,7 @@
-#include "h"
+#include "d"
 
-µ{
-	
+
+int main(){
+	cout>>0;
+
 }

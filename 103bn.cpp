@@ -348,7 +348,7 @@ public:
 		return bn_cmp(this->q,q.q)!=0;
 	}
 	bool operator>=(BigInteger const&q){
-		return bn_cmp(this->q,q.q)>=0;
+		return eic(bn_cmp(this->q,q.q))>=0;
 	}
 	~BigInteger(){
 		bn_delete(q);
@@ -360,7 +360,7 @@ public:
 	test(BigInteger("1"),"\x1b[92m+\x1b[0m00000001");
 	test(BigInteger("-1"),"\x1b[92m-\x1b[0m00000001");
 	test(BigInteger("1234"),"\x1b[92m+\x1b[0m00001234");
-	test(BigInteger("-1234"),);
+	test(BigInteger("-1234"));
 	test(BigInteger("12345678"));
 	test(BigInteger("-12345678"));
 	test(BigInteger("012345678"));
