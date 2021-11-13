@@ -73,6 +73,31 @@ bn *bn_init(bn const*orig){
 	return q;
 }
 
+int bn_init_bn(bn* q,const bn*orig){
+#if ERRORS
+	if(!orig){
+		return nullptr;
+	}
+	if(!q){
+		return nullptr;
+	}
+#endif
+	if (q->vect){
+		free(q->vect);
+	}
+	*q=*orig;
+	q->vect=(uint32_t*)malloc(q->size*sizeof(uint32_t));
+#if ERRORS
+	if (!q->vect){
+		return nullptr;
+	}
+#endif
+	for (size_t w=0;w<q->size;++w){
+		q->vect[w]=orig->vect[w];
+	}
+	return BN_OK;
+}
+
 int bn_init_int(bn *q,int64_t e){
 #if ERRORS
 	if (!q){
@@ -236,7 +261,7 @@ int bn_delete(bn *q){
 // }
 
 
-int bn_P_add_to(bn *q, bn const *e){
+static int bn_M_add_to(bn *q, bn const *e){
 	if (!q){
 		return BN_NULL_OBJECT;
 	}
@@ -264,18 +289,110 @@ int bn_P_add_to(bn *q, bn const *e){
 	return BN_OK;
 }
 
+static int bn_M_sub_to(bn *q, bn const *e){
+	if (!q){
+		return BN_NULL_OBJECT;
+	}
+	if (!e){
+		return BN_NULL_OBJECT;
+	}
+	q->size=(q->size>e->size?q->size:e->size)+1;
+	q->vect=(uint32_t*)realloc(q->vect,q->size*sizeof(uint32_t));
+#if ERRORS
+	if(!q->vect){
+		return BN_NO_MEMORY;
+	}
+#endif
+	int64_t buff=0;
+	for (size_t w=0;w<q->size;++q){
+		if (w<q->size){
+			buff+=q->vect[w];
+		}
+		if (w<e->size){
+			buff-=e->vect[w];
+		}
+		q->vect[w]=buff&0b11111111111111111111111111111111;
+		buff>>=32;
+	}
+	size_t g=q->size;
+	while (g>0 and q->vect[g-1]==0){
+		g-=1;
+	}
+	if (g==0){
+		q->sign=0;
+#if NORMAL_SIZE
+		q->size=0;
+		free(q->vect);
+		q->vect=nullptr;
+#endif
+	}else{
+#if NORMAL_SIZE
+		q->size=g;
+		q->vect=(uint32_t*)realloc(q->vect,(g)*sizeof(uint32_t));
+#if ERRORS
+		if (!q->vect){
+			return BN_NO_MEMORY;
+		}
+#endif
+#endif
+	}	
+	return BN_OK;
+}
+
 int bn_cmp(bn const *q, bn const *e){
 	if (q->sign!=e->sign){
 		return q->sign-e->sign;
 	}
-	for (ssize_t c=(q->size>e->size?q->size:e->size)-1;c>0;--c){
-		auto a=q->size<c?q->vect[c]:0;
-		auto s=e->size<c?q->vect[c]:0;
+	for (ssize_t c=(q->size>e->size?q->size:e->size)-1;c>=0;--c){
+		auto a=q->size>c?q->vect[c]:0;
+		auto s=e->size>c?e->vect[c]:0;
 		if (a!=s){
-			return a-s;
+			return (a-s)*q->sign;
 		}
 	}
 	return 0;
+}
+
+int bn_add_to(bn*q,const bn*e){
+#if ERRORS
+#error
+#endif
+	auto h=bn_new();
+	auto j=bn_cmp(q,h);
+	auto k=bn_cmp(e,h);
+	auto l=bn_cmp(q,e);
+	if (j<0){
+		if (k<0){
+			bn_M_add_to(q,e);
+		}else if(k==0){
+			/*pass*/
+		}else{
+			if (l<0){
+				bn_M_sub_to(q,e);
+			}else if (l==0){
+				bn_init_int(q,0);
+			}else{
+				
+			}
+		}
+	}else if(j==0){
+		if (k<0){
+
+		}else if(k==0){
+			/*pass*/
+		}else{
+
+		}
+	}else{
+		if (k<0){
+			
+		}else if(k==0){
+			/*pass*/
+		}else{
+			bn_M_add_to(q,e);
+		}
+	}
+	return BN_OK;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -348,7 +465,7 @@ public:
 		return bn_cmp(this->q,q.q)!=0;
 	}
 	bool operator>=(BigInteger const&q){
-		return bn_cmp(this->q,q.q)>=0;
+		return eic(bn_cmp(this->q,q.q))>=0;
 	}
 	~BigInteger(){
 		bn_delete(q);
@@ -360,28 +477,31 @@ public:
 	test(BigInteger("1"),"\x1b[92m+\x1b[0m00000001");
 	test(BigInteger("-1"),"\x1b[92m-\x1b[0m00000001");
 	test(BigInteger("1234"),"\x1b[92m+\x1b[0m00001234");
-	test(BigInteger("-1234"),);
-	test(BigInteger("12345678"));
-	test(BigInteger("-12345678"));
-	test(BigInteger("012345678"));
-	test(BigInteger("-012345678"));
-	test(BigInteger("876543210"));
-	test(BigInteger("-876543210"));
-	test(BigInteger("fedcba9876543210"));
-	test(BigInteger("-fedcba9876543210"));
-	test(BigInteger("1234567898765432123456789876543212345678987654321234567"));
-	test(BigInteger("0"));
-	test(BigInteger(4294967296));
-	test(BigInteger(4294967295));
-	test(BigInteger(-2147483648));
-	test(BigInteger(0));
-	test(BigInteger(0));
-	test(BigInteger(0)==BigInteger(0));
-	test(BigInteger(0)==BigInteger("0"));
-	test(BigInteger(1)==BigInteger(0));
-	test(BigInteger(1)==BigInteger(-1));
-	test(BigInteger(1)==BigInteger("1"));
-	test(BigInteger(-1)==BigInteger("-1"));
+	test(BigInteger("-1234"),"\x1b[92m-\x1b[0m00001234");
+	test(BigInteger("12345678"),"\x1b[92m+\x1b[0m12345678");
+	test(BigInteger("-12345678"),"\x1b[92m-\x1b[0m00000000\x1b[92m12345678\x1b[0m");
+	test(BigInteger("012345678"),"\x1b[92m+\x1b[0m00000000\x1b[92m12345678\x1b[0m");
+	test(BigInteger("-012345678"),"\x1b[92m-\x1b[0m00000000\x1b[92m12345678\x1b[0m");
+	test(BigInteger("876543210"),"\x1b[92m+\x1b[0m00000008\x1b[92m76543210\x1b[0m");
+	test(BigInteger("-876543210"),"\x1b[92m-\x1b[0m00000008\x1b[92m76543210\x1b[0m");
+	test(BigInteger("fedcba9876543210"),"\x1b[92m+\x1b[0mfedcba98\x1b[92m76543210\x1b[0m");
+	test(BigInteger("-fedcba9876543210"),"\x1b[92m-\x1b[0m00000000\x1b[92mfedcba98\x1b[0m76543210");
+	test(BigInteger("1234567898765432123456789876543212345678987654321234567"),"\x1b[92m+\x1b[0m01234567\x1b[92m89876543\x1b[0m21234567\x1b[92m89876543\x1b[0m21234567\x1b[92m89876543\x1b[0m21234567");
+	test(BigInteger("0"),"\x1b[92m0\x1b[0m00000000");
+	test(BigInteger(4294967296),"\x1b[92m+\x1b[0m00000001\x1b[92m00000000\x1b[0m");
+	test(BigInteger(4294967295),"\x1b[92m+\x1b[0m00000000\x1b[92mffffffff\x1b[0m");
+	test(BigInteger(-2147483648),"\x1b[92m-\x1b[0m00000000\x1b[92m80000000\x1b[0m");
+	test(BigInteger(0),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m");
+	test(BigInteger(0),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m");
+	test(BigInteger(0)==BigInteger(0),"True");
+	test(BigInteger(0)==BigInteger("0"),"True");
+	test(BigInteger(1)==BigInteger(0),"False");
+	test(BigInteger(1)==BigInteger(-1),"False");
+	test(BigInteger(1)==BigInteger("1"),"True");
+	test(BigInteger(-1)==BigInteger("-1"),"True");
+	test(BigInteger(2)>BigInteger(1),"True");
+	test(BigInteger(-2)<BigInteger(-1),"True");
+	test(BigInteger(),"\x1b[92m0\x1b[0m")
 }
 
 #endif

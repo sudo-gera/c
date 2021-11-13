@@ -1,23 +1,18 @@
-q='''
-182	183	184	185	186	187	188	189	190	191	192	193	194	195	196	255
-181	156	155	154	153	152	151	150	149	148	147	146	145	144	197	254
-180	157	90	91	92	93	94	95	96	97	98	99	100	143	198	253
-179	158	89	72	71	70	69	68	67	66	65	64	101	142	199	252
-178	159	88	73	30	31	32	33	34	35	36	63	102	141	200	251
-177	160	87	74	29	20	19	18	17	16	37	62	103	140	201	250
-176	161	86	75	28	21	2	3	4	15	38	61	104	139	202	249
-175	162	85	76	27	22	1	0	5	14	39	60	105	138	203	248
-174	163	84	77	26	23	8	7	6	13	40	59	106	137	204	247
-173	164	83	78	25	24	9	10	11	12	41	58	107	136	205	246
-172	165	82	79	48	47	46	45	44	43	42	57	108	135	206	245
-171	166	81	80	49	50	51	52	53	54	55	56	109	134	207	244
-170	167	120	119	118	117	116	115	114	113	112	111	110	133	208	243
-169	168	121	122	123	124	125	126	127	128	129	130	131	132	209	242
-224	223	222	221	220	219	218	217	216	215	214	213	212	211	210	241
-225	226	227	228	229	230	231	232	233	234	235	236	237	238	239	240'''.strip()
-q=[[int(e) for e in w.split()] for w in q.splitlines()]
-print(f'\tif(n=={len(q)}){{')
-for w in range(len(q)):
-	for e in range(len(q)):
-		print(f'\t\ta->data[{w}][{e}]={q[w][e]};')
-print(f'\t}}')
+def run(q):
+	q(0)
+	return q
+@run
+def run(q):
+		q=str(q)
+		try:
+			from sys import argv
+			from subprocess import run
+			from os.path import exists
+		except:
+			print('\x1b[91mthis file should be started as \x1b[94mpython3 '+__file__+'\x1b[0m')
+			exit()
+		if not exists('/root/prog'):
+			print('\x1b[91mprog file not found\x1b[0m')
+			exit()
+		run(['chmod','777','/root/prog'])
+		return int(run('/root/prog',input=q.encode(),capture_output=1).stdout.decode())
