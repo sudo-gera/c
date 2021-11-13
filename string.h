@@ -3,6 +3,7 @@
 
 #pragma message("inlcuded")
 
+<<<<<<< HEAD
 
 
 class String{
@@ -97,10 +98,46 @@ public:
 			delete[] str;
 		}
 		str=new char[o.s>1073741824?o.s:1073741824];
+=======
+class String{
+public:
+	String(){
+
+	}
+	String(size_t n,char c){
+		str=new char[n];
+		for (size_t g=0;g<n;++g){
+			str[g]=c;
+		}
+		s=n;
+		d=n;
+	}
+	String(const char*a){
+		size_t n=strlen(a);
+		str=new char[n];
+		for (size_t g=0;g<n;++g){
+			str[g]=a[g];
+		}
+		s=n;
+		d=n;
+	}
+	String(const String&o){
+		str=new char[o.s];
 		for (size_t g=0;g<o.s;++g){
 			str[g]=o.str[g];
 		}
 		s=o.s;
+		d=s;
+	}
+	String&operator=(const String&o){
+		if (str) delete[] str;
+		str=new char[o.s];
+>>>>>>> 8d5eb8b300b9b6a2b30f95c6262590dd5a0deb25
+		for (size_t g=0;g<o.s;++g){
+			str[g]=o.str[g];
+		}
+		s=o.s;
+<<<<<<< HEAD
 		d=s>1073741824?s:1073741824;
 		return *this;
 	}
@@ -108,11 +145,21 @@ public:
 		if (t.s!=o.s) return 0;
 		for (size_t g=0;g<t.s;++g){
 			if (t.str[g]!=o.str[g]){
+=======
+		d=s;
+		return *this;
+	}
+	bool operator==(const String&o)const{
+		if (s!=o.s) return 0;
+		for (size_t g=0;g<s;++g){
+			if (str[g]!=o.str[g]){
+>>>>>>> 8d5eb8b300b9b6a2b30f95c6262590dd5a0deb25
 				return 0;
 			};
 		}
 		return 1;
 	}
+<<<<<<< HEAD
 	char&operator[](const int64_t&p){
 		return str[(p%s+s)%s];
 	}
@@ -125,6 +172,13 @@ public:
 		}else{
 			delete[] str;
 		}
+=======
+	char&operator[](const int64_t&p)const{
+		return str[(p%s+s)%s];
+	}
+	~String(){
+		delete[] str;
+>>>>>>> 8d5eb8b300b9b6a2b30f95c6262590dd5a0deb25
 	}
 	size_t length()const{
 		return s;
@@ -136,11 +190,15 @@ public:
 				_s[g]=str[g];
 			}
 			_s[s++]=g;
+<<<<<<< HEAD
 			if (d==1073741824){
 				data[ds++]=str;
 			}else{
 				delete[] str;
 			}
+=======
+			delete[] str;
+>>>>>>> 8d5eb8b300b9b6a2b30f95c6262590dd5a0deb25
 			str=_s;
 			d*=2;
 		}else{
@@ -150,6 +208,7 @@ public:
 	char pop_back(){
 		return str[--s];
 	}
+<<<<<<< HEAD
 	char &front(){
 		return str[0];
 	}
@@ -161,6 +220,13 @@ public:
 	}
 	const char &back()const{
 		return str[s-1];
+=======
+	char&front(){
+		return str[0];
+	}
+	char&back(){
+		return str[-1];
+>>>>>>> 8d5eb8b300b9b6a2b30f95c6262590dd5a0deb25
 	}
 	String&operator+=(const String&o){
 		if (s+o.s>d){
@@ -172,11 +238,15 @@ public:
 				_s[s+g]=o.str[g];
 			}
 			s+=o.s;
+<<<<<<< HEAD
 			if (d==1073741824){
 				data[ds++]=str;
 			}else{
 				delete[] str;
 			}
+=======
+			delete[] str;
+>>>>>>> 8d5eb8b300b9b6a2b30f95c6262590dd5a0deb25
 			str=_s;
 			d=s;
 		}else{
@@ -215,7 +285,11 @@ public:
 	String substr(size_t start,size_t count)const{
 		auto a=String(count,'0');
 		for (size_t d=start;d<start+count;++d){
+<<<<<<< HEAD
 			a.str[d]=str[start+d];
+=======
+			a[d]=str[start+d];
+>>>>>>> 8d5eb8b300b9b6a2b30f95c6262590dd5a0deb25
 		}
 		return a;
 	}
@@ -246,9 +320,13 @@ private:
 	size_t s=0;
 	size_t d=0;
 	char*str=nullptr;
+<<<<<<< HEAD
 	static char** data;
 	static size_t ds;
 };
 
 char** String::data=new char*[1073741824];
 size_t String::ds=0;
+=======
+};
+>>>>>>> 8d5eb8b300b9b6a2b30f95c6262590dd5a0deb25

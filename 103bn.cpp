@@ -477,6 +477,7 @@ public:
 	test(BigInteger("1"),"\x1b[92m+\x1b[0m00000001");
 	test(BigInteger("-1"),"\x1b[92m-\x1b[0m00000001");
 	test(BigInteger("1234"),"\x1b[92m+\x1b[0m00001234");
+<<<<<<< HEAD
 	test(BigInteger("-1234"),"\x1b[92m-\x1b[0m00001234");
 	test(BigInteger("12345678"),"\x1b[92m+\x1b[0m12345678");
 	test(BigInteger("-12345678"),"\x1b[92m-\x1b[0m00000000\x1b[92m12345678\x1b[0m");
@@ -502,6 +503,30 @@ public:
 	test(BigInteger(2)>BigInteger(1),"True");
 	test(BigInteger(-2)<BigInteger(-1),"True");
 	test(BigInteger(),"\x1b[92m0\x1b[0m")
+=======
+	test(BigInteger("-1234"));
+	test(BigInteger("12345678"));
+	test(BigInteger("-12345678"));
+	test(BigInteger("012345678"));
+	test(BigInteger("-012345678"));
+	test(BigInteger("876543210"));
+	test(BigInteger("-876543210"));
+	test(BigInteger("fedcba9876543210"));
+	test(BigInteger("-fedcba9876543210"));
+	test(BigInteger("1234567898765432123456789876543212345678987654321234567"));
+	test(BigInteger("0"));
+	test(BigInteger(4294967296));
+	test(BigInteger(4294967295));
+	test(BigInteger(-2147483648));
+	test(BigInteger(0));
+	test(BigInteger(0));
+	test(BigInteger(0)==BigInteger(0));
+	test(BigInteger(0)==BigInteger("0"));
+	test(BigInteger(1)==BigInteger(0));
+	test(BigInteger(1)==BigInteger(-1));
+	test(BigInteger(1)==BigInteger("1"));
+	test(BigInteger(-1)==BigInteger("-1"));
+>>>>>>> 8d5eb8b300b9b6a2b30f95c6262590dd5a0deb25
 }
 
 #endif
