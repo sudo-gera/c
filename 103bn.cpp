@@ -99,6 +99,7 @@ int bn_init_bn(bn* q,const bn*orig){
 	return BN_OK;
 }
 
+
 int bn_init_int(bn *q,int64_t e){
 #if ERRORS
 	if (!q){
@@ -129,6 +130,11 @@ int bn_init_int(bn *q,int64_t e){
 #endif
 	return BN_OK;
 }
+
+int bn_init_int(bn *q,int e){
+	return bn_init_int(q,int64_t(e));
+}
+
 
 // int bn_init_int(bn *q,int e){
 // 	return bn_init_int(q,int64_t(e));
@@ -954,9 +960,13 @@ public:
 		q=bn_new();
 		bn_init_int(q,orig);
 	}
+	BigInteger(const long orig){
+		q=bn_new();
+		bn_init_int(q,int64_t(orig));
+	}
 	BigInteger(const int orig){
 		q=bn_new();
-		bn_init_int(q,orig);
+		bn_init_int(q,int64_t(orig));
 	}
 	BigInteger(const string orig){
 		q=bn_new();
