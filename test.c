@@ -1,14 +1,8 @@
 #include <stdio.h>
-
-struct{}__cpp__;
-const int is_cpp=sizeof(__cpp__);
-
-
+#include <stdlib.h>
+#include <stdint.h>
 int main(){
-	if (is_cpp){
-		printf("it is c++\n");
-	}else{
-		printf("it is c\n");
-	}
+	uint64_t* q=(uint64_t*)malloc(sizeof(uint64_t));
+	printf("%llx\n",*q);
+	
 }
-
