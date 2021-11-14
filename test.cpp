@@ -1,10 +1,8 @@
-#include "header.hpp"
+// #include "h"
+#include <bits/stdc++.h>
+using namespace std;
 
-
-
-
-
-_main{
-	print(type(cout));
+int main(){
+	cout<<1<<2<<3<<endl;
 }
 
