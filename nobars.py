@@ -29,7 +29,7 @@
 # listener.start()
 # listener.join()
 
-if __name__ == '__main__':
+if 0 and __name__ == '__main__':
 	from pynput.mouse import Controller
 	a=Controller()
 	from time import *

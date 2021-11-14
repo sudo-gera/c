@@ -1,2 +1,10 @@
-16
-11 13 3 2 4 4 1 13 8 6 8 9 14 3 6 15
+9
+enqueue 2
+front
+dequeue
+size
+dequeue
+enqueue 1
+enqueue 2
+size
+min
