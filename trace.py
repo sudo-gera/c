@@ -67,4 +67,7 @@ while working:
 		ll.append(q)
 	else:
 		working=0
-print('\x1b['+str(91 if a.returncode else 92)+'mexecution stopped at line',ll[-1]-1,'\x1b[0m')
+if ll:
+	print('\x1b['+str(91 if a.returncode else 92)+'mexecution stopped at line',ll[-1]-1,'\x1b[0m')
+else:
+	print('\x1b['+str(91 if a.returncode else 92)+'mexecution didn`t start \x1b[0m')
