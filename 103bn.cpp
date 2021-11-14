@@ -956,10 +956,6 @@ public:
 	BigInteger(const BigInteger& orig){
 		q=bn_init(orig.q);
 	}
-	BigInteger(const int64_t orig){
-		q=bn_new();
-		bn_init_int(q,orig);
-	}
 	BigInteger(const long orig){
 		q=bn_new();
 		bn_init_int(q,int64_t(orig));
