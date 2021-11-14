@@ -1,11 +1,8 @@
-#include "h"
+// #include "h"
+#include <bits/stdc++.h>
+using namespace std;
 
-µ{
-	int a[99];
-	0[a]=00;
-	1[a]=11;
-	2[a]=22;
-	3[a]=33;
-	cout<<0[a]<<' '<<1[a]<<' '<<2[a]<<' '<<3[a]<<std::endl;
+int main(){
+	cout<<1<<2<<3<<endl;
 }
 
