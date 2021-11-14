@@ -1200,15 +1200,15 @@ signed main(){
 	// test(BigInteger("-zyxwvutsrqponmlkjihgfedcba9876543210",36).str(36),"-zyxwvutsrqponmlkjihgfedcba9876543210");
 
 	test(BigInteger("1"),"+00000001");
-	test(BigInteger("-1"),"-00000001");
-	test(BigInteger("1234"),"+00001234");
-	test(BigInteger("-1234"),"-00001234");
-	test(BigInteger("12345678"),"+12345678");
-	test(BigInteger("-12345678"),"-0000000012345678");
-	test(BigInteger("012345678"),"+0000000012345678");
-	test(BigInteger("-012345678"),"-0000000012345678");
-	test(BigInteger("876543210"),"+0000000876543210");
-	test(BigInteger("-876543210"),"-0000000876543210");
+	// test(BigInteger("-1"),"-00000001");
+	// test(BigInteger("1234"),"+00001234");
+	// test(BigInteger("-1234"),"-00001234");
+	// test(BigInteger("12345678"),"+12345678");
+	// test(BigInteger("-12345678"),"-0000000012345678");
+	// test(BigInteger("012345678"),"+0000000012345678");
+	// test(BigInteger("-012345678"),"-0000000012345678");
+	// test(BigInteger("876543210"),"+0000000876543210");
+	// test(BigInteger("-876543210"),"-0000000876543210");
 	// test(BigInteger("fedcba9876543210"),"+fedcba9876543210");
 	// test(BigInteger("-fedcba9876543210"),"-00000000fedcba9876543210");
 	// test(BigInteger("1234567898765432123456789876543212345678987654321234567"),"+01234567898765432123456789876543212345678987654321234567");
