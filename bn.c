@@ -8,7 +8,7 @@ struct bn_s{
 	int8_t sign;
 	size_t size;
 	uint32_t *vect;
-	// uint64_t pow;
+	uint64_t pow;
 };
 
 #ifdef CPP_R
