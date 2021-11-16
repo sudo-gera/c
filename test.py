@@ -70,7 +70,7 @@ a=[  w[:-1]+[str(w[-1])]    for w in a]
 a=[f'/* { {"pow":"**","+":"+","-":"-","*":"*","/":"/","%":"%","root":"/ *","to_radix":"<< *"}[w[1]] } */test(str(BigInteger("{w[0]}",10){ {"pow":"**","+":"+","-":"-","*":"*","/":"/","%":"%","root":"/ *","to_radix":"<< *"}[w[1]] }BigInteger("{w[2]}",10)),"{w[3]}")' for w in a]
 a=[f'#ifndef HIDE_{q}\n\tt=monotonic();\n\t{w}\n\tprint("test {q}",output_time(monotonic()-t));\n#endif\n' for q,w in enumerate(a)]
 # a=[w if len(w)>1000 else f'print("skipping {q}");\n' for q,w in enumerate(a)]
-a=[w if len(w)>1000 else f'' for q,w in enumerate(a)]
+a=[w if len(w) else f'' for q,w in enumerate(a)]
 # a=a[:40]
 a=''.join(a)
 a='\tauto t=monotonic();\n'+a
