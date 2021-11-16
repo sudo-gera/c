@@ -521,6 +521,31 @@ static int bn_half(bn*q){
 	return BN_OK;
 }
 
+int bn_M_div(bn*q,bn*e){
+	size_t qs=q->size;
+	size_t es=e->size;
+	while (qs and q->vect[qs-1]==0){
+		--qs;
+	}
+	while (es and e->vect[es-1]==0){
+		--es;
+	}
+	bn**a=new bn*[32];
+	a[0]=bn_init(e);
+	a[0]->vect=1+(uint32_t*)realloc(a[0]->vect,sizeof(uint32_t),a[0]->size++);
+	a[0]=bn_init(e);
+	a[0]->vect--;
+	a[w]->vect[0]=0;
+	for (size_t w=32;w>0;--w){
+		a[w-1]=bn_init(a[w%32]);
+		bn_half(a[w-1]);
+	}
+	for (size_t w=0;w<32;++w){
+		ic(a[w]);
+	}
+	return BN_OK;
+}
+
 int bn_P_div_(bn*q,bn*e){
 	size_t qs=q->size;
 	size_t es=e->size;
@@ -586,7 +611,8 @@ bn* bn_div(const bn*q,const bn*e){
 	}
 	bn*d=bn_init(e);
 	bn_abs(d);
-	bn_P_div_(a,d);
+	bn_M_div(a,d);
+	// bn_P_div_(a,d);
 	d->sign*=-1;
 	if (q->sign*e->sign<0){
 		bn_delete(a);

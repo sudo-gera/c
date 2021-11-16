@@ -345,9 +345,9 @@ signed main(){
 	// test(BigInteger(-17)/(-10),"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
 	// test(BigInteger(0)/(-10),"\x1b[92m0\x1b[0m");
 	// test(BigInteger(0)/(+10),"\x1b[92m0\x1b[0m");
-	// h=BigInteger("ffffffffffffffffffffffffffffffff");
+	h=BigInteger("ffffffffffffffffffffffffffffffff");
 	// test(h/15,"\x1b[92m+\x1b[0m00000000\x1b[92m11111111\x1b[0m11111111\x1b[92m11111111\x1b[0m11111111")
-	// test(h/BigInteger("ffffffff"),"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m00000001\x1b[92m00000001\x1b[0m00000001")
+	test(h/BigInteger("ffffffff"),"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m00000001\x1b[92m00000001\x1b[0m00000001")
 	// test(h%BigInteger("ffffffff"),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000")
 	test(BigInteger(2) ** BigInteger(2),"\x1b[92m+\x1b[0m00000000\x1b[92m00000004\x1b[0m");
 	test(BigInteger(2) ** BigInteger(10),"\x1b[92m+\x1b[0m00000000\x1b[92m00000400\x1b[0m");
@@ -419,7 +419,7 @@ signed main(){
 #define HIDE_157
 #define HIDE_158
 #define HIDE_159
-#include "stdout.cpp"
+// #include "stdout.cpp"
 }
 #endif
 
