@@ -8,6 +8,7 @@ struct bn_s{
 	int8_t sign;
 	size_t size;
 	uint32_t *vect;
+	// uint64_t pow;
 };
 
 #ifdef CPP_R
@@ -15,7 +16,8 @@ struct bn_s{
 auto print_one(const bn*q){
 	char b[99999];
 	b[0]=0;
-	sprintf(b+strlen(b),"\x1b[92m%c\x1b[0m",1==q->sign?'+':-1==q->sign?'-':'0');
+	sprintf(b+strlen(b),"\x1b[92m%s\x1b[0m",1==q->sign?"+":-1==q->sign?"-":1<q->sign?"++":-1>q->sign?"--":"0");
+	// sprintf(b+strlen(b),"\x1b[92m%i\x1b[0m",q->sign);
 	int c=0;
 	for (int t=q->size-1;t>-1;--t){
 		if (c%2){
@@ -31,21 +33,7 @@ auto print_one(const bn*q){
 }
 
 auto print_one(bn*q){
-	char b[99999];
-	b[0]=0;
-	sprintf(b+strlen(b),"\x1b[92m%c\x1b[0m",1==q->sign?'+':-1==q->sign?'-':'0');
-	int c=0;
-	for (int t=q->size-1;t>-1;--t){
-		if (c%2){
-			sprintf(b+strlen(b),"\x1b[92m");
-		}
-		sprintf(b+strlen(b),"%0*x",8,q->vect[t]);
-		if (c%2){
-			sprintf(b+strlen(b),"\x1b[0m");
-		}
-		++c;
-	}
-	return str(b);
+	return print_one((const bn*)q);
 }
 
 #else
@@ -194,7 +182,7 @@ int bn_delete(bn *q){
 
 int bn_cmp(bn const *q, bn const *e){
 	if (q->sign!=e->sign){
-		return q->sign-e->sign;
+		return ((q->sign)-(e->sign));
 	}
 	if (q->size+e->size==0){
 		return 0;
@@ -464,10 +452,10 @@ bn* bn_mul(bn const*q,const bn*e){
 	bn*tmp=bn_new();
 	size_t qs=q->size;
 	size_t es=e->size;
-	if (qs and q->vect[qs-1]==0){
+	while (qs and q->vect[qs-1]==0){
 		--qs;
 	}
-	if (es and e->vect[es-1]==0){
+	while (es and e->vect[es-1]==0){
 		--es;
 	}
 	res->size=qs+es;
@@ -480,10 +468,12 @@ bn* bn_mul(bn const*q,const bn*e){
 	}
 	tmp->sign=1;
 	for (size_t w=0;w<qs;++w){
-		for (size_t r=0;r<es;++r){
-			*(uint64_t*)(tmp->vect+w+r)=(uint64_t)(q->vect[w])*(uint64_t)(e->vect[r]);
-			bn_add_to(res,tmp);
-			*(uint64_t*)(tmp->vect+w+r)=0;
+		if (q->vect[w]){
+			for (size_t r=0;r<es;++r){
+				*(uint64_t*)(tmp->vect+w+r)=(uint64_t)(q->vect[w])*(uint64_t)(e->vect[r]);
+				bn_M_add_to(res,tmp);
+				*(uint64_t*)(tmp->vect+w+r)=0;
+			}
 		}
 	}
 	res->sign=q->sign*e->sign;
@@ -544,7 +534,7 @@ int bn_P_div_(bn*q,bn*e){
 	while (1){
 		bn_init_bn(_f,_e);
 		bn_sub_to(_f,_b);
-		if (bn_cmp(_f,_g)<0){
+		if ((bn_cmp(_f,_g))<0){
 			break;
 		}
 		bn_init_bn(_c,_b);
@@ -578,11 +568,10 @@ int bn_P_div_(bn*q,bn*e){
 bn* bn_div(const bn*q,const bn*e){
 	bn*a=bn_init(q);
 	bn_abs(a);
-	bn*d=bn_new();
-	if (bn_cmp(d,e)==0){
+	if (e->sign==0){
 		return 0;
 	}
-	bn_init_bn(d,e);
+	bn*d=bn_init(e);
 	bn_abs(d);
 	bn_P_div_(a,d);
 	d->sign*=-1;
@@ -596,24 +585,20 @@ bn* bn_div(const bn*q,const bn*e){
 }
 
 int bn_div_to(bn*q,bn const*w){
-	bn* h=bn_new();
-	if (bn_cmp(w,h)==0){
+	if (!w->sign){
 		return BN_DIVIDE_BY_ZERO;
 	}
 	bn*u=bn_div(q,w);
 	bn_init_bn(q,u);
 	bn_delete(u);
-	bn_delete(h);
 	return BN_OK;
 }
 
 int bn_mod_to(bn*q,const bn*w){
-	bn* h=bn_new();
-	if (bn_cmp(w,h)==0){
+	if (!w->sign){
 		return BN_DIVIDE_BY_ZERO;
 	}
-	bn_delete(h);
-	h=bn_div(q,w);
+	bn* h=bn_div(q,w);
 	bn_mul_to(h,w);
 	bn_sub_to(q,h);
 	bn_delete(h);
@@ -729,50 +714,303 @@ int bn_init_string_radix(bn*q,const char*e,int t){
 	}
 	for (size_t w=g;w<l;++w){
 		bn_mul_to(q,y);
-		bn_init_int(a,"\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x24\x25\x26\x27\x28\x29\x2a\x2b\x2c\x2d\x2e\x2f\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x3a\x3b\x3c\x3d\x3e\x3f\x40\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x5b\x5c\x5d\x5e\x5f\x60\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x7b\x7c\x7d\x7e\x7f"[(int)(e[w])]);
+		bn_init_int(a,"\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x24\x25\x26\x27\x28\x29\x2a\x2b\x2c\x2d\x2e\x2f\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x3a\x3b\x3c\x3d\x3e\x3f\x40\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x5b\x5c\x5d\x5e\x5f\x60\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x7b\x7c\x7d\x7e\x7f"
+			[(int)(e[w])]);
 		bn_add_to(q,a);
 	}
-	q->sign+=(-2)*g;
+	q->sign*=(-2)*g+1;  
 	bn_delete(a);
 	bn_delete(y);
 	return BN_OK;
 }
 
 int bn_init_string(bn*q,const char*e){
-	int t=10;
-	size_t l=strlen(e);
-	q->size=l/9+1;
-	q->sign=0;
-	if (q->vect){
-		free(q->vect);
+	return bn_init_string_radix(q,e,10);
+}
+
+
+struct bnd_s{
+	int8_t sign;
+	size_t size;
+	uint8_t *vect;
+};
+
+typedef struct bnd_s bnd;
+
+#ifdef CPP_R
+auto print_one(const bnd*q){
+	char b[99999];
+	b[0]=0;
+	sprintf(b+strlen(b),"\x1b[92m%s\x1b[0m",1==q->sign?"+":-1==q->sign?"-":1<q->sign?"++":-1>q->sign?"--":"0");
+	// sprintf(b+strlen(b),"\x1b[92m%i\x1b[0m",q->sign);
+	int c=0;
+	for (int t=q->size-1;t>-1;--t){
+		if (c%2){
+			sprintf(b+strlen(b),"\x1b[92m");
+		}
+		sprintf(b+strlen(b),"%i ",q->vect[t]);
+		if (c%2){
+			sprintf(b+strlen(b),"\x1b[0m");
+		}
+		++c;
 	}
-	q->vect=(uint32_t*)calloc(sizeof(uint32_t),q->size);
-	bn*a=bn_new();
-	bn*y=bn_new();
-	bn_init_int(y,t);
-	int g=0;
-	if (l and e[0]=='-'){
-		g=1;
+	return str(b);
+}
+auto print_one(bnd*q){
+	return print_one((const bnd*)q);
+}
+#endif
+
+static bnd*bnd_new(){
+	return (bnd*)calloc(sizeof(bnd),1);
+}
+
+bnd *bnd_init(bnd const*orig){
+	bnd *q=(bnd*)malloc(sizeof(bnd));
+	*q=*orig;
+	q->vect=(uint8_t*)malloc(q->size*sizeof(uint8_t));
+	for (size_t w=0;w<q->size;++w){
+		q->vect[w]=orig->vect[w];
 	}
-	for (size_t w=g;w<l;++w){
-		bn_mul_to(q,y);
-		bn_init_int(a,"\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x24\x25\x26\x27\x28\x29\x2a\x2b\x2c\x2d\x2e\x2f\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x3a\x3b\x3c\x3d\x3e\x3f\x40\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x5b\x5c\x5d\x5e\x5f\x60\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x7b\x7c\x7d\x7e\x7f"[(int)(e[w])]);
-		bn_add_to(q,a);
+	return q;
+}
+
+// int bn_init_int(bn *q,int _e){
+// 	int64_t e=_e;
+// 	if (q->vect){
+// 		free(q->vect);
+// 	}
+// 	q->vect=(uint32_t*)malloc(sizeof(uint32_t)*2);
+// 	q->size=2;
+// 	q->sign=e>0?1:e<0?-1:0;
+// 	*(uint64_t*)(q->vect)=e>0?e:-e;
+// 	return BN_OK;
+// }
+
+static int bnd_delete(bnd*q){
+	if (q){
+		if (q->vect){
+			free(q->vect);
+		}
+		free(q);
 	}
-	q->sign+=(-2)*g;
-	bn_delete(a);
-	bn_delete(y);
 	return BN_OK;
 }
 
+static int bn_D_add_to(bnd *q, bnd const *e,uint64_t _t){
+	size_t qs=q->size;
+	if (qs and q->vect[qs-1]==0){
+		qs-=1;
+	}
+	size_t es=e->size;
+	if (es and e->vect[es-1]==0){
+		es-=1;
+	}
+	qs=(qs>es?qs:es)+1;
+	if (qs!=q->size){
+		q->vect=(uint8_t*)realloc(q->vect,qs*sizeof(uint8_t));
+	}
+#if ERRORS
+	if(!q->vect){
+		return BN_NO_MEMORY;
+	}
+#endif
+	for (size_t w=q->size;w<qs;++w){
+		q->vect[w]=0;
+	}
+	q->size=qs;
+	uint64_t buff=0;
+	for (size_t w=0;w<q->size;++w){
+		buff+=q->vect[w];
+		if (w<e->size){
+			buff+=e->vect[w];
+		}
+		q->vect[w]=buff%_t;
+		buff/=_t;
+	}
+	return BN_OK;
+}
+
+
+static int bn_D_mul_to(bnd *q,const bnd*e,uint64_t _t){
+	bnd*res=bnd_new();
+	bnd*tmp=bnd_new();
+	size_t qs=q->size;
+	size_t es=e->size;
+	while (qs and q->vect[qs-1]==0){
+		--qs;
+	}
+	while (es and e->vect[es-1]==0){
+		--es;
+	}
+	res->size=qs+es;
+	tmp->size=qs+es;
+	res->vect=(uint8_t*)realloc(res->vect,res->size*sizeof(uint8_t));
+	tmp->vect=(uint8_t*)realloc(tmp->vect,tmp->size*sizeof(uint8_t));
+	for (size_t w=0;w<res->size;++w){
+		res->vect[w]=0;
+		tmp->vect[w]=0;
+	}
+	tmp->sign=1;
+	for (size_t w=0;w<qs;++w){
+		for (size_t r=0;r<es;++r){
+			uint64_t tmp_=(uint64_t)(q->vect[w])*(uint64_t)(e->vect[r]);
+			tmp->vect[w+r]=tmp_%_t;
+			tmp->vect[w+r+1]=tmp_/_t;
+			bn_D_add_to(res,tmp,_t);
+			tmp->vect[w+r]=0;
+			tmp->vect[w+r+1]=0;
+		}
+	}
+	res->sign=q->sign*e->sign;
+	if (q->size<res->size){
+		q->vect=(uint8_t*)realloc(q->vect,sizeof(uint8_t)*res->size);
+	}
+	q->sign=res->sign;
+	q->size=res->size;
+	for (size_t w=0;w<res->size;++w){
+		q->vect[w]=res->vect[w];
+		res->vect[w]=0;
+	}
+	bnd_delete(res);
+	bnd_delete(tmp);
+	return BN_OK;
+}
+
+int bnd_pow_to(bnd*q,int _e,int _t){
+	int64_t e=_e;
+	size_t s=0;
+	for (size_t w=0;w<64;++w){
+		if ((1ULL<<w&e)){
+			s=w+1;
+		}
+	}
+	if(s){
+		bnd**a=(bnd**)malloc(sizeof(bnd*)*s);
+		a[0]=bnd_init(q);
+		for (size_t w=1;w<s;++w){
+			a[w]=bnd_init(a[w-1]);
+			bn_D_mul_to(a[w],a[w],_t);
+		}
+		if (q->size){
+			for (size_t w=1;w<q->size;++w){
+				q->vect[w]=0;
+			}
+			q->vect[0]=1;
+			q->sign=1;
+		}else{
+			q->vect=(uint8_t*)realloc(q->vect,sizeof(uint8_t)*1);
+			q->vect[0]=1;
+			q->sign=1;
+		}
+		for (size_t w=0;w<s;++w){
+			if ((1<<w)&e){
+				bn_D_mul_to(q,a[w],_t);
+			}
+		}
+		for (size_t w=0;w<s;++w){
+			bnd_delete(a[w]);
+		}
+		free(a);
+	}else{
+		if (q->size){
+			for (size_t w=1;w<q->size;++w){
+				q->vect[w]=0;
+			}
+			q->vect[0]=1;
+			q->sign=1;
+		}else{
+			q->vect=(uint8_t*)realloc(q->vect,sizeof(uint8_t)*1);
+			q->vect[0]=1;
+			q->sign=1;
+		}
+	}
+	return BN_OK;
+}
+
+
+const char* bn_to_string_low(const bn*q,int e){
+	uint64_t _t=e;
+	char _s[]="000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001112111122102220200201000000000000000000000000000010000000000000000141324200442230000000000000000000405510401055100000000000000000000453224103112000000000000000000000000000000040000000000000000000000454756860210000000000000000000000692769492400000000000000000000000455044409100000000000000000000000495164ab900000000000000000000000098897a5350000000000000000000000004647b5ac200000000000000000000000018dcd02a100000000000000000000000000000000100000000000000000000000019adff7a00000000000000000000000004g7eh407000000000000000000000000066ffa5f40000000000000000000000000g4ia327300000000000000000000000004i55d1820000000000000000000000000481b8jf10000000000000000000000000ci7k60610000000000000000000000000ga499bm00000000000000000000000000lgm2keh00000000000000000000000000mnbhcnd00000000000000000000000000mdpj82b000000000000000000000000004higfp800000000000000000000000000ggieb6700000000000000000000000000gqpcmq5000000000000000000000000004otj0q40000000000000000000000000000000040000000000000000000000000049qkoa300000000000000000000000000iljxhq200000000000000000000000000bq54rb2000000000000000000000000004z141z100000000000000000000000000";
+	for (size_t w=0;w<sizeof(_s)-1;++w){
+		_s[w]-='0';
+	}
+	bnd*s=bnd_new();
+	s->sign=1;
+	s->size=33;
+	s->vect=(uint8_t*)(_s)+e*33;
+	while(!s->vect[s->size-1]){
+		--s->size;
+	}
+	bnd*a=bnd_new();
+	bnd*res=bnd_new();
+	bnd*tmp=bnd_new();
+	bnd*b=bnd_new();
+	// a->sign=0;
+	// a->size=(q->size+2)*32;
+	// a->vect=(uint8_t*)calloc(sizeof(uint8_t),a->size);
+	// res->sign=0;
+	// res->size=(q->size+2)*32;
+	// res->vect=(uint8_t*)calloc(sizeof(uint8_t),res->size);
+	// tmp->sign=0;
+	// tmp->size=(q->size+2)*32;
+	// tmp->vect=(uint8_t*)calloc(sizeof(uint8_t),tmp->size);
+	b->sign=1;
+	b->size=34;
+	b->vect=(uint8_t*)calloc(sizeof(uint8_t),b->size);
+	for (size_t _w=q->size;_w>0;--_w){size_t w=_w-1;
+		while (a->size>0 and a->vect[a->size-1]==0){
+			--a->size;
+		}
+		uint64_t f=q->vect[w];
+		b->size=0;
+		while (f){
+			b->vect[b->size++]=f%_t;
+			f/=e;
+		}
+		bn_D_mul_to(a,s,_t);
+		bn_D_add_to(a,b,_t);
+	}
+	while (a->size>0 and a->vect[a->size-1]==0){
+		--a->size;
+	}
+	if (q->sign==-1){
+		a->vect=(uint8_t*)realloc(a->vect,sizeof(uint8_t)*++a->size);
+		a->vect[a->size-1]=36;
+	}
+	for (size_t w=0;w+w<a->size;++w){
+		auto t=a->vect[a->size-1-w];
+		a->vect[a->size-1-w]=a->vect[w];
+		a->vect[w]=t;
+	}
+	for (size_t w=0;w<a->size;++w){
+		a->vect[w]="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-"[((int)(a->vect[w]))];
+	}
+	if (a->size==0){
+		a->vect=(uint8_t*)realloc(a->vect,sizeof(uint8_t)*++a->size);
+		a->vect[a->size-1]='0';
+	}
+	a->vect=(uint8_t*)realloc(a->vect,sizeof(uint8_t)*++a->size);
+	a->vect[a->size-1]='\0';
+	for (size_t w=0;w<strlen((char*)(a->vect));++w){
+		a->vect[w]=a->vect[w];
+	}
+	return (char*)(a->vect);
+}
+
+
+
 const char* bn_to_string(const bn*q,int e){
+	if(!"\0\0\0\0\0\0\0\0\0\0\0\0----\0---------------\0----\0\0\0"[e]){
+		return bn_to_string_low(q,e);
+	}
 	bn*r=bn_init(q);
 	bn_abs(r);
 	bn*t=bn_new();
 	bn*y;
 	bn*u=bn_new();
 	bn_init_int(u,e);
-	char*a=(char*)calloc(sizeof(char),q->size*32);
+	char*a=(char*)calloc(sizeof(char),(q->size+1)*32);
 	size_t s=0;
 	while (bn_cmp(r,t)){
 		y=bn_mod(r,u);
@@ -781,10 +1019,13 @@ const char* bn_to_string(const bn*q,int e){
 		bn_div_to(r,u);
 	}
 	for (size_t w=0;w<s;++w){
-		a[w]="0123456789abcdefghijklmnopqrstuvwxyz"[(int)(a[w])];
+		a[w]="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"[(int)(a[w])];
 	}
 	if (q->sign<0){
 		a[s++]='-';
+	}
+	if (!s){
+		a[s++]='0';
 	}
 	for (size_t w=0;w*2<s;++w){
 		char t=a[w];
@@ -796,4 +1037,19 @@ const char* bn_to_string(const bn*q,int e){
 	bn_delete(u);
 	return a;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
