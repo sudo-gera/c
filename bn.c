@@ -552,21 +552,13 @@ int bn_M_div_to(bn*q,bn*e){
 	r->size=qs+1-es;
 	r->sign=1;
 	r->vect=(uint32_t*)calloc(sizeof(uint32_t),r->size);
-	// bn*_q=bn_init(q);
 	while (f>=0){
-		// ic(q,e,t,r,f)
 		if (bn_cmp(q,t)>=0){
-		// ic(q,e,t,r,f)
 			r->vect[f/32]|=(1LL<<(f%32));
-		// ic(q,e,t,r,f)
-			bn_sub_to(q,t);
-		// ic(q,e,t,r,f)
+			bn_M_sub_to(q,t);
 		}
-		// ic(q,e,t,r,f)
 		f-=1;
-		// ic(q,e,t,r,f)
 		bn_half(t);
-		// ic(q,e,t,r,f)
 	}
 	size_t rs=r->size;
 	while (rs and r->vect[rs-1]==0){
@@ -576,6 +568,8 @@ int bn_M_div_to(bn*q,bn*e){
 		r->sign=0;
 	}
 	bn_init_bn(e,r);
+	bn_delete(r);
+	bn_delete(t);
 	return BN_OK;
 }
 
@@ -648,6 +642,7 @@ bn* bn_mod(const bn*q,const bn*e){
 			r->sign*=-1;
 			bn_sub_to(a,r);
 			bn_delete(d);
+			bn_delete(r);
 			return a;
 		}
 		bn_delete(d);
@@ -709,7 +704,7 @@ static bn* bn_pow(bn*q,int w){
 int bn_root2_to(bn*q){
 	bn*r=bn_new();
 	r->size=q->size+1;
-	r->sign=bool(r->size);
+	r->sign=1;
 	r->vect=(uint32_t*)calloc(sizeof(uint32_t),r->size);
 	bn*p=bn_new();
 	p->size=q->size+1;
@@ -727,8 +722,11 @@ int bn_root2_to(bn*q){
 		bn_half(r);
 		bn_half(p);
 		bn_half(p);
+		bn_delete(u);
 	}
 	bn_init_bn(q,r);
+	bn_delete(r);
+	bn_delete(p);
 	return BN_OK;
 }
 
@@ -740,7 +738,7 @@ int bn_root_to(bn*q,int __e){
 	bn*_b=bn_new();
 	bn*_e=bn_new();
 	_e->size=q->size/2+1;
-	_e->sign=bool(_e->size);
+	_e->sign=1;
 	_e->vect=(uint32_t*)calloc(sizeof(uint32_t),_e->size);
 	if (_e->size){
 		_e->vect[_e->size-1]=1;
