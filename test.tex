@@ -1,0 +1,108 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage[a4paper,top=1.5cm, bottom=1.5cm, left=1cm, right=1cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{mathtext}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{textcomp}
+\usepackage[english, russian]{babel}
+\usepackage{indentfirst}
+\usepackage{fixltx2e}
+\usepackage{longtable}
+\usepackage{graphicx}
+\usepackage{tabto}
+\graphicspath{{pictures/}}
+\DeclareGraphicsExtensions{.pdf,.png,.jpg}
+\usepackage{natbib}
+\usepackage{mathrsfs}
+\usepackage[europeanresistors, americaninductors]{circuitikz}
+\renewcommand{\t}[1]{\hspace{#1mm}}
+\newcommand{\n}{\par{}}
+\renewcommand{\d}{$}
+\renewcommand{\a}{\bigcap{}}
+\renewcommand{\u}{\bigcup{}}
+\newcommand{\png}[1]{\includegraphics[width=200pt]{~/Documents/#1.png}\n}
+\renewcommand{\i}{^{-1}}
+
+\title{АЛКТГ дз 2}
+\author{Татаринов Георгий}
+\date{\today}
+
+\begin{document}
+	\maketitle
+	\section*{Задание 1}
+		$R \subseteq \{1, 2, 3\} \times \{1, 2, 3\}$\n
+		а)$R = \{(1, 1), (2, 2), (3, 3), (1, 2), (1, 3), (3, 2)\}$\n
+		\png{1}
+		R рефлексивно, так как для всех a из \{1, 2, 3\} $(a, a) принадлежит R$
+
+		R не симметрично, так как (1, 2) принадлежит R, а (2, 1) не принадлежит R
+
+		R транзитивно, так как R х R - имеет тот же граф, что и R
+
+		R не отношение эквивалентноти, так так R не симметрично
+
+
+		б)$R = \{(1, 1), (1, 2), (2, 1), (2, 2)\}$
+
+		\png{2}
+
+		R не рефлексивно, так как (3, 3) не принадлежит R
+
+		R симметрично, так как граф неориентированный
+
+		R транзитивно, так как R х R - имеет тот же граф, что и R
+
+		R не рефлексивно следовательно, R не отношение эквивалентноти
+
+	\section*{Задание 2}
+		пусть M - отношение быть матерью
+		
+		пусть P - отношение быть отцом
+
+		пусть R - отношение быть племянником
+
+		тогда: \d R=M \i \circ M \i \circ M \u M \i \circ P \i \circ P \u P \i \circ M \i \circ M \u P \i \circ P \i \circ P \d
+	\section*{Задание 3}
+		пусть А=\{1,2,3,4,5\}
+
+		$P_1=\{(1,2),(3,4)\}$
+
+		$P_2=\{(2,3),(4,5)\}$
+
+		тогда:
+
+		$\overline{P_1}$ содержит (1,3) и (3,2), но не содержит (1,2) значит не транзитивно
+
+		$P_1\u P_2$ содержит (1,2) и (2,3) но не содержит (1,3) значит не транзитивно
+
+		$P_1\circ P_2$ содержит (1,3) и (3,5) но не содержит (1,5) значит не транзитивно
+
+		для любого A:
+
+		$P_1\u P_2$ транзитивно, так как если $P_1\u P_2$ соержит (a,b) и (b,c) то каждое из $P_1$ и $P_2$ содержит (a,b) и (b,c), тогда каждое из $P_1$ и $P_2$ содержит (a,c) тогда $P_1\u P_2$ содержит (a,c)
+
+	\section*{Задание 4}
+		Пусть множество \{1,2,3,4,5,6\}
+		
+		Рассмотрим бинарное отношение из любого элемента в любой, кроме отношений (4,4),(5,5),(6,6)
+
+		тогда это отношеие симметрично и состоит из 33 пар
+
+		а) ответ: да
+
+		если из множества всех пар выбросить пару (1,1), то придётся выбросить ещё по одной из пар (1,2) и (2,1), (1,3) и (3,1), (1,4) и (4,1), (1,5) и (5,1), (1,6) и (6,1). Тогда так как всего пар 36, останется не более 30.
+
+		если из множества всех пар выбросить пару (1,2), то придётся выбросить ещё по одной из пар (1,3) и (3,2), (1,4) и (4,2), (1,5) и (5,2), (1,6) и (6,2). Тогда так как всего пар 36, останется не более 31.
+
+		случаи выбрасывания остальных пар аналогичны этим
+
+		б) ответ: нет
+	\section*{Задание 5}
+	\section*{Задание 6}
+	\section*{Задание 7}
+	\section*{Задание 8}
+	\section*{Задание 9}
+	\section*{Задание 10}
+\end{document}

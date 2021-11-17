@@ -1,102 +1,87 @@
 #include <bits/stdc++.h>
 using namespace std;
-template<typename T>
-class pointer{
-	int64_t *count=nullptr;
-	T *value=nullptr;
-	void __init__(const T&q){
-		value=new T(q);
-		count=new int64_t(1);
-	}
-	void __init__(const pointer& o){
-		value=o.value;
-		count=o.count;
-		*count+=1;
-	}
+#include "pointer.hpp"
+
+
+int qq=0;
+class test{
 public:
-	pointer(){
+	int q;
+	test(){
+		q=++qq;
+		cout<<"constructor "<<q<<endl;
 	}
-	pointer(const T&q){
-		this->__init__(q);
+	template<typename T>
+	test(T w){
+		q=++qq;
+		cout<<"constructor "<<q<<" with "<<w<<endl;
 	}
-	pointer(const pointer& o){
-		this->__init__(o);
+	test(const test&w){
+		q=++qq;
+		cout<<"constructor "<<q<<" from "<<w.q<<endl;
 	}
-	pointer&operator=(const T&q){
-		this->clear();
-		this->__init__(q);
-		return *this;
+	template<typename T>
+	void operator=(T w){
+		cout<<"assign "<<q<<" with "<<w<<endl;
 	}
-	pointer&operator=(const pointer&q){
-		this->clear();
-		this->__init__(q);
-		return *this;
+	void operator=(const test&w){
+		cout<<"assign "<<q<<" from "<<w.q<<endl;
 	}
-	operator bool(){
-		return count;
-	}
-	void clear(){
-		if(count){
-			*count-=1;
-			if (*count==0){
-				delete count;
-				count=nullptr;
-				delete value;
-				value=nullptr;
-			}
-		}
-	}
-	~pointer(){
-		this->clear();
-	}
-	template <typename Y>
-	bool operator<(const pointer<Y> o)const{
-		return (*value)<(*o.value);
-	}
-	T&operator*(){
-		return *value;
-	}
-	operator T*(){
-		return value;
-	}
-	friend ostream&operator<<(ostream&q,const pointer&w){
-		q<<w.value;
-		return q;
-	}
-	friend istream&operator>>(istream&q,pointer&w){
-		T e;
-		q>>e;
-		w=e;
-		return q;
+	~test(){
+		cout<<"destructor "<<q<<endl;		
 	}
 };
 
-// int qq=0;
-// class test{
-// public:
-// 	int q;
-// 	test(){
-// 		q=++qq;
-// 		cout<<"constructor "<<q<<endl;
-// 	}
-// 	template<typename T>
-// 	test(T w){
-// 		q=++qq;
-// 		cout<<"constructor "<<q<<" with "<<w<<endl;
-// 	}
-// 	test(const test&w){
-// 		q=++qq;
-// 		cout<<"constructor "<<q<<" from "<<w.q<<endl;
-// 	}
-// 	template<typename T>
-// 	void operator=(T w){
-// 		cout<<"assign "<<q<<" with "<<w<<endl;
-// 	}
-// 	void operator=(const test&w){
-// 		cout<<"assign "<<q<<" from "<<w.q<<endl;
-// 	}
-// 	~test(){
-// 		cout<<"destructor "<<q<<endl;		
-// 	}
-// };
+template <typename Y>
+void ___mergesort(Y qb,Y qe,pointer<vector<typename Y::value_type>> _a=nullptr){
+	using T=typename Y::value_type;
+	// using T=vector<decltype(qb[0])>;
+	// T*a=(T*)_a;
+	if (qe-qb<2){
+		return;
+	}
+	bool outs=0;
+	if (!_a){
+		// a=new T[qe-qb];
+		_a=vector<T>(qe-qb);
+		outs=1;
+	}
+	vector<T>&a=*_a;
+	___mergesort(qb,qb+(qe-qb)/2,_a);
+	___mergesort(qb+(qe-qb)/2,qe,_a);
+	size_t asize=0;
+	size_t lp=0;
+	size_t rp=(qe-qb)/2;
+	while (lp<(qe-qb)/2 or rp<(qe-qb)){
+		if (lp==(qe-qb)/2){
+			a[asize++]=qb[rp++];
+		}else
+		if (rp==(qe-qb)){
+			a[asize++]=qb[lp++];
+		}else
+		if (qb[lp]>qb[rp]){
+			a[asize++]=qb[rp++];
+		}else{
+			a[asize++]=qb[lp++];
+		}
+	}
+	for (size_t w=0;w<asize;++w){
+		qb[w]=a[w];
+	}
+	if (outs){
+		// delete a;
+	}
+}
 
+
+int main(){
+	// vector<int> a({1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0});
+	// ___mergesort(a.begin(),a.end());
+	// for (auto w:a){
+	// 	cout<<w<<' ';
+	// }
+	// cout<<'\n';
+	pointer<int> q;
+	q=pointer(12);
+	cout<<*q<<endl;
+}

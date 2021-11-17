@@ -1,19 +1,8 @@
 #include <stdio.h>
-
-
-int inc(int q){
-	q+=1;
-}
-
-int inc_p(int *q){
-	*q+=1;
-}
-
-
+#include <stdlib.h>
+#include <stdint.h>
 int main(){
-	int a=0; // в a 0
-	inc(a); //копирует содержимое в функцию, а там меняется уже копия, значение a не меняется
-	inc_p(&a); //отправляет адрес переменной a в функцию, само содержисое a не меняется и не копируется. Функция изменяет саму переменную
-
-
+	uint64_t* q=(uint64_t*)malloc(sizeof(uint64_t));
+	printf("%llx\n",*q);
+	
 }
