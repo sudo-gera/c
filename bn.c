@@ -518,10 +518,6 @@ static int bn_half(bn*q){
 		q->vect[w-1]|=(q->vect[w]&1)<<31;
 		q->vect[w]>>=1;
 	}
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 	size_t r=0;
 	for (size_t w=0;w<q->size;++w){
 		if (q->vect[w]){
@@ -532,137 +528,14 @@ static int bn_half(bn*q){
 	if (!r){
 		q->sign=0;
 	}
-<<<<<<< HEAD
 	return BN_OK;
 }
 
 int bn_M_div_to(bn*q,bn*e){
-=======
 	return BN_OK;
 }
 
 int bn_M_div_to(bn*q,bn*e){
-=======
-	return BN_OK;
-}
-
-int bn_P_div_(bn*q,bn*e){
->>>>>>> 865af33369a3ed625fb172082b0ea1cac624d0bd
->>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
-	size_t qs=q->size;
-	size_t es=e->size;
-	while (qs and q->vect[qs-1]==0){
-		--qs;
-	}
-	while (es and e->vect[es-1]==0){
-		--es;
-	}
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
-	bn*t=bn_new();
-	t->size=qs+1;
-	t->sign=1;
-	t->vect=(uint32_t*)calloc(sizeof(uint32_t),t->size);
-	for(size_t w=0;w<es;++w){
-		t->vect[qs-es+1+w]=e->vect[w];
-	}
-	ssize_t f=(qs-es+1)*32;
-	bn*r=bn_new();
-	r->size=qs+1-es;
-	r->sign=1;
-	r->vect=(uint32_t*)calloc(sizeof(uint32_t),r->size);
-	// bn*_q=bn_init(q);
-	while (f>=0){
-		// ic(q,e,t,r,f)
-		if (bn_cmp(q,t)>=0){
-		// ic(q,e,t,r,f)
-			r->vect[f/32]|=(1LL<<(f%32));
-		// ic(q,e,t,r,f)
-			bn_sub_to(q,t);
-		// ic(q,e,t,r,f)
-<<<<<<< HEAD
-=======
-		}
-		// ic(q,e,t,r,f)
-		f-=1;
-		// ic(q,e,t,r,f)
-		bn_half(t);
-		// ic(q,e,t,r,f)
-	}
-	size_t rs=r->size;
-	while (rs and r->vect[rs-1]==0){
-		--rs;
-	}
-	if (!rs){
-		r->sign=0;
-	}
-	bn_init_bn(e,r);
-=======
-	bn*_b=bn_new();
-	// bn*_e=bn_init(q);
-	bn*_e=bn_new();
-	_e->size=qs-es+2;
-	_e->sign=bool(_e->size);
-	_e->vect=(uint32_t*)calloc(sizeof(uint32_t),_e->size);
-	if (_e->size){
-		_e->vect[_e->size-1]=1;
-	}
-	bn*_c=bn_new();
-	bn*_d=bn_new();	
-	bn*_f=bn_new();
-	bn*_g=bn_new();
-	bn_init_int(_g,2);
-	while (1){
-		bn_init_bn(_f,_e);
-		bn_sub_to(_f,_b);
-		if ((bn_cmp(_f,_g))<0){
-			break;
-		}
-		bn_init_bn(_c,_b);
-		bn_add_to(_c,_e);
-		bn_half(_c);
-		bn_init_bn(_d,_c);
-		bn_mul_to(_d,e);
-		int j=bn_cmp(_d,q);
-		if (j<0){
-			bn_init_bn(_b,_c);
-		}else
-		if (j>0){
-			bn_init_bn(_e,_c);
-		}else
-		if (j==0){
-			bn_init_bn(_e,_c);
-			bn_init_bn(_b,_c);
->>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
-		}
-		// ic(q,e,t,r,f)
-		f-=1;
-		// ic(q,e,t,r,f)
-		bn_half(t);
-		// ic(q,e,t,r,f)
-	}
-<<<<<<< HEAD
-	size_t rs=r->size;
-	while (rs and r->vect[rs-1]==0){
-		--rs;
-	}
-	if (!rs){
-		r->sign=0;
-	}
-	bn_init_bn(e,r);
-=======
-	bn_delete(_c);
-	bn_delete(_d);
-	bn_delete(_f);
-	bn_delete(_g);
-	bn_init_bn(q,_b);
-	bn_init_bn(e,_e);
-	bn_delete(_e);
-	bn_delete(_b);
->>>>>>> 865af33369a3ed625fb172082b0ea1cac624d0bd
->>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 	return BN_OK;
 }
 

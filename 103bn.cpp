@@ -338,10 +338,6 @@ signed main(){
 	test(q*-4,"\x1b[92m+\x1b[0m00000000\x1b[92m00000010\x1b[0m");
 	q=-2147483648;
 	test(q*2147483648,"\x1b[92m+\x1b[0m00000000\x1b[92m40000000\x1b[0m00000000");
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 	test(q/2147483648,"\x1b[92m+\x1b[0m00000001");
 	test(BigInteger(17)/10,"\x1b[92m+\x1b[0m00000001");
 	test(BigInteger(-17)/10,"\x1b[92m-\x1b[0m00000000\x1b[92m00000002\x1b[0m");
@@ -353,9 +349,6 @@ signed main(){
 	test(h/15,"\x1b[92m+\x1b[0m11111111\x1b[92m11111111\x1b[0m11111111\x1b[92m11111111\x1b[0m")
 	test(h/BigInteger("ffffffff"),"\x1b[92m+\x1b[0m00000001\x1b[92m00000001\x1b[0m00000001\x1b[92m00000001\x1b[0m")
 	test(h%BigInteger("ffffffff"),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000")
-<<<<<<< HEAD
-=======
-=======
 	// test(q/2147483648,"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
 	// test(BigInteger(17)/10,"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
 	// test(BigInteger(-17)/10,"\x1b[92m-\x1b[0m00000000\x1b[92m00000002\x1b[0m");
@@ -367,8 +360,6 @@ signed main(){
 	// test(h/15,"\x1b[92m+\x1b[0m00000000\x1b[92m11111111\x1b[0m11111111\x1b[92m11111111\x1b[0m11111111")
 	// test(h/BigInteger("ffffffff"),"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m00000001\x1b[92m00000001\x1b[0m00000001")
 	// test(h%BigInteger("ffffffff"),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000")
->>>>>>> 865af33369a3ed625fb172082b0ea1cac624d0bd
->>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 	test(BigInteger(2) ** BigInteger(2),"\x1b[92m+\x1b[0m00000000\x1b[92m00000004\x1b[0m");
 	test(BigInteger(2) ** BigInteger(10),"\x1b[92m+\x1b[0m00000000\x1b[92m00000400\x1b[0m");
 	test(BigInteger(7) ** BigInteger(7),"\x1b[92m+\x1b[0m00000000\x1b[92m000c90f7\x1b[0m");
@@ -376,18 +367,12 @@ signed main(){
 	test(BigInteger(-23) ** BigInteger(23),"\x1b[92m-\x1b[0m00000000\x1b[92m00000107\x1b[0m8c6e4f7d\x1b[92m75450b1f\x1b[0mb3ec6ae7");
 	test(BigInteger(23) ** BigInteger(24),"\x1b[92m+\x1b[0m00000000\x1b[92m000017ad\x1b[0m9de92445\x1b[92m8933ffd9\x1b[0m2a3d9ac1");
 	test(BigInteger(-23) ** BigInteger(24),"\x1b[92m+\x1b[0m00000000\x1b[92m000017ad\x1b[0m9de92445\x1b[92m8933ffd9\x1b[0m2a3d9ac1");
-<<<<<<< HEAD
 	test(BigInteger(16)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000002");
 	test(BigInteger(15)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000001");
-=======
-<<<<<<< HEAD
 	test(BigInteger(16)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000002");
 	test(BigInteger(15)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000001");
-=======
 	// test(BigInteger(16)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000002\x1b[0m");
 	// test(BigInteger(15)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
->>>>>>> 865af33369a3ed625fb172082b0ea1cac624d0bd
->>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 	test(BigInteger("123456",7),"\x1b[92m+\x1b[0m00000000\x1b[92m0000595b\x1b[0m");
 	test(BigInteger("zyxwvutsrqponmlkjihgfedcba9876543210",36),"\x1b[92m+\x1b[0m00000000\x1b[92m0455d441\x1b[0me55a3723\x1b[92m9ab4c303\x1b[0m18957607\x1b[92m1af5578f\x1b[0mfca80504");
 	test(BigInteger("-zyxwvutsrqponmlkjihgfedcba9876543210",36),"\x1b[92m-\x1b[0m00000000\x1b[92m0455d441\x1b[0me55a3723\x1b[92m9ab4c303\x1b[0m18957607\x1b[92m1af5578f\x1b[0mfca80504");
@@ -404,10 +389,6 @@ signed main(){
 	test(BigInteger(10).str(10),"10");
 	test(BigInteger(10).str(2),"1010");
 	test(BigInteger(65536).str(2),"10000000000000000");
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 	// // // // // // _rand
 	// // // // // // vector<int> a(40);
 	// // // // // // for (auto q:range(9)){
@@ -420,9 +401,6 @@ signed main(){
 	// // // // // // 	}
 	// // // // // // }
 	// // // // // // print(a);
-<<<<<<< HEAD
-=======
-=======
 	// _rand
 	// vector<int> a(40);
 	// for (auto q:range(9)){
@@ -435,17 +413,11 @@ signed main(){
 	// 	}
 	// }
 	// print(a);
->>>>>>> 865af33369a3ed625fb172082b0ea1cac624d0bd
->>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 	test(BigInteger(0).str(36),"0");
 	test(str(BigInteger("100000000000000000000000000000000000000000000000000000000",10)/BigInteger("100000000000000000000000000000000000000000000000000000001",10)),"0")
 	test(str(BigInteger("0",10)%BigInteger("10",10)),"0")
 	test(BigInteger("0",10)<BigInteger("2",10),"True")
 	test(str(BigInteger("-0",10)+BigInteger("0",10)),"0")
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 	// // // // // std::string _t="9675014747112608736850773242048361690409865981458363630705894373979202914072624810773537954622842049373398993797832873339776860075727147259888580079459161264328932129729221929178213767648394882406658458661139787843222912562544351554813090922783715438420126";
 	// // // // // auto l=monotonic();
 	// // // // // auto y=BigInteger(_t,10);
@@ -453,8 +425,6 @@ signed main(){
 	// // // // // l=monotonic();
 	// // // // // test(str(y),_t)
 	// // // // // print(monotonic()-l)
-<<<<<<< HEAD
-=======
 
 // #define HIDE_118
 // #define HIDE_119
@@ -474,7 +444,6 @@ signed main(){
 // #define HIDE_157
 // #define HIDE_158
 // #define HIDE_159
-=======
 	// std::string _t="9675014747112608736850773242048361690409865981458363630705894373979202914072624810773537954622842049373398993797832873339776860075727147259888580079459161264328932129729221929178213767648394882406658458661139787843222912562544351554813090922783715438420126";
 	// auto l=monotonic();
 	// auto y=BigInteger(_t,10);
@@ -482,7 +451,6 @@ signed main(){
 	// l=monotonic();
 	// test(str(y),_t)
 	// print(monotonic()-l)
->>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 
 // #define HIDE_118
 // #define HIDE_119
@@ -490,7 +458,6 @@ signed main(){
 // #define HIDE_139
 
 
-<<<<<<< HEAD
 // #define HIDE_148
 // #define HIDE_149
 // #define HIDE_150
@@ -503,7 +470,6 @@ signed main(){
 // #define HIDE_157
 // #define HIDE_158
 // #define HIDE_159
-=======
 #define HIDE_148
 #define HIDE_149
 #define HIDE_150
@@ -516,8 +482,6 @@ signed main(){
 #define HIDE_157
 #define HIDE_158
 #define HIDE_159
->>>>>>> 865af33369a3ed625fb172082b0ea1cac624d0bd
->>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 #include "stdout.cpp"
 }
 #endif
