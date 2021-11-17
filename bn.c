@@ -518,6 +518,10 @@ static int bn_half(bn*q){
 		q->vect[w-1]|=(q->vect[w]&1)<<31;
 		q->vect[w]>>=1;
 	}
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 	size_t r=0;
 	for (size_t w=0;w<q->size;++w){
 		if (q->vect[w]){
@@ -528,10 +532,23 @@ static int bn_half(bn*q){
 	if (!r){
 		q->sign=0;
 	}
+<<<<<<< HEAD
 	return BN_OK;
 }
 
 int bn_M_div_to(bn*q,bn*e){
+=======
+	return BN_OK;
+}
+
+int bn_M_div_to(bn*q,bn*e){
+=======
+	return BN_OK;
+}
+
+int bn_P_div_(bn*q,bn*e){
+>>>>>>> 865af33369a3ed625fb172082b0ea1cac624d0bd
+>>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 	size_t qs=q->size;
 	size_t es=e->size;
 	while (qs and q->vect[qs-1]==0){
@@ -540,6 +557,10 @@ int bn_M_div_to(bn*q,bn*e){
 	while (es and e->vect[es-1]==0){
 		--es;
 	}
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 	bn*t=bn_new();
 	t->size=qs+1;
 	t->sign=1;
@@ -561,6 +582,8 @@ int bn_M_div_to(bn*q,bn*e){
 		// ic(q,e,t,r,f)
 			bn_sub_to(q,t);
 		// ic(q,e,t,r,f)
+<<<<<<< HEAD
+=======
 		}
 		// ic(q,e,t,r,f)
 		f-=1;
@@ -576,6 +599,70 @@ int bn_M_div_to(bn*q,bn*e){
 		r->sign=0;
 	}
 	bn_init_bn(e,r);
+=======
+	bn*_b=bn_new();
+	// bn*_e=bn_init(q);
+	bn*_e=bn_new();
+	_e->size=qs-es+2;
+	_e->sign=bool(_e->size);
+	_e->vect=(uint32_t*)calloc(sizeof(uint32_t),_e->size);
+	if (_e->size){
+		_e->vect[_e->size-1]=1;
+	}
+	bn*_c=bn_new();
+	bn*_d=bn_new();	
+	bn*_f=bn_new();
+	bn*_g=bn_new();
+	bn_init_int(_g,2);
+	while (1){
+		bn_init_bn(_f,_e);
+		bn_sub_to(_f,_b);
+		if ((bn_cmp(_f,_g))<0){
+			break;
+		}
+		bn_init_bn(_c,_b);
+		bn_add_to(_c,_e);
+		bn_half(_c);
+		bn_init_bn(_d,_c);
+		bn_mul_to(_d,e);
+		int j=bn_cmp(_d,q);
+		if (j<0){
+			bn_init_bn(_b,_c);
+		}else
+		if (j>0){
+			bn_init_bn(_e,_c);
+		}else
+		if (j==0){
+			bn_init_bn(_e,_c);
+			bn_init_bn(_b,_c);
+>>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
+		}
+		// ic(q,e,t,r,f)
+		f-=1;
+		// ic(q,e,t,r,f)
+		bn_half(t);
+		// ic(q,e,t,r,f)
+	}
+<<<<<<< HEAD
+	size_t rs=r->size;
+	while (rs and r->vect[rs-1]==0){
+		--rs;
+	}
+	if (!rs){
+		r->sign=0;
+	}
+	bn_init_bn(e,r);
+=======
+	bn_delete(_c);
+	bn_delete(_d);
+	bn_delete(_f);
+	bn_delete(_g);
+	bn_init_bn(q,_b);
+	bn_init_bn(e,_e);
+	bn_delete(_e);
+	bn_delete(_b);
+>>>>>>> 865af33369a3ed625fb172082b0ea1cac624d0bd
+>>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 	return BN_OK;
 }
 
@@ -587,6 +674,10 @@ bn* bn_div(const bn*q,const bn*e){
 	}
 	bn*d=bn_init(e);
 	bn_abs(d);
+<<<<<<< HEAD
+	bn_M_div_to(a,d);
+=======
+<<<<<<< HEAD
 	bn_M_div_to(a,d);
 	if (q->sign*e->sign<0){
 		if (a->sign){
@@ -601,6 +692,29 @@ bn* bn_div(const bn*q,const bn*e){
 	}else{
 		bn_delete(a);
 		return d;
+=======
+	bn_P_div_(a,d);
+	d->sign*=-1;
+>>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
+	if (q->sign*e->sign<0){
+		if (a->sign){
+			bn_init_int(a,-1);
+			bn_sub_to(a,d);
+			bn_delete(d);
+			return a;
+		}
+		d->sign*=-1;
+		bn_delete(a);
+		return d;
+	}else{
+<<<<<<< HEAD
+		bn_delete(a);
+		return d;
+=======
+		bn_delete(d);
+		return a;
+>>>>>>> 865af33369a3ed625fb172082b0ea1cac624d0bd
+>>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 	}
 }
 
@@ -614,6 +728,10 @@ int bn_div_to(bn*q,bn const*w){
 	return BN_OK;
 }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 // int bn_mod_to(bn*q,const bn*w){
 // 	if (!w->sign){
 // 		return BN_DIVIDE_BY_ZERO;
@@ -659,6 +777,8 @@ bn* bn_mod(const bn*q,const bn*e){
 }
 
 int bn_mod_to(bn*q,bn const*w){
+<<<<<<< HEAD
+=======
 	if (!w->sign){
 		return BN_DIVIDE_BY_ZERO;
 	}
@@ -668,6 +788,27 @@ int bn_mod_to(bn*q,bn const*w){
 	return BN_OK;
 }
 
+=======
+int bn_mod_to(bn*q,const bn*w){
+>>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
+	if (!w->sign){
+		return BN_DIVIDE_BY_ZERO;
+	}
+	bn*u=bn_mod(q,w);
+	bn_init_bn(q,u);
+	bn_delete(u);
+	return BN_OK;
+}
+
+<<<<<<< HEAD
+=======
+bn* bn_mod(const bn*q,const bn*w){
+	bn*h=bn_init(q);
+	bn_mod_to(h,w);
+	return h;
+}
+>>>>>>> 865af33369a3ed625fb172082b0ea1cac624d0bd
+>>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 
 int bn_pow_to(bn*q,int _e){
 	int64_t e=_e;
@@ -706,6 +847,10 @@ static bn* bn_pow(bn*q,int w){
 	return h;
 }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 int bn_root2_to(bn*q){
 	bn*r=bn_new();
 	r->size=q->size+1;
@@ -732,10 +877,20 @@ int bn_root2_to(bn*q){
 	return BN_OK;
 }
 
+<<<<<<< HEAD
 int bn_root_to(bn*q,int __e){
 	if (__e==2){
 		return bn_root2_to(q);
 	}
+=======
+int bn_root_to(bn*q,int __e){
+	if (__e==2){
+		return bn_root2_to(q);
+	}
+=======
+int bn_root_to(bn*q,int __e){
+>>>>>>> 865af33369a3ed625fb172082b0ea1cac624d0bd
+>>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 	uint64_t e=__e;
 	bn*_b=bn_new();
 	bn*_e=bn_new();
@@ -751,7 +906,15 @@ int bn_root_to(bn*q,int __e){
 	bn*_g=bn_new();
 	bn_init_int(_g,2);
 	while (1){
+<<<<<<< HEAD
 		// ic(_b,_e)
+=======
+<<<<<<< HEAD
+		// ic(_b,_e)
+=======
+		ic(_b,_e)
+>>>>>>> 865af33369a3ed625fb172082b0ea1cac624d0bd
+>>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 		bn_init_bn(_f,_e);
 		bn_sub_to(_f,_b);
 		if (bn_cmp(_f,_g)<0){
