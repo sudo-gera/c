@@ -532,10 +532,50 @@ static int bn_half(bn*q){
 }
 
 int bn_M_div_to(bn*q,bn*e){
-	return BN_OK;
-}
-
-int bn_M_div_to(bn*q,bn*e){
+	size_t qs=q->size;
+	size_t es=e->size;
+	while (qs and q->vect[qs-1]==0){
+		--qs;
+	}
+	while (es and e->vect[es-1]==0){
+		--es;
+	}
+	bn*t=bn_new();
+	t->size=qs+1;
+	t->sign=1;
+	t->vect=(uint32_t*)calloc(sizeof(uint32_t),t->size);
+	for(size_t w=0;w<es;++w){
+		t->vect[qs-es+1+w]=e->vect[w];
+	}
+	ssize_t f=(qs-es+1)*32;
+	bn*r=bn_new();
+	r->size=qs+1-es;
+	r->sign=1;
+	r->vect=(uint32_t*)calloc(sizeof(uint32_t),r->size);
+	// bn*_q=bn_init(q);
+	while (f>=0){
+		// ic(q,e,t,r,f)
+		if (bn_cmp(q,t)>=0){
+		// ic(q,e,t,r,f)
+			r->vect[f/32]|=(1LL<<(f%32));
+		// ic(q,e,t,r,f)
+			bn_sub_to(q,t);
+		// ic(q,e,t,r,f)
+		}
+		// ic(q,e,t,r,f)
+		f-=1;
+		// ic(q,e,t,r,f)
+		bn_half(t);
+		// ic(q,e,t,r,f)
+	}
+	size_t rs=r->size;
+	while (rs and r->vect[rs-1]==0){
+		--rs;
+	}
+	if (!rs){
+		r->sign=0;
+	}
+	bn_init_bn(e,r);
 	return BN_OK;
 }
 
@@ -547,10 +587,6 @@ bn* bn_div(const bn*q,const bn*e){
 	}
 	bn*d=bn_init(e);
 	bn_abs(d);
-<<<<<<< HEAD
-	bn_M_div_to(a,d);
-=======
-<<<<<<< HEAD
 	bn_M_div_to(a,d);
 	if (q->sign*e->sign<0){
 		if (a->sign){
@@ -565,29 +601,6 @@ bn* bn_div(const bn*q,const bn*e){
 	}else{
 		bn_delete(a);
 		return d;
-=======
-	bn_P_div_(a,d);
-	d->sign*=-1;
->>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
-	if (q->sign*e->sign<0){
-		if (a->sign){
-			bn_init_int(a,-1);
-			bn_sub_to(a,d);
-			bn_delete(d);
-			return a;
-		}
-		d->sign*=-1;
-		bn_delete(a);
-		return d;
-	}else{
-<<<<<<< HEAD
-		bn_delete(a);
-		return d;
-=======
-		bn_delete(d);
-		return a;
->>>>>>> 865af33369a3ed625fb172082b0ea1cac624d0bd
->>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 	}
 }
 
@@ -601,10 +614,6 @@ int bn_div_to(bn*q,bn const*w){
 	return BN_OK;
 }
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 // int bn_mod_to(bn*q,const bn*w){
 // 	if (!w->sign){
 // 		return BN_DIVIDE_BY_ZERO;
@@ -650,8 +659,6 @@ bn* bn_mod(const bn*q,const bn*e){
 }
 
 int bn_mod_to(bn*q,bn const*w){
-<<<<<<< HEAD
-=======
 	if (!w->sign){
 		return BN_DIVIDE_BY_ZERO;
 	}
@@ -661,27 +668,6 @@ int bn_mod_to(bn*q,bn const*w){
 	return BN_OK;
 }
 
-=======
-int bn_mod_to(bn*q,const bn*w){
->>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
-	if (!w->sign){
-		return BN_DIVIDE_BY_ZERO;
-	}
-	bn*u=bn_mod(q,w);
-	bn_init_bn(q,u);
-	bn_delete(u);
-	return BN_OK;
-}
-
-<<<<<<< HEAD
-=======
-bn* bn_mod(const bn*q,const bn*w){
-	bn*h=bn_init(q);
-	bn_mod_to(h,w);
-	return h;
-}
->>>>>>> 865af33369a3ed625fb172082b0ea1cac624d0bd
->>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 
 int bn_pow_to(bn*q,int _e){
 	int64_t e=_e;
@@ -720,10 +706,6 @@ static bn* bn_pow(bn*q,int w){
 	return h;
 }
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 int bn_root2_to(bn*q){
 	bn*r=bn_new();
 	r->size=q->size+1;
@@ -750,20 +732,10 @@ int bn_root2_to(bn*q){
 	return BN_OK;
 }
 
-<<<<<<< HEAD
 int bn_root_to(bn*q,int __e){
 	if (__e==2){
 		return bn_root2_to(q);
 	}
-=======
-int bn_root_to(bn*q,int __e){
-	if (__e==2){
-		return bn_root2_to(q);
-	}
-=======
-int bn_root_to(bn*q,int __e){
->>>>>>> 865af33369a3ed625fb172082b0ea1cac624d0bd
->>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 	uint64_t e=__e;
 	bn*_b=bn_new();
 	bn*_e=bn_new();
@@ -779,15 +751,7 @@ int bn_root_to(bn*q,int __e){
 	bn*_g=bn_new();
 	bn_init_int(_g,2);
 	while (1){
-<<<<<<< HEAD
 		// ic(_b,_e)
-=======
-<<<<<<< HEAD
-		// ic(_b,_e)
-=======
-		ic(_b,_e)
->>>>>>> 865af33369a3ed625fb172082b0ea1cac624d0bd
->>>>>>> f90ec9bcf8a9784b190f52d1fe19a5593c55c061
 		bn_init_bn(_f,_e);
 		bn_sub_to(_f,_b);
 		if (bn_cmp(_f,_g)<0){
