@@ -10,6 +10,8 @@ struct bn_s{
 	uint32_t *vect;
 };
 
+// typedef bn_s bn;
+
 #ifdef CPP_R
 #if COLORS
 auto print_one(const bn*q){
@@ -232,6 +234,49 @@ static int bn_M_add_to(bn *q, bn const *e){
 		}
 		q->vect[w]=buff&0b11111111111111111111111111111111;
 		buff>>=32;
+	}
+	return BN_OK;
+}
+
+static int bn_M_add_to_fast(bn *q, bn const *e,uint64_t start){
+	if (!q){
+		return BN_NULL_OBJECT;
+	}
+	if (!e){
+		return BN_NULL_OBJECT;
+	}
+	size_t qs=q->size;
+	if (qs and q->vect[qs-1]==0){
+		qs-=1;
+	}
+	size_t es=e->size;
+	if (es and e->vect[es-1]==0){
+		es-=1;
+	}
+	qs=(qs>es?qs:es)+1;
+	if (qs!=q->size){
+		q->vect=(uint32_t*)realloc(q->vect,qs*sizeof(uint32_t));
+	}
+#if ERRORS
+	if(!q->vect){
+		return BN_NO_MEMORY;
+	}
+#endif
+	for (size_t w=q->size;w<qs;++w){
+		q->vect[w]=0;
+	}
+	q->size=qs;
+	uint64_t buff=0;
+	for (size_t w=start;w<q->size;++w){
+		buff+=q->vect[w];
+		if (w<e->size){
+			buff+=e->vect[w];
+		}
+		q->vect[w]=buff&0b11111111111111111111111111111111;
+		buff>>=32;
+		if (w>start and buff==0){
+			break;
+		}
 	}
 	return BN_OK;
 }
@@ -469,7 +514,7 @@ bn* bn_mul(bn const*q,const bn*e){
 		if (q->vect[w]){
 			for (size_t r=0;r<es;++r){
 				*(uint64_t*)(tmp->vect+w+r)=(uint64_t)(q->vect[w])*(uint64_t)(e->vect[r]);
-				bn_M_add_to(res,tmp);
+				bn_M_add_to_fast(res,tmp,w+r);
 				*(uint64_t*)(tmp->vect+w+r)=0;
 			}
 		}
@@ -534,6 +579,7 @@ static int bn_half(bn*q){
 int bn_M_div_to(bn*q,bn*e){
 	size_t qs=q->size;
 	size_t es=e->size;
+	// ic(q,e)
 	while (qs and q->vect[qs-1]==0){
 		--qs;
 	}
@@ -541,24 +587,44 @@ int bn_M_div_to(bn*q,bn*e){
 		--es;
 	}
 	bn*t=bn_new();
-	t->size=qs+1;
+	t->size=qs+2;
 	t->sign=1;
 	t->vect=(uint32_t*)calloc(sizeof(uint32_t),t->size);
 	for(size_t w=0;w<es;++w){
-		t->vect[qs-es+1+w]=e->vect[w];
+		t->vect[qs-es+2+w]=e->vect[w];
 	}
-	ssize_t f=(qs-es+1)*32;
+	bn**a=(bn**)malloc(sizeof(bn*)*32);
+	a[31]=bn_init(t);
+	bn_half(a[31]);
+	for (size_t w=31;w>1;--w){
+		a[w-1]=bn_init(a[w]);
+		bn_half(a[w-1]);
+	}
+	a[0]=bn_init(t);
+	// for (size_t w=0;w<32;++w){
+	// 	ic(a[w]->vect)
+	// }
+	// ic(t);
+	// for (size_t w=0;w<32;++w){
+	// 	ic(a[w])
+	// }
+	uint64_t*o=(uint64_t*)calloc(32,sizeof(uint64_t));
+	ssize_t f=(qs-es+2)*32;
 	bn*r=bn_new();
 	r->size=qs+1-es;
 	r->sign=1;
 	r->vect=(uint32_t*)calloc(sizeof(uint32_t),r->size);
 	while (f>=0){
-		if (bn_cmp(q,t)>=0){
-			r->vect[f/32]|=(1LL<<(f%32));
-			bn_M_sub_to(q,t);
+		// ic(q,r,a[f&0b11111],f)
+		if (bn_cmp(q,a[f&0b11111])>=0){
+			r->vect[f>>5]|=(1LL<<(f&0b11111));
+			bn_M_sub_to(q,a[f&0b11111]);
 		}
+		a[f&0b11111]->size-=1;
+		a[f&0b11111]->vect+=1;
+		o[f&0b11111]+=1;
 		f-=1;
-		bn_half(t);
+		// bn_half(t);
 	}
 	size_t rs=r->size;
 	while (rs and r->vect[rs-1]==0){
@@ -567,6 +633,13 @@ int bn_M_div_to(bn*q,bn*e){
 	if (!rs){
 		r->sign=0;
 	}
+	for (size_t w=0;w<32;++w){
+		a[w]->vect-=o[w];
+		// ic(a[w]->vect)
+		bn_delete(a[w]);
+	}
+	free(o);
+	free(a);
 	bn_init_bn(e,r);
 	bn_delete(r);
 	bn_delete(t);
@@ -806,6 +879,10 @@ int bn_init_string_radix(bn*q,const char*e,int t){
 	}
 	for (size_t w=g;w<l;++w){
 		bn_mul_to(q,y);
+		// if ('0'<=e[w] and e[w]<='9'){bn_init_int(a,e[w]-'0');} else
+		// if ('a'<=e[w] and e[w]<='z'){bn_init_int(a,e[w]-'a');} else
+		// if ('A'<=e[w] and e[w]<='Z'){bn_init_int(a,e[w]-'Z');}
+
 		bn_init_int(a,"\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x24\x25\x26\x27\x28\x29\x2a\x2b\x2c\x2d\x2e\x2f\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x3a\x3b\x3c\x3d\x3e\x3f\x40\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x5b\x5c\x5d\x5e\x5f\x60\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x7b\x7c\x7d\x7e\x7f"
 			[(int)(e[w])]);
 		bn_add_to(q,a);
@@ -866,19 +943,3 @@ const char* bn_to_string(const bn*q,int e){
 	bn_delete(t);
 	return a;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

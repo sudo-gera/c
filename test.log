@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.9.29)  11 NOV 2021 21:03
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.9.29)  18 NOV 2021 21:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -982,58 +982,50 @@ LaTeX Font Info:    Trying to load font information for U+rsfs on input line 33
 File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
 )
 LaTeX Font Info:    Font shape `OML/cmr/m/up' in size <12> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 35.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 45.
 LaTeX Font Info:    Font shape `OML/cmr/m/up' in size <8> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 35.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 45.
 LaTeX Font Info:    Font shape `OML/cmr/m/up' in size <6> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 35.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 45.
 LaTeX Font Info:    Font shape `OMS/cmr/m/up' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 35.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 45.
 LaTeX Font Info:    Font shape `OMS/cmr/m/up' in size <8> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 35.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 45.
 LaTeX Font Info:    Font shape `OMS/cmr/m/up' in size <6> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 35.
-<~/Documents/1.png, id=4, 321.2pt x 240.9pt>
-File: ~/Documents/1.png Graphic file (type png)
-<use ~/Documents/1.png>
-Package pdftex.def Info: ~/Documents/1.png  used on input line 37.
-(pdftex.def)             Requested size: 200.0pt x 150.00339pt.
-<~/Documents/2.png, id=6, 321.2pt x 240.9pt>
-File: ~/Documents/2.png Graphic file (type png)
-<use ~/Documents/2.png>
-Package pdftex.def Info: ~/Documents/2.png  used on input line 49.
-(pdftex.def)             Requested size: 200.0pt x 150.00339pt.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 45.
  [1
 
-{/usr/local/texlive/2021/texmf-var/fonts/map/pdftex/updmap/pdftex.map} </Users/
-gera/Documents/1.png> </Users/gera/Documents/2.png>] [2] (./test.aux)
+{/usr/local/texlive/2021/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] (./
+test.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
  ) 
 Here is how much of TeX's memory you used:
- 29311 strings out of 478994
- 703575 string characters out of 5858184
- 1201872 words of memory out of 5000000
- 46391 multiletter control sequences out of 15000+600000
+ 29297 strings out of 478994
+ 703341 string characters out of 5858184
+ 1206872 words of memory out of 5000000
+ 46381 multiletter control sequences out of 15000+600000
  418914 words of font info for 71 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 102i,6n,103p,442b,251s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 102i,6n,103p,1546b,251s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t2a.enc
-}</usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb>
-</usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><
-/usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></u
-sr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/
-local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/l
-ocal/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/loc
-al/texlive/2021/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb></usr/local
-/texlive/2021/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/t
-exlive/2021/texmf-dist/fonts/type1/public/cm-super/sfrm1440.pfb></usr/local/tex
-live/2021/texmf-dist/fonts/type1/public/cm-super/sfrm2074.pfb>
-Output written on test.pdf (2 pages, 118539 bytes).
+}</usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb>
+</usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></
+usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></us
+r/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/
+local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/loc
+al/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/
+texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/t
+exlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/tex
+live/2021/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb></usr/local/texli
+ve/2021/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive
+/2021/texmf-dist/fonts/type1/public/cm-super/sfrm1440.pfb></usr/local/texlive/2
+021/texmf-dist/fonts/type1/public/cm-super/sfrm2074.pfb>
+Output written on test.pdf (2 pages, 126049 bytes).
 PDF statistics:
- 60 PDF objects out of 1000 (max. 8388607)
- 41 compressed objects within 1 object stream
+ 63 PDF objects out of 1000 (max. 8388607)
+ 46 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 23 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 13 words of extra memory for PDF output out of 10000 (max. 10000000)
 

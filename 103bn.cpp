@@ -338,6 +338,17 @@ signed main(){
 	test(q*-4,"\x1b[92m+\x1b[0m00000000\x1b[92m00000010\x1b[0m");
 	q=-2147483648;
 	test(q*2147483648,"\x1b[92m+\x1b[0m00000000\x1b[92m40000000\x1b[0m00000000");
+	// test(q/2147483648,"\x1b[92m+\x1b[0m00000001");
+	// test(BigInteger(17)/10,"\x1b[92m+\x1b[0m00000001");
+	// test(BigInteger(-17)/10,"\x1b[92m-\x1b[0m00000000\x1b[92m00000002\x1b[0m");
+	// test(BigInteger(17)/(-10),"\x1b[92m-\x1b[0m00000000\x1b[92m00000002\x1b[0m");
+	// test(BigInteger(-17)/(-10),"\x1b[92m+\x1b[0m00000001");
+	// test(BigInteger(0)/(-10),"\x1b[92m0\x1b[0m");
+	// test(BigInteger(0)/(+10),"\x1b[92m0\x1b[0m");
+	h=BigInteger("ffffffffffffffffffffffffffffffff");
+	test(h/15,"\x1b[92m+\x1b[0m11111111\x1b[92m11111111\x1b[0m11111111\x1b[92m11111111\x1b[0m")
+	test(h/BigInteger("ffffffff"),"\x1b[92m+\x1b[0m00000001\x1b[92m00000001\x1b[0m00000001\x1b[92m00000001\x1b[0m")
+	test(h%BigInteger("ffffffff"),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000")
 	test(q/2147483648,"\x1b[92m+\x1b[0m00000001");
 	test(BigInteger(17)/10,"\x1b[92m+\x1b[0m00000001");
 	test(BigInteger(-17)/10,"\x1b[92m-\x1b[0m00000000\x1b[92m00000002\x1b[0m");
@@ -349,17 +360,6 @@ signed main(){
 	test(h/15,"\x1b[92m+\x1b[0m11111111\x1b[92m11111111\x1b[0m11111111\x1b[92m11111111\x1b[0m")
 	test(h/BigInteger("ffffffff"),"\x1b[92m+\x1b[0m00000001\x1b[92m00000001\x1b[0m00000001\x1b[92m00000001\x1b[0m")
 	test(h%BigInteger("ffffffff"),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000")
-	// test(q/2147483648,"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
-	// test(BigInteger(17)/10,"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
-	// test(BigInteger(-17)/10,"\x1b[92m-\x1b[0m00000000\x1b[92m00000002\x1b[0m");
-	// test(BigInteger(17)/(-10),"\x1b[92m-\x1b[0m00000000\x1b[92m00000002\x1b[0m");
-	// test(BigInteger(-17)/(-10),"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
-	// test(BigInteger(0)/(-10),"\x1b[92m0\x1b[0m");
-	// test(BigInteger(0)/(+10),"\x1b[92m0\x1b[0m");
-	// h=BigInteger("ffffffffffffffffffffffffffffffff");
-	// test(h/15,"\x1b[92m+\x1b[0m00000000\x1b[92m11111111\x1b[0m11111111\x1b[92m11111111\x1b[0m11111111")
-	// test(h/BigInteger("ffffffff"),"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m00000001\x1b[92m00000001\x1b[0m00000001")
-	// test(h%BigInteger("ffffffff"),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000")
 	test(BigInteger(2) ** BigInteger(2),"\x1b[92m+\x1b[0m00000000\x1b[92m00000004\x1b[0m");
 	test(BigInteger(2) ** BigInteger(10),"\x1b[92m+\x1b[0m00000000\x1b[92m00000400\x1b[0m");
 	test(BigInteger(7) ** BigInteger(7),"\x1b[92m+\x1b[0m00000000\x1b[92m000c90f7\x1b[0m");
@@ -374,7 +374,9 @@ signed main(){
 	// test(BigInteger(16)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000002\x1b[0m");
 	// test(BigInteger(15)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
 	test(BigInteger("123456",7),"\x1b[92m+\x1b[0m00000000\x1b[92m0000595b\x1b[0m");
+	// ic()
 	test(BigInteger("zyxwvutsrqponmlkjihgfedcba9876543210",36),"\x1b[92m+\x1b[0m00000000\x1b[92m0455d441\x1b[0me55a3723\x1b[92m9ab4c303\x1b[0m18957607\x1b[92m1af5578f\x1b[0mfca80504");
+	// ic()
 	test(BigInteger("-zyxwvutsrqponmlkjihgfedcba9876543210",36),"\x1b[92m-\x1b[0m00000000\x1b[92m0455d441\x1b[0me55a3723\x1b[92m9ab4c303\x1b[0m18957607\x1b[92m1af5578f\x1b[0mfca80504");
 	test(1**BigInteger(1000000000),"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
 	test(BigInteger("-0",10),"\x1b[92m0\x1b[0m00000000")
@@ -389,42 +391,42 @@ signed main(){
 	test(BigInteger(10).str(10),"10");
 	test(BigInteger(10).str(2),"1010");
 	test(BigInteger(65536).str(2),"10000000000000000");
-	// // // // // // _rand
-	// // // // // // vector<int> a(40);
-	// // // // // // for (auto q:range(9)){
-	// // // // // // 	auto f=BigInteger(rand());
-	// // // // // // 	f=f**BigInteger(rand()%9);
-	// // // // // // 	for (auto w:range(2,37)){
-	// // // // // // 		if (f.str(w)!=f.str1(w)){
-	// // // // // // 			a[w]+=1;
-	// // // // // // 		}
-	// // // // // // 	}
-	// // // // // // }
-	// // // // // // print(a);
-	// _rand
-	// vector<int> a(40);
-	// for (auto q:range(9)){
-	// 	auto f=BigInteger(rand());
-	// 	f=f**BigInteger(rand()%9);
-	// 	for (auto w:range(2,37)){
-	// 		if (f.str(w)!=f.str1(w)){
-	// 			a[w]+=1;
-	// 		}
-	// 	}
-	// }
-	// print(a);
-	test(BigInteger(0).str(36),"0");
-	test(str(BigInteger("100000000000000000000000000000000000000000000000000000000",10)/BigInteger("100000000000000000000000000000000000000000000000000000001",10)),"0")
-	test(str(BigInteger("0",10)%BigInteger("10",10)),"0")
-	test(BigInteger("0",10)<BigInteger("2",10),"True")
-	test(str(BigInteger("-0",10)+BigInteger("0",10)),"0")
-	// // // // // std::string _t="9675014747112608736850773242048361690409865981458363630705894373979202914072624810773537954622842049373398993797832873339776860075727147259888580079459161264328932129729221929178213767648394882406658458661139787843222912562544351554813090922783715438420126";
-	// // // // // auto l=monotonic();
-	// // // // // auto y=BigInteger(_t,10);
-	// // // // // print(monotonic()-l)	
-	// // // // // l=monotonic();
-	// // // // // test(str(y),_t)
-	// // // // // print(monotonic()-l)
+	// // // // // // // _rand
+	// // // // // // // vector<int> a(40);
+	// // // // // // // for (auto q:range(9)){
+	// // // // // // // 	auto f=BigInteger(rand());
+	// // // // // // // 	f=f**BigInteger(rand()%9);
+	// // // // // // // 	for (auto w:range(2,37)){
+	// // // // // // // 		if (f.str(w)!=f.str1(w)){
+	// // // // // // // 			a[w]+=1;
+	// // // // // // // 		}
+	// // // // // // // 	}
+	// // // // // // // }
+	// // // // // // // print(a);
+	// // _rand
+	// // vector<int> a(40);
+	// // for (auto q:range(9)){
+	// // 	auto f=BigInteger(rand());
+	// // 	f=f**BigInteger(rand()%9);
+	// // 	for (auto w:range(2,37)){
+	// // 		if (f.str(w)!=f.str1(w)){
+	// // 			a[w]+=1;
+	// // 		}
+	// // 	}
+	// // }
+	// // print(a);
+	// test(BigInteger(0).str(36),"0");
+	// test(str(BigInteger("100000000000000000000000000000000000000000000000000000000",10)/BigInteger("100000000000000000000000000000000000000000000000000000001",10)),"0")
+	// test(str(BigInteger("0",10)%BigInteger("10",10)),"0")
+	// test(BigInteger("0",10)<BigInteger("2",10),"True")
+	// test(str(BigInteger("-0",10)+BigInteger("0",10)),"0")
+	// // // // // // std::string _t="9675014747112608736850773242048361690409865981458363630705894373979202914072624810773537954622842049373398993797832873339776860075727147259888580079459161264328932129729221929178213767648394882406658458661139787843222912562544351554813090922783715438420126";
+	// // // // // // auto l=monotonic();
+	// // // // // // auto y=BigInteger(_t,10);
+	// // // // // // print(monotonic()-l)	
+	// // // // // // l=monotonic();
+	// // // // // // test(str(y),_t)
+	// // // // // // print(monotonic()-l)
 
 // #define HIDE_118
 // #define HIDE_119
@@ -451,6 +453,7 @@ signed main(){
 	// l=monotonic();
 	// test(str(y),_t)
 	// print(monotonic()-l)
+
 
 // #define HIDE_118
 // #define HIDE_119
