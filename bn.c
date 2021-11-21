@@ -10,11 +10,16 @@ struct bn_s{
 	uint32_t *vect;
 };
 
-<<<<<<< HEAD
 typedef bn_s bn;
-=======
-// typedef bn_s bn;
->>>>>>> f551edf2377d4482a52dead0c522256c48ed4aeb
+
+#define HEAP 0
+
+
+#if !HEAP
+bn bn_data[1073741824];
+uint64_t bn_used=0;
+#endif
+
 
 #ifdef CPP_R
 #if COLORS
@@ -86,7 +91,11 @@ enum bn_codes {
 int bn_codes=1;
 
 bn *bn_new(){
+#if HEAP
 	return (bn*)calloc(sizeof(bn),1);
+#else
+	return (bn*)(bn_data)+(bn_used++);
+#endif
 }
 
 bn *bn_init(bn const*orig){
@@ -95,7 +104,11 @@ bn *bn_init(bn const*orig){
 		return 0;
 	}
 #endif
+#if HEAP
 	bn *q=(bn*)malloc(sizeof(bn));
+#else
+	bn *q=(bn*)(bn_data)+(bn_used++);
+#endif
 #if ERRORS
 	if (!q){
 		return 0;
@@ -179,8 +192,10 @@ int bn_delete(bn *q){
 	if (q->vect){
 		free(q->vect);
 	}
+#if HEAP
 	free(q);
-	return BN_OK;
+#endif
+		return BN_OK;
 }
 
 

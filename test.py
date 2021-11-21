@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-print(1)
-=======
 from pprint import pprint
 a=open('test.txt').read()
 a=a.split('====== Test')
@@ -45,7 +42,7 @@ def to_radix(_q,_e):
 	if int(s,e)!=q:
 		print('error radix',[a.index(w)])
 	return s
-a=[w for w in a if w[1]!='memstress']
+# a=[w for w in a if w[1]!='memstress']
 for w in a:
 	if w[1]=='pow':
 		w.append(int(w[0])**int(w[2]))
@@ -65,13 +62,15 @@ for w in a:
 		w.append(root(int(w[0]),int(w[2])))
 	elif w[1]=='to_radix':
 		w.append(to_radix(int(w[0]),int(w[2])))
+	elif w[1]=='memstress':
+		w.append('')
 	else:
 		print(w[1])
 	s.append(w)
 a=s
 a=[  w[:-1]+[str(w[-1])]    for w in a]
-a=[f'/* { {"pow":"**","+":"+","-":"-","*":"*","/":"/","%":"%","root":"/ *","to_radix":"<< *"}[w[1]] } */test(str(BigInteger("{w[0]}",10){ {"pow":"**","+":"+","-":"-","*":"*","/":"/","%":"%","root":"/ *","to_radix":"<< *"}[w[1]] }BigInteger("{w[2]}",10)),"{w[3]}")' for w in a]
-a=[f'#ifndef HIDE_{q}\n\tt=monotonic();\n\t{w}\n\tprint("test {q}",output_time(monotonic()-t));\n#endif\n' for q,w in enumerate(a)]
+a=[f'/* { {"pow":"**","+":"+","-":"-","*":"*","/":"/","%":"%","root":"/ *","to_radix":"<< *","memstress":"^*"}[w[1]] } */test(str(BigInteger("{w[0]}",10){ {"pow":"**","+":"+","-":"-","*":"*","/":"/","%":"%","root":"/ *","to_radix":"<< *","memstress":"^*"}[w[1]] }BigInteger("{w[2]}",10)),"{w[3]}")' for w in a]
+a=[f'#ifndef HIDE_{q}\n\tt=monotonic();\n\t{w}\n\tprint("test {q}",output_time(monotonic()-t));\n#endif\nic()\n' for q,w in enumerate(a)]
 # a=[w if len(w)>1000 else f'print("skipping {q}");\n' for q,w in enumerate(a)]
 a=[w if len(w) else f'' for q,w in enumerate(a)]
 # a=a[:40]
@@ -93,4 +92,3 @@ open('stdout.cpp','w').write(a)
 
 
 
->>>>>>> 5d8df70213d7fc81253b7bfcc6ca5f217e24a294
