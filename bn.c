@@ -10,7 +10,11 @@ struct bn_s{
 	uint32_t *vect;
 };
 
+<<<<<<< HEAD
 typedef bn_s bn;
+=======
+// typedef bn_s bn;
+>>>>>>> f551edf2377d4482a52dead0c522256c48ed4aeb
 
 #ifdef CPP_R
 #if COLORS
@@ -943,19 +947,3 @@ const char* bn_to_string(const bn*q,int e){
 	bn_delete(t);
 	return a;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,6 +1,6 @@
 echo "source this";
-hp="8282"
-sp="8181"
+hp="8080"
+sp="1088"
 export http_proxy="192.168.49.1:$hp";
 export HTTP_PROXY="192.168.49.1:$hp";
 export https_proxy="192.168.49.1:$hp";

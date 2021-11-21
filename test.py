@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+print(1)
+=======
 from pprint import pprint
 a=open('test.txt').read()
 a=a.split('====== Test')
@@ -90,3 +93,4 @@ open('stdout.cpp','w').write(a)
 
 
 
+>>>>>>> 5d8df70213d7fc81253b7bfcc6ca5f217e24a294

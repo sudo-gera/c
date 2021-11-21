@@ -1,5 +1,6 @@
 #include "d"
 
+<<<<<<< HEAD
 void q(int64_t w){
     printf("int64_t");
 }
@@ -20,3 +21,16 @@ int main(){
 }
 
 
+=======
+auto run(int q){
+    if (q){
+        return run(q-1)+1;
+    }
+    return 0;
+}
+
+ima{
+    auto h=run(9);
+    print(h);
+}
+>>>>>>> f551edf2377d4482a52dead0c522256c48ed4aeb
