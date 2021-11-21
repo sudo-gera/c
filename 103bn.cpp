@@ -100,37 +100,53 @@ class BigInteger{
 public:
 	bn *q;
 	BigInteger(){
+		auto v=perf();
 		q=bn_new();
+		ic(v);
 	}
 	BigInteger(bn*q){
 		this->q=q;
 	}
 	BigInteger(const BigInteger& orig){
+		auto v=perf();
 		q=bn_init(orig.q);
+		ic(v);
 	}
 	BigInteger(const long orig){
+		auto v=perf();
 		q=bn_new();
 		bn_init_int(q,int64_t(orig));
+		ic(v);
 	}
 	BigInteger(const int orig){
+		auto v=perf();
 		q=bn_new();
 		bn_init_int(q,int64_t(orig));
+		ic(v);
 	}
 	BigInteger(const string orig){
+		auto v=perf();
 		q=bn_new();
 		bn_init_str(q,orig.c_str());
+		ic(v);
 	}
 	BigInteger(const string orig,int64_t r){
+		auto v=perf();
 		q=bn_new();
 		bn_init_string_radix(q,orig.c_str(),r);
+		ic(v);
 	}
 	auto&operator=(int64_t orig){
+		auto v=perf();
 		bn_init_int(q,orig);
+		ic(v);
 		return *this;
 	}
 	auto&operator=(const BigInteger&orig){
+		auto v=perf();
 		bn_delete(q);
 		q=bn_init(orig.q);
+		ic(v);
 		return *this;
 	}
 	template <typename T>
@@ -139,50 +155,79 @@ public:
 		return q;
 	}
 	bool operator<(BigInteger const&q){
-		return bn_cmp(this->q,q.q)<0;
+		auto v=perf();
+		auto h=bn_cmp(this->q,q.q)<0;
+		ic(v);
+		return h;
 	}
 	bool operator==(BigInteger const&q){
-		return bn_cmp(this->q,q.q)==0;
+		auto v=perf();
+		auto h=bn_cmp(this->q,q.q)==0;
+		ic(v);
+		return h;
 	}
 	bool operator>(BigInteger const&q){
-		return bn_cmp(this->q,q.q)>0;
+		auto v=perf();
+		auto h=bn_cmp(this->q,q.q)>0;
+		ic(v);
+		return h;
 	}
 	bool operator<=(BigInteger const&q){
-		return bn_cmp(this->q,q.q)<=0;
+		auto v=perf();
+		auto h=bn_cmp(this->q,q.q)<=0;
+		ic(v);
+		return h;
 	}
 	bool operator!=(BigInteger const&q){
-		return bn_cmp(this->q,q.q)!=0;
+		auto v=perf();
+		auto h=bn_cmp(this->q,q.q)!=0;
+		ic(v);
+		return h;
 	}
 	bool operator>=(BigInteger const&q){
-		return eic(bn_cmp(this->q,q.q))>=0;
+		auto v=perf();
+		auto h=bn_cmp(this->q,q.q)>=0;
+		ic(v);
+		return h;
 	}
 	~BigInteger(){
 		bn_delete(q);
 	}
 	auto&operator+=(const BigInteger&q){
+		auto v=perf();
 		bn_add_to(this->q,q.q);
+		ic(v);
 		return *this;
 	}
 	auto&operator-=(const BigInteger&q){
+		auto v=perf();
 		bn_sub_to(this->q,q.q);
+		ic(v);
 		return *this;
 	}
 	auto&operator*=(const BigInteger&q){
+		auto v=perf();
 		bn_mul_to(this->q,q.q);
+		ic(v);
 		return *this;
 	}
 	auto&operator/=(const BigInteger&q){
+		auto v=perf();
 		bn_div_to(this->q,q.q);
+		ic(v);
 		return *this;
 	}
 	auto&operator%=(const BigInteger&q){
+		auto v=perf();
 		bn_mod_to(this->q,q.q);
+		ic(v);
 		return *this;
 	}
 	struct pow{
 		const BigInteger&q;
 		pow(const BigInteger&w):q(w){}
 		friend BigInteger operator*(const BigInteger&q,const pow&w){
+			auto v=perf();
 			bn*e=w.q.q;
 			uint64_t r;
 			if (e->size==0){
@@ -192,9 +237,12 @@ public:
 			}else{
 				r=e->vect[0]|uint64_t(e->vect[1])<<32;
 			}
-			return bn_pow(q.q,r);
+			auto h=bn_pow(q.q,r);
+			ic(v);
+			return h;
 		}
 		friend BigInteger operator/(const BigInteger&q,const pow&w){
+			auto v=perf();
 			bn*e=w.q.q;
 			uint64_t r;
 			if (e->size==0){
@@ -204,9 +252,12 @@ public:
 			}else{
 				r=e->vect[0]|uint64_t(e->vect[1])<<32;
 			}
-			return bn_root(q.q,r);
+			auto h=bn_root(q.q,r);
+			ic(v);
+			return h;
 		}
 		friend auto operator<<(const BigInteger&q,const pow&w){
+			auto v=perf();
 			bn*e=w.q.q;
 			uint64_t r;
 			if (e->size==0){
@@ -220,6 +271,7 @@ public:
 			auto g=std::string(h);
 			char *u=(char*)h;
 			free(u);
+			ic(v);
 			return g;
 		}
 	};
@@ -227,25 +279,42 @@ public:
 		return pow(*this);
 	}
 	friend BigInteger operator+(const BigInteger&q,const BigInteger&w){
-		return bn_add(q.q,w.q);
+		auto v=perf();
+		auto h=bn_add(q.q,w.q);
+		ic(v);
+		return h;
 	}
 	friend BigInteger operator-(const BigInteger&q,const BigInteger&w){
-		return bn_sub(q.q,w.q);
+		auto v=perf();
+		auto h=bn_sub(q.q,w.q);
+		ic(v);
+		return h;
 	}
 	friend BigInteger operator*(const BigInteger&q,const BigInteger&w){
-		return bn_mul(q.q,w.q);
+		auto v=perf();
+		auto h=bn_mul(q.q,w.q);
+		ic(v);
+		return h;
 	}
 	friend BigInteger operator/(const BigInteger&q,const BigInteger&w){
-		return bn_div(q.q,w.q);
+		auto v=perf();
+		auto h=bn_div(q.q,w.q);
+		ic(v);
+		return h;
 	}
 	friend BigInteger operator%(const BigInteger&q,const BigInteger&w){
-		return bn_mod(q.q,w.q);
+		auto v=perf();
+		auto h=bn_mod(q.q,w.q);
+		ic(v);
+		return h;
 	}
 	std::string str(int64_t w)const{
+		auto v=perf();
 		auto h=bn_to_string(q,w);
 		auto g=std::string(h);
 		char *u=(char*)h;
 		free(u);
+		ic(v);
 		return g;
 	}
 	// std::string str1(int64_t w)const{
@@ -256,10 +325,12 @@ public:
 	// 	return g;
 	// }
 	operator std::string()const{
+		auto v=perf();
 		auto h=bn_to_string(q,10);
 		auto g=std::string(h);
 		char *u=(char*)h;
 		free(u);
+		ic(v);
 		return g;
 	}
 };
