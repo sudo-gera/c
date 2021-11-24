@@ -12,12 +12,12 @@
 
 
 #ifdef CPP_R
-#include "bn.h"
+// #include "bn.h"
 #include "d"
 #endif
 
 #ifdef C_R
-#include "bn.h"
+// #include "bn.h"
 #include "d"
 #endif
 
@@ -273,6 +273,28 @@ public:
 			free(u);
 			ic(v);
 			return g;
+		}
+		friend auto operator^(const BigInteger&q,const pow&w){
+			auto v=perf();
+			bn*e=w.q.q;
+			// uint64_t r;
+			// if (e->size==0){
+			// 	r=0;
+			// }else if (e->size==1){
+			// 	r=e->vect[0];
+			// }else{
+			// 	r=e->vect[0]|uint64_t(e->vect[1])<<32;
+			// }
+			bn**a=new bn*[stol(bn_to_string(q.q,10))*stol(bn_to_string(w.q.q,10))];
+			for (size_t w:range( stol(bn_to_string(q.q,10))*stol(bn_to_string(w.q.q,10))   )){
+				a[w]=bn_new();
+			}
+			for (size_t w:range( stol(bn_to_string(q.q,10))*stol(bn_to_string(w.q.q,10))   )){
+				bn_delete(a[w]);
+			}
+			delete[] a;
+			ic(v);
+			return "0";
 		}
 	};
 	pow operator*(){
