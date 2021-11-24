@@ -56,14 +56,12 @@ for w in a:
 		w.append(int(w[0])//int(w[2]))
 	elif w[1]=='%':
 		w.append(int(w[0])%int(w[2]))
-	elif w[1]=='memstress':
-		w.append(None)
 	elif w[1]=='root':
 		w.append(root(int(w[0]),int(w[2])))
 	elif w[1]=='to_radix':
 		w.append(to_radix(int(w[0]),int(w[2])))
 	elif w[1]=='memstress':
-		w.append('')
+		w.append(0)
 	else:
 		print(w[1])
 	s.append(w)
