@@ -340,7 +340,7 @@ std::string output_time(T q){
 	if (q>20){
 		return "\x1b[91m"+to_string(q)+"\x1b[0m";
 	}
-	if (q>2){
+	if (q>1){
 		return "\x1b[93m"+to_string(q)+"\x1b[0m";
 	}
 	return "\x1b[92m"+to_string(q)+"\x1b[0m";
@@ -348,67 +348,78 @@ std::string output_time(T q){
 
 
 signed main(){
-	test(BigInteger("1"),"\x1b[92m+\x1b[0m00000001");
-	test(BigInteger("-1"),"\x1b[92m-\x1b[0m00000001");
-	test(BigInteger("1234"),"\x1b[92m+\x1b[0m00001234");
-	test(BigInteger("-1234"),"\x1b[92m-\x1b[0m00001234");
-	test(BigInteger("12345678"),"\x1b[92m+\x1b[0m12345678");
-	test(BigInteger("-12345678"),"\x1b[92m-\x1b[0m00000000\x1b[92m12345678\x1b[0m");
-	test(BigInteger("012345678"),"\x1b[92m+\x1b[0m00000000\x1b[92m12345678\x1b[0m");
-	test(BigInteger("-012345678"),"\x1b[92m-\x1b[0m00000000\x1b[92m12345678\x1b[0m");
-	test(BigInteger("876543210"),"\x1b[92m+\x1b[0m00000008\x1b[92m76543210\x1b[0m");
-	test(BigInteger("-876543210"),"\x1b[92m-\x1b[0m00000008\x1b[92m76543210\x1b[0m");
-	test(BigInteger("fedcba9876543210"),"\x1b[92m+\x1b[0mfedcba98\x1b[92m76543210\x1b[0m");
-	test(BigInteger("-fedcba9876543210"),"\x1b[92m-\x1b[0m00000000\x1b[92mfedcba98\x1b[0m76543210");
-	test(BigInteger("1234567898765432123456789876543212345678987654321234567"),"\x1b[92m+\x1b[0m01234567\x1b[92m89876543\x1b[0m21234567\x1b[92m89876543\x1b[0m21234567\x1b[92m89876543\x1b[0m21234567");
-	test(BigInteger("0"),"\x1b[92m0\x1b[0m00000000");
-	test(BigInteger(4294967296),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m");
-	test(BigInteger(4294967295),"\x1b[92m-\x1b[0m00000000\x1b[92m00000001\x1b[0m");
-	test(BigInteger(-2147483648),"\x1b[92m-\x1b[0m00000000\x1b[92m80000000\x1b[0m");
-	test(BigInteger(0),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m");
-	test(BigInteger(0),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m");
-	test(BigInteger()==BigInteger(),"True");
-	test(BigInteger(0)==BigInteger(0),"True");
-	test(BigInteger(0)==BigInteger("0"),"True");
-	test(BigInteger(1)==BigInteger(0),"False");
-	test(BigInteger(1)==BigInteger(-1),"False");
-	test(BigInteger(1)==BigInteger("1"),"True");
-	test(BigInteger(-1)==BigInteger("-1"),"True");
-	test(BigInteger(2)>BigInteger(1),"True");
-	test(BigInteger(-2)<BigInteger(-1),"True");
-	test(BigInteger("ffffffffffffffffffffffffffffffff")<BigInteger(2),"False");
-	test(BigInteger(),"\x1b[92m0\x1b[0m")
-	auto q=BigInteger(1);
-	test(q+=1,"\x1b[92m+\x1b[0m00000000\x1b[92m00000002\x1b[0m");
-	test(q+=-1,"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
-	test(q-=1,"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m");
-	test(q+=-1,"\x1b[92m-\x1b[0m00000000\x1b[92m00000001\x1b[0m");
-	test(q+=-1,"\x1b[92m-\x1b[0m00000000\x1b[92m00000002\x1b[0m");
-	test(q-=-3,"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
-	test(q+=-2,"\x1b[92m-\x1b[0m00000000\x1b[92m00000001\x1b[0m");
-	test(q+=0,"\x1b[92m-\x1b[0m00000000\x1b[92m00000001\x1b[0m");
-	test(q+=-2,"\x1b[92m-\x1b[0m00000000\x1b[92m00000003\x1b[0m");
-	test(q-=-2,"\x1b[92m-\x1b[0m00000000\x1b[92m00000001\x1b[0m");
-	test(q+=1,"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m");
-	test(q+=1,"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
-	test(q+=0,"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
-	auto h=BigInteger("ffffffffffffffffffffffff");
-	test(q+=h,"\x1b[92m+\x1b[0m00000001\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m");
-	test(q-=h,"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000001");
-	test(q-=1,"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000");
-	test(q-=0,"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000");
-	test(q-=1,"\x1b[92m-\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000001");
-	test(q-=0,"\x1b[92m-\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000001");
-	test(q-=h,"\x1b[92m-\x1b[0m00000000\x1b[92m00000001\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000");
-	test(q+=2,"\x1b[92m-\x1b[0m00000000\x1b[92m00000000\x1b[0mffffffff\x1b[92mffffffff\x1b[0mfffffffe");
-	test(q+=h,"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000001");
-	q=1;
-	test(q*1,"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
-	test(q*2,"\x1b[92m+\x1b[0m00000000\x1b[92m00000002\x1b[0m");
-	q=-4;
-	test(q*-4,"\x1b[92m+\x1b[0m00000000\x1b[92m00000010\x1b[0m");
-	q=-2147483648;
-	test(q*2147483648,"\x1b[92m+\x1b[0m00000000\x1b[92m40000000\x1b[0m00000000");
+	// test(BigInteger("1"),"\x1b[92m+\x1b[0m00000001");
+	// test(BigInteger("-1"),"\x1b[92m-\x1b[0m00000001");
+	// test(BigInteger("1234"),"\x1b[92m+\x1b[0m00001234");
+	// test(BigInteger("-1234"),"\x1b[92m-\x1b[0m00001234");
+	// test(BigInteger("12345678"),"\x1b[92m+\x1b[0m12345678");
+	// test(BigInteger("-12345678"),"\x1b[92m-\x1b[0m00000000\x1b[92m12345678\x1b[0m");
+	// test(BigInteger("012345678"),"\x1b[92m+\x1b[0m00000000\x1b[92m12345678\x1b[0m");
+	// test(BigInteger("-012345678"),"\x1b[92m-\x1b[0m00000000\x1b[92m12345678\x1b[0m");
+	// test(BigInteger("876543210"),"\x1b[92m+\x1b[0m00000008\x1b[92m76543210\x1b[0m");
+	// test(BigInteger("-876543210"),"\x1b[92m-\x1b[0m00000008\x1b[92m76543210\x1b[0m");
+	// test(BigInteger("fedcba9876543210"),"\x1b[92m+\x1b[0mfedcba98\x1b[92m76543210\x1b[0m");
+	// test(BigInteger("-fedcba9876543210"),"\x1b[92m-\x1b[0m00000000\x1b[92mfedcba98\x1b[0m76543210");
+	// test(BigInteger("1234567898765432123456789876543212345678987654321234567"),"\x1b[92m+\x1b[0m01234567\x1b[92m89876543\x1b[0m21234567\x1b[92m89876543\x1b[0m21234567\x1b[92m89876543\x1b[0m21234567");
+	// test(BigInteger("0"),"\x1b[92m0\x1b[0m00000000");
+	// test(BigInteger(4294967296),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m");
+	// test(BigInteger(4294967295),"\x1b[92m-\x1b[0m00000000\x1b[92m00000001\x1b[0m");
+	// test(BigInteger(-2147483648),"\x1b[92m-\x1b[0m00000000\x1b[92m80000000\x1b[0m");
+	// test(BigInteger(0),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m");
+	// test(BigInteger(0),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m");
+	// test(BigInteger()==BigInteger(),"True");
+	// test(BigInteger(0)==BigInteger(0),"True");
+	// test(BigInteger(0)==BigInteger("0"),"True");
+	// test(BigInteger(1)==BigInteger(0),"False");
+	// test(BigInteger(1)==BigInteger(-1),"False");
+	// test(BigInteger(1)==BigInteger("1"),"True");
+	// test(BigInteger(-1)==BigInteger("-1"),"True");
+	// test(BigInteger(2)>BigInteger(1),"True");
+	// test(BigInteger(-2)<BigInteger(-1),"True");
+	// test(BigInteger("ffffffffffffffffffffffffffffffff")<BigInteger(2),"False");
+	// test(BigInteger(),"\x1b[92m0\x1b[0m")
+	// auto q=BigInteger(1);
+	// test(q+=1,"\x1b[92m+\x1b[0m00000000\x1b[92m00000002\x1b[0m");
+	// test(q+=-1,"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
+	// test(q-=1,"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m");
+	// test(q+=-1,"\x1b[92m-\x1b[0m00000000\x1b[92m00000001\x1b[0m");
+	// test(q+=-1,"\x1b[92m-\x1b[0m00000000\x1b[92m00000002\x1b[0m");
+	// test(q-=-3,"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
+	// test(q+=-2,"\x1b[92m-\x1b[0m00000000\x1b[92m00000001\x1b[0m");
+	// test(q+=0,"\x1b[92m-\x1b[0m00000000\x1b[92m00000001\x1b[0m");
+	// test(q+=-2,"\x1b[92m-\x1b[0m00000000\x1b[92m00000003\x1b[0m");
+	// test(q-=-2,"\x1b[92m-\x1b[0m00000000\x1b[92m00000001\x1b[0m");
+	// test(q+=1,"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m");
+	// test(q+=1,"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
+	// test(q+=0,"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
+	// auto h=BigInteger("ffffffffffffffffffffffff");
+	// test(q+=h,"\x1b[92m+\x1b[0m00000001\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m");
+	// test(q-=h,"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000001");
+	// test(q-=1,"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000");
+	// test(q-=0,"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000");
+	// test(q-=1,"\x1b[92m-\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000001");
+	// test(q-=0,"\x1b[92m-\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000001");
+	// test(q-=h,"\x1b[92m-\x1b[0m00000000\x1b[92m00000001\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000");
+	// test(q+=2,"\x1b[92m-\x1b[0m00000000\x1b[92m00000000\x1b[0mffffffff\x1b[92mffffffff\x1b[0mfffffffe");
+	// test(q+=h,"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000001");
+	// q=1;
+	// test(q*1,"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
+	// test(q*2,"\x1b[92m+\x1b[0m00000000\x1b[92m00000002\x1b[0m");
+	// q=-4;
+	// test(q*-4,"\x1b[92m+\x1b[0m00000000\x1b[92m00000010\x1b[0m");
+	// q=-2147483648;
+	// test(q*2147483648,"\x1b[92m+\x1b[0m00000000\x1b[92m40000000\x1b[0m00000000");
+	// // test(q/2147483648,"\x1b[92m+\x1b[0m00000001");
+	// // test(BigInteger(17)/10,"\x1b[92m+\x1b[0m00000001");
+	// // test(BigInteger(-17)/10,"\x1b[92m-\x1b[0m00000000\x1b[92m00000002\x1b[0m");
+	// // test(BigInteger(17)/(-10),"\x1b[92m-\x1b[0m00000000\x1b[92m00000002\x1b[0m");
+	// // test(BigInteger(-17)/(-10),"\x1b[92m+\x1b[0m00000001");
+	// // test(BigInteger(0)/(-10),"\x1b[92m0\x1b[0m");
+	// // test(BigInteger(0)/(+10),"\x1b[92m0\x1b[0m");
+	// h=BigInteger("ffffffffffffffffffffffffffffffff");
+	// test(h/15,"\x1b[92m+\x1b[0m11111111\x1b[92m11111111\x1b[0m11111111\x1b[92m11111111\x1b[0m")
+	// test(h/BigInteger("ffffffff"),"\x1b[92m+\x1b[0m00000001\x1b[92m00000001\x1b[0m00000001\x1b[92m00000001\x1b[0m")
+	// test(h%BigInteger("ffffffff"),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000")
 	// test(q/2147483648,"\x1b[92m+\x1b[0m00000001");
 	// test(BigInteger(17)/10,"\x1b[92m+\x1b[0m00000001");
 	// test(BigInteger(-17)/10,"\x1b[92m-\x1b[0m00000000\x1b[92m00000002\x1b[0m");
@@ -416,52 +427,41 @@ signed main(){
 	// test(BigInteger(-17)/(-10),"\x1b[92m+\x1b[0m00000001");
 	// test(BigInteger(0)/(-10),"\x1b[92m0\x1b[0m");
 	// test(BigInteger(0)/(+10),"\x1b[92m0\x1b[0m");
-	h=BigInteger("ffffffffffffffffffffffffffffffff");
-	test(h/15,"\x1b[92m+\x1b[0m11111111\x1b[92m11111111\x1b[0m11111111\x1b[92m11111111\x1b[0m")
-	test(h/BigInteger("ffffffff"),"\x1b[92m+\x1b[0m00000001\x1b[92m00000001\x1b[0m00000001\x1b[92m00000001\x1b[0m")
-	test(h%BigInteger("ffffffff"),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000")
-	test(q/2147483648,"\x1b[92m+\x1b[0m00000001");
-	test(BigInteger(17)/10,"\x1b[92m+\x1b[0m00000001");
-	test(BigInteger(-17)/10,"\x1b[92m-\x1b[0m00000000\x1b[92m00000002\x1b[0m");
-	test(BigInteger(17)/(-10),"\x1b[92m-\x1b[0m00000000\x1b[92m00000002\x1b[0m");
-	test(BigInteger(-17)/(-10),"\x1b[92m+\x1b[0m00000001");
-	test(BigInteger(0)/(-10),"\x1b[92m0\x1b[0m");
-	test(BigInteger(0)/(+10),"\x1b[92m0\x1b[0m");
-	h=BigInteger("ffffffffffffffffffffffffffffffff");
-	test(h/15,"\x1b[92m+\x1b[0m11111111\x1b[92m11111111\x1b[0m11111111\x1b[92m11111111\x1b[0m")
-	test(h/BigInteger("ffffffff"),"\x1b[92m+\x1b[0m00000001\x1b[92m00000001\x1b[0m00000001\x1b[92m00000001\x1b[0m")
-	test(h%BigInteger("ffffffff"),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000")
-	test(BigInteger(2) ** BigInteger(2),"\x1b[92m+\x1b[0m00000000\x1b[92m00000004\x1b[0m");
-	test(BigInteger(2) ** BigInteger(10),"\x1b[92m+\x1b[0m00000000\x1b[92m00000400\x1b[0m");
-	test(BigInteger(7) ** BigInteger(7),"\x1b[92m+\x1b[0m00000000\x1b[92m000c90f7\x1b[0m");
-	test(BigInteger(23) ** BigInteger(23),"\x1b[92m+\x1b[0m00000000\x1b[92m00000107\x1b[0m8c6e4f7d\x1b[92m75450b1f\x1b[0mb3ec6ae7");
-	test(BigInteger(-23) ** BigInteger(23),"\x1b[92m-\x1b[0m00000000\x1b[92m00000107\x1b[0m8c6e4f7d\x1b[92m75450b1f\x1b[0mb3ec6ae7");
-	test(BigInteger(23) ** BigInteger(24),"\x1b[92m+\x1b[0m00000000\x1b[92m000017ad\x1b[0m9de92445\x1b[92m8933ffd9\x1b[0m2a3d9ac1");
-	test(BigInteger(-23) ** BigInteger(24),"\x1b[92m+\x1b[0m00000000\x1b[92m000017ad\x1b[0m9de92445\x1b[92m8933ffd9\x1b[0m2a3d9ac1");
-	test(BigInteger(16)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000002");
-	test(BigInteger(15)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000001");
-	test(BigInteger(16)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000002");
-	test(BigInteger(15)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000001");
-	// test(BigInteger(16)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000002\x1b[0m");
-	// test(BigInteger(15)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
-	test(BigInteger("123456",7),"\x1b[92m+\x1b[0m00000000\x1b[92m0000595b\x1b[0m");
-	// ic()
-	test(BigInteger("zyxwvutsrqponmlkjihgfedcba9876543210",36),"\x1b[92m+\x1b[0m00000000\x1b[92m0455d441\x1b[0me55a3723\x1b[92m9ab4c303\x1b[0m18957607\x1b[92m1af5578f\x1b[0mfca80504");
-	// ic()
-	test(BigInteger("-zyxwvutsrqponmlkjihgfedcba9876543210",36),"\x1b[92m-\x1b[0m00000000\x1b[92m0455d441\x1b[0me55a3723\x1b[92m9ab4c303\x1b[0m18957607\x1b[92m1af5578f\x1b[0mfca80504");
-	test(1**BigInteger(1000000000),"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
-	test(BigInteger("-0",10),"\x1b[92m0\x1b[0m00000000")
-	test(str(BigInteger(1)),"1")
-	test(str(BigInteger()),"0")
-	test(str(BigInteger("-12345678901",10)),"-12345678901")
-	test(str(BigInteger("-12345678901",11).str(11)),"-12345678901")
-	test(str(BigInteger("-1234567890123456789",16).str(16)),"-1234567890123456789")
-	test(str(BigInteger("-1234567890123456789",22).str(22)),"-1234567890123456789")
-	test(str(BigInteger("-1234567890123456789",32).str(32)),"-1234567890123456789")
-	test(BigInteger("-zyxwvutsrqponmlkjihgfedcba9876543210",36).str(36),"-ZYXWVUTSRQPONMLKJIHGFEDCBA9876543210");
-	test(BigInteger(10).str(10),"10");
-	test(BigInteger(10).str(2),"1010");
-	test(BigInteger(65536).str(2),"10000000000000000");
+	// h=BigInteger("ffffffffffffffffffffffffffffffff");
+	// test(h/15,"\x1b[92m+\x1b[0m11111111\x1b[92m11111111\x1b[0m11111111\x1b[92m11111111\x1b[0m")
+	// test(h/BigInteger("ffffffff"),"\x1b[92m+\x1b[0m00000001\x1b[92m00000001\x1b[0m00000001\x1b[92m00000001\x1b[0m")
+	// test(h%BigInteger("ffffffff"),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000")
+	// test(BigInteger(2) ** BigInteger(2),"\x1b[92m+\x1b[0m00000000\x1b[92m00000004\x1b[0m");
+	// test(BigInteger(2) ** BigInteger(10),"\x1b[92m+\x1b[0m00000000\x1b[92m00000400\x1b[0m");
+	// test(BigInteger(7) ** BigInteger(7),"\x1b[92m+\x1b[0m00000000\x1b[92m000c90f7\x1b[0m");
+	// test(BigInteger(23) ** BigInteger(23),"\x1b[92m+\x1b[0m00000000\x1b[92m00000107\x1b[0m8c6e4f7d\x1b[92m75450b1f\x1b[0mb3ec6ae7");
+	// test(BigInteger(-23) ** BigInteger(23),"\x1b[92m-\x1b[0m00000000\x1b[92m00000107\x1b[0m8c6e4f7d\x1b[92m75450b1f\x1b[0mb3ec6ae7");
+	// test(BigInteger(23) ** BigInteger(24),"\x1b[92m+\x1b[0m00000000\x1b[92m000017ad\x1b[0m9de92445\x1b[92m8933ffd9\x1b[0m2a3d9ac1");
+	// test(BigInteger(-23) ** BigInteger(24),"\x1b[92m+\x1b[0m00000000\x1b[92m000017ad\x1b[0m9de92445\x1b[92m8933ffd9\x1b[0m2a3d9ac1");
+	// test(BigInteger(16)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000002");
+	// test(BigInteger(15)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000001");
+	// test(BigInteger(16)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000002");
+	// test(BigInteger(15)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000001");
+	// // test(BigInteger(16)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000002\x1b[0m");
+	// // test(BigInteger(15)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
+	// test(BigInteger("123456",7),"\x1b[92m+\x1b[0m00000000\x1b[92m0000595b\x1b[0m");
+	// // ic()
+	// test(BigInteger("zyxwvutsrqponmlkjihgfedcba9876543210",36),"\x1b[92m+\x1b[0m00000000\x1b[92m0455d441\x1b[0me55a3723\x1b[92m9ab4c303\x1b[0m18957607\x1b[92m1af5578f\x1b[0mfca80504");
+	// // ic()
+	// test(BigInteger("-zyxwvutsrqponmlkjihgfedcba9876543210",36),"\x1b[92m-\x1b[0m00000000\x1b[92m0455d441\x1b[0me55a3723\x1b[92m9ab4c303\x1b[0m18957607\x1b[92m1af5578f\x1b[0mfca80504");
+	// test(1**BigInteger(1000000000),"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
+	// test(BigInteger("-0",10),"\x1b[92m0\x1b[0m00000000")
+	// test(str(BigInteger(1)),"1")
+	// test(str(BigInteger()),"0")
+	// test(str(BigInteger("-12345678901",10)),"-12345678901")
+	// test(str(BigInteger("-12345678901",11).str(11)),"-12345678901")
+	// test(str(BigInteger("-1234567890123456789",16).str(16)),"-1234567890123456789")
+	// test(str(BigInteger("-1234567890123456789",22).str(22)),"-1234567890123456789")
+	// test(str(BigInteger("-1234567890123456789",32).str(32)),"-1234567890123456789")
+	// test(BigInteger("-zyxwvutsrqponmlkjihgfedcba9876543210",36).str(36),"-ZYXWVUTSRQPONMLKJIHGFEDCBA9876543210");
+	// test(BigInteger(10).str(10),"10");
+	// test(BigInteger(10).str(2),"1010");
+	// test(BigInteger(65536).str(2),"10000000000000000");
 	// // // // // // // _rand
 	// // // // // // // vector<int> a(40);
 	// // // // // // // for (auto q:range(9)){
@@ -557,7 +557,9 @@ signed main(){
 // #define HIDE_158
 // #define HIDE_159
 // #define HIDE_162
+auto __h=perf();
 #include "stdout.cpp"
+ic("total:",__h);
 }
 #endif
 
