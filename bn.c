@@ -10,8 +10,20 @@ struct bn_s{
 	uint32_t *vect;
 };
 
+<<<<<<< HEAD
 typedef struct bn_s bn;
 
+=======
+typedef bn_s bn;
+
+#define HEAP 0
+
+
+#if !HEAP
+bn bn_data[1073741824];
+uint64_t bn_used=0;
+#endif
+>>>>>>> 46dfc180cdf64f10001a635345392471cd765bfb
 
 
 #ifdef CPP_R
@@ -84,11 +96,33 @@ enum bn_codes {
 int bn_codes=1;
 
 bn *bn_new(){
+#if HEAP
 	return (bn*)calloc(sizeof(bn),1);
+#else
+	return (bn*)(bn_data)+(bn_used++);
+#endif
 }
 
 bn *bn_init(bn const*orig){
+<<<<<<< HEAD
 	bn *q=(bn*)malloc(sizeof(bn));
+=======
+#if ERRORS
+	if(!orig){
+		return 0;
+	}
+#endif
+#if HEAP
+	bn *q=(bn*)malloc(sizeof(bn));
+#else
+	bn *q=(bn*)(bn_data)+(bn_used++);
+#endif
+#if ERRORS
+	if (!q){
+		return 0;
+	}
+#endif
+>>>>>>> 46dfc180cdf64f10001a635345392471cd765bfb
 	*q=*orig;
 	q->vect=(uint32_t*)malloc(q->size*sizeof(uint32_t));
 	for (size_t w=0;w<q->size;++w){
@@ -128,7 +162,12 @@ int bn_delete(bn *q){
 	if (q->vect){
 		free(q->vect);
 	}
+#if HEAP
 	free(q);
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> 46dfc180cdf64f10001a635345392471cd765bfb
 		return BN_OK;
 }
 

@@ -1,6 +1,9 @@
 // #include "h"
 #include <stdio.h>
+<<<<<<< HEAD
 #include <stdint.h>
+=======
+>>>>>>> 46dfc180cdf64f10001a635345392471cd765bfb
 
 
 void run(int q){
