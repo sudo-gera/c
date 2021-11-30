@@ -1,10 +1,10 @@
 def create_input_string():
 	from random import randint
-	n=randint(7,10**1)
-	k=randint(7,10**1)
+	n=randint(1,10**3)
+	k=randint(1,min(n,10_000))
 	a=str(n)+' '+str(k)+'\n'
-	for w in range(k):
-		a+=str(randint(0,n-1))+' '+str(randint(1,10**9))+'\n'
+	for w in range(n):
+		a+=str(randint(-10**18,10**18))+'\n'
 	# a=str(n)+'\n'
 	# for w in range(n):
 	# 	a+=str(randint(1,n))+' '
@@ -14,7 +14,7 @@ def how_to_run(filename):
 	if filename.endswith('.cpp'):
 		from time import time
 		t='./tmp'+str(time())+'.trash.trash'
-		return [['g++','-std=c++17','-Wfatal-errors',filename,'-o',t],[t],['rm',t]]
+		return [['g++','-std=c++17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',t],[t],['rm',t]]
 	if filename.endswith('.c'):
 		from time import time
 		t='./tmp'+str(time())+'.trash.trash'

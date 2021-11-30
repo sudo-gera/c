@@ -54,16 +54,20 @@ a.append(['1000000000000000000000000000000000','/','-1000000'])
 a.append(['453234523460009834520987234598234502345987029345436345634563','/','234523452034623049872345234520983475325345234232578'])
 a.append(['-23534576554950000000000000009999990000999900000','/','8888888888884444444444433333333333332222222222222111112222777777777'])
 a.append(['-1','/','1'])
-a=[w for w in a if w[1]!='root']
-a=[w for w in a if w[1]!='%']
-a=[w for w in a if w[1]!='pow']
-a=[w for w in a if w[1]!='to_radix']
-a=[w for w in a if w[1]!='memstress']
-a=[]
+a.append(['1000000000000000000000000000000000','%','-1000000'])
+a.append(['453234523460009834520987234598234502345987029345436345634563','%','234523452034623049872345234520983475325345234232578'])
+a.append(['-23534576554950000000000000009999990000999900000','%','8888888888884444444444433333333333332222222222222111112222777777777'])
+a.append(['-1','/','1'])
+# a=[w for w in a if w[1]!='%']
+# a=[w for w in a if w[1]!='root']
+# a=[w for w in a if w[1]!='pow']
+# a=[w for w in a if w[1]!='to_radix']
+# a=[w for w in a if w[1]!='memstress']
+# a=[]
 aa=382343234334334323331
-for w in range(400):
-	# a.append([str(randint(-aa,aa))+'/'+str(randint(1,aa)),choice('+-/*'),str(randint(-aa,aa))+'/'+str(randint(1,aa))])
-	a.append([str(randint(-aa,aa))+'/'+str(randint(1,aa)),'dec',str(randint(0,20))])
+# for w in range(400):
+# 	# a.append([str(randint(-aa,aa))+'/'+str(randint(1,aa)),choice('+-/*'),str(randint(-aa,aa))+'/'+str(randint(1,aa))])
+# 	a.append([str(randint(-aa,aa))+'/'+str(randint(1,aa)),'dec',str(randint(0,20))])
 for w in a:
 	if w[1]=='pow':
 		w.append(f(w[0])**f(w[2]))
@@ -74,14 +78,16 @@ for w in a:
 	elif w[1]=='*':
 		w.append(f(w[0])*f(w[2]))
 	elif w[1]=='/':
-		w.append(abs(int(w[0]))//abs(int(w[2]))*(-1 if int(w[0])*int(w[2])<0 else 1))
+		w.append(int(w[0])//int(w[2]))
+		# w.append(abs(int(w[0]))//abs(int(w[2]))*(-1 if int(w[0])*int(w[2])<0 else 1))
 		# w.append(f(w[0])/f(f(w[2])))
 	elif w[1]=='%':
-		w.append(abs(f(w[0]))%abs(f(w[2]))*(-1 if f(w[0])*f(w[2])<0 else 1))
+		w.append(int(w[0])%int(w[2]))
+		# w.append(abs(f(w[0]))%abs(f(w[2]))*(-1 if f(w[0])*f(w[2])<0 else 1))
 	elif w[1]=='root':
 		w.append(root(f(w[0]),f(w[2])))
 	elif w[1]=='to_radix':
-		w.append(to_radix(f(w[0]),f(w[2])))
+		w.append(to_radix(int(w[0]),int(w[2])))
 	elif w[1]=='memstress':
 		w.append(0)
 	elif w[1]=='dec':
@@ -92,10 +98,10 @@ for w in a:
 a=s
 a=[  w[:-1]+[str(w[-1])]    for w in a]
 d={"pow":"**","+":"+","-":"-","*":"*","/":"/","%":"%","root":"/ *","to_radix":"<< *","memstress":"^*","dec":"%"}
-# n='BigInteger'
-n='Rational'
+n='BigInteger'
+# n='Rational'
 a=[f'/* { d[w[1]] } */test(str({n}("{w[0]}",10){ d[w[1]] }{n}("{w[2]}",10)),"{w[3]}")' for w in a]
-a=[f'#ifndef HIDE_{q}\n\tt=monotonic();\n\t{w}\n\t//print("test {q}",output_time(monotonic()-t));\n#endif\n' for q,w in enumerate(a)]
+a=[f'#ifndef HIDE_{q}\n\tt=monotonic();\n\t{w}\n\tprint("test {q}",output_time(monotonic()-t));\n#endif\n' for q,w in enumerate(a)]
 a=[w if len(w) else f'//print("skipping {q}");\n' for q,w in enumerate(a)]
 a=[w if len(w) else f'' for q,w in enumerate(a)]
 # a=a[:40]

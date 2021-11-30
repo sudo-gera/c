@@ -1,60 +1,59 @@
 #include <iostream>
-// #include "d"
 
-auto get_product(int q,int* s,int argc,int**h,int*args){
+auto get_product(int stack_pos,int* stack,int arg_count,int**arrays,int*args){
 	int64_t res=0;
-	if (q==argc){
+	if (stack_pos==arg_count){
 		res=1;
-		for (int w=0;w<q;++w){
-			res*=h[w][s[w]];
+		for (int w=0;w<stack_pos;++w){
+			res*=arrays[w][stack[w]];
 		}
 		return res;
 	}
-	for (int w=0;w<args[q];++w){
-		int b=0;
-		for (int e=0;e<q;++e){
-			if (s[e]==w){
-				b=1;
+	for (int w=0;w<args[stack_pos];++w){
+		int breaked=0;
+		for (int e=0;e<stack_pos;++e){
+			if (stack[e]==w){
+				breaked=1;
 				break;
 			}
 		}
-		if (b){
+		if (breaked){
 			continue;
 		}
-		s[q]=w;
-		res+=get_product(q+1,s,argc,h,args);
+		stack[stack_pos]=w;
+		res+=get_product(stack_pos+1,stack,arg_count,arrays,args);
 	}
 	return res;
 }
 
 
-int main(int argc,char**argv){
-	auto args=new int[argc-1];
+int main(int arg_count,char**args_strings){
+	auto args=new int[arg_count-1];
 	--args;
-	for (int w=1;w<argc;++w){
+	for (int w=1;w<arg_count;++w){
 		args[w]=0;
-		while(argv[w][0]){
-			args[w]=args[w]*10+argv[w][0]-'0';
-			argv[w]++;
+		while(args_strings[w][0]){
+			args[w]=args[w]*10+args_strings[w][0]-'0';
+			args_strings[w]++;
 		}
 	}
 	++args;
-	--argc;
-	auto h=new int*[argc];
-	for (int w=0;w<argc;++w){
-		h[w]=new int[args[w]];
+	--arg_count;
+	auto arrays=new int*[arg_count];
+	for (int w=0;w<arg_count;++w){
+		arrays[w]=new int[args[w]];
 		for (int e=0;e<args[w];++e){
-			std::cin>>h[w][e];
+			std::cin>>arrays[w][e];
 		}
 	}
-	auto s=new int[argc];
-	auto f=get_product(0,s,argc,h,args);
-	std::cout<<f<<std::endl;
+	auto stack=new int[arg_count];
+	auto res=get_product(0,stack,arg_count,arrays,args);
+	std::cout<<res<<std::endl;
 	delete[] args;
-	delete[] s;
-	for (int w=0;w<argc;++w){
-		delete[] h[w];
+	delete[] stack;
+	for (int w=0;w<arg_count;++w){
+		delete[] arrays[w];
 	}
-	delete[] h;
+	delete[] arrays;
 }
 

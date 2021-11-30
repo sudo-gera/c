@@ -35,21 +35,11 @@
 
 
 #ifdef CPP_R
-int bn_init_str(bn *q,string e){
-#if ERRORS
-	if (!q){
-		return BN_NULL_OBJECT;
-	}
-#endif
+void bn_init_str(bn *q,string e){
 	if (q->vect){
 		free(q->vect);
 	}
 	q->vect=(uint32_t*)calloc(sizeof(uint32_t)*(e.size()/8+bool(e.size()%8)),1);
-#if ERRORS
-	if (!q->vect){
-		return BN_NO_MEMORY;
-	}
-#endif
 	q->size=e.size()/8+bool(e.size()%8);
 	if (e.size()==0){
 		q->sign=0;
@@ -72,23 +62,8 @@ int bn_init_str(bn *q,string e){
 	}
 	if (g==0){
 		q->sign=0;
-#if NORMAL_SIZE
-		q->size=0;
-		free(q->vect);
-		q->vect=nullptr;
-#endif
 	}else{
-#if NORMAL_SIZE
-		q->size=g;
-		q->vect=(uint32_t*)realloc(q->vect,(g)*sizeof(uint32_t));
-#if ERRORS
-		if (!q->vect){
-			return BN_NO_MEMORY;
-		}
-#endif
-#endif
 	}
-	return BN_OK;
 }
 #endif
 
@@ -285,14 +260,14 @@ public:
 			// }else{
 			// 	r=e->vect[0]|uint64_t(e->vect[1])<<32;
 			// }
-			bn**a=new bn*[stol(bn_to_string(q.q,10))*stol(bn_to_string(w.q.q,10))];
-			for (size_t w:range( stol(bn_to_string(q.q,10))*stol(bn_to_string(w.q.q,10))   )){
-				a[w]=bn_new();
-			}
-			for (size_t w:range( stol(bn_to_string(q.q,10))*stol(bn_to_string(w.q.q,10))   )){
-				bn_delete(a[w]);
-			}
-			delete[] a;
+			// bn**a=new bn*[stol(bn_to_string(q.q,10))*stol(bn_to_string(w.q.q,10))];
+			// for (size_t w:range( stol(bn_to_string(q.q,10))*stol(bn_to_string(w.q.q,10))   )){
+			// 	a[w]=bn_new();
+			// }
+			// for (size_t w:range( stol(bn_to_string(q.q,10))*stol(bn_to_string(w.q.q,10))   )){
+			// 	bn_delete(a[w]);
+			// }
+			// delete[] a;
 			ic(v);
 			return "0";
 		}
@@ -578,10 +553,16 @@ signed main(){
 // #define HIDE_157
 // #define HIDE_158
 // #define HIDE_159
-// #define HIDE_162
+
+#define HIDE_162
 auto __h=perf();
 #include "stdout.cpp"
 ic("total:",__h);
+
+// ic(BigInteger("11111111",16)/ *BigInteger(3));
+
+// ic(sizeof(bn))
+
 }
 #endif
 
