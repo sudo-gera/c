@@ -60,6 +60,7 @@ bn *bn_init(bn const*orig){
 }
 
 static int bn_init_bn(bn* q,const bn*orig){
+	// ic(orig)
 	if (q->size and q->vect){
 		free(q->vect);
 	}
@@ -282,7 +283,7 @@ int bn_add_to(bn*q,const bn*e){
 	}
 	bn data[1];
 	memset(data,0,sizeof(data));
-	bn*h=data[0];
+	bn*h=data+0;
 	if (j<=0){
 		if (k<0){
 			bn_M_add_to(q,e);
@@ -304,7 +305,6 @@ int bn_add_to(bn*q,const bn*e){
 				bn_init_bn(h,q);
 				bn_init_bn(q,e);
 				bn_M_sub_to(q,h);
-				bn_delete(h);
 			}
 		}else{
 			bn_M_add_to(q,e);
@@ -338,14 +338,12 @@ bn* bn_add(const bn*q,const bn*w){
 	bn*h=bn_init(q);
 	bn_add_to(h,w);
 	return h;
-	return 0;
 }
 
 bn* bn_sub(const bn*q,const bn*w){
 	bn*h=bn_init(q);
 	bn_sub_to(h,w);
 	return h;
-	return 0;
 }
 
 bn* bn_mul(bn const*q,const bn*e){
@@ -359,11 +357,11 @@ bn* bn_mul(bn const*q,const bn*e){
 	while (es and ev[es-1]==0){
 		--es;
 	}
-	bn data[2];
+	bn data[1];
 	memset(data,0,sizeof(data));
-	bn*res=data+0;
+	bn*res=bn_new();
 	if (qs+es>2){
-		bn*tmp=data+1;
+		bn*tmp=data+0;
 		res->size=qs+es;
 		tmp->size=qs+es;
 		res->vect=(uint32_t*)realloc(res->vect,res->size*sizeof(uint32_t));
@@ -383,7 +381,7 @@ bn* bn_mul(bn const*q,const bn*e){
 			}
 		}
 		res->sign=q->sign*e->sign;
-		bn_delete(tmp);
+		bn_del(tmp);
 	}else{
 		res->sign=q->sign*e->sign;
 		res->size=0;
@@ -465,15 +463,6 @@ int bn_M_div_to(bn*q,bn*e){
 		for(size_t w=0;w<es;++w){
 			t->vect[qs-es+2+w]=ev[w];
 		}
-		// bn**a=(bn**)malloc(sizeof(bn*)*32);
-		// a[31]=bn_init(t);
-		// bn_half(a[31]);
-		// for (size_t w=31;w>1;--w){
-		// 	a[w-1]=bn_init(a[w]);
-		// 	bn_half(a[w-1]);
-		// }
-		// a[0]=bn_init(t);
-		// uint64_t*o=(uint64_t*)calloc(32,sizeof(uint64_t));
 		ssize_t f=(qs-es+2)*32;
 		bn*r=data+1;
 		uint32_t*rv;
@@ -530,19 +519,19 @@ int bn_M_div_to(bn*q,bn*e){
 		// free(o);
 		// free(a);
 		bn_init_bn(e,r);
-		bn_delete(r);
-		bn_delete(t);
+		bn_del(r);
+		bn_del(t);
 	}else{
 		bn_init_int(e,0);
 	}
 	return 0;
 }
 
-bn* bn_div(const bn*q,const bn*e){
+int bn_div_to(bn*q,const bn*e){
 	bn data[2];
 	memset(data,0,sizeof(data));
-	a=data+0;
-	d=data+1;
+	bn*a=data+0;
+	bn*d=data+1;
 	bn_init_bn(a,q);
 	a->sign=(bool)(a->sign);
 	bn_init_bn(d,e);
@@ -552,61 +541,70 @@ bn* bn_div(const bn*q,const bn*e){
 		if (a->sign){
 			bn_init_int(a,-1);
 			bn_sub_to(a,d);
-			bn_delete(d);
-			return a;
+			bn_del(d);
+			bn_init_bn(q,a);
+			return 0;
 		}
 		d->sign*=-1;
-		bn_delete(a);
-		return d;
+		bn_del(a);
+		bn_init_bn(q,d);
+		return 0;
 	}else{
-		bn_delete(a);
-		return d;
+		bn_del(a);
+		bn_init_bn(q,d);
+		return 0;
 	}
 	return 0;
 }
 
-int bn_div_to(bn*q,bn const*w){
-	bn*u=bn_div(q,w);
-	bn_init_bn(q,u);
-	bn_delete(u);
-	return 0;
+bn* bn_div(const bn*q,const bn*w){
+	bn*h=bn_init(q);
+	bn_div_to(h,w);
+	return h;
 }
 
-bn* bn_mod(const bn*q,const bn*e){
+int bn_mod_to(bn*q,const bn*e){
 	bn data[3];
 	memset(data,0,sizeof(data));
-	a=data+0;
-	d=data+1;
+	bn*a=data+0;
+	bn*d=data+1;
 	bn_init_bn(a,q);
 	a->sign=(bool)(a->sign);
 	bn_init_bn(d,e);
 	d->sign=(bool)(d->sign);
 	bn_M_div_to(a,d);
+	ic(a,d)
 	if (q->sign*e->sign<0){
 		if (a->sign){
-			bn*r=data+2;
-			bn_init_bn(r,e);
-			// bn_abs(r);
-			r->sign*=-1;
-			bn_sub_to(a,r);
-			bn_delete(d);
-			bn_delete(r);
-			return a;
+			a->sign=e->sign;
+			bn_sub_to(a,e);
+			// a->sign=-e->sign;
+			// bn*r=data+2;
+			// bn_init_bn(r,e);
+			// // r->sign*=-1;
+			// bn_sub_to(a,r);
+			// a->sign*=-1;
+			// bn_del(d);
+			// bn_del(r);
+			bn_init_bn(q,a);
+			return 0;
 		}
-		bn_delete(d);
-		return a;
+		bn_del(d);
+		bn_init_bn(q,a);
+		return 0;
 	}else{
-		bn_delete(d);
-		return a;
+		bn_del(d);
+		a->sign=q->sign;
+		bn_init_bn(q,a);
+		return 0;
 	}
 	return 0;
 }
 
-int bn_mod_to(bn*q,bn const*w){
-	bn*u=bn_mod(q,w);
-	bn_init_bn(q,u);
-	bn_delete(u);
-	return 0;
+bn* bn_mod(const bn*q,const bn*w){
+	bn*h=bn_init(q);
+	bn_mod_to(h,w);
+	return h;
 }
 
 
@@ -619,22 +617,23 @@ int bn_pow_to(bn*q,int _e){
 		}
 	}
 	if(s){
-		bn**a=(bn**)malloc(sizeof(bn*)*s);
-		a[0]=bn_init(q);
+		bn a[64];
+		memset(a,0,sizeof(a));
+		bn_init_bn(a+0,q);
 		for (size_t w=1;w<s;++w){
-			a[w]=bn_init(a[w-1]);
-			bn_mul_to(a[w],a[w]);
+			bn_init_bn(a+w,a+w-1);
+			bn_mul_to(a+w,a+w);
 		}
 		bn_init_int(q,1);
 		for (size_t w=0;w<s;++w){
 			if ((1<<w)&e){
-				bn_mul_to(q,a[w]);
+				bn_mul_to(q,a+w);
 			}
 		}
 		for (size_t w=0;w<s;++w){
-			bn_delete(a[w]);
+			bn_del(a+w);
 		}
-		free(a);
+		// free(a);
 	}else{
 		bn_init_int(q,1);
 	}
@@ -649,7 +648,7 @@ static bn* bn_pow(bn*q,int w){
 }
 
 int bn_root2_to(bn*q){
-	bn data[2];
+	bn data[3];
 	memset(data,0,sizeof(data));
 	bn*r=data+0;
 	bn*p=data+1;
@@ -679,9 +678,10 @@ int bn_root2_to(bn*q){
 		// pv=(uint32_t*)&(p->vect);
 		// ps=2;
 	}
-	bn*u;
+	bn*u=data+2;
 	while(p->sign){
-		u=bn_add(r,p);
+		bn_init_bn(u,r);
+		bn_add_to(u,r);
 		if (bn_cmp(q,u)>=0){
 			bn_sub_to(q,u);
 			bn_add_to(r,p);
@@ -690,11 +690,11 @@ int bn_root2_to(bn*q){
 		bn_half(r);
 		bn_half(p);
 		bn_half(p);
-		bn_delete(u);
+		// bn_delete(u);
 	}
 	bn_init_bn(q,r);
-	bn_delete(r);
-	bn_delete(p);
+	bn_del(r);
+	bn_del(p);
 	return 0;
 }
 
@@ -746,13 +746,13 @@ int bn_root_to(bn*q,int __e){
 			bn_init_bn(_b,_c);
 		}
 	}
-	bn_delete(_c);
-	bn_delete(_d);
-	bn_delete(_f);
-	bn_delete(_g);
+	bn_del(_c);
+	bn_del(_d);
+	bn_del(_f);
+	bn_del(_g);
 	bn_init_bn(q,_b);
-	bn_delete(_b);
-	bn_delete(_e);
+	bn_del(_b);
+	bn_del(_e);
 	return 0;
 }
 
@@ -795,8 +795,8 @@ int bn_init_string_radix(bn*q,const char*e,int t){
 		bn_add_to(q,a);
 	}
 	q->sign*=(-2)*g+1;  
-	bn_delete(a);
-	bn_delete(y);
+	bn_del(a);
+	bn_del(y);
 	return 0;
 }
 
@@ -814,13 +814,15 @@ const char* bn_to_string(const bn*q,int e){
 		--qs;
 	}
 	uint64_t _t=e;
-	bn*r=bn_init(q);
+	bn data[2];
+	memset(data,0,sizeof(data));
+	bn*r=data+0;
+	// ic(int64_t(r),int64_t(q))
+	bn_init_bn(r,q);
 	r->sign=(bool)(r->sign);
 	uint32_t* rv=r->size?r->vect:(uint32_t*)&(r->vect);
 	uint32_t rs=qs;
-	bn data[1];
-	memset(data,0,sizeof(data));
-	bn*t=data+0;
+	bn*t=data+1;
 	char*a=(char*)calloc(sizeof(char),2+(qs+1)*"\x00\x00\x20\x15\x10\x0e\x0d\x0c\x0b\x0b\x0a\x0a\x09\x09\x09\x09\x08\x08\x08\x08\x08\x08\x08\x08\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07"[_t]);
 	size_t s=0;
 	while (r->sign){
@@ -853,7 +855,7 @@ const char* bn_to_string(const bn*q,int e){
 		a[w]=a[s-1-w];
 		a[s-1-w]=t;
 	}
-	bn_delete(r);
-	bn_delete(t);
+	bn_del(r);
+	bn_del(t);
 	return a;
 }

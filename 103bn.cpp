@@ -68,7 +68,7 @@ void bn_init_str(bn *q,string e){
 #endif
 
 
-#define PERF 1
+#define PERF 0
 
 
 #ifdef CPP_R
@@ -616,13 +616,17 @@ signed main(){
 // #define HIDE_158
 // #define HIDE_159
 
-#define HIDE_162
-auto __h=perf();
-#include "stdout.cpp"
-ic("total:",__h);
+// #define HIDE_162
+// auto __h=perf();
+// #include "stdout.cpp"
+// ic("total:",__h);
 
-// auto h=str(BigInteger("8",10)/ *BigInteger("3",10));
-// ic(h)
+
+
+ic(str(BigInteger("-17",10)%BigInteger("-10",10)));
+ic(str(BigInteger("-17",10)%BigInteger("10",10)));
+ic(str(BigInteger("17",10)%BigInteger("-10",10)));
+ic(str(BigInteger("17",10)%BigInteger("10",10)));
 
 // ic(sizeof(bn))
 
