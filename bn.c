@@ -95,6 +95,12 @@ int bn_delete(bn *q){
 	return 0;
 }
 
+static int bn_del(bn *q){
+	if (q->size and q->vect){
+		free(q->vect);
+	}
+	return 0;
+}
 
 int bn_cmp(bn const *q, bn const *e){
 	if (q->sign!=e->sign){
@@ -271,10 +277,12 @@ int bn_add_to(bn*q,const bn*e){
 		l=bn_cmp(q,e);
 		q->sign=qs;
 	}
-	bn *h;
 	if (!k){
 		return 0;
 	}
+	bn data[1];
+	memset(data,0,sizeof(data));
+	bn*h=data[0];
 	if (j<=0){
 		if (k<0){
 			bn_M_add_to(q,e);
@@ -283,10 +291,9 @@ int bn_add_to(bn*q,const bn*e){
 			if (l>=0){
 				bn_M_sub_to(q,e);
 			}else{
-				bn*h=bn_init(q);
+				bn_init_bn(h,q);
 				bn_init_bn(q,e);
 				bn_M_sub_to(q,h);
-				bn_delete(h);
 			}
 		}
 	}else{
@@ -294,7 +301,7 @@ int bn_add_to(bn*q,const bn*e){
 			if (l<=0){
 				bn_M_sub_to(q,e);
 			}else{
-				bn*h=bn_init(q);
+				bn_init_bn(h,q);
 				bn_init_bn(q,e);
 				bn_M_sub_to(q,h);
 				bn_delete(h);
@@ -304,6 +311,7 @@ int bn_add_to(bn*q,const bn*e){
 			q->sign=1;
 		}
 	}
+	bn_del(h);
 	uint32_t* qv=q->size?q->vect:(uint32_t*)&(q->vect);
 	uint32_t qs=q->size?q->size:2;
 	size_t b=0;
@@ -351,7 +359,7 @@ bn* bn_mul(bn const*q,const bn*e){
 	while (es and ev[es-1]==0){
 		--es;
 	}
-	bn data+2;
+	bn data[2];
 	memset(data,0,sizeof(data));
 	bn*res=data+0;
 	if (qs+es>2){
@@ -447,7 +455,7 @@ int bn_M_div_to(bn*q,bn*e){
 	while (es and ev[es-1]==0){
 		--es;
 	}
-	bn data+2;
+	bn data[2];
 	memset(data,0,sizeof(data));
 	if(qs>=es){
 		bn*t=data+0;
@@ -531,9 +539,13 @@ int bn_M_div_to(bn*q,bn*e){
 }
 
 bn* bn_div(const bn*q,const bn*e){
-	bn*a=bn_init(q);
+	bn data[2];
+	memset(data,0,sizeof(data));
+	a=data+0;
+	d=data+1;
+	bn_init_bn(a,q);
 	a->sign=(bool)(a->sign);
-	bn*d=bn_init(e);
+	bn_init_bn(d,e);
 	d->sign=(bool)(d->sign);
 	bn_M_div_to(a,d);
 	if (q->sign*e->sign<0){
@@ -561,15 +573,19 @@ int bn_div_to(bn*q,bn const*w){
 }
 
 bn* bn_mod(const bn*q,const bn*e){
-	bn*a=bn_init(q);
+	bn data[3];
+	memset(data,0,sizeof(data));
+	a=data+0;
+	d=data+1;
+	bn_init_bn(a,q);
 	a->sign=(bool)(a->sign);
-	bn*d=bn_init(e);
+	bn_init_bn(d,e);
 	d->sign=(bool)(d->sign);
 	bn_M_div_to(a,d);
-	a->sign*=q->sign;
 	if (q->sign*e->sign<0){
 		if (a->sign){
-			bn*r=bn_init(e);
+			bn*r=data+2;
+			bn_init_bn(r,e);
 			// bn_abs(r);
 			r->sign*=-1;
 			bn_sub_to(a,r);
@@ -633,7 +649,7 @@ static bn* bn_pow(bn*q,int w){
 }
 
 int bn_root2_to(bn*q){
-	bn data+2;
+	bn data[2];
 	memset(data,0,sizeof(data));
 	bn*r=data+0;
 	bn*p=data+1;
@@ -763,7 +779,7 @@ int bn_init_string_radix(bn*q,const char*e,int t){
 		q->vect=0;
 	}
 	q->sign=0;
-	bn data+2;
+	bn data[2];
 	memset(data,0,sizeof(data));
 	bn*a=data+0;
 	bn*y=data+1;
@@ -802,7 +818,7 @@ const char* bn_to_string(const bn*q,int e){
 	r->sign=(bool)(r->sign);
 	uint32_t* rv=r->size?r->vect:(uint32_t*)&(r->vect);
 	uint32_t rs=qs;
-	bn data+1;
+	bn data[1];
 	memset(data,0,sizeof(data));
 	bn*t=data+0;
 	char*a=(char*)calloc(sizeof(char),2+(qs+1)*"\x00\x00\x20\x15\x10\x0e\x0d\x0c\x0b\x0b\x0a\x0a\x09\x09\x09\x09\x08\x08\x08\x08\x08\x08\x08\x08\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07"[_t]);
