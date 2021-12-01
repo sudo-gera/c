@@ -68,6 +68,8 @@ void bn_init_str(bn *q,string e){
 #endif
 
 
+#define PERF 1
+
 
 #ifdef CPP_R
 
@@ -77,7 +79,9 @@ public:
 	BigInteger(){
 		auto v=perf();
 		q=bn_new();
+#if PERF
 		ic(v);
+#endif
 	}
 	BigInteger(bn*q){
 		this->q=q;
@@ -85,43 +89,57 @@ public:
 	BigInteger(const BigInteger& orig){
 		auto v=perf();
 		q=bn_init(orig.q);
+#if PERF
 		ic(v);
+#endif
 	}
-	BigInteger(const long orig){
-		auto v=perf();
-		q=bn_new();
-		bn_init_int(q,int64_t(orig));
-		ic(v);
-	}
+// 	BigInteger(const long orig){
+// 		auto v=perf();
+// 		q=bn_new();
+// 		bn_init_int(q,int64_t(orig));
+// #if PERF
+// 		ic(v);
+// #endif
+// 	}
 	BigInteger(const int orig){
 		auto v=perf();
 		q=bn_new();
 		bn_init_int(q,int64_t(orig));
+#if PERF
 		ic(v);
+#endif
 	}
 	BigInteger(const string orig){
 		auto v=perf();
 		q=bn_new();
 		bn_init_str(q,orig.c_str());
+#if PERF
 		ic(v);
+#endif
 	}
 	BigInteger(const string orig,int64_t r){
 		auto v=perf();
 		q=bn_new();
 		bn_init_string_radix(q,orig.c_str(),r);
+#if PERF
 		ic(v);
+#endif
 	}
 	auto&operator=(int64_t orig){
 		auto v=perf();
 		bn_init_int(q,orig);
+#if PERF
 		ic(v);
+#endif
 		return *this;
 	}
 	auto&operator=(const BigInteger&orig){
 		auto v=perf();
 		bn_delete(q);
 		q=bn_init(orig.q);
+#if PERF
 		ic(v);
+#endif
 		return *this;
 	}
 	template <typename T>
@@ -132,37 +150,49 @@ public:
 	bool operator<(BigInteger const&q){
 		auto v=perf();
 		auto h=bn_cmp(this->q,q.q)<0;
+#if PERF
 		ic(v);
+#endif
 		return h;
 	}
 	bool operator==(BigInteger const&q){
 		auto v=perf();
 		auto h=bn_cmp(this->q,q.q)==0;
+#if PERF
 		ic(v);
+#endif
 		return h;
 	}
 	bool operator>(BigInteger const&q){
 		auto v=perf();
 		auto h=bn_cmp(this->q,q.q)>0;
+#if PERF
 		ic(v);
+#endif
 		return h;
 	}
 	bool operator<=(BigInteger const&q){
 		auto v=perf();
 		auto h=bn_cmp(this->q,q.q)<=0;
+#if PERF
 		ic(v);
+#endif
 		return h;
 	}
 	bool operator!=(BigInteger const&q){
 		auto v=perf();
 		auto h=bn_cmp(this->q,q.q)!=0;
+#if PERF
 		ic(v);
+#endif
 		return h;
 	}
 	bool operator>=(BigInteger const&q){
 		auto v=perf();
 		auto h=bn_cmp(this->q,q.q)>=0;
+#if PERF
 		ic(v);
+#endif
 		return h;
 	}
 	~BigInteger(){
@@ -171,31 +201,41 @@ public:
 	auto&operator+=(const BigInteger&q){
 		auto v=perf();
 		bn_add_to(this->q,q.q);
+#if PERF
 		ic(v);
+#endif
 		return *this;
 	}
 	auto&operator-=(const BigInteger&q){
 		auto v=perf();
 		bn_sub_to(this->q,q.q);
+#if PERF
 		ic(v);
+#endif
 		return *this;
 	}
 	auto&operator*=(const BigInteger&q){
 		auto v=perf();
 		bn_mul_to(this->q,q.q);
+#if PERF
 		ic(v);
+#endif
 		return *this;
 	}
 	auto&operator/=(const BigInteger&q){
 		auto v=perf();
 		bn_div_to(this->q,q.q);
+#if PERF
 		ic(v);
+#endif
 		return *this;
 	}
 	auto&operator%=(const BigInteger&q){
 		auto v=perf();
 		bn_mod_to(this->q,q.q);
+#if PERF
 		ic(v);
+#endif
 		return *this;
 	}
 	struct pow{
@@ -206,14 +246,16 @@ public:
 			bn*e=w.q.q;
 			uint64_t r;
 			if (e->size==0){
-				r=0;
+				r=(uint64_t)(e->vect);
 			}else if (e->size==1){
 				r=e->vect[0];
 			}else{
 				r=e->vect[0]|uint64_t(e->vect[1])<<32;
 			}
 			auto h=bn_pow(q.q,r);
-			ic(v);
+	#if PERF
+		ic(v);
+#endif
 			return h;
 		}
 		friend BigInteger operator/(const BigInteger&q,const pow&w){
@@ -221,14 +263,16 @@ public:
 			bn*e=w.q.q;
 			uint64_t r;
 			if (e->size==0){
-				r=0;
+				r=(uint64_t)(e->vect);
 			}else if (e->size==1){
 				r=e->vect[0];
 			}else{
 				r=e->vect[0]|uint64_t(e->vect[1])<<32;
 			}
 			auto h=bn_root(q.q,r);
-			ic(v);
+	#if PERF
+		ic(v);
+#endif
 			return h;
 		}
 		friend auto operator<<(const BigInteger&q,const pow&w){
@@ -236,7 +280,7 @@ public:
 			bn*e=w.q.q;
 			uint64_t r;
 			if (e->size==0){
-				r=0;
+				r=(uint64_t)(e->vect);
 			}else if (e->size==1){
 				r=e->vect[0];
 			}else{
@@ -246,7 +290,9 @@ public:
 			auto g=std::string(h);
 			char *u=(char*)h;
 			free(u);
-			ic(v);
+	#if PERF
+		ic(v);
+#endif
 			return g;
 		}
 		friend auto operator^(const BigInteger&q,const pow&w){
@@ -268,7 +314,9 @@ public:
 			// 	bn_delete(a[w]);
 			// }
 			// delete[] a;
-			ic(v);
+	#if PERF
+		ic(v);
+#endif
 			return "0";
 		}
 	};
@@ -278,31 +326,41 @@ public:
 	friend BigInteger operator+(const BigInteger&q,const BigInteger&w){
 		auto v=perf();
 		auto h=bn_add(q.q,w.q);
+#if PERF
 		ic(v);
+#endif
 		return h;
 	}
 	friend BigInteger operator-(const BigInteger&q,const BigInteger&w){
 		auto v=perf();
 		auto h=bn_sub(q.q,w.q);
+#if PERF
 		ic(v);
+#endif
 		return h;
 	}
 	friend BigInteger operator*(const BigInteger&q,const BigInteger&w){
 		auto v=perf();
 		auto h=bn_mul(q.q,w.q);
+#if PERF
 		ic(v);
+#endif
 		return h;
 	}
 	friend BigInteger operator/(const BigInteger&q,const BigInteger&w){
 		auto v=perf();
 		auto h=bn_div(q.q,w.q);
+#if PERF
 		ic(v);
+#endif
 		return h;
 	}
 	friend BigInteger operator%(const BigInteger&q,const BigInteger&w){
 		auto v=perf();
 		auto h=bn_mod(q.q,w.q);
+#if PERF
 		ic(v);
+#endif
 		return h;
 	}
 	std::string str(int64_t w)const{
@@ -311,7 +369,9 @@ public:
 		auto g=std::string(h);
 		char *u=(char*)h;
 		free(u);
+#if PERF
 		ic(v);
+#endif
 		return g;
 	}
 	// std::string str1(int64_t w)const{
@@ -327,7 +387,9 @@ public:
 		auto g=std::string(h);
 		char *u=(char*)h;
 		free(u);
+#if PERF
 		ic(v);
+#endif
 		return g;
 	}
 };
@@ -559,7 +621,8 @@ auto __h=perf();
 #include "stdout.cpp"
 ic("total:",__h);
 
-// ic(BigInteger("11111111",16)/ *BigInteger(3));
+// auto h=str(BigInteger("8",10)/ *BigInteger("3",10));
+// ic(h)
 
 // ic(sizeof(bn))
 
