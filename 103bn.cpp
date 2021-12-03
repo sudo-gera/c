@@ -589,46 +589,29 @@ signed main(){
 // #define HIDE_119
 // #define HIDE_138
 // #define HIDE_139
-
-
-// #define HIDE_148
-// #define HIDE_149
-// #define HIDE_150
-// #define HIDE_151
-// #define HIDE_152
-// #define HIDE_153
-// #define HIDE_154
-// #define HIDE_155
-// #define HIDE_156
-// #define HIDE_157
-// #define HIDE_158
-// #define HIDE_159
-// #define HIDE_148
-// #define HIDE_149
-// #define HIDE_150
-// #define HIDE_151
-// #define HIDE_152
-// #define HIDE_153
-// #define HIDE_154
-// #define HIDE_155
-// #define HIDE_156
-// #define HIDE_157
-// #define HIDE_158
 // #define HIDE_159
 
-// #define HIDE_162
-// auto __h=perf();
-// #include "stdout.cpp"
-// ic("total:",__h);
+
+#define HIDE_162
+auto __h=perf();
+#include "stdout.cpp"
+ic("total:",__h);
+
+// ic(BigInteger(1)/BigInteger(1))
+
+// ic(str(BigInteger("1000000000000",10)<< *BigInteger("a")))
+// ic(BigInteger("1000000000000",10))
+// ic(BigInteger("2540be400")*BigInteger("a"))
 
 
-
-ic(str(BigInteger("-17",10)%BigInteger("-10",10)));
-ic(str(BigInteger("-17",10)%BigInteger("10",10)));
-ic(str(BigInteger("17",10)%BigInteger("-10",10)));
-ic(str(BigInteger("17",10)%BigInteger("10",10)));
+// ic(str(BigInteger("-17",10)%BigInteger("-10",10)));
+// ic(str(BigInteger("-17",10)%BigInteger("10",10)));
+// ic(str(BigInteger("17",10)%BigInteger("-10",10)));
+// ic(str(BigInteger("17",10)%BigInteger("10",10)));
 
 // ic(sizeof(bn))
+
+// ic(BigInteger("10000000000000000000000000000000000000000000000000",10)<<*BigInteger("10",10))
 
 }
 #endif

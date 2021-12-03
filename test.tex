@@ -29,6 +29,8 @@
 \newcommand{\dor}{$\lor$}
 \newcommand{\dno}[1]{$\overline{#1}$}
 \newcommand{\dnot}{$\neg$}
+\newcommand{\ans}{Ответ: }
+
 
 
 
@@ -39,91 +41,61 @@
 \begin{document}
 	\maketitle
 	\section*{Задание 1}
+		а) $a_k = k$. Тогда производящая функция равна:
 
-		ДНФ: $ \overline{x_1} x_2 \overline{x_3} \vee \overline{x_1} x_2 x_3 \vee x_1 \overline{x_2} \overline{x_3} \vee x_1 \overline{x_2} x_3$
+		$\sum\limits_{k = 0}^{\infty} (k*x^k)$
 
-		КНФ: $ (x_1 \vee x_2 \vee x_3)(x_1 \vee x_2 \vee \overline{x_3})(\overline{x_1} \vee \overline{x_2} \vee x_3)(\overline{x_1} \vee \overline{x_2} \vee \overline{x_3})$
+		$\dfrac{1}{1 - x}=1 + x + x^2 ... $
 
+		$(\dfrac{1}{1 - x})'= 1 + 2x + 3x^2 + ... = \sum\limits_{k = 0}^{\infty} kx^{k-1}$
+
+		$(\dfrac{1}{1 - x})' * x = (1 + 2x + 3x^2 + ...) * x = \sum\limits_{k = 0}^{\infty} kx^k$
+
+		Ответ: $\dfrac{x}{(1 - x)^2}$ - производящая функция последовательности $a_k$
+
+		б) $a_k = \dfrac{1}{k!}$. Тогда производящая функция равна:
+
+		$\sum\limits_{k = 0}^{\infty} \dfrac{x^k}{k!}$
+
+		$e^x=\sum\limits_{k = 0}^{\infty} \dfrac{x^k}{k!}$
+
+		Ответ: $e^x$ - производящая функция последовательности $a_k$
 	\section*{Задание 2}
-		$\neg (1->1)=\neg 1 =0$
-
-		Ответ: да
 	\section*{Задание 3}
-		MAJ(x, y, z) = xy+xz+yz
-
-		функция симметрична относительно x,y,z
-
-		MAJ(0,0,0)=0
-
-		MAJ(1,0,0)=0
-
-		MAJ(1,1,0)=0
-
-		MAJ(1,1,1)=0
 	\section*{Задание 4}
-		x_1 \dor x_2 \dor ... x_n=x_1+x_2+...+x_n+x_1x_2+...+x_1x_2...x_n
+		Пусть f(x)=$\sum\limits_{k=0}^{n}C_n^k*x^k=(1+x)^n$
 
-		количество слагаемых - все способы выбрать непустое подмножетсво множества переменных.
+		f '(x)=$\sum\limits_{k=0}^{n}C_n^k*k*x^{k-1}=n*(1+x)^{n-1}$
 
-		Ответ: 2^n-1
+		f ''(x)=$\sum\limits_{k=0}^{n}C_n^k*k*(k-1)*x^{k-2}=n*(n-1)*(1+x)^{n-2}$
+
+		f ''(x)=$\sum\limits_{k=2}^{n}C_n^k*k*(k-1)*x^{k-2}=n*(n-1)*(1+x)^{n-2}$
+
+		При x=1
+
+		$\sum\limits_{k=2}^{n}C_n^k*k*(k-1)=n*(n-1)*2^{n-2}$
 	\section*{Задание 5}
-		\dnot(x\dand x)=\dnot x
+		$g(x)=\sum\limits_{k=0}^{\infty}(x^k*s_k)$
 
-		\dnot \dnot(x \dand y) = x \dand y
+		$x*g(x)=\sum\limits_{k=0}^{\infty}(x^{k+1}*s_k)$
 
-		\dnot (\dnot x \dand \dnot y) = x \dor y
+		$x*g(x)=\sum\limits_{k=1}^{\infty}(x^{k}*s_{k-1})$
+
+		$x*g(x)-g(x)=\sum\limits_{k=1}^{\infty}(x^k*s_{k-1}-x^k*s_k)+s_0$
+
+		$x*g(x)-g(x)=\sum\limits_{k=1}^{\infty}(x^k*a_{k})+s_0$
+
+		$x*g(x)-g(x)=\sum\limits_{k=0}^{\infty}(x^k*a_{k})$
+
+		Ответ: $x*g(x)-g(x)$
 	\section*{Задание 6}
-		1->1=1
+		При x$\neq$ 0
 
-		1\dor1=1
+		$\lim\limits_{n->\infty}\sum\limits_{i=0}^{n}\dfrac{x^i}{i+1}=1/x*\lim\limits_{n->\infty}\sum\limits_{i=0}^{n}\dfrac{x^{i+1}}{i+1}=1/x*\lim\limits_{n->\infty}\sum\limits_{i=1}^{n}\dfrac{x^i}{i}=-\dfrac{ln(1-x)}{x}$
 
-		базис содержится в T_1
+		При x=0
 
-		Ответ: нет
-	\section*{Задание 7}
-		$\lnot \overline{x}$ = $\overline{\lnot x}$
-		
-		\dnot MAJ(x_1,x_2,x_3) = MAJ(\dnot x_1,\dnot x_2,\dnot x_3)
+		$\lim\limits_{n->\infty}\sum\limits_{i=0}^{n}\dfrac{x^i}{i+1}=1$
 
-		базис содержится в S
-
-		Ответ: нет
-	\section*{Задание 8}
-		f - не монотонная -> есть переменная x_i и набор значений a_j из \{0,1\} для остальных переменных, что f(a_1,a_2,...,a_{i-1},1,...,a_n)=0 и f(a_1,a_2,...,0,...,a_n)=1
-
-		тогда g(x)=f(a_1,a_2,...,a_{i-1},x,...,a_n)
-	\section*{Задание 9}
-		Представим нашу функцию $f(x_1, x_2, ..., x_n)$ в дизъюнктивной нормальной форме, тогда если в каком-то слагаемом был элемент $\neg x_i$, то в силу монотонности есть слагаемое, где есть элемент x_1, а остальные множители такие же. Объединим их и избавимся от $\neg x_i$. И так пока не придём к базису.
-	\section*{Задание 10}
-		а)
-
-		PAR(x_1,x_2,...,x_n)=x_1+x_2+...+x_n
-
-		индукция по n
-
-		база n=1
-
-		PAR (x_1)=x_1 верно
-
-		переход x_{n-1} -> x_n
-
-		PAR(x_1,...,x_{n-1},0)=PAR(x_1,...,x_{n-1})=PAR(x_1,...,x_{n-1})+0
-
-		PAR(x_1,...,x_{n-1},1)=\dnot PAR(x_1,...,x_{n-1})=PAR(x_1,...,x_{n-1})+1
-
-		б)
-
-		при  n=1
-
-		PAR (x_1)=x_1
-
-		при n>1
-
-		PAR(1,1,0,...,0)=0
-
-		PAR(1,0,0,...,0)=1
-
-		функция PAR не монотонна -> не представима ввиде ДНФ без отрицаний
-
-		Ответ: при n=1
+		Ответ: $-\dfrac{ln(1-x)}{x}$ при x$\neq$0 и 1 при x=0
 \end{document}
