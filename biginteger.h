@@ -55,37 +55,8 @@ public:
 	BigInteger(const char*orig,int base=10){
 		*this=BigInteger(static_cast<std::string>(orig),base);
 	}
-	BigInteger(const std::string&orig,int64_t base=10){
-		resize(orig.size()/"\x00\x00\x20\x14\x10\x0d\x0c\x0b\x0a\x0a\x09\x09\x08\x08\x08\x08\x08\x07\x07\x07\x07\x07\x07\x07\x06\x06\x06\x06\x06\x06\x06\x06\x06\x06\x06\x06\x06"
-			[base]+1); //optimal digit count, int(ln(2^32)/ln(base))
-		sign=0;
-		bool starts_with_minus_sign=0;
-		if (orig.size() and orig[0]=='-'){
-			starts_with_minus_sign=1;
-		}
-		auto symbol_to_code="------------------------------------------------\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09-------\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23------\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23-----";
-		//string has \x00\x01... at positions '0','1',... and \x0a\x0b... at positions 'a','b',... and 'A','B',... symbol_to_code['0'] is 0, symbol_to_code['a'] is 10
-		for (size_t w=starts_with_minus_sign;w<orig.size();++w){
-			*this*=base;
-			*this+=symbol_to_code[static_cast<int>(orig[w])];  
-		}
-		if (starts_with_minus_sign){
-			sign*=-1;
-		}
-	}
-	friend std::ostream&operator<<(std::ostream&ostr,const BigInteger&bn){
-		ostr<<bn.toString();
-		return ostr;
-	}
-	friend auto&operator>>(std::istream&istr,BigInteger&bn){
-		std::string tmp;
-		istr>>tmp;
-		bn=tmp;
-		return istr;
-	}
 	std::string toString(uint64_t base=10)const{
-		BigInteger abs_of_this;
-		abs_of_this=*this;
+		BigInteger abs_of_this=*this;
 		abs_of_this.sign=bool(abs_of_this.sign);
 		std::string res;
 		while (abs_of_this.sign){
@@ -128,41 +99,21 @@ public:
 	operator std::string()const{
 		return this->toString();
 	}
-private:
-	friend int cmp(BigInteger const&q,BigInteger const&e,bool onlymod=0){
-		if (!onlymod and q.sign!=e.sign){
-			return ((q.sign)-(e.sign));
+	int cmp(BigInteger const&e,bool onlymod=0)const{
+		if (!onlymod and sign!=e.sign){
+			return ((sign)-(e.sign));
 		}
-		if (q.size+e.size==0){
+		if (size+e.size==0){
 			return 0;
 		}
-		for (size_t c=(q.size>e.size?q.size:e.size);c--;){
-			size_t qdigit=q.size>c?q.vect[c]:0;
+		for (size_t c=(size>e.size?size:e.size);c--;){
+			size_t qdigit=size>c?vect[c]:0;
 			size_t edigit=e.size>c?e.vect[c]:0;
 			if (qdigit!=edigit){
-				return ((qdigit>edigit)*2-1)*(onlymod?1:q.sign);
+				return ((qdigit>edigit)*2-1)*(onlymod?1:sign);
 			}
 		}
 		return 0;
-	}
-public:
-	friend bool operator<(BigInteger const&q,BigInteger const&e){
-		return cmp(q,e)<0;
-	}
-	friend bool operator>(BigInteger const&q,BigInteger const&e){
-		return cmp(q,e)>0;
-	}
-	friend bool operator==(BigInteger const&q,BigInteger const&e){
-		return cmp(q,e)==0;
-	}
-	friend bool operator!=(BigInteger const&q,BigInteger const&e){
-		return cmp(q,e)!=0;
-	}
-	friend bool operator<=(BigInteger const&q,BigInteger const&e){
-		return cmp(q,e)<=0;
-	}
-	friend bool operator>=(BigInteger const&q,BigInteger const&e){
-		return cmp(q,e)>=0;
 	}
 	~BigInteger(){
 		if (vect){
@@ -170,9 +121,9 @@ public:
 		}
 	}
 private:
-	friend void bn_M_add_to(BigInteger &q, BigInteger const &e){
-		size_t qs=q.size;
-		if (qs and q.vect[qs-1]==0){
+	void bn_M_add_to(BigInteger const &e){
+		size_t qs=size;
+		if (qs and vect[qs-1]==0){
 			qs-=1;
 		}
 		size_t es=e.size;
@@ -180,21 +131,21 @@ private:
 			es-=1;
 		}
 		qs=(qs>es?qs:es)+1;
-		q.resize(qs);
+		resize(qs);
 		uint64_t buff=0;
 		for (size_t w=0;w<qs;++w){
-			buff+=q.vect[w];
+			buff+=vect[w];
 			if (w<e.size){
 				buff+=e.vect[w];
 			}
-			q.vect[w]=buff&0b11111111111111111111111111111111;
+			vect[w]=buff&0b11111111111111111111111111111111;
 			buff>>=32;
 		}
 	}
 	//helps in e has only 2 digits
-	friend void bn_M_add_to_fast(BigInteger &q, BigInteger const &e,uint64_t start){
-		size_t qs=q.size;
-		if (qs and q.vect[qs-1]==0){
+	void bn_M_add_to_fast(BigInteger const &e,uint64_t start){
+		size_t qs=size;
+		if (qs and vect[qs-1]==0){
 			qs-=1;
 		}
 		size_t es=e.size;
@@ -202,23 +153,23 @@ private:
 			es-=1;
 		}
 		qs=(qs>es?qs:es)+1;
-		q.resize(qs);
+		resize(qs);
 		uint64_t buff=0;
 		for (size_t w=start;w<qs;++w){
-			buff+=q.vect[w];
+			buff+=vect[w];
 			if (w<e.size){
 				buff+=e.vect[w];
 			}
-			q.vect[w]=buff&0b11111111111111111111111111111111;
+			vect[w]=buff&0b11111111111111111111111111111111;
 			buff>>=32;
 			if (w>start and buff==0){
 				break;
 			}
 		}
 	}
-	friend void bn_M_sub_to(BigInteger &q, BigInteger const &e){
-		size_t qs=q.size;
-		if (qs and q.vect[qs-1]==0){
+	void bn_M_sub_to(BigInteger const &e){
+		size_t qs=size;
+		if (qs and vect[qs-1]==0){
 			qs-=1;
 		}
 		size_t es=e.size;
@@ -226,28 +177,28 @@ private:
 			es-=1;
 		}
 		qs=(qs>es?qs:es)+1;
-		q.resize(qs);
+		resize(qs);
 		int64_t buff=0;
 		for (size_t w=0;w<qs;++w){
-			buff+=q.vect[w];
+			buff+=vect[w];
 			if (w<e.size){
 				buff-=e.vect[w];
 			}
-			q.vect[w]=buff&0b11111111111111111111111111111111;
+			vect[w]=buff&0b11111111111111111111111111111111;
 			buff>>=32;
 		}
-		size_t g=q.size;
-		while (g>0 and q.vect[g-1]==0){
+		size_t g=size;
+		while (g>0 and vect[g-1]==0){
 			g-=1;
 		}
 		if (g==0){
-			q.sign=0;
+			sign=0;
 		}	
 	}
 	//helps in e has only 2 digits
-	friend void bn_M_sub_to_fast(BigInteger &q, BigInteger const &e,uint64_t start){
-		size_t qs=q.size;
-		if (qs and q.vect[qs-1]==0){
+	void bn_M_sub_to_fast(BigInteger const &e,uint64_t start){
+		size_t qs=size;
+		if (qs and vect[qs-1]==0){
 			qs-=1;
 		}
 		size_t es=e.size;
@@ -255,25 +206,25 @@ private:
 			es-=1;
 		}
 		qs=(qs>es?qs:es)+1;
-		q.resize(qs);
+		resize(qs);
 		int64_t buff=0;
 		for (size_t w=start;w<qs;++w){
-			buff+=q.vect[w];
+			buff+=vect[w];
 			if (w<e.size){
 				buff-=e.vect[w];
 			}
-			q.vect[w]=buff&0b11111111111111111111111111111111;
+			vect[w]=buff&0b11111111111111111111111111111111;
 			buff>>=32;
 			if (w>start and buff==0){
 				break;
 			}
 		}
-		size_t g=q.size;
-		while (g>0 and q.vect[g-1]==0){
+		size_t g=size;
+		while (g>0 and vect[g-1]==0){
 			g-=1;
 		}
 		if (g==0){
-			q.sign=0;
+			sign=0;
 		}	
 	}
 public:
@@ -282,14 +233,14 @@ public:
 			return *this;
 		}
 		if (e.sign*sign>=0){
-			bn_M_add_to(*this,e);
+			bn_M_add_to(e);
 			sign=e.sign;
-		}else if (cmp(*this,e,1)>=0){
-			bn_M_sub_to(*this,e);
+		}else if (this->cmp(e,1)>=0){
+			bn_M_sub_to(e);
 		}else{
 			BigInteger tmp=*this;
 			*this=e;
-			bn_M_sub_to(*this,tmp);
+			bn_M_sub_to(tmp);
 		}
 		size_t ts=size;
 		while (ts>0 and vect[ts-1]==0){
@@ -306,22 +257,12 @@ public:
 		sign*=-1;
 		return *this;
 	}
-	friend BigInteger operator+(const BigInteger&q,const BigInteger&w){
-		auto tmp=q;
-		tmp+=w;
-		return tmp;
-	}
-	friend BigInteger operator-(const BigInteger&q,const BigInteger&w){
-		auto tmp=q;
-		tmp-=w;
-		return tmp;
-	}
-	friend BigInteger operator*(BigInteger const&q,const BigInteger&e){
+	auto&operator*=(const BigInteger&e){
 		BigInteger res;
 		BigInteger tmp;
-		size_t qs=q.size;
+		size_t qs=size;
 		size_t es=e.size;
-		while (qs and q.vect[qs-1]==0){
+		while (qs and vect[qs-1]==0){
 			--qs;
 		}
 		while (es and e.vect[es-1]==0){
@@ -331,49 +272,45 @@ public:
 		tmp.resize(qs+es);
 		tmp.sign=1;
 		for (size_t w=0;w<qs;++w){
-			if (q.vect[w]){
+			if (vect[w]){
 				for (size_t r=0;r<es;++r){
-					*(uint64_t*)(tmp.vect+w+r)=(uint64_t)(q.vect[w])*(uint64_t)(e.vect[r]);
-					bn_M_add_to_fast(res,tmp,w+r); 
+					*(uint64_t*)(tmp.vect+w+r)=(uint64_t)(vect[w])*(uint64_t)(e.vect[r]);
+					res.bn_M_add_to_fast(tmp,w+r); 
 					*(uint64_t*)(tmp.vect+w+r)=0;
 				}
 			}
 		}
-		res.sign=q.sign*e.sign;
-		return res;
-	}
-	BigInteger&operator*=(BigInteger const&w){
-		return *this=*this*w;
+		res.sign=sign*e.sign;
+		*this=res;
+		return *this;
 	}
 private:
-	friend void bn_half(BigInteger&q){
-		if (q.size){
-			q.vect[0]>>=1;
+	void bn_half(){
+		if (size){
+			vect[0]>>=1;
 		}
-		for (size_t w=1;w<q.size;++w){
-			q.vect[w-1]|=(q.vect[w]&1)<<31;
-			q.vect[w]>>=1;
+		for (size_t w=1;w<size;++w){
+			vect[w-1]|=(vect[w]&1)<<31;
+			vect[w]>>=1;
 		}
 		size_t not_zero=0;
-		for (size_t w=0;w<q.size;++w){
-			if (q.vect[w]){
+		for (size_t w=0;w<size;++w){
+			if (vect[w]){
 				not_zero=1;
 				break;
 			}
 		}
 		if (!not_zero){
-			q.sign=0;
+			sign=0;
 		}
 	}
-	friend std::string print_one(BigInteger&q);
-	friend std::string print_one(const BigInteger&q);
-	friend void bn_M_div_to(BigInteger&q,const BigInteger&e,bool getdiv=1){
+	void bn_M_div_to(const BigInteger&e,bool getdiv=1){
 		if(!e.sign){std::cerr<<"zero"<<std::flush;return;}
-		auto rsign=q.sign*e.sign;
-		q.sign=bool(q.sign); //q=abs(q)
-		size_t qs=q.size;
+		auto rsign=sign*e.sign;
+		sign=bool(sign); //q=abs(q)
+		size_t qs=size;
 		size_t es=e.size;
-		while (qs and q.vect[qs-1]==0){
+		while (qs and vect[qs-1]==0){
 			--qs;
 		}
 		while (es and e.vect[es-1]==0){
@@ -388,19 +325,19 @@ private:
 				shifted_e[0].vect[qs-es+2+w]=e.vect[w];
 			}
 			shifted_e[31]=shifted_e[0];
-			bn_half(shifted_e[31]);
+			shifted_e[31].bn_half();
 			for (size_t w=31;w>1;--w){
 				shifted_e[w-1]=shifted_e[w];
-				bn_half(shifted_e[w-1]);
+				shifted_e[w-1].bn_half();
 			}
 			uint64_t*offsets=new uint64_t[32]();
 			res.resize(qs+1-es);
 			int64_t shift=(res.size+1)*32;
 			res.sign=1;
 			while (shift>=0){
-				if (q>=shifted_e[shift&0b11111]){
+				if (this->cmp(shifted_e[shift&0b11111])>=0){
 					res.vect[shift>>5]|=(1LL<<(shift&0b11111));
-					bn_M_sub_to(q,shifted_e[shift&0b11111]);
+					bn_M_sub_to(shifted_e[shift&0b11111]);
 				}
 				shifted_e[shift&0b11111].size-=1;
 				shifted_e[shift&0b11111].vect+=1;
@@ -421,43 +358,31 @@ private:
 			delete[] shifted_e;
 		}
 		if (getdiv){
-			q=res;
+			*this=res;
 		}
-		q.sign=rsign;
-		qs=q.size;
-		while (qs>0 and q.vect[qs-1]==0){
+		sign=rsign;
+		qs=size;
+		while (qs>0 and vect[qs-1]==0){
 			qs-=1;
 		}
 		if (qs==0){
-			q.sign=0;
+			sign=0;
 		}	
 	}
 public:
 	auto&operator/=(const BigInteger&e){
-		bn_M_div_to(*this,e,1);
+		bn_M_div_to(e,1);
 		return *this;
 	}
 	auto&operator%=(const BigInteger&e){
-		bn_M_div_to(*this,e,0);
+		bn_M_div_to(e,0);
 		return *this;
 	}
-
-	friend BigInteger operator/(const BigInteger&q,const BigInteger&w){
-		auto tmp=q;
-		tmp/=w;
-		return tmp;
-	}
-	friend BigInteger operator%(const BigInteger&q,const BigInteger&w){
-		auto tmp=q;
-		tmp%=w;
-		return tmp;
-	}
-
 	auto&operator++(){
 		if (this->sign<0){
-			bn_M_sub_to_fast(*this,1,0);
+			bn_M_sub_to_fast(1,0);
 		}else{
-			bn_M_add_to_fast(*this,1,0);
+			bn_M_add_to_fast(1,0);
 		}
 		return *this;
 	}
@@ -468,9 +393,9 @@ public:
 	}
 	auto&operator--(){
 		if (this->sign<0){
-			bn_M_add_to_fast(*this,1,0);
+			bn_M_add_to_fast(1,0);
 		}else{
-			bn_M_sub_to_fast(*this,1,0);
+			bn_M_sub_to_fast(1,0);
 		}
 		return *this;
 	}
@@ -487,8 +412,80 @@ public:
 	explicit operator bool(){
 		return this->sign;
 	}
-	friend BigInteger gcd(BigInteger q,BigInteger w);
+	BigInteger(const std::string&orig,int64_t base=10){
+		resize(orig.size()/"\x00\x00\x20\x14\x10\x0d\x0c\x0b\x0a\x0a\x09\x09\x08\x08\x08\x08\x08\x07\x07\x07\x07\x07\x07\x07\x06\x06\x06\x06\x06\x06\x06\x06\x06\x06\x06\x06\x06"
+			[base]+1); //optimal digit count, int(ln(2^32)/ln(base))
+		sign=0;
+		bool starts_with_minus_sign=0;
+		if (orig.size() and orig[0]=='-'){
+			starts_with_minus_sign=1;
+		}
+		auto symbol_to_code="------------------------------------------------\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09-------\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23------\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23-----";
+		//string has \x00\x01... at positions '0','1',... and \x0a\x0b... at positions 'a','b',... and 'A','B',... symbol_to_code['0'] is 0, symbol_to_code['a'] is 10
+		for (size_t w=starts_with_minus_sign;w<orig.size();++w){
+			*this*=base;
+			*this+=symbol_to_code[static_cast<int>(orig[w])];  
+		}
+		if (starts_with_minus_sign){
+			sign*=-1;
+		}
+	}
 };
+
+
+std::ostream&operator<<(std::ostream&ostr,const BigInteger&bn){
+	ostr<<bn.toString();
+	return ostr;
+}
+auto&operator>>(std::istream&istr,BigInteger&bn){
+	std::string tmp;
+	istr>>tmp;
+	bn=tmp;
+	return istr;
+}
+bool operator<(BigInteger const&q,BigInteger const&e){
+	return q.cmp(e)<0;
+}
+bool operator>(BigInteger const&q,BigInteger const&e){
+	return q.cmp(e)>0;
+}
+bool operator==(BigInteger const&q,BigInteger const&e){
+	return q.cmp(e)==0;
+}
+bool operator!=(BigInteger const&q,BigInteger const&e){
+	return q.cmp(e)!=0;
+}
+bool operator<=(BigInteger const&q,BigInteger const&e){
+	return q.cmp(e)<=0;
+}
+bool operator>=(BigInteger const&q,BigInteger const&e){
+	return q.cmp(e)>=0;
+}
+BigInteger operator+(const BigInteger&q,const BigInteger&w){
+	auto tmp=q;
+	tmp+=w;
+	return tmp;
+}
+BigInteger operator-(const BigInteger&q,const BigInteger&w){
+	auto tmp=q;
+	tmp-=w;
+	return tmp;
+}
+BigInteger operator*(const BigInteger&q,const BigInteger&w){
+	auto tmp=q;
+	tmp*=w;
+	return tmp;
+}
+BigInteger operator/(const BigInteger&q,const BigInteger&w){
+	auto tmp=q;
+	tmp/=w;
+	return tmp;
+}
+BigInteger operator%(const BigInteger&q,const BigInteger&w){
+	auto tmp=q;
+	tmp%=w;
+	return tmp;
+}
 
 
 BigInteger operator""_bi(const char*orig){
@@ -497,13 +494,13 @@ BigInteger operator""_bi(const char*orig){
 
 
 BigInteger gcd(BigInteger q,BigInteger e){
-	while (q.sign and e.sign){
+	while (q and e){
 		q%=e;
-		if (q.sign and e.sign){
+		if (q and e){
 			e%=q;
 		}
 	}
-	if (q.sign){
+	if (q){
 		return q;
 	}
 	return e;
@@ -511,8 +508,10 @@ BigInteger gcd(BigInteger q,BigInteger e){
 
 
 class Rational{
+public:
 	BigInteger numerator=0;
 	BigInteger denominator=1;
+private:
 	void norm(){
 		auto g=gcd(numerator,denominator);
 		numerator/=g;
@@ -549,11 +548,6 @@ public:
 		norm();
 		return *this;
 	}
-	friend auto operator+(const Rational&q,const Rational&e){
-		auto tmp=q;
-		tmp+=e;
-		return tmp;
-	}
 	auto&operator-=(const Rational&e){
 		numerator*=e.denominator;
 		numerator-=e.numerator*denominator;
@@ -561,10 +555,11 @@ public:
 		norm();
 		return *this;
 	}
-	friend auto operator-(const Rational&q,const Rational&e){
-		auto tmp=q;
-		tmp-=e;
-		return tmp;
+	auto&operator/=(const Rational&e){
+		numerator*=e.denominator;
+		denominator*=e.numerator;
+		norm();
+		return *this;
 	}
 	auto&operator*=(const Rational&e){
 		numerator*=e.numerator;
@@ -572,42 +567,8 @@ public:
 		norm();
 		return *this;
 	}
-	friend auto operator*(const Rational&q,const Rational&e){
-		auto tmp=q;
-		tmp*=e;
-		return tmp;
-	}
-	auto&operator/=(const Rational&e){
-		numerator*=e.denominator;
-		denominator*=e.numerator;
-		norm();
-		return *this;
-	}
-	friend auto operator/(const Rational&q,const Rational&e){
-		auto tmp=q;
-		tmp/=e;
-		return tmp;
-	}
 	auto operator-()const{
-		return Rational(-numerator)/denominator;
-	}
-	friend bool operator<(const Rational&q,const Rational&e){
-		return q.numerator*e.denominator<q.denominator*e.numerator;
-	}
-	friend bool operator>(const Rational&q,const Rational&e){
-		return q.numerator*e.denominator>q.denominator*e.numerator;
-	}
-	friend bool operator==(const Rational&q,const Rational&e){
-		return q.numerator*e.denominator==q.denominator*e.numerator;
-	}
-	friend bool operator<=(const Rational&q,const Rational&e){
-		return q.numerator*e.denominator<=q.denominator*e.numerator;
-	}
-	friend bool operator!=(const Rational&q,const Rational&e){
-		return q.numerator*e.denominator!=q.denominator*e.numerator;
-	}
-	friend bool operator>=(const Rational&q,const Rational&e){
-		return q.numerator*e.denominator>=q.denominator*e.numerator;
+		return Rational(-numerator)/=denominator;
 	}
 	auto toString()const{
 		auto res=numerator.toString();
@@ -618,10 +579,6 @@ public:
 	}
 	operator std::string()const{
 		return this->toString();
-	}
-	friend std::ostream&operator<<(std::ostream&q,const Rational&w){
-		q<<w.toString();
-		return q;
 	}
 	auto asDecimal(const size_t&p){
 		auto tmp=numerator;
@@ -645,3 +602,48 @@ public:
 		return stold(numerator.toString())/stold(denominator.toString());
 	}
 };
+
+
+
+auto operator+(const Rational&q,const Rational&e){
+	auto tmp=q;
+	tmp+=e;
+	return tmp;
+}
+auto operator-(const Rational&q,const Rational&e){
+	auto tmp=q;
+	tmp-=e;
+	return tmp;
+}
+auto operator*(const Rational&q,const Rational&e){
+	auto tmp=q;
+	tmp*=e;
+	return tmp;
+}
+auto operator/(const Rational&q,const Rational&e){
+	auto tmp=q;
+	tmp/=e;
+	return tmp;
+}
+bool operator<(const Rational&q,const Rational&e){
+	return q.numerator*e.denominator<q.denominator*e.numerator;
+}
+bool operator>(const Rational&q,const Rational&e){
+	return q.numerator*e.denominator>q.denominator*e.numerator;
+}
+bool operator==(const Rational&q,const Rational&e){
+	return q.numerator*e.denominator==q.denominator*e.numerator;
+}
+bool operator<=(const Rational&q,const Rational&e){
+	return q.numerator*e.denominator<=q.denominator*e.numerator;
+}
+bool operator!=(const Rational&q,const Rational&e){
+	return q.numerator*e.denominator!=q.denominator*e.numerator;
+}
+bool operator>=(const Rational&q,const Rational&e){
+	return q.numerator*e.denominator>=q.denominator*e.numerator;
+}
+std::ostream&operator<<(std::ostream&q,const Rational&w){
+	q<<w.toString();
+	return q;
+}
