@@ -647,3 +647,9 @@ std::ostream&operator<<(std::ostream&q,const Rational&w){
 	q<<w.toString();
 	return q;
 }
+
+int main(){
+	BigInteger q,w;
+	std::cin>>q>>w;
+	std::cout<<q/w<<std::endl<<q%w<<std::endl;
+}
