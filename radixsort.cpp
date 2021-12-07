@@ -25,14 +25,14 @@ void radixsort(T A,uint32_t n){
 	if (std::is_signed<val>::value){
 		for (size_t w=0;w<n;++w){
 			if (std::is_floating_point<val>::value and 
-				A[w]<0){
+				reinterpret_cast<uns&>(A[w])&pow){
 					reinterpret_cast<uns&>(A[w])=~reinterpret_cast<uns&>(A[w]);
 			}else{
 				reinterpret_cast<uns&>(A[w])^=static_cast<uns>(1)<<(8*sizeof(A[0])-1);
 			}
 		}
 	}
-	const int k=(sizeof(uns)==1)?256:65536;
+	const int k=1<<(sizeof(shu)*8);
 	auto C=reinterpret_cast<uint32_t*>(malloc(sizeof(uint32_t)*k));
 	auto B=reinterpret_cast<uns*>(malloc(sizeof(uns)*n));
 	for (size_t w=0;w<sizeof(uns)/sizeof(shu);++w){
@@ -73,7 +73,7 @@ void radixsort(T A,uint32_t n){
 	if (std::is_signed<val>::value){
 		for (size_t w=0;w<n;++w){
 			if (std::is_floating_point<val>::value and 
-				A[w]>=0){
+				~reinterpret_cast<uns&>(A[w])&pow){
 					reinterpret_cast<uns&>(A[w])=~reinterpret_cast<uns&>(A[w]);
 			}else{
 				reinterpret_cast<uns&>(A[w])^=static_cast<uns>(1)<<(8*sizeof(A[0])-1);
