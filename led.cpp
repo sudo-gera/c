@@ -1,6 +1,8 @@
 #include <iostream>
 
-// #include "d"
+#if __has_include("d")
+#include "d"
+#endif
 
 struct str_ {
     const char* data;
@@ -8,7 +10,6 @@ struct str_ {
 };
 
 using namespace std;
-// using str_=str_ing;
 bool check_all(str_ q, str_ e)
 {
     for (size_t _w = 0; _w < q.size; ++_w) {
@@ -79,47 +80,52 @@ str_ slice_(str_ q, size_t e)
     return { q.data + e, q.size - e };
 }
 
-// auto check=pyfunc(pref,count)=
-// "  def check_rev_h(q):\n"
-// "    for w in range(len(q)):\n"
-// "      if q[w] in '1380':\n"
-// "        pass\n"
-// "      else:\n"
-// "        return 0\n"
-// "    return 1\n"
-// "\n"
-// "  def check_rev_v(q):\n"
-// "    for w in range(len(q)):\n"
-// "      if q[w]=='2':\n"
-// "        if q[-1-w]!='5':\n"
-// "          return 0\n"
-// "      elif q[w]=='5':\n"
-// "        if q[-1-w]!='2':\n"
-// "          return 0\n"
-// "      elif q[w]=='0':\n"
-// "        if q[-1-w]!='0':\n"
-// "          return 0\n"
-// "      elif q[w]=='8':\n"
-// "        if q[-1-w]!='8':\n"
-// "          return 0\n"
-// "      else:\n"
-// "        return 0\n"
-// "    return 1;\n"
-// "\n"
-// "  def check_rev(q):\n"
-// "    return check_rev_h(q) or check_rev_v(q)\n"
-// "\n"
-// "  c=0\n"
-// "  for w in range(int(pref+'0'*count),int(pref+'9'*count)+1):\n"
-// "    c+=bool(check_rev(str(w)))\n"
-// "    c%=10**9+7\n"
-// "  return (c)\n";
+#if __has_include("d")
+auto check=pyfunc(pref,count)=
+"  def check_rev_h(q):\n"
+"    for w in range(len(q)):\n"
+"      if q[w] in '1380':\n"
+"        pass\n"
+"      else:\n"
+"        return 0\n"
+"    return 1\n"
+"\n"
+"  def check_rev_v(q):\n"
+"    for w in range(len(q)):\n"
+"      if q[w]=='2':\n"
+"        if q[-1-w]!='5':\n"
+"          return 0\n"
+"      elif q[w]=='5':\n"
+"        if q[-1-w]!='2':\n"
+"          return 0\n"
+"      elif q[w]=='0':\n"
+"        if q[-1-w]!='0':\n"
+"          return 0\n"
+"      elif q[w]=='8':\n"
+"        if q[-1-w]!='8':\n"
+"          return 0\n"
+"      else:\n"
+"        return 0\n"
+"    return 1;\n"
+"\n"
+"  def check_rev(q):\n"
+"    return check_rev_h(q) or check_rev_v(q)\n"
+"\n"
+"  c=0\n"
+"  for w in range(int(pref+'0'*count),int(pref+'9'*count)+1):\n"
+"    c+=bool(check_rev(str(w)))\n"
+"    c%=10**9+7\n"
+"  return (c)\n";
+#endif
+
 
 size_t count_with_zero(str_ pref, size_t count)
 {
-    assert(pref.size);
     // ic(pref.data,pref.size,count)
+#if __has_include("d")
+    assert(pref.size);
     // int64_t res_=check(pref.data,int64_t(count));
+#endif
     ssize_t res = 0;
     if (check_all(pref, { "1380", 4 })) {
         res += _pow(4, count);
@@ -156,7 +162,9 @@ size_t count_with_zero(str_ pref, size_t count)
     res %= 1000000007;
     // ic(res)
     // ic(res_)
+#if __has_include("d")
     // assert(res==res_);
+#endif
     return res;
 }
 
@@ -174,7 +182,9 @@ size_t count_one_dig(size_t b, size_t e)
     e -= 1;
     size_t l = 0;
     while (e != b) {
+#if __has_include("d")
         assert(b % 10 == 0 and e % 10 == 9);
+#endif
         ++l;
         b /= 10;
         e /= 10;
