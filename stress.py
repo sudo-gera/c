@@ -1,13 +1,9 @@
 def create_input_string():
 	from random import randint
-	n=randint(1,10**3)
-	k=randint(1,min(n,10_000))
-	a=str(n)+' '+str(k)+'\n'
-	for w in range(n):
-		a+=str(randint(-10**18,10**18))+'\n'
-	# a=str(n)+'\n'
-	# for w in range(n):
-	# 	a+=str(randint(1,n))+' '
+	a=[randint(1,9999),randint(1,9999)]
+	a.sort()
+	a=' '.join([str(w) for w in a])
+	a+='\n'
 	return a
 
 def how_to_run(filename):
@@ -68,7 +64,6 @@ def logging(log):
 			print('\x1b[94minput(repr version)\x1b[0m')
 			print(repr(q[0]))
 			from sys import argv
-			print(argv,q)
 			for w in range(1,len(argv)):
 				print('\x1b[94m'+argv[w]+'(str version)\x1b[0m')
 				print(str(q[w]))

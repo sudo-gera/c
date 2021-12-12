@@ -274,9 +274,12 @@ public:
 		for (size_t w=0;w<qs;++w){
 			if (vect[w]){
 				for (size_t r=0;r<es;++r){
-					*(uint64_t*)(tmp.vect+w+r)=(uint64_t)(vect[w])*(uint64_t)(e.vect[r]);
+					uint64_t mulres=(uint64_t)(vect[w])*(uint64_t)(e.vect[r]);
+					tmp.vect[w+r]=mulres<<32>>32;
+					tmp.vect[w+r+1]=mulres>>32;
 					res.bn_M_add_to_fast(tmp,w+r); 
-					*(uint64_t*)(tmp.vect+w+r)=0;
+					tmp.vect[w+r]=0;
+					tmp.vect[w+r+1]=0;
 				}
 			}
 		}
@@ -648,8 +651,9 @@ std::ostream&operator<<(std::ostream&q,const Rational&w){
 	return q;
 }
 
-int main(){
-	BigInteger q,w;
-	std::cin>>q>>w;
-	std::cout<<q/w<<std::endl<<q%w<<std::endl;
-}
+// int main(){
+// 	BigInteger q,w;
+// 	std::cin>>q>>w;
+// 	std::cout<<q/w<<std::endl<<q%w<<std::endl;
+// }
+

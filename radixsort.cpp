@@ -17,7 +17,8 @@ template <>
 struct sized_uns<16>{using uns=__uint128_t;using shu=uint16_t;};
 
 template<typename T>
-void radixsort(T A,uint32_t n){
+void radixsort(T A,T E){
+	uint32_t n=E-A;
 	using uns=typename sized_uns<sizeof(A[0])>::uns;
 	using shu=typename sized_uns<sizeof(A[0])>::shu;
 	using val=typename std::remove_reference<decltype(A[0])>::type;
