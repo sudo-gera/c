@@ -1,6 +1,7 @@
 #include <iostream>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 struct Str {
   const char* data;
   size_t size;
@@ -15,6 +16,8 @@ size_t get_power(size_t q) {
   }
   return l;
 =======
+=======
+>>>>>>> 400128ebf054c37eb8e91090086c0e7f41e46730
 #if __has_include("d")
 #include "d"
 #endif
@@ -101,6 +104,7 @@ bool check_rev_v(Str q) {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 Str slice_(Str q, size_t e) {
   if (e > q.size) {
     e = q.size;
@@ -131,6 +135,8 @@ size_t count_with_zero(Str pref, size_t count) {
   }
   return res;
 =======
+=======
+>>>>>>> 400128ebf054c37eb8e91090086c0e7f41e46730
 #if __has_include("d")
 auto check=pyfunc(pref,count)=
 "  def check_rev_h(q):\n"
