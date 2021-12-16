@@ -1,5 +1,8 @@
+#include <stdio.h>
 int main(){
-	int *a=new int [10]();
-	int b=10;
-	ic(b,11,itervect(a,a+10));
+	int q;
+	scanf("%li",&q);
+	unsigned w;
+	printf("%i",q<w);
+
 }

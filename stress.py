@@ -1,10 +1,12 @@
 def create_input_string():
 	from random import randint
-	a=[randint(1,9999),randint(1,9999)]
-	a.sort()
-	a=' '.join([str(w) for w in a])
-	a+='\n'
-	return a
+	n=randint(1,10**7)
+	k=randint(1,min(n,10**4))
+	a=[randint(-10**18,10**18) for w in range(n)]
+	a=[str(w) for w in a]
+	en=' \n '
+	s=f'{n}  {k} \n { en.join(a) }'
+	return s
 
 def how_to_run(filename):
 	if filename.endswith('.cpp'):
@@ -96,9 +98,13 @@ if __name__=='__main__':
 	for w in range(16):
 		s.append(Process(target=cmp,args=(log,)))
 		s[-1].start()
-	a.join()
+	try:
+		a.join()
+	except KeyboardInterrupt:
+		pass
+	from os import system
+	system('rm -r tmp*.trash.trash*')
 	for w in s:
 		w.terminate()
 	from time import sleep
 	sleep(0.1)
-	# Pool().map(cmp,[(log,w) for w in range(1)])
