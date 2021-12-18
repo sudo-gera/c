@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from sys import argv
 from subprocess import run
 ex=argv[0]

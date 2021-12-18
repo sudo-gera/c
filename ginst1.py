@@ -5,6 +5,7 @@ wsubl="C:/Program Files/Sublime Text 3/sublime_text.exe"
 from sys import argv
 from subprocess import run
 from urllib.request import urlopen
+from os.path import *
 import os
 if not os.geteuid() == 0:
 	from pathlib import Path
@@ -14,10 +15,11 @@ if not os.geteuid() == 0:
 	run(['chmod','777',str(Path.home())+'/v'])
 	open(str(Path.home())+'/b','wb').write(urlopen('https://raw.githubusercontent.com/sudo-gera/c/master/b.py').read())
 	run(['chmod','777',str(Path.home())+'/b'])
+	open(str(Path.home())+'/.bashrc','a').write('\nPATH="$PATH:~/.local/bin:~:."\n')
 
 	run(['sudo','python3',__file__])
 
-	run([wsubl,diranme(abspath(__file__))])
+	run([wsubl,dirname(abspath(__file__))])
 	exit()
 else:
 	open('/usr/bin/wind','wb').write(urlopen('https://raw.githubusercontent.com/sudo-gera/wind/master/wind.py').read())
