@@ -1,20 +1,18 @@
 def create_input_string():
 	from random import randint
-	n=randint(7,10**1)
-	k=randint(7,10**1)
-	a=str(n)+' '+str(k)+'\n'
-	for w in range(k):
-		a+=str(randint(0,n-1))+' '+str(randint(1,10**9))+'\n'
-	# a=str(n)+'\n'
-	# for w in range(n):
-	# 	a+=str(randint(1,n))+' '
-	return a
+	n=randint(1,10**7)
+	k=randint(1,min(n,10**4))
+	a=[randint(-10**18,10**18) for w in range(n)]
+	a=[str(w) for w in a]
+	en=' \n '
+	s=f'{n}  {k} \n { en.join(a) }'
+	return s
 
 def how_to_run(filename):
 	if filename.endswith('.cpp'):
 		from time import time
 		t='./tmp'+str(time())+'.trash.trash'
-		return [['g++','-std=c++17','-Wfatal-errors',filename,'-o',t],[t],['rm',t]]
+		return [['g++','-std=c++17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',t],[t],['rm',t]]
 	if filename.endswith('.c'):
 		from time import time
 		t='./tmp'+str(time())+'.trash.trash'
@@ -68,7 +66,6 @@ def logging(log):
 			print('\x1b[94minput(repr version)\x1b[0m')
 			print(repr(q[0]))
 			from sys import argv
-			print(argv,q)
 			for w in range(1,len(argv)):
 				print('\x1b[94m'+argv[w]+'(str version)\x1b[0m')
 				print(str(q[w]))
@@ -101,9 +98,13 @@ if __name__=='__main__':
 	for w in range(16):
 		s.append(Process(target=cmp,args=(log,)))
 		s[-1].start()
-	a.join()
+	try:
+		a.join()
+	except KeyboardInterrupt:
+		pass
+	from os import system
+	system('rm -r tmp*.trash.trash*')
 	for w in s:
 		w.terminate()
 	from time import sleep
 	sleep(0.1)
-	# Pool().map(cmp,[(log,w) for w in range(1)])

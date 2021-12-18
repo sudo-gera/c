@@ -4,9 +4,15 @@ then
 else
 	d="$1"
 fi
+if [ $(find . -size +51200 | grep -v "^./.git" | wc -l) -ne 0 ]
+then
+	echo "too large files"
+	ls -l $(find . -size +51200 | grep -v "^./.git")
+	exit
+fi
 git add *
 git commit -qam "$d"
 git pull -q --no-edit
 git add *
-git commit -qam "$d"
+git commit -qam "$d" >/dev/null 2>/dev/null
 git push -q

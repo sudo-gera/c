@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.9.29)  1 OCT 2021 20:52
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.9.29)  18 NOV 2021 21:12
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -425,6 +425,11 @@ File: pdftex.def 2020/10/05 v1.2a Graphics/color driver for pdftex
 \Gin@req@height=\dimen158
 \Gin@req@width=\dimen159
 )
+(/usr/local/texlive/2021/texmf-dist/tex/latex/tabto-ltx/tabto.sty
+Package: tabto 2018/12/28  v 1.4  Another tabbing mechanism
+\CurrentLineWidth=\dimen160
+\TabPrevPos=\dimen161
+)
 (/usr/local/texlive/2021/texmf-dist/tex/latex/natbib/natbib.sty
 Package: natbib 2010/09/13 8.31b (PWD, AO)
 \bibhang=\skip56
@@ -446,8 +451,8 @@ Package: circuitikz 2021/03/14{} The CircuiTikz circuit drawing package version
 (/usr/local/texlive/2021/texmf-dist/tex/generic/pgf/utilities/pgfutil-common.te
 x
 \pgfutil@everybye=\toks25
-\pgfutil@tempdima=\dimen160
-\pgfutil@tempdimb=\dimen161
+\pgfutil@tempdima=\dimen162
+\pgfutil@tempdimb=\dimen163
 
 (/usr/local/texlive/2021/texmf-dist/tex/generic/pgf/utilities/pgfutil-common-li
 sts.tex))
@@ -471,16 +476,16 @@ Package: pgfsys 2020/12/27 v3.1.8b (3.1.8b)
 ode.tex
 \pgfkeys@tmptoks=\toks28
 ))
-\pgf@x=\dimen162
-\pgf@y=\dimen163
-\pgf@xa=\dimen164
-\pgf@ya=\dimen165
-\pgf@xb=\dimen166
-\pgf@yb=\dimen167
-\pgf@xc=\dimen168
-\pgf@yc=\dimen169
-\pgf@xd=\dimen170
-\pgf@yd=\dimen171
+\pgf@x=\dimen164
+\pgf@y=\dimen165
+\pgf@xa=\dimen166
+\pgf@ya=\dimen167
+\pgf@xb=\dimen168
+\pgf@yb=\dimen169
+\pgf@xc=\dimen170
+\pgf@yc=\dimen171
+\pgf@xd=\dimen172
+\pgf@yd=\dimen173
 \w@pgf@writea=\write3
 \r@pgf@reada=\read3
 \c@pgf@counta=\count276
@@ -537,7 +542,7 @@ Package: pgfcore 2020/12/27 v3.1.8b (3.1.8b)
 (/usr/local/texlive/2021/texmf-dist/tex/generic/pgf/math/pgfmathcalc.code.tex
 (/usr/local/texlive/2021/texmf-dist/tex/generic/pgf/math/pgfmathutil.code.tex)
 (/usr/local/texlive/2021/texmf-dist/tex/generic/pgf/math/pgfmathparser.code.tex
-\pgfmath@dimen=\dimen172
+\pgfmath@dimen=\dimen174
 \pgfmath@count=\count283
 \pgfmath@box=\box54
 \pgfmath@toks=\toks32
@@ -568,32 +573,32 @@ erarithmetics.code.tex)))
 (/usr/local/texlive/2021/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepoints.co
 de.tex
 File: pgfcorepoints.code.tex 2020/12/27 v3.1.8b (3.1.8b)
-\pgf@picminx=\dimen173
-\pgf@picmaxx=\dimen174
-\pgf@picminy=\dimen175
-\pgf@picmaxy=\dimen176
-\pgf@pathminx=\dimen177
-\pgf@pathmaxx=\dimen178
-\pgf@pathminy=\dimen179
-\pgf@pathmaxy=\dimen180
-\pgf@xx=\dimen181
-\pgf@xy=\dimen182
-\pgf@yx=\dimen183
-\pgf@yy=\dimen184
-\pgf@zx=\dimen185
-\pgf@zy=\dimen186
+\pgf@picminx=\dimen175
+\pgf@picmaxx=\dimen176
+\pgf@picminy=\dimen177
+\pgf@picmaxy=\dimen178
+\pgf@pathminx=\dimen179
+\pgf@pathmaxx=\dimen180
+\pgf@pathminy=\dimen181
+\pgf@pathmaxy=\dimen182
+\pgf@xx=\dimen183
+\pgf@xy=\dimen184
+\pgf@yx=\dimen185
+\pgf@yy=\dimen186
+\pgf@zx=\dimen187
+\pgf@zy=\dimen188
 )
 (/usr/local/texlive/2021/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathconst
 ruct.code.tex
 File: pgfcorepathconstruct.code.tex 2020/12/27 v3.1.8b (3.1.8b)
-\pgf@path@lastx=\dimen187
-\pgf@path@lasty=\dimen188
+\pgf@path@lastx=\dimen189
+\pgf@path@lasty=\dimen190
 )
 (/usr/local/texlive/2021/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathusage
 .code.tex
 File: pgfcorepathusage.code.tex 2020/12/27 v3.1.8b (3.1.8b)
-\pgf@shorten@end@additional=\dimen189
-\pgf@shorten@start@additional=\dimen190
+\pgf@shorten@end@additional=\dimen191
+\pgf@shorten@start@additional=\dimen192
 )
 (/usr/local/texlive/2021/texmf-dist/tex/generic/pgf/basiclayer/pgfcorescopes.co
 de.tex
@@ -606,14 +611,14 @@ File: pgfcorescopes.code.tex 2020/12/27 v3.1.8b (3.1.8b)
 (/usr/local/texlive/2021/texmf-dist/tex/generic/pgf/basiclayer/pgfcoregraphicst
 ate.code.tex
 File: pgfcoregraphicstate.code.tex 2020/12/27 v3.1.8b (3.1.8b)
-\pgflinewidth=\dimen191
+\pgflinewidth=\dimen193
 )
 (/usr/local/texlive/2021/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransform
 ations.code.tex
 File: pgfcoretransformations.code.tex 2020/12/27 v3.1.8b (3.1.8b)
-\pgf@pt@x=\dimen192
-\pgf@pt@y=\dimen193
-\pgf@pt@temp=\dimen194
+\pgf@pt@x=\dimen194
+\pgf@pt@y=\dimen195
+\pgf@pt@temp=\dimen196
 )
 (/usr/local/texlive/2021/texmf-dist/tex/generic/pgf/basiclayer/pgfcorequick.cod
 e.tex
@@ -630,12 +635,12 @@ File: pgfcorepathprocessing.code.tex 2020/12/27 v3.1.8b (3.1.8b)
 (/usr/local/texlive/2021/texmf-dist/tex/generic/pgf/basiclayer/pgfcorearrows.co
 de.tex
 File: pgfcorearrows.code.tex 2020/12/27 v3.1.8b (3.1.8b)
-\pgfarrowsep=\dimen195
+\pgfarrowsep=\dimen197
 )
 (/usr/local/texlive/2021/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreshade.cod
 e.tex
 File: pgfcoreshade.code.tex 2020/12/27 v3.1.8b (3.1.8b)
-\pgf@max=\dimen196
+\pgf@max=\dimen198
 \pgf@sys@shading@range@num=\count286
 \pgf@shadingcount=\count287
 )
@@ -676,8 +681,8 @@ File: pgfmoduleplot.code.tex 2020/12/27 v3.1.8b (3.1.8b)
 (/usr/local/texlive/2021/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version
 -0-65.sty
 Package: pgfcomp-version-0-65 2020/12/27 v3.1.8b (3.1.8b)
-\pgf@nodesepstart=\dimen197
-\pgf@nodesepend=\dimen198
+\pgf@nodesepstart=\dimen199
+\pgf@nodesepend=\dimen256
 )
 (/usr/local/texlive/2021/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version
 -1-18.sty
@@ -692,8 +697,8 @@ Package: pgfcomp-version-1-18 2020/12/27 v3.1.8b (3.1.8b)
 Package: pgffor 2020/12/27 v3.1.8b (3.1.8b)
 
 (/usr/local/texlive/2021/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex)
-\pgffor@iter=\dimen199
-\pgffor@skip=\dimen256
+\pgffor@iter=\dimen257
+\pgffor@skip=\dimen258
 \pgffor@stack=\toks35
 \pgffor@toks=\toks36
 ))
@@ -705,16 +710,16 @@ Package: tikz 2020/12/27 v3.1.8b (3.1.8b)
 dlers.code.tex
 File: pgflibraryplothandlers.code.tex 2020/12/27 v3.1.8b (3.1.8b)
 \pgf@plot@mark@count=\count288
-\pgfplotmarksize=\dimen257
+\pgfplotmarksize=\dimen259
 )
-\tikz@lastx=\dimen258
-\tikz@lasty=\dimen259
-\tikz@lastxsaved=\dimen260
-\tikz@lastysaved=\dimen261
-\tikz@lastmovetox=\dimen262
-\tikz@lastmovetoy=\dimen263
-\tikzleveldistance=\dimen264
-\tikzsiblingdistance=\dimen265
+\tikz@lastx=\dimen260
+\tikz@lasty=\dimen261
+\tikz@lastxsaved=\dimen262
+\tikz@lastysaved=\dimen263
+\tikz@lastmovetox=\dimen264
+\tikz@lastmovetoy=\dimen265
+\tikzleveldistance=\dimen266
+\tikzsiblingdistance=\dimen267
 \tikz@figbox=\box60
 \tikz@figbox@bg=\box61
 \tikz@tempbox=\box62
@@ -744,10 +749,10 @@ File: tikzlibrarycalc.code.tex 2020/12/27 v3.1.8b (3.1.8b)
 (/usr/local/texlive/2021/texmf-dist/tex/generic/pgf/libraries/pgflibraryarrows.
 meta.code.tex
 File: pgflibraryarrows.meta.code.tex 2020/12/27 v3.1.8b (3.1.8b)
-\pgfarrowinset=\dimen266
-\pgfarrowlength=\dimen267
-\pgfarrowwidth=\dimen268
-\pgfarrowlinewidth=\dimen269
+\pgfarrowinset=\dimen268
+\pgfarrowlength=\dimen269
+\pgfarrowwidth=\dimen270
+\pgfarrowlinewidth=\dimen271
 )
 (/usr/local/texlive/2021/texmf-dist/tex/generic/pgf/frontendlayer/tikz/librarie
 s/tikzlibrarybending.code.tex
@@ -760,18 +765,18 @@ File: pgfmodulebending.code.tex 2020/12/27 v3.1.8b (3.1.8b)
 (/usr/local/texlive/2021/texmf-dist/tex/generic/pgf/modules/pgfmodulenonlineart
 ransformations.code.tex
 File: pgfmodulenonlineartransformations.code.tex 2020/12/27 v3.1.8b (3.1.8b)
-\pgftransformnonlinearflatness=\dimen270
+\pgftransformnonlinearflatness=\dimen272
 )
 (/usr/local/texlive/2021/texmf-dist/tex/generic/pgf/libraries/pgflibrarycurvili
 near.code.tex
 File: pgflibrarycurvilinear.code.tex 2020/12/27 v3.1.8b (3.1.8b)
-\pgf@curvilinear@time@a=\dimen271
-\pgf@curvilinear@length@a=\dimen272
-\pgf@curvilinear@length@b=\dimen273
-\pgf@curvilinear@length@c=\dimen274
-\pgf@curvilinear@length@d=\dimen275
+\pgf@curvilinear@time@a=\dimen273
+\pgf@curvilinear@length@a=\dimen274
+\pgf@curvilinear@length@b=\dimen275
+\pgf@curvilinear@length@c=\dimen276
+\pgf@curvilinear@length@d=\dimen277
 )
-\pgf@arrows@the@rigidity=\dimen276
+\pgf@arrows@the@rigidity=\dimen278
 ))
 (/usr/local/texlive/2021/texmf-dist/tex/generic/pgf/frontendlayer/tikz/librarie
 s/tikzlibraryfpu.code.tex
@@ -781,17 +786,17 @@ e.tex))
 \pgf@circ@count@a=\count297
 \pgf@circ@count@b=\count298
 \pgf@circ@count@c=\count299
-\pgf@circ@res@up=\dimen277
-\pgf@circ@res@down=\dimen278
-\pgf@circ@res@zero=\dimen279
-\pgf@circ@res@left=\dimen280
-\pgf@circ@res@right=\dimen281
-\pgf@circ@res@other=\dimen282
-\pgf@circ@res@step=\dimen283
-\pgf@circ@res@temp=\dimen284
-\pgf@circ@Rlen=\dimen285
-\pgf@circ@scaled@Rlen=\dimen286
-\pgfstartlinewidth=\dimen287
+\pgf@circ@res@up=\dimen279
+\pgf@circ@res@down=\dimen280
+\pgf@circ@res@zero=\dimen281
+\pgf@circ@res@left=\dimen282
+\pgf@circ@res@right=\dimen283
+\pgf@circ@res@other=\dimen284
+\pgf@circ@res@step=\dimen285
+\pgf@circ@res@temp=\dimen286
+\pgf@circ@Rlen=\dimen287
+\pgf@circ@scaled@Rlen=\dimen288
+\pgfstartlinewidth=\dimen289
 ) (/usr/local/texlive/2021/texmf-dist/tex/generic/circuitikz/pgfcircutils.tex)
 (/usr/local/texlive/2021/texmf-dist/tex/generic/circuitikz/pgfcircpath.tex)
 (/usr/local/texlive/2021/texmf-dist/tex/generic/circuitikz/pgfcircshapes.tex)
@@ -806,7 +811,7 @@ e.tex))
 (/usr/local/texlive/2021/texmf-dist/tex/generic/circuitikz/pgfcircmultipoles.te
 x) (/usr/local/texlive/2021/texmf-dist/tex/generic/circuitikz/pgfcirclabel.tex)
 (/usr/local/texlive/2021/texmf-dist/tex/generic/circuitikz/pgfcircvoltage.tex
-\pgfcirc@labelshift=\dimen288
+\pgfcirc@labelshift=\dimen290
 )
 (/usr/local/texlive/2021/texmf-dist/tex/generic/circuitikz/pgfcirccurrent.tex)
 (/usr/local/texlive/2021/texmf-dist/tex/generic/circuitikz/pgfcircflow.tex))
@@ -823,22 +828,22 @@ File: t2acmr.fd 2001/08/11 v1.0a Computer Modern Cyrillic font definitions
 ))
 \openout1 = `test.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 24.
-LaTeX Font Info:    ... okay on input line 24.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 24.
-LaTeX Font Info:    ... okay on input line 24.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 24.
-LaTeX Font Info:    ... okay on input line 24.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 24.
-LaTeX Font Info:    ... okay on input line 24.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 24.
-LaTeX Font Info:    ... okay on input line 24.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 24.
-LaTeX Font Info:    ... okay on input line 24.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 24.
-LaTeX Font Info:    ... okay on input line 24.
-LaTeX Font Info:    Checking defaults for T2A/cmr/m/n on input line 24.
-LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for T2A/cmr/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -874,17 +879,17 @@ LaTeX Font Info:    ... okay on input line 24.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-LaTeX Info: Redefining \th on input line 24.
+LaTeX Info: Redefining \th on input line 32.
 (/usr/local/texlive/2021/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count302
-\scratchdimen=\dimen289
+\scratchdimen=\dimen291
 \scratchbox=\box65
 \nofMPsegments=\count303
 \nofMParguments=\count304
 \everyMPshowfont=\toks37
 \MPscratchCnt=\count305
-\MPscratchDim=\dimen290
+\MPscratchDim=\dimen292
 \MPnumerator=\count306
 \makeMPintoPDFobject=\count307
 \everyMPtoPDFconversion=\toks38
@@ -925,43 +930,43 @@ Package grfext Info: Graphics extension search list:
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-LaTeX Font Info:    Trying to load font information for OML+cmr on input line 2
-5.
+LaTeX Font Info:    Trying to load font information for OML+cmr on input line 3
+3.
 
 (/usr/local/texlive/2021/texmf-dist/tex/latex/base/omlcmr.fd
 File: omlcmr.fd 2019/12/16 v2.5j Standard LaTeX font definitions
 )
 
 LaTeX Font Warning: Font shape `OML/cmr/m/up' undefined
-(Font)              using `OML/cmr/m/it' instead on input line 25.
+(Font)              using `OML/cmr/m/it' instead on input line 33.
 
 LaTeX Font Info:    Font shape `OML/cmr/m/it' in size <14.4> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 25.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 33.
 LaTeX Font Info:    Font shape `OML/cmr/m/up' in size <10> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 25.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 33.
 LaTeX Font Info:    Font shape `OML/cmr/m/up' in size <7> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 25.
-LaTeX Font Info:    Trying to load font information for OMS+cmr on input line 2
-5.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 33.
+LaTeX Font Info:    Trying to load font information for OMS+cmr on input line 3
+3.
 (/usr/local/texlive/2021/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2019/12/16 v2.5j Standard LaTeX font definitions
 )
 
 LaTeX Font Warning: Font shape `OMS/cmr/m/up' undefined
-(Font)              using `OMS/cmr/m/n' instead on input line 25.
+(Font)              using `OMS/cmr/m/n' instead on input line 33.
 
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <14.4> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 25.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 33.
 LaTeX Font Info:    Font shape `OMS/cmr/m/up' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 25.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 33.
 LaTeX Font Info:    Font shape `OMS/cmr/m/up' in size <7> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 25.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 25.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 33.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 33.
 
 (/usr/local/texlive/2021/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 25.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 33.
 
 
 (/usr/local/texlive/2021/texmf-dist/tex/latex/amsfonts/umsb.fd
@@ -969,56 +974,51 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 
 LaTeX Font Warning: Font shape `T2A/cmr/m/up' undefined
-(Font)              using `T2A/cmr/m/n' instead on input line 25.
+(Font)              using `T2A/cmr/m/n' instead on input line 33.
 
-LaTeX Font Info:    Trying to load font information for U+rsfs on input line 25
+LaTeX Font Info:    Trying to load font information for U+rsfs on input line 33
 .
 (/usr/local/texlive/2021/texmf-dist/tex/latex/jknapltx/ursfs.fd
 File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
 )
 LaTeX Font Info:    Font shape `OML/cmr/m/up' in size <12> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 27.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 35.
 LaTeX Font Info:    Font shape `OML/cmr/m/up' in size <8> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 27.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 35.
 LaTeX Font Info:    Font shape `OML/cmr/m/up' in size <6> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 27.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 35.
 LaTeX Font Info:    Font shape `OMS/cmr/m/up' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 27.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 35.
 LaTeX Font Info:    Font shape `OMS/cmr/m/up' in size <8> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 27.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 35.
 LaTeX Font Info:    Font shape `OMS/cmr/m/up' in size <6> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 27.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 35.
  [1
 
-{/usr/local/texlive/2021/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] (./
-test.aux)
+{/usr/local/texlive/2021/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] (./test
+.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
  ) 
 Here is how much of TeX's memory you used:
- 29271 strings out of 478994
- 702888 string characters out of 5858184
- 1204420 words of memory out of 5000000
- 46359 multiletter control sequences out of 15000+600000
+ 29297 strings out of 478994
+ 703341 string characters out of 5858184
+ 1198872 words of memory out of 5000000
+ 46381 multiletter control sequences out of 15000+600000
  418914 words of font info for 71 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 102i,6n,103p,590b,251s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 102i,6n,103p,442b,251s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t2a.enc
-}</usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb>
-</usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><
-/usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></u
-sr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/
-local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/l
-ocal/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></u
-sr/local/texlive/2021/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb></usr
-/local/texlive/2021/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/l
-ocal/texlive/2021/texmf-dist/fonts/type1/public/cm-super/sfrm1440.pfb></usr/loc
-al/texlive/2021/texmf-dist/fonts/type1/public/cm-super/sfrm2074.pfb>
-Output written on test.pdf (2 pages, 96227 bytes).
+}</usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></
+usr/local/texlive/2021/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb></us
+r/local/texlive/2021/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/
+local/texlive/2021/texmf-dist/fonts/type1/public/cm-super/sfrm1440.pfb></usr/lo
+cal/texlive/2021/texmf-dist/fonts/type1/public/cm-super/sfrm2074.pfb>
+Output written on test.pdf (1 page, 43463 bytes).
 PDF statistics:
- 55 PDF objects out of 1000 (max. 8388607)
- 40 compressed objects within 1 object stream
+ 32 PDF objects out of 1000 (max. 8388607)
+ 23 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 

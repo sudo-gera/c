@@ -1,28 +1,45 @@
-from pynput.mouse import Controller
-a=Controller()
-from time import *
-scs=[1440,900]
-rect=[6,
-	0,	0,
-	  0]
-while 1:
-#	print(list(map(lambda x:str(10**9+round(x,4))[6:],a.position)),end='\n',sep='\t')
-	if a.position[1]<rect[0]:
-		a.position=(a.position[0],rect[0])
-	if a.position[1]<45 and a.position[1]*20>a.position[0]*45:
-		a.position=[20,45]
-	# if a.position[0]+a.position[1]*2<80:
-	# 	a.position=(a.position[0],(80-a.position[0])/2)
-	# if a.position[0]*2+a.position[1]<64:
-	# 	a.position=((64-a.position[1])/2,a.position[1])
+# # def main():
+# if 1:
+# 	from time import sleep
+# 	sleep(1)
+# 	import pygame
+# 	clock = pygame.time.Clock()ww111234rf
+# 	pygame.init()
+# 	pygame.display.set_mode([333,333]).fill([20,20,40])
+# 	done = 0
+# 	while not done:
+# 		pygame.display.update()
+# 		for e in pygame.event.get():
+# 			print(e)
+# 			if e.type == pygame.QUIT or (e.type == pygame.KEYUP and e.key == pygame.K_ESCAPE):
+# 				done = 1
+# 				break
+# 		clock.tick(50)
+# 	# pygame.display.quit()
+# 	pygame.quit()
+# main()
 
+# from pynput.keyboard import Listener
+# def run(q):
+# 	pass
+# 	# print(q)
+# listener = Listener(
+#     on_press=run,
+#     on_release=run)
+# listener.start()
+# listener.join()
 
-
-
-	# if a.position[1]>scs[1]-rect[3]:
-	# 	a.position=(a.position[0],scs[1]-rect[3])
-	# if a.position[0]<rect[1]:
-	# 	a.position=(rect[1],a.position[1])
-	# if a.position[0]>scs[0]-rect[2]:
-	# 	a.position=(scs[0]-rect[2],a.position[1])
-	sleep(0.03)
+if 0 and __name__ == '__main__':
+	from pynput.mouse import Controller
+	a=Controller()
+	from time import *
+	scs=[1440,900]
+	rect=[6,
+		0,	0,
+		  0]
+	while 1:
+		if a.position[1]<rect[0]:
+			a.position=(a.position[0],rect[0])
+		if a.position[1]<45 and a.position[1]*20>a.position[0]*45:
+			a.position=[20,45]
+		sleep(0.03)

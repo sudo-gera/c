@@ -1,18 +1,18 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.9.29)  30 SEP 2021 09:56
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.9.29)  20 OCT 2021 18:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**text.tex
+**+
 
 ! Emergency stop.
-<*> text.tex
-            
+<*> +
+     
 End of file on the terminal!
 
  
 Here is how much of TeX's memory you used:
- 2 strings out of 478994
- 96 string characters out of 5858184
+ 3 strings out of 478994
+ 97 string characters out of 5858184
  283044 words of memory out of 5000000
  17591 multiletter control sequences out of 15000+600000
  403430 words of font info for 27 fonts, out of 8000000 for 9000

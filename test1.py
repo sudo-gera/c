@@ -1,13 +1,8 @@
-c=1
-def run(n):
-	if n==0:
-		return
-	global res
-	res+=[0]*c
-	run(n//3)
-	run(2*n//3)
-for w in range(40,80):
-	res=[]
-	run(w)
-	from math import log
-	print(log(len(res),w))
+from h import *
+a=open('test1.txt','a')
+# for w in range(10**9):
+# 	a.write(choice(['\n',chr(randint(32,127))]))
+# 	if w%10**5==0:
+# 		print(w/10**9)
+a.write('1234\n')
+a.close()

@@ -7,7 +7,7 @@ k=pynput.keyboard.Controller()
 
 k.press(pynput.keyboard.Key.cmd)
 k.press(pynput.keyboard.Key.ctrl)
-k.press('y')
+k.press('e')
 k.release(pynput.keyboard.Key.cmd)
 k.release(pynput.keyboard.Key.ctrl)
 sleep(0.2)
