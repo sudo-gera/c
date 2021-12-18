@@ -9,7 +9,7 @@ else:
 ca=argv[:argv.index(file)+1]
 ra=argv[argv.index(file)+1:]
 ca='g++ -g -fsanitize=address,undefined -std=c++17 -Wfatal-errors'.split()+ca
-ra='./a.out'.split()+ra
+ra='gdb ./a.out'.split()+ra
 if run(ca).returncode:
 	exit()
 a=run(ra).returncode

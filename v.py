@@ -8,8 +8,8 @@ else:
 	file=[w for w in argv if not w.startswith('-')][0]
 ca=argv[:argv.index(file)+1]
 ra=argv[argv.index(file)+1:]
-ca='g++ -g -fsanitize=address,undefined -std=c++17 -Wfatal-errors'.split()+ca
-ra='./a.out'.split()+ra
+ca='g++ -g -std=c++17 -Wfatal-errors'.split()+ca
+ra='valgrind -s --track-origins=yes --leak-check=full ./a.out'.split()+ra
 if run(ca).returncode:
 	exit()
 a=run(ra).returncode
