@@ -19,10 +19,10 @@ if not os.geteuid() == 0:
 
 	run(['sudo','python3',__file__])
 
-	run([wsubl,dirname(abspath(__file__))])
+	run(['subl',dirname(abspath(__file__))])
 	exit()
 else:
 	open('/usr/bin/wind','wb').write(urlopen('https://raw.githubusercontent.com/sudo-gera/wind/master/wind.py').read())
 	run(['chmod','777','/usr/bin/wind'])
-	open('/usr/bin/subl','wb').write(urlopen('https://raw.githubusercontent.com/sudo-gera/c/master/subl').read().replace('/mnt/c/Program Files/Sublime Text/subl.exe',subl))
+	open('/usr/bin/subl','wb').write(urlopen('https://raw.githubusercontent.com/sudo-gera/c/master/subl').read().replace(b'/mnt/c/Program Files/Sublime Text/subl.exe',subl.encode()))
 	run(['chmod','777','/usr/bin/subl'])
