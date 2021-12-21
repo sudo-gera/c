@@ -9,11 +9,11 @@ from os.path import *
 import os
 if not os.geteuid() == 0:
 	from pathlib import Path
-	open(str(Path.home())+'/g','wb').write(urlopen('https://raw.githubusercontent.com/sudo-gera/c/master/g.py').read())
+	open(str(Path.home())+'/g','wb').write(urlopen('https://raw.githubusercontent.com/sudo-gera/c/master/g1.py').read())
 	run(['chmod','777',str(Path.home())+'/g'])
-	open(str(Path.home())+'/v','wb').write(urlopen('https://raw.githubusercontent.com/sudo-gera/c/master/v.py').read())
+	open(str(Path.home())+'/v','wb').write(urlopen('https://raw.githubusercontent.com/sudo-gera/c/master/v1.py').read())
 	run(['chmod','777',str(Path.home())+'/v'])
-	open(str(Path.home())+'/b','wb').write(urlopen('https://raw.githubusercontent.com/sudo-gera/c/master/b.py').read())
+	open(str(Path.home())+'/b','wb').write(urlopen('https://raw.githubusercontent.com/sudo-gera/c/master/b1.py').read())
 	run(['chmod','777',str(Path.home())+'/b'])
 	open(str(Path.home())+'/.bashrc','a').write('\nPATH="$PATH:~/.local/bin:~:."\n')
 

@@ -1,16 +1,14 @@
 #include <bits/stdc++.h>
 #include "pointer.hpp"
 using namespace std;
-#define elif else if
-#define int int64_t
 
 template <typename t>
 struct el{
 	t v;
-	int w;
+	int64_t w;
 	pointer<el> _z=nullptr;
 	pointer<el> _x=nullptr;
-	int s=1;
+	int64_t s=1;
 	el(t _v){
 		v=_v;
 		w=rand();
@@ -36,7 +34,7 @@ struct el{
 };
 
 template<typename T>
-pointer<el<T>> get_by_index(pointer<el<T>> s,int n){
+pointer<el<T>> get_by_index(pointer<el<T>> s,int64_t n){
 	if (!s){
 		cout<<__LINE__<<" ValueError"<<endl;
 		return (pointer<el<T>>)(nullptr);
@@ -70,10 +68,10 @@ void update(el<T>*t){
 	if (!(t->z()) and !(t->x())){
 		t->s=1;
 	}
-	elif (!(t->z())){
+	else if (!(t->z())){
 		t->s=t->x()->s+1;
 	}
-	elif (!(t->x())){
+	else if (!(t->x())){
 		t->s=t->z()->s+1;
 	}else{
 		t->s=t->z()->s+t->x()->s+1;
@@ -121,11 +119,11 @@ pointer<el<T>> merge(pointer<el<T>> t1,pointer<el<T>> t2){
 }
 
 template <typename T>
-pair<pointer<el<T>>,pointer<el<T>>> split(pointer<el<T>> t,int n){
+pair<pointer<el<T>>,pointer<el<T>>> split(pointer<el<T>> t,int64_t n){
 	if (!t){
 		return {(pointer<el<T>>)(nullptr),(pointer<el<T>>)(nullptr)};
 	}
-	elif (!(t->z())){
+	else if (!(t->z())){
 		if (n<1){
 			return {(pointer<el<T>>)(nullptr),t};
 		}
@@ -135,20 +133,20 @@ pair<pointer<el<T>>,pointer<el<T>>> split(pointer<el<T>> t,int n){
 			auto t2=tmp.second;
 			return {t,t2};
 		}
-	}elif (t->z()->s==n){
+	}else if (t->z()->s==n){
 		auto t1=t->z();
 		t->z((pointer<el<T>>)(0));
 		return {t1,t};
-	}elif (t->z()->s+1==n){
+	}else if (t->z()->s+1==n){
 		auto t2=t->x();
 		t->x((pointer<el<T>>)(nullptr));
 		return {t,t2};
-	}elif (t->z()->s+1<n){
+	}else if (t->z()->s+1<n){
 		auto tmp=split(t->x(),n-t->z()->s-1);
 		t->x(tmp.first);
 		auto t2=tmp.second;
 		return {t,t2};
-	}elif (t->z()->s>n){
+	}else if (t->z()->s>n){
 		auto tmp=split(t->z(),n);
 		auto t1=tmp.first;
 		t->z(tmp.second);
@@ -168,54 +166,44 @@ struct treap{
 			e=merge(e,pointer(el(w)));
 		}
 	}
-	treap(int l){
-		for (int w=0;w<l;++w){
+	treap(int64_t l){
+		for (int64_t w=0;w<l;++w){
 			e=merge(e,pointerel(T()));
 		}
 	}
 	treap(const treap&l){
-		for (int w=0;w<l.size();++w){
+		for (int64_t w=0;w<l.size();++w){
 			e=merge(e,pointer(el(l[w])));
 		}
 	}
 	void operator=(const treap&l){
 		e=nullptr;
-		for (int w=0;w<l.size();++w){
+		for (int64_t w=0;w<l.size();++w){
 			e=merge(e,pointer(el(l[w])));
 		}
 	}
-	// def __init__(s,l=[],f=[]):
-	// 	if isinstance(l,el):
-	// 		s.e=l
-	// 	elif l==None:
-	// 		s.e=l
-	// 	else:
-	// 		s.f=dict([[w,None] for w in f])
-	// 		l=list(l)
-	// 		s.e=init(l,0,len(l),f[:])
-	// 		# s.e=balance(l,ff=f[:])
-
-	int size()const{
+	
+	int64_t size()const{
 		return e?e->s:0;
 	}
 
-	T&operator[](int n){
+	T&operator[](int64_t n){
 		if (n<0){
 			n+=this->size();
 		}
 		return get_by_index(e,n)->v;
 	}
 
-	T&operator[](int n)const{
+	T&operator[](int64_t n)const{
 		if (n<0){
 			n+=this->size();
 		}
 		return get_by_index(e,n)->v;
 	}
 
-	friend int __cmp__(treap s,treap d){
-		int min_len=s.size()>d.size()?d.size():s.size();
-		for (int w=0;w<min_len;++w){
+	friend int64_t __cmp__(treap s,treap d){
+		int64_t min_len=s.size()>d.size()?d.size():s.size();
+		for (int64_t w=0;w<min_len;++w){
 			if (s[w]<d[w]){
 				return -1;
 			}
@@ -249,7 +237,7 @@ struct treap{
 	}
 
 
-	treap<T> cut(int n){
+	treap<T> cut(int64_t n){
 		auto tmp=split(this->e,n);
 		e=tmp.second;
 		treap<T> res;
@@ -260,7 +248,7 @@ struct treap{
 	friend ostream&operator<<(ostream&q,treap w){
 		auto r=to_list(w.e);
 		q<<'[';
-		int c=0;
+		int64_t c=0;
 		for (auto w:r){
 			if (c){
 				q<<", "<<w;
@@ -277,7 +265,7 @@ struct treap{
 
 signed main(){
 	cout<<__LINE__<<endl;
-	auto q=treap<int>();
+	auto q=treap<int64_t>();
 	cout<<__LINE__<<endl;
 	q.push_back(1);
 	q.push_back(2);
@@ -287,5 +275,6 @@ signed main(){
 	q.push_back(2);
 	q.push_back(3);
 	cout<<w<<endl;
+	cout<<q<<endl;
 	cout<<endl;
 }

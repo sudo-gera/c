@@ -1,11 +1,12 @@
+from random import *
 def create_input_string():
-	from random import randint
-	n=randint(1,10**7)
-	k=randint(1,min(n,10**4))
-	a=[randint(-10**18,10**18) for w in range(n)]
-	a=[str(w) for w in a]
-	en=' \n '
-	s=f'{n}  {k} \n { en.join(a) }'
+	n=randint(1,10**1)
+	a=[[randint(0,1),randint(-10**9,10**9)] for w in range(n)]
+	a=[w if w[0]==0 else w[:-1] for w in a]
+	a=[[str(e) for e in w] for w in a]
+	a=[' '.join(w) for w in a]
+	en='\n'
+	s=f'{n}\n{ en.join(a) }'
 	return s
 
 def how_to_run(filename):
@@ -30,6 +31,8 @@ def cmp(log):
 		c=[how_to_run(w) for w in argv[1:]]
 		p=create_input_string()
 		c=[[run(e,stdout=PIPE,input=p.encode()) for e in w] for w in c]
+		if any([any([e.returncode for e in w]) for w in c]):
+			log.put([p])
 		c=[['\n'.join([r.strip() for r in (e.stdout.decode() if hasattr(e,'stdout') and e.stdout!=None else '').strip().split('\n') if r.strip()])+\
 			'\n'.join([r.strip() for r in (e.stderr.decode() if hasattr(e,'stderr') and e.stderr!=None else '').strip().split('\n') if r.strip()])
 			for e in w] for w in c]
@@ -59,7 +62,7 @@ def logging(log):
 	t=time()
 	while 1:
 		q=log.get()
-		if type(q)==list:
+		if type(q)==list and len(q)==2:
 			print('\x1b[91mERROR\x1b[0m')
 			print('\x1b[94minput(str version)\x1b[0m')
 			print(str(q[0]))
@@ -72,6 +75,15 @@ def logging(log):
 				print('\x1b[94m'+argv[w]+'(repr version)\x1b[0m')
 				print(repr(q[w]))
 			print('\x1b[91mANSWERS ARE DIFFERENT\x1b[0m')
+			print()
+			exit()
+		if type(q)==list and len(q)==1:
+			print('\x1b[91mERROR\x1b[0m')
+			print('\x1b[94minput(str version)\x1b[0m')
+			print(str(q[0]))
+			print('\x1b[94minput(repr version)\x1b[0m')
+			print(repr(q[0]))
+			print('\x1b[91mNON-ZERO RETURN CODE\x1b[0m')
 			print()
 			exit()
 		else:
@@ -103,7 +115,7 @@ if __name__=='__main__':
 	except KeyboardInterrupt:
 		pass
 	from os import system
-	system('rm -r tmp*.trash.trash*')
+	system('rm -fr tmp*.trash.trash*')
 	for w in s:
 		w.terminate()
 	from time import sleep
