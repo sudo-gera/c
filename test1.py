@@ -1,2 +1,19 @@
-import os
-print(os.name,__file__)
+class r:
+	def __init__():
+		pass
+	def __add__(s,o):
+		return r(s.q+r(o.).q)
+	def __radd__(s,o):
+		return r(s.q+r(o).q)
+	def __sub__(s,o):
+		return r(s.q-r(o).q)
+	def __rsub__(s,o):
+		return r(r(o).q-s.q)
+	def __mul__(s,o):
+		return r(s.q*r(o).q)
+	def __rmul__(s,o):
+		return r(r(o).q*s.q)
+	def __div__(s,o):
+		return r(s.q/pow(r(o).q,s.b-2,s.b))
+	def __rdiv__(s,o):
+		return r(r(o).q/s.q)

@@ -1,6 +1,5 @@
-#include <ext/rope>
-
 ima{
-	__gnu_cxx::rope<int64_t> a;
-	
+	#define TO_REPEAT(q) std::cout<<q<<'\n'
+	#define SEP ;
+	REPEAT(3);
 }

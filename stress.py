@@ -1,13 +1,13 @@
 from random import *
+def rand(q=2**64):
+	return randint(0,q-1)
 def create_input_string():
-	n=randint(1,10**1)
-	a=[[randint(0,1),randint(-10**9,10**9)] for w in range(n)]
-	a=[w if w[0]==0 else w[:-1] for w in a]
-	a=[[str(e) for e in w] for w in a]
-	a=[' '.join(w) for w in a]
-	en='\n'
-	s=f'{n}\n{ en.join(a) }'
-	return s
+	a='\n'.join([
+		' '*(rand()%10)+  ''.join([str(rand(10)) for e in range(rand(100))]) +' '*(rand()%10)
+	for w in range(rand(100))])+'\n'
+
+
+	return a
 
 def how_to_run(filename):
 	if filename.endswith('.cpp'):
@@ -30,7 +30,7 @@ def cmp(log):
 		from subprocess import run,PIPE
 		c=[how_to_run(w) for w in argv[1:]]
 		p=create_input_string()
-		c=[[run(e,stdout=PIPE,input=p.encode()) for e in w] for w in c]
+		c=[[run(e,stdout=PIPE,stderr=PIPE,input=p.encode()) for e in w] for w in c]
 		if any([any([e.returncode for e in w]) for w in c]):
 			log.put([p])
 		c=[['\n'.join([r.strip() for r in (e.stdout.decode() if hasattr(e,'stdout') and e.stdout!=None else '').strip().split('\n') if r.strip()])+\
