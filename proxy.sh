@@ -1,6 +1,6 @@
 echo "source this";
 hp="8080"
-sp="1088"
+sp="1080"
 export ftp_proxy="192.168.49.1:$hp";
 export FTP_PROXY="192.168.49.1:$hp";
 export http_proxy="192.168.49.1:$hp";
