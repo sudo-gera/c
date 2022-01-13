@@ -1,5 +1,8 @@
-ima{
-	#define TO_REPEAT(q) std::cout<<q<<'\n'
-	#define SEP ;
-	REPEAT(3);
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <algorithm>
+
+int main(){
+	size_t q;
 }
