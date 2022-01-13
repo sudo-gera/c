@@ -1,13 +1,7 @@
-from random import *
-def rand(q=2**64):
-	return randint(0,q-1)
 def create_input_string():
-	a='\n'.join([
-		' '*(rand()%10)+  ''.join([str(rand(10)) for e in range(rand(100))]) +' '*(rand()%10)
-	for w in range(rand(100))])+'\n'
+	from subprocess import run,PIPE
+	return run(['python3','create_input.py'],stdout=PIPE).stdout.decode()
 
-
-	return a
 
 def how_to_run(filename):
 	if filename.endswith('.cpp'):
