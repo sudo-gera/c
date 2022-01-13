@@ -4,10 +4,6 @@
 #include <algorithm>
 
 int main(){
-<<<<<<< HEAD
-	size_t q;
-	
-=======
 	size_t n;
 	scanf("%zi",&n);
 	auto a=new size_t[n];
@@ -19,5 +15,4 @@ int main(){
 	q=1.0*(clock()-q)/CLOCKS_PER_SEC;
 	printf("%ld\n",q);
 	printf("%zi\n",a[rand()%n]);
->>>>>>> 0ce36dc1c052752b72fa4842f651d2bfa4155dce
 }
