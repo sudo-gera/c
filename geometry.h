@@ -5,31 +5,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
-using namespace std;
+#include <list>
+#include <algorithm>
 
-using longdouble=long double;
+double zero=0.000012345;
 
-longdouble zero=0.000012345;
-
-#define log {std::cerr<<__LINE__<<" "<<__PRETTY_FUNCTION__<<std::endl;}
-
-#ifndef HOME
-#define ic(...)
-
-#define eic(...) __VA_ARGS__
-#endif
+double pi=3.141592653589793;
 
 struct Point{
-	longdouble x,y;
+	double x,y;
 	Point(){}
-	Point(longdouble q,longdouble w):x(q),y(w){}
+	Point(double q,double w):x(q),y(w){}
 };
-
-#if HOME
-auto print_one(Point a){
-	return str("Point(")+print_one(a.x)+", "+print_one(a.y)+")";
-}
-#endif
 
 bool operator==(Point a,Point s){
 	return abs(a.x-s.x)<zero and abs(a.y-s.y)<zero;
@@ -46,24 +33,24 @@ public:
 		a=_a;
 		s=_s;
 	}
-	Line(longdouble k,longdouble b){
+	Line(double k,double b){
 		*this=Line({0,b},{1,b+k});
 	}
-	Line(Point a,longdouble k){
+	Line(Point a,double k){
 		*this=Line(a,{a.x+1,a.y+k});
 	}
 };
-
-///////////////////////////////////////////////////////////////////////////////
 
 struct vect;
 
 vect operator+(vect q,vect e);
 
+vect operator*(vect q,double e);
+
 struct vect{
-	longdouble x=0,y=0;
+	double x=0,y=0;
 	vect(){};
-	vect(longdouble _x,longdouble _y):
+	vect(double _x,double _y):
 		x(_x),
 		y(_y)
 	{}
@@ -75,52 +62,60 @@ struct vect{
 		x(_y.x),
 		y(_y.y)
 	{}
-	longdouble abs(){
-		// ic(x,y)
+	vect operator-(){
+		return {-x,-y};
+	}
+	double abs(){
 		return sqrt(x*x+y*y);
 	}
 	operator Point()const{
 		return {x,y};
 	}
-	vect rotate(longdouble a){
+	vect rotate(double a){
 		return vect(
 			x*cosl(a)-y*sinl(a),
 			y*cosl(a)+x*sinl(a)
-		)+vect(1,1)+vect(-1,-1);
-	}
-	vect orotate(){
-		return {-y,x};
+		);
 	}
 	Line to_line(Point q){
 		return Line(q,vect(q)+*this);
 	}
-	longdouble coord_angle(){
+	vect perp(){
+		return {-y,x};
+	}
+	double coord_angle(){
 		return atan2(y,x);
 	}
-	longdouble angle(vect e){
-		// ic(*this,e)
+	double angle(vect e){
 		auto t=e.coord_angle()-coord_angle();
-		if (t<3.141592653589793){
-			t+=3.141592653589793*2;
+		if (t<pi){
+			t+=pi*2;
 		}
-		if (t>3.141592653589793){
-			t-=3.141592653589793*2;
+		if (t>pi){
+			t-=pi*2;
 		}
 		return t;
 	}
+	vect(Point q,Point e,double r,double t);
+	vect(Line q){
+		*this=vect(q.a,q.s);
+	}
 };
 
-#if HOME
-auto print_one(vect a){
-	return str("vect(")+print_one(a.x)+", "+print_one(a.y)+")";
+Line perp_line(Point q,Point w,Point e){
+	return vect(q,w).perp().to_line(e);
 }
-auto print_one(Line a){
-	return str("Line(")+print_one(a.a)+", "+print_one(a.s)+")";
-}
-#endif
 
-longdouble angle(vect q,vect e){
+vect::vect(Point q,Point e,double r,double t){
+	*this=vect(q,e)*r+vect(q,e).perp()*t;
+}
+
+double angle(vect q,vect e){
 	return q.angle(e);
+}
+
+double angle(Point q,Point w,Point e){
+	return angle(vect(q,w),vect(w,e));
 }
 
 vect operator+(vect q,vect e){
@@ -131,20 +126,16 @@ vect operator-(vect q,vect e){
 	return {q.x-e.x,q.y-e.y};
 }
 
-vect operator*(vect q,longdouble e){
+vect operator*(vect q,double e){
 	return {q.x*e,q.y*e};
 }
 
-vect operator*(longdouble q,vect e){
+vect operator*(double q,vect e){
 	return {q*e.x,q*e.y};
 }
 
-vect operator/(vect q,longdouble e){
+vect operator/(vect q,double e){
 	return {q.x/e,q.y/e};
-}
-
-vect operator/(longdouble q,vect e){
-	return {q/e.x,q/e.y};
 }
 
 auto operator*(vect q,vect e){
@@ -160,8 +151,6 @@ auto operator^(vect q,vect e){
 	return t>0?1:t<0?-1:0;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-
 bool operator==(Line q,Line e){
 	auto a=vect(q.a,q.s)/vect(q.a,q.s).abs();
 	auto s=vect(e.a,e.s)/vect(e.a,e.s).abs();
@@ -174,23 +163,23 @@ bool operator!=(Line q,Line w){
 
 class Shape{
 public:
-	virtual longdouble perimeter()=0;
-	virtual longdouble area()=0;
+	virtual double perimeter()=0;
+	virtual double area()=0;
 	virtual bool isCongruentTo(const Shape&q);
 	virtual bool isSimilarTo(const Shape&q);
 	virtual bool containsPoint(const Point&q)=0;
-	virtual void rotate(Point center, longdouble angle)=0;
+	virtual void rotate(Point center, double angle)=0;
 	virtual void reflect(Point center)=0;
 	virtual void reflect(Line axis)=0;
-	virtual void scale(Point center, longdouble coefficient)=0;
+	virtual void scale(Point center, double coefficient)=0;
 	virtual ~Shape(){}
 };
 
-Point rotate(Point q,Point e,longdouble r){
+Point rotate(Point q,Point e,double r){
 	return e+vect(e,q).rotate(r);
 }
 
-Point scale(Point q,Point e,longdouble r){
+Point scale(Point q,Point e,double r){
 	return e+vect(e,q)*r;
 }
 
@@ -205,27 +194,27 @@ Point intersect(Line q,Line e){
 		x4=e.s.x,
 		y4=e.s.y;
 	return{
-		((x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4))
-		/
-		((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4)),
-		((x1*y2-y1*x2)*(y3-y4)-(y1-y2)*(x3*y4-y3*x4))
-		/
-		((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4))
+				((x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4))
+		/ //	---------------------------------------------
+					((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4))
+	,
+				((x1*y2-y1*x2)*(y3-y4)-(y1-y2)*(x3*y4-y3*x4))
+		/ //	---------------------------------------------
+					((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4))
 	};
 
-	// auto t=
-	// 	(x1-x3)*(y3-y4)-(y1-y3)*(x3-x4)
-	// 	/
-	// 	()
+}
+
+Point normal(Point q,Line e){
+	return intersect(perp_line(e.a,e.s,q),e);
 }
 
 Point reflect(Point q,Line e){
-	// ic(q,e)
-	return q-2*vect(
-		intersect(
-			vect(e.a,e.s).orotate().to_line(q),e
-		),q
-	);
+	return 2*normal(q,e)-q;
+}
+
+Point reflect(Point q,Point e){
+	return 2*e-q;
 }
 
 class Polygon:public Shape{
@@ -238,33 +227,18 @@ public:
 		return vertices;
 	}
 	bool isConvex(){
-		// ssize_t vs=vertices.size();
-		// auto j=
-		// 	vect(
-		// 		vertices[vs-1],
-		// 		vertices[0]
-		// 	)^vect(
-		// 		vertices[0],
-		// 		vertices[1]
-		// 	);
-		// for (ssize_t w=0;w<ssize_t(vertices.size());++w){
-		// 	if (((vect(
-		// 			vertices[(w-1)%vs],
-		// 			vertices[w]
-		// 		)^vect(
-		// 			vertices[w],
-		// 			vertices[(w+1)%vs]
-		// 		)))!=j){
-		// 		return false;
-		// 	}
-		// }
-		// return true;
-		longdouble direction=0;
+		double direction=0;
 		for (size_t w=0;w<vertices.size();++w){
-			direction+=angle(vect(vertices[w],vertices[(w+1)%vertices.size()]),vect(vertices[(w+1)%vertices.size()],vertices[(w+2)%vertices.size()]));
+			auto&A=vertices[w];
+			auto&B=vertices[(w+1)%vertices.size()];
+			auto&C=vertices[(w+2)%vertices.size()];
+			direction+=angle(A,B,C);
 		}
 		for (size_t w=0;w<vertices.size();++w){
-			if (direction*angle(vect(vertices[w],vertices[(w+1)%vertices.size()]),vect(vertices[(w+1)%vertices.size()],vertices[(w+2)%vertices.size()]))<0){
+			auto&A=vertices[w];
+			auto&B=vertices[(w+1)%vertices.size()];
+			auto&C=vertices[(w+2)%vertices.size()];
+			if (direction*angle(A,B,C)<0){
 				return false;
 			}
 		}
@@ -273,110 +247,52 @@ public:
 	Polygon(const std::vector<Point>&q):
 		vertices(q.begin(),q.end())
 	{}
-
-	// template <typename...T>
-	// Polygon(const T&...q)
-	// 	:vertices({Point(q)...})
-	// {}
-
-	#define __rp__0(x) TO_REPEAT(x)
-	#define __rp__1(x) __rp__0(x##0) SEP __rp__0(x##1)
-	#define __rp__2(x) __rp__1(x##0) SEP __rp__1(x##1)
-	#define __rp__3(x) __rp__2(x##0) SEP __rp__2(x##1)
-	#define __rp__4(x) __rp__3(x##0) SEP __rp__3(x##1)
-	#define __rp__5(x) __rp__4(x##0) SEP __rp__4(x##1)
-	#define __rp__6(x) __rp__5(x##0) SEP __rp__5(x##1)
-	#define __rp__7(x) __rp__6(x##0) SEP __rp__6(x##1)
-	#define __rp__8(x) __rp__7(x##0) SEP __rp__7(x##1)
-	#define __rp__9(x) __rp__8(x##0) SEP __rp__8(x##1)
-	#define REPEAT(x) __rp__##x(0b)
-	#define TO_REPEAT(x) Point q##x=Point(98765432123456789,98765432123456789)
-	#define SEP ,
-	Polygon(REPEAT(4)):
-	#undef TO_REPEAT
-	#define TO_REPEAT(x) q##x
-		vertices({REPEAT(4)})
-	#undef TO_REPEAT
-	{
-		while(vertices.size() and vertices[vertices.size()-1]==Point(98765432123456789,98765432123456789)){
-			vertices.pop_back();
-		}
-	}
-	#undef SEP
-
-	longdouble perimeter() override {
+	template <typename...T>
+	Polygon(const T&...q):
+		vertices({Point(q)...})
+	{}
+	double perimeter() override {
 		auto res=vect(vertices[vertices.size()-1],vertices[0]).abs();
 		for (size_t w=1;w<vertices.size();++w){
 			res+=vect(vertices[w-1],vertices[w]).abs();
 		}
 		return res;
 	}
-	longdouble area()override{
-		// __gnu_cxx::rope<Point> ver(vertices.begin(),vertices.end());
-		// longdouble direction=0;
-		// for (size_t w=0;w<vertices.size();++w){
-		// 	direction+=angle(vect(vertices[w],vertices[(w+1)%vertices.size()]),vect(vertices[(w+1)%vertices.size()],vertices[(w+2)%vertices.size()])) ;
-			// ic(direction)
-		// }
-		// vector<Point> ver;
-		// if (direction>0){
-		// 	ver=vector<Point>(vertices.begin(),vertices.end());
-		// }else{
-		// 	ver=vector<Point>(vertices.rbegin(),vertices.rend());
-		// }
-		longdouble res=0;
+	double area()override{
+		double res=0;
 		for (size_t w=2;w<vertices.size();++w){
 			res+=vect(vertices[0],vertices[w-1])/vect(vertices[w-1],vertices[w]);
 		}
 		return abs(res)/2;
-		// assert(0);
 	}
-	bool containsPoint(const Point&q)override{
-		// longdouble direction=0;
-		// for (size_t w=0;w<vertices.size();++w){
-		// 	direction+=angle(vect(vertices[w],vertices[(w+1)%vertices.size()]),vect(vertices[(w+1)%vertices.size()],vertices[(w+2)%vertices.size()])) ;
-		// 	ic(direction)
-		// }
-		// vector<Point> ver;
-		// if (direction>0){
-		// 	ver=vector<Point>(vertices.begin(),vertices.end());
-		// }else{
-		// 	ver=vector<Point>(vertices.rbegin(),vertices.rend());
-		// }
-		// for (size_t )
-		assert(0);
-		return size_t(&q-100);
-	}
-	void rotate(Point center, longdouble angle)override{
+	bool containsPoint(const Point&q)override;
+	void rotate(Point center, double angle)override{
 		for (auto&w:vertices){
 			w=::rotate(w,center,angle);
 		}
 	}
 	void reflect(Point center)override{
 		for (auto&w:vertices){
-			w=center-vect(center,w);
+			w=::reflect(w,center);			
 		}
 	}
 	void reflect(Line axis)override{
 		for (auto&w:vertices){
-			// w=w-2*vect(intersect(vect(axis.a,axis.s).orotate().to_line(w),axis),w);
 			w=::reflect(w,axis);
 		}
 	}
-	void scale(Point center, longdouble coefficient)override{
+	void scale(Point center, double coefficient)override{
 		for (auto&w:vertices){
 			w=::scale(w,center,coefficient);
 		}
 	}
 };
 
-
-
 class Ellipse:public Shape{
 public:
-	longdouble a,b,c,e;
+	double a,b,c,e;
 	Point f1,f2;
-	Ellipse(Point _f1,Point _f2,longdouble d):f1(_f1),f2(_f2){
+	Ellipse(Point _f1,Point _f2,double d):f1(_f1),f2(_f2){
 		a=d/2;
 		c=vect(_f1,_f2).abs()/2;
 		b=sqrt(a*a-c*c);
@@ -386,53 +302,66 @@ public:
 		return {f1,f2};
 	}
 	std::pair<Line, Line> directrices(){
-		auto p=vect(f1,f2).orotate();
-		auto d=vect(f1,f2)/c/2*a/e;
+		vect p=vect(f1,f2).perp();
+		vect d=vect(f1,f2)/c/2*a/e;
 		return {
 			p.to_line(center()+d),
 			p.to_line(center()-d)
 		};
 	}
-	longdouble eccentricity(){
+	double eccentricity(){
 		return e;
 	}
 	Point center(){
-		return (vect(f1)+vect(f2))/2;
+		return (f1+f2)/2;
 	}
-	longdouble perimeter(){
-		return 4*(3.141592653589793*a*b+a-b)/(a+b);
+	double perimeter(){
+		double res=0;
+		double dt=0.0000004;
+		double tmp;
+		for (double t=0;t<pi/2;t+=dt){
+			tmp=cos(t)*e;
+			res+=dt*sqrt(1-tmp*tmp);
+		}
+		return 4*a*res;
 	}
-	longdouble area(){
-		return a*b*3.141592653589793;
+	double area(){
+		return a*b*pi;
 	}
 	bool containsPoint(const Point&e){
 		return vect(f1,e).abs()+vect(f2,e).abs()<=a*2;
 	}
-	void rotate(Point center, longdouble angle){
+	void rotate(Point center, double angle){
 		f1=::rotate(f1,center,angle);
 		f2=::rotate(f2,center,angle);
 	}
 	void reflect(Point center){
-		f1=center-vect(center,f1);
-		f2=center-vect(center,f2);
+		f1=::reflect(f1,center);
+		f2=::reflect(f2,center);
 	}
 	void reflect(Line axis){
-		f1=f1-2*vect(intersect(vect(axis.a,axis.s).orotate().to_line(f1),axis),f1);
-		f2=f2-2*vect(intersect(vect(axis.a,axis.s).orotate().to_line(f2),axis),f2);
+		f1=::reflect(f1,axis);
+		f2=::reflect(f2,axis);
 	}
-	void scale(Point center, longdouble coefficient){
+	void scale(Point center, double coefficient){
 		f1=::scale(f1,center,coefficient);
 		f2=::scale(f2,center,coefficient);
+		a*=abs(coefficient);
+		b*=abs(coefficient);
+		c*=abs(coefficient);
 	}
 };
 
 class Circle:
 	public Ellipse{
 public:
-	Circle(Point q,longdouble d):
-		Ellipse(q,q,d)
+	Circle(Point q,double d):
+		Ellipse(q,q,d*2)
 	{}
-	longdouble radius(){
+	Circle(Point q,Point e):
+		Ellipse(q,q,vect(q,e).abs()*2)
+	{}
+	double radius(){
 		return a;
 	}
 };
@@ -441,19 +370,25 @@ class Rectangle:
 	public Polygon{
 public:
 	using Polygon::Polygon;
-	Rectangle(Point q,Point e,longdouble f){
-		if (f>1){
-			auto s=vect(q,e)/(f*f+1)+vect(q,e).orotate()*f/(f*f+1);
-			*this=Rectangle(Point(q),Point(q+s),Point(e),Point(e-s));
+	Rectangle(Point q,Point e,double f){
+		if (f>=1){
+			auto s=vect(q,e,1/(f*f+1),f/(f*f+1));
+			*this=Rectangle(q,q+s,e,e-s);
 		}else{
 			*this=Rectangle(q,e,1/f);
 		}
 	}
+	Rectangle(Point q,Point e,int f){
+		*this=Rectangle(q,e,double(f));
+	}
 	std::pair<Line, Line> diagonals(){
-		return {{vertices[0],vertices[2]},{vertices[1],vertices[3]}};
+		return {
+			{vertices[0],vertices[2]},
+			{vertices[1],vertices[3]}
+		};
 	}
 	Point center(){
-		return vect(vertices[0],vertices[1])/2+vect(vertices[1]+vertices[2])/2+vertices[0];
+		return (vertices[0]+vertices[1]+vertices[2]+vertices[3])/4;
 	}
 };
 
@@ -461,6 +396,10 @@ class Square:
 	public Rectangle{
 public:
 	using Rectangle::Rectangle;
+	Square(Point q,Point e){
+		auto g=vect(q,e,0.5,0.5);
+		*this=Square(q,g+q,e,e-g);
+	}
 	Circle circumscribedCircle(){
 		return Circle(center(),vect(vertices[0],vertices[1]).abs()/sqrt(2.0));
 	}
@@ -469,397 +408,195 @@ public:
 	}
 };
 
-
-
-
 class Triangle:
 	public Polygon{
 public:
 	using Polygon::Polygon;
 	Circle circumscribedCircle(){
 		auto g=intersect(
-			vect(vertices[0],vertices[1]).orotate().to_line(vertices[0]+vect(vertices[0],vertices[1])/2),
-			vect(vertices[0],vertices[2]).orotate().to_line(vertices[0]+vect(vertices[0],vertices[2])/2)
+			perp_line(vertices[0],vertices[1],(vertices[0]+vertices[1])/2),
+			perp_line(vertices[0],vertices[2],(vertices[0]+vertices[2])/2)
 		);
-		return Circle(g,vect(g,vertices[0]).abs());
+		return Circle(g,vertices[0]);
 	}
 	Circle inscribedCircle(){
 		auto b1=vect(vertices[0],vertices[2]).rotate(
-					vect(vertices[0],vertices[2]).angle(
+					angle(
+						vect(vertices[0],vertices[2]),
 						vect(vertices[0],vertices[1])
 					)/2
 			).to_line(vertices[0]);
 		auto b2=vect(vertices[1],vertices[2]).rotate(
-					vect(vertices[1],vertices[2]).angle(
+					angle(
+						vect(vertices[1],vertices[2]),
 						vect(vertices[1],vertices[0])
 					)/2
 			).to_line(vertices[1]);
 		auto g=intersect(b1,b2);
-		return Circle(g,vect(g,intersect(Line(vertices[0],vertices[1]),vect(vertices[0],vertices[1]).orotate().to_line(g))).abs());
+		return Circle(g,normal(g,Line(vertices[0],vertices[1])));
 	}
 	Point centroid(){
 		return (vertices[0]+vertices[1]+vertices[2])/3;
 	}
 	Point orthocenter(){
 		return intersect(
-			vect(vertices[0],vertices[1]).orotate().to_line(vertices[2]),
-			vect(vertices[2],vertices[1]).orotate().to_line(vertices[0])
+			perp_line(vertices[0],vertices[1],vertices[2]),
+			perp_line(vertices[2],vertices[1],vertices[0])
 		);
 	}
 	Line EulerLine(){
 		return Line(centroid(),orthocenter());
 	}
 	Circle ninePointsCircle(){
-		return Circle(
-			(orthocenter()+circumscribedCircle().center())/2,
-			vect((orthocenter()+circumscribedCircle().center())/2,(vertices[0],vertices[1])/2).abs()
-		);
+		auto g=circumscribedCircle();
+		g.scale(centroid(),-0.5);
+		return g;
+
+
 	}
 };
 
-#if HOME
-auto print_one(Polygon a){
-	return str("pol(")+print_one(a.vertices)+")";
+bool in_triangle(Triangle q,Point w,bool no_bord=0){
+	auto z=vect(q.vertices[0],q.vertices[1])^vect(q.vertices[0],w);
+	auto x=vect(q.vertices[1],q.vertices[2])^vect(q.vertices[1],w);
+	auto c=vect(q.vertices[2],q.vertices[0])^vect(q.vertices[2],w);
+	if (no_bord){
+		return z==x and x==c;
+	}
+	if (z>=0 and x>=0 and c>=0){
+		return 1;
+	}
+	if (z<=0 and x<=0 and c<=0){
+		return 1;
+	}
+	return 0;
 }
-auto print_one(Rectangle a){
-	return str("pol(")+print_one(a.vertices)+")";
+
+bool Polygon::containsPoint(const Point&q){
+	double direction=0;
+	for (size_t w=0;w<vertices.size();++w){
+		auto&A=vertices[w];
+		auto&B=vertices[(w+1)%vertices.size()];
+		auto&C=vertices[(w+2)%vertices.size()];
+		direction+=angle(A,B,C);
+	}
+	std::list<Point> ver;
+	if (direction>0){
+		ver=std::list<Point>(vertices.begin(),vertices.end());
+	}else{
+		ver=std::list<Point>(vertices.rbegin(),vertices.rend());
+	}
+	while (ver.size()>2){
+		for (auto w=++ver.begin();w!=--ver.end();++w){
+			auto A=*--w;
+			auto B=*++w;
+			auto C=*++w;
+			--w;
+			if (angle(A,B,C)>0){
+				bool no_points=1;
+				for (auto e=vertices.begin();e!=vertices.end();++e){
+					if (in_triangle({A,B,C},*e,1)){
+						no_points=0;
+						break;
+					}
+				}
+				if (no_points){
+					if (in_triangle({A,B,C},q)){
+						return 1;
+					}
+					ver.erase(w);
+					break;
+				}
+			}
+		}
+	}
+	if (ver.size()==2){
+		auto A=*ver.begin();
+		auto B=*++ver.begin();
+		auto C=A+vect(A,B).perp();
+		auto z=in_triangle({A,B,C},q);
+		C=B+vect(B,A).perp();
+		auto x=in_triangle({A,B,C},q);
+		return z and x;
+	}
+	if (ver.size()==1){
+		auto A=*ver.begin();
+		return q==A;
+	}
+	return 0;
 }
-auto print_one(Square a){
-	return str("pol(")+print_one(a.vertices)+")";
-}
-auto print_one(Triangle a){
-	return str("pol(")+print_one(a.vertices)+")";
-}
-#endif
 
 template <typename T,typename Y>
-bool simPolygon(T q,Y e){
-	if (q.getVertices().size()!=q.getVertices().size()){
+bool simPolygon(T q,Y e,bool no_scale=0){
+	if (q.vertices.size()!=q.vertices.size()){
 		return false;
 	}
-	if (q.getVertices().size()<3){
+	if (q.vertices.size()<3){
 		return true;
 	}
-
-	ic(q)
-	ic(e)
-
 	size_t mw=0;
-	longdouble m=vect(q.getVertices()[0],q.getVertices()[1]).abs();
-	for (size_t w=0;w<q.getVertices().size();++w){
-		auto t=vect(q.getVertices()[w],q.getVertices()[(w+1)%q.getVertices().size()]).abs();
+	double m=vect(q.vertices[0],q.vertices[1]).abs();
+	for (size_t w=0;w<q.vertices.size();++w){
+		auto A=q.vertices[w];
+		auto B=q.vertices[(w+1)%q.vertices.size()];
+		auto t=vect(A,B).abs();
 		if (t>m){
 			mw=w;
 			m=t;
 		}
 	}
-	{
-		auto t=q;
-		q.vertices.clear();
-		q.vertices.insert(q.vertices.end(),t.vertices.begin()+mw,t.vertices.end());
-		q.vertices.insert(q.vertices.end(),t.vertices.begin(),t.vertices.begin()+mw);
-	}
+	std::rotate(q.vertices.begin(),q.vertices.begin()+mw,q.vertices.end());
 	mw=0;
-	m=vect(e.getVertices()[0],e.getVertices()[1]).abs();
-	for (size_t w=0;w<e.getVertices().size();++w){
-		auto t=vect(e.getVertices()[w],e.getVertices()[(w+1)%e.getVertices().size()]).abs();
+	m=vect(e.vertices[0],e.vertices[1]).abs();
+	for (size_t w=0;w<e.vertices.size();++w){
+		auto A=e.vertices[w];
+		auto B=e.vertices[(w+1)%e.vertices.size()];
+		auto t=vect(A,B).abs();
 		if (t>m){
 			mw=w;
 			m=t;
 		}
 	}
-	{
-		auto t=e;
-		e.vertices.clear();
-		e.vertices.insert(e.vertices.end(),t.vertices.begin()+mw,t.vertices.end());
-		e.vertices.insert(e.vertices.end(),t.vertices.begin(),t.vertices.begin()+mw);
-	}
-
-	ic(q)
-	ic(e)
-
-	e.scale(e.getVertices()[0],
-		eic(vect(q.getVertices()[0],q.getVertices()[1])).abs()/
-		eic(vect(e.getVertices()[0],e.getVertices()[1])).abs()
+	std::rotate(e.vertices.begin(),e.vertices.begin()+mw,e.vertices.end());
+	if (!no_scale){
+		e.scale(
+			e.vertices[0],
+			(vect(q.vertices[0],q.vertices[1])).abs()/
+			(vect(e.vertices[0],e.vertices[1])).abs()
 		);
-
-	ic(q)
-	ic(e)
-
-	auto tm=vect(e.getVertices()[0],q.getVertices()[0]);
-	ic(tm)
-	for (size_t w=0;w<e.getVertices().size();++w){
+	}
+	auto tm=vect(e.vertices[0],q.vertices[0]);
+	for (size_t w=0;w<e.vertices.size();++w){
 		e.vertices[w]=e.vertices[w]+tm;
 	}
-
-	ic(q)
-	ic(e)
-
 	auto an=angle(
-		vect(e.getVertices()[0],e.getVertices()[1]),
-		vect(q.getVertices()[0],q.getVertices()[1])
+		vect(e.vertices[0],e.vertices[1]),
+		vect(q.vertices[0],q.vertices[1])
 	);
-	ic(an)
-
-	e.rotate(e.getVertices()[0], an);
-
-	ic(q)
-	ic(e)
-
+	e.rotate(e.vertices[0], an);
 	bool res=0;
-
 	res=res or eqPolygon(q,e);
-	e.reflect(Line(e.getVertices()[0],e.getVertices()[1]));
-	ic(q)
-	ic(e)
+	e.reflect(Line(e.vertices[0],e.vertices[1]));
 	res=res or eqPolygon(q,e);
-	e.reflect(vect(e.getVertices()[0],e.getVertices()[1]).orotate().to_line((e.getVertices()[0]+e.getVertices()[1])/2));
-	ic(q)
-	ic(e)
+	e.reflect(perp_line(e.vertices[0],e.vertices[1],(e.vertices[0]+e.vertices[1])/2));
 	res=res or eqPolygon(q,e);
-	e.reflect(Line(e.getVertices()[0],e.getVertices()[1]));
-	ic(q)
-	ic(e)
+	e.reflect(Line(e.vertices[0],e.vertices[1]));
 	res=res or eqPolygon(q,e);
-
-
 	return res;
-}
-
-bool isSimilarTo(const Shape&q,const Shape&e){
-	if (auto w=dynamic_cast<const Polygon*>(&q)){
-		if (auto r=dynamic_cast<const Polygon*>(&e)){
-			return simPolygon(*w,*r);
-		}
-		if (auto r=dynamic_cast<const Rectangle*>(&e)){
-			return simPolygon(*w,*r);
-		}
-		if (auto r=dynamic_cast<const Square*>(&e)){
-			return simPolygon(*w,*r);
-		}
-		if (auto r=dynamic_cast<const Triangle*>(&e)){
-			return simPolygon(*w,*r);
-		}
-	}
-	if (auto w=dynamic_cast<const Rectangle*>(&q)){
-		if (auto r=dynamic_cast<const Polygon*>(&e)){
-			return simPolygon(*w,*r);
-		}
-		if (auto r=dynamic_cast<const Rectangle*>(&e)){
-			return simPolygon(*w,*r);
-		}
-		if (auto r=dynamic_cast<const Square*>(&e)){
-			return simPolygon(*w,*r);
-		}
-	}
-	if (auto w=dynamic_cast<const Square*>(&q)){
-		if (auto r=dynamic_cast<const Polygon*>(&e)){
-			return simPolygon(*w,*r);
-		}
-		if (auto r=dynamic_cast<const Rectangle*>(&e)){
-			return simPolygon(*w,*r);
-		}
-		if (auto r=dynamic_cast<const Square*>(&e)){
-			return simPolygon(*w,*r);
-		}
-	}
-	if (auto w=dynamic_cast<const Triangle*>(&q)){
-		if (auto r=dynamic_cast<const Polygon*>(&e)){
-			return simPolygon(*w,*r);
-		}
-		if (auto r=dynamic_cast<const Triangle*>(&e)){
-			return simPolygon(*w,*r);
-		}
-	}
-	if (auto w=dynamic_cast<const Ellipse*>(&q)){
-		if (auto r=dynamic_cast<const Ellipse*>(&e)){
-			return abs(w->a*r->b-w->b*r->a)<zero;
-		}
-		if (auto r=dynamic_cast<const Circle*>(&e)){
-			return abs(w->a*r->b-w->b*r->a)<zero;
-		}
-	}
-	if (auto w=dynamic_cast<const Circle*>(&q)){
-		if (auto r=dynamic_cast<const Ellipse*>(&e)){
-			return abs(w->a*r->b-w->b*r->a)<zero;
-		}
-		if (auto r=dynamic_cast<const Circle*>(&e)){
-			return abs(w->a*r->b-w->b*r->a)<zero;
-		}
-	}
-	return false;
-}
-
-bool Shape::isSimilarTo(const Shape&q){
-	return ::isSimilarTo(*this,q);
-}
-
-template <typename T,typename Y>
-bool conPolygon(T q,Y e){
-	if (q.getVertices().size()!=q.getVertices().size()){
-		return false;
-	}
-	if (q.getVertices().size()<3){
-		return true;
-	}
-
-	ic(q)
-	ic(e)
-
-	size_t mw=0;
-	longdouble m=vect(q.getVertices()[0],q.getVertices()[1]).abs();
-	for (size_t w=0;w<q.getVertices().size();++w){
-		auto t=vect(q.getVertices()[w],q.getVertices()[(w+1)%q.getVertices().size()]).abs();
-		if (t>m){
-			mw=w;
-			m=t;
-		}
-	}
-	{
-		auto t=q;
-		q.vertices.clear();
-		q.vertices.insert(q.vertices.end(),t.vertices.begin()+mw,t.vertices.end());
-		q.vertices.insert(q.vertices.end(),t.vertices.begin(),t.vertices.begin()+mw);
-	}
-	mw=0;
-	m=vect(e.getVertices()[0],e.getVertices()[1]).abs();
-	for (size_t w=0;w<e.getVertices().size();++w){
-		auto t=vect(e.getVertices()[w],e.getVertices()[(w+1)%e.getVertices().size()]).abs();
-		if (t>m){
-			mw=w;
-			m=t;
-		}
-	}
-	{
-		auto t=e;
-		e.vertices.clear();
-		e.vertices.insert(e.vertices.end(),t.vertices.begin()+mw,t.vertices.end());
-		e.vertices.insert(e.vertices.end(),t.vertices.begin(),t.vertices.begin()+mw);
-	}
-
-	ic(q)
-	ic(e)
-
-	auto tm=vect(e.getVertices()[0],q.getVertices()[0]);
-	ic(tm)
-	for (size_t w=0;w<e.getVertices().size();++w){
-		e.vertices[w]=e.vertices[w]+tm;
-	}
-
-	ic(q)
-	ic(e)
-
-	auto an=angle(
-		vect(e.getVertices()[0],e.getVertices()[1]),
-		vect(q.getVertices()[0],q.getVertices()[1])
-	);
-	ic(an)
-
-	e.rotate(e.getVertices()[0], an);
-
-	ic(q)
-	ic(e)
-
-	bool res=0;
-
-	res=res or eqPolygon(q,e);
-	e.reflect(Line(e.getVertices()[0],e.getVertices()[1]));
-	ic(q)
-	ic(e)
-	res=res or eqPolygon(q,e);
-	e.reflect(vect(e.getVertices()[0],e.getVertices()[1]).orotate().to_line((e.getVertices()[0]+e.getVertices()[1])/2));
-	ic(q)
-	ic(e)
-	res=res or eqPolygon(q,e);
-	e.reflect(Line(e.getVertices()[0],e.getVertices()[1]));
-	ic(q)
-	ic(e)
-	res=res or eqPolygon(q,e);
-
-
-	return res;
-}
-
-bool isCongruentTo(const Shape&q,const Shape&e){
-	if (auto w=dynamic_cast<const Polygon*>(&q)){
-		if (auto r=dynamic_cast<const Polygon*>(&e)){
-			return conPolygon(*w,*r);
-		}
-		if (auto r=dynamic_cast<const Rectangle*>(&e)){
-			return conPolygon(*w,*r);
-		}
-		if (auto r=dynamic_cast<const Square*>(&e)){
-			return conPolygon(*w,*r);
-		}
-		if (auto r=dynamic_cast<const Triangle*>(&e)){
-			return conPolygon(*w,*r);
-		}
-	}
-	if (auto w=dynamic_cast<const Rectangle*>(&q)){
-		if (auto r=dynamic_cast<const Polygon*>(&e)){
-			return conPolygon(*w,*r);
-		}
-		if (auto r=dynamic_cast<const Rectangle*>(&e)){
-			return conPolygon(*w,*r);
-		}
-		if (auto r=dynamic_cast<const Square*>(&e)){
-			return conPolygon(*w,*r);
-		}
-	}
-	if (auto w=dynamic_cast<const Square*>(&q)){
-		if (auto r=dynamic_cast<const Polygon*>(&e)){
-			return conPolygon(*w,*r);
-		}
-		if (auto r=dynamic_cast<const Rectangle*>(&e)){
-			return conPolygon(*w,*r);
-		}
-		if (auto r=dynamic_cast<const Square*>(&e)){
-			return conPolygon(*w,*r);
-		}
-	}
-	if (auto w=dynamic_cast<const Triangle*>(&q)){
-		if (auto r=dynamic_cast<const Polygon*>(&e)){
-			return conPolygon(*w,*r);
-		}
-		if (auto r=dynamic_cast<const Triangle*>(&e)){
-			return conPolygon(*w,*r);
-		}
-	}
-	if (auto w=dynamic_cast<const Ellipse*>(&q)){
-		if (auto r=dynamic_cast<const Ellipse*>(&e)){
-			return abs(w->a-r->a)<zero;
-		}
-		if (auto r=dynamic_cast<const Circle*>(&e)){
-			return abs(w->a-r->a)<zero;
-		}
-	}
-	if (auto w=dynamic_cast<const Circle*>(&q)){
-		if (auto r=dynamic_cast<const Ellipse*>(&e)){
-			return abs(w->a-r->a)<zero;
-		}
-		if (auto r=dynamic_cast<const Circle*>(&e)){
-			return abs(w->a-r->a)<zero;
-		}
-	}
-	return false;
-}
-
-bool Shape::isCongruentTo(const Shape&q){
-	return ::isCongruentTo(*this,q);
 }
 
 template <typename T,typename Y>
 bool eqPolygon(const T&q,const Y&e){
-	if (q.getVertices().size()!=q.getVertices().size()){
+	if (q.vertices.size()!=q.vertices.size()){
 		return false;
 	}
-	if (q.getVertices().size()==0){
+	if (q.vertices.size()==0){
 		return true;
 	}
-	for (size_t r=0;r<e.getVertices().size();++r){
+	for (size_t r=0;r<e.vertices.size();++r){
 		bool not_same=0;
-		for (size_t w=0;w<q.getVertices().size();++w){
-			if (q.getVertices()[w]!=e.getVertices()[(r+w)%e.getVertices().size()]){
+		for (size_t w=0;w<q.vertices.size();++w){
+			if (q.vertices[w]!=e.vertices[(r+w)%e.vertices.size()]){
 				not_same=1;
 			}
 		}
@@ -867,8 +604,8 @@ bool eqPolygon(const T&q,const Y&e){
 			return true;
 		}
 		not_same=0;
-		for (size_t w=0;w<q.getVertices().size();++w){
-			if (q.getVertices()[w]!=e.getVertices()[(e.getVertices().size()+r-w)%e.getVertices().size()]){
+		for (size_t w=0;w<q.vertices.size();++w){
+			if (q.vertices[w]!=e.vertices[(e.vertices.size()+r-w)%e.vertices.size()]){
 				not_same=1;
 			}
 		}
@@ -879,120 +616,125 @@ bool eqPolygon(const T&q,const Y&e){
 	return false;
 }
 
-bool operator==(const Shape&q,const Shape&e){
+template <typename PolCMP,typename EllCMP>
+bool cmp(const Shape&q,const Shape&e){
 	if (auto w=dynamic_cast<const Polygon*>(&q)){
 		if (auto r=dynamic_cast<const Polygon*>(&e)){
-			return eqPolygon(*w,*r);
+			return PolCMP{}(*w,*r);
 		}
 		if (auto r=dynamic_cast<const Rectangle*>(&e)){
-			return eqPolygon(*w,*r);
+			return PolCMP{}(*w,*r);
 		}
 		if (auto r=dynamic_cast<const Square*>(&e)){
-			return eqPolygon(*w,*r);
+			return PolCMP{}(*w,*r);
 		}
 		if (auto r=dynamic_cast<const Triangle*>(&e)){
-			return eqPolygon(*w,*r);
+			return PolCMP{}(*w,*r);
 		}
 	}
 	if (auto w=dynamic_cast<const Rectangle*>(&q)){
 		if (auto r=dynamic_cast<const Polygon*>(&e)){
-			return eqPolygon(*w,*r);
+			return PolCMP{}(*w,*r);
 		}
 		if (auto r=dynamic_cast<const Rectangle*>(&e)){
-			return eqPolygon(*w,*r);
+			return PolCMP{}(*w,*r);
 		}
 		if (auto r=dynamic_cast<const Square*>(&e)){
-			return eqPolygon(*w,*r);
+			return PolCMP{}(*w,*r);
 		}
 	}
 	if (auto w=dynamic_cast<const Square*>(&q)){
 		if (auto r=dynamic_cast<const Polygon*>(&e)){
-			return eqPolygon(*w,*r);
+			return PolCMP{}(*w,*r);
 		}
 		if (auto r=dynamic_cast<const Rectangle*>(&e)){
-			return eqPolygon(*w,*r);
+			return PolCMP{}(*w,*r);
 		}
 		if (auto r=dynamic_cast<const Square*>(&e)){
-			return eqPolygon(*w,*r);
+			return PolCMP{}(*w,*r);
 		}
 	}
 	if (auto w=dynamic_cast<const Triangle*>(&q)){
 		if (auto r=dynamic_cast<const Polygon*>(&e)){
-			return eqPolygon(*w,*r);
+			return PolCMP{}(*w,*r);
 		}
 		if (auto r=dynamic_cast<const Triangle*>(&e)){
-			return eqPolygon(*w,*r);
+			return PolCMP{}(*w,*r);
 		}
 	}
 	if (auto w=dynamic_cast<const Ellipse*>(&q)){
 		if (auto r=dynamic_cast<const Ellipse*>(&e)){
-			return abs(w->a-r->a)<zero and (w->f1-r->f1).abs()<zero and (w->f2-r->f2).abs()<zero;
+			return EllCMP{}(*w,*r);
 		}
 		if (auto r=dynamic_cast<const Circle*>(&e)){
-			return abs(w->a-r->a)<zero and (w->f1-r->f1).abs()<zero and (w->f2-r->f2).abs()<zero;
+			return EllCMP{}(*w,*r);
 		}
 	}
 	if (auto w=dynamic_cast<const Circle*>(&q)){
 		if (auto r=dynamic_cast<const Ellipse*>(&e)){
-			return abs(w->a-r->a)<zero and (w->f1-r->f1).abs()<zero and (w->f2-r->f2).abs()<zero;
+			return EllCMP{}(*w,*r);
 		}
 		if (auto r=dynamic_cast<const Circle*>(&e)){
-			return abs(w->a-r->a)<zero and (w->f1-r->f1).abs()<zero and (w->f2-r->f2).abs()<zero;
+			return EllCMP{}(*w,*r);
 		}
 	}
 	return false;
 }
 
+struct PolSim{
+	template <typename T,typename Y>
+	bool operator()(T q,Y e){
+		return simPolygon(q,e);
+	}
+};
+
+struct EllSim{
+	template <typename T,typename Y>
+	bool operator()(T q,Y e){
+		return abs(q.a*e.b-q.b*e.a)<zero;
+	}
+};
+
+struct PolCon{
+	template <typename T,typename Y>
+	bool operator()(T q,Y e){
+		return simPolygon(q,e,1);
+	}
+};
+
+struct EllCon{
+	template <typename T,typename Y>
+	bool operator()(T q,Y e){
+		return abs(q.a-e.a)<zero;
+	}
+};
+
+struct PolEq{
+	template <typename T,typename Y>
+	bool operator()(T q,Y e){
+		return eqPolygon(q,e);
+	}
+};
+
+struct EllEq{
+	template <typename T,typename Y>
+	bool operator()(T q,Y e){
+		return abs(q.a-e.a)<zero and (q.f1-e.f1).abs()<zero and (q.f2-e.f2).abs()<zero;
+	}
+};
+
+bool operator==(const Shape&q,const Shape&e){
+	return cmp<PolEq,EllEq>(q,e);
+}
+
+bool Shape::isCongruentTo(const Shape&q){
+	return cmp<PolCon,EllCon>(*this,q);
+}
+
+bool Shape::isSimilarTo(const Shape&q){
+	return cmp<PolSim,EllSim>(*this,q);
+}
+
 bool operator!=(const Shape&q,const Shape&e){
 	return !(q==e);
 }
-
-
-auto readfile_(FILE*q){
-	std::string s;
-	int c; // note: int, not char, required to handle EOF
-	while ((c = fgetc(q)) != EOF) { // standard C I/O file reading loop
-		s+=c;
-	}
-	return s;
-}
-
-auto replace_(std::string q,std::string w,std::string e){
-	std::string res;
-	uint64_t a=0;
-	while (a<uint64_t((q).size())){
-		if (q.find(w,a)==a){
-			res+=e;
-			a+=w.size();
-		}else{
-			res+=q[a];
-			++a;
-		}
-	}
-	return res;
-}
-
-bool printed=0;
-
-int ffff(std::string file){
-	if (printed){
-		return 0;
-	}
-	printed=1;
-	auto d=fopen(file.c_str(),"r");
-	auto s=readfile_(d);
-	fclose(d);
-	for (size_t w=0;w<128;++w){
-		if (isspace(w) and w!='\n'){
-			s=replace_(s,{char(w)},"");
-		}
-	}
-	size_t len=512;
-	size_t start=len*0;
-	std::cerr<<"PART "<<start/len<<" of "<< s.size()/len+1  <<std::endl;
-	std::cerr<<string(s.begin()+(start<s.size()?start:s.size()),s.begin()+(start+len<s.size()?start+len:s.size()))<<std::endl;
-	return 0;
-}
-
-
-#define area(...) area(__VA_ARGS__)+ffff(__FILE__)

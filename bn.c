@@ -7,13 +7,12 @@
 
 struct bn_s{
 	int8_t sign;
-	uint32_t size;
+	uint16_t size;
+	uint16_t dsize;
 	uint32_t*vect;
 };
 
 typedef struct bn_s bn;
-
-
 
 #ifdef CPP_R
 auto print_one(const bn*q){
@@ -23,8 +22,16 @@ auto print_one(const bn*q){
 	int c=0;
 	if (q->size){
 		for (int t=q->size-1;t>-1;--t){
-			if (c%2){
-				sprintf(b+strlen(b),"\x1b[92m");
+			if (t>=q->dsize){
+				if (c%2){
+					sprintf(b+strlen(b),"\x1b[94m");
+				}else{
+					sprintf(b+strlen(b),"\x1b[95m");
+				}
+			}else{
+				if (c%2){
+					sprintf(b+strlen(b),"\x1b[92m");
+				}
 			}
 			sprintf(b+strlen(b),"%0*x",8,q->vect[t]);
 			if (c%2){
@@ -45,14 +52,7 @@ auto print_one(bn*q){
 
 
 bn *bn_new(){
-// #if STACK
-// 	adata[dsize].sign=0;
-// 	adata[dsize].size=0;
-// 	adata[dsize].vect=0;
-// 	return adata+dsize++;
-// #else
 	return (bn*)calloc(sizeof(bn),1);
-// #endif
 }
 
 static int bn_swap(bn*q,bn*e){
@@ -63,18 +63,11 @@ static int bn_swap(bn*q,bn*e){
 }
 
 bn *bn_init(bn const*orig){
-// #if STACK
-// 	bn*q=adata+dsize++;
-// #else
 	bn *q=(bn*)malloc(sizeof(bn));
-// #endif
 	*q=*orig;
 	if (orig->size){
 		q->vect=(uint32_t*)malloc(q->size*sizeof(uint32_t));
 		memcpy(q->vect,orig->vect,q->size*sizeof(uint32_t));
-		// for (size_t w=0;w<q->size;++w){
-		// 	q->vect[w]=orig->vect[w];
-		// }
 	}
 	return q;
 }
@@ -83,9 +76,7 @@ int bn_delete(bn *q){
 	if (q->size and q->vect){
 		free(q->vect);
 	}
-// #if !STACK
 	free(q);
-// #endif
 	return 0;
 }
 
@@ -97,7 +88,6 @@ static int bn_del(bn *q){
 }
 
 static int bn_init_bn(bn* q,const bn*orig){
-	// ic(orig)
 	if (q->size and q->vect){
 		free(q->vect);
 	}
@@ -105,9 +95,6 @@ static int bn_init_bn(bn* q,const bn*orig){
 	if (q->size){
 		q->vect=(uint32_t*)malloc(q->size*sizeof(uint32_t));
 		memcpy(q->vect,orig->vect,q->size*sizeof(uint32_t));
-		// for (size_t w=0;w<q->size;++w){
-		// 	q->vect[w]=orig->vect[w];
-		// }
 	}
 	return 0;
 }
@@ -119,10 +106,10 @@ int bn_init_int(bn *q,int e){
 	q->sign=e>0?1:e<0?-1:0;
 	q->size=0;
 	q->vect=(uint32_t*)(uint64_t)(q->sign*(int64_t)(e));
-	// q->vect=(uint32_t*)malloc(sizeof(uint32_t)*1);
-	// q->size=1;
-	// q->sign=e>0?1:e<0?-1:0;
-	// q->vect[0]=q->sign*e;
+	q->dsize=2;
+	while(q->dsize and q->vect[q->dsize-1]==0){
+		q->dsize--;
+	}
 	return 0;
 }
 
@@ -131,9 +118,11 @@ int bn_cmp(bn const *q, bn const *e){
 		return ((q->sign)-(e->sign));
 	}
 	uint32_t* qv=q->size?q->vect:(uint32_t*)&(q->vect);
-	uint32_t qs=q->size?q->size:2;
+	// uint32_t qs=q->size?q->size:2;
+	uint32_t qs=q->dsize;
 	uint32_t* ev=e->size?e->vect:(uint32_t*)&(e->vect);
-	uint32_t es=e->size?e->size:2;
+	// uint32_t es=e->size?e->size:2;
+	uint32_t es=e->dsize;
 	for (size_t c=(qs>es?qs:es)-1;;--c){
 		size_t a=qs>c?qv[c]:0;
 		size_t s=es>c?ev[c]:0;
@@ -148,23 +137,22 @@ int bn_cmp(bn const *q, bn const *e){
 
 static int bn_M_add_to(bn *q, bn const *e){
 	uint32_t* qv=q->size?q->vect:(uint32_t*)&(q->vect);
-	uint32_t qs=q->size?q->size:2;
+	uint32_t qs=q->dsize;
+	// uint32_t qs=q->size?q->size:2;
 	uint32_t* ev=e->size?e->vect:(uint32_t*)&(e->vect);
-	uint32_t es=e->size?e->size:2;
-	while (qs and qv[qs-1]==0){
-		qs-=1;
-	}
-	while (es and ev[es-1]==0){
-		es-=1;
-	}
+	uint32_t es=e->dsize;
+	// uint32_t es=e->size?e->size:2;
+	// while (qs and qv[qs-1]==0){
+	// 	qs-=1;
+	// }
+	// while (es and ev[es-1]==0){
+	// 	es-=1;
+	// }
 	qs=(qs>es?qs:es)+1;
 	if (q->size and qs>q->size){
 		q->vect=(uint32_t*)realloc(q->vect,qs*sizeof(uint32_t));
 		qv=q->vect;
 		memset(q->vect+q->size,0,(qs-q->size)*sizeof(uint32_t));
-		// for (size_t w=q->size;w<qs;++w){
-		// 	q->vect[w]=0;
-		// }
 		q->size=qs;
 	}else if (q->size==0 and qs>2){
 		uint64_t tmp=*(uint64_t*)&(q->vect);
