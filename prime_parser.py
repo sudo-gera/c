@@ -98,17 +98,17 @@ def hide():
 			b+=1
 		if b>0 and primes_db[b-1]==None:
 			load(q)
-			b=get_primes(q)[0]
+			return get_primes(q)
 		else:
 			b=primes_db[b]
 		while primes_db[e]==None or primes_db[e]>q:
 			e-=1
 		if e<len(primes_db)-1 and primes_db[e+1]==None:
 			load(q)
-			e=get_primes(q)[1]
+			return get_primes(q)
 		else:
 			e=primes_db[e]
-		return [b,e]
+		return [e,b]
 
 	def prev_prime(q):
 		return get_primes(q-1)[0]

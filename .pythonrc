@@ -39,7 +39,9 @@ class Module:
 		return m
 modules=Module()
 modules.sys.ps2='    '
+from pathlib import Path
+modules.sys.path.append(str(Path.home())+'/c')
 try:
 	d=HOME
 except:
-	exec(open(str(Path.home())+'/c/h.py'))
+	from h import *
