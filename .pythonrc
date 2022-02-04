@@ -42,4 +42,4 @@ modules.sys.ps2='    '
 try:
 	d=HOME
 except:
-	from h import *
+	exec(open(str(Path.home())+'/c/h.py'))
