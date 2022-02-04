@@ -5,42 +5,61 @@
 #include <inttypes.h>
 #include <string.h>
 #include <math.h>
+#include <ctype.h>
+#include <assert.h>
+#include <iso646.h>
+
+int8_t get_sign;
+int get_c;
 
 #define get_int(res)\
 {\
-	int8_t sign=1;\
-	int c;\
-	while (c=getchar_unlocked(),isspace(c)){\
+	get_sign=1;\
+	while (get_c=getchar_unlocked(),isspace(get_c)){\
 	}\
-	if (c=='-'){\
-		sign*=-1;\
+	if (get_c=='-'){\
+		get_sign*=-1;\
+		res=0;\
 	}else{\
-		res=c-'0';\
+		res=get_c-'0';\
 	}\
-	while (c=getchar_unlocked(),c!=EOF and !isspace(c)){\
+	while (get_c=getchar_unlocked(),get_c!=EOF and !isspace(get_c)){\
 		res*=10;\
-		res+=c-'0';\
+		res+=get_c-'0';\
 	}\
-	res*=sign;\
+	res*=get_sign;\
 }
 
 char put_data[44];
+unsigned long long put_t;
+unsigned put_ds;
 
 #define put_int(q)\
 {\
-	unsigned long long t;\
-	if (std::is_signed<decltype(q)>::value and q<0){\
+	if (q<0){\
 		putchar_unlocked('-');\
-		t=-q;\
+		put_t=-q;\
 	}else{\
-		t=q;\
+		put_t=q;\
 	}\
-	unsigned ds=1;\
-	while (t){\
-		put_data[ds++]=t%10+'0';\
-		t/=10;\
+	put_ds=0;\
+	while(put_t){\
+		put_data[++put_ds]=put_t%10+unsigned('0');\
+		put_t/=10;\
 	}\
-	for (--ds;ds;--ds){\
-		putchar_unlocked(put_data[ds]);\
+	if (put_ds==0){\
+		putchar_unlocked('0');\
 	}\
+	for (;put_ds;--put_ds){\
+		putchar_unlocked(put_data[put_ds]);\
+	}\
+}
+
+int main(){
+	size_t q;
+	for (size_t w=0;w<9;++w){
+		get_int(q);
+		put_int(q);
+		putchar_unlocked('\n');
+	}
 }

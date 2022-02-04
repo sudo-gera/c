@@ -1,28 +1,45 @@
 class Module:
-	def __dir__(s):
+	def __init__(s):
 		from pathlib import Path
-		try:
-			ms=open(str(Path.home())+'/.python_modules_db').read().split()
-		except:
-			ms=[]
-		return ms
+		class _:
+			def __init__(s):
+				s.filename=str(Path.home())+'/.python_modules_db'
+			def get_modules(s):
+				try:
+					ms=open(s.filename).read().split()
+				except:
+					ms=[]
+
+				return ms
+			def put_modules(s,ms):
+				open(s.filename,'w').write(ms)
+			def get(s,n):
+				try:
+					return __import__(n)
+				except Exception:
+					pass
+				try:
+					exec(f'from h import {n}')
+					return eval(n)
+				except Exception:
+					pass
+		s._=_()
+	def __dir__(s):
+		return s._.get_modules()
 	def __getattr__(s,n):
 		from pathlib import Path
 		mn=n.replace('___','.')
-		try:
-			exec('import '+mn)
-			m=eval(mn)
-		except:
-			m=None
-		try:
-			ms=open(str(Path.home())+'/.python_modules_db').read().split()
-		except:
-			ms=[]
+		m=s._.get(mn)
+		ms=s._.get_modules()
 		if n in ms and m==None:
 			ms=[w for w in ms if w!=n]
 		if n not in ms and m!= None:
 			ms.append(n)
-		open(str(Path.home())+'/.python_modules_db','w').write(' '.join(ms))
-		exec('import '+mn)
-		return eval(mn)
+		s._.put_modules(' '.join(ms))
+		return m
 modules=Module()
+modules.sys.ps2='    '
+try:
+	d=HOME
+except:
+	from h import *

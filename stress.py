@@ -33,22 +33,9 @@ def cmp(log):
 		c=[''.join(w) for w in c]
 		sc=set(c)
 		if len(sc)!=1:
-			log.put([p,*c])
+			log.put([p,c])
 		else:
 			log.put(None)
-		# if len(c)!=1:
-		# 	print(p)
-		# 	print(c)
-		# else:
-		# 	if time()-t>4:
-		# 		tt=int(time())
-		# 		c+=1
-		# 		print(f'from {('00'+str((t//3600)%24))[-2:]}:{('00'+str((t//60)%60))[-2:]}:{('00'+str((t//1)%60))[-2:]} to {('00'+str((tt//3600)%24))[-2:]}:{('00'+str((tt//60)%60))[-2:]}:{('00'+str((tt//1)%60))[-2:]} {c} sucessfull tests')
-		# 		t=tt
-		# 	else:
-		# 		c+=1
-		# 	print('from ')
-		# 	print('ok')
 
 def logging(log):
 	c=0
@@ -57,6 +44,7 @@ def logging(log):
 	while 1:
 		q=log.get()
 		if type(q)==list and len(q)==2:
+			q=[q[0]]+q[1]
 			print('\x1b[91mERROR\x1b[0m')
 			print('\x1b[94minput(str version)\x1b[0m')
 			print(str(q[0]))
