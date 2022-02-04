@@ -51,4 +51,4 @@ def is_prime(q):
 		assert(primes[-1]**2>=q)
 	else:
 		return bisect_in(primes,q)
-exec(open('prime_parser.py').read())
+from prime_parser import *
