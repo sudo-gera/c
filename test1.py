@@ -1,13 +1,19 @@
-from icecream import ic
-a=open('stdin.txt').read().splitlines()
-a=[w for w in a if w]
-a=[w.split(':',1)[1].strip()[1:] for w in a]
-a=[ [w[:w.index(']')],w[w.index(']')+1:]] for w in a  ]
-a=[[e.split() for e in w] for w in a]
-a=[[[int(r) for r in e] for e in w] for w in a]
-h='0123456789abcdefghijklmnopqrstuvwxyz'
-for w in range(len(a)):
-	a[w][0]=int(''.join([h[e] for e in a[w][0][::-1]]),22)
-for w in range(len(a)-1):
-	if (a[w][0]+a[w][1][0]*a[w][1][1]*22**(a[w][1][2]+a[w][1][3]))!=(a[w+1][0]):
-		print(w)
+class r:
+	def __init__():
+		pass
+	def __add__(s,o):
+		return r(s.q+r(o.).q)
+	def __radd__(s,o):
+		return r(s.q+r(o).q)
+	def __sub__(s,o):
+		return r(s.q-r(o).q)
+	def __rsub__(s,o):
+		return r(r(o).q-s.q)
+	def __mul__(s,o):
+		return r(s.q*r(o).q)
+	def __rmul__(s,o):
+		return r(r(o).q*s.q)
+	def __div__(s,o):
+		return r(s.q/pow(r(o).q,s.b-2,s.b))
+	def __rdiv__(s,o):
+		return r(r(o).q/s.q)

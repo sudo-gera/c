@@ -251,6 +251,53 @@ def handle_print(a,p=0):
 			print('\x1b[37m'+w['name']+'\x1b[0m',end='')
 	if p==0:
 		print()
+def try_float(q):
+	try:
+		return float(q)
+	except Exception:
+		return 0
+def handle_ev(a,p=0):
+	a=[
+				reduce(lambda a,s:a+s, handle_ev(w['cont']) )
+			if w['name']=='add' else
+				reduce(lambda a,s:a-s, handle_ev(w['cont']) )
+			if w['name']=='sub' else
+				reduce(lambda a,s:a*s, handle_ev(w['cont']) )
+			if w['name']=='mul' else
+				reduce(lambda a,s:a/s, handle_ev(w['cont']) )
+			if w['name']=='div' else
+				reduce(lambda a,s:a%s, handle_ev(w['cont']) )
+			if w['name']=='mod' else
+				reduce(lambda a,s:a+s, handle_ev(w['cont']) )
+		if w['type']=='seq' else
+			try_float(w['name'])
+	for w in a]
+	return a
+	# for w in a:
+	# 	if w['type']=='seq':
+	# 		if w['name']=='add':
+	# 			return handle_ev(w['cont'])
+	# 	else:
+	# 		return w['name']
+
+	# c=1
+	# for w in a:
+	# 	if c:
+	# 		c=0
+	# 	else:
+	# 		print('\x1b[33m,\x1b[0m',end='')
+	# 	if w['type']=='seq':
+	# 		print('\x1b[33m__'+w['name']+'__('+'\x1b[0m',end='')
+	# 		handle_print(w['cont'],1)
+	# 		print('\x1b[33m)\x1b[0m',end='')
+	# 	elif w['type']=='oper':
+	# 		print('\x1b[31m'+w['name']+'\x1b[0m',end='')
+	# 	elif w['type']=='name':
+	# 		print('\x1b[36m'+w['name']+'\x1b[0m',end='')
+	# 	elif w['type']=='value':
+	# 		print('\x1b[32m'+w['name']+'\x1b[0m',end='')
+	# 	else:
+	# 		print('\x1b[37m'+w['name']+'\x1b[0m',end='')
 def handle_parentheses(a,insi=[0,-1]):
 	s=[]
 	pairs={1:{'(':')','[':']','{':'}'},0:{'(':')','[':']','{':'}','begin':'end'}}
@@ -571,8 +618,7 @@ text_list=handle_stat_if(text_list)
 
 
 
-
 if len(argv)==1:
 	print()
 handle_print(text_list)
-
+# print(handle_ev(text_list)[0])

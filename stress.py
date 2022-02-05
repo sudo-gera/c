@@ -1,20 +1,13 @@
 def create_input_string():
-	from random import randint
-	n=randint(7,10**1)
-	k=randint(7,10**1)
-	a=str(n)+' '+str(k)+'\n'
-	for w in range(k):
-		a+=str(randint(0,n-1))+' '+str(randint(1,10**9))+'\n'
-	# a=str(n)+'\n'
-	# for w in range(n):
-	# 	a+=str(randint(1,n))+' '
-	return a
+	from subprocess import run,PIPE
+	return run(['python3','create_input.py'],stdout=PIPE).stdout.decode()
+
 
 def how_to_run(filename):
 	if filename.endswith('.cpp'):
 		from time import time
 		t='./tmp'+str(time())+'.trash.trash'
-		return [['g++','-std=c++17','-Wfatal-errors',filename,'-o',t],[t],['rm',t]]
+		return [['g++','-std=c++17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',t],[t],['rm',t]]
 	if filename.endswith('.c'):
 		from time import time
 		t='./tmp'+str(time())+'.trash.trash'
@@ -31,29 +24,18 @@ def cmp(log):
 		from subprocess import run,PIPE
 		c=[how_to_run(w) for w in argv[1:]]
 		p=create_input_string()
-		c=[[run(e,stdout=PIPE,input=p.encode()) for e in w] for w in c]
+		c=[[run(e,stdout=PIPE,stderr=PIPE,input=p.encode()) for e in w] for w in c]
+		if any([any([e.returncode for e in w]) for w in c]):
+			log.put([p])
 		c=[['\n'.join([r.strip() for r in (e.stdout.decode() if hasattr(e,'stdout') and e.stdout!=None else '').strip().split('\n') if r.strip()])+\
 			'\n'.join([r.strip() for r in (e.stderr.decode() if hasattr(e,'stderr') and e.stderr!=None else '').strip().split('\n') if r.strip()])
 			for e in w] for w in c]
 		c=[''.join(w) for w in c]
 		sc=set(c)
 		if len(sc)!=1:
-			log.put([p,*c])
+			log.put([p,c])
 		else:
 			log.put(None)
-		# if len(c)!=1:
-		# 	print(p)
-		# 	print(c)
-		# else:
-		# 	if time()-t>4:
-		# 		tt=int(time())
-		# 		c+=1
-		# 		print(f'from {('00'+str((t//3600)%24))[-2:]}:{('00'+str((t//60)%60))[-2:]}:{('00'+str((t//1)%60))[-2:]} to {('00'+str((tt//3600)%24))[-2:]}:{('00'+str((tt//60)%60))[-2:]}:{('00'+str((tt//1)%60))[-2:]} {c} sucessfull tests')
-		# 		t=tt
-		# 	else:
-		# 		c+=1
-		# 	print('from ')
-		# 	print('ok')
 
 def logging(log):
 	c=0
@@ -61,20 +43,29 @@ def logging(log):
 	t=time()
 	while 1:
 		q=log.get()
-		if type(q)==list:
+		if type(q)==list and len(q)==2:
+			q=[q[0]]+q[1]
 			print('\x1b[91mERROR\x1b[0m')
 			print('\x1b[94minput(str version)\x1b[0m')
 			print(str(q[0]))
 			print('\x1b[94minput(repr version)\x1b[0m')
 			print(repr(q[0]))
 			from sys import argv
-			print(argv,q)
 			for w in range(1,len(argv)):
 				print('\x1b[94m'+argv[w]+'(str version)\x1b[0m')
 				print(str(q[w]))
 				print('\x1b[94m'+argv[w]+'(repr version)\x1b[0m')
 				print(repr(q[w]))
 			print('\x1b[91mANSWERS ARE DIFFERENT\x1b[0m')
+			print()
+			exit()
+		if type(q)==list and len(q)==1:
+			print('\x1b[91mERROR\x1b[0m')
+			print('\x1b[94minput(str version)\x1b[0m')
+			print(str(q[0]))
+			print('\x1b[94minput(repr version)\x1b[0m')
+			print(repr(q[0]))
+			print('\x1b[91mNON-ZERO RETURN CODE\x1b[0m')
 			print()
 			exit()
 		else:
@@ -101,9 +92,13 @@ if __name__=='__main__':
 	for w in range(16):
 		s.append(Process(target=cmp,args=(log,)))
 		s[-1].start()
-	a.join()
+	try:
+		a.join()
+	except KeyboardInterrupt:
+		pass
+	from os import system
+	system('rm -fr tmp*.trash.trash*')
 	for w in s:
 		w.terminate()
 	from time import sleep
 	sleep(0.1)
-	# Pool().map(cmp,[(log,w) for w in range(1)])

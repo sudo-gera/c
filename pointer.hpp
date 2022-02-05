@@ -11,12 +11,14 @@ class pointer{
 	void __init__(const pointer& o){
 		value=o.value;
 		count=o.count;
-		*count+=1;
+		if (count){
+			*count+=1;
+		}
 	}
 public:
 	pointer(){
 	}
-	pointer(const T q){
+	pointer(const T&q){
 		this->__init__(q);
 	}
 	pointer(const pointer& o){
@@ -27,7 +29,7 @@ public:
 			this->__init__(*o);
 		}
 	}
-	pointer&operator=(const T q){
+	pointer&operator=(const T& q){
 		this->clear();
 		this->__init__(q);
 		return *this;
@@ -44,6 +46,9 @@ public:
 		}
 		return *this;
 	}
+	~pointer(){
+		this->clear();
+	}
 	operator bool()const{
 		return count;
 	}
@@ -57,9 +62,6 @@ public:
 				value=nullptr;
 			}
 		}
-	}
-	~pointer(){
-		this->clear();
 	}
 	template <typename Y>
 	bool operator<(const pointer<Y> o)const{
