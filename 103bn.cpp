@@ -585,37 +585,31 @@ signed main(){
 	// print(monotonic()-l)
 
 
-<<<<<<< HEAD
-#define HIDE_118
-#define HIDE_119
-#define HIDE_138
-#define HIDE_139
-
-
-#define HIDE_159
-
-=======
 // #define HIDE_118
 // #define HIDE_119
 // #define HIDE_138
 // #define HIDE_139
+
+
 // #define HIDE_159
 
+#define HIDE_118
+#define HIDE_119
+#define HIDE_138
+#define HIDE_139
+#define HIDE_159
 
->>>>>>> c608cbdd465a6b743027f53363e40af73babc29c
+
 #define HIDE_162
 auto __h=perf();
 #include "stdout.cpp"
 ic("total:",__h);
 
-<<<<<<< HEAD
-=======
 // ic(BigInteger(1)/BigInteger(1))
 
 // ic(str(BigInteger("1000000000000",10)<< *BigInteger("a")))
 // ic(BigInteger("1000000000000",10))
 // ic(BigInteger("2540be400")*BigInteger("a"))
->>>>>>> c608cbdd465a6b743027f53363e40af73babc29c
 
 
 // ic(str(BigInteger("-17",10)%BigInteger("-10",10)));
@@ -625,11 +619,8 @@ ic("total:",__h);
 
 // ic(sizeof(bn))
 
-<<<<<<< HEAD
-=======
 // ic(BigInteger("10000000000000000000000000000000000000000000000000",10)<<*BigInteger("10",10))
 
->>>>>>> c608cbdd465a6b743027f53363e40af73babc29c
 }
 #endif
 
