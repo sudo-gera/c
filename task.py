@@ -1,5 +1,5 @@
-a=int('-9285',16)
-b=int('-6463',16)
+a=int('8503',16)
+b=int('5925',16)
 def mod(a,s):
 	d=abs(a)%abs(s)
 	if a<0:
