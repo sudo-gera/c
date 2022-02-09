@@ -1,8 +1,9 @@
-import(get_fields_,/Users/gera/pony/get_fields.py)
-
-
+struct a{
+	int q=1,w=2;
+	char r=48;
+}
 
 ima{
-	ic(get_fields_(1))
+	ic(a())
 }
 
