@@ -79,12 +79,12 @@ for w in a:
 	elif w[1]=='*':
 		w.append(f(w[0])*f(w[2]))
 	elif w[1]=='/':
-		w.append(int(w[0])//int(w[2]))
-		# w.append(abs(int(w[0]))//abs(int(w[2]))*(-1 if int(w[0])*int(w[2])<0 else 1))
+		# w.append(int(w[0])//int(w[2]))
+		w.append(abs(int(w[0]))//abs(int(w[2]))*(-1 if int(w[0])*int(w[2])<0 else 1))
 		# w.append(f(w[0])/f(f(w[2])))
 	elif w[1]=='%':
-		w.append(int(w[0])%int(w[2]))
-		# w.append(abs(f(w[0]))%abs(f(w[2]))*(-1 if f(w[0])*f(w[2])<0 else 1))
+		# w.append(int(w[0])%int(w[2]))
+		w.append(abs(f(w[0]))%abs(f(w[2]))*(-1 if f(w[0])*f(w[2])<0 else 1))
 	elif w[1]=='root':
 		w.append(root(f(w[0]),f(w[2])))
 	elif w[1]=='to_radix':

@@ -1,8 +1,8 @@
+import(get_fields_,/Users/gera/pony/get_fields.py)
 
 
 
-int main(){
-	decltype(std::declval<ostream>()) qq;
-	qq=0;
-	// write(type(qq))>();
+ima{
+	ic(get_fields_(1))
 }
+
