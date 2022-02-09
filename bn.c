@@ -17,25 +17,25 @@ typedef struct bn_s bn ;
 
 
 
-#ifdef CPP_R
+#ifdef HOME
 auto print_one(const bn*q) {
 	char b[99999] ;
 	b[0] = 0 ;
-	sprintf(b+strlen(b) , "\x1b[92m %s\x1b[0m" , 1 == q -> sign ? "+" : -1 == q -> sign ? "-" : 1 < q -> sign ? "++" : -1 > q -> sign ? "--" : "0") ;
+	sprintf(b+strlen(b) , "\x1b[92m%s\x1b[0m" , 1 == q -> sign ? "+" : -1 == q -> sign ? "-" : 1 < q -> sign ? "++" : -1 > q -> sign ? "--" : "0") ;
 	int c = 0 ;
 	if (q -> size) {
 		for (int t = q -> size-1 ; t > -1 ; --t) {
 			if (c % 2) {
 				sprintf(b+strlen(b) , "\x1b[92m") ;
 			}
-			sprintf(b+strlen(b) , " %0*x" , 8 , q -> vect[t]) ;
+			sprintf(b+strlen(b) , "%0*x" , 8 , q -> vect[t]) ;
 			if (c % 2) {
 				sprintf(b+strlen(b) , "\x1b[0m") ;
 			}
 			++c ;
 		}
 	} else {
-		sprintf(b+strlen(b) , "\x1b[93m %0*llx\x1b[0m" , 16 , uint64_t(q -> vect)) ;
+		sprintf(b+strlen(b) , "\x1b[93m%0*llx\x1b[0m" , 16 , uint64_t(q -> vect)) ;
 	}
 	return str(b) ;
 }
@@ -939,14 +939,14 @@ char* bn_to_string(const bn*q , int e) {
 	return a ;
 }
 
-static bn* bn_root(bn*q , int _w) {
+bn* bn_root(bn*q , int _w) {
 	// uint64_t w = (uint64_t)(_w) ;
 	bn*h = bn_init(q) ;
 	bn_root_to(h , _w) ;
 	return h ;
 }
 
-static bn* bn_pow(bn*q , int w) {
+bn* bn_pow(bn*q , int w) {
 	bn*h = bn_init(q) ;
 	bn_pow_to(h , w) ;
 	return h ;

@@ -17,25 +17,25 @@ typedef struct bn_s bn ;
 
 
 
-#ifdef CPP_R
+#ifdef HOME
 auto print_one(const bn*q) {
     char b[99999] ;
     b[0] = 0 ;
-    sprintf(b+strlen(b) , "\x1b[92m % s\x1b[0m" , 1 == q -> sign ? "+" : -1 == q -> sign ? "-" : 1 < q -> sign ? "++" : -1 > q -> sign ? "--" : "0") ;
+    sprintf(b+strlen(b) , "\x1b[92m%s\x1b[0m" , 1 == q -> sign ? "+" : -1 == q -> sign ? "-" : 1 < q -> sign ? "++" : -1 > q -> sign ? "--" : "0") ;
     int c = 0 ;
     if (q -> size) {
         for (int t = q -> size-1 ; t > -1 ; --t) {
             if (c % 2) {
                 sprintf(b+strlen(b) , "\x1b[92m") ;
             }
-            sprintf(b+strlen(b) , " % 0*x" , 8 , q -> vect[t]) ;
+            sprintf(b+strlen(b) , "%0*x" , 8 , q -> vect[t]) ;
             if (c % 2) {
                 sprintf(b+strlen(b) , "\x1b[0m") ;
             }
             ++c ;
         }
     } else {
-        sprintf(b+strlen(b) , "\x1b[93m % 0*llx\x1b[0m" , 16 , uint64_t(q -> vect)) ;
+        sprintf(b+strlen(b) , "\x1b[93m%0*llx\x1b[0m" , 16 , uint64_t(q -> vect)) ;
     }
     return str(b) ;
 }
@@ -137,10 +137,10 @@ int bn_cmp(bn const *q , bn const *e) {
     const uint32_t* ev = e -> size ? e -> vect : (const uint32_t*)&(e -> vect) ;
     const uint32_t es = e -> size ? e -> size : 2 ;
     for (size_t c = (qs > es ? qs : es)-1 ; ; --c) {
-        size_t a = qs > c ? qv[c] : 0 ;
+        size_t __a = qs > c ? qv[c] : 0 ;
         size_t s = es > c ? ev[c] : 0 ;
-        if (a != s) {
-            return ((a > s)*2-1)*q -> sign ;
+        if (__a != s) {
+            return ((__a > s)*2-1)*q -> sign ;
         }
         if (!c) {
             break ;
@@ -553,13 +553,13 @@ int bn_M_div_to(bn*q , bn*e) {
             rs = 2 ;
         }
         while (f >= 0) {
-            // ic(q , r , a[f&31] , f)
-            // if (bn_cmp(q , a[f&31]) >= 0) {
+            // ic(q , r , __a[f&31] , f)
+            // if (bn_cmp(q , __a[f&31]) >= 0) {
             // rv[f >> 5] |= (1LL << (f&31)) ;
-            // bn_M_sub_to(q , a[f&31]) ;
+            // bn_M_sub_to(q , __a[f&31]) ;
             //}
-            // a[f&31] -> size -= 1 ;
-            // a[f&31] -> vect += 1 ;
+            // __a[f&31] -> size -= 1 ;
+            // __a[f&31] -> vect += 1 ;
             // o[f&31] += 1 ;
             // f -= 1 ;
             // // bn_half(t) ;
@@ -584,12 +584,12 @@ int bn_M_div_to(bn*q , bn*e) {
             r -> sign = 0 ;
         }
         // for (size_t w = 0 ; w < 32 ; ++w) {
-        // a[w] -> vect -= o[w] ;
-        // // ic(a[w] -> vect)
-        // bn_delete(a[w]) ;
+        // __a[w] -> vect -= o[w] ;
+        // // ic(__a[w] -> vect)
+        // bn_delete(__a[w]) ;
         //}
         // free(o) ;
-        // free(a) ;
+        // free(__a) ;
         bn_swap(e , r) ;
         // bn_init_bn(e , r) ;
         bn_del(r) ;
@@ -603,31 +603,31 @@ int bn_M_div_to(bn*q , bn*e) {
 int bn_div_to(bn*q , const bn*e) {
     bn data[2] ;
     memset(data , 0 , sizeof(data)) ;
-    bn*a = data+0 ;
+    bn*__a = data+0 ;
     bn*d = data+1 ;
-    bn_init_bn(a , q) ;
-    a -> sign = (bool)(a -> sign) ;
+    bn_init_bn(__a , q) ;
+    __a -> sign = (bool)(__a -> sign) ;
     bn_init_bn(d , e) ;
     d -> sign = (bool)(d -> sign) ;
-    bn_M_div_to(a , d) ;
+    bn_M_div_to(__a , d) ;
     if (q -> sign*e -> sign < 0) {
-        if (a -> sign) {
-            bn_init_int(a , -1) ;
-            bn_sub_to(a , d) ;
+        if (__a -> sign) {
+            bn_init_int(__a , -1) ;
+            bn_sub_to(__a , d) ;
             bn_del(d) ;
-            bn_swap(q , a) ;
-            // bn_init_bn(q , a) ;
-            bn_del(a) ;
+            bn_swap(q , __a) ;
+            // bn_init_bn(q , __a) ;
+            bn_del(__a) ;
             return 0 ;
         }
         d -> sign *= -1 ;
-        bn_del(a) ;
+        bn_del(__a) ;
         bn_swap(q , d) ;
         // bn_init_bn(q , d) ;
         bn_del(d) ;
         return 0 ;
     } else {
-        bn_del(a) ;
+        bn_del(__a) ;
         bn_swap(q , d) ;
         // bn_init_bn(q , d) ;
         bn_del(d) ;
@@ -644,35 +644,35 @@ bn* bn_div(const bn*q , const bn*w) {
 int bn_mod_to(bn*q , const bn*e) {
     bn data[2] ;
     memset(data , 0 , sizeof(data)) ;
-    bn*a = data+0 ;
+    bn*__a = data+0 ;
     bn*d = data+1 ;
-    bn_init_bn(a , q) ;
-    a -> sign = (bool)(a -> sign) ;
+    bn_init_bn(__a , q) ;
+    __a -> sign = (bool)(__a -> sign) ;
     bn_init_bn(d , e) ;
     d -> sign = (bool)(d -> sign) ;
-    bn_M_div_to(a , d) ;
-    // ic(a , d)
+    bn_M_div_to(__a , d) ;
+    // ic(__a , d)
     if (q -> sign*e -> sign < 0) {
-        if (a -> sign) {
-            a -> sign = e -> sign ;
-            bn_sub_to(a , e) ;
-            a -> sign = e -> sign ;
+        if (__a -> sign) {
+            __a -> sign = e -> sign ;
+            bn_sub_to(__a , e) ;
+            __a -> sign = e -> sign ;
             bn_del(d) ;
-            bn_swap(q , a) ;
-            bn_del(a) ;
+            bn_swap(q , __a) ;
+            bn_del(__a) ;
             return 0 ;
         }
         bn_del(d) ;
-        bn_swap(q , a) ;
-        // bn_init_bn(q , a) ;
-        bn_del(a) ;
+        bn_swap(q , __a) ;
+        // bn_init_bn(q , __a) ;
+        bn_del(__a) ;
         return 0 ;
     } else {
         bn_del(d) ;
-        a -> sign = q -> sign ;
-        bn_swap(q , a) ;
-        // bn_init_bn(q , a) ;
-        bn_del(a) ;
+        __a -> sign = q -> sign ;
+        bn_swap(q , __a) ;
+        // bn_init_bn(q , __a) ;
+        bn_del(__a) ;
         return 0 ;
     }
 }
@@ -693,23 +693,23 @@ int bn_pow_to(bn*q , int _e) {
         }
     }
     if(s) {
-        bn a[64] ;
-        memset(a , 0 , sizeof(a)) ;
-        bn_init_bn(a+0 , q) ;
+        bn __a[64] ;
+        memset(__a , 0 , sizeof(__a)) ;
+        bn_init_bn(__a+0 , q) ;
         for (size_t w = 1 ; w < s ; ++w) {
-            bn_init_bn(a+w , a+w-1) ;
-            bn_mul_to(a+w , a+w) ;
+            bn_init_bn(__a+w , __a+w-1) ;
+            bn_mul_to(__a+w , __a+w) ;
         }
         bn_init_int(q , 1) ;
         for (size_t w = 0 ; w < s ; ++w) {
             if ((1 << w)&e) {
-                bn_mul_to(q , a+w) ;
+                bn_mul_to(q , __a+w) ;
             }
         }
         for (size_t w = 0 ; w < s ; ++w) {
-            bn_del(a+w) ;
+            bn_del(__a+w) ;
         }
-        // free(a) ;
+        // free(__a) ;
     } else {
         bn_init_int(q , 1) ;
     }
@@ -856,7 +856,7 @@ int bn_init_string_radix(bn*q , const char*e , int t) {
     q -> sign = 0 ;
     bn data[2] ;
     memset(data , 0 , sizeof(data)) ;
-    bn*a = data+0 ;
+    bn*__a = data+0 ;
     bn*y = data+1 ;
     bn_init_int(y , t) ;
     size_t g = 0 ;
@@ -864,18 +864,18 @@ int bn_init_string_radix(bn*q , const char*e , int t) {
         g = 1 ;
     }
     for (size_t w = g ; w < l ; ++w) {
-        // ic(q , y , a)
+        // ic(q , y , __a)
         bn_mul_to(q , y) ;
-        // ic(q , y , a)
-        bn_init_int(a , "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x24\x25\x26\x27\x28\x29\x2a\x2b\x2c\x2d\x2e\x2f\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x3a\x3b\x3c\x3d\x3e\x3f\x40\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x5b\x5c\x5d\x5e\x5f\x60\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x7b\x7c\x7d\x7e\x7f"
+        // ic(q , y , __a)
+        bn_init_int(__a , "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x24\x25\x26\x27\x28\x29\x2a\x2b\x2c\x2d\x2e\x2f\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x3a\x3b\x3c\x3d\x3e\x3f\x40\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x5b\x5c\x5d\x5e\x5f\x60\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x7b\x7c\x7d\x7e\x7f"
             [(int)(e[w])]) ;
-        if (a -> sign) {
+        if (__a -> sign) {
             q -> sign = 1 ;
         }
-        bn_M_add_to_fast(q , a , 0) ;
+        bn_M_add_to_fast(q , __a , 0) ;
     }
     q -> sign *= "\x01\xff"[g] ;
-    bn_del(a) ;
+    bn_del(__a) ;
     bn_del(y) ;
     return 0 ;
 }
@@ -901,7 +901,7 @@ char* bn_to_string(const bn*q , int e) {
     r -> sign = (bool)(r -> sign) ;
     uint32_t* rv = r -> size ? r -> vect : (uint32_t*)&(r -> vect) ;
     uint32_t rs = qs ;
-    char*a = (char*)calloc(sizeof(char) , 2+(qs+1)*(unsigned)("\x00\x00\x20\x15\x10\x0e\x0d\x0c\x0b\x0b\x0a\x0a\x09\x09\x09\x09\x08\x08\x08\x08\x08\x08\x08\x08\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07"
+    char*__a = (char*)calloc(sizeof(char) , 2+(qs+1)*(unsigned)("\x00\x00\x20\x15\x10\x0e\x0d\x0c\x0b\x0b\x0a\x0a\x09\x09\x09\x09\x08\x08\x08\x08\x08\x08\x08\x08\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07"
         [_t])) ;
     size_t s = 0 ;
     while (r -> sign) {
@@ -919,38 +919,39 @@ char* bn_to_string(const bn*q , int e) {
                 r -> sign = 1 ;
             }
         }
-        a[s++] = (char)(b) ;
+        __a[s++] = (char)(b) ;
     }
     for (size_t w = 0 ; w < s ; ++w) {
-        a[w] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"[(int)(a[w])] ;
+        __a[w] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"[(int)(__a[w])] ;
     }
     if (q -> sign < 0) {
-        a[s++] = '-' ;
+        __a[s++] = '-' ;
     }
     if (!s) {
-        a[s++] = '0' ;
+        __a[s++] = '0' ;
     }
     for (size_t w = 0 ; w*2 < s ; ++w) {
-        char t = a[w] ;
-        a[w] = a[s-1-w] ;
-        a[s-1-w] = t ;
+        char t = __a[w] ;
+        __a[w] = __a[s-1-w] ;
+        __a[s-1-w] = t ;
     }
     bn_del(r) ;
-    return a ;
+    return __a ;
 }
 
-// static bn* bn_root(bn*q , int _w) {
-//     // uint64_t w = (uint64_t)(_w) ;
-//     bn*h = bn_init(q) ;
-//     bn_root_to(h , _w) ;
-//     return h ;
-// }
+bn* bn_root(bn*q , int _w) {
+    // uint64_t w = (uint64_t)(_w) ;
+    bn*h = bn_init(q) ;
+    bn_root_to(h , _w) ;
+    return h ;
+}
 
-// static bn* bn_pow(bn*q , int w) {
-//     bn*h = bn_init(q) ;
-//     bn_pow_to(h , w) ;
-//     return h ;
-// }
+bn* bn_pow(bn*q , int w) {
+    bn*h = bn_init(q) ;
+    bn_pow_to(h , w) ;
+    return h ;
+}
+
 
 
 #include <stdio.h>
@@ -966,22 +967,61 @@ char* bn_to_string(const bn*q , int e) {
 #include <fcntl.h>
 
 
-int read ( int , char * , int ) ;
-int write ( int , char * , int ) ;
+#ifdef HOME
+#define N 4
+struct _Decimal {
+    char a[N];   // number is __a[0]*10^0 + __a[1]*10^1 + ..+ __a[n]*10^n
+    unsigned int n;       // наибольшая степень десяти
+};
+typedef struct _Decimal Decimal;
+#endif
 
-static char a [ 1024 ] ;
-int main() {
-    // int fdin = open ( "input.txt" , O_RDONLY ) ;
-    // int s = read ( fdin , a , 1024 ) ;
-    
-    a [ s ] = 0 ;
-    bn * q = bn_new ( ) ;
-    bn_init_string_radix ( q , a , 3 ) ; 
-    char * d = bn_to_string ( q , 10 ) ; 
-    bn_delete ( q ) ; 
-
-
-    int fdout = open ( "output.txt" , O_WRONLY | O_CREAT | O_TRUNC ) ;
-    write ( fdout , d , (int)(strlen(d)) ) ;
-    free(d);
+char __a[1024];
+Decimal add(Decimal q,Decimal e){
+    q.n++;
+    e.n++;
+    for (size_t w = 0 ; w < q.n; ++ w ){
+        __a[q.n - 1 - w] = q.a[w]+'0';
+    }
+    __a[q.n] = 0;
+    bn*qq=bn_new();
+    bn_init_string(qq,__a);
+    for (size_t w = 0 ; w < e.n; ++ w ){
+        __a[e.n - 1 - w] = e.a[w]+'0';
+    }
+    __a[e.n] = 0;
+    bn*ee=bn_new();
+    bn_init_string(ee,__a);
+    bn_add_to ( qq , ee ) ;
+    char * s = bn_to_string ( qq , 10 ) ;
+    size_t l = strlen(s);
+    Decimal r;
+    for (size_t w = 0 ; w < l; ++ w ){
+        r.a[l - 1 - w] = s[w]-'0';
+    }
+    r.n = (unsigned)(l)-1;
+    bn_del(qq);
+    bn_del(ee);
+    return r;
 }
+
+#ifdef HOME
+auto to_str(Decimal res){
+    // ic(type(res.a[0]))
+    // return str();
+    auto f=vector<int>( (char*)(res.a), (res.n+1+(char*)(res.a))) ;
+    return to_str(res.n)+"|"+to_str( f );
+}
+int main(){
+    Decimal a = {{7, 4, 1}, 2};  // set number 147
+    Decimal b = {{3, 1}, 1};     // set number 13
+    Decimal res;
+    ic(a,b)
+
+    res = add(a, b);             // res = __a+b = 147+13 = 160
+    ic(res)
+    printf("\n");
+    
+    return 0;
+}
+#endif
