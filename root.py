@@ -1,8 +1,10 @@
 from fractions import Fraction
 from functools import total_ordering
 from functools import reduce
+from functools import cache
 from math import *
 from numbers import Rational
+@cache
 def find_root(q):
 	w=2
 	f=[]
@@ -214,39 +216,6 @@ class Fraction_with_root(Rational):
 		return s.as_fraction().denominator
 
 
-# def root(q):
-# 	if type(q)==Fraction:
-# 		return root(q.numerator)/root(q.denominator)
-# 	if type(q)==Fraction_with_root:
-# 		return q.as_fraction()
-# 	e=Fraction_with_root(q,0,1)
-# 	if e.b==0:
-# 		return e.a
-# 	s=[]
-# 	d={}
-# 	while 1:
-# 		if e in d:
-# 			break
-# 		ie=floor(e)
-# 		d[e]=ie
-# 		s.append(ie)
-# 		e=1/(e-ie)
-# 	end=e
-# 	p=[]
-# 	p.append(int(e))
-# 	e=1/(e-floor(e))
-# 	while e!=end:
-# 		ie=floor(e)
-# 		p.append(ie)
-# 		e=1/(e-ie)
-# 	r=Fraction(1)
-# 	for w in range(4999//len(p)):
-# 		for e in p[::-1]:
-# 			r=e+1/r
-# 	for e in s[::-1]:
-# 		r=e+1/r
-# 	return r
-
 def check(q,f):
 	from time import perf_counter
 	a=perf_counter()
@@ -281,26 +250,30 @@ def root(q):
 		return root(q.numerator)/root(q.denominator)
 	if type(q)==Fraction_with_root:
 		return q.as_fraction()
+	if type(q)!=int:
+		return root(Fraction(q))
 	if q==0:
 		return Fraction(0)
 	e=Fraction_with_root(q,0,1)
 	if e.b==0:
 		return e.a
 	s=[]
-	d={}
+	d=set()
 	while 1:
 		if e in d:
 			break
-		d[e]=int(e)
-		s.append(int(e))
-		e=1/(e-int(e))
+		ie=floor(e)
+		d.add(e)
+		s.append(ie)
+		e=1/(e-ie)
 	end=e
 	p=[]
-	p.append(int(e))
-	e=1/(e-int(e))
+	p.append(floor(e))
+	e=1/(e-floor(e))
 	while e!=end:
-		p.append(int(e))
-		e=1/(e-int(e))
+		ie=floor(e)
+		p.append(ie)
+		e=1/(e-ie)
 	l=p
 	s+=p+p
 	p_2=s[0]
@@ -312,6 +285,66 @@ def root(q):
 			a=s[w]
 		else:
 			a=l[(w-len(s))%len(l)]
+		p=a*p_1+p_2
+		q=a*q_1+q_2
+		p_1,p_2=p,p_1
+		q_1,q_2=q,q_1
+	return Fraction(p,q)
+
+def fast_root(q):
+	if type(q)==Fraction:
+		return root(q.numerator)/root(q.denominator)
+	if type(q)==Fraction_with_root:
+		return q.as_fraction()
+	if type(q)!=int:
+		return root(Fraction(q))
+	if q==0:
+		return Fraction(0)
+	e=Fraction_with_root(q)
+	if e.b==0:
+		return e.a
+	# s=[]
+	# d=set()
+	# while 1:
+	# 	if e in d:
+	# 		break
+	# 	ie=floor(e)
+	# 	d.add(e)
+	# 	s.append(ie)
+	# 	e=1/(e-ie)
+	# end=e
+	# p=[]
+	# p.append(floor(e))
+	# e=1/(e-floor(e))
+	# while e!=end:
+	# 	ie=floor(e)
+	# 	p.append(ie)
+	# 	e=1/(e-ie)
+	# l=p
+	# s+=p+p
+	n=[e,1]
+	def get_n(w):
+		if len(n)>w:
+			return n[w]
+		get_n(w-1)
+		n.append(n[w-2] % n[w-1])
+		return n[w]
+	get_n(9)
+	print(n)
+	def get_a(w):
+		# if w<len(s):
+		# 	a=s[w]
+		# else:
+		# 	a=l[(w-len(s))%len(l)]
+		# return a
+		while len(n)<w+2:
+
+	p_2=get_a(0)
+	q_2=1
+	p_1=get_a(0)*get_a(1)+1
+	q_1=get_a(1)
+	for w in range(2,9999):
+		a=get_a(w)
 		p=a*p_1+p_2
 		q=a*q_1+q_2
 		p_1,p_2=p,p_1
