@@ -309,7 +309,6 @@ def floor_root(q):
 	p=1
 	while p<q:
 		p<<=32
-	u=0
 	while p:
 		u=r+p
 		if q >= u :
@@ -336,4 +335,12 @@ def fractional_root(q):
 	p=2**15
 	# p=2**p
 	return Fraction(floor_root(q<<p<<p),1<<p)
+
+
+
+
+
+
+
+
 
