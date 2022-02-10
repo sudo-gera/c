@@ -29,9 +29,9 @@ def find_root(q):
 	g=lambda a,s:a*s
 	return [reduce(g,d,1),reduce(g,e,1)]
 
-class Fraction_with_root(Rational):
+class froot(Rational):
 	def __init__(s,r,a=None,b=None):
-		if type(r)==Fraction_with_root:
+		if type(r)==froot:
 			s.r=r.r
 			s._a=r.a
 			s._b=r.b
@@ -62,66 +62,66 @@ class Fraction_with_root(Rational):
 	def b(s):
 		return s._b
 	def __repr__(s):
-		return str(s.a)+'+'+str(s.b)+'*sqrt('+str(s.r)+')'
+		return str(s.a)+'+'+str(s.b)+'*froot('+str(s.r)+')'
 	def __eq__(s,a):
-		if type(a)!=Fraction_with_root:
-			a=Fraction_with_root(s.r,a)
+		if type(a)!=froot:
+			a=froot(s.r,a)
 		assert s.r==a.r
 		return s.a==a.a and s.b==a.b
 	def __add__(s,a):
-		if type(a)!=Fraction_with_root:
-			a=Fraction_with_root(s.r,a)
+		if type(a)!=froot:
+			a=froot(s.r,a)
 		assert s.r==a.r
-		d=Fraction_with_root(s.r,s.a+a.a,s.b+a.b)
+		d=froot(s.r,s.a+a.a,s.b+a.b)
 		return d
 	def __neg__(s):
-		d=Fraction_with_root(s.r,-s.a,-s.b)
+		d=froot(s.r,-s.a,-s.b)
 		return d
 	def __pos__(s):
 		return s
 	def __radd__(s,a):
-		if type(a)!=Fraction_with_root:
-			a=Fraction_with_root(s.r,a)
+		if type(a)!=froot:
+			a=froot(s.r,a)
 		return a+s
 	def __sub__(s,a):
-		if type(a)!=Fraction_with_root:
-			a=Fraction_with_root(s.r,a)
+		if type(a)!=froot:
+			a=froot(s.r,a)
 		return s+-a
 	def __rsub__(s,a):
-		if type(a)!=Fraction_with_root:
-			a=Fraction_with_root(s.r,a)
+		if type(a)!=froot:
+			a=froot(s.r,a)
 		return a+-s
 	def __iadd__(s,a):
 		return s+a
 	def __isub__(s,a):
 		return s-a
 	def __mul__(s,a):
-		if type(a)!=Fraction_with_root:
-			a=Fraction_with_root(s.r,a)
+		if type(a)!=froot:
+			a=froot(s.r,a)
 		assert s.r==a.r
-		d=Fraction_with_root(s.r,s.a*a.a+s.r*s.b*a.b,s.a*a.b+s.b*a.a)
+		d=froot(s.r,s.a*a.a+s.r*s.b*a.b,s.a*a.b+s.b*a.a)
 		return d
 	def __rmul__(s,a):
-		if type(a)!=Fraction_with_root:
-			a=Fraction_with_root(s.r,a)
+		if type(a)!=froot:
+			a=froot(s.r,a)
 		return a*s
 	def __imul__(s,a):
 		return s*a
 	def invert(s):
 		assert s!=0
-		pr=Fraction_with_root(s.r,s.a,-s.b)
+		pr=froot(s.r,s.a,-s.b)
 		d=(s*pr).a
 		s=pr
-		s=Fraction_with_root(s.r,s.a/d,s.b/d)
+		s=froot(s.r,s.a/d,s.b/d)
 		return s
 	def __truediv__(s,a):
-		if type(a)!=Fraction_with_root:
-			a=Fraction_with_root(s.r,a)
+		if type(a)!=froot:
+			a=froot(s.r,a)
 		assert s.r==a.r
 		return s*a.invert()
 	def __rtruediv__(s,a):
-		if type(a)!=Fraction_with_root:
-			a=Fraction_with_root(s.r,a)
+		if type(a)!=froot:
+			a=froot(s.r,a)
 		return a/s
 	def __idiv__(s,a):
 		return s/a
@@ -142,13 +142,13 @@ class Fraction_with_root(Rational):
 			return b*b*r>=a*a
 		assert 0
 	def __ge__(s,a):
-		if type(a)!=Fraction_with_root:
-			a=Fraction_with_root(s.r,a)
+		if type(a)!=froot:
+			a=froot(s.r,a)
 		assert s.r==a.r
 		return (s-a).is_not_negative()
 	def __le__(s,a):
-		if type(a)!=Fraction_with_root:
-			a=Fraction_with_root(s.r,a)
+		if type(a)!=froot:
+			a=froot(s.r,a)
 		assert s.r==a.r
 		return (a-s).is_not_negative()
 	def __lt__(s,a):
@@ -197,7 +197,7 @@ class Fraction_with_root(Rational):
 	def __mod__(s,o):
 		return s-s//o*o
 	def __rmod__(s,o):
-		return s-s//o*o
+		return o-o//s*s
 	def __imod__(s,o):
 		return s%o
 	def __round__(s,d=0):
@@ -214,7 +214,6 @@ class Fraction_with_root(Rational):
 	@property
 	def denominator(s):
 		return s.as_fraction().denominator
-
 
 def check(q,f):
 	from time import perf_counter
@@ -248,13 +247,13 @@ def bin_root(q):
 def root(q):
 	if type(q)==Fraction:
 		return root(q.numerator)/root(q.denominator)
-	if type(q)==Fraction_with_root:
+	if type(q)==froot:
 		return q.as_fraction()
 	if type(q)!=int:
 		return root(Fraction(q))
 	if q==0:
 		return Fraction(0)
-	e=Fraction_with_root(q,0,1)
+	e=froot(q,0,1)
 	if e.b==0:
 		return e.a
 	s=[]
@@ -294,13 +293,13 @@ def root(q):
 def fast_root(q):
 	if type(q)==Fraction:
 		return root(q.numerator)/root(q.denominator)
-	if type(q)==Fraction_with_root:
+	if type(q)==froot:
 		return q.as_fraction()
 	if type(q)!=int:
 		return root(Fraction(q))
 	if q==0:
 		return Fraction(0)
-	e=Fraction_with_root(q)
+	e=froot(q)
 	if e.b==0:
 		return e.a
 	# s=[]
@@ -326,18 +325,18 @@ def fast_root(q):
 	def get_n(w):
 		if len(n)>w:
 			return n[w]
-		get_n(w-1)
+		for e in range(len(n),w):
+			get_n(w-1)
 		n.append(n[w-2] % n[w-1])
 		return n[w]
-	get_n(9)
-	print(n)
-	def get_a(w):
+	get_n(99999)
+	# def get_a(w):
 		# if w<len(s):
 		# 	a=s[w]
 		# else:
 		# 	a=l[(w-len(s))%len(l)]
 		# return a
-		while len(n)<w+2:
+		# while len(n)<w+2:
 
 	p_2=get_a(0)
 	q_2=1
