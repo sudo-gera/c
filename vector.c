@@ -14,19 +14,18 @@
 #endif
 
 #ifdef HOME
-#define stack stack_home
+#define vector vector_home
 #endif
 
-struct stack{
+struct vector{
 	void* data;
 	size_t size;
 	size_t dsize;
 	size_t elem_size;
 };
 
-struct stack *stack_new(size_t elem_size){
-	size_t elems=0;
-	struct stack*a=(struct stack*)malloc(sizeof(struct stack));
+struct vector *vector_new(size_t elems, size_t elem_size){
+	struct vector*a=(struct vector*)malloc(sizeof(struct vector));
 	if (!a){
 		return 0;
 	}
@@ -43,7 +42,7 @@ struct stack *stack_new(size_t elem_size){
 	return a;
 }
 
-int stack_push(struct stack *v, void const *elem){
+int vector_push(struct vector *v, void const *elem){
 	if (!v or !elem){
 		return 1;
 	}
@@ -61,7 +60,7 @@ int stack_push(struct stack *v, void const *elem){
 	return 0;
 }
 
-int stack_pop (struct stack *v, void *elem){
+int vector_pop (struct vector *v, void *elem){
 	if (!v or !elem){
 		return 1;
 	}
@@ -81,27 +80,14 @@ int stack_pop (struct stack *v, void *elem){
 	return 0;
 }
 
-int stack_top (struct stack *v, void *elem){
-	if (!v or !elem){
-		return 1;
-	}
-	if (!v->size){
-		return 1;
-	}
-	v->size--;
-	memcpy(elem,((char*)(v->data)+v->elem_size*v->size),v->elem_size);
-	v->size++;
-	return 0;
-}
-
-int stack_empty(struct stack const *v){
+int vector_empty(struct vector const *v){
 	if (!v){
 		return 1;
 	}
 	return v->size==0;
 }
 
-struct stack *stack_delete(struct stack *v){
+struct vector *vector_delete(struct vector *v){
 	if (v){
 		free(v->data);
 		free(v);
@@ -109,7 +95,7 @@ struct stack *stack_delete(struct stack *v){
 	return 0;
 }
 
-void stack_print(struct stack const *v, void (*pf)(void const *data)){
+void vector_print(struct vector const *v, void (*pf)(void const *data)){
 	if (v){
 		printf("[");
 		int c=0;
@@ -125,7 +111,7 @@ void stack_print(struct stack const *v, void (*pf)(void const *data)){
 	}
 }
 
-int stack_set(struct stack *v, size_t index, void const *elem){
+int vector_set(struct vector *v, size_t index, void const *elem){
 	if (!v or !elem){
 		return 1;
 	}
@@ -136,7 +122,7 @@ int stack_set(struct stack *v, size_t index, void const *elem){
 	return 0;
 }
 
-int stack_get(struct stack const *v, size_t index, void *elem){
+int vector_get(struct vector const *v, size_t index, void *elem){
 	if (!v or !elem){
 		return 1;
 	}
@@ -147,7 +133,7 @@ int stack_get(struct stack const *v, size_t index, void *elem){
 	return 0;
 }
 
-int stack_resize(struct stack *v, size_t new_size){
+int vector_resize(struct vector *v, size_t new_size){
 	if (!v){
 		return 1;
 	}
@@ -159,7 +145,7 @@ int stack_resize(struct stack *v, size_t new_size){
 	return 0;
 }
 
-size_t stack_size(struct stack const *v){
+size_t vector_size(struct vector const *v){
 	if (v){
 		return v->size;
 	}else{
@@ -173,61 +159,61 @@ static void print_int(void const *data) {
 }
 
 int main() {
-	struct stack*v=0;
+	struct vector*v=0;
 	while (1){
 		int q=0,w=0,r=0,e=0;
 		scanf("%i",&q);
 		if (q==0){
 			scanf("%i",&w);
 			if (!v){
-				stack_delete(v);
+				vector_delete(v);
 			}
-			v=stack_new(w,sizeof(int));
+			v=vector_new(w,sizeof(int));
 			for (int t=0;t<w;++t){
-				r+=stack_set(v,t,&t);
+				r+=vector_set(v,t,&t);
 			}
 			printf("%i\n",r);
 		}else
 		if (q==1){
 			scanf("%i",&w);
-			r=stack_push(v,&w);
+			r=vector_push(v,&w);
 			printf("%i\n",r);
 		}else
 		if (q==2){
-			r=stack_pop(v,&w);
+			r=vector_pop(v,&w);
 			printf("%i %i\n",r,w);
 		}else
 		if (q==3){
-			r=stack_empty(v);
+			r=vector_empty(v);
 			printf("%i\n",r);
 		}else
 		if (q==4){
-			v=stack_delete(v);
+			v=vector_delete(v);
 		}else
 		if (q==5){
-			stack_print(v,print_int);
+			vector_print(v,print_int);
 		}else
 		if (q==6){
 			scanf("%i %i",&w,&e);
-			r=stack_set(v,e,&w);
+			r=vector_set(v,e,&w);
 			printf("%i\n",r);
 		}else
 		if (q==7){
 			scanf("%i",&e);
-			r=stack_get(v,e,&w);
+			r=vector_get(v,e,&w);
 			printf("%i %i\n",w,r);
 		}else
 		if (q==8){
 			scanf("%i",&w);
-			e=stack_size(v);
-			r=stack_resize(v,w);
+			e=vector_size(v);
+			r=vector_resize(v,w);
 			for (size_t t=e;t<w;++t){
-				r+=stack_set(v,t,&t);
+				r+=vector_set(v,t,&t);
 			}
 			printf("%i\n",r);
 		}else
 		if (q==9){
-			w=stack_size(v);
+			w=vector_size(v);
 			printf("%i\n",w);
 		}else{
 			break;
