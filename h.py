@@ -81,12 +81,8 @@ def prev_prime(q):
 		q-=2
 	return q
 def primes_until(w):
-	q=primes[-1]
-	q=next_prime(q)
-	while q<w:
-		primes.append(q)
-		q=next_prime(q)
-	primes.append(q)
+	while primes[-1]<w:
+		primes.append(next_prime(primes[-1]))
 
 @cache
 def fibonacci(q):
@@ -98,3 +94,37 @@ def fibonacci(q):
 		q-=1
 	return a
 from root import *
+
+def factor(q):
+	f=[]
+	if q<0:
+		q*=-1
+		f=[-1]
+	if q==0:
+		return []
+	primes_until(ceil_root(q))
+	for w in primes:
+		while q%w==0:
+			f.append(w)
+			q//=w
+		if w*w>q:
+			break
+	if q!=1:
+		f.append(q)
+	return f
+
+def divizors(q):
+	f=[]
+	if q<0:
+		q=-q
+	w=1
+	while w*w<q:
+		if q%w==0:
+			f.append(w)
+		w+=1
+	l=len(f)
+	if w*w==q:
+		f.append(w)
+	for e in f[:l][::-1]:
+		f.append(q//e)
+	return f

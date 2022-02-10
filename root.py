@@ -4,6 +4,8 @@ from functools import reduce
 from functools import cache
 from math import *
 from numbers import Rational
+from time import time
+from bisect import *
 @cache
 def find_root(q):
 	w=2
@@ -173,7 +175,7 @@ class froot(Rational):
 			return -s
 		return s
 	def near_int(s):
-		return int(s.a)+floor_root(s.b**2+s.r)
+		return int(s.a)+floor_root(s.b**2*s.r)
 	def __ceil__(s):
 		d=s.near_int()
 		while d>s:
@@ -231,202 +233,26 @@ class froot(Rational):
 	def denominator(s):
 		return s.as_fraction().denominator
 
-def check(q,f):
-	from time import perf_counter
-	a=perf_counter()
-	fq=f(q)
-	a=perf_counter()-a
-	fq=Fraction(fq)
-	q=(fq**2-q)/q
-	q=abs(q)
-	if q==0:
-		f=float('-inf')
-	else:
-		f=log(q.numerator)-log(q.denominator)
-	if f<-10000:
-		return a
-	else:
-		raise ValueError
-
-
-def root(q):
-	if type(q)==Fraction:
-		return root(q.numerator)/root(q.denominator)
-	if type(q)==froot:
-		return q.as_fraction()
-	if type(q)!=int:
-		return root(Fraction(q))
-	if q==0:
-		return Fraction(0)
-	e=froot(q,0,1)
-	if e.b==0:
-		return e.a
-	s=[]
-	d=set()
-	while 1:
-		if e in d:
-			break
-		ie=floor(e)
-		d.add(e)
-		s.append(ie)
-		e=1/(e-ie)
-	end=e
-	p=[]
-	p.append(floor(e))
-	e=1/(e-floor(e))
-	while e!=end:
-		ie=floor(e)
-		p.append(ie)
-		e=1/(e-ie)
-	l=p
-	s+=p+p
-	p_2=s[0]
-	q_2=1
-	p_1=s[0]*s[1]+1
-	q_1=s[1]
-	for w in range(2,9999):
-		if w<len(s):
-			a=s[w]
-		else:
-			a=l[(w-len(s))%len(l)]
-		p=a*p_1+p_2
-		q=a*q_1+q_2
-		p_1,p_2=p,p_1
-		q_1,q_2=q,q_1
-	return Fraction(p,q)
-
-# def fast_root(q):
-# 	if type(q)==Fraction:
-# 		return root(q.numerator)/root(q.denominator)
-# 	if type(q)==froot:
-# 		return q.as_fraction()
-# 	if type(q)!=int:
-# 		return root(Fraction(q))
+# def check(q,f):
+# 	from time import perf_counter
+# 	a=perf_counter()
+# 	fq=f(q)
+# 	a=perf_counter()-a
+# 	fq=Fraction(fq)
+# 	q=(fq**2-q)/q
+# 	q=abs(q)
 # 	if q==0:
-# 		return Fraction(0)
-# 	e=froot(q)
-# 	if e.b==0:
-# 		return e.a
-# 	# s=[]
-# 	# d=set()
-# 	# while 1:
-# 	# 	if e in d:
-# 	# 		break
-# 	# 	ie=floor(e)
-# 	# 	d.add(e)
-# 	# 	s.append(ie)
-# 	# 	e=1/(e-ie)
-# 	# end=e
-# 	# p=[]
-# 	# p.append(floor(e))
-# 	# e=1/(e-floor(e))
-# 	# while e!=end:
-# 	# 	ie=floor(e)
-# 	# 	p.append(ie)
-# 	# 	e=1/(e-ie)
-# 	# l=p
-# 	# s+=p+p
-# 	n=[e,1]
-# 	def get_n(w):
-# 		if len(n)>w:
-# 			return n[w]
-# 		for e in range(len(n),w):
-# 			get_n(e)
-# 		n.append(n[w-2] % n[w-1])
-# 		return n[w]
-# 	def get_a(w):
-# 		# print(w)
-# 		# if w<len(s):
-# 		# 	a=s[w]
-# 		# else:
-# 		# 	a=l[(w-len(s))%len(l)]
-# 		# return a
-# 		return get_n(w)//get_n(w+1)
-
-# 	p_2=get_a(0)
-# 	q_2=1
-# 	p_1=get_a(0)*get_a(1)+1
-# 	q_1=get_a(1)
-# 	for w in range(2,99):
-# 		a=get_a(w)
-# 		p=a*p_1+p_2
-# 		q=a*q_1+q_2
-# 		p_1,p_2=p,p_1
-# 		q_1,q_2=q,q_1
-# 	return Fraction(p,q)
-
-# def fast_root1(q):
-# 	if type(q)==Fraction:
-# 		return root(q.numerator)/root(q.denominator)
-# 	if type(q)==froot:
-# 		return q.as_fraction()
-# 	if type(q)!=int:
-# 		return root(Fraction(q))
-# 	if q==0:
-# 		return Fraction(0)
-# 	e=froot(q)
-# 	if e.b==0:
-# 		return e.a
-# 	def get_as():
-# 		nonlocal e
-# 		# s=[]
-# 		# d=set()
-# 		while 1:
-# 			# if e in d:
-# 			# 	break
-# 			ie=floor(e)
-# 			# d.add(e)
-# 			# s.append(ie)
-# 			yield ie
-# 			e=1/(e-ie)
-# 		# end=e
-# 		# p=[]
-# 		# p.append(floor(e))
-# 		# e=1/(e-floor(e))
-# 		# while e!=end:
-# 		# 	ie=floor(e)
-# 		# 	p.append(ie)
-# 		# 	e=1/(e-ie)
-# 		# l=p
-# 		# s+=p+p
-# 	sa=[]
-# 	ai=iter(get_as())
-# 	def get_a(w):
-# 		# print(w)
-# 		while len(sa)<=w:
-# 			sa.append(next(ai))
-# 		return sa[w]
-
-# 	# n=[e,1]
-# 	# def get_n(w):
-# 	# 	if len(n)>w:
-# 	# 		return n[w]
-# 	# 	for e in range(len(n),w):
-# 	# 		get_n(e)
-# 	# 	n.append(n[w-2] % n[w-1])
-# 	# 	return n[w]
-# 	# def get_a(w):
-# 		# print(w)
-# 		if w<len(s):
-# 			a=s[w]
-# 		else:
-# 			a=l[(w-len(s))%len(l)]
+# 		f=float('-inf')
+# 	else:
+# 		f=log(q.numerator)-log(q.denominator)
+# 	print(f)
+# 	if f<-10000:
 # 		return a
-# 		# return get_n(w)//get_n(w+1)
+# 	else:
+# 		raise ValueError
 
-# 	p_2=get_a(0)
-# 	q_2=1
-# 	p_1=get_a(0)*get_a(1)+1
-# 	q_1=get_a(1)
-# 	for w in range(2,9999):
-# 		a=get_a(w)
-# 		p=a*p_1+p_2
-# 		q=a*q_1+q_2
-# 		p_1,p_2=p,p_1
-# 		q_1,q_2=q,q_1
-# 	return Fraction(p,q)
 
-def fast_root2(q):
+def continued_root(q):
 	if type(q)==Fraction:
 		return root(q.numerator)/root(q.denominator)
 	if type(q)==froot:
@@ -435,7 +261,7 @@ def fast_root2(q):
 		return root(Fraction(q))
 	if q==0:
 		return Fraction(0)
-	e=float(q)**0.5
+	e=froot(q)
 	# if e.b==0:
 	# 	return e.a
 
@@ -452,24 +278,33 @@ def fast_root2(q):
 	p_1=a[0]*a[1]+1
 	q_1=a[1]
 
-	n=[float(q)**0.5]
-	n.append(n[0]*0+1)
-	m=divmod(n[0],n[1])
-	n=[n[1],m[1]]
-	m=divmod(n[0],n[1])
-	n=[n[1],m[1]]
+	s=[]
+	index=-1
+	d=set()
 	for w in range(2,9999):
-		m=divmod(n[0],n[1])
-		n=[n[1],m[1]]
-		a=m[0]
+		if index == -1:
+			ie=floor(e)
+			a=ie
+			if e in d:
+				s=s[s.index(a):]
+				index=1%len(s)
+			else:
+				d.add(e)
+				s.append(a)
+			e=1/(e-ie)
+		else:
+			a=s[index]
+			index=(index+1)%len(s)
+
 
 		p=a*p_1+p_2
 		q=a*q_1+q_2
 		p_1,p_2=p,p_1
 		q_1,q_2=q,q_1
-	return Fraction(p,q)
+	return Fraction(p)/Fraction(q)
 
 def floor_root(q):
+	q=int(q)
 	r=0
 	p=1
 	while p<q:
@@ -485,13 +320,20 @@ def floor_root(q):
 		p>>=2
 	return r
 
-def fraction_root(q):
+def ceil_root(q):
+	s=floor_root(q)
+	if s*s<q:
+		return s+1
+	return s
+
+def fractional_root(q):
 	if type(q)==Fraction:
 		return fraction_root(q.numerator)/fraction_root(q.denominator)
 	if type(q)==froot:
 		return q.as_fraction()
 	if type(q)!=int:
 		return fraction_root(Fraction(q))
-	p=2**14
+	p=2**15
 	# p=2**p
 	return Fraction(floor_root(q<<p<<p),1<<p)
+
