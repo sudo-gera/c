@@ -11,6 +11,7 @@ from random import *
 from urllib.request import *
 from pprint import *
 from math import *
+from decimal import *
 from traceback import *
 from fractions import *
 from subprocess import *
