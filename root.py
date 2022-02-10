@@ -1,6 +1,7 @@
 from fractions import Fraction
 from functools import total_ordering
 from functools import reduce
+from math import log
 def find_root(q):
 	w=2
 	f=[]
@@ -179,5 +180,7 @@ def root(q):
 		r=e+1/r
 	return r
 
-
+def check(q):
+	q=(root(q)**2-q)/q
+	return log(q.numerator)-log(q.denominator)
 
