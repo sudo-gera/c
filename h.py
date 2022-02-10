@@ -97,5 +97,3 @@ def fibonacci(q):
 		q-=1
 	return a
 from root import *
-def fibonacci1(q):
-	return round(((Fraction_with_root(5)+1)/2)**q/Fraction_with_root(5))

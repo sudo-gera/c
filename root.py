@@ -214,38 +214,38 @@ class Fraction_with_root(Rational):
 		return s.as_fraction().denominator
 
 
-def root(q):
-	if type(q)==Fraction:
-		return root(q.numerator)/root(q.denominator)
-	if type(q)==Fraction_with_root:
-		return q.as_fraction()
-	e=Fraction_with_root(q,0,1)
-	if e.b==0:
-		return e.a
-	s=[]
-	d={}
-	while 1:
-		if e in d:
-			break
-		ie=floor(e)
-		d[e]=ie
-		s.append(ie)
-		e=1/(e-ie)
-	end=e
-	p=[]
-	p.append(int(e))
-	e=1/(e-floor(e))
-	while e!=end:
-		ie=floor(e)
-		p.append(ie)
-		e=1/(e-ie)
-	r=Fraction(1)
-	for w in range(4999//len(p)):
-		for e in p[::-1]:
-			r=e+1/r
-	for e in s[::-1]:
-		r=e+1/r
-	return r
+# def root(q):
+# 	if type(q)==Fraction:
+# 		return root(q.numerator)/root(q.denominator)
+# 	if type(q)==Fraction_with_root:
+# 		return q.as_fraction()
+# 	e=Fraction_with_root(q,0,1)
+# 	if e.b==0:
+# 		return e.a
+# 	s=[]
+# 	d={}
+# 	while 1:
+# 		if e in d:
+# 			break
+# 		ie=floor(e)
+# 		d[e]=ie
+# 		s.append(ie)
+# 		e=1/(e-ie)
+# 	end=e
+# 	p=[]
+# 	p.append(int(e))
+# 	e=1/(e-floor(e))
+# 	while e!=end:
+# 		ie=floor(e)
+# 		p.append(ie)
+# 		e=1/(e-ie)
+# 	r=Fraction(1)
+# 	for w in range(4999//len(p)):
+# 		for e in p[::-1]:
+# 			r=e+1/r
+# 	for e in s[::-1]:
+# 		r=e+1/r
+# 	return r
 
 def check(q,f):
 	from time import perf_counter
@@ -276,11 +276,13 @@ def bin_root(q):
 	c=(b+e)//2
 	return c
 
-def fast_root(q):
+def root(q):
 	if type(q)==Fraction:
 		return root(q.numerator)/root(q.denominator)
 	if type(q)==Fraction_with_root:
 		return q.as_fraction()
+	if q==0:
+		return Fraction(0)
 	e=Fraction_with_root(q,0,1)
 	if e.b==0:
 		return e.a
@@ -305,8 +307,7 @@ def fast_root(q):
 	q_2=1
 	p_1=s[0]*s[1]+1
 	q_1=s[1]
-	for w in range(19):
-		print(p_2,q_2)
+	for w in range(2,9999):
 		if w<len(s):
 			a=s[w]
 		else:
