@@ -36,6 +36,7 @@ int set_insert(struct set *s, size_t elem){
 	if (elem>=s->size){
 		return 1;
 	}
+	if (s->data[elem/8])
 	s->data[elem/8]|=1U<<(elem%8);
 	s->usize++;
 	return 0;

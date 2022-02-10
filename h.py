@@ -39,16 +39,63 @@ true=True
 def bisect_in(a,s):
 	return bisect_left(a,s)!=bisect_right(a,s)
 from primes import primes
+@cache
 def is_prime(q):
-	if primes[-1]**2<q:
-		if q<2:
-			return False
+	if primes[-1]>=q:
+		return bisect_in(primes,q)
+	if primes[-1]**2>=q:
 		for w in primes:
 			if q%w==0:
 				return False
 			if w*w>q:
 				return True
-		assert(primes[-1]**2>=q)
-	else:
-		return bisect_in(primes,q)
-from prime_parser import *
+	start=primes[-1]
+	start=start//6*6-1
+	for w in count(start,6):
+		if q%w==0:
+			return False
+		if q%(w+2)==0:
+			return False
+		if w*w>q:
+			return True
+# from prime_parser import *
+@cache
+def next_prime(q):
+	if q<2:
+		return 2
+	q-=(q+1)%2
+	q+=2
+	while not is_prime(q):
+		q+=2
+	return q
+@cache
+def prev_prime(q):
+	if q<3:
+		return None
+	if q==3:
+		return 2
+	q+=(q+1)%2
+	q-=2
+	while not is_prime(q):
+		q-=2
+	return q
+def primes_until(w):
+	q=primes[-1]
+	q=next_prime(q)
+	while q<w:
+		primes.append(q)
+		q=next_prime(q)
+	primes.append(q)
+
+@cache
+def fibonacci(q):
+	if q<0:
+		return None
+	a,s=0,1
+	while q:
+		a,s=s,a+s
+		q-=1
+	return a
+from root import *
+def fibonacci1(q):
+	return round(((Fraction_with_root(5)+1)/2)**q/Fraction_with_root(5))
