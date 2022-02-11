@@ -44,6 +44,7 @@ from primes import primes
 def is_prime(q):
 	if primes[-1]>=q:
 		return bisect_in(primes,q)
+	# primes_until(ceil_root(q))
 	if primes[-1]**2>=q:
 		for w in primes:
 			if q%w==0:
@@ -128,3 +129,17 @@ def divizors(q):
 	for e in f[:l][::-1]:
 		f.append(q//e)
 	return f
+def to_radix(_q,_e):
+	q,e=_q,_e
+	z=abs(q)
+	s=''
+	while z:
+		s+=str("0123456789abcdefghijklmnopqrstuvwxyz".upper()[z%e])
+		z//=e
+	if q<0:
+		s+='-'
+	if not s:
+		s='0'
+	s=s[::-1]
+	assert int(s,e)==q
+	return s
