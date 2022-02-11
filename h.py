@@ -10,7 +10,9 @@ from json import *
 from random import *
 from urllib.request import *
 from pprint import *
+__p=pow
 from math import *
+pow=__p
 from decimal import *
 from traceback import *
 from fractions import *
@@ -40,17 +42,15 @@ true=True
 def bisect_in(a,s):
 	return bisect_left(a,s)!=bisect_right(a,s)
 from primes import primes
-@cache
-def is_prime(q):
+from is_prime import *
+def is_prime_root(q):
 	if primes[-1]>=q:
 		return bisect_in(primes,q)
-	# primes_until(ceil_root(q))
-	if primes[-1]**2>=q:
-		for w in primes:
-			if q%w==0:
-				return False
-			if w*w>q:
-				return True
+	for w in primes:
+		if q%w==0:
+			return False
+		if w*w>q:
+			return True
 	start=primes[-1]
 	start=start//6*6-1
 	for w in count(start,6):
@@ -60,6 +60,12 @@ def is_prime(q):
 			return False
 		if w*w>q:
 			return True
+@cache
+def is_prime(q):
+	if q<10**11:
+		return is_prime_root(q)
+	return is_prime_Miller(q)
+
 # from prime_parser import *
 @cache
 def next_prime(q):

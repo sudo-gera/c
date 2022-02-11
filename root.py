@@ -2,7 +2,6 @@ from fractions import Fraction
 from functools import total_ordering
 from functools import reduce
 from functools import cache
-from math import *
 from numbers import Rational
 from time import time
 from bisect import *
