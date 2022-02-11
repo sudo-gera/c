@@ -3,18 +3,11 @@ def rand(q=2**64):
 	assert q
 	return randint(0,q-1)
 
-for w in range(4):
-	q=rand()%10
+print(0,2**4)
+for w in range(16):
+	q=choice([0,1,2,3,4,5,7])
+	# q=rand()%9
 	print(q)
-	if q==0:
-		print(randint(-2**8,2**8))
-	elif q==1:
-		print(randint(-2**8,2**8))
-	elif q==6:
-		print(randint(-2**8,2**8))
-		print(randint(-2**8,2**8))
-	elif q==7:
-		print(randint(-2**8,2**8))
-	elif q==8:
-		print(randint(-2**8,2**8))
+	if q in [0,1,2,3,6]:
+		print(rand(2**8))
 print(10000000000000)

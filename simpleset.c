@@ -33,23 +33,24 @@ struct set *set_new(size_t capacity){
 // Создать новое пустое множество, значения элементов которого могут лежать в границах от 0 до capacity-1 включительно. Вернуть указатель на него.
 
 int set_insert(struct set *s, size_t elem){
-	if (elem>=s->size){
+	if (!s or elem>=s->size){
 		return 1;
 	}
-	if (s->data[elem/8])
-	s->data[elem/8]|=1U<<(elem%8);
-	s->usize++;
+	if ((s->data[elem/8]&(1U<<(elem%8))) == 0){
+		s->usize++;
+		s->data[elem/8]+=1U<<(elem%8);
+	}
 	return 0;
 }
 // Добавить во множество s элемент elem. Если элемент существовал, множество не изменится. Вернуть 0, если операция корректна, т.е. elem < capacity, иначе вернуть 1.
 int set_erase(struct set *s, size_t elem){
-	if (elem>=s->size){
+	if (!s or elem>=s->size){
 		return 1;
 	}
-	s->data[elem/8]=~s->data[elem/8];
-	s->data[elem/8]|=1U<<(elem%8);
-	s->data[elem/8]=~s->data[elem/8];
-	s->usize--;
+	if ((s->data[elem/8]&(1U<<(elem%8))) != 0){
+		s->usize--;
+		s->data[elem/8]-=1U<<(elem%8);
+	}
 	return 0;
 }
 // Удалить элемент из множества. Если элемент не существовал, множество не изменится. Вернуть 0, если операция корректна, т.е. elem < capacity, иначе вернуть 1.
@@ -74,10 +75,16 @@ struct set *set_delete(struct set *s){
 }
 // Удалить объект множество и вернуть NULL
 int set_empty(struct set const *s){
+	if (!s){
+		return 1;
+	}
 	return s->usize==0;
 }
 // Предикат: вернуть единицу, если в множестве есть хотя бы один элемент и ноль в противном случае.
 ssize_t set_findfirst(struct set const *s, size_t start){
+	if (!s){
+		return -1;
+	}
 	for (size_t w=start;w<s->size;++w){
 		if (set_find(s,w)){
 			return w;
@@ -87,21 +94,28 @@ ssize_t set_findfirst(struct set const *s, size_t start){
 }
 // Вернуть наименьший из элементов множества, не меньших start. Если таких элементов нет (например, множество пустое), то вернуть -1.
 size_t set_size(struct set const *s){
+	if (!s){
+		return 0;
+	}
 	return s->usize;
 }
 // Вернуть количество элементов множества.
 void set_print(struct set const *s){
+	if (!s){
+		return;
+	}
 	printf("[");
 	int c=0;
-	for (size_t w=0;w<s->size;++w){
-		if (set_find(s,w)){
-			if (c){
-				printf(", ");
-			}else{
-				c=1;
-			}
-			printf("%zu",w);
+	int val=0;
+	val=set_findfirst(s,val);
+	while (val!=-1){
+		if (c){
+			printf(", ");
+		}else{
+			c=1;
 		}
+		printf("%i",val);
+		val=set_findfirst(s,val+1);
 	}
 	printf("]\n");
 }
@@ -109,28 +123,68 @@ void set_print(struct set const *s){
 
 #ifdef HOME
 int main() {
-    struct set *s = set_new(7);
-    set_print(s);
-    assert(set_insert(s, 1) == 0);
-    set_print(s);
-    assert(set_insert(s, 2) == 0);
-    set_print(s);
-    assert(set_insert(s, 100) != 0);
-    set_print(s);
-    assert(set_size(s) == 2);
-    set_print(s);            
-    assert(set_find(s,1) != 0);
-    set_print(s);
-    assert(set_find(s,100) == 0);
-    set_print(s);
-    assert(set_insert(s, 5) == 0);
-    set_print(s);
-    assert(set_erase(s,2) == 0);
-    set_print(s);
-    assert(set_findfirst(s, 2) == 5);
-    set_print(s);
-    assert(set_findfirst(s, 10) == -1);
-    set_print(s);
-    assert(set_delete(s) == NULL);
+	// struct set*v=0;
+	// while (1){
+	// 	int q=0,w=0,r=0,e=0;
+	// 	scanf("%i",&q);
+	// 	if (q==0){
+	// 		scanf("%i",&w);
+	// 		v=set_delete(v);
+	// 		v=set_new(w);
+	// 		printf("%i\n",r);
+	// 	}else
+	// 	if (q==1){
+	// 		scanf("%i",&w);
+	// 		r=set_insert(v,w);
+	// 		printf("%i\n",r);
+	// 	}else
+	// 	if (q==2){
+	// 		scanf("%i",&w);
+	// 		r=set_erase(v,w);
+	// 		printf("%i\n",r);
+	// 	}else
+	// 	if (q==3){
+	// 		scanf("%i",&w);
+	// 		r=set_find(v,w);
+	// 		printf("%i\n",r);
+	// 	}else
+	// 	if (q==4){
+	// 		v=set_delete(v);
+	// 	}else
+	// 	if (q==5){
+	// 		r=set_empty(v);
+	// 		printf("%i\n",r);
+	// 	}else
+	// 	if (q==6){
+	// 		scanf("%i",&w);
+	// 		r=set_findfirst(v,w);
+	// 		printf("%i\n",r);
+	// 	}else
+	// 	if (q==7){
+	// 		r=set_size(v);
+	// 		printf("%i\n",r);
+	// 	}else
+	// 	if (q==8){
+	// 		set_print(v);
+	// 	}else
+	// 	{
+	// 		break;
+	// 	}
+	// }
+	// v=set_delete(v);
+	struct set*s=set_new(16);
+	ic(set_insert(s,3))
+	ic(set_find(s,3))
+	ic(set_find(s,4))
+	ic(set_size(s))
+	ic(set_insert(s,4))
+	ic(set_find(s,3))
+	ic(set_find(s,4))
+	ic(set_size(s))
+	ic(set_erase(s,3))
+	ic(set_find(s,3))
+	ic(set_find(s,4))
+	ic(set_size(s))
+	ic(set_delete(s))
 }
 #endif

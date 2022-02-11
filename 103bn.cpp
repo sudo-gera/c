@@ -73,27 +73,27 @@ void bn_init_str(bn *q,string e){
 
 #ifdef CPP_R
 
-class BigInteger{
+class bn_class{
 public:
 	bn *q;
-	BigInteger(){
+	bn_class(){
 		auto v=perf();
 		q=bn_new();
 #if PERF
 		ic(v);
 #endif
 	}
-	BigInteger(bn*q){
+	bn_class(bn*q){
 		this->q=q;
 	}
-	BigInteger(const BigInteger& orig){
+	bn_class(const bn_class& orig){
 		auto v=perf();
 		q=bn_init(orig.q);
 #if PERF
 		ic(v);
 #endif
 	}
-// 	BigInteger(const long orig){
+// 	bn_class(const long orig){
 // 		auto v=perf();
 // 		q=bn_new();
 // 		bn_init_int(q,int64_t(orig));
@@ -101,7 +101,7 @@ public:
 // 		ic(v);
 // #endif
 // 	}
-	BigInteger(const int orig){
+	bn_class(const int orig){
 		auto v=perf();
 		q=bn_new();
 		bn_init_int(q,int64_t(orig));
@@ -109,7 +109,7 @@ public:
 		ic(v);
 #endif
 	}
-	BigInteger(const string orig){
+	bn_class(const string orig){
 		auto v=perf();
 		q=bn_new();
 		bn_init_str(q,orig.c_str());
@@ -117,7 +117,7 @@ public:
 		ic(v);
 #endif
 	}
-	BigInteger(const string orig,int64_t r){
+	bn_class(const string orig,int64_t r){
 		auto v=perf();
 		q=bn_new();
 		bn_init_string_radix(q,orig.c_str(),r);
@@ -133,7 +133,7 @@ public:
 #endif
 		return *this;
 	}
-	auto&operator=(const BigInteger&orig){
+	auto&operator=(const bn_class&orig){
 		auto v=perf();
 		bn_delete(q);
 		q=bn_init(orig.q);
@@ -143,11 +143,11 @@ public:
 		return *this;
 	}
 	template <typename T>
-	friend auto &operator<<(T& q,BigInteger f){
+	friend auto &operator<<(T& q,bn_class f){
 		q<<print_one(f.q);
 		return q;
 	}
-	bool operator<(BigInteger const&q){
+	bool operator<(bn_class const&q){
 		auto v=perf();
 		auto h=bn_cmp(this->q,q.q)<0;
 #if PERF
@@ -155,7 +155,7 @@ public:
 #endif
 		return h;
 	}
-	bool operator==(BigInteger const&q){
+	bool operator==(bn_class const&q){
 		auto v=perf();
 		auto h=bn_cmp(this->q,q.q)==0;
 #if PERF
@@ -163,7 +163,7 @@ public:
 #endif
 		return h;
 	}
-	bool operator>(BigInteger const&q){
+	bool operator>(bn_class const&q){
 		auto v=perf();
 		auto h=bn_cmp(this->q,q.q)>0;
 #if PERF
@@ -171,7 +171,7 @@ public:
 #endif
 		return h;
 	}
-	bool operator<=(BigInteger const&q){
+	bool operator<=(bn_class const&q){
 		auto v=perf();
 		auto h=bn_cmp(this->q,q.q)<=0;
 #if PERF
@@ -179,7 +179,7 @@ public:
 #endif
 		return h;
 	}
-	bool operator!=(BigInteger const&q){
+	bool operator!=(bn_class const&q){
 		auto v=perf();
 		auto h=bn_cmp(this->q,q.q)!=0;
 #if PERF
@@ -187,7 +187,7 @@ public:
 #endif
 		return h;
 	}
-	bool operator>=(BigInteger const&q){
+	bool operator>=(bn_class const&q){
 		auto v=perf();
 		auto h=bn_cmp(this->q,q.q)>=0;
 #if PERF
@@ -195,10 +195,10 @@ public:
 #endif
 		return h;
 	}
-	~BigInteger(){
+	~bn_class(){
 		bn_delete(q);
 	}
-	auto&operator+=(const BigInteger&q){
+	auto&operator+=(const bn_class&q){
 		auto v=perf();
 		bn_add_to(this->q,q.q);
 #if PERF
@@ -206,7 +206,7 @@ public:
 #endif
 		return *this;
 	}
-	auto&operator-=(const BigInteger&q){
+	auto&operator-=(const bn_class&q){
 		auto v=perf();
 		bn_sub_to(this->q,q.q);
 #if PERF
@@ -214,7 +214,7 @@ public:
 #endif
 		return *this;
 	}
-	auto&operator*=(const BigInteger&q){
+	auto&operator*=(const bn_class&q){
 		auto v=perf();
 		bn_mul_to(this->q,q.q);
 #if PERF
@@ -222,7 +222,7 @@ public:
 #endif
 		return *this;
 	}
-	auto&operator/=(const BigInteger&q){
+	auto&operator/=(const bn_class&q){
 		auto v=perf();
 		bn_div_to(this->q,q.q);
 #if PERF
@@ -230,7 +230,7 @@ public:
 #endif
 		return *this;
 	}
-	auto&operator%=(const BigInteger&q){
+	auto&operator%=(const bn_class&q){
 		auto v=perf();
 		bn_mod_to(this->q,q.q);
 #if PERF
@@ -239,9 +239,9 @@ public:
 		return *this;
 	}
 	struct pow{
-		const BigInteger&q;
-		pow(const BigInteger&w):q(w){}
-		friend BigInteger operator*(const BigInteger&q,const pow&w){
+		const bn_class&q;
+		pow(const bn_class&w):q(w){}
+		friend bn_class operator*(const bn_class&q,const pow&w){
 			auto v=perf();
 			bn*e=w.q.q;
 			uint64_t r;
@@ -258,7 +258,7 @@ public:
 #endif
 			return h;
 		}
-		friend BigInteger operator/(const BigInteger&q,const pow&w){
+		friend bn_class operator/(const bn_class&q,const pow&w){
 			auto v=perf();
 			bn*e=w.q.q;
 			uint64_t r;
@@ -275,7 +275,7 @@ public:
 #endif
 			return h;
 		}
-		friend auto operator<<(const BigInteger&q,const pow&w){
+		friend auto operator<<(const bn_class&q,const pow&w){
 			auto v=perf();
 			bn*e=w.q.q;
 			uint64_t r;
@@ -295,7 +295,7 @@ public:
 #endif
 			return g;
 		}
-		friend auto operator^(const BigInteger&q,const pow&w){
+		friend auto operator^(const bn_class&q,const pow&w){
 			auto v=perf();
 			bn*e=w.q.q;
 			// uint64_t r;
@@ -323,7 +323,7 @@ public:
 	pow operator*(){
 		return pow(*this);
 	}
-	friend BigInteger operator+(const BigInteger&q,const BigInteger&w){
+	friend bn_class operator+(const bn_class&q,const bn_class&w){
 		auto v=perf();
 		auto h=bn_add(q.q,w.q);
 #if PERF
@@ -331,7 +331,7 @@ public:
 #endif
 		return h;
 	}
-	friend BigInteger operator-(const BigInteger&q,const BigInteger&w){
+	friend bn_class operator-(const bn_class&q,const bn_class&w){
 		auto v=perf();
 		auto h=bn_sub(q.q,w.q);
 #if PERF
@@ -339,7 +339,7 @@ public:
 #endif
 		return h;
 	}
-	friend BigInteger operator*(const BigInteger&q,const BigInteger&w){
+	friend bn_class operator*(const bn_class&q,const bn_class&w){
 		auto v=perf();
 		auto h=bn_mul(q.q,w.q);
 #if PERF
@@ -347,7 +347,7 @@ public:
 #endif
 		return h;
 	}
-	friend BigInteger operator/(const BigInteger&q,const BigInteger&w){
+	friend bn_class operator/(const bn_class&q,const bn_class&w){
 		auto v=perf();
 		auto h=bn_div(q.q,w.q);
 #if PERF
@@ -355,7 +355,7 @@ public:
 #endif
 		return h;
 	}
-	friend BigInteger operator%(const BigInteger&q,const BigInteger&w){
+	friend bn_class operator%(const bn_class&q,const bn_class&w){
 		auto v=perf();
 		auto h=bn_mod(q.q,w.q);
 #if PERF
@@ -407,37 +407,37 @@ std::string output_time(T q){
 
 
 signed main(){
-	// test(BigInteger("1"),"\x1b[92m+\x1b[0m00000001");
-	// test(BigInteger("-1"),"\x1b[92m-\x1b[0m00000001");
-	// test(BigInteger("1234"),"\x1b[92m+\x1b[0m00001234");
-	// test(BigInteger("-1234"),"\x1b[92m-\x1b[0m00001234");
-	// test(BigInteger("12345678"),"\x1b[92m+\x1b[0m12345678");
-	// test(BigInteger("-12345678"),"\x1b[92m-\x1b[0m00000000\x1b[92m12345678\x1b[0m");
-	// test(BigInteger("012345678"),"\x1b[92m+\x1b[0m00000000\x1b[92m12345678\x1b[0m");
-	// test(BigInteger("-012345678"),"\x1b[92m-\x1b[0m00000000\x1b[92m12345678\x1b[0m");
-	// test(BigInteger("876543210"),"\x1b[92m+\x1b[0m00000008\x1b[92m76543210\x1b[0m");
-	// test(BigInteger("-876543210"),"\x1b[92m-\x1b[0m00000008\x1b[92m76543210\x1b[0m");
-	// test(BigInteger("fedcba9876543210"),"\x1b[92m+\x1b[0mfedcba98\x1b[92m76543210\x1b[0m");
-	// test(BigInteger("-fedcba9876543210"),"\x1b[92m-\x1b[0m00000000\x1b[92mfedcba98\x1b[0m76543210");
-	// test(BigInteger("1234567898765432123456789876543212345678987654321234567"),"\x1b[92m+\x1b[0m01234567\x1b[92m89876543\x1b[0m21234567\x1b[92m89876543\x1b[0m21234567\x1b[92m89876543\x1b[0m21234567");
-	// test(BigInteger("0"),"\x1b[92m0\x1b[0m00000000");
-	// test(BigInteger(4294967296),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m");
-	// test(BigInteger(4294967295),"\x1b[92m-\x1b[0m00000000\x1b[92m00000001\x1b[0m");
-	// test(BigInteger(-2147483648),"\x1b[92m-\x1b[0m00000000\x1b[92m80000000\x1b[0m");
-	// test(BigInteger(0),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m");
-	// test(BigInteger(0),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m");
-	// test(BigInteger()==BigInteger(),"True");
-	// test(BigInteger(0)==BigInteger(0),"True");
-	// test(BigInteger(0)==BigInteger("0"),"True");
-	// test(BigInteger(1)==BigInteger(0),"False");
-	// test(BigInteger(1)==BigInteger(-1),"False");
-	// test(BigInteger(1)==BigInteger("1"),"True");
-	// test(BigInteger(-1)==BigInteger("-1"),"True");
-	// test(BigInteger(2)>BigInteger(1),"True");
-	// test(BigInteger(-2)<BigInteger(-1),"True");
-	// test(BigInteger("ffffffffffffffffffffffffffffffff")<BigInteger(2),"False");
-	// test(BigInteger(),"\x1b[92m0\x1b[0m")
-	// auto q=BigInteger(1);
+	// test(bn_class("1"),"\x1b[92m+\x1b[0m00000001");
+	// test(bn_class("-1"),"\x1b[92m-\x1b[0m00000001");
+	// test(bn_class("1234"),"\x1b[92m+\x1b[0m00001234");
+	// test(bn_class("-1234"),"\x1b[92m-\x1b[0m00001234");
+	// test(bn_class("12345678"),"\x1b[92m+\x1b[0m12345678");
+	// test(bn_class("-12345678"),"\x1b[92m-\x1b[0m00000000\x1b[92m12345678\x1b[0m");
+	// test(bn_class("012345678"),"\x1b[92m+\x1b[0m00000000\x1b[92m12345678\x1b[0m");
+	// test(bn_class("-012345678"),"\x1b[92m-\x1b[0m00000000\x1b[92m12345678\x1b[0m");
+	// test(bn_class("876543210"),"\x1b[92m+\x1b[0m00000008\x1b[92m76543210\x1b[0m");
+	// test(bn_class("-876543210"),"\x1b[92m-\x1b[0m00000008\x1b[92m76543210\x1b[0m");
+	// test(bn_class("fedcba9876543210"),"\x1b[92m+\x1b[0mfedcba98\x1b[92m76543210\x1b[0m");
+	// test(bn_class("-fedcba9876543210"),"\x1b[92m-\x1b[0m00000000\x1b[92mfedcba98\x1b[0m76543210");
+	// test(bn_class("1234567898765432123456789876543212345678987654321234567"),"\x1b[92m+\x1b[0m01234567\x1b[92m89876543\x1b[0m21234567\x1b[92m89876543\x1b[0m21234567\x1b[92m89876543\x1b[0m21234567");
+	// test(bn_class("0"),"\x1b[92m0\x1b[0m00000000");
+	// test(bn_class(4294967296),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m");
+	// test(bn_class(4294967295),"\x1b[92m-\x1b[0m00000000\x1b[92m00000001\x1b[0m");
+	// test(bn_class(-2147483648),"\x1b[92m-\x1b[0m00000000\x1b[92m80000000\x1b[0m");
+	// test(bn_class(0),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m");
+	// test(bn_class(0),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m");
+	// test(bn_class()==bn_class(),"True");
+	// test(bn_class(0)==bn_class(0),"True");
+	// test(bn_class(0)==bn_class("0"),"True");
+	// test(bn_class(1)==bn_class(0),"False");
+	// test(bn_class(1)==bn_class(-1),"False");
+	// test(bn_class(1)==bn_class("1"),"True");
+	// test(bn_class(-1)==bn_class("-1"),"True");
+	// test(bn_class(2)>bn_class(1),"True");
+	// test(bn_class(-2)<bn_class(-1),"True");
+	// test(bn_class("ffffffffffffffffffffffffffffffff")<bn_class(2),"False");
+	// test(bn_class(),"\x1b[92m0\x1b[0m")
+	// auto q=bn_class(1);
 	// test(q+=1,"\x1b[92m+\x1b[0m00000000\x1b[92m00000002\x1b[0m");
 	// test(q+=-1,"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
 	// test(q-=1,"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m");
@@ -451,7 +451,7 @@ signed main(){
 	// test(q+=1,"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m");
 	// test(q+=1,"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
 	// test(q+=0,"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
-	// auto h=BigInteger("ffffffffffffffffffffffff");
+	// auto h=bn_class("ffffffffffffffffffffffff");
 	// test(q+=h,"\x1b[92m+\x1b[0m00000001\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m");
 	// test(q-=h,"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000001");
 	// test(q-=1,"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000");
@@ -469,63 +469,63 @@ signed main(){
 	// q=-2147483648;
 	// test(q*2147483648,"\x1b[92m+\x1b[0m00000000\x1b[92m40000000\x1b[0m00000000");
 	// // test(q/2147483648,"\x1b[92m+\x1b[0m00000001");
-	// // test(BigInteger(17)/10,"\x1b[92m+\x1b[0m00000001");
-	// // test(BigInteger(-17)/10,"\x1b[92m-\x1b[0m00000000\x1b[92m00000002\x1b[0m");
-	// // test(BigInteger(17)/(-10),"\x1b[92m-\x1b[0m00000000\x1b[92m00000002\x1b[0m");
-	// // test(BigInteger(-17)/(-10),"\x1b[92m+\x1b[0m00000001");
-	// // test(BigInteger(0)/(-10),"\x1b[92m0\x1b[0m");
-	// // test(BigInteger(0)/(+10),"\x1b[92m0\x1b[0m");
-	// h=BigInteger("ffffffffffffffffffffffffffffffff");
+	// // test(bn_class(17)/10,"\x1b[92m+\x1b[0m00000001");
+	// // test(bn_class(-17)/10,"\x1b[92m-\x1b[0m00000000\x1b[92m00000002\x1b[0m");
+	// // test(bn_class(17)/(-10),"\x1b[92m-\x1b[0m00000000\x1b[92m00000002\x1b[0m");
+	// // test(bn_class(-17)/(-10),"\x1b[92m+\x1b[0m00000001");
+	// // test(bn_class(0)/(-10),"\x1b[92m0\x1b[0m");
+	// // test(bn_class(0)/(+10),"\x1b[92m0\x1b[0m");
+	// h=bn_class("ffffffffffffffffffffffffffffffff");
 	// test(h/15,"\x1b[92m+\x1b[0m11111111\x1b[92m11111111\x1b[0m11111111\x1b[92m11111111\x1b[0m")
-	// test(h/BigInteger("ffffffff"),"\x1b[92m+\x1b[0m00000001\x1b[92m00000001\x1b[0m00000001\x1b[92m00000001\x1b[0m")
-	// test(h%BigInteger("ffffffff"),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000")
+	// test(h/bn_class("ffffffff"),"\x1b[92m+\x1b[0m00000001\x1b[92m00000001\x1b[0m00000001\x1b[92m00000001\x1b[0m")
+	// test(h%bn_class("ffffffff"),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000")
 	// test(q/2147483648,"\x1b[92m+\x1b[0m00000001");
-	// test(BigInteger(17)/10,"\x1b[92m+\x1b[0m00000001");
-	// test(BigInteger(-17)/10,"\x1b[92m-\x1b[0m00000000\x1b[92m00000002\x1b[0m");
-	// test(BigInteger(17)/(-10),"\x1b[92m-\x1b[0m00000000\x1b[92m00000002\x1b[0m");
-	// test(BigInteger(-17)/(-10),"\x1b[92m+\x1b[0m00000001");
-	// test(BigInteger(0)/(-10),"\x1b[92m0\x1b[0m");
-	// test(BigInteger(0)/(+10),"\x1b[92m0\x1b[0m");
-	// h=BigInteger("ffffffffffffffffffffffffffffffff");
+	// test(bn_class(17)/10,"\x1b[92m+\x1b[0m00000001");
+	// test(bn_class(-17)/10,"\x1b[92m-\x1b[0m00000000\x1b[92m00000002\x1b[0m");
+	// test(bn_class(17)/(-10),"\x1b[92m-\x1b[0m00000000\x1b[92m00000002\x1b[0m");
+	// test(bn_class(-17)/(-10),"\x1b[92m+\x1b[0m00000001");
+	// test(bn_class(0)/(-10),"\x1b[92m0\x1b[0m");
+	// test(bn_class(0)/(+10),"\x1b[92m0\x1b[0m");
+	// h=bn_class("ffffffffffffffffffffffffffffffff");
 	// test(h/15,"\x1b[92m+\x1b[0m11111111\x1b[92m11111111\x1b[0m11111111\x1b[92m11111111\x1b[0m")
-	// test(h/BigInteger("ffffffff"),"\x1b[92m+\x1b[0m00000001\x1b[92m00000001\x1b[0m00000001\x1b[92m00000001\x1b[0m")
-	// test(h%BigInteger("ffffffff"),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000")
-	// test(BigInteger(2) ** BigInteger(2),"\x1b[92m+\x1b[0m00000000\x1b[92m00000004\x1b[0m");
-	// test(BigInteger(2) ** BigInteger(10),"\x1b[92m+\x1b[0m00000000\x1b[92m00000400\x1b[0m");
-	// test(BigInteger(7) ** BigInteger(7),"\x1b[92m+\x1b[0m00000000\x1b[92m000c90f7\x1b[0m");
-	// test(BigInteger(23) ** BigInteger(23),"\x1b[92m+\x1b[0m00000000\x1b[92m00000107\x1b[0m8c6e4f7d\x1b[92m75450b1f\x1b[0mb3ec6ae7");
-	// test(BigInteger(-23) ** BigInteger(23),"\x1b[92m-\x1b[0m00000000\x1b[92m00000107\x1b[0m8c6e4f7d\x1b[92m75450b1f\x1b[0mb3ec6ae7");
-	// test(BigInteger(23) ** BigInteger(24),"\x1b[92m+\x1b[0m00000000\x1b[92m000017ad\x1b[0m9de92445\x1b[92m8933ffd9\x1b[0m2a3d9ac1");
-	// test(BigInteger(-23) ** BigInteger(24),"\x1b[92m+\x1b[0m00000000\x1b[92m000017ad\x1b[0m9de92445\x1b[92m8933ffd9\x1b[0m2a3d9ac1");
-	// test(BigInteger(16)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000002");
-	// test(BigInteger(15)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000001");
-	// test(BigInteger(16)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000002");
-	// test(BigInteger(15)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000001");
-	// // test(BigInteger(16)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000002\x1b[0m");
-	// // test(BigInteger(15)/ *BigInteger(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
-	// test(BigInteger("123456",7),"\x1b[92m+\x1b[0m00000000\x1b[92m0000595b\x1b[0m");
+	// test(h/bn_class("ffffffff"),"\x1b[92m+\x1b[0m00000001\x1b[92m00000001\x1b[0m00000001\x1b[92m00000001\x1b[0m")
+	// test(h%bn_class("ffffffff"),"\x1b[92m0\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000\x1b[92m00000000\x1b[0m00000000")
+	// test(bn_class(2) ** bn_class(2),"\x1b[92m+\x1b[0m00000000\x1b[92m00000004\x1b[0m");
+	// test(bn_class(2) ** bn_class(10),"\x1b[92m+\x1b[0m00000000\x1b[92m00000400\x1b[0m");
+	// test(bn_class(7) ** bn_class(7),"\x1b[92m+\x1b[0m00000000\x1b[92m000c90f7\x1b[0m");
+	// test(bn_class(23) ** bn_class(23),"\x1b[92m+\x1b[0m00000000\x1b[92m00000107\x1b[0m8c6e4f7d\x1b[92m75450b1f\x1b[0mb3ec6ae7");
+	// test(bn_class(-23) ** bn_class(23),"\x1b[92m-\x1b[0m00000000\x1b[92m00000107\x1b[0m8c6e4f7d\x1b[92m75450b1f\x1b[0mb3ec6ae7");
+	// test(bn_class(23) ** bn_class(24),"\x1b[92m+\x1b[0m00000000\x1b[92m000017ad\x1b[0m9de92445\x1b[92m8933ffd9\x1b[0m2a3d9ac1");
+	// test(bn_class(-23) ** bn_class(24),"\x1b[92m+\x1b[0m00000000\x1b[92m000017ad\x1b[0m9de92445\x1b[92m8933ffd9\x1b[0m2a3d9ac1");
+	// test(bn_class(16)/ *bn_class(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000002");
+	// test(bn_class(15)/ *bn_class(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000001");
+	// test(bn_class(16)/ *bn_class(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000002");
+	// test(bn_class(15)/ *bn_class(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000000\x1b[0m00000001");
+	// // test(bn_class(16)/ *bn_class(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000002\x1b[0m");
+	// // test(bn_class(15)/ *bn_class(4),"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
+	// test(bn_class("123456",7),"\x1b[92m+\x1b[0m00000000\x1b[92m0000595b\x1b[0m");
 	// // ic()
-	// test(BigInteger("zyxwvutsrqponmlkjihgfedcba9876543210",36),"\x1b[92m+\x1b[0m00000000\x1b[92m0455d441\x1b[0me55a3723\x1b[92m9ab4c303\x1b[0m18957607\x1b[92m1af5578f\x1b[0mfca80504");
+	// test(bn_class("zyxwvutsrqponmlkjihgfedcba9876543210",36),"\x1b[92m+\x1b[0m00000000\x1b[92m0455d441\x1b[0me55a3723\x1b[92m9ab4c303\x1b[0m18957607\x1b[92m1af5578f\x1b[0mfca80504");
 	// // ic()
-	// test(BigInteger("-zyxwvutsrqponmlkjihgfedcba9876543210",36),"\x1b[92m-\x1b[0m00000000\x1b[92m0455d441\x1b[0me55a3723\x1b[92m9ab4c303\x1b[0m18957607\x1b[92m1af5578f\x1b[0mfca80504");
-	// test(1**BigInteger(1000000000),"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
-	// test(BigInteger("-0",10),"\x1b[92m0\x1b[0m00000000")
-	// test(str(BigInteger(1)),"1")
-	// test(str(BigInteger()),"0")
-	// test(str(BigInteger("-12345678901",10)),"-12345678901")
-	// test(str(BigInteger("-12345678901",11).str(11)),"-12345678901")
-	// test(str(BigInteger("-1234567890123456789",16).str(16)),"-1234567890123456789")
-	// test(str(BigInteger("-1234567890123456789",22).str(22)),"-1234567890123456789")
-	// test(str(BigInteger("-1234567890123456789",32).str(32)),"-1234567890123456789")
-	// test(BigInteger("-zyxwvutsrqponmlkjihgfedcba9876543210",36).str(36),"-ZYXWVUTSRQPONMLKJIHGFEDCBA9876543210");
-	// test(BigInteger(10).str(10),"10");
-	// test(BigInteger(10).str(2),"1010");
-	// test(BigInteger(65536).str(2),"10000000000000000");
+	// test(bn_class("-zyxwvutsrqponmlkjihgfedcba9876543210",36),"\x1b[92m-\x1b[0m00000000\x1b[92m0455d441\x1b[0me55a3723\x1b[92m9ab4c303\x1b[0m18957607\x1b[92m1af5578f\x1b[0mfca80504");
+	// test(1**bn_class(1000000000),"\x1b[92m+\x1b[0m00000000\x1b[92m00000001\x1b[0m");
+	// test(bn_class("-0",10),"\x1b[92m0\x1b[0m00000000")
+	// test(str(bn_class(1)),"1")
+	// test(str(bn_class()),"0")
+	// test(str(bn_class("-12345678901",10)),"-12345678901")
+	// test(str(bn_class("-12345678901",11).str(11)),"-12345678901")
+	// test(str(bn_class("-1234567890123456789",16).str(16)),"-1234567890123456789")
+	// test(str(bn_class("-1234567890123456789",22).str(22)),"-1234567890123456789")
+	// test(str(bn_class("-1234567890123456789",32).str(32)),"-1234567890123456789")
+	// test(bn_class("-zyxwvutsrqponmlkjihgfedcba9876543210",36).str(36),"-ZYXWVUTSRQPONMLKJIHGFEDCBA9876543210");
+	// test(bn_class(10).str(10),"10");
+	// test(bn_class(10).str(2),"1010");
+	// test(bn_class(65536).str(2),"10000000000000000");
 	// // // // // // // _rand
 	// // // // // // // vector<int> a(40);
 	// // // // // // // for (auto q:range(9)){
-	// // // // // // // 	auto f=BigInteger(rand());
-	// // // // // // // 	f=f**BigInteger(rand()%9);
+	// // // // // // // 	auto f=bn_class(rand());
+	// // // // // // // 	f=f**bn_class(rand()%9);
 	// // // // // // // 	for (auto w:range(2,37)){
 	// // // // // // // 		if (f.str(w)!=f.str1(w)){
 	// // // // // // // 			a[w]+=1;
@@ -536,8 +536,8 @@ signed main(){
 	// // _rand
 	// // vector<int> a(40);
 	// // for (auto q:range(9)){
-	// // 	auto f=BigInteger(rand());
-	// // 	f=f**BigInteger(rand()%9);
+	// // 	auto f=bn_class(rand());
+	// // 	f=f**bn_class(rand()%9);
 	// // 	for (auto w:range(2,37)){
 	// // 		if (f.str(w)!=f.str1(w)){
 	// // 			a[w]+=1;
@@ -545,14 +545,14 @@ signed main(){
 	// // 	}
 	// // }
 	// // print(a);
-	// test(BigInteger(0).str(36),"0");
-	// test(str(BigInteger("100000000000000000000000000000000000000000000000000000000",10)/BigInteger("100000000000000000000000000000000000000000000000000000001",10)),"0")
-	// test(str(BigInteger("0",10)%BigInteger("10",10)),"0")
-	// test(BigInteger("0",10)<BigInteger("2",10),"True")
-	// test(str(BigInteger("-0",10)+BigInteger("0",10)),"0")
+	// test(bn_class(0).str(36),"0");
+	// test(str(bn_class("100000000000000000000000000000000000000000000000000000000",10)/bn_class("100000000000000000000000000000000000000000000000000000001",10)),"0")
+	// test(str(bn_class("0",10)%bn_class("10",10)),"0")
+	// test(bn_class("0",10)<bn_class("2",10),"True")
+	// test(str(bn_class("-0",10)+bn_class("0",10)),"0")
 	// // // // // // std::string _t="9675014747112608736850773242048361690409865981458363630705894373979202914072624810773537954622842049373398993797832873339776860075727147259888580079459161264328932129729221929178213767648394882406658458661139787843222912562544351554813090922783715438420126";
 	// // // // // // auto l=monotonic();
-	// // // // // // auto y=BigInteger(_t,10);
+	// // // // // // auto y=bn_class(_t,10);
 	// // // // // // print(monotonic()-l)	
 	// // // // // // l=monotonic();
 	// // // // // // test(str(y),_t)
@@ -578,7 +578,7 @@ signed main(){
 // #define HIDE_159
 	// std::string _t="9675014747112608736850773242048361690409865981458363630705894373979202914072624810773537954622842049373398993797832873339776860075727147259888580079459161264328932129729221929178213767648394882406658458661139787843222912562544351554813090922783715438420126";
 	// auto l=monotonic();
-	// auto y=BigInteger(_t,10);
+	// auto y=bn_class(_t,10);
 	// print(monotonic()-l)	
 	// l=monotonic();
 	// test(str(y),_t)
@@ -605,21 +605,21 @@ auto __h=perf();
 #include "stdout.cpp"
 ic("total:",__h);
 
-// ic(BigInteger(1)/BigInteger(1))
+// ic(bn_class(1)/bn_class(1))
 
-// ic(str(BigInteger("1000000000000",10)<< *BigInteger("a")))
-// ic(BigInteger("1000000000000",10))
-// ic(BigInteger("2540be400")*BigInteger("a"))
+// ic(str(bn_class("1000000000000",10)<< *bn_class("a")))
+// ic(bn_class("1000000000000",10))
+// ic(bn_class("2540be400")*bn_class("a"))
 
 
-// ic(str(BigInteger("-17",10)%BigInteger("-10",10)));
-// ic(str(BigInteger("-17",10)%BigInteger("10",10)));
-// ic(str(BigInteger("17",10)%BigInteger("-10",10)));
-// ic(str(BigInteger("17",10)%BigInteger("10",10)));
+// ic(str(bn_class("-17",10)%bn_class("-10",10)));
+// ic(str(bn_class("-17",10)%bn_class("10",10)));
+// ic(str(bn_class("17",10)%bn_class("-10",10)));
+// ic(str(bn_class("17",10)%bn_class("10",10)));
 
 // ic(sizeof(bn))
 
-// ic(BigInteger("10000000000000000000000000000000000000000000000000",10)<<*BigInteger("10",10))
+// ic(bn_class("10000000000000000000000000000000000000000000000000",10)<<*bn_class("10",10))
 
 }
 #endif
