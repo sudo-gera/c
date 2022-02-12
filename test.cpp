@@ -1,9 +1,6 @@
-struct a{
-	int q=1,w=2;
-	char r=48;
+bool is_odd(int q){
+	return q%2;
 }
 
-ima{
-	ic(a())
+int main(){
 }
-
