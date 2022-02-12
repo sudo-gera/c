@@ -27,11 +27,14 @@ struct vector{
 };
 
 struct vector *vector_new(size_t elems, size_t elem_size){
-	struct vector*a=(struct vector*)malloc(sizeof(struct vector));
-	if (!a){
+	if (!elem_size){
 		return 0;
 	}
 	if (elem_size*elems>=0x10000000000){
+		return 0;
+	}
+	struct vector*a=(struct vector*)malloc(sizeof(struct vector));
+	if (!a){
 		return 0;
 	}
 	a->elem_size=elem_size;
@@ -39,6 +42,7 @@ struct vector *vector_new(size_t elems, size_t elem_size){
 	a->dsize=elems+1;
 	a->data=malloc((elems+1)*elem_size);
 	if (!a->data){
+		free(a);
 		return 0;
 	}
 	return a;
@@ -71,14 +75,14 @@ int vector_pop (struct vector *v, void *elem){
 	}
 	v->size--;
 	memcpy(elem,((char*)(v->data)+v->elem_size*v->size),v->elem_size);
-	// if (v->size<v->dsize/4){
-	// 	void*tmp=realloc(v->data,v->dsize/4*v->elem_size);
-	// 	if (!tmp){
-	// 		return 0;
-	// 	}
-	// 	v->data=tmp;
-	// 	v->dsize/=4;
-	// }
+	if (v->size<v->dsize/4+1){
+		void*tmp=realloc(v->data,(v->dsize/4+1)*v->elem_size);
+		if (!tmp){
+			return 0;
+		}
+		v->data=tmp;
+		v->dsize=v->dsize/4+1;
+	}
 	return 0;
 }
 

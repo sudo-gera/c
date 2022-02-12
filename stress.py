@@ -5,12 +5,12 @@ def create_input_string():
 
 def how_to_run(filename):
 	if filename.endswith('.cpp'):
-		from time import time
-		t='./tmp'+str(time())+'.trash.trash'
+		from time import time,perf_counter
+		t='./tmp'+str(time()*2**128+perf_counter()*2**64)+'.trash.trash'
 		return [['g++','-std=c++17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',t],[t],['rm',t]]
 	if filename.endswith('.c'):
-		from time import time
-		t='./tmp'+str(time())+'.trash.trash'
+		from time import time,perf_counter
+		t='./tmp'+str(time()*2**128+perf_counter()*2**64)+'.trash.trash'
 		return [['cc','-Wfatal-errors',filename,'-o',t],[t],['rm',t]]
 	if filename.endswith('.py'):
 		return [['python3',filename]]
@@ -24,7 +24,7 @@ def cmp(log):
 		from subprocess import run,PIPE
 		c=[how_to_run(w) for w in argv[1:]]
 		p=create_input_string()
-		c=[[run(e,stdout=PIPE,stderr=PIPE,input=p.encode()) for e in w] for w in c]
+		c=[[run(e,stdout=PIPE,input=p.encode()) for e in w] for w in c]
 		if any([any([e.returncode for e in w]) for w in c]):
 			log.put([p])
 		c=[['\n'.join([r.strip() for r in (e.stdout.decode() if hasattr(e,'stdout') and e.stdout!=None else '').strip().split('\n') if r.strip()])+\
