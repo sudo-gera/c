@@ -25,8 +25,11 @@ while (1):
 		if v==None:
 			print(1,w)
 		else:
-			w=v.pop()
-			print(0,w)
+			if v:
+				w=v.pop()
+				print(0,w)
+			else:
+				print(1,w)
 	elif (q==3):
 		print(int(not v))
 	elif (q==4):
@@ -59,6 +62,7 @@ while (1):
 			e=len(v)
 			for t in range(e,w):
 				v.append(t)
+			v=v[:w]
 			print(0)
 		else:
 			e=0

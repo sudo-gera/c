@@ -149,3 +149,8 @@ def to_radix(_q,_e):
 	s=s[::-1]
 	assert int(s,e)==q
 	return s
+def primes_count(start=0):
+	start-=1
+	while 1:
+		start=next_prime(start)
+		yield start

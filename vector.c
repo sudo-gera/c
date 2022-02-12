@@ -10,7 +10,9 @@
 #include <iso646.h>
 
 #if __has_include("d")
+#ifndef HOME
 #define HOME
+#endif
 #endif
 
 #ifdef HOME
@@ -32,13 +34,13 @@ struct vector *vector_new(size_t elems, size_t elem_size){
 	if (elem_size*elems>=0x10000000000){
 		return 0;
 	}
-	a->data=malloc(elems*elem_size);
+	a->elem_size=elem_size;
+	a->size=elems;
+	a->dsize=elems+1;
+	a->data=malloc((elems+1)*elem_size);
 	if (!a->data){
 		return 0;
 	}
-	a->elem_size=elem_size;
-	a->size=elems;
-	a->dsize=elems;
 	return a;
 }
 
@@ -64,19 +66,19 @@ int vector_pop (struct vector *v, void *elem){
 	if (!v or !elem){
 		return 1;
 	}
-	if (!v->size){
+	if (v->size == 0){
 		return 1;
 	}
 	v->size--;
 	memcpy(elem,((char*)(v->data)+v->elem_size*v->size),v->elem_size);
-	if (v->size<v->dsize/4){
-		void*tmp=realloc(v->data,v->dsize/4*v->elem_size);
-		if (!tmp){
-			return 0;
-		}
-		v->data=tmp;
-		v->dsize/=4;
-	}
+	// if (v->size<v->dsize/4){
+	// 	void*tmp=realloc(v->data,v->dsize/4*v->elem_size);
+	// 	if (!tmp){
+	// 		return 0;
+	// 	}
+	// 	v->data=tmp;
+	// 	v->dsize/=4;
+	// }
 	return 0;
 }
 
@@ -137,11 +139,13 @@ int vector_resize(struct vector *v, size_t new_size){
 	if (!v){
 		return 1;
 	}
-	void*tmp=realloc(v->data,new_size*v->elem_size);
+	void*tmp=realloc(v->data,(new_size+1)*v->elem_size);
 	if (!tmp){
 		return 1;
 	}
 	v->data=tmp;
+	v->size=new_size;
+	v->dsize=new_size+1;
 	return 0;
 }
 
@@ -155,7 +159,24 @@ size_t vector_size(struct vector const *v){
 
 #ifdef HOME
 static void print_int(void const *data) {
-   printf("%d", *(int *)data);
+	uint32_t r=0,t=0;
+	int y;
+	uint8_t*id=(uint8_t*)(data);
+	t=id[0];
+	r+=t;
+	t=id[1];
+	t<<=8;
+	r+=t;
+	t=id[2];
+	t<<=16;
+	r+=t;
+	r<<=8;
+	r>>=8;
+	y=r;
+	if (y>=1U<<23){
+		y-=1U<<24;
+	}
+	printf("%d", y);
 }
 
 int main() {
@@ -168,7 +189,7 @@ int main() {
 			if (!v){
 				vector_delete(v);
 			}
-			v=vector_new(w,sizeof(int));
+			v=vector_new(w,3);
 			for (int t=0;t<w;++t){
 				r+=vector_set(v,t,&t);
 			}
