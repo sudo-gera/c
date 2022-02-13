@@ -30,7 +30,7 @@ struct vector *vector_new(size_t elems, size_t elem_size){
 	if (!elem_size){
 		return 0;
 	}
-	if (elem_size*elems>=0x10000000000){
+	if (elem_size*elems>=0x1000000000){
 		return 0;
 	}
 	struct vector*a=(struct vector*)malloc(sizeof(struct vector));
@@ -61,6 +61,9 @@ int vector_push(struct vector *v, void const *elem){
 		v->dsize*=2;
 		v->dsize+=1;
 	}
+	if (v->dsize<v->size){
+		return 1;
+	}
 	memcpy( (char*)(v->data)+v->elem_size*v->size ,elem,v->elem_size);
 	v->size++;
 	return 0;
@@ -70,7 +73,7 @@ int vector_pop (struct vector *v, void *elem){
 	if (!v or !elem){
 		return 1;
 	}
-	if (v->size == 0){
+	if (v->size == 0 or v->dsize == 0){
 		return 1;
 	}
 	v->size--;
@@ -95,14 +98,16 @@ int vector_empty(struct vector const *v){
 
 struct vector *vector_delete(struct vector *v){
 	if (v){
-		free(v->data);
+		if (v->data){
+			free(v->data);
+		}
 		free(v);
 	}
 	return 0;
 }
 
 void vector_print(struct vector const *v, void (*pf)(void const *data)){
-	if (v){
+	if (v and v->data){
 		printf("[");
 		int c=0;
 		for (size_t w=0;w<v->size;++w){
@@ -121,7 +126,7 @@ int vector_set(struct vector *v, size_t index, void const *elem){
 	if (!v or !elem){
 		return 1;
 	}
-	if (index>=v->size){
+	if (index>=v->size or index>=v->dsize){
 		return 1;
 	}
 	memcpy((char*)(v->data)+index*v->elem_size,elem,v->elem_size);
@@ -132,7 +137,7 @@ int vector_get(struct vector const *v, size_t index, void *elem){
 	if (!v or !elem){
 		return 1;
 	}
-	if (index>=v->size){
+	if (index>=v->size or index>=v->dsize){
 		return 1;
 	}
 	memcpy(elem,(char*)(v->data)+index*v->elem_size,v->elem_size);
@@ -141,6 +146,9 @@ int vector_get(struct vector const *v, size_t index, void *elem){
 
 int vector_resize(struct vector *v, size_t new_size){
 	if (!v){
+		return 1;
+	}
+	if (v->elem_size*new_size>=0x1000000000){
 		return 1;
 	}
 	void*tmp=realloc(v->data,(new_size+1)*v->elem_size);

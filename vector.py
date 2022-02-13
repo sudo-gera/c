@@ -12,8 +12,11 @@ while (1):
 		if w<0:
 			print(0)
 		else:
-			v=list(range(w))
-			print(0)
+			if w>=0:
+				v=list(range(w))
+				print(0)
+			else:
+				print(1)
 	elif (q==1):
 		w=scan(int)
 		if v==None:
@@ -60,10 +63,13 @@ while (1):
 		w=scan(int)
 		if v!=None:
 			e=len(v)
-			for t in range(e,w):
-				v.append(t)
-			v=v[:w]
-			print(0)
+			if w>=0:
+				for t in range(e,w):
+					v.append(t)
+				v=v[:w]
+				print(0)
+			else:
+				print(1)
 		else:
 			e=0
 			print(1+max(0,w-e))
