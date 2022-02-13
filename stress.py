@@ -2,27 +2,48 @@ def create_input_string():
 	from subprocess import run,PIPE
 	return run(['python3','create_input.py'],stdout=PIPE).stdout.decode()
 
+from time import time,perf_counter
+start_time=str(time()*2**128+perf_counter()*2**64)
 
-def how_to_run(filename):
+def how_to_run(filename,files):
+	compiled_file='./tmp'+start_time+'_'+filename+'_.trash.trash'
 	if filename.endswith('.cpp'):
-		from time import time,perf_counter
-		t='./tmp'+str(time()*2**128+perf_counter()*2**64)+'.trash.trash'
-		return [['g++','-std=c++17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',t],[t],['rm',t]]
+		compiled_file+='.out'
 	if filename.endswith('.c'):
-		from time import time,perf_counter
-		t='./tmp'+str(time()*2**128+perf_counter()*2**64)+'.trash.trash'
-		return [['cc','-Wfatal-errors',filename,'-o',t],[t],['rm',t]]
+		compiled_file+='.out'
 	if filename.endswith('.py'):
-		return [['python3',filename]]
+		compiled_file+='.pyc'
 	if filename.endswith('.out'):
-		return [[filename]]
+		compiled_file+='.out'
+	files.put(compiled_file)
+	from os.path import exists
+	from subprocess import run
+	if not exists(compiled_file):
+		if filename.endswith('.cpp'):
+			assert run(['g++','-Ofast','-std=c++17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',compiled_file]).returncode==0
+		if filename.endswith('.c'):
+			assert run(['cc','-Ofast','-std=c17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',compiled_file]).returncode==0
+		if filename.endswith('.py'):
+			from py_compile import compile
+			compile(filename,cfile=compiled_file,optimize=2,doraise=True)
+		if filename.endswith('.out'):
+			assert run(['cp',filename,compiled_file]).returncode==0
+	if filename.endswith('.cpp'):
+		return [[compiled_file]]
+	if filename.endswith('.c'):
+		return [[compiled_file]]
+	if filename.endswith('.py'):
+		from sys import executable
+		return [[executable,compiled_file]]
+	if filename.endswith('.out'):
+		return [[compiled_file]]
 
-def cmp(log):
+def cmp(log,files):
 	from time import time, asctime
 	while 1:
 		from sys import argv
 		from subprocess import run,PIPE
-		c=[how_to_run(w) for w in argv[1:]]
+		c=[how_to_run(w,files) for w in argv[1:]]
 		p=create_input_string()
 		c=[[run(e,stdout=PIPE,input=p.encode()) for e in w] for w in c]
 		if any([any([e.returncode for e in w]) for w in c]):
@@ -85,19 +106,20 @@ if __name__=='__main__':
 			ValueError('need at least 2 files to compare, got '+str(len(argv)-1))
 	from multiprocessing import Pool,Queue,Process
 	log=Queue()
+	files=Queue()
 
 	a=Process(target=logging,args=(log,))
 	a.start()
 	s=[]
 	for w in range(16):
-		s.append(Process(target=cmp,args=(log,)))
+		s.append(Process(target=cmp,args=(log,files)))
 		s[-1].start()
 	try:
 		a.join()
 	except KeyboardInterrupt:
 		pass
 	from os import system
-	system('rm -fr tmp*.trash.trash*')
+	system('rm -fr tmp*.trash.trash.*')
 	for w in s:
 		w.terminate()
 	from time import sleep
