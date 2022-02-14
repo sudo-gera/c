@@ -21,7 +21,8 @@ def how_to_run(filename):
 		if filename.endswith('.cpp'):
 			assert run(['g++','-Ofast','-std=c++17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',compiled_file]).returncode==0
 		if filename.endswith('.c'):
-			assert run(['cc','-Ofast','-std=c17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',compiled_file]).returncode==0
+			assert run(['g++','-Ofast','-std=c++17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',compiled_file]).returncode==0
+			# assert run(['cc','-Ofast','-std=c17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',compiled_file]).returncode==0
 		if filename.endswith('.py'):
 			from py_compile import compile
 			compile(filename,cfile=compiled_file,optimize=2,doraise=True)
