@@ -7,16 +7,11 @@ r=0
 while (1):
 	q=w=e=r=0
 	q=scan(int)
+	print('-',q)
 	if (q==0):
 		w=scan(int)
-		if w<0:
-			print(0)
-		else:
-			if w>=0:
-				v=list(range(w))
-				print(0)
-			else:
-				print(1)
+		v=[0]*abs(w)
+		print(0)
 	elif (q==1):
 		w=scan(int)
 		if v==None:
@@ -35,8 +30,8 @@ while (1):
 				print(1,w)
 	elif (q==3):
 		print(int(not v))
-	elif (q==4):
-		v=None
+	# elif (q==4):
+	# 	v=None
 	elif (q==5):
 		if v!=None:
 			print(v)
@@ -53,23 +48,21 @@ while (1):
 	elif (q==7):
 		e=scan(int)
 		if v==None:
-			print(w,1)
+			print(1,w)
 		else:
 			if 0<=e<len(v):
-				print(v[e],0)
+				print(0,v[e])
 			else:
-				print(w,1)
+				print(1,w)
 	elif (q==8):
 		w=scan(int)
 		if v!=None:
 			e=len(v)
-			if w>=0:
-				for t in range(e,w):
-					v.append(t)
-				v=v[:w]
-				print(0)
-			else:
-				print(1)
+			w=abs(w)
+			for t in range(e,w):
+				v.append(0)
+			v=v[:w]
+			print(0)
 		else:
 			e=0
 			print(1+max(0,w-e))
