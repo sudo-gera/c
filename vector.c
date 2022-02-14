@@ -34,9 +34,16 @@ size_t tmpst=0;
 
 
 int vector_resize(struct vector *v, size_t new_size){
+	if (!v){
+		return 1;
+	}
 	check
 	if (new_size+1>v->dsize){
-		v->data=realloc(v->data,(new_size+1)*v->elem_size);
+		void*tmp=realloc(v->data,(new_size+1)*v->elem_size);
+		if (!tmp){
+			return 1;
+		}
+		v->data=tmp;
 		// for (size_t w=v->dsize*v->elem_size;w<(new_size+1)*v->elem_size;++w){
 		// 	access(0)[w]=0;
 		// }
@@ -52,25 +59,42 @@ int vector_resize(struct vector *v, size_t new_size){
 }
 
 struct vector *vector_new(size_t elems, size_t elem_size){
+	if (!elem_size){
+		return 0;
+	}
 	struct vector*v=(struct vector*)malloc(sizeof(struct vector));
+	if (!v){
+		return 0;
+	}
 	v->data=0;
 	v->dsize=0;
 	v->size=0;
 	v->elem_size=elem_size;
-	vector_resize(v,elems);
+	if (vector_resize(v,elems)){
+		free(v);
+		return 0;
+	}
 	check
 	return v;
 }
 
 int vector_empty(struct vector const *v){
+	if (!v){
+		return 1;
+	}
 	check
 	return v->size==0;
 }
 
 struct vector *vector_delete(struct vector *v){
 	check
-	free(v->data);
-	free(v);
+	if (v){
+		if (v->data){
+			free(v->data);
+			v->data=0;
+		}
+		free(v);
+	}
 	return 0;
 }
 
@@ -91,6 +115,9 @@ void vector_print(struct vector const *v, void (*pf)(void const *data)){
 }
 
 int vector_set(struct vector *v, size_t index, void const *elem){
+	if (!v or !elem){
+		return 1;
+	}
 	check
 	if (index>=v->size){
 		return 1;
@@ -101,6 +128,9 @@ int vector_set(struct vector *v, size_t index, void const *elem){
 }
 
 int vector_get(struct vector const *v, size_t index, void *elem){
+	if (!v or !elem){
+		return 1;
+	}
 	check
 	if (index>=v->size){
 		return 1;
@@ -111,23 +141,35 @@ int vector_get(struct vector const *v, size_t index, void *elem){
 }
 
 int vector_push(struct vector *v, void const *elem){
+	if (!v or !elem){
+		return 1;
+	}
 	check
 	size_t s=v->size;
 	if (v->dsize==v->size+1){
-		vector_resize(v,v->dsize*2+1);
+		if (vector_resize(v,v->dsize*2+1)){
+			return 1;
+		}
 	}
 	v->size=s+1;
-	vector_set(v,v->size-1,elem);
+	if (vector_set(v,v->size-1,elem)){
+		return 1;
+	}
 	check
 	return 0;
 }
 
 int vector_pop(struct vector *v, void *elem){
+	if (!v or !elem){
+		return 1;
+	}
 	check
 	if (v->size == 0){
 		return 1;
 	}
-	vector_get(v,v->size-1,elem);
+	if (vector_get(v,v->size-1,elem)){
+		return 1;
+	}
 	// for (size_t w=(v->size-1)*v->elem_size;w<v->size*v->elem_size;++w){
 	// 	access(0)[w]=0;
 	// }
@@ -137,6 +179,9 @@ int vector_pop(struct vector *v, void *elem){
 }
 
 size_t vector_size(struct vector const *v){
+	if (!v){
+		return 0;
+	}
 	check
 	return v->size;
 }
