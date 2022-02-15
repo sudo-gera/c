@@ -58,39 +58,41 @@ unsigned put_ds;
 	}\
 }
 
-size_t fib(size_t*ff0_102400,size_t*ff1_102400,size_t m,size_t n){
-	size_t f0=ff0_102400[n/102400];
-	size_t f1=ff1_102400[n/102400];
-	n%=102400;
-	while (n){
-		size_t f2=(f0+f1)%m;
-		f0=f1;
-		f1=f2;
-		n-=1;
+size_t fibonacci(size_t n,long m){
+	size_t t=1;
+	while (t<n){
+		t<<=1;
+	}
+	long f0=0;
+	long f1=1;
+	long t0,t1;
+	while (t>1){
+		if (n&t){
+			f1+=f0;
+			f0=f1-f0;
+		}
+		t0=f1*f0*2-f0*f0;
+		t1=f0*f0+f1*f1;
+		f0=(t0%m+m)%m;
+		f1=(t1%m+m)%m;
+		t>>=1;
+	}
+	if (n%2){
+		return f1;
 	}
 	return f0;
 }
 
-int main(){
-	size_t a0,a1,n,m;
-	// get_int(a0);
-	// get_int(a1);
-	// get_int(n);
-	// get_int(m);
-	m=1000000;
-	c_array(size_t,f,102400+4);
-	c_array(size_t,ff0_102400,102400+1);
-	c_array(size_t,ff1_102400,102400+1);
-	f[0]=1;
-	f[1]=1;
-	for (size_t w=2;w<102400+4;++w){
-		f[w]=(f[w-1]+f[w-2])%m;
+int main(int argc,char**argv){
+	long a0,a1,n,m;
+	get_int(a0);
+	get_int(a1);
+	get_int(n);
+	get_int(m);
+	if (n==0){
+		put_int(a0);
+	}else{
+		put_int((a0*fibonacci(n-1,m)+a1*fibonacci(n,m))%m);
 	}
-	ff0_102400[0]=1;
-	ff1_102400[0]=1;
-	for (size_t k=0;k<102400;++k){
-		ff0_102400[k+1]=(f[102400-2]*ff0_102400[k]+f[102400-1]*ff1_102400[k])%m;
-		ff1_102400[k+1]=(f[102400-1]*ff0_102400[k]+f[102400]*ff1_102400[k])%m;
-	}
-	
+	putchar_unlocked('\n');
 }
