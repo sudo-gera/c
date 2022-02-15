@@ -16,6 +16,7 @@
 #define array(t,n) ((t*)malloc(sizeof(t)*(n)))
 #define c_array(t,a,n) t*a=array(t,(n));
 
+/*
 #define get_int(res)\
 {\
 	get_sign=1;\
@@ -61,19 +62,19 @@ unsigned put_ds;
 		putchar_unlocked(put_data[put_ds]);\
 	}\
 }
-
+*/
 
 size_t min_sum=-1;
 
-size_t*a;
-size_t*s;
-size_t*sumsl;
-size_t*sumsr;
+uint32_t*a;
+uint32_t*s;
+uint32_t*sumsl;
+uint32_t*sumsr;
 
 
 size_t sumss=0;
 
-void run(size_t*a,size_t*sums,size_t*sumss,size_t as,size_t a_sum,size_t ss,size_t sum,size_t last_index){
+void run(uint32_t*a,uint32_t*sums,size_t*sumss,size_t as,size_t a_sum,size_t ss,size_t sum,size_t last_index){
 	// ic_no_func(itervect(a,a+as),itervect(sums,sums+*sumss),a_sum,itervect(s,s+ss),sum,last_index)
 	sums[(*sumss)++]=sum;
 	// if (sum+sum-a_sum < min_sum){
@@ -91,7 +92,7 @@ void run(size_t*a,size_t*sums,size_t*sumss,size_t as,size_t a_sum,size_t ss,size
 	}
 }
 
-int cmp(size_t*q,size_t*w){
+int cmp(uint32_t*q,uint32_t*w){
 	// ic(*(size_t*)(q),*(size_t*)(w),*(size_t*)(q)<*(size_t*)(w))
 	// return (*(size_t*)(q))<(*(size_t*)(w));
 	return *q-*w;
@@ -99,14 +100,20 @@ int cmp(size_t*q,size_t*w){
 
 int main(){
 	size_t n;
-	get_int(n);
-	a=array(size_t,n);
-	s=array(size_t,n);
-	sumsl=array(size_t,1LLU<<n);
-	sumsr=array(size_t,1LLU<<n);
+	scanf("%zu",&n);
+	// get_int(n);
+	a=array(uint32_t,n);
+	s=array(uint32_t,n);
+	sumsl=array(uint32_t,1LLU<<(n/2));
+	sumsr=array(uint32_t,1LLU<<(n-n/2));
+	// while (!a){}
+	// while (!s){}
+	// while (!sumsl){}
+	// while (!sumsr){}
 	size_t a_sum=0;
 	for (size_t w=0;w<n;++w){
-		get_int(a[w]);
+		// get_int(a[w]);
+		scanf("%u",a+w);
 		a_sum+=a[w];
 	}
 	size_t sumssl=0;
@@ -147,6 +154,7 @@ int main(){
 			break;
 		}
 	}
-	put_int(min_sum);
+	printf("%u",min_sum);
+	// put_int(min_sum);
 	putchar_unlocked('\n');
 }

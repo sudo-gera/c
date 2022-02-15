@@ -91,15 +91,22 @@ def primes_until(w):
 	while primes[-1]<w:
 		primes.append(next_prime(primes[-1]))
 
-@cache
-def fibonacci(q):
-	if q<0:
-		return None
-	a,s=0,1
-	while q:
-		a,s=s,a+s
-		q-=1
-	return a
+from fib import *
+# @cache
+# def fibonacci(q):
+# 	if q<0:
+# 		return None
+# 	if q==0:
+# 		return 0
+# 	if q==1:
+# 		return 1
+# 	return fibonacci(q-1)+fibonacci(q-2)
+	# a,s=0,1
+	# while q:
+	# 	a,s=s,a+s
+	# 	q-=1
+	# return a
+
 from root import *
 
 def factor(q):

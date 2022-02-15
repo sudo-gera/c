@@ -1,24 +1,15 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-int num[10] = {
-1,3,6,5,8,7,9,6,2,0
-};
-
-int comp (const int *, const int *);
-
-int main(void)
-{
-int i;
-for (i=0; i<10; i ++) printf("%d ",num[i]);
-printf ("\n");
-qsort(num, 10, sizeof (int), (int(*) (const void *, const void *)) comp);
-for(i = 0; i <10; i ++ ) printf("%d ", num[i]);
-return 0;
-}
-
-/* сравнение двух целых */
-int comp (const int *i, const int *j)
-{
-return *i - *j;
+ima{
+	inf z=1;
+	inf x=1;
+	printf("{");
+	for (size_t w=0;w<1000'000'000;++w){
+		if (w%1000==0){
+				printf("{%s,%s},",z.to_string().c_str(),x.to_string().c_str());
+				fprintf(stderr, "%zu\n", w);
+		}
+		inf c=z+x;
+		z=x;
+		x=c;
+	}
+	printf("}\n");
 }
