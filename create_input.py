@@ -14,7 +14,10 @@ def rand(q=2**64):
 # 	print()
 # print(100000)
 
-n=rand()%20
-print(n)
-for w in range(n):
-	print(rand()%1000000)
+# n=rand()%20
+# print(n)
+# for w in range(n):
+# 	print(rand()%1000000)
+print(rand(8))
+print(rand(8))
+print(randint(2,8))

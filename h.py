@@ -41,8 +41,10 @@ false=False
 true=True
 def bisect_in(a,s):
 	return bisect_left(a,s)!=bisect_right(a,s)
-from primes import primes
+# from primes import primes
+primes=[2]
 from is_prime import *
+from scan import *
 def is_prime_root(q):
 	if primes[-1]>=q:
 		return bisect_in(primes,q)
@@ -91,6 +93,7 @@ def primes_until(w):
 	while primes[-1]<w:
 		primes.append(next_prime(primes[-1]))
 
+primes_until(10**5)
 from fib import *
 # @cache
 # def fibonacci(q):

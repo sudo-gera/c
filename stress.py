@@ -3,10 +3,10 @@ def create_input_string():
 	return run(['python3','create_input.py'],stdout=PIPE).stdout.decode()
 
 from time import time,perf_counter
-start_time=str(time()*2**128+perf_counter()*2**64)
+start_time=str(int(time()*2**128)+int(perf_counter()*2**64))
 
 def how_to_run(filename):
-	compiled_file='./tmp'+start_time+'_'+filename+'_.trash.trash'
+	compiled_file='./tmp'+start_time+'_'+filename.replace('/','_')+'_.trash.trash'
 	if filename.endswith('.cpp'):
 		compiled_file+='.out'
 	if filename.endswith('.c'):
