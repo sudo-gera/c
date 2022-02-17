@@ -14,6 +14,8 @@ def is_visitor(a,n,s,d):
 	return 0
 
 def is_prime_Miller(n):
+	if n<2:
+		return False
 	nn=n
 	n-=1
 	t=0
@@ -24,8 +26,6 @@ def is_prime_Miller(n):
 	n=nn
 	s=t
 	d=r
-	if n<2:
-		return False
 	for a in range(2, min(ceil(2*log(n)**2),n) ):
 		if not is_visitor(a,n,s,d):
 			return False

@@ -1,5 +1,11 @@
-import(fibonacci,test)
+struct a{
+};
+bool operator<(a q,a w){
+	return 1;
+}
 
 ima{
-	print(fibonacci(6));
+	_rand
+	vector<a> q(999);
+	sort(q.begin(),q.end());
 }
