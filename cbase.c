@@ -101,12 +101,9 @@ str input_str(){static char t[1073741824];scanf("%s",t);return to_str(t);}
 #define print(q) {str __t=to_str(q);printf("%s\n",__t);del(__t);}
 #define put(q)   {str __t=to_str(q);printf("%s"  ,__t);del(__t);}
 
+#define bit_get(a,s)   ((a)[(s)/8]>>(s)%8)
+#define bit_set(a,s,d) (a)[(s)/8]&=1<<(s)%8;(a)[(s)/8]+=((d)&1)<<(s)%8;
+
 
 int main(){
-	read(size_t,q);
-	read(size_t,w);
-	print(q+w);
-	read(,q)
-	read(,w)
-	print(q+w);
 }

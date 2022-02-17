@@ -1,13 +1,28 @@
+html {
+background-color: #0000;
+background-image: url("https://w.wallha.com/ws/13/N7DJn9rG.jpg");
+background-size: cover;
+background-attachment: fixed;
+}
+
+body{
+  background-color: #0000;
+}
+
 #probNavTaskArea {
-  opacity: 0.75;
+  background-color: #0000;
 }
 
 #l13 {
-  background-image: url("https://w.wallha.com/ws/13/N7DJn9rG.jpg");
+background-image: url("https://w.wallha.com/ws/13/N7DJn9rG.jpg");
 background-size: cover;
 background-attachment: fixed;
 }
 
 pre.line-numbers.language-c {
-  opacity: 0.75;
+  background-color: #0000;
+}
+
+pre.line-numbers.language-cpp {
+  background-color: #0000;
 }
