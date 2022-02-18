@@ -1,4 +1,10 @@
 from h import *
 
-q=scan(int)
-print(is_prime(q))
+from server_example import *
+
+a=Server()
+print(a.port)
+
+while 1:
+	print(a.get())
+	a.put(0)
