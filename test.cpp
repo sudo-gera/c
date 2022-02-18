@@ -1,12 +1,26 @@
-<<<<<<< HEAD
-int main(){
-	int* a=new int[12];
-	int s=a[-1];
-=======
-def run=pyfunc(*q)
-// return q
+#include "d"
+#define bit_get(a,s)   (((a)[(s)/8/sizeof((a)[0])]>>(s)%(8*sizeof((a)[0])))&1)
+#define bit_set(a,s,d) {(a)[(s)/8/sizeof((a)[0])]&=~(1<<(s)%(8*sizeof((a)[0])));(a)[(s)/8/sizeof((a)[0])]+=(d)<<(s)%(8*sizeof((a)[0]));}
+
 
 ima{
-	ic(run(1,"2",3))
->>>>>>> d3edd0736029ac1e600a0cfab6d0318aaaa57f02
+	auto q=new uint8_t[4]();
+	size_t w=1;
+	cin>>w;
+	while (w){
+		if (w==1){
+			size_t e,r;
+			cin>>e>>r;
+			bit_set(q,e,r);
+		}else{
+			size_t e;
+			cin>>e;
+			print(bit_get(q,e))
+		}
+		// for (size_t w=0;w<4;++w){
+		// 	write(bin_repr(q[w]));
+		// }
+		// print()
+		cin>>w;
+	}
 }

@@ -1,7 +1,7 @@
+#!/usr/bin/python3
 subl="/mnt/c/Program Files/Sublime Text 3/sublime_text.exe"
 wsubl="C:/Program Files/Sublime Text 3/sublime_text.exe"
 
-#!/usr/bin/python3
 from sys import argv
 from subprocess import run
 from urllib.request import urlopen

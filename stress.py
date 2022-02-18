@@ -1,57 +1,62 @@
 def create_input_string():
-	from random import randint
-	n=randint(1,10**7)
-	k=randint(1,min(n,10**4))
-	a=[randint(-10**18,10**18) for w in range(n)]
-	a=[str(w) for w in a]
-	en=' \n '
-	s=f'{n}  {k} \n { en.join(a) }'
-	return s
+	from subprocess import run,PIPE
+	return run(['python3','create_input.py'],stdout=PIPE).stdout.decode()
 
-def how_to_run(filename):
+from time import time,perf_counter
+start_time=str(int(time()*2**128)+int(perf_counter()*2**64))
+
+def how_to_run(filename,start_time):
+	compiled_file='./tmp'+start_time+'_'+filename.replace('/','_')+'_.trash.trash'
 	if filename.endswith('.cpp'):
-		from time import time
-		t='./tmp'+str(time())+'.trash.trash'
-		return [['g++','-std=c++17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',t],[t],['rm',t]]
+		compiled_file+='.out'
 	if filename.endswith('.c'):
-		from time import time
-		t='./tmp'+str(time())+'.trash.trash'
-		return [['cc','-Wfatal-errors',filename,'-o',t],[t],['rm',t]]
+		compiled_file+='.out'
 	if filename.endswith('.py'):
-		return [['python3',filename]]
+		compiled_file+='.pyc'
 	if filename.endswith('.out'):
-		return [[filename]]
+		compiled_file+='.out'
+	from os.path import exists
+	from subprocess import run
+	if not exists(compiled_file):
+		if filename.endswith('.cpp'):
+			assert run(['g++','-Ofast','-std=c++17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',compiled_file]).returncode==0
+		if filename.endswith('.c'):
+			assert run(['g++','-Ofast','-std=c++17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',compiled_file]).returncode==0
+			# assert run(['cc','-Ofast','-std=c17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',compiled_file]).returncode==0
+		if filename.endswith('.py'):
+			from py_compile import compile
+			compile(filename,cfile=compiled_file,optimize=2,doraise=True)
+		if filename.endswith('.out'):
+			assert run(['cp',filename,compiled_file]).returncode==0
+	if filename.endswith('.cpp'):
+		return [[compiled_file]]
+	if filename.endswith('.c'):
+		return [[compiled_file]]
+	if filename.endswith('.py'):
+		from sys import executable
+		return [[executable,compiled_file]]
+	if filename.endswith('.out'):
+		return [[compiled_file]]
 
-def cmp(log):
+def cmp(log,start_time):
 	from time import time, asctime
 	while 1:
 		from sys import argv
 		from subprocess import run,PIPE
-		c=[how_to_run(w) for w in argv[1:]]
+		c=[how_to_run(w,start_time) for w in argv[1:]]
 		p=create_input_string()
 		c=[[run(e,stdout=PIPE,input=p.encode()) for e in w] for w in c]
+		if any([any([e.returncode for e in w]) for w in c]):
+			log.put([p])
 		c=[['\n'.join([r.strip() for r in (e.stdout.decode() if hasattr(e,'stdout') and e.stdout!=None else '').strip().split('\n') if r.strip()])+\
 			'\n'.join([r.strip() for r in (e.stderr.decode() if hasattr(e,'stderr') and e.stderr!=None else '').strip().split('\n') if r.strip()])
 			for e in w] for w in c]
 		c=[''.join(w) for w in c]
 		sc=set(c)
 		if len(sc)!=1:
-			log.put([p,*c])
+			log.put([p,c])
 		else:
 			log.put(None)
-		# if len(c)!=1:
-		# 	print(p)
-		# 	print(c)
-		# else:
-		# 	if time()-t>4:
-		# 		tt=int(time())
-		# 		c+=1
-		# 		print(f'from {('00'+str((t//3600)%24))[-2:]}:{('00'+str((t//60)%60))[-2:]}:{('00'+str((t//1)%60))[-2:]} to {('00'+str((tt//3600)%24))[-2:]}:{('00'+str((tt//60)%60))[-2:]}:{('00'+str((tt//1)%60))[-2:]} {c} sucessfull tests')
-		# 		t=tt
-		# 	else:
-		# 		c+=1
-		# 	print('from ')
-		# 	print('ok')
 
 def logging(log):
 	c=0
@@ -59,7 +64,8 @@ def logging(log):
 	t=time()
 	while 1:
 		q=log.get()
-		if type(q)==list:
+		if type(q)==list and len(q)==2:
+			q=[q[0]]+q[1]
 			print('\x1b[91mERROR\x1b[0m')
 			print('\x1b[94minput(str version)\x1b[0m')
 			print(str(q[0]))
@@ -74,6 +80,15 @@ def logging(log):
 			print('\x1b[91mANSWERS ARE DIFFERENT\x1b[0m')
 			print()
 			exit()
+		if type(q)==list and len(q)==1:
+			print('\x1b[91mERROR\x1b[0m')
+			print('\x1b[94minput(str version)\x1b[0m')
+			print(str(q[0]))
+			print('\x1b[94minput(repr version)\x1b[0m')
+			print(repr(q[0]))
+			print('\x1b[91mNON-ZERO RETURN CODE\x1b[0m')
+			print()
+			exit()
 		else:
 			c+=1
 			y=time()
@@ -82,13 +97,14 @@ def logging(log):
 				t=y
 
 if __name__=='__main__':
-	if type(create_input_string())!=str:
-		raise\
-			TypeError('create_input_string() function should return string, not '+type(create_input_string()).__name__)
+	# if type(create_input_string())!=str:
+	# 	raise\
+	# 		TypeError('create_input_string() function should return string, not '+type(create_input_string()).__name__)
 	from sys import argv
 	if len(argv)<3:
 		raise\
 			ValueError('need at least 2 files to compare, got '+str(len(argv)-1))
+	[how_to_run(w,start_time) for w in argv[1:]]
 	from multiprocessing import Pool,Queue,Process
 	log=Queue()
 
@@ -96,14 +112,14 @@ if __name__=='__main__':
 	a.start()
 	s=[]
 	for w in range(16):
-		s.append(Process(target=cmp,args=(log,)))
+		s.append(Process(target=cmp,args=(log,start_time)))
 		s[-1].start()
 	try:
 		a.join()
 	except KeyboardInterrupt:
 		pass
 	from os import system
-	system('rm -r tmp*.trash.trash*')
+	system('rm -fr tmp*.trash.trash.*')
 	for w in s:
 		w.terminate()
 	from time import sleep

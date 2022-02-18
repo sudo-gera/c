@@ -11,7 +11,7 @@ then
 	exit
 fi
 git add *
-git commit -qam "$d"
+git commit -qam "$d" >/dev/null
 git pull -q --no-edit
 git add *
 git commit -qam "$d" >/dev/null 2>/dev/null
