@@ -26,3 +26,7 @@ pre.line-numbers.language-c {
 pre.line-numbers.language-cpp {
   background-color: #0000;
 }
+
+td div pre {
+  background-color: #0000;
+}
