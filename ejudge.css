@@ -1,3 +1,7 @@
+td div pre {
+  background-color: #0000;
+}
+
 html {
 background-color: #0000;
 background-image: url("https://w.wallha.com/ws/13/N7DJn9rG.jpg");
@@ -27,6 +31,3 @@ pre.line-numbers.language-cpp {
   background-color: #0000;
 }
 
-td div pre {
-  background-color: #0000;
-}
