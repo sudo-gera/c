@@ -5,7 +5,7 @@ def create_input_string():
 from time import time,perf_counter
 start_time=str(int(time()*2**128)+int(perf_counter()*2**64))
 
-def how_to_run(filename):
+def how_to_run(filename,start_time):
 	compiled_file='./tmp'+start_time+'_'+filename.replace('/','_')+'_.trash.trash'
 	if filename.endswith('.cpp'):
 		compiled_file+='.out'
@@ -38,12 +38,12 @@ def how_to_run(filename):
 	if filename.endswith('.out'):
 		return [[compiled_file]]
 
-def cmp(log):
+def cmp(log,start_time):
 	from time import time, asctime
 	while 1:
 		from sys import argv
 		from subprocess import run,PIPE
-		c=[how_to_run(w) for w in argv[1:]]
+		c=[how_to_run(w,start_time) for w in argv[1:]]
 		p=create_input_string()
 		c=[[run(e,stdout=PIPE,input=p.encode()) for e in w] for w in c]
 		if any([any([e.returncode for e in w]) for w in c]):
@@ -97,13 +97,14 @@ def logging(log):
 				t=y
 
 if __name__=='__main__':
-	if type(create_input_string())!=str:
-		raise\
-			TypeError('create_input_string() function should return string, not '+type(create_input_string()).__name__)
+	# if type(create_input_string())!=str:
+	# 	raise\
+	# 		TypeError('create_input_string() function should return string, not '+type(create_input_string()).__name__)
 	from sys import argv
 	if len(argv)<3:
 		raise\
 			ValueError('need at least 2 files to compare, got '+str(len(argv)-1))
+	[how_to_run(w,start_time) for w in argv[1:]]
 	from multiprocessing import Pool,Queue,Process
 	log=Queue()
 
@@ -111,7 +112,7 @@ if __name__=='__main__':
 	a.start()
 	s=[]
 	for w in range(16):
-		s.append(Process(target=cmp,args=(log,)))
+		s.append(Process(target=cmp,args=(log,start_time)))
 		s[-1].start()
 	try:
 		a.join()

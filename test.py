@@ -1,10 +1,18 @@
 from h import *
 
-from server_example import *
 
-a=Server()
-print(a.port)
 
-while 1:
-	print(a.get())
-	a.put(0)
+
+if 1:
+	q=[0]*8*4
+	w=1
+	w=scan(int)
+	while w:
+		if w==1:
+			e,r=0,0
+			e,r=scan(int),scan(int)
+			q[e]=r
+		else:
+			e=scan(int)
+			print(q[e])
+		w=scan(int)

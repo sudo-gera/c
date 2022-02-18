@@ -96,14 +96,18 @@ mkinput(char,char,"%c",&q);
 #undef mkinput
 str input_str(){static char t[1073741824];scanf("%s",t);return to_str(t);}
 
-#define read(type,name) type name = _Generic(name, func_name_generator(input)) ();		
+#define read(type,name)\
+	type name = _Generic(name,\
+		func_name_generator\
+			(input)\
+				) (\
+					);
 #define write(q) {str __t=to_str(q);printf("%s " ,__t);del(__t);}
 #define print(q) {str __t=to_str(q);printf("%s\n",__t);del(__t);}
 #define put(q)   {str __t=to_str(q);printf("%s"  ,__t);del(__t);}
 
-#define bit_get(a,s)   ((a)[(s)/8]>>(s)%8)
-#define bit_set(a,s,d) (a)[(s)/8]&=1<<(s)%8;(a)[(s)/8]+=((d)&1)<<(s)%8;
+#define bit_get(a,s)   (((a)[(s)/8/sizeof((a)[0])]>>(s)%(8*sizeof((a)[0])))&1)
+#define bit_set(a,s,d) {(a)[(s)/8/sizeof((a)[0])]&=~(1<<(s)%(8*sizeof((a)[0])));(a)[(s)/8/sizeof((a)[0])]+=(d)<<(s)%(8*sizeof((a)[0]));}
 
-
-int main(){
+int main() {
 }
