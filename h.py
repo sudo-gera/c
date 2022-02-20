@@ -2,17 +2,13 @@ HOME=1
 from icecream import ic
 ic.configureOutput(includeContext=1)
 from time import *
-__o=open
 from os import *
-open=__o
 from sys import *
 from json import *
 from random import *
 from urllib.request import *
 from pprint import *
-__p=pow
 from math import *
-pow=__p
 from decimal import *
 from traceback import *
 from fractions import *
@@ -24,6 +20,7 @@ from base64 import *
 from itertools import *
 from timeit import *
 from bisect import *
+from builtins import *
 home=str(Path.home())+'/'
 def rand(q=2**64):
 	return randint(0,q-1)
@@ -93,7 +90,7 @@ def primes_until(w):
 	while primes[-1]<w:
 		primes.append(next_prime(primes[-1]))
 
-primes_until(10**5)
+primes_until(10**3)
 from fib import *
 # @cache
 # def fibonacci(q):
@@ -164,3 +161,4 @@ def primes_count(start=0):
 	while 1:
 		start=next_prime(start)
 		yield start
+from builtins import *

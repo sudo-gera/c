@@ -1,12 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <iso646.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdbool.h>
-
+#include "cbase.c"
 
 int main(){
-    int a[]={1,2,3,4,5};
-    qsort
+    read(size_t,q)
+    print(q)
 }
