@@ -7,11 +7,11 @@ def how_to_run(filename):
 	if filename.endswith('.cpp'):
 		from time import time
 		t='./tmp'+str(time())+'.trash.trash'
-		return [['g++','-std=c++17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',t],[t],['rm',t]]
+		return [['g++','-std=c++17','-Wfatal-errors','-g',filename,'-o',t],['valgrind','--leak-check=full',t],['rm',t]]
 	if filename.endswith('.c'):
 		from time import time
 		t='./tmp'+str(time())+'.trash.trash'
-		return [['cc','-Wfatal-errors',filename,'-o',t],[t],['rm',t]]
+		return [['cc',              '-Wfatal-errors','-g',filename,'-o',t],['valgrind','--leak-check=full',t],['rm',t]]
 	if filename.endswith('.py'):
 		return [['python3',filename]]
 	if filename.endswith('.out'):
@@ -28,7 +28,7 @@ def cmp(log):
 		if any([any([e.returncode for e in w]) for w in c]):
 			log.put([p])
 		c=[['\n'.join([r.strip() for r in (e.stdout.decode() if hasattr(e,'stdout') and e.stdout!=None else '').strip().split('\n') if r.strip()])+\
-			'\n'.join([r.strip() for r in (e.stderr.decode() if hasattr(e,'stderr') and e.stderr!=None else '').strip().split('\n') if r.strip()])
+			'\n'.join([r.strip() for r in ([e.stderr.decode(),''][-1] if hasattr(e,'stderr') and e.stderr!=None else '').strip().split('\n') if r.strip()])
 			for e in w] for w in c]
 		c=[''.join(w) for w in c]
 		sc=set(c)
