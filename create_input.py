@@ -3,6 +3,17 @@ def rand(q=2**64):
 	assert q
 	return randint(0,q-1)
 
+<<<<<<< HEAD
+print(0,2**8)
+for w in range(128):
+	q=rand()%10
+	print(q)
+	if q in [0,1,6,7,8]:
+		print(rand(2**16))
+	if q in [6]:
+		print(rand(2**16))
+print(10000000000000)
+=======
 # for w in range(rand(10)):
 # 	q=rand(2)+1
 # 	print(q)
@@ -23,3 +34,4 @@ def rand(q=2**64):
 # print(m,q)
 q=''.join([choice('qwertyuiopasdfghjklzxcvbnm') for w in range(rand(9)+1)])
 print(q)
+>>>>>>> edd1a72a29bdf481718ea43e7194f3dbec21102a
