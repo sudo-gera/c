@@ -1,5 +1,9 @@
+<<<<<<< HEAD
+
+=======
 from h import *
 
+<<<<<<< HEAD
 def get_index_a(q,n):
 	q=int(q)
 	a=list(range(10**n))
@@ -113,3 +117,21 @@ for w in range(9999):
 	except Exception:
 		print(q,n)
 		break
+=======
+print(input()+'_')
+
+# if 1:
+# 	q=[0]*8*4
+# 	w=1
+# 	w=scan(int)
+# 	while w:
+# 		if w==1:
+# 			e,r=0,0
+# 			e,r=scan(int),scan(int)
+# 			q[e]=r
+# 		else:
+# 			e=scan(int)
+# 			print(q[e])
+# 		w=scan(int)
+>>>>>>> ce402be16924a6f15247777b49396153b9b46ecc
+>>>>>>> 74d49e8f8825a736a557241cf782f40ee7fd9ab7
