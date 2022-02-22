@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #define bit_get(a,s)   (((a)[(s)/8/sizeof((a)[0])]>>(s)%(8*sizeof((a)[0])))&1)
 
 #include <stdio.h>
@@ -13,4 +14,13 @@ int main(){
 		printf(" %Lf\n",f);
 		f-=1;
 	}
+=======
+#include <stdio.h>
+
+int main(){
+	int q;
+	scanf("%i",&q);
+	int w=12/q;
+	printf("%i\n",w);
+>>>>>>> 7f2db97fa8b71c051f68ecc7a6caa2f2744006b1
 }
