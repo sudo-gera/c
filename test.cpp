@@ -1,7 +1,10 @@
 int main(){
-	long double w=45.56;
-	let q=bin_repr(w);
-	print(sizeof(w))
-	print(str(q.begin(),q.begin()+1),str(q.begin()+1,q.end()-23),str(q.end()-23,q.end()))
-	print(inf(q,2).to_string(16))
+	long double q=1;
+	size_t c=0;
+	while (1!=q+1){
+		print(bin_repr(q),bin_repr(q+1))
+		q/=2;
+		c+=1;
+	}
+	print(c)
 }
