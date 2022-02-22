@@ -105,3 +105,33 @@ str input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 #define bit_set(a,s,d) {(a)[(s)/8/sizeof((a)[0])]&=~(1<<(s)%(8*sizeof((a)[0])));(a)[(s)/8/sizeof((a)[0])]+=(d)<<(s)%(8*sizeof((a)[0]));}
 
 
+int main(){
+	read(str,q);
+	long end=len(q)-1;
+	for (;end>0 and q[end-1]>=q[end];--end){
+
+	}
+	if (q[end-1]<=q[end]){
+
+	}
+	long oth=len(q)-1;
+	if (end){
+		for (;oth>=end and q[oth]<=q[end-1];--oth){
+
+		}
+
+		char t=q[oth];
+		q[oth]=q[end-1];
+		q[end-1]=t;
+	}else{
+		oth=0;
+	}
+
+	for (long w=end;w<(end+len(q))/2;++w){
+		char t=q[w];
+		q[w]=q[len(q)-1-w+end];
+		q[len(q)-1-w+end]=t;
+	}
+	print(q);
+	del(q);
+}

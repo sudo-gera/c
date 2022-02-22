@@ -1,3 +1,4 @@
+//D-seq
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -105,3 +106,29 @@ str input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 #define bit_set(a,s,d) {(a)[(s)/8/sizeof((a)[0])]&=~(1<<(s)%(8*sizeof((a)[0])));(a)[(s)/8/sizeof((a)[0])]+=(d)<<(s)%(8*sizeof((a)[0]));}
 
 
+char get_letter(size_t n,size_t i){
+	size_t len=(1LLU<<n)-1;
+	// write(i);
+	// write(n);
+	// print(len);
+	assert(i<len);
+	if (i==0){
+		return n-1+'a';
+	}
+	//len of n str is 2**n-1
+	if (i<len/2+1){
+		return get_letter(n-1,i-1);
+	}
+	return get_letter(n-1,i-len/2-1);
+}
+
+int main(){
+	read(size_t,n)
+	read(size_t,k)
+	read(size_t,l)
+	k-=1;
+	for (size_t w=k;w<l;++w){
+		putchar(get_letter(n,w));
+	}
+	putchar('\n');
+}

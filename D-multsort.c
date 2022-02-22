@@ -24,7 +24,7 @@ void*resize_f(void**a,uint64_t s,uint64_t y){
 		a=&p;
 	}
 	if (!*a){                 // int*a=0; resize(a,12);
-		*a=OFFSET+(uint64_t*)malloc(s*(y+1)+OFFSET*sizeof(uint64_t));
+		*a=OFFSET+(uint64_t*)calloc(s*(y+1)+OFFSET*sizeof(uint64_t),1);
 		_arr_meta(a)[0]=y+1;
 	}else
 	if (_arr_meta(a)[0] < y+1 and y+1 < 2*_arr_meta(a)[0]){
@@ -104,4 +104,69 @@ str input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 #define bit_get(a,s)   (((a)[(s)/8/sizeof((a)[0])]>>(s)%(8*sizeof((a)[0])))&1)
 #define bit_set(a,s,d) {(a)[(s)/8/sizeof((a)[0])]&=~(1<<(s)%(8*sizeof((a)[0])));(a)[(s)/8/sizeof((a)[0])]+=(d)<<(s)%(8*sizeof((a)[0]));}
 
+long**a=0;
+str*name=0;
+long*p=0;
+str**pname=0;
 
+int cmp(const str**qq,const str**ee){
+	long q=*qq-name;
+	long e=*ee-name;
+	// write(name[q]);
+	// print(name[e]);
+	// for (long w=0;w<len(a[q]);++w){
+	// 	write(a[q][w]);
+	// }
+	// putchar('\n');
+	// for (long w=0;w<len(a[e]);++w){
+	// 	write(a[e][w]);
+	// }
+	// putchar('\n');
+	for (long w=0;w<len(p);++w){
+		// write(a[q][p[w]-1]);
+		// print(a[e][p[w]-1]);
+		if (a[q][p[w]-1]!=a[e][p[w]-1]){
+			return a[e][p[w]-1]-a[q][p[w]-1];
+		}
+	}
+	return e-q;
+}
+
+int main(){
+	read(long,n);
+	read(long,k);
+	resize(p,k);
+	// array(long,p,k);
+	for (long w=0;w<k;++w){
+		read(,p[w]);
+	}
+	resize(name,n);
+	// array(str,name,n);
+	// array(long*,a,n);
+	resize(a,n);
+	for (long w=0;w<n;++w){
+		read(,name[w]);
+		resize(a[w],k);
+		for (long e=0;e<k;++e){
+			read(,a[w][e]);
+		}
+	}
+	resize(pname,n);
+	for (long w=0;w<n;++w){
+		pname[w]=name+w;
+	}
+	qsort(pname, n, sizeof (pname[0]), (int(*) (const void *, const void *)) cmp);
+	for (long w=0;w<n;++w){
+		print(pname[w][0]);
+	}
+	del(p);
+	for (long w=0;w<len(name);++w){
+		del(name[w]);
+	}
+	del(name);
+	for (long w=0;w<len(a);++w){
+		del(a[w]);
+	}
+	del(a);
+	del(pname);
+}

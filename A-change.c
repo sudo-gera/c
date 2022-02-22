@@ -15,9 +15,9 @@
  * interface: len(a), append(a,n), pop(a), resize(a,l), a[i]
  */
 #define OFFSET 2
-#define _arr_meta(q) (( (uint64_t*)*(q) )- OFFSET)
+#define arr_meta(q) (( (uint64_t*)*(q) )- OFFSET)
 #define arr_data(t,q) ((t*)(*q))
-uint64_t len(void*a){if (!a){return 0;}return _arr_meta(&a)[1];}
+uint64_t len(void*a){if (!a){return 0;}return arr_meta(&a)[1];}
 void*resize_f(void**a,uint64_t s,uint64_t y){
 	void*p=0;
 	if (!a){                  // resize_f(0,12);
@@ -25,25 +25,25 @@ void*resize_f(void**a,uint64_t s,uint64_t y){
 	}
 	if (!*a){                 // int*a=0; resize(a,12);
 		*a=OFFSET+(uint64_t*)malloc(s*(y+1)+OFFSET*sizeof(uint64_t));
-		_arr_meta(a)[0]=y+1;
+		arr_meta(a)[0]=y+1;
 	}else
-	if (_arr_meta(a)[0] < y+1 and y+1 < 2*_arr_meta(a)[0]){
-		*a=OFFSET+(uint64_t*)realloc(_arr_meta(a),s*_arr_meta(a)[0]*2+OFFSET*sizeof(uint64_t));
-		_arr_meta(a)[0]*=2;
+	if (arr_meta(a)[0] < y+1 and y+1 < 2*arr_meta(a)[0]){
+		*a=OFFSET+(uint64_t*)realloc(arr_meta(a),s*arr_meta(a)[0]*2+OFFSET*sizeof(uint64_t));
+		arr_meta(a)[0]*=2;
 	}else
-	if (_arr_meta(a)[0] < y+1){
-		*a=OFFSET+(uint64_t*)realloc(_arr_meta(a),s*(y+1)+OFFSET*sizeof(uint64_t));
-		_arr_meta(a)[0]=y+1;
+	if (arr_meta(a)[0] < y+1){
+		*a=OFFSET+(uint64_t*)realloc(arr_meta(a),s*(y+1)+OFFSET*sizeof(uint64_t));
+		arr_meta(a)[0]=y+1;
 	}else
-	if (_arr_meta(a)[0] > (y+1)*4){
-		*a=OFFSET+(uint64_t*)realloc(_arr_meta(a),s*(y+1)+OFFSET*sizeof(uint64_t));
-		_arr_meta(a)[0]=y+1;
+	if (arr_meta(a)[0] > (y+1)*4){
+		*a=OFFSET+(uint64_t*)realloc(arr_meta(a),s*(y+1)+OFFSET*sizeof(uint64_t));
+		arr_meta(a)[0]=y+1;
 	}
-	_arr_meta(a)[1]=y;
+	arr_meta(a)[1]=y;
 	return *a;
 }
 #define resize(a,...) resize_f((void**)(&(a)),sizeof(*(a)),__VA_ARGS__)
-void del(void*a){if (!a){return;}free(_arr_meta(&a));}
+void del(void*a){if (!a){return;}free(arr_meta(&a));}
 #define append(a,...) ((a)[len(a)]=(__VA_ARGS__),resize((a),len(a)+1))
 #define pop(a,...) (resize((a),len(a)-1),(a)[len(a)])
 #define array(type,name,...) type* name=(type*)resize_f(0,sizeof(type),__VA_ARGS__-0);
@@ -105,3 +105,18 @@ str input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 #define bit_set(a,s,d) {(a)[(s)/8/sizeof((a)[0])]&=~(1<<(s)%(8*sizeof((a)[0])));(a)[(s)/8/sizeof((a)[0])]+=(d)<<(s)%(8*sizeof((a)[0]));}
 
 
+int main(){
+	read(size_t,n);
+	long min=0;
+	long have=0;
+	for (size_t w=0;w<n;++w){
+		read(long,val);
+		if (val==5){
+			have++;
+		}else{
+			have-=(val-5)/5;
+			min=have<min?have:min;
+		}
+	}
+	print(-min)
+}

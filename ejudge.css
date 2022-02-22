@@ -4,7 +4,7 @@ td div pre {
 
 html {
 background-color: #0000;
-background-image: url("https://w.wallha.com/ws/13/N7DJn9rG.jpg");
+background-image: url("https://github.com/sudo-gera/c/raw/master/wallpaperbetter.com_1600x900.jpg");
 background-size: cover;
 background-attachment: fixed;
 }
@@ -18,7 +18,7 @@ body{
 }
 
 #l13 {
-background-image: url("https://w.wallha.com/ws/13/N7DJn9rG.jpg");
+background-image: url("https://github.com/sudo-gera/c/raw/master/wallpaperbetter.com_1600x900.jpg");
 background-size: cover;
 background-attachment: fixed;
 }
@@ -31,3 +31,6 @@ pre.line-numbers.language-cpp {
   background-color: #0000;
 }
 
+tr td textarea {
+  background-color: #0000;
+}

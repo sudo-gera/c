@@ -1,3 +1,4 @@
+//E-grey
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -104,4 +105,36 @@ str input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 #define bit_get(a,s)   (((a)[(s)/8/sizeof((a)[0])]>>(s)%(8*sizeof((a)[0])))&1)
 #define bit_set(a,s,d) {(a)[(s)/8/sizeof((a)[0])]&=~(1<<(s)%(8*sizeof((a)[0])));(a)[(s)/8/sizeof((a)[0])]+=(d)<<(s)%(8*sizeof((a)[0]));}
 
+void create(size_t*a,int n){
+	if (!n){
+		return;
+	}
+	create(a,n-1);
+	size_t len=1LLU<<n;
+	for (size_t w=len/2;w<len;++w){
+		a[w]=a[len-1-w];
+		bit_set(a+w,n-1,1);
+	}
+}
 
+
+int main(){
+	read(size_t,n);
+	size_t*a=(size_t*)calloc(sizeof(size_t),1<<n);
+	create(a,n);
+	size_t len=1LLU<<n;
+	for (size_t w=0;w<len;++w){
+		size_t c=0;
+		for (size_t q=0;q<n;++q){
+			if (w){
+				c+=bit_get(a+w-1,q)!=bit_get(a+w,q);
+			}
+			putchar('0'+bit_get(a+w,n-1-q));
+		}
+		putchar('\n');
+		if (w){
+			assert(c==1);
+		}
+	}
+	free(a);
+}

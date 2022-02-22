@@ -1,3 +1,4 @@
+//B-poly
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -105,3 +106,24 @@ str input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 #define bit_set(a,s,d) {(a)[(s)/8/sizeof((a)[0])]&=~(1<<(s)%(8*sizeof((a)[0])));(a)[(s)/8/sizeof((a)[0])]+=(d)<<(s)%(8*sizeof((a)[0]));}
 
 
+int main(){
+	read(size_t,n)
+	read(size_t,m)
+	read(size_t,mod)
+	array(size_t,a,n+1)
+	// array(size_t,x,m)
+	for (size_t w=0;w<n+1;++w){
+		read(,a[w]);
+	}
+	for (size_t q=0;q<m;++q){
+		read(size_t,x)
+		size_t res=a[0];
+		for (size_t w=0;w<n;++w){
+			res*=x;
+			res+=a[w+1];
+			res%=mod;
+		}
+		print(res)
+	}
+	del(a);
+}

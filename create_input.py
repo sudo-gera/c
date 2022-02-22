@@ -11,4 +11,15 @@ def rand(q=2**64):
 # 	else:
 # 		print(rand(8*4))
 # print(0)
-print(rand(92299339))
+# print(rand(92299339))
+
+
+# n=randint(1,9)
+# q=randint(1,10**n-1)
+# print(q,n)
+
+# m=randint(1,999)
+# q=randint(1,m)
+# print(m,q)
+q=''.join([choice('qwertyuiopasdfghjklzxcvbnm') for w in range(rand(9)+1)])
+print(q)
