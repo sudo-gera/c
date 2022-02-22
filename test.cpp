@@ -1,18 +1,16 @@
-<<<<<<< HEAD
+#define bit_get(a,s)   (((a)[(s)/8/sizeof((a)[0])]>>(s)%(8*sizeof((a)[0])))&1)
+
+#include <stdio.h>
+
 int main(){
-	long double q=1;
-	size_t c=0;
-	while (1!=q+1){
-		print(bin_repr(q),bin_repr(q+1))
-		q/=2;
-		c+=1;
+	for (long double f=1;f+1!=f;f*=2){
+//	for (long double f=-9;f<9;f++){
+		f+=1;
+		unsigned*p=(unsigned*)&f;
+		for (long w=0;w<sizeof(f)*8;++w){
+			printf("%i",bit_get(p,w));
+		}
+		printf(" %Lf\n",f);
+		f-=1;
 	}
-	print(c)
-=======
-ima{
-	float w=45.56;
-	let q=bin_repr(w);
-	print(str(q.begin(),q.begin()+1),str(q.begin()+1,q.begin()+25),str(q.begin()+25,q.end()))
-	print(inf(q,2).to_string(16))
->>>>>>> edd1a72a29bdf481718ea43e7194f3dbec21102a
 }
