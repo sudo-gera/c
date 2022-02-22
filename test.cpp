@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 int main(){
 	long double q=1;
 	size_t c=0;
@@ -7,4 +8,11 @@ int main(){
 		c+=1;
 	}
 	print(c)
+=======
+ima{
+	float w=45.56;
+	let q=bin_repr(w);
+	print(str(q.begin(),q.begin()+1),str(q.begin()+1,q.begin()+25),str(q.begin()+25,q.end()))
+	print(inf(q,2).to_string(16))
+>>>>>>> edd1a72a29bdf481718ea43e7194f3dbec21102a
 }

@@ -9,13 +9,9 @@
 #include <assert.h>
 #include <iso646.h>
 
-int8_t get_sign;
-int get_c;
-
 #define get_int(res)\
 {\
 	get_sign=1;\
-	get_c;\
 	while (get_c=getchar_unlocked(),isspace(get_c)){\
 	}\
 	if (get_c=='-'){\
@@ -30,11 +26,11 @@ int get_c;
 	}\
 	res*=get_sign;\
 }
-
+int8_t get_sign;
+int get_c;
 char put_data[44];
 unsigned long long put_t;
 unsigned put_ds;
-
 #define put_int(q)\
 {\
 	if (q<0){\
@@ -45,7 +41,7 @@ unsigned put_ds;
 	}\
 	put_ds=0;\
 	while(put_t){\
-		put_data[++put_ds]=put_t%10+unsigned('0');\
+		put_data[++put_ds]=put_t%10+(unsigned)('0');\
 		put_t/=10;\
 	}\
 	if (put_ds==0){\
@@ -56,11 +52,3 @@ unsigned put_ds;
 	}\
 }
 
-int main(){
-	size_t q;
-	for (size_t w=0;w<9;++w){
-		get_int(q);
-		put_int(q);
-		putchar_unlocked('\n');
-	}
-}
