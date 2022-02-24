@@ -3,6 +3,7 @@ from icecream import ic
 ic.configureOutput(includeContext=1)
 from time import *
 from os import *
+from os.path import *
 from sys import *
 from json import *
 from random import *
@@ -39,7 +40,7 @@ true=True
 def bisect_in(a,s):
 	return bisect_left(a,s)!=bisect_right(a,s)
 # from primes import primes
-primes=[2]
+primes=[2,3,5]
 from is_prime import *
 from scan import *
 def is_prime_root(q):
@@ -161,4 +162,37 @@ def primes_count(start=0):
 	while 1:
 		start=next_prime(start)
 		yield start
+
+@cache
+def fast_next_prime(q):
+	if q<2:
+		return 2
+	q+=1
+	while q%5 not in [2,3]:
+		q+=1
+	while 1:
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q+=1
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q+=4
+
+@cache
+def fast_prev_prime(q):
+	if q<3:
+		return None
+	if q==3:
+		return 2
+	q-=1
+	while q%5 not in [2,3]:
+		q-=1
+	while 1:
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q-=1
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q-=4
+
 from builtins import *
