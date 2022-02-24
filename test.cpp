@@ -1,3 +1,2 @@
-
-ima{
+int main(){
 }
