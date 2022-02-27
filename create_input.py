@@ -4,6 +4,10 @@ def rand(q=2**64):
 	return randint(0,q-1)
 
 n=rand(999)
-print(n)
 for w in range(n):
-	print(rand(2**60)-2**59)
+	q=rand(2)
+	print(q,end=' ')
+	if q:
+		print(rand(10000),end=' ')
+	print()
+print(1000000000)

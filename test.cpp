@@ -1,48 +1,36 @@
 #include "d"
 #undef ic
 #define ic(...)
-#include "/Users/gera/Downloads/sort.h"
+#include "heap.h"
 int LEN;
 long*aa;
 
-// struct item{
-// 	size_t q;
-// 	item(size_t w=0){
-// 		q=w;
-// 	}
-// };
-
-// bool operator<(const item&q,const item&w){
-// 	return q.q<w.q;
-// }
-
-// bool operator==(const item&q,const item&w){
-// 	return q.q==w.q;
-// }
-
 ima{
-	vector <long>a={6,3,1,2};
-	LEN=a.size();
-	aa=a.data();
-	// Sort(&(a[0]),LEN+&(a[0]));
-	// sort(s.begin(),s.end());
-	// if (itervect(a+0,a+LEN)!=s){
-	// 	print(itervect(a+0,a+LEN))
-	// 	print(s)
-	// }
-	// int n;
-	// cin>>n;
-	// vector<size_t>a(n);
-	// for (auto&w:a){
-	// 	cin>>w;
-	// 	// w=rand();
-	// }
-	Sort(&(a[0]),a.size()+&(a[0]));
-	vector<refdecltype(a[0])> s(a.begin(),a.end());
-	sort(s.begin(),s.end());
-	if (a!=s){
-		print(a)
-		print(s)
-		return 1;
+	vector<refdecltype(aa[0])> a;
+	multiset<refdecltype(aa[0])> s;
+	int q;
+	while (1){
+		cin>>q;
+		ic(q)
+		if (q==1){
+			int w;
+			cin>>w;
+			ic(w)
+			s.insert(w);
+			a.push_back(w);
+			PushHeap(a.data(),a.data()+a.size());
+		}else
+		if (q == 0 and s.size()){
+			PopHeap(a.data(),a.data()+a.size());
+			auto l=s.end();
+			l--;
+			assert(*l==a.end()[-1]);
+			s.erase(l);
+			a.pop_back();
+		}else{
+			break;
+		}
+		ic(a)
+		ic(s)
 	}
 }
