@@ -1,2 +1,2 @@
 from h import *
-sleep(1)
+print(not rand(9))

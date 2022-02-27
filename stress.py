@@ -64,8 +64,8 @@ def cmp(log,start_time,stop):
 	while 1:
 		try:
 			p=create_input_string()
-		except:
-			log.put(['',''])
+		except Exception:
+			log.put([format_exc()])
 			exit()
 		try:
 			if not stop.empty():
@@ -116,7 +116,8 @@ def logging(log,stop):
 			q=log.get()
 		except KeyboardInterrupt:
 			exit()
-		if type(q)==list:
+		if type(q)==list and len(q)==2:
+			print('\r                                                   \r',end='')
 			print('\x1b[91mERROR\x1b[0m')
 			print('\x1b[94minput(str version)\x1b[0m')
 			print(str(q[0]))
@@ -127,13 +128,22 @@ def logging(log,stop):
 			print()
 			exit()
 			stop.put('stop')
+		if type(q)==list and len(q)==1:
+			print('\r                                                   \r',end='')
+			print('\x1b[91mERROR\x1b[0m')
+			print('\x1b[91mWHAT:\x1b[0m')
+			print(q[0])
+			print()
+			exit()
+			stop.put('stop')
 		elif q==None:
 			c+=1
 			y=time()
-			if y-t>1:
-				print(f'{c} sucessfull tests')
+			if y-t>0.2:
+				print(f'   {c} sucessfull tests',end='\r')
 				t=y
 		else:
+			print('\r                                                   \r',end='')
 			print('\x1b[91mERROR: wrong log\x1b[0m')
 			exit()
 
@@ -157,7 +167,7 @@ if __name__=='__main__':
 	try:
 		a.join()
 	except KeyboardInterrupt:
-		print('\r  \r',end='')
+		print()
 	except SystemExit:
 		pass
 	stop.put('stop')
