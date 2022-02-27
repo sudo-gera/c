@@ -30,10 +30,10 @@ def how_to_run(filename,start_time,stop,log):
 		compiled_file+='.out'
 	if not exists(compiled_file):
 		if filename.endswith('.cpp'):
-			if run(['g++','-Ofast','-std=c++17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',compiled_file]).returncode:
+			if run(['g++','-Ofast','-lgmpxx','-lgmp','-std=c++17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',compiled_file]).returncode:
 				exit()
 		if filename.endswith('.c'):
-			if run(['g++','-Ofast','-std=c++17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',compiled_file]).returncode:
+			if run(['g++','-Ofast','-lgmpxx','-lgmp','-std=c++17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',compiled_file]).returncode:
 				exit()
 		if filename.endswith('.py'):
 			if run(['python3','-m','py_compile',filename]).returncode:
@@ -48,19 +48,9 @@ def how_to_run(filename,start_time,stop,log):
 			if run(['cp',filename,compiled_file]).returncode:
 				exit()
 	if filename.endswith('.cpp'):
-<<<<<<< HEAD
-		from time import time
-		t='./tmp'+str(time())+'.trash.trash'
-		return [['g++','-std=c++17','-Wfatal-errors','-g',filename,'-o',t],['valgrind','--leak-check=full',t],['rm',t]]
-	if filename.endswith('.c'):
-		from time import time
-		t='./tmp'+str(time())+'.trash.trash'
-		return [['cc',              '-Wfatal-errors','-g',filename,'-o',t],['valgrind','--leak-check=full',t],['rm',t]]
-=======
 		return [compiled_file]
 	if filename.endswith('.c'):
 		return [compiled_file]
->>>>>>> edd1a72a29bdf481718ea43e7194f3dbec21102a
 	if filename.endswith('.py'):
 		return [executable,compiled_file]
 	if filename.endswith('.out'):
@@ -69,24 +59,6 @@ def how_to_run(filename,start_time,stop,log):
 def cmp(log,start_time,stop):
 	signal.signal(signal.SIGINT, signal.SIG_IGN)
 	while 1:
-<<<<<<< HEAD
-		from sys import argv
-		from subprocess import run,PIPE
-		c=[how_to_run(w) for w in argv[1:]]
-		p=create_input_string()
-		c=[[run(e,stdout=PIPE,stderr=PIPE,input=p.encode()) for e in w] for w in c]
-		if any([any([e.returncode for e in w]) for w in c]):
-			log.put([p])
-		c=[['\n'.join([r.strip() for r in (e.stdout.decode() if hasattr(e,'stdout') and e.stdout!=None else '').strip().split('\n') if r.strip()])+\
-			'\n'.join([r.strip() for r in ([e.stderr.decode(),''][-1] if hasattr(e,'stderr') and e.stderr!=None else '').strip().split('\n') if r.strip()])
-			for e in w] for w in c]
-		c=[''.join(w) for w in c]
-		sc=set(c)
-		if len(sc)!=1:
-			log.put([p,c])
-		else:
-			log.put(None)
-=======
 		try:
 			p=create_input_string()
 		except:
@@ -129,7 +101,6 @@ def cmp(log,start_time,stop):
 			exit()
 		except:
 			break
->>>>>>> edd1a72a29bdf481718ea43e7194f3dbec21102a
 
 def logging(log,stop):
 	c=0
