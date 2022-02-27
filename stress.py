@@ -2,6 +2,9 @@ def create_input_string():
 	from subprocess import run,PIPE
 	return run(['python3','create_input.py'],stdout=PIPE).stdout.decode()
 
+TIME_LIMIT=2
+PROCESS_COUNT=16
+
 from time import time,perf_counter
 start_time=str(int(time()*2**128)+int(perf_counter()*2**64))
 
@@ -72,6 +75,7 @@ def cmp(log,start_time,stop):
 			for w in c:
 				if not stop.empty():
 					break
+				rr=time()
 				try:
 					w=Popen(w,stdout=PIPE,stdin=PIPE)
 				except Exception:
@@ -80,7 +84,7 @@ def cmp(log,start_time,stop):
 				w.stdin.write(p.encode())
 				w.stdin.close()
 				try:
-					if w.wait(2):
+					if w.wait(TIME_LIMIT):
 						w.terminate()
 						log.put([p,'non-zero run code'])
 						exit()
@@ -135,6 +139,7 @@ def logging(log,stop):
 
 
 if __name__=='__main__':
+	assert TIME_LIMIT
 	if len(argv)<3:
 		raise\
 			ValueError('need at least 2 files to compare, got '+str(len(argv)-1))
@@ -145,24 +150,26 @@ if __name__=='__main__':
 	a=Process(target=logging,args=(log,stop))
 	a.start()
 	s=[]
-	for w in range(16):
+	for w in range(PROCESS_COUNT):
 		s.append(Process(target=cmp,args=(log,start_time,stop)))
 		s[-1].daemon = True
 		s[-1].start()
 	try:
 		a.join()
 	except KeyboardInterrupt:
-		print()
+		print('\r  \r',end='')
 	except SystemExit:
 		pass
 	stop.put('stop')
-	print('exiting...')
-	for w in range(20):
-		print('####'*w+'----'*(20-w),end='\r')
+	for w in range(TIME_LIMIT*10):
+		w=round(w*8/TIME_LIMIT)
+		print('exiting:','#'*w+'-'*(80-w),end='\r')
 		sleep(0.2)
+		if all([not w.is_alive() for w in s]):
+			break
 	for w in s:
 		w.terminate()
 	system('rm -fr tmp*.trash.trash.*')
-	print('####'*20+'----'*(20-20),end='\r')
+	print('exiting:','#'*80+'----'*(80-80),end='\r')
 	sleep(0.2)
-	print('    '*20+'    '*(20-20),end='\r')
+	print('        ','    '*80+'    '*(80-80),end='\r')
