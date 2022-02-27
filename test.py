@@ -1,2 +1,2 @@
 from h import *
-print(not rand(9))
+print(scan(int,int))
