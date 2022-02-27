@@ -150,9 +150,9 @@ def logging(log,stop):
 
 if __name__=='__main__':
 	assert TIME_LIMIT
-	if len(argv)<3:
-		raise\
-			ValueError('need at least 2 files to compare, got '+str(len(argv)-1))
+	# if len(argv)<3:
+	# 	raise\
+	# 		ValueError('need at least 2 files to compare, got '+str(len(argv)-1))
 	log=Queue()
 	stop=Queue()
 	[how_to_run(w,start_time,stop,log) for w in argv[1:]]
