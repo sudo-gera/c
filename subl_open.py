@@ -3,9 +3,11 @@ from subprocess import *
 from time import *
 from sys import *
 sleep(4)
-while exists(expanduser('~/ubuntux/.subl_open')):
-	f=open(expanduser('~/ubuntux/.subl_open')).read().splitlines()
-	open(expanduser('~/ubuntux/.subl_open'),'w')
+p=expanduser('~/ubuntux/.subl_open')
+while exists(p):
+	f=list(open(p).read().splitlines())
+	print(f)
+	open(p,'w')
 	for w in f:
 		w=w.replace('/home/gera/','~/ubuntux/')
 		Popen(['/opt/local/bin/subl',w])
