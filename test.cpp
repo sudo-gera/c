@@ -1,3 +1,12 @@
+<<<<<<< HEAD
+#include <stdio.h>
+
+int main(){
+	int q;
+	scanf("%i",&q);
+	int w=12/q;
+	printf("%i\n",w);
+=======
 #include "d"
 #undef ic
 #define ic(...)
@@ -33,4 +42,5 @@ ima{
 		ic(a)
 		ic(s)
 	}
+>>>>>>> 9c74c5ec11d4bb507dd89afd303a8fde0c1bbc7c
 }
