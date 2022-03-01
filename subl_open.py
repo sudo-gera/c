@@ -5,11 +5,15 @@ from sys import *
 sleep(4)
 p=expanduser('~/ubuntux/.subl_open')
 while exists(p):
-	f=list(open(p).read().splitlines())
+	a=open(p)
+	f=a.read()
 	print(f)
-	open(p,'w')
-	for w in f:
-		w=w.replace('/home/gera/','~/ubuntux/')
-		Popen(['/opt/local/bin/subl',w])
+	a.close()
+	del(a)
+	# f=f.splitlines()
+	open(p,'w').close()
+	# for w in f:
+	# 	w=w.replace('/home/gera/','~/ubuntux/')
+	# 	Popen(['/opt/local/bin/subl',w])
 	sleep(1)
 
