@@ -110,32 +110,28 @@ def logging(log,stop):
 	c=0
 	t=time()
 	while 1:
-		if not stop.empty():
-			break
 		try:
 			q=log.get()
 		except KeyboardInterrupt:
 			exit()
+		if not stop.empty():
+			break
 		if type(q)==list and len(q)==2:
 			print('\r                                                   \r',end='')
 			print('\x1b[91mERROR\x1b[0m')
-			print('\x1b[94minput(str version)\x1b[0m')
-			print(str(q[0]))
-			print('\x1b[94minput(repr version)\x1b[0m')
-			print(repr(q[0]))
-			print('\x1b[91mWHAT:\x1b[0m')
 			print(q[1])
+			open('created_input.txt','w').write(q[0])
+			print('\x1b[94minput saved to created_input.txt\x1b[0m')
 			print()
-			exit()
 			stop.put('stop')
+			exit()
 		if type(q)==list and len(q)==1:
 			print('\r                                                   \r',end='')
 			print('\x1b[91mERROR\x1b[0m')
-			print('\x1b[91mWHAT:\x1b[0m')
 			print(q[0])
 			print()
-			exit()
 			stop.put('stop')
+			exit()
 		elif q==None:
 			c+=1
 			y=time()
@@ -160,10 +156,21 @@ if __name__=='__main__':
 	a=Process(target=logging,args=(log,stop))
 	a.start()
 	s=[]
+	d=4
 	for w in range(PROCESS_COUNT):
+		if not stop.empty():
+			break
 		s.append(Process(target=cmp,args=(log,start_time,stop)))
 		s[-1].daemon = True
 		s[-1].start()
+		if d:
+			try:
+				sleep(TIME_LIMIT)
+			except KeyboardInterrupt:
+				print()
+				stop.put('stop')
+				log.put(None)
+			d-=1
 	try:
 		a.join()
 	except KeyboardInterrupt:
