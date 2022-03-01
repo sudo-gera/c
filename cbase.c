@@ -91,12 +91,7 @@ mkinput(char,char,"%c",&q);
 #undef mkinput
 str input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 
-#define read(type,name)\
-	type name = _Generic(name,\
-		func_name_generator\
-			(input)\
-				) (\
-					);
+#define read(type,name) type name = _Generic(name,func_name_generator(input))();
 #define write(q) {str __t=to_str(q);printf("%s " ,__t);del(__t);}
 #define print(q) {str __t=to_str(q);printf("%s\n",__t);del(__t);}
 #define put(q)   {str __t=to_str(q);printf("%s"  ,__t);del(__t);}

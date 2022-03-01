@@ -107,6 +107,7 @@ def cmp(log,start_time,stop):
 			break
 
 def logging(log,stop):
+	signal.signal(signal.SIGINT, signal.SIG_IGN)
 	c=0
 	t=time()
 	while 1:
@@ -165,7 +166,11 @@ if __name__=='__main__':
 		s[-1].start()
 		if d:
 			try:
-				sleep(TIME_LIMIT)
+				st=0
+				while st<TIME_LIMIT:
+					sleep(0.2)
+					if not stop.empty():
+						break
 			except KeyboardInterrupt:
 				print()
 				stop.put('stop')
@@ -178,15 +183,19 @@ if __name__=='__main__':
 	except SystemExit:
 		pass
 	stop.put('stop')
+	not_print=0
+	if all([not w.is_alive() for w in s]):
+		not_print=1
 	for w in range(TIME_LIMIT*10):
+		if all([not w.is_alive() for w in s]):
+			break
 		w=round(w*8/TIME_LIMIT)
 		print('exiting:','#'*w+'-'*(80-w),end='\r')
 		sleep(0.2)
-		if all([not w.is_alive() for w in s]):
-			break
 	for w in s:
 		w.terminate()
 	system('rm -fr tmp*.trash.trash.*')
-	print('exiting:','#'*80+'----'*(80-80),end='\r')
-	sleep(0.2)
-	print('        ','    '*80+'    '*(80-80),end='\r')
+	if not_print==0:
+		print('exiting:','#'*80+'-'*(80-80),end='\r')
+		sleep(0.2)
+	print('        ',' '*80+' '*(80-80),end='\r')
