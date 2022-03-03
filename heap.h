@@ -41,4 +41,14 @@ void PopHeap(T *begin, T *end) {
     }
   }
 }
+template <typename T>
+void heapsort(T*begin,T*end){
+  for (T *w = begin; w != end; ++w){
+    PushHeap(begin, w + 1);
+  }
+  for (T *w = end; w != begin; --w){
+    PopHeap(begin, w);
+  }
+}
+
 #endif  // DESKTOP_HEAP_H

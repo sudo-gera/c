@@ -171,6 +171,7 @@ if __name__=='__main__':
 					sleep(0.2)
 					if not stop.empty():
 						break
+					st+=0.2
 			except KeyboardInterrupt:
 				print()
 				stop.put('stop')

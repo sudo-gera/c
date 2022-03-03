@@ -10,14 +10,19 @@ def rand(q=2**64):
 # 	print(q,end=' ')
 # print()
 
-a=list(range(4))
-shuffle(a)
-def t(q):
-	return [len([
-					e
-			for e in range(w)
-				if q[e]>q[w]])
-		for w in range(len(q))
-	]
-print(len(a))
-print(*t(a))
+# a=list(range(4))
+# shuffle(a)
+# def t(q):
+# 	return [len([
+# 					e
+# 			for e in range(w)
+# 				if q[e]>q[w]])
+# 		for w in range(len(q))
+# 	]
+# print(len(a))
+# print(*t(a))
+
+n=rand(9999)
+print(n)
+for w in range(n):
+	print(rand(9999))
