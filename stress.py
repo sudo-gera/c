@@ -107,35 +107,32 @@ def cmp(log,start_time,stop):
 			break
 
 def logging(log,stop):
+	signal.signal(signal.SIGINT, signal.SIG_IGN)
 	c=0
 	t=time()
 	while 1:
-		if not stop.empty():
-			break
 		try:
 			q=log.get()
 		except KeyboardInterrupt:
 			exit()
+		if not stop.empty():
+			break
 		if type(q)==list and len(q)==2:
 			print('\r                                                   \r',end='')
 			print('\x1b[91mERROR\x1b[0m')
-			print('\x1b[94minput(str version)\x1b[0m')
-			print(str(q[0]))
-			print('\x1b[94minput(repr version)\x1b[0m')
-			print(repr(q[0]))
-			print('\x1b[91mWHAT:\x1b[0m')
 			print(q[1])
+			open('created_input.txt','w').write(q[0])
+			print('\x1b[94minput saved to created_input.txt\x1b[0m')
 			print()
-			exit()
 			stop.put('stop')
+			exit()
 		if type(q)==list and len(q)==1:
 			print('\r                                                   \r',end='')
 			print('\x1b[91mERROR\x1b[0m')
-			print('\x1b[91mWHAT:\x1b[0m')
 			print(q[0])
 			print()
-			exit()
 			stop.put('stop')
+			exit()
 		elif q==None:
 			c+=1
 			y=time()
@@ -160,10 +157,25 @@ if __name__=='__main__':
 	a=Process(target=logging,args=(log,stop))
 	a.start()
 	s=[]
+	d=4
 	for w in range(PROCESS_COUNT):
+		if not stop.empty():
+			break
 		s.append(Process(target=cmp,args=(log,start_time,stop)))
 		s[-1].daemon = True
 		s[-1].start()
+		if d:
+			try:
+				st=0
+				while st<TIME_LIMIT:
+					sleep(0.2)
+					if not stop.empty():
+						break
+			except KeyboardInterrupt:
+				print()
+				stop.put('stop')
+				log.put(None)
+			d-=1
 	try:
 		a.join()
 	except KeyboardInterrupt:
@@ -171,15 +183,19 @@ if __name__=='__main__':
 	except SystemExit:
 		pass
 	stop.put('stop')
+	not_print=0
+	if all([not w.is_alive() for w in s]):
+		not_print=1
 	for w in range(TIME_LIMIT*10):
+		if all([not w.is_alive() for w in s]):
+			break
 		w=round(w*8/TIME_LIMIT)
 		print('exiting:','#'*w+'-'*(80-w),end='\r')
 		sleep(0.2)
-		if all([not w.is_alive() for w in s]):
-			break
 	for w in s:
 		w.terminate()
 	system('rm -fr tmp*.trash.trash.*')
-	print('exiting:','#'*80+'----'*(80-80),end='\r')
-	sleep(0.2)
-	print('        ','    '*80+'    '*(80-80),end='\r')
+	if not_print==0:
+		print('exiting:','#'*80+'-'*(80-80),end='\r')
+		sleep(0.2)
+	print('        ',' '*80+' '*(80-80),end='\r')

@@ -81,7 +81,9 @@ make_to_string(char,               char,  "%c",   q,      128                 );
 	long double:func##_float,double:func##_float,float:func##_float,\
 	char:func##_int,char*const:func##_str,char*:func##_str
 
-#define to_str(q) _Generic((q), func_name_generator(to_string) )(q)
+#define generic_generator(q,f) _Generic((q),func_name_generator(f))
+
+#define to_str(q) generic_generator(q,to_string)(q)
 
 #define mkinput(type,name,str,acc) type input_##name(){type q=0;scanf(str,acc);return q;}
 mkinput(long long int,int,"%lli",&q);
@@ -91,12 +93,7 @@ mkinput(char,char,"%c",&q);
 #undef mkinput
 str input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 
-#define read(type,name)\
-	type name = _Generic(name,\
-		func_name_generator\
-			(input)\
-				) (\
-					);
+#define read(type,name) type name = generic_generator(name,input)();
 #define write(q) {str __t=to_str(q);printf("%s " ,__t);del(__t);}
 #define print(q) {str __t=to_str(q);printf("%s\n",__t);del(__t);}
 #define put(q)   {str __t=to_str(q);printf("%s"  ,__t);del(__t);}
