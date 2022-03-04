@@ -123,4 +123,16 @@ cstr input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 #define RP_9(x) RP_8(x##0) TO_REPEAT_SEP RP_8(x##1)
 #define REPEAT(x) RP_##x(0b0)
 
-
+int main(){
+	read(size_t,n);
+	size_t start=1;
+	for (size_t w=0;w<n;++w){
+		read(size_t,a);
+		if (a>start){
+			print(start);
+			return 0;
+		}
+		start+=a;
+	}
+	print(start)
+}

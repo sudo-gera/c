@@ -124,3 +124,46 @@ cstr input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 #define REPEAT(x) RP_##x(0b0)
 
 
+int main(){
+	read(size_t,n);
+	read(size_t,m);
+	array(size_t,v,n);
+	for (size_t w=0;w<n;++w){
+		read(,v[w]);
+	}
+	array(size_t,s,n+1);
+	for (size_t w=0;w<n;++w){
+		s[w+1]=s[w]+v[w];
+	}
+	// for (size_t w=0;w<len(s);++w){
+	// 	write(s[w]);
+	// }putchar('\n');
+	for (size_t t=0;t<m;++t){
+		read(size_t,p);
+		size_t b=0,e=0;
+		size_t breaked=0;
+		while (b<=e and e<len(s)){
+			// put("\x1b[32m")
+			// write(b)
+			// print(e)
+			// put("\x1b[0m")
+			if (s[e]<s[b]+p){
+				e++;
+			}else
+			if (s[e]>s[b]+p){
+				b++;
+			}else
+			if (s[e]==s[b]+p){
+				breaked=1;
+				write(b+1)
+				print(e+1)
+				break;
+			}
+		}
+		if (breaked==0){
+			print("Not found");
+		}
+	}
+	del(v);
+	del(s);
+}

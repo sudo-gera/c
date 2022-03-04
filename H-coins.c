@@ -45,7 +45,7 @@ void*resize_f(void**a,uint64_t s,uint64_t y){
 }
 #define resize(a,...) resize_f((void**)(&(a)),sizeof(*(a)),__VA_ARGS__)
 void del(void*a){if (!a){return;}free(_arr_meta(&a));}
-#define append(a,...) (resize((a),len(a)+1),(a)[len(a)-1]=(__VA_ARGS__))
+#define append(a,...) ((a)[len(a)]=(__VA_ARGS__),resize((a),len(a)+1))
 #define pop(a,...) (resize((a),len(a)-1),(a)[len(a)])
 #define array(type,name,...) type* name=(type*)resize_f(0,sizeof(type),__VA_ARGS__-0);
 
@@ -66,11 +66,11 @@ typedef char*    cstr;
 	}
 
 
-make_to_string(long long int,      int,   "%lli", q,      128                 )
-make_to_string(long long unsigned, uns,   "%llu", q,      128                 )
-make_to_string(long double,        float, "%Lf",  q,      128                 )
-make_to_string(cstr,               str,   "%s",   q?q:"", q?128+strlen(q):128 )
-make_to_string(char,               char,  "%c",   q,      128                 )
+make_to_string(long long int,      int,   "%lli", q,      128                 );
+make_to_string(long long unsigned, uns,   "%llu", q,      128                 );
+make_to_string(long double,        float, "%Lf",  q,      128                 );
+make_to_string(cstr,               str,   "%s",   q?q:"", q?128+strlen(q):128 );
+make_to_string(char,               char,  "%c",   q,      128                 );
 #undef make_to_string
 #define func_name_generator(func)\
 	const char:func##_char,const char*const:func##_str,const char*:func##_str,\
@@ -91,10 +91,10 @@ make_to_string(char,               char,  "%c",   q,      128                 )
 #define to_str(q) generic_generator(q,to_string)(q)
 
 #define mkinput(type,name,str,acc) type input_##name(){type q=0;scanf(str,acc);return q;}
-mkinput(long long int,int,"%lli",&q)
-mkinput(long long uns,uns,"%llu",&q)
-mkinput(long double,float,"%Lf", &q)
-mkinput(char,char,"%c",&q)
+mkinput(long long int,int,"%lli",&q);
+mkinput(long long uns,uns,"%llu",&q);
+mkinput(long double,float,"%Lf", &q);
+mkinput(char,char,"%c",&q);
 #undef mkinput
 cstr input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 
@@ -123,4 +123,57 @@ cstr input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 #define RP_9(x) RP_8(x##0) TO_REPEAT_SEP RP_8(x##1)
 #define REPEAT(x) RP_##x(0b0)
 
+size_t run(size_t*c,size_t u,size_t v){
+	if (u==len(c)){
+		if (v){
+			return -1;
+		}
+		return 0;
+	}
+	size_t r1=-1,r2=-1,r3=-1;
+	r1=run(c,u+1,v);
+	if (c[u]<=v){
+		r2=run(c,u+1,v-c[u]);
+		if (r2!=(size_t)(-1)){
+			r2+=1;
+		}
+	}
+	if (c[u]*2<=v){
+		r3=run(c,u+1,v-c[u]*2);
+		if (r3!=(size_t)(-1)){
+			r3+=2;
+		}
+	}
+	if (r1>r2){
+		r1=r2;
+	}
+	if (r1>r3){
+		r1=r3;
+	}
+	return r1;
+}
 
+int main(){
+	read(size_t,v)
+	read(size_t,n)
+	array(size_t,c,n)
+	for (size_t w=0;w<n;++w){
+		read(,c[w]);
+	}
+	size_t r=run(c,0,v);
+	if (r!=(size_t)(-1)){
+		print(r)
+		del(c);
+		return 0;
+	}
+	size_t s=0;
+	for (size_t w=0;w<n;++w){
+		s+=c[w]*2;
+	}
+	if (s>=v){
+		print("Change");
+	}else{
+		print("Impossible");
+	}
+	del(c);
+}

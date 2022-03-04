@@ -66,11 +66,11 @@ typedef char*    cstr;
 	}
 
 
-make_to_string(long long int,      int,   "%lli", q,      128                 )
-make_to_string(long long unsigned, uns,   "%llu", q,      128                 )
-make_to_string(long double,        float, "%Lf",  q,      128                 )
-make_to_string(cstr,               str,   "%s",   q?q:"", q?128+strlen(q):128 )
-make_to_string(char,               char,  "%c",   q,      128                 )
+make_to_string(long long int,      int,   "%lli", q,      128                 );
+make_to_string(long long unsigned, uns,   "%llu", q,      128                 );
+make_to_string(long double,        float, "%Lf",  q,      128                 );
+make_to_string(char*,              str,   "%s",   q?q:"", q?128+strlen(q):128 );
+make_to_string(char,               char,  "%c",   q,      128                 );
 #undef make_to_string
 #define func_name_generator(func)\
 	const char:func##_char,const char*const:func##_str,const char*:func##_str,\
@@ -91,10 +91,10 @@ make_to_string(char,               char,  "%c",   q,      128                 )
 #define to_str(q) generic_generator(q,to_string)(q)
 
 #define mkinput(type,name,str,acc) type input_##name(){type q=0;scanf(str,acc);return q;}
-mkinput(long long int,int,"%lli",&q)
-mkinput(long long uns,uns,"%llu",&q)
-mkinput(long double,float,"%Lf", &q)
-mkinput(char,char,"%c",&q)
+mkinput(long long int,int,"%lli",&q);
+mkinput(long long uns,uns,"%llu",&q);
+mkinput(long double,float,"%Lf", &q);
+mkinput(char,char,"%c",&q);
 #undef mkinput
 cstr input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 
@@ -123,4 +123,64 @@ cstr input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 #define RP_9(x) RP_8(x##0) TO_REPEAT_SEP RP_8(x##1)
 #define REPEAT(x) RP_##x(0b0)
 
+size_t*access(size_t b,size_t e,size_t*a){
+	return a+(len(a)/2+b)/(e-b);
+}
 
+size_t init(size_t b,size_t e,size_t*a,size_t*h){
+	if (e==1+b){
+		if (b<len(h)){
+			return access(b,e,a)[0]=h[b];
+		}
+		return -1;
+	}
+	size_t c=(e+b)/2;
+	size_t r1=init(b,c,a,h);
+	size_t r2=init(c,e,a,h);
+	r1=r1<r2?r1:r2;
+	access(b,e,a)[0]=r1;
+	return r1;
+}
+
+size_t min(size_t ub,size_t ue,size_t b,size_t e,size_t*a){
+	if (b==ub and ue==e){
+		return access(b,e,a)[0];
+	}
+	size_t c=(b+e)/2;
+	if (b<=ub and ue<=c){
+		return min(ub,ue,b,c,a);
+	}
+	if (c<=ub and ue<=e){
+		return min(ub,ue,c,e,a);
+	}
+	size_t r1=min(ub,c,b,c,a);
+	size_t r2=min(c,ue,c,e,a);
+	r1=r1<r2?r1:r2;
+	return r1;
+}
+
+int main(){
+	read(size_t,n);
+	array(size_t,h,n);
+	for (size_t w=0;w<n;++w){
+		read(,h[w]);
+	}
+	size_t d=2;
+	while (n){
+		n>>=1;
+		d<<=1;
+	}
+	n=len(h);
+	array(size_t,a,d);
+	init(0,d/2,a,h);
+	size_t sq=0;
+	for (size_t w=0;w<=n;++w){
+		for (size_t e=0;e<w;++e){
+			size_t q=(w-e)*min(e,w,0,len(a),a);
+			sq=sq>q?sq:q;
+		}
+	}
+	print(sq);
+	del(h);
+	del(a);
+}

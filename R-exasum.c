@@ -123,4 +123,55 @@ cstr input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 #define RP_9(x) RP_8(x##0) TO_REPEAT_SEP RP_8(x##1)
 #define REPEAT(x) RP_##x(0b0)
 
+int cmp(const void*q,const void*w){
+	return *(const int*)(q)-*(const int*)(w);
+}
 
+int main(){
+	size_t n,m;
+	scanf("%zu%zu",&n,&m);
+	array(int,v,n);
+	for (size_t w=0;w<n;++w){
+		read(,v[w]);
+	}
+	qsort(v,len(v),sizeof(v[0]),cmp);
+	for (size_t w=0;w<m;++w){
+		size_t z=0,x=0;
+		int p;
+		scanf("%i",&p);
+		while (z<n and x<n){
+			if (v[z]+v[n-1-x]<p){
+				++z;
+			}else
+			if (v[z]+v[n-1-x]>p){
+				++x;
+			}else
+			if (v[z]+v[n-1-x]==p){
+				if (z==n-1-x){
+					++z;
+					if (z<n){
+						if (v[z]+v[n-1-x]==p){
+							break;
+						}
+					}
+					--z;
+					++x;
+					if (x<n){
+						if (v[z]+v[n-1-x]==p){
+							break;
+						}
+					}
+					++z;
+				}else{
+					break;
+				}
+			}
+		}
+		if (z<n and x<n and v[z]+v[n-1-x]==p){
+			printf("%i %i\n",v[z]<v[n-1-x]?v[z]:v[n-1-x],v[z]>v[n-1-x]?v[z]:v[n-1-x]);
+		}else{
+			printf("Not found\n");
+		}
+	}
+	del(v);
+}

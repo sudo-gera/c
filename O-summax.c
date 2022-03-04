@@ -123,4 +123,27 @@ cstr input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 #define RP_9(x) RP_8(x##0) TO_REPEAT_SEP RP_8(x##1)
 #define REPEAT(x) RP_##x(0b0)
 
-
+int main(){
+	read(size_t,n);
+	array(int,v,n);
+	long vsum=0;
+	for (size_t w=0;w<n;++w){
+		read(,v[w]);
+		vsum+=v[w];
+	}
+	long sum=(size_t)(-1)/2+1;
+	n++;
+	long sufsum=0;
+	long maxprefsum=(size_t)(-1)/2+1;
+	for (long w=n-1;w>=0;--w){
+		long ts=sufsum+maxprefsum;
+		maxprefsum=maxprefsum>vsum-sufsum?maxprefsum:vsum-sufsum;
+		sufsum=sufsum+v[w-1];
+		if (ts>sum){
+			sum=ts;
+		}
+	}
+	sum-=vsum;
+	print(sum)
+	del(v);
+}

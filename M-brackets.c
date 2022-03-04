@@ -66,11 +66,11 @@ typedef char*    cstr;
 	}
 
 
-make_to_string(long long int,      int,   "%lli", q,      128                 )
-make_to_string(long long unsigned, uns,   "%llu", q,      128                 )
-make_to_string(long double,        float, "%Lf",  q,      128                 )
-make_to_string(cstr,               str,   "%s",   q?q:"", q?128+strlen(q):128 )
-make_to_string(char,               char,  "%c",   q,      128                 )
+make_to_string(long long int,      int,   "%lli", q,      128                 );
+make_to_string(long long unsigned, uns,   "%llu", q,      128                 );
+make_to_string(long double,        float, "%Lf",  q,      128                 );
+make_to_string(cstr,               str,   "%s",   q?q:"", q?128+strlen(q):128 );
+make_to_string(char,               char,  "%c",   q,      128                 );
 #undef make_to_string
 #define func_name_generator(func)\
 	const char:func##_char,const char*const:func##_str,const char*:func##_str,\
@@ -91,10 +91,10 @@ make_to_string(char,               char,  "%c",   q,      128                 )
 #define to_str(q) generic_generator(q,to_string)(q)
 
 #define mkinput(type,name,str,acc) type input_##name(){type q=0;scanf(str,acc);return q;}
-mkinput(long long int,int,"%lli",&q)
-mkinput(long long uns,uns,"%llu",&q)
-mkinput(long double,float,"%Lf", &q)
-mkinput(char,char,"%c",&q)
+mkinput(long long int,int,"%lli",&q);
+mkinput(long long uns,uns,"%llu",&q);
+mkinput(long double,float,"%Lf", &q);
+mkinput(char,char,"%c",&q);
 #undef mkinput
 cstr input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 
@@ -124,3 +124,67 @@ cstr input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 #define REPEAT(x) RP_##x(0b0)
 
 
+int main()  {
+	array(char,a);
+	char c;
+	while (!isspace(c=getchar())){
+		append(a,c);
+	}
+	array(char,s,len(a));
+	size_t w  =  0; 
+	for (size_t q  =  0; a[q]; ++q) {
+		switch(a[q]) {
+			case '<':
+				s[w++] = '>'; 
+				break; 
+			case '{':
+				s[w++] = '}'; 
+				break; 
+			case '[':
+				s[w++] = ']'; 
+				break; 
+			case '(':
+				s[w++] = ')'; 
+				break; 
+			case '>':
+				if (!w or s[--w] != '>') {
+					printf("NO");
+					del(a);
+					del(s);
+					return 0; 
+				}
+				break; 
+			case '}':
+				if (!w or s[--w] != '}') {
+					printf("NO"); 
+					del(a);
+					del(s);
+					return 0; 
+				}
+				break; 
+			case ']':
+				if (!w or s[--w] != ']') {
+					printf("NO"); 
+					del(a);
+					del(s);
+					return 0; 
+				}
+				break; 
+			case ')':
+				if (!w or s[--w] != ')') {
+					printf("NO"); 
+					del(a);
+					del(s);
+					return 0; 
+				}
+				break; 
+		}
+	}
+	if (w) {
+		printf("NO"); 
+	} else {
+		printf("YES"); 
+	}
+	del(a);
+	del(s);
+}

@@ -124,3 +124,84 @@ cstr input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 #define REPEAT(x) RP_##x(0b0)
 
 
+int main(){
+	int c;
+	char got=0;
+	char open=0;
+	array(size_t,count,4);
+	while ((c=getchar_unlocked())!=EOF){
+		// put("\x1b[34m");
+		// write(c)
+		// write((char)(c))
+		// write((int)(got))
+		// write(got)
+		// write((int)(open))
+		// print(open)
+		// put("\x1b[0m");
+		if (open==0){
+			if (c=='\''){
+				open='\'';
+				got=0;
+			}else
+			if (c=='/'){
+				if (got==0){
+					got='/';
+				}else{
+					open='/';
+					got=0;
+				}
+			}else
+			if (c=='('){
+				got='(';
+			}else
+			if (c=='{'){
+				open='{';
+			}else
+			if (c=='*'){
+				if (got=='('){
+					open='*';
+				}
+				got=0;
+			}else{
+				got=0;
+			}
+		}else
+		if (open=='/'){
+			if (c=='\n'){
+				count[2]++;
+				open=0;
+			}
+		}else
+		if (open=='*'){
+			if (c=='*'){
+				got='*';
+			}else
+			if (c==')'){
+				if (got=='*'){
+					count[0]++;
+					open=0;
+				}
+				got=0;
+			}else{
+				got=0;
+			}
+		}else
+		if (open=='\''){
+			if (c=='\''){
+				open=0;
+				count[3]++;
+			}
+		}else
+		if (open=='{'){
+			if (c=='}'){
+				count[1]++;
+				open=0;
+			}
+		}
+	}
+	for (size_t w=0;w<len(count);++w){
+		write(count[w]);
+	}
+	putchar('\n');
+	del(count);
+}

@@ -123,4 +123,69 @@ cstr input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 #define RP_9(x) RP_8(x##0) TO_REPEAT_SEP RP_8(x##1)
 #define REPEAT(x) RP_##x(0b0)
 
+long*access(size_t b,size_t e,long*a){
+	assert(b<=e);
+	assert(e*2<=len(a));
+	return a+(len(a)/2+b)/(e-b);
+}
 
+void add(size_t ub,size_t ue,size_t b,size_t e,long*a,long d){
+	if (b==ub and ue==e){
+		access(b,e,a)[0]+=d;
+		return;
+	}
+	size_t c=(b+e)/2;
+	if (b<=ub and ue<=c){
+		add(ub,ue,b,c,a,d);
+		return;
+	}
+	if (c<=ub and ue<=e){
+		add(ub,ue,c,e,a,d);
+		return;
+	}
+	add(ub,c,b,c,a,d);
+	add(c,ue,c,e,a,d);
+}
+
+void make(size_t b,size_t e,long*a,long*s){
+	long ac=access(b,e,a)[0];
+	for (size_t w=b;w<e;++w){
+		if (w<len(s)){
+			s[w]+=ac;
+		}
+	}
+	if (b+1<e){
+		size_t c=(b+e)/2;
+		make(b,c,a,s);
+		make(c,e,a,s);
+	}
+}
+
+int main(){
+	read(size_t,n)
+	read(size_t,q)
+	array(long,a,n)
+	for (size_t w=0;w<n;++w){
+		read(,a[w])
+	}
+	size_t d=2;
+	while (n){
+		n>>=1;
+		d<<=1;
+	}
+	n=len(a);
+	array(long,s,d);
+	for (size_t w=0;w<q;++w){
+		read(size_t,l)
+		read(size_t,r)
+		read(long,x)
+		add(l,r+1,0,d/2,s,x);
+	}
+	make(0,d/2,s,a);
+	for (size_t w=0;w<n;++w){
+		write(a[w]);
+	}
+	putchar('\n');
+	del(a);
+	del(s);
+}
