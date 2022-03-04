@@ -2,7 +2,7 @@ def create_input_string():
 	from subprocess import run,PIPE
 	return run(['python3','create_input.py'],stdout=PIPE).stdout.decode()
 
-TIME_LIMIT=16
+TIME_LIMIT=2
 PROCESS_COUNT=16
 
 from time import time,perf_counter
