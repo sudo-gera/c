@@ -1,5 +1,3 @@
-#include "cbase.c"
+#include "/Users/gera/Downloads/rational.h"
 int main(){
-    print(0)
-
 }
