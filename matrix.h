@@ -803,7 +803,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-template <size_t M,size_t N,typename Field=Rational>
+template <size_t M,size_t N,typename Field>
 class Matrix{
 public:
 	Matrix(){}
@@ -1092,7 +1092,7 @@ int f(std::string file){
 	fclose(d);
 	s=replace_(s,"\t"," ");
 	size_t len=512;
-	size_t start=len*0;
+	size_t start=len*13;
 	std::cerr<<"//BEGIN OF PART "<<start/len<<std::endl;
 	std::cerr<<std::string(s.begin()+(start<s.size()?start:s.size()),s.begin()+(start+len<s.size()?start+len:s.size()))<<std::endl;
 	std::cerr<<"//END OF PART "<<start/len<<std::endl;
@@ -1100,4 +1100,4 @@ int f(std::string file){
 }
 
 
-#define BigInteger f(__FILE__);BigInteger
+// #define rank() rank()+f(__FILE__)
