@@ -1,4 +1,5 @@
 #include <stdio.h>
 int main(){
-	printf("%i",'0000');
+	int q;
+	typeof(q) w;
 }
