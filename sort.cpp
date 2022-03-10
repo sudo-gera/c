@@ -277,6 +277,7 @@ void radixsort(int32_t*_A,int32_t n){
    }
 }
 
+#include "/Users/gera/c/heap.h"
 
 typedef void(*sort_func)(int *a, int n);
 
@@ -284,20 +285,21 @@ struct sort_s {
    sort_func func;
    string    name;
 } funcs [] = {
-   {sort_bubble, "bubble_simple"},
-   {sort_bubble_traditional, "bubble_trad"},
-   {sort_shaker, "shaker"},
-   {sort_insertion, "insertion"},
-   {sort_exchange, "exchange"},
-   {sort_shell,  "shell"},
-   {sort_shell2,  "shell2"},
-   {sort_shell3,  "shell3"},
-   {sort_merge,  "merge"},
+   // {sort_bubble, "bubble_simple"},
+   // {sort_bubble_traditional, "bubble_trad"},
+   // {sort_shaker, "shaker"},
+   // {sort_insertion, "insertion"},
+   // {sort_exchange, "exchange"},
+   // {sort_shell,  "shell"},
+   // {sort_shell2,  "shell2"},
+   // {sort_shell3,  "shell3"},
+   // {sort_merge,  "merge"},
    {sort_heap,   "heap"},
    {sort_quick_recursive, "quick recursive"},
    {sort_vector, "vector"},
    {sort_qsort,  "qsort"},
    {radixsort,  "radixsort"},
+   {hs,  "hs"},
 };
    
 int main(int argc, char **argv) {
