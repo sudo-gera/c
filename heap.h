@@ -1,5 +1,3 @@
-#ifndef DESKTOP_HEAP_H
-#define DESKTOP_HEAP_H
 template <typename T>
 void PushHeap(T *begin, T *end) {
   int i = end - begin;
@@ -51,4 +49,3 @@ void heapsort(T*begin,T*end){
   }
 }
 
-#endif  // DESKTOP_HEAP_H
