@@ -1,2 +1,3 @@
-for w in range(2**2**2**2):
-	print(w)
+from h import *
+
+a=is_prime(2)
