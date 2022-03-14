@@ -1,10 +1,9 @@
-// #include <iostream>
-// #include <iterator>
-// #include <vector>
+#include <iostream>
+#include <iterator>
+#include <vector>
 // #include <assert.h>
-// #include <algorithm>
+#include <algorithm>
 using namespace std;
-#include <bits/stdc++.h>
 using namespace std;
 #include <bits/stdc++.h>
 using namespace std;
@@ -500,10 +499,10 @@ auto operator+(long w,TT q)->enable_if_t<is_same_v<typename treap<typename TT::v
 	return e;
 }
 
-// template<typename TT>
-// auto operator==(TT q,TT w)->enable_if_t<is_same_v<typename treap<typename TT::value_type>::iter,TT>,bool>{
-// 	return q.a==w.a;
-// }
+template<typename TT>
+auto operator==(TT q,TT w)->enable_if_t<is_same_v<typename treap<typename TT::value_type>::iter,TT>,bool>{
+	return q.a==w.a;
+}
 
 template<typename TT>
 auto operator>=(TT q,TT w)->enable_if_t<is_same_v<typename treap<typename TT::value_type>::iter,TT>,bool>{
@@ -550,6 +549,7 @@ void check(T q,T e){
 			assert(w>e  or a[w]<=a[e]);
 			assert(w<e  or a[w]>=a[e]);
 			assert(w!=e or a[w]==a[e]);
+			// ic(q,q+8,a[w],a[w]-8,q+8==a[w],a[w]-8==q)
 			assert(a[w]+(-d)==a[e]);
 			assert(a[w]-(d)==a[e]);
 		}
@@ -565,19 +565,19 @@ void check(T q,T e){
 }
 
 
-int main(){
-	// ic(aa)
-	// for (auto w=a.begin();w!=a.begin()+(a.end()-a.begin())/2;++w){
-	// 	auto e=a.end()-1-(w-a.begin());
-	// 	swap(*w,*e);
-	// }
-	// assert(a.begin()<a.begin()+1);
-	// sort(aa.begin(),aa.end());
-	// ic(aa)
-	auto a=treap<long>({5,4,3,2,1});
-	sort(a.begin(),a.end());
-	for (auto w:a){
-		cout<<w<<' ';
-	}
-	cout<<endl;
-}
+// int main(){
+// 	// ic(aa)
+// 	// for (auto w=a.begin();w!=a.begin()+(a.end()-a.begin())/2;++w){
+// 	// 	auto e=a.end()-1-(w-a.begin());
+// 	// 	swap(*w,*e);
+// 	// }
+// 	// assert(a.begin()<a.begin()+1);
+// 	// sort(aa.begin(),aa.end());
+// 	// ic(aa)
+// 	auto a=vector<long>({5,4,3,2,1});
+// 	___mergesort(a.rbegin(),a.rend());
+// 	for (auto w:a){
+// 		cout<<w<<' ';
+// 	}
+// 	cout<<endl;
+// }
