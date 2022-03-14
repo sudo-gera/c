@@ -1,5 +1,3 @@
-
-
 %include "st_io.inc"
 global _start
 section .bss

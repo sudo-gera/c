@@ -2,7 +2,6 @@
 global _start
 section .data
 section .bss
-d resb 4
 section .text
 _start:
 mov bh,10
@@ -22,6 +21,4 @@ PUTCHAR 10
 FINISH
 not_5:
 mov ah,0
-mov [d],dword while
-mov ecx,d
-jmp [ecx]
+jmp while

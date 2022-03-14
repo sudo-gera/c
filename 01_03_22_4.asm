@@ -1,30 +1,29 @@
 %include "st_io.inc"
 global _start
 section .bss
-tmp resb 4
 section .data
-x db 100
+x db 2
 a db 7
 section .text
 _start:
 mov al,[x]
 imul byte[x]
 mov bx,ax
-mov cx,0
-mov cl,[x]
-imul cx
-mov [tmp],ax
-mov [tmp+2],dx
-mov eax,[tmp]
-mov ecx,eax
-mov eax,0
+imul byte[x]
+mov cx,ax
 mov ax,bx
-imul word 10
-mov [tmp],ax
-mov [tmp+2],dx
-mov eax,[tmp]
-add eax,ecx
-add eax,5
-neg eax
-
+mov dl,10
+imul dl
+add ax,cx
+add ax,5
+mov cl,[a]
+neg ax
+idiv cl
+mov ecx,0
+movsx ecx,al
+SIGNINT ecx
+PUTCHAR 10
+movsx ecx,ah
+SIGNINT ecx
+PUTCHAR 10
 FINISH
