@@ -73,18 +73,18 @@ make_to_string(cstr,               str,   "%s",   q?q:"", q?128+strlen(q):128 )
 make_to_string(char,               char,  "%c",   q,      128                 )
 #undef make_to_string
 #define func_name_generator(func)\
-	const char:func##_char,const char*const:func##_str,const char*:func##_str,\
-	const long long int:func##_int,const long int:func##_int,const int:func##_int,\
-	const long long uns:func##_uns,const long uns:func##_uns,const uns:func##_uns,\
-	const long double:func##_float,const double:func##_float,const float:func##_float,\
-	char:func##_char,char*const:func##_str,char*:func##_str,\
-	long long int:func##_int,long int:func##_int,int:func##_int,\
-	long long uns:func##_uns,long uns:func##_uns,uns:func##_uns,\
-	long double:func##_float,double:func##_float,float:func##_float,\
-	int8_t:func##_int,const int8_t:func##_int,\
-	uint8_t:func##_uns,const uint8_t:func##_uns,\
-	int16_t:func##_int,const int16_t:func##_int,\
-	uint16_t:func##_uns,const uint16_t:func##_uns
+	const char: func##_char,const char*const: func##_str,const char*: func##_str,\
+	const long long int: func##_int,const long int: func##_int,const int: func##_int,\
+	const long long uns: func##_uns,const long uns: func##_uns,const uns: func##_uns,\
+	const long double: func##_float,const double: func##_float,const float: func##_float,\
+	char: func##_char,char*const: func##_str,char*: func##_str,\
+	long long int: func##_int,long int: func##_int,int: func##_int,\
+	long long uns: func##_uns,long uns: func##_uns,uns: func##_uns,\
+	long double: func##_float,double: func##_float,float: func##_float,\
+	int8_t: func##_int,const int8_t: func##_int,\
+	uint8_t: func##_uns,const uint8_t: func##_uns,\
+	int16_t: func##_int,const int16_t: func##_int,\
+	uint16_t: func##_uns,const uint16_t: func##_uns
 
 #define generic_generator(q,f) _Generic((q),func_name_generator(f))
 
@@ -110,54 +110,160 @@ cstr input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 #define bit_get(a,s)   (((a)[(s)/8/sizeof((a)[0])]>>(s)%(8*sizeof((a)[0])))&1)
 #define bit_set(a,s,d) {(a)[(s)/8/sizeof((a)[0])]&=~(1<<(s)%(8*sizeof((a)[0])));(a)[(s)/8/sizeof((a)[0])]+=(d)<<(s)%(8*sizeof((a)[0]));}
 
+#define TO_REPEAT_SEP
 #define RP_0(x) TO_REPEAT(x)
-#define RP_1(x) RP_0(x##0) RP_0(x##1)
-#define RP_2(x) RP_1(x##0) RP_1(x##1)
-#define RP_3(x) RP_2(x##0) RP_2(x##1)
-#define RP_4(x) RP_3(x##0) RP_3(x##1)
-#define RP_5(x) RP_4(x##0) RP_4(x##1)
-#define RP_6(x) RP_5(x##0) RP_5(x##1)
-#define RP_7(x) RP_6(x##0) RP_6(x##1)
-#define RP_8(x) RP_7(x##0) RP_7(x##1)
-#define RP_9(x) RP_8(x##0) RP_8(x##1)
+#define RP_1(x) RP_0(x##0) TO_REPEAT_SEP RP_0(x##1)
+#define RP_2(x) RP_1(x##0) TO_REPEAT_SEP RP_1(x##1)
+#define RP_3(x) RP_2(x##0) TO_REPEAT_SEP RP_2(x##1)
+#define RP_4(x) RP_3(x##0) TO_REPEAT_SEP RP_3(x##1)
+#define RP_5(x) RP_4(x##0) TO_REPEAT_SEP RP_4(x##1)
+#define RP_6(x) RP_5(x##0) TO_REPEAT_SEP RP_5(x##1)
+#define RP_7(x) RP_6(x##0) TO_REPEAT_SEP RP_6(x##1)
+#define RP_8(x) RP_7(x##0) TO_REPEAT_SEP RP_7(x##1)
+#define RP_9(x) RP_8(x##0) TO_REPEAT_SEP RP_8(x##1)
 #define REPEAT(x) RP_##x(0b0)
 
-/*
- *
- * TO_REPEAT(x) - what to repeat
- *
- * REPEAT(n) - repeats TO_REPEAT 2**n times with x = 0, 1, 2, ..., 2**n-1
- *
- */
 
+void*read_0_0();
+void*read_47_0();
+void*read_42_0();
+void*read_39_0();
+void*read_123_0();
+void*read_0_40();
+void*read_47_40();
+void*read_42_40();
+void*read_39_40();
+void*read_123_40();
+void*read_0_42();
+void*read_47_42();
+void*read_42_42();
+void*read_39_42();
+void*read_123_42();
+void*read_0_47();
+void*read_47_47();
+void*read_42_47();
+void*read_39_47();
+void*read_123_47();
 
-void set_print(size_t*i){
-	// в данном подмножестве символ x встречается i[x] раз
-	for (size_t x=0;x<128;++x){
-		for (size_t w=0;w<i[x];++w){
-			putchar_unlocked(x);
-		}
+void* read_0_0(int c){
+	switch(c){
+		case EOF:
+			return 0;
+		case '\'':
+			return read_39_0;
+		case '/':
+			return read_0_47;
+		case '(':
+			return read_0_40;
+		case '{':
+			return read_123_0;
+		case '*':
+			return read_0_0;
+		default:
+			return read_0_0;
 	}
-	putchar('\n');
 }
 
-void set_create(size_t*count){
-	array(size_t,i,len(count));
-	#define TO_REPEAT(x) for (i[x]=0;i[x]<=count[x];++i[x]){
-	REPEAT(7)
-	#undef TO_REPEAT
-	set_print(i);
-	#define TO_REPEAT(x) }
-	REPEAT(7)
-	#undef	TO_REPEAT
+void* read_0_40(int c){
+	switch(c){
+		case EOF:
+			return 0;
+		case '\'':
+			return read_39_0;
+		case '/':
+			return read_47_0;
+		case '(':
+			return read_0_40;
+		case '{':
+			return read_123_0;
+		case '*':
+			return read_0_0;
+		default:
+			return read_0_0;
+	}
 }
-
 
 int main(){
-	array(size_t,count,128);
-	char s;
-	while (!isspace(s=getchar_unlocked())){
-		count[(uns)(s)]++;
+	int c;
+	char got=0;
+	char open=0;
+	array(size_t,count,4);
+	while ((c=getchar_unlocked())!=EOF){
+		// put("\x1b[34m");
+		// write(c)
+		// write((char)(c))
+		// write((int)(got))
+		// write(got)
+		// write((int)(open))
+		// print(open)
+		// put("\x1b[0m");
+		assert(open==0 or open=='/' or open=='*' or open=='\'' or open=='{');
+		// print(got)
+		assert(got==0 or got=='(' or got=='*' or got=='/');
+		if (open==0){
+			if (c=='\''){
+				open='\'';
+				got=0;
+			}else
+			if (c=='/'){
+				if (got==0){
+					got='/';
+				}else{
+					open='/';
+					got=0;
+				}
+			}else
+			if (c=='('){
+				got='(';
+			}else
+			if (c=='{'){
+				open='{';
+			}else
+			if (c=='*'){
+				if (got=='('){
+					open='*';
+				}
+				got=0;
+			}else{
+				got=0;
+			}
+		}else
+		if (open=='/'){
+			if (c=='\n'){
+				count[2]++;
+				open=0;
+			}
+		}else
+		if (open=='*'){
+			if (c=='*'){
+				got='*';
+			}else
+			if (c==')'){
+				if (got=='*'){
+					count[0]++;
+					open=0;
+				}
+				got=0;
+			}else{
+				got=0;
+			}
+		}else
+		if (open=='\''){
+			if (c=='\''){
+				open=0;
+				count[3]++;
+			}
+		}else
+		if (open=='{'){
+			if (c=='}'){
+				count[1]++;
+				open=0;
+			}
+		}
 	}
-	set_create(count);
+	for (size_t w=0;w<len(count);++w){
+		write(count[w]);
+	}
+	putchar('\n');
+	del(count);
 }
