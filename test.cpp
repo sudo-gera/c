@@ -1,8 +1,8 @@
-#include <iostream>
-#include <iterator>
-#include <vector>
-#include <assert.h>
-#include <algorithm>
+// #include <iostream>
+// #include <iterator>
+// #include <vector>
+// #include <assert.h>
+// #include <algorithm>
 using namespace std;
 #include <bits/stdc++.h>
 using namespace std;
@@ -500,10 +500,10 @@ auto operator+(long w,TT q)->enable_if_t<is_same_v<typename treap<typename TT::v
 	return e;
 }
 
-template<typename TT>
-auto operator==(TT q,TT w)->enable_if_t<is_same_v<typename treap<typename TT::value_type>::iter,TT>,bool>{
-	return q.a==w.a;
-}
+// template<typename TT>
+// auto operator==(TT q,TT w)->enable_if_t<is_same_v<typename treap<typename TT::value_type>::iter,TT>,bool>{
+// 	return q.a==w.a;
+// }
 
 template<typename TT>
 auto operator>=(TT q,TT w)->enable_if_t<is_same_v<typename treap<typename TT::value_type>::iter,TT>,bool>{
@@ -575,7 +575,7 @@ int main(){
 	// sort(aa.begin(),aa.end());
 	// ic(aa)
 	auto a=treap<long>({5,4,3,2,1});
-	___mergesort(a.begin(),a.end());
+	sort(a.begin(),a.end());
 	for (auto w:a){
 		cout<<w<<' ';
 	}
