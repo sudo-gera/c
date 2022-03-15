@@ -124,142 +124,142 @@ cstr input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 #define REPEAT(x) RP_##x(0b0)
 
 
-void*read_0_0();
-void*read_47_0();
-void*read_42_0();
-void*read_39_0();
-void*read_123_0();
-void*read_0_40();
-void*read_47_40();
-void*read_42_40();
-void*read_39_40();
-void*read_123_40();
-void*read_0_42();
-void*read_47_42();
-void*read_42_42();
-void*read_39_42();
-void*read_123_42();
-void*read_0_47();
-void*read_47_47();
-void*read_42_47();
-void*read_39_47();
-void*read_123_47();
+void*free_text();
+void*third_comment();
+void*first_comment();
+void*string();
+void*second_comment();
+void*first_comment_begin();
+void*third_comment_end();
+void*third_comment_begin();
 
-void* read_0_0(int c){
+void* free_text(int c,size_t*count){
 	switch(c){
 		case EOF:
 			return 0;
 		case '\'':
-			return read_39_0;
+			return string;
 		case '/':
-			return read_0_47;
+			return third_comment_begin;
 		case '(':
-			return read_0_40;
+			return first_comment_begin;
 		case '{':
-			return read_123_0;
+			return second_comment;
 		case '*':
-			return read_0_0;
+			return free_text;
 		default:
-			return read_0_0;
+			return free_text;
 	}
 }
 
-void* read_0_40(int c){
+void* first_comment_begin(int c,size_t*count){
 	switch(c){
 		case EOF:
 			return 0;
 		case '\'':
-			return read_39_0;
+			return string;
 		case '/':
-			return read_47_0;
+			return third_comment;
 		case '(':
-			return read_0_40;
+			return first_comment_begin;
 		case '{':
-			return read_123_0;
+			return second_comment;
 		case '*':
-			return read_0_0;
+			return first_comment;
 		default:
-			return read_0_0;
+			return free_text;
 	}
 }
+
+void* third_comment_begin(int c,size_t*count){
+	switch(c){
+		case EOF:
+			return 0;
+		case '\'':
+			return string;
+		case '/':
+			return third_comment;
+		case '(':
+			return first_comment_begin;
+		case '{':
+			return second_comment;
+		case '*':
+			return free_text;
+		default:
+			return free_text;
+	}
+}
+
+void* third_comment(int c,size_t*count){
+	switch(c){
+		case EOF:
+			return 0;
+		case '\n':
+			count[2]++;
+			return free_text;
+		default:
+			return third_comment;
+	}
+}
+
+void* first_comment(int c,size_t*count){
+	switch(c){
+		case EOF:
+			return 0;
+		case '*':
+			return third_comment_end;
+		case ')':
+			return first_comment;
+		default:
+			return first_comment;
+	}
+}
+
+void* third_comment_end(int c,size_t*count){
+	switch(c){
+		case EOF:
+			return 0;
+		case '*':
+			return third_comment_end;
+		case ')':
+			count[0]++;
+			return free_text;
+		default:
+			return first_comment;
+	}
+}
+
+void* string(int c,size_t*count){
+	switch(c){
+		case EOF:
+			return 0;
+		case '\'':
+			count[3]++;
+			return free_text;
+		default:
+			return string;
+	}
+}
+
+void* second_comment(int c,size_t*count){
+	switch(c){
+		case EOF:
+			return 0;
+		case '}':
+			count[1]++;
+			return free_text;
+		default:
+			return second_comment;
+	}
+}
+
+typedef void*(*ft)(int,size_t*);
 
 int main(){
-	int c;
-	char got=0;
-	char open=0;
 	array(size_t,count,4);
-	while ((c=getchar_unlocked())!=EOF){
-		// put("\x1b[34m");
-		// write(c)
-		// write((char)(c))
-		// write((int)(got))
-		// write(got)
-		// write((int)(open))
-		// print(open)
-		// put("\x1b[0m");
-		assert(open==0 or open=='/' or open=='*' or open=='\'' or open=='{');
-		// print(got)
-		assert(got==0 or got=='(' or got=='*' or got=='/');
-		if (open==0){
-			if (c=='\''){
-				open='\'';
-				got=0;
-			}else
-			if (c=='/'){
-				if (got==0){
-					got='/';
-				}else{
-					open='/';
-					got=0;
-				}
-			}else
-			if (c=='('){
-				got='(';
-			}else
-			if (c=='{'){
-				open='{';
-			}else
-			if (c=='*'){
-				if (got=='('){
-					open='*';
-				}
-				got=0;
-			}else{
-				got=0;
-			}
-		}else
-		if (open=='/'){
-			if (c=='\n'){
-				count[2]++;
-				open=0;
-			}
-		}else
-		if (open=='*'){
-			if (c=='*'){
-				got='*';
-			}else
-			if (c==')'){
-				if (got=='*'){
-					count[0]++;
-					open=0;
-				}
-				got=0;
-			}else{
-				got=0;
-			}
-		}else
-		if (open=='\''){
-			if (c=='\''){
-				open=0;
-				count[3]++;
-			}
-		}else
-		if (open=='{'){
-			if (c=='}'){
-				count[1]++;
-				open=0;
-			}
-		}
+	ft a=free_text;
+	while (a){
+		a=a(getchar_unlocked(),count);
 	}
 	for (size_t w=0;w<len(count);++w){
 		write(count[w]);
