@@ -43,7 +43,7 @@ def how_to_run(filename,start_time,stop,log):
 				print(file=stderr)
 				exit()
 			try:
-				compile(filename,cfile=compiled_file,optimize=2,doraise=True)
+				compile(filename,cfile=compiled_file,optimize=0,doraise=True)
 			except Exception:
 				print(format_exc(),stderr)
 				exit()
@@ -171,6 +171,7 @@ if __name__=='__main__':
 					sleep(0.2)
 					if not stop.empty():
 						break
+					st+=0.2
 			except KeyboardInterrupt:
 				print()
 				stop.put('stop')

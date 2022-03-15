@@ -168,31 +168,41 @@ def fast_next_prime(q):
 	if q<2:
 		return 2
 	q+=1
-	while q%5 not in [2,3]:
+	while q%30!=7:
 		q+=1
 	while 1:
 		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
 			return q
-		q+=1
+		q+=6
 		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
 			return q
 		q+=4
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q+=6
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q+=14
 
 @cache
 def fast_prev_prime(q):
-	if q<3:
-		return None
-	if q==3:
-		return 2
+	if q<1024:
+		return prev_prime(q)
 	q-=1
-	while q%5 not in [2,3]:
+	while q%30!=7:
 		q-=1
 	while 1:
 		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
 			return q
-		q-=1
+		q-=14
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q-=6
 		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
 			return q
 		q-=4
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q-=6
 
 from builtins import *

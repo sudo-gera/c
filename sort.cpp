@@ -193,19 +193,21 @@ void sort_quick_recursive(int *a, int n) {
 
 static void heapify(int *a, int i, int n)
 {
-    int curr = a[i];
-    int index = i;
+    size_t curr = a[i];
+    int* index = a+i;
+    int*ai=a+i;
+    int*an=a+n;
     for (;;) {
-        int left = index + index + 1;
-        int right = left + 1;
-        if ( left < n && a[left] > curr)
+        int* left = index + (index-a) + 1;
+        int* right = left + 1;
+        if ( left < an && *left > curr)
             index = left;
-        if ( right < n && a[right] > a[index])
+        if ( right < an && *right > *index)
             index = right;
-        if (index == i ) break;
-        a[i] = a[index];
-        a[index] = curr;
-        i = index;
+        if (index == ai ) break;
+        *ai = *index;
+        *index = curr;
+        ai = index;
     }
 }
 
@@ -213,11 +215,13 @@ void sort_heap(int *a, int n) {
     for(int i = n/2-1; i >= 0; i--) {
         heapify(a, i, n);
     }
+    int*an=a+n;
     while( n > 1 ) {
         n--;
+        an--;
         int tmp = a[0];
-        a[0] = a[n];
-        a[n] = tmp;
+        a[0] = *an;
+        *an = tmp;
         heapify(a, 0, n);
     }
 }
@@ -277,6 +281,7 @@ void radixsort(int32_t*_A,int32_t n){
    }
 }
 
+#include "/Users/gera/c/heap.h"
 
 typedef void(*sort_func)(int *a, int n);
 
@@ -298,6 +303,7 @@ struct sort_s {
    {sort_vector, "vector"},
    {sort_qsort,  "qsort"},
    {radixsort,  "radixsort"},
+   {hs,  "hs"},
 };
    
 int main(int argc, char **argv) {
@@ -319,7 +325,7 @@ int main(int argc, char **argv) {
        argc--; argv++;
        start_alg = 5;
     }
-    int n = 100000;
+    int n = 1000000;
     if (argc > 1) {
         n = atoi(argv[1]);
     } 
