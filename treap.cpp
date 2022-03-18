@@ -133,7 +133,7 @@ signed main(){
 			t*=t;
 			t%=102001;
 		}
-		assert(e[r]==w);
+		assert(e[w]==r);
 	}
 	for (size_t w=1;w<102001;++w){
 		assert(w*e[w]%102001==1);
