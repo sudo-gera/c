@@ -1,14 +1,18 @@
 from h import *
-mm=-1
-while 1:
-	d=rand(11)
-	a=rand(11)
-	c=10-a
-	b=10-d
-	if a+b==0 or c+d==0:
-		continue
-	m=Fraction(a,a+b)+Fraction(c,c+d)
-	m/=2
-	if m>mm:
-		mm=m
-		print(a,b,c,d,m)
+class a:
+	def __init__(s):
+		s.is_deleted=0
+	def __del__(s):
+		print('has',id(s.o),s.o.is_deleted)
+		print('deleted',id(s),s.is_deleted)
+		s.is_deleted=1
+
+def run():
+	q=a()
+	w=a()
+	q.o=w
+	w.o=q
+
+for w in range(20):
+	run()
+print('--')

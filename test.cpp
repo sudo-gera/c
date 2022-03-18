@@ -549,7 +549,6 @@ void check(T q,T e){
 			assert(w>e  or a[w]<=a[e]);
 			assert(w<e  or a[w]>=a[e]);
 			assert(w!=e or a[w]==a[e]);
-			// ic(q,q+8,a[w],a[w]-8,q+8==a[w],a[w]-8==q)
 			assert(a[w]+(-d)==a[e]);
 			assert(a[w]-(d)==a[e]);
 		}
