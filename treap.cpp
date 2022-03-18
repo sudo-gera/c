@@ -144,4 +144,6 @@ signed main(){
 		e.insert(w*250+1,w);
 	}
 	assert(vector<int>(z,x)==vector<int>(e));
+	copy(w.begin(),w.end(),inserter(q,q.begin()+4));
+	assert(vector<string>(q)==vector<string>({"-1","0","1","2","0","1","2","3","4","5","6"}));
 }

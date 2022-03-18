@@ -289,8 +289,6 @@ el<T>* add(el<T>*q,int64_t n){
 	return (el<T>*)(0);
 }
 
-
-
 template <typename T>
 struct treap{
 	el<T>* e=nullptr;
@@ -300,9 +298,6 @@ struct treap{
 			e=merge(e,new auto (el<T>(w)));
 		}
 	}
-	// treap(const T&w){
-	// 	e=merge(e,new auto (el(w)));
-	// }
 	treap(int64_t l){
 		for (int64_t w=0;w<l;++w){
 			e=merge(e,new auto (el(T())));
@@ -368,7 +363,7 @@ struct treap{
 		q.e=nullptr;
 	}
 	treap<T> cut_left(int64_t n){
-		assert_f(0<=n and n<=size());
+		assert(0<=n and n<=size());
 		auto s=size();
 		auto tmp=split(e,n);
 		assert(el_size(tmp.first)+el_size(tmp.second)==s);
@@ -378,7 +373,7 @@ struct treap{
 		return r;
 	}
 	treap<T> cut_right(int64_t n){
-		assert_f(0<=n and n<=size());
+		assert(0<=n and n<=size());
 		auto s=size();
 		auto tmp=split(e,size()-n);
 		assert(el_size(tmp.first)+el_size(tmp.second)==s);
@@ -449,22 +444,6 @@ struct treap{
 	const T&back()const{
 		return (*this)[this->size()-1];
 	}
-	void insert(int64_t n,const T&q){
-		auto w=cut_left(n);
-		w.push_back(q);
-		add_left(w);
-	}
-	void erase(int64_t n){
-		auto w=cut_left(n);
-		pop_front();
-		add_left(w);
-	}
-	void resize(int64_t n){
-		for (size_t w=size();w<n;++w){
-			push_back(T());
-		}
-		cut_right(size()-n);
-	}
 	class iter {
 	public:
 		using difference_type = std::ptrdiff_t;
@@ -513,6 +492,12 @@ struct treap{
 		auto&operator[](long q){
 			return *(*this+q);
 		}
+		auto& operator=(const iter&q){
+			e=q.e;
+			o=q.o;
+			d=q.d;
+			return *this;
+		}
 	};
 	auto begin(){
 		auto q=e;
@@ -537,6 +522,34 @@ struct treap{
 		auto q=begin()-1;
 		q.d=-1;
 		return q;
+	}
+	using iterator=iter;
+	using value_type=T;
+	auto insert(int64_t n,const T&q){
+		auto w=cut_left(n);
+		w.push_back(q);
+		add_left(w);
+		return n;
+	}
+	auto erase(int64_t n){
+		auto w=cut_left(n);
+		pop_front();
+		add_left(w);
+		return n;
+	}
+	template<typename TT>
+	auto insert(TT n,const T&q)->typename TT::template is_iterator<iter>{
+		return begin()+insert(find_index(n.e),q);
+	}
+	template<typename TT>
+	auto erase(TT n,const T&q)->typename TT::template is_iterator<iter>{
+		return begin()+erase(find_index(n.e),q);
+	}
+	void resize(int64_t n){
+		for (size_t w=size();w<n;++w){
+			push_back(T());
+		}
+		cut_right(size()-n);
 	}
 };
 
@@ -626,16 +639,22 @@ auto operator>(TT q,TT w)->typename TT::template is_iterator<bool>{
 
 template<typename TT>
 auto operator==(TT q,TT w)->typename TT::template is_iterator<bool>{
+	// if (q.o==w.o){
+	// 	return q.e==w.e;
+	// }
 	// q+=q.o;
 	// w+=w.o;
 	// return q.e==w.e and q.o==e.o;
-	return q-w==0;
+	return ++q-++w==0;
 }
 
 template<typename TT>
 auto operator!=(TT q,TT w)->typename TT::template is_iterator<bool>{
+	// if (q.o==w.o){
+	// 	return q.e!=w.e;
+	// }
 	// q+=q.o;
 	// w+=w.o;
 	// return q.e!=w.e;
-	return q-w!=0;
+	return ++q-++w!=0;
 }
