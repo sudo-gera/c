@@ -13,8 +13,8 @@ struct el{
 	el* _x=nullptr;
 	el* _p=nullptr;
 	int64_t s=1;
-	el(t _v){
-		v=_v;
+	template<typename...Y>
+	el(const Y&..._v):v(_v...){
 		w=rand();
 	}
 
@@ -38,7 +38,7 @@ struct el{
 };
 
 template<typename T>
-int64_t size(el<T>* s){
+int64_t el_size(el<T>* s){
 	return s?s->s:0;
 }
 
@@ -128,7 +128,7 @@ el<T>* copy(el<T>* q){
 	}
 	el<T>*w=new el<T>(q->v);
 	w->z(copy(q->z()));
-	w->x(copy(w->x()));
+	w->x(copy(q->x()));
 	return w;
 }
 
@@ -214,11 +214,11 @@ template <typename T>
 int64_t find_index(el<T>*q){
 	auto w=q->_p;
 	if (w==nullptr){
-		return size(q->z());
+		return el_size(q->z());
 	}else if (w->z()==q){
-		return find_index(w)-size(q->x())-1;
+		return find_index(w)-el_size(q->x())-1;
 	}else if (w->x()==q){
-		return find_index(w)+size(q->z())+1;
+		return find_index(w)+el_size(q->z())+1;
 	}
 	assert(0);
 }
@@ -257,30 +257,30 @@ el<T>* add(el<T>*q,int64_t n){
 		return q;
 	}
 	if (n>0){
-		if (size(q->x())>=n){
+		if (el_size(q->x())>=n){
 			return get_by_index(q->x(),n-1);
 		}else{
 			auto w=q->_p;
 			if (w==nullptr){
 				return nullptr;
 			}else if (w->z()==q){
-				return add(q->_p,-size(q->x())-1+n);
+				return add(q->_p,-el_size(q->x())-1+n);
 			}else if (w->x()==q){
-				return add(q->_p,size(q->z())+1+n);
+				return add(q->_p,el_size(q->z())+1+n);
 			}
 			assert(0);
 		}
 	}else if (n<0){
-		if (-size(q->z())<=n){
-			return get_by_index(q->x(),size(q->z())+n);
+		if (-el_size(q->z())<=n){
+			return get_by_index(q->z(),el_size(q->z())+n);
 		}else{
 			auto w=q->_p;
 			if (w==nullptr){
 				return nullptr;
 			}else if (w->z()==q){
-				return add(q->_p,-size(q->x())-1+n);
+				return add(q->_p,-el_size(q->x())-1+n);
 			}else if (w->x()==q){
-				return add(q->_p,size(q->z())+1+n);
+				return add(q->_p,el_size(q->z())+1+n);
 			}
 			assert(0);
 		}
@@ -295,14 +295,14 @@ template <typename T>
 struct treap{
 	el<T>* e=nullptr;
 	template <typename y=vector<T>>
-	treap(const y&l=vector<T>(),enable_if_t<is_same_v<typename decltype(declval<y&>().begin())::value_type,T>,int> =0){
+	treap(const y&l=initializer_list<T>(),enable_if_t<is_same_v<typename decltype(declval<y&>().begin())::value_type,T>,int> =0){
 		for (auto w:l){
-			e=merge(e,new auto (el(w)));
+			e=merge(e,new auto (el<T>(w)));
 		}
 	}
-	treap(const T&w){
-		e=merge(e,new auto (el(w)));
-	}
+	// treap(const T&w){
+	// 	e=merge(e,new auto (el(w)));
+	// }
 	treap(int64_t l){
 		for (int64_t w=0;w<l;++w){
 			e=merge(e,new auto (el(T())));
@@ -326,6 +326,8 @@ struct treap{
 		if (n<0){
 			n+=this->size();
 		}
+		assert(n<size());
+		assert(n>=0);
 		return get_by_index(e,n)->v;
 	}
 
@@ -333,6 +335,8 @@ struct treap{
 		if (n<0){
 			n+=this->size();
 		}
+		assert(n<size());
+		assert(n>=0);
 		return get_by_index(e,n)->v;
 	}
 
@@ -364,26 +368,38 @@ struct treap{
 		q.e=nullptr;
 	}
 	treap<T> cut_left(int64_t n){
+		assert_f(0<=n and n<=size());
+		auto s=size();
 		auto tmp=split(e,n);
+		assert(el_size(tmp.first)+el_size(tmp.second)==s);
 		e=tmp.second;
 		auto r=treap<T>();
 		r.e=tmp.first;
 		return r;
 	}
 	treap<T> cut_right(int64_t n){
+		assert_f(0<=n and n<=size());
+		auto s=size();
 		auto tmp=split(e,size()-n);
+		assert(el_size(tmp.first)+el_size(tmp.second)==s);
 		e=tmp.first;
 		auto r=treap<T>();
 		r.e=tmp.second;
 		return r;
 	}
 	void push_back(const T&a){
-		auto q=treap<T>(a);
-		add_right(q);
+		e=merge(e,new auto(el<T>(a)));
 	}
 	void push_front(const T&a){
-		auto q=treap<T>(a);
-		add_left(q);
+		e=merge(new auto(el<T>(a)),e);
+	}
+	template<typename...Y>
+	void emplace_back(const Y&...a){
+		e=merge(e,new auto(el<T>(a...)));
+	}
+	template<typename...Y>
+	void emplace_front(const Y&...a){
+		e=merge(new auto(el<T>(a...)),e);
 	}
 	T pop_back(){
 		auto q=cut_right(1);
@@ -443,6 +459,12 @@ struct treap{
 		pop_front();
 		add_left(w);
 	}
+	void resize(int64_t n){
+		for (size_t w=size();w<n;++w){
+			push_back(T());
+		}
+		cut_right(size()-n);
+	}
 	class iter {
 	public:
 		using difference_type = std::ptrdiff_t;
@@ -450,8 +472,11 @@ struct treap{
 		using pointer = T*;
 		using reference = T&;
 		using iterator_category = std::random_access_iterator_tag;
+		template<typename Y>
+		using is_iterator=Y;
 		el<T>*e=nullptr;
 		int64_t o=0;
+		int64_t d=1;
 		T&operator*(){
 			return e->v;
 		}
@@ -462,9 +487,10 @@ struct treap{
 			return *this+=1;
 		}
 		auto&operator+=(long w){
+			w*=d;
 			w+=o;
 			assert(e);
-			while (w!=0){
+			while (1){
 				auto s=w*2;
 				auto q=e;
 				q=nullptr;
@@ -501,6 +527,16 @@ struct treap{
 			q=q->x();
 		}
 		return iter{q,1};
+	}
+	auto rbegin(){
+		auto q=end()-1;
+		q.d=-1;
+		return q;
+	}
+	auto rend(){
+		auto q=begin()-1;
+		q.d=-1;
+		return q;
 	}
 };
 
@@ -542,53 +578,54 @@ void swap(treap<T>&q,treap<T>&e){
 }
 
 template<typename TT>
-auto operator-(TT q,TT w)->enable_if_t<is_same_v<typename treap<typename TT::value_type>::iter,TT>,ptrdiff_t>{
-	return find_index(q.e)-find_index(w.e)+q.o-w.o;
+auto operator-(TT q,TT w)->typename TT::template is_iterator<ptrdiff_t>{
+	assert(q.d==w.d);
+	return (find_index(q.e)-find_index(w.e)+q.o-w.o)*q.d;
 }
 
 template<typename TT>
-auto operator+(TT q,long w)->enable_if_t<is_same_v<typename treap<typename TT::value_type>::iter,TT>,TT>{
+auto operator+(TT q,long w)->typename TT::template is_iterator<TT>{
 	auto e=q;
 	e+=w;
 	return e;
 }
 
 template<typename TT>
-auto operator-(TT q,long w)->enable_if_t<is_same_v<typename treap<typename TT::value_type>::iter,TT>,TT>{
+auto operator-(TT q,long w)->typename TT::template is_iterator<TT>{
 	auto e=q;
 	e-=w;
 	return e;
 }
 
 template<typename TT>
-auto operator+(long w,TT q)->enable_if_t<is_same_v<typename treap<typename TT::value_type>::iter,TT>,TT>{
+auto operator+(long w,TT q)->typename TT::template is_iterator<TT>{
 	auto e=q;
 	e+=w;
 	return e;
 }
 
 template<typename TT>
-auto operator>=(TT q,TT w)->enable_if_t<is_same_v<typename treap<typename TT::value_type>::iter,TT>,bool>{
+auto operator>=(TT q,TT w)->typename TT::template is_iterator<bool>{
 	return q-w>=0;
 }
 
 template<typename TT>
-auto operator<=(TT q,TT w)->enable_if_t<is_same_v<typename treap<typename TT::value_type>::iter,TT>,bool>{
+auto operator<=(TT q,TT w)->typename TT::template is_iterator<bool>{
 	return q-w<=0;
 }
 
 template<typename TT>
-auto operator<(TT q,TT w)->enable_if_t<is_same_v<typename treap<typename TT::value_type>::iter,TT>,bool>{
+auto operator<(TT q,TT w)->typename TT::template is_iterator<bool>{
 	return q-w<0;
 }
 
 template<typename TT>
-auto operator>(TT q,TT w)->enable_if_t<is_same_v<typename treap<typename TT::value_type>::iter,TT>,bool>{
+auto operator>(TT q,TT w)->typename TT::template is_iterator<bool>{
 	return q-w>0;
 }
 
 template<typename TT>
-auto operator==(TT q,TT w)->enable_if_t<is_same_v<typename treap<typename TT::value_type>::iter,TT>,bool>{
+auto operator==(TT q,TT w)->typename TT::template is_iterator<bool>{
 	// q+=q.o;
 	// w+=w.o;
 	// return q.e==w.e and q.o==e.o;
@@ -596,7 +633,7 @@ auto operator==(TT q,TT w)->enable_if_t<is_same_v<typename treap<typename TT::va
 }
 
 template<typename TT>
-auto operator!=(TT q,TT w)->enable_if_t<is_same_v<typename treap<typename TT::value_type>::iter,TT>,bool>{
+auto operator!=(TT q,TT w)->typename TT::template is_iterator<bool>{
 	// q+=q.o;
 	// w+=w.o;
 	// return q.e!=w.e;

@@ -3,8 +3,40 @@ using namespace std;
 
 #include "treap.hpp"
 
+template<typename T>
+void check(T q,T e){
+	vector<T> a;
+	for (auto w=q;w!=e;++w){
+		a.push_back(w);
+	}
+	a.push_back(e);
+	for (size_t w=0;w<a.size();++w){
+		for (size_t e=0;e<a.size();++e){
+			long d=long(w)-long(e);
+			assert(a[w]-a[e]==d);
+			assert(w>=e or  a[w]<a[e]);
+			assert(w<=e or  a[w]>a[e]);
+			assert(w==e or a[w]!=a[e]);
+			assert(w>e  or a[w]<=a[e]);
+			assert(w<e  or a[w]>=a[e]);
+			assert(w!=e or a[w]==a[e]);
+			assert(a[w]+(-d)==a[e]);
+			assert(a[w]-(d)==a[e]);
+		}
+	}
+	auto s=a;
+	s.clear();
+	for (auto w=e;w!=q;--w){
+		s.push_back(w);
+	}
+	s.push_back(q);
+	reverse(s.begin(),s.end());
+	assert(a==s);
+}
+
 
 signed main(){
+	treap<int> e({1,2,3,4,5});
 	auto q=treap<string>({"1","2","3"});
 	auto w=q;
 	assert(q==w);
@@ -38,16 +70,78 @@ signed main(){
 	swap(q,w);
 	assert(vector<string>(q)==vector<string>({"-1","0","1","2","3","4","5","6"}));
 	assert(vector<string>(w)==vector<string>({"0","1","2"}));
-	// auto a=q.e;
-	// while (a->z()){
-	// 	a=a->z();
-	// }
-	// assert(find_index(a)==0);
-	// while (a){
-	// 	a=add(a,1);
-	// }
-	// pr(q.e);
-	// for (auto w=q.begin();w!=q.end();++w){
-	// 	ic(*w)
-	// }
+	check(e.begin(),e.end());
+	assert(vector<int>(e)==vector<int>({1,2,3,4,5}));
+	reverse(e.begin(),e.end());
+	assert(vector<int>(e)==vector<int>({5,4,3,2,1}));
+	sort(e.begin(),e.end());
+	assert(vector<int>(e)==vector<int>({1,2,3,4,5}));
+	check(e.begin()-20,e.end()+20);
+	check(e.rbegin(),e.rend());
+	sort(e.rbegin(),e.rend());
+	assert(vector<int>(e)==vector<int>({5,4,3,2,1}));
+	reverse(e.begin(),e.end());
+	assert(vector<int>(e)==vector<int>({1,2,3,4,5}));
+	check(e.rbegin()-20,e.rend()+20);
+	e.clear();
+	for (size_t w=0;w<102400;++w){
+		e.push_back(w);
+	}
+	for (size_t w=0;w<e.size();++w){
+		assert(w==e[w]);
+	}
+	for (size_t w=0;w<102400;++w){
+		assert(w==e.pop_front());
+	}
+	assert(e.empty());
+	for (size_t w=0;w<102400;++w){
+		e.push_front(w);
+	}
+	reverse(e.begin(),e.end());
+	for (size_t w=0;w<e.size();++w){
+		assert(w==e[w]);
+	}
+	reverse(e.rbegin(),e.rend());
+	for (size_t w=0;w<102400;++w){
+		assert(w==e.pop_back());
+	}
+	e.resize(102400);
+	assert(e.size()==102400);
+	e.resize(102001);
+	assert(e.size()==102001);
+	for (size_t w=1;w<102001;++w){
+		size_t r=1;
+		size_t t=w; 
+		for (size_t y=1;y<102001;y*=2){
+			if (y&(102001-2)){
+				r*=t;
+				r%=102001;
+			}
+			t*=t;
+			t%=102001;
+		}
+		e[r]=w;
+	}
+	for (size_t w=1;w<102001;++w){
+		size_t r=1;
+		size_t t=w; 
+		for (size_t y=1;y<102001;y*=2){
+			if (y&(102001-2)){
+				r*=t;
+				r%=102001;
+			}
+			t*=t;
+			t%=102001;
+		}
+		assert(e[r]==w);
+	}
+	for (size_t w=1;w<102001;++w){
+		assert(w*e[w]%102001==1);
+	}
+	auto z=e.begin();
+	auto x=e.end();
+	for (size_t w=0;w<102400-102001;++w){
+		e.insert(w*250+1,w);
+	}
+	assert(vector<int>(z,x)==vector<int>(e));
 }
