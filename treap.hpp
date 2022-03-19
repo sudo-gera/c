@@ -15,7 +15,7 @@ class treap{
 		int64_t s=1;
 		int64_t d=1;
 		template<typename...Y>
-		el(const Y&..._v):v(_v...),w(rand()){if(a0){assert(0);}}
+		el(const Y&..._v):v(_v...),w(rand()){}
 
 		el*& z(){
 			return _z;
@@ -56,7 +56,7 @@ class treap{
 				t->d=(t->z()->d>t->x()->d?t->z()->d:t->x()->d)+1;
 			}
 			if (t->d>256){
-				pr(t);
+				// pr(t);
 				cout<<"bamboo!! "<<t->d<<endl;
 				exit(0);
 			}
@@ -125,7 +125,7 @@ class treap{
 		for (auto w=0;w<n;++w){
 			putchar('|');
 		}
-		print(q,q->v);
+		cout<<q<<' '<<q->v<<' '<<q->w<<endl;
 		pr(q->x(),n+1);
 	}
 
@@ -134,8 +134,8 @@ class treap{
 			return nullptr;
 		}
 		el*w=new el(q->v);
-		w->z(copy(q->z()));
-		w->x(copy(q->x()));
+		w=merge(copy(q->z()),w);
+		w=merge(w,copy(q->x()));
 		return w;
 	}
 
@@ -362,7 +362,7 @@ public:
 		e=tmp.second;
 		auto r=treap<T>();
 		r.e=tmp.first;
-		return r.transfer();
+		return r;
 	}
 	treap<T> cut_right(int64_t n){
 		assert(0<=n and n<=size());
@@ -372,7 +372,7 @@ public:
 		e=tmp.first;
 		auto r=treap<T>();
 		r.e=tmp.second;
-		return r.transfer();
+		return r;
 	}
 	void push_back(const T&a){
 		e=merge(e,new auto(el(a)));
@@ -459,7 +459,9 @@ public:
 		auto&operator+=(long w){
 			w*=d;
 			w+=o;
-			assert(e);
+			if (!e){
+				return *this;
+			}
 			while (1){
 				auto s=w*2;
 				auto q=e;
@@ -491,6 +493,9 @@ public:
 		}
 	};
 	auto begin(){
+		if (!e){
+			return iter{e,0};
+		}
 		auto q=e;
 		while (q->z()){
 			q=q->z();
@@ -498,6 +503,9 @@ public:
 		return iter{q,0};
 	}
 	auto end(){
+		if (!e){
+			return iter{e,0};
+		}
 		auto q=e;
 		while (q->x()){
 			q=q->x();

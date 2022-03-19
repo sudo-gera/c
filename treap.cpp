@@ -1,12 +1,10 @@
-// #include <bits/stdc++.h>
+#include <bits/stdc++.h>
 
 #define private public
 #define class struct
 
-int a0=0;
-
-#include "treap.hpp"
 using namespace std;
+#include "treap.hpp"
 
 
 template<typename T>
@@ -42,8 +40,7 @@ void check(T q,T e){
 
 struct B {int d=0; B(B&&){} explicit B(int f):d(f){} };
 
-signed main(){
-	srand(time(0));
+int main(){
 	treap<int> e({1,2,3,4,5});
 	auto q=treap<string>({"1","2","3"});
 	auto w=q;
@@ -96,9 +93,10 @@ signed main(){
 	assert(vector<int>(e)==vector<int>({1,2,3,4,5}));
 	check(e.rbegin()-20,e.rend()+20);
 	e.clear();
-	// auto z=e.begin();
-	// auto x=e.end();
 	auto y=e;
+	auto z=e.begin();
+	auto x=e.end();
+	assert(z==x);
 	for (size_t w=0;w<102400;++w){
 		e.push_back(w);
 	}
@@ -181,20 +179,21 @@ signed main(){
 	e.resize(102400);
 	e.resize(102001);
 	y=e;
-	y.pr(y.e);
-	a0=1;
-	for (size_t w=0;w<99;++w){
-		print();
-	}
-	for (size_t w=0;w<e.size();++w){
+	for (size_t w=0;w<y.size();++w){
 		auto q=y.cut_right(51001);
 		y.add_left(q);
-		// y.pr(y.e);
-		// for (size_t w=0;w<99;++w){
-		// 	print();
-		// }
 		assert(y.size()==e.size());
 		assert(q.empty());
 	}
-	a0=0;
+	assert(e==y);
+	for (size_t w=0;w<y.size();++w){
+		auto t=y.begin()+51001;
+		ic((t-1).e,t.e)
+		auto q=y.cut_left(51001);
+		ic((q.end()-1).e,(y.begin()).e)
+		y.add_right(q);
+		assert(y.size()==e.size());
+		assert(q.empty());
+	}
+	assert(e==y);
 }
