@@ -266,6 +266,8 @@ public:
 				typename y::value_type,T
 			> and std::is_copy_constructible_v<T>
 			,int> =0){
+		ic()
+		if (aa[0]==1)
 		for (auto&w:l){
 			e=merge(e,new auto (el(w)));
 		}
@@ -274,22 +276,27 @@ public:
 	treap(y=0,
 		std::enable_if_t<!std::is_copy_constructible_v<T>
 			,y> =0){
+		ic()
 	}
 	template<typename y=int64_t>
 	treap(std::enable_if_t<
 			std::is_trivially_constructible_v<T>
 		,y> l){
+		ic()
 		for (int64_t w=0;w<l;++w){
 			e=merge(e,new auto (el(T())));
 		}
 	}
 	treap(const treap&l){
+		ic()
 		e=copy(l.e);
 	}
 	treap(data_holder p){
+		ic()
 		e=p.e;
 	}
 	auto operator=(const treap&l){
+		ic()
 		if (e!=l.e){
 			del(e);
 			e=copy(l.e);
