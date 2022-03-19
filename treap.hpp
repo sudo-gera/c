@@ -61,15 +61,15 @@ class treap{
 				exit(0);
 			}
 		}
-		int64_t find_index(){
+		int64_t nz_find_index(){
 			auto q=this;
 			auto w=q->_p;
 			if (w==nullptr){
 				return el_size(q->z());
 			}else if (w->z()==q){
-				return w->find_index()-el_size(q->x())-1;
+				return w->nz_find_index()-el_size(q->x())-1;
 			}else if (w->x()==q){
-				return w->find_index()+el_size(q->z())+1;
+				return w->nz_find_index()+el_size(q->z())+1;
 			}
 			assert(0);
 			return 0;
@@ -78,6 +78,10 @@ class treap{
 
 	static int64_t el_size(el*&s){
 		return s?s->s:0;
+	}
+
+	static int64_t find_index(el*const&s){
+		return s?s->nz_find_index():0;
 	}
 
 	static el* get_by_index(el*const&s,int64_t n){
@@ -265,9 +269,8 @@ public:
 			std::is_same_v<
 				typename y::value_type,T
 			> and std::is_copy_constructible_v<T>
+			and is_same_v<decltype(l.begin()!=l.end()),decltype(l.begin()!=l.end())>
 			,int> =0){
-		ic()
-		if (aa[0]==1)
 		for (auto&w:l){
 			e=merge(e,new auto (el(w)));
 		}
@@ -276,27 +279,22 @@ public:
 	treap(y=0,
 		std::enable_if_t<!std::is_copy_constructible_v<T>
 			,y> =0){
-		ic()
 	}
 	template<typename y=int64_t>
 	treap(std::enable_if_t<
 			std::is_trivially_constructible_v<T>
 		,y> l){
-		ic()
 		for (int64_t w=0;w<l;++w){
 			e=merge(e,new auto (el(T())));
 		}
 	}
 	treap(const treap&l){
-		ic()
 		e=copy(l.e);
 	}
 	treap(data_holder p){
-		ic()
 		e=p.e;
 	}
 	auto operator=(const treap&l){
-		ic()
 		if (e!=l.e){
 			del(e);
 			e=copy(l.e);
@@ -327,12 +325,12 @@ public:
 		assert(n>=0);
 		return get_by_index(e,n)->v;
 	}
+private:
 	data_holder transfer(){
 		auto q=e;
 		e=nullptr;
 		return data_holder{q};
 	}
-private:
 	int64_t __cmp__(const treap&d)const{
 		auto&s=*this;
 		int64_t min_len=d.size()<s.size()?d.size():s.size();
@@ -369,7 +367,7 @@ public:
 		e=tmp.second;
 		auto r=treap<T>();
 		r.e=tmp.first;
-		return r;
+		return r.transfer();
 	}
 	treap<T> cut_right(int64_t n){
 		assert(0<=n and n<=size());
@@ -379,7 +377,14 @@ public:
 		e=tmp.first;
 		auto r=treap<T>();
 		r.e=tmp.second;
-		return r;
+		return r.transfer();
+	}
+	treap<T> cut(int64_t l,int64_t r){
+		assert(0<=l and l<=r and  r<=size());
+		auto q=cut_left(l);
+		auto w=cut_left(r-l);
+		add_left(q);
+		return w.transfer();
 	}
 	void push_back(const T&a){
 		e=merge(e,new auto(el(a)));
@@ -545,11 +550,21 @@ public:
 	}
 	template<typename TT>
 	auto insert(TT n,const T&q)->typename TT::template is_iterator<iter>{
-		return begin()+insert(n.e->find_index(),q);
+		return begin()+insert(find_index(n.e),q);
 	}
 	template<typename TT>
 	auto erase(TT n,const T&q)->typename TT::template is_iterator<iter>{
-		return begin()+erase(n.e->find_index(),q);
+		return begin()+erase(find_index(n.e),q);
+	}
+	auto insert(int64_t n,treap<T>&q){
+		auto w=cut_left(n);
+		add_left(q);
+		add_left(w);
+		return n;
+	}
+	template<typename TT>
+	auto insert(TT n,treap<T>&q)->typename TT::template is_iterator<iter>{
+		return begin()+insert(find_index(n.e),q);
 	}
 	void resize(int64_t n){
 		for (size_t w=size();w<n;++w){
@@ -613,7 +628,7 @@ void swap(treap<T>&q,treap<T>&e){
 template<typename TT>
 auto operator-(TT q,TT w)->typename TT::template is_iterator<ptrdiff_t>{
 	assert(q.d==w.d);
-	return ((q.e)->find_index()-(w.e)->find_index()+q.o-w.o)*q.d;
+	return ((q.e)->nz_find_index()-(w.e)->nz_find_index()+q.o-w.o)*q.d;
 }
 
 template<typename TT>
