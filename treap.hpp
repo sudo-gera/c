@@ -3,6 +3,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <type_traits>
+#include <assert.h>
 
 template <typename T>
 class treap{
@@ -22,7 +24,7 @@ class treap{
 		}
 		template<typename y>
 		void z(y&& q){
-			_z=move(q);
+			_z=std::move(q);
 			update();
 		}
 
@@ -31,7 +33,7 @@ class treap{
 		}
 		template<typename y>
 		void x(y&& q){
-			_x=move(q);
+			_x=std::move(q);
 			update();
 		}
 		void update(){
@@ -56,8 +58,7 @@ class treap{
 				t->d=(t->z()->d>t->x()->d?t->z()->d:t->x()->d)+1;
 			}
 			if (t->d>256){
-				// pr(t);
-				cout<<"bamboo!! "<<t->d<<endl;
+				std::cerr<<"bamboo!! "<<t->d<<std::endl;
 				exit(0);
 			}
 		}
@@ -129,7 +130,7 @@ class treap{
 		for (auto w=0;w<n;++w){
 			putchar('|');
 		}
-		cout<<q<<' '<<q->v<<' '<<q->w<<endl;
+		std::cout<<q<<' '<<q->v<<' '<<q->w<<std::endl;
 		pr(q->x(),n+1);
 	}
 
@@ -269,7 +270,7 @@ public:
 			std::is_same_v<
 				typename y::value_type,T
 			> and std::is_copy_constructible_v<T>
-			and is_same_v<decltype(l.begin()!=l.end()),decltype(l.begin()!=l.end())>
+			and std::is_same_v<decltype(l.begin()!=l.end()),bool>
 			,int> =0){
 		for (auto&w:l){
 			e=merge(e,new auto (el(w)));

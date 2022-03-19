@@ -1,11 +1,13 @@
-#include <bits/stdc++.h>
+// #include <bits/stdc++.h>
 
-#define private public
-#define class struct
-int aa[99];
+// #define private public
+// #define class struct
+// int aa[99];
 
-using namespace std;
+// using namespace std;
 #include "treap.hpp"
+#include <bits/stdc++.h>
+using namespace std;
 
 
 template<typename T>
