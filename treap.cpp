@@ -1,7 +1,13 @@
-#include <bits/stdc++.h>
-using namespace std;
+// #include <bits/stdc++.h>
+
+#define private public
+#define class struct
+
+int a0=0;
 
 #include "treap.hpp"
+using namespace std;
+
 
 template<typename T>
 void check(T q,T e){
@@ -34,8 +40,10 @@ void check(T q,T e){
 	assert(a==s);
 }
 
+struct B {int d=0; B(B&&){} explicit B(int f):d(f){} };
 
 signed main(){
+	srand(time(0));
 	treap<int> e({1,2,3,4,5});
 	auto q=treap<string>({"1","2","3"});
 	auto w=q;
@@ -44,6 +52,10 @@ signed main(){
 	assert(q.pop_back()=="3");
 	assert(vector<string>(q)==vector<string>({"1","2"}));
 	assert(q.pop_front()=="1");
+	assert(vector<string>(q)==vector<string>({"2"}));
+	assert(q.pop_front()=="2");
+	assert(vector<string>(q)==vector<string>({}));
+	q.push_back("2");
 	assert(vector<string>(q)==vector<string>({"2"}));
 	w.push_back("4");
 	assert(vector<string>(w)==vector<string>({"1","2","3","4"}));
@@ -84,6 +96,9 @@ signed main(){
 	assert(vector<int>(e)==vector<int>({1,2,3,4,5}));
 	check(e.rbegin()-20,e.rend()+20);
 	e.clear();
+	// auto z=e.begin();
+	// auto x=e.end();
+	auto y=e;
 	for (size_t w=0;w<102400;++w){
 		e.push_back(w);
 	}
@@ -138,12 +153,48 @@ signed main(){
 	for (size_t w=1;w<102001;++w){
 		assert(w*e[w]%102001==1);
 	}
-	auto z=e.begin();
-	auto x=e.end();
+	z=e.begin();
+	x=e.end();
 	for (size_t w=0;w<102400-102001;++w){
 		e.insert(w*250+1,w);
 	}
 	assert(vector<int>(z,x)==vector<int>(e));
+	y=e;
+	for (size_t w=0;w<102400;++w){
+		swap(y,e);
+	}
+	swap(y,y);
+	assert(y==e);
+	e.resize(102001);
+	y.resize(e.size());
+	assert(y==e);
 	copy(w.begin(),w.end(),inserter(q,q.begin()+4));
 	assert(vector<string>(q)==vector<string>({"-1","0","1","2","0","1","2","3","4","5","6"}));
+	q=q;
+	assert(vector<string>(q)==vector<string>({"-1","0","1","2","0","1","2","3","4","5","6"}));
+	// treap<B> r;
+	// r.emplace_back(1);
+	// r.emplace_front(2);
+	// auto t=r.cut_left(1);
+	// assert(t[0].d==2);
+	// assert(r[0].d==1);
+	e.resize(102400);
+	e.resize(102001);
+	y=e;
+	y.pr(y.e);
+	a0=1;
+	for (size_t w=0;w<99;++w){
+		print();
+	}
+	for (size_t w=0;w<e.size();++w){
+		auto q=y.cut_right(51001);
+		y.add_left(q);
+		// y.pr(y.e);
+		// for (size_t w=0;w<99;++w){
+		// 	print();
+		// }
+		assert(y.size()==e.size());
+		assert(q.empty());
+	}
+	a0=0;
 }
