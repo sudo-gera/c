@@ -1,10 +1,3 @@
-// #include <bits/stdc++.h>
-
-// #define private public
-// #define class struct
-// int aa[99];
-
-// using namespace std;
 #include "treap.hpp"
 #include <bits/stdc++.h>
 using namespace std;

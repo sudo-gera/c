@@ -16,6 +16,7 @@ class treap{
 		el* _p=nullptr;
 		int64_t s=1;
 		int64_t d=1;
+		int r=0;
 		template<typename...Y>
 		el(const Y&..._v):v(_v...),w(rand()){}
 
@@ -35,6 +36,20 @@ class treap{
 		void x(y&& q){
 			_x=std::move(q);
 			update();
+		}
+		void make(){
+			if (r){
+				auto t=z();
+				z(x());
+				x(t);
+				if (z()){
+					z()->r=1;
+				}
+				if (x()){
+					x()->r=1;
+				}
+				r=0;
+			}
 		}
 		void update(){
 			auto t=this;
