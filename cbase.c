@@ -110,6 +110,20 @@ cstr input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 #define bit_get(a,s)   (((a)[(s)/8/sizeof((a)[0])]>>(s)%(8*sizeof((a)[0])))&1)
 #define bit_set(a,s,d) {(a)[(s)/8/sizeof((a)[0])]&=~(1<<(s)%(8*sizeof((a)[0])));(a)[(s)/8/sizeof((a)[0])]+=(d)<<(s)%(8*sizeof((a)[0]));}
 
+/*
+ *
+ * repeater for pieces of code
+ *
+ * REPEAT(n) will repeat TO_REPEAT 2**n times separating by TO_REPEAT_SEP
+ *
+ * REPEAT(1) is TO_REPEAT TO_REPEAT_SEP TO_REPEAT
+ * 
+ * TO_REPEAT is not defined by default
+ *
+ * TO_REPEAT_SEP is empty by default
+ *
+ */
+
 #define TO_REPEAT_SEP
 #define RP_0(x) TO_REPEAT(x)
 #define RP_1(x) RP_0(x##0) TO_REPEAT_SEP RP_0(x##1)
@@ -123,4 +137,8 @@ cstr input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 #define RP_9(x) RP_8(x##0) TO_REPEAT_SEP RP_8(x##1)
 #define REPEAT(x) RP_##x(0b0)
 
+#define min(a,s) ((a)<(s)?(a):(s))
+#define max(a,s) ((a)<(s)?(a):(s))
+
+///////////////////////////////////////////////////end of lib
 
