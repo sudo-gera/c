@@ -29,8 +29,8 @@ def outputFunction(*a):
 	s=split(r' in ',a)
 	line=s[0]
 	a=a[len(s[0])+4:]
-	s=split(r'\(\)- ',a)
-	func=s[0]+'()'
+	s=split(r'- ',a)
+	func=s[0]
 	a=a[len(func)+2:]
 	args=a
 	print("\x1b[92mline \x1b[94m"+line+"\x1b[92m file \x1b[94m"+file+"\x1b[92m func \x1b[94m"+func+"\x1b[92m \x1b[0m"+args)

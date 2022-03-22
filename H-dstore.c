@@ -144,3 +144,62 @@ typedef int (*qsort_cmp_t)(const void *, const void *);
 
 ///////////////////////////////////////////////////end of lib
 
+int qcmp(const long*q,const long*e){
+	return -*q+*e;
+}
+
+int main(){
+	read(size_t,n);
+	array(size_t,s,n);
+	for (size_t w=0;w<n;++w){
+		read(,s[w]);
+	}
+	qsort(s,len(s),sizeof(s[0]),(qsort_cmp_t)qcmp);
+	while (len(s) and s[len(s)-1]==0){
+		pop(s);
+	}
+	size_t c=0;
+	while (len(s)>1){
+		size_t d=-1;
+		size_t ls=len(s);
+		if (len(s)==2){
+			d=s[1];
+			c+=d;
+			s[0]-=d;
+			s[1]-=d;
+		}else{
+			size_t*lcp=s;
+			size_t*lce=s+ls-1;
+			while (lcp!=lce and lcp[0]==s[0]){
+				lcp+=1;
+			}
+			size_t lc=lcp-s;
+			d=s[ls-1];
+			if (lc<ls-1 and (s[0]-s[lc])*lc<d){
+				d=(s[0]-s[lc])*lc;
+			}
+			size_t da=d/lc;
+			size_t dlc=lc-d%lc;
+			size_t*ss=s;
+			size_t*se=s+dlc;
+			for (;ss!=se;++ss){
+				ss[0]-=da;
+			}
+			se=s+lc;
+			da++;
+			for (;ss!=se;++ss){
+				ss[0]-=da;
+			}
+			s[ls-1]-=d;
+			c+=d;
+		}
+		size_t*se=s+ls-1;
+		while (se[0]==0){
+			se-=1;
+		}
+		ls=se-s+1;
+		resize(s,ls);
+	}
+	print(c);
+	del(s);
+}
