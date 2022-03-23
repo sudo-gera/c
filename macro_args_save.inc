@@ -166,22 +166,11 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-<<<<<<< HEAD
 mov %1, dword[esp]
 add esp 4
 mov %2, dword[esp]
 add esp 4
-=======
-<<<<<<< HEAD
 add esp,8
-pop dword %1
-pop dword %2
-=======
-pop dword %1
-pop dword %2
->>>>>>> 0686d1c8de13d6973aef728e517705afb42a943d
-add esp,8
->>>>>>> 4c4fc944b9aa9230b0a5d0b574f5c89b58a7ceb7
 %endmacro
 
 %macro macro_args_save_bbb 3
