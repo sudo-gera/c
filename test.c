@@ -1,7 +1,7 @@
 #include <stdio.h>
 int main(){
-	int q;
+	unsigned q;
 	scanf("%i",&q);
-	q+=2;
+	q*=q;
 	printf("%i",q);
 }
