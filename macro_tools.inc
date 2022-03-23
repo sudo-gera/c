@@ -101,10 +101,7 @@ mov edx,0
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro _divmod 4
-sub esp,8
-macro_args_read_dd %3,%4
+macro_args_read_dd 8,%3,%4
 div ebx
-macro_args_save_dd eax,edx
-pop dword %1
-pop dword %2
+macro_args_save_dd %1,%2
 %endmacro

@@ -10,11 +10,19 @@ for r in ['','b','w','d']:
 					print('add esp, '+str(16+f[q]+f[w]+f[e]+f[r]))
 					for t,y in list(enumerate([q,w,e,r]))[::-1]:
 						if y=='b':
-							print('push byte  %'+str(t+1))
+							print('push byte  %sl'%'abcd'[t])
 						if y=='w':
-							print('push word  %'+str(t+1))
+							print('push word  %sx'%'abcd'[t])
 						if y=='d':
-							print('push dword %'+str(t+1))
+							print('push dword e%sx'%'abcd'[t])
 					print('sub esp, '+str(16))
 					print('regload')
-					print('%endmacro')
+					print('add esp,'+str(16-f[q]-f[w]-f[e]-f[r]))
+					for t,y in list(enumerate([q,w,e,r])):
+						if y=='b':
+							print('pop byte  %'+str(t+1))
+						if y=='w':
+							print('pop word  %'+str(t+1))
+						if y=='d':
+							print('pop dword %'+str(t+1))
+					print('%endmacro\n')
