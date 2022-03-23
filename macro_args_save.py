@@ -17,7 +17,6 @@ for r in ['','b','w','d']:
 							print('push dword e%sx'%'abcd'[t])
 					print('sub esp, '+str(16))
 					print('regload')
-					print('add esp,'+str(16-f[q]-f[w]-f[e]-f[r]))
 					for t,y in list(enumerate([q,w,e,r])):
 						if y=='b':
 							print('pop byte  %'+str(t+1))
@@ -25,4 +24,5 @@ for r in ['','b','w','d']:
 							print('pop word  %'+str(t+1))
 						if y=='d':
 							print('pop dword %'+str(t+1))
+					print('add esp,'+str(16-f[q]-f[w]-f[e]-f[r]))
 					print('%endmacro\n')
