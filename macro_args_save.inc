@@ -126,15 +126,9 @@ push dword ebx
 push dword eax
 sub esp, 16
 regload
-<<<<<<< HEAD
-add esp,8
-pop dword %1
-pop dword %2
-=======
 pop dword %1
 pop dword %2
 add esp,8
->>>>>>> 4c4fc944b9aa9230b0a5d0b574f5c89b58a7ceb7
 %endmacro
 
 %macro macro_args_save_bbb 3

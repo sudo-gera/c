@@ -106,11 +106,11 @@ mov edx,0
 
 %macro _divmod 4
 regout
-macro_args_read_dd %3,%4
+macro_args_read_wb %3,%4
 regout
 div ebx
 mov ebx,edx
 regout
-macro_args_save_dd %1,%2
+macro_args_save_dw %1,%2
 regout
 %endmacro
