@@ -3,14 +3,18 @@
 
 start
 
-mov eax,1
-mov ebx,2
-mov ecx,3
-mov edx,4
+mov ebx,13
+mov eax,4
+
+
 regout
-; _work 0,12,34
+_divmod [a],[s],ebx,eax
 regout
 
+UNSINT [a]
+PUTCHAR 10
+UNSINT [s]
+PUTCHAR 10
 
 
 stop

@@ -971,122 +971,122 @@ pop ebx
 pop eax
 %endmacro
 %macro macro_args_read_ 0
-macro_args_read_dddd 0 0 0 0
+macro_args_read_dddd 0, 0, 0, 0,
 %endmacro
 %macro macro_args_read_b 1
-macro_args_read_bddd %1 0 0 0
+macro_args_read_bddd %1, 0, 0, 0,
 %endmacro
 %macro macro_args_read_w 1
-macro_args_read_wddd %1 0 0 0
+macro_args_read_wddd %1, 0, 0, 0,
 %endmacro
 %macro macro_args_read_d 1
-macro_args_read_dddd %1 0 0 0
+macro_args_read_dddd %1, 0, 0, 0,
 %endmacro
 %macro macro_args_read_bb 2
-macro_args_read_bbdd %1 %2 0 0
+macro_args_read_bbdd %1, %2, 0, 0,
 %endmacro
 %macro macro_args_read_wb 2
-macro_args_read_wbdd %1 %2 0 0
+macro_args_read_wbdd %1, %2, 0, 0,
 %endmacro
 %macro macro_args_read_db 2
-macro_args_read_dbdd %1 %2 0 0
+macro_args_read_dbdd %1, %2, 0, 0,
 %endmacro
 %macro macro_args_read_bw 2
-macro_args_read_bwdd %1 %2 0 0
+macro_args_read_bwdd %1, %2, 0, 0,
 %endmacro
 %macro macro_args_read_ww 2
-macro_args_read_wwdd %1 %2 0 0
+macro_args_read_wwdd %1, %2, 0, 0,
 %endmacro
 %macro macro_args_read_dw 2
-macro_args_read_dwdd %1 %2 0 0
+macro_args_read_dwdd %1, %2, 0, 0,
 %endmacro
 %macro macro_args_read_bd 2
-macro_args_read_bddd %1 %2 0 0
+macro_args_read_bddd %1, %2, 0, 0,
 %endmacro
 %macro macro_args_read_wd 2
-macro_args_read_wddd %1 %2 0 0
+macro_args_read_wddd %1, %2, 0, 0,
 %endmacro
 %macro macro_args_read_dd 2
-macro_args_read_dddd %1 %2 0 0
+macro_args_read_dddd %1, %2, 0, 0,
 %endmacro
 %macro macro_args_read_bbb 3
-macro_args_read_bbbd %1 %2 %3 0
+macro_args_read_bbbd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_wbb 3
-macro_args_read_wbbd %1 %2 %3 0
+macro_args_read_wbbd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_dbb 3
-macro_args_read_dbbd %1 %2 %3 0
+macro_args_read_dbbd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_bwb 3
-macro_args_read_bwbd %1 %2 %3 0
+macro_args_read_bwbd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_wwb 3
-macro_args_read_wwbd %1 %2 %3 0
+macro_args_read_wwbd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_dwb 3
-macro_args_read_dwbd %1 %2 %3 0
+macro_args_read_dwbd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_bdb 3
-macro_args_read_bdbd %1 %2 %3 0
+macro_args_read_bdbd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_wdb 3
-macro_args_read_wdbd %1 %2 %3 0
+macro_args_read_wdbd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_ddb 3
-macro_args_read_ddbd %1 %2 %3 0
+macro_args_read_ddbd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_bbw 3
-macro_args_read_bbwd %1 %2 %3 0
+macro_args_read_bbwd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_wbw 3
-macro_args_read_wbwd %1 %2 %3 0
+macro_args_read_wbwd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_dbw 3
-macro_args_read_dbwd %1 %2 %3 0
+macro_args_read_dbwd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_bww 3
-macro_args_read_bwwd %1 %2 %3 0
+macro_args_read_bwwd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_www 3
-macro_args_read_wwwd %1 %2 %3 0
+macro_args_read_wwwd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_dww 3
-macro_args_read_dwwd %1 %2 %3 0
+macro_args_read_dwwd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_bdw 3
-macro_args_read_bdwd %1 %2 %3 0
+macro_args_read_bdwd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_wdw 3
-macro_args_read_wdwd %1 %2 %3 0
+macro_args_read_wdwd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_ddw 3
-macro_args_read_ddwd %1 %2 %3 0
+macro_args_read_ddwd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_bbd 3
-macro_args_read_bbdd %1 %2 %3 0
+macro_args_read_bbdd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_wbd 3
-macro_args_read_wbdd %1 %2 %3 0
+macro_args_read_wbdd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_dbd 3
-macro_args_read_dbdd %1 %2 %3 0
+macro_args_read_dbdd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_bwd 3
-macro_args_read_bwdd %1 %2 %3 0
+macro_args_read_bwdd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_wwd 3
-macro_args_read_wwdd %1 %2 %3 0
+macro_args_read_wwdd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_dwd 3
-macro_args_read_dwdd %1 %2 %3 0
+macro_args_read_dwdd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_bdd 3
-macro_args_read_bddd %1 %2 %3 0
+macro_args_read_bddd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_wdd 3
-macro_args_read_wddd %1 %2 %3 0
+macro_args_read_wddd %1, %2, %3, 0,
 %endmacro
 %macro macro_args_read_ddd 3
-macro_args_read_dddd %1 %2 %3 0
+macro_args_read_dddd %1, %2, %3, 0,
 %endmacro

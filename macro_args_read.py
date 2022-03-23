@@ -32,5 +32,5 @@ for r in ['','b','w','d']:
 					d.add(q+w+e+r)
 					l=len([z for z in [q,w,e,r] if z])
 					print('%macro macro_args_read_'+q+w+e+r+' '+str(l))
-					print('macro_args_read_'+q+w+e+r+('d'*(4-l)+''.join([' %1',' %2',' %3',' %4',][:l])+''.join(([' 0']*4)[:(4-l)]))         )
+					print('macro_args_read_'+q+w+e+r+('d'*(4-l)+''.join([' %1,',' %2,',' %3,',' %4,',][:l])+''.join(([' 0,']*4)[:(4-l)]))         )
 					print('%endmacro')

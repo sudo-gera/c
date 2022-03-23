@@ -2,27 +2,73 @@
 PRINT "eax = "
 PUTCHAR 27
 PRINT "[32m"
-UNSINT eax
+SIGNINT eax
 PUTCHAR 27
 PRINT "[0m"
-PRINT " ebx = "
+
+PUTCHAR 9
+
+PRINT "ebx = "
 PUTCHAR 27
 PRINT "[32m"
-UNSINT ebx
+SIGNINT ebx
 PUTCHAR 27
 PRINT "[0m"
-PRINT " ecx = "
+
+PUTCHAR 9
+
+PRINT "ecx = "
 PUTCHAR 27
 PRINT "[32m"
-UNSINT ecx
+SIGNINT ecx
 PUTCHAR 27
 PRINT "[0m"
-PRINT " edx = "
+
+PUTCHAR 9
+
+PRINT "edx = "
 PUTCHAR 27
 PRINT "[32m"
-UNSINT edx
+SIGNINT edx
 PUTCHAR 27
 PRINT "[0m"
+
+PUTCHAR 9
+
+PRINT " esi = "
+PUTCHAR 27
+PRINT "[32m"
+SIGNINT esi
+PUTCHAR 27
+PRINT "[0m"
+
+PUTCHAR 9
+
+PRINT " edi = "
+PUTCHAR 27
+PRINT "[32m"
+SIGNINT edi
+PUTCHAR 27
+PRINT "[0m"
+
+PUTCHAR 9
+
+PRINT " ebp = "
+PUTCHAR 27
+PRINT "[32m"
+SIGNINT ebp
+PUTCHAR 27
+PRINT "[0m"
+
+PUTCHAR 9
+
+PRINT " esp = "
+PUTCHAR 27
+PRINT "[32m"
+SIGNINT esp
+PUTCHAR 27
+PRINT "[0m"
+
 PUTCHAR 10
 %endmacro
 
@@ -54,3 +100,11 @@ mov edx,0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+%macro _divmod 4
+sub esp,8
+macro_args_read_dd %3,%4
+div ebx
+macro_args_save_dd eax,edx
+pop dword %1
+pop dword %2
+%endmacro
