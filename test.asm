@@ -1,27 +1,16 @@
 %include "st_io.inc"
-global _start
-section .data
-section .bss
-d resb 4
-section .text
-_start:
-mov bh,10
-GETUN eax
-while:
-cmp al,0
-jne not_0
-PRINT "n"
-PUTCHAR 10
-FINISH
-not_0:
-idiv bh
-cmp ah,5
-jne not_5
-PRINT "y"
-PUTCHAR 10
-FINISH
-not_5:
-mov ah,0
-mov [d],dword while
-mov ecx,d
-jmp [ecx]
+%include "macro.inc"
+
+start
+
+mov eax,1
+mov ebx,2
+mov ecx,3
+mov edx,4
+regout
+; _work 0,12,34
+regout
+
+
+
+stop
