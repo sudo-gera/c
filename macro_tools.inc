@@ -1,5 +1,5 @@
 %macro regout 0
-PRINT "eax = "
+PRINT "eax == "
 PUTCHAR 27
 PRINT "[32m"
 SIGNINT eax
@@ -8,7 +8,7 @@ PRINT "[0m"
 
 PUTCHAR 9
 
-PRINT "ebx = "
+PRINT "ebx == "
 PUTCHAR 27
 PRINT "[32m"
 SIGNINT ebx
@@ -17,7 +17,7 @@ PRINT "[0m"
 
 PUTCHAR 9
 
-PRINT "ecx = "
+PRINT "ecx == "
 PUTCHAR 27
 PRINT "[32m"
 SIGNINT ecx
@@ -26,7 +26,7 @@ PRINT "[0m"
 
 PUTCHAR 9
 
-PRINT "edx = "
+PRINT "edx == "
 PUTCHAR 27
 PRINT "[32m"
 SIGNINT edx
@@ -35,7 +35,7 @@ PRINT "[0m"
 
 PUTCHAR 9
 
-PRINT " esi = "
+PRINT " esi == "
 PUTCHAR 27
 PRINT "[32m"
 SIGNINT esi
@@ -44,7 +44,7 @@ PRINT "[0m"
 
 PUTCHAR 9
 
-PRINT " edi = "
+PRINT " edi == "
 PUTCHAR 27
 PRINT "[32m"
 SIGNINT edi
@@ -53,7 +53,7 @@ PRINT "[0m"
 
 PUTCHAR 9
 
-PRINT " ebp = "
+PRINT " ebp == "
 PUTCHAR 27
 PRINT "[32m"
 SIGNINT ebp
@@ -62,10 +62,14 @@ PRINT "[0m"
 
 PUTCHAR 9
 
-PRINT " esp = "
+PRINT " esp == "
 PUTCHAR 27
 PRINT "[32m"
-SIGNINT esp
+sub [esp_base],esp
+neg dword [esp_base]
+SIGNINT [esp_base]
+neg dword [esp_base]
+add [esp_base],esp
 PUTCHAR 27
 PRINT "[0m"
 
@@ -101,7 +105,12 @@ mov edx,0
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro _divmod 4
-macro_args_read_dd 8,%3,%4
+regout
+macro_args_read_dd %3,%4
+regout
 div ebx
+mov ebx,edx
+regout
 macro_args_save_dd %1,%2
+regout
 %endmacro

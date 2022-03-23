@@ -31,8 +31,10 @@ z dd 0
 global _start
 section .data
 alld
+esp_base dd 0
 section .text
 _start:
+mov [esp_base],esp
 %endmacro
 
 %macro stop 0-1 0

@@ -5,7 +5,7 @@ for r in ['b','w','d']:
 			for q in ['b','w','d']:
 				if q+w+e+r not in d:
 					d.add(q+w+e+r)
-					print('%macro macro_args_read_'+q+w+e+r+' '+str(1+len([z for z in [q,w,e,r] if z])))
+					print('%macro macro_args_read_'+q+w+e+r+' '+str(len([z for z in [q,w,e,r] if z])))
 					print('sub esp,16')
 					print('regsave')
 					for t,y in enumerate([q,w,e,r]):

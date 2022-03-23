@@ -1,4 +1,4 @@
-%macro macro_args_read_bbbb 5
+%macro macro_args_read_bbbb 4
 sub esp,16
 regsave
 push byte  %1
@@ -12,7 +12,7 @@ pop  bl
 pop  al
 %endmacro
 
-%macro macro_args_read_wbbb 5
+%macro macro_args_read_wbbb 4
 sub esp,16
 regsave
 push word  %1
@@ -26,7 +26,7 @@ pop  bl
 pop  ax
 %endmacro
 
-%macro macro_args_read_dbbb 5
+%macro macro_args_read_dbbb 4
 sub esp,16
 regsave
 push dword %1
@@ -40,7 +40,7 @@ pop  bl
 pop eax
 %endmacro
 
-%macro macro_args_read_bwbb 5
+%macro macro_args_read_bwbb 4
 sub esp,16
 regsave
 push byte  %1
@@ -54,7 +54,7 @@ pop  bx
 pop  al
 %endmacro
 
-%macro macro_args_read_wwbb 5
+%macro macro_args_read_wwbb 4
 sub esp,16
 regsave
 push word  %1
@@ -68,7 +68,7 @@ pop  bx
 pop  ax
 %endmacro
 
-%macro macro_args_read_dwbb 5
+%macro macro_args_read_dwbb 4
 sub esp,16
 regsave
 push dword %1
@@ -82,7 +82,7 @@ pop  bx
 pop eax
 %endmacro
 
-%macro macro_args_read_bdbb 5
+%macro macro_args_read_bdbb 4
 sub esp,16
 regsave
 push byte  %1
@@ -96,7 +96,7 @@ pop ebx
 pop  al
 %endmacro
 
-%macro macro_args_read_wdbb 5
+%macro macro_args_read_wdbb 4
 sub esp,16
 regsave
 push word  %1
@@ -110,7 +110,7 @@ pop ebx
 pop  ax
 %endmacro
 
-%macro macro_args_read_ddbb 5
+%macro macro_args_read_ddbb 4
 sub esp,16
 regsave
 push dword %1
@@ -124,7 +124,7 @@ pop ebx
 pop eax
 %endmacro
 
-%macro macro_args_read_bbwb 5
+%macro macro_args_read_bbwb 4
 sub esp,16
 regsave
 push byte  %1
@@ -138,7 +138,7 @@ pop  bl
 pop  al
 %endmacro
 
-%macro macro_args_read_wbwb 5
+%macro macro_args_read_wbwb 4
 sub esp,16
 regsave
 push word  %1
@@ -152,7 +152,7 @@ pop  bl
 pop  ax
 %endmacro
 
-%macro macro_args_read_dbwb 5
+%macro macro_args_read_dbwb 4
 sub esp,16
 regsave
 push dword %1
@@ -166,7 +166,7 @@ pop  bl
 pop eax
 %endmacro
 
-%macro macro_args_read_bwwb 5
+%macro macro_args_read_bwwb 4
 sub esp,16
 regsave
 push byte  %1
@@ -180,7 +180,7 @@ pop  bx
 pop  al
 %endmacro
 
-%macro macro_args_read_wwwb 5
+%macro macro_args_read_wwwb 4
 sub esp,16
 regsave
 push word  %1
@@ -194,7 +194,7 @@ pop  bx
 pop  ax
 %endmacro
 
-%macro macro_args_read_dwwb 5
+%macro macro_args_read_dwwb 4
 sub esp,16
 regsave
 push dword %1
@@ -208,7 +208,7 @@ pop  bx
 pop eax
 %endmacro
 
-%macro macro_args_read_bdwb 5
+%macro macro_args_read_bdwb 4
 sub esp,16
 regsave
 push byte  %1
@@ -222,7 +222,7 @@ pop ebx
 pop  al
 %endmacro
 
-%macro macro_args_read_wdwb 5
+%macro macro_args_read_wdwb 4
 sub esp,16
 regsave
 push word  %1
@@ -236,7 +236,7 @@ pop ebx
 pop  ax
 %endmacro
 
-%macro macro_args_read_ddwb 5
+%macro macro_args_read_ddwb 4
 sub esp,16
 regsave
 push dword %1
@@ -250,7 +250,7 @@ pop ebx
 pop eax
 %endmacro
 
-%macro macro_args_read_bbdb 5
+%macro macro_args_read_bbdb 4
 sub esp,16
 regsave
 push byte  %1
@@ -264,7 +264,7 @@ pop  bl
 pop  al
 %endmacro
 
-%macro macro_args_read_wbdb 5
+%macro macro_args_read_wbdb 4
 sub esp,16
 regsave
 push word  %1
@@ -278,7 +278,7 @@ pop  bl
 pop  ax
 %endmacro
 
-%macro macro_args_read_dbdb 5
+%macro macro_args_read_dbdb 4
 sub esp,16
 regsave
 push dword %1
@@ -292,7 +292,7 @@ pop  bl
 pop eax
 %endmacro
 
-%macro macro_args_read_bwdb 5
+%macro macro_args_read_bwdb 4
 sub esp,16
 regsave
 push byte  %1
@@ -306,7 +306,7 @@ pop  bx
 pop  al
 %endmacro
 
-%macro macro_args_read_wwdb 5
+%macro macro_args_read_wwdb 4
 sub esp,16
 regsave
 push word  %1
@@ -320,7 +320,7 @@ pop  bx
 pop  ax
 %endmacro
 
-%macro macro_args_read_dwdb 5
+%macro macro_args_read_dwdb 4
 sub esp,16
 regsave
 push dword %1
@@ -334,7 +334,7 @@ pop  bx
 pop eax
 %endmacro
 
-%macro macro_args_read_bddb 5
+%macro macro_args_read_bddb 4
 sub esp,16
 regsave
 push byte  %1
@@ -348,7 +348,7 @@ pop ebx
 pop  al
 %endmacro
 
-%macro macro_args_read_wddb 5
+%macro macro_args_read_wddb 4
 sub esp,16
 regsave
 push word  %1
@@ -362,7 +362,7 @@ pop ebx
 pop  ax
 %endmacro
 
-%macro macro_args_read_dddb 5
+%macro macro_args_read_dddb 4
 sub esp,16
 regsave
 push dword %1
@@ -376,7 +376,7 @@ pop ebx
 pop eax
 %endmacro
 
-%macro macro_args_read_bbbw 5
+%macro macro_args_read_bbbw 4
 sub esp,16
 regsave
 push byte  %1
@@ -390,7 +390,7 @@ pop  bl
 pop  al
 %endmacro
 
-%macro macro_args_read_wbbw 5
+%macro macro_args_read_wbbw 4
 sub esp,16
 regsave
 push word  %1
@@ -404,7 +404,7 @@ pop  bl
 pop  ax
 %endmacro
 
-%macro macro_args_read_dbbw 5
+%macro macro_args_read_dbbw 4
 sub esp,16
 regsave
 push dword %1
@@ -418,7 +418,7 @@ pop  bl
 pop eax
 %endmacro
 
-%macro macro_args_read_bwbw 5
+%macro macro_args_read_bwbw 4
 sub esp,16
 regsave
 push byte  %1
@@ -432,7 +432,7 @@ pop  bx
 pop  al
 %endmacro
 
-%macro macro_args_read_wwbw 5
+%macro macro_args_read_wwbw 4
 sub esp,16
 regsave
 push word  %1
@@ -446,7 +446,7 @@ pop  bx
 pop  ax
 %endmacro
 
-%macro macro_args_read_dwbw 5
+%macro macro_args_read_dwbw 4
 sub esp,16
 regsave
 push dword %1
@@ -460,7 +460,7 @@ pop  bx
 pop eax
 %endmacro
 
-%macro macro_args_read_bdbw 5
+%macro macro_args_read_bdbw 4
 sub esp,16
 regsave
 push byte  %1
@@ -474,7 +474,7 @@ pop ebx
 pop  al
 %endmacro
 
-%macro macro_args_read_wdbw 5
+%macro macro_args_read_wdbw 4
 sub esp,16
 regsave
 push word  %1
@@ -488,7 +488,7 @@ pop ebx
 pop  ax
 %endmacro
 
-%macro macro_args_read_ddbw 5
+%macro macro_args_read_ddbw 4
 sub esp,16
 regsave
 push dword %1
@@ -502,7 +502,7 @@ pop ebx
 pop eax
 %endmacro
 
-%macro macro_args_read_bbww 5
+%macro macro_args_read_bbww 4
 sub esp,16
 regsave
 push byte  %1
@@ -516,7 +516,7 @@ pop  bl
 pop  al
 %endmacro
 
-%macro macro_args_read_wbww 5
+%macro macro_args_read_wbww 4
 sub esp,16
 regsave
 push word  %1
@@ -530,7 +530,7 @@ pop  bl
 pop  ax
 %endmacro
 
-%macro macro_args_read_dbww 5
+%macro macro_args_read_dbww 4
 sub esp,16
 regsave
 push dword %1
@@ -544,7 +544,7 @@ pop  bl
 pop eax
 %endmacro
 
-%macro macro_args_read_bwww 5
+%macro macro_args_read_bwww 4
 sub esp,16
 regsave
 push byte  %1
@@ -558,7 +558,7 @@ pop  bx
 pop  al
 %endmacro
 
-%macro macro_args_read_wwww 5
+%macro macro_args_read_wwww 4
 sub esp,16
 regsave
 push word  %1
@@ -572,7 +572,7 @@ pop  bx
 pop  ax
 %endmacro
 
-%macro macro_args_read_dwww 5
+%macro macro_args_read_dwww 4
 sub esp,16
 regsave
 push dword %1
@@ -586,7 +586,7 @@ pop  bx
 pop eax
 %endmacro
 
-%macro macro_args_read_bdww 5
+%macro macro_args_read_bdww 4
 sub esp,16
 regsave
 push byte  %1
@@ -600,7 +600,7 @@ pop ebx
 pop  al
 %endmacro
 
-%macro macro_args_read_wdww 5
+%macro macro_args_read_wdww 4
 sub esp,16
 regsave
 push word  %1
@@ -614,7 +614,7 @@ pop ebx
 pop  ax
 %endmacro
 
-%macro macro_args_read_ddww 5
+%macro macro_args_read_ddww 4
 sub esp,16
 regsave
 push dword %1
@@ -628,7 +628,7 @@ pop ebx
 pop eax
 %endmacro
 
-%macro macro_args_read_bbdw 5
+%macro macro_args_read_bbdw 4
 sub esp,16
 regsave
 push byte  %1
@@ -642,7 +642,7 @@ pop  bl
 pop  al
 %endmacro
 
-%macro macro_args_read_wbdw 5
+%macro macro_args_read_wbdw 4
 sub esp,16
 regsave
 push word  %1
@@ -656,7 +656,7 @@ pop  bl
 pop  ax
 %endmacro
 
-%macro macro_args_read_dbdw 5
+%macro macro_args_read_dbdw 4
 sub esp,16
 regsave
 push dword %1
@@ -670,7 +670,7 @@ pop  bl
 pop eax
 %endmacro
 
-%macro macro_args_read_bwdw 5
+%macro macro_args_read_bwdw 4
 sub esp,16
 regsave
 push byte  %1
@@ -684,7 +684,7 @@ pop  bx
 pop  al
 %endmacro
 
-%macro macro_args_read_wwdw 5
+%macro macro_args_read_wwdw 4
 sub esp,16
 regsave
 push word  %1
@@ -698,7 +698,7 @@ pop  bx
 pop  ax
 %endmacro
 
-%macro macro_args_read_dwdw 5
+%macro macro_args_read_dwdw 4
 sub esp,16
 regsave
 push dword %1
@@ -712,7 +712,7 @@ pop  bx
 pop eax
 %endmacro
 
-%macro macro_args_read_bddw 5
+%macro macro_args_read_bddw 4
 sub esp,16
 regsave
 push byte  %1
@@ -726,7 +726,7 @@ pop ebx
 pop  al
 %endmacro
 
-%macro macro_args_read_wddw 5
+%macro macro_args_read_wddw 4
 sub esp,16
 regsave
 push word  %1
@@ -740,7 +740,7 @@ pop ebx
 pop  ax
 %endmacro
 
-%macro macro_args_read_dddw 5
+%macro macro_args_read_dddw 4
 sub esp,16
 regsave
 push dword %1
@@ -754,7 +754,7 @@ pop ebx
 pop eax
 %endmacro
 
-%macro macro_args_read_bbbd 5
+%macro macro_args_read_bbbd 4
 sub esp,16
 regsave
 push byte  %1
@@ -768,7 +768,7 @@ pop  bl
 pop  al
 %endmacro
 
-%macro macro_args_read_wbbd 5
+%macro macro_args_read_wbbd 4
 sub esp,16
 regsave
 push word  %1
@@ -782,7 +782,7 @@ pop  bl
 pop  ax
 %endmacro
 
-%macro macro_args_read_dbbd 5
+%macro macro_args_read_dbbd 4
 sub esp,16
 regsave
 push dword %1
@@ -796,7 +796,7 @@ pop  bl
 pop eax
 %endmacro
 
-%macro macro_args_read_bwbd 5
+%macro macro_args_read_bwbd 4
 sub esp,16
 regsave
 push byte  %1
@@ -810,7 +810,7 @@ pop  bx
 pop  al
 %endmacro
 
-%macro macro_args_read_wwbd 5
+%macro macro_args_read_wwbd 4
 sub esp,16
 regsave
 push word  %1
@@ -824,7 +824,7 @@ pop  bx
 pop  ax
 %endmacro
 
-%macro macro_args_read_dwbd 5
+%macro macro_args_read_dwbd 4
 sub esp,16
 regsave
 push dword %1
@@ -838,7 +838,7 @@ pop  bx
 pop eax
 %endmacro
 
-%macro macro_args_read_bdbd 5
+%macro macro_args_read_bdbd 4
 sub esp,16
 regsave
 push byte  %1
@@ -852,7 +852,7 @@ pop ebx
 pop  al
 %endmacro
 
-%macro macro_args_read_wdbd 5
+%macro macro_args_read_wdbd 4
 sub esp,16
 regsave
 push word  %1
@@ -866,7 +866,7 @@ pop ebx
 pop  ax
 %endmacro
 
-%macro macro_args_read_ddbd 5
+%macro macro_args_read_ddbd 4
 sub esp,16
 regsave
 push dword %1
@@ -880,7 +880,7 @@ pop ebx
 pop eax
 %endmacro
 
-%macro macro_args_read_bbwd 5
+%macro macro_args_read_bbwd 4
 sub esp,16
 regsave
 push byte  %1
@@ -894,7 +894,7 @@ pop  bl
 pop  al
 %endmacro
 
-%macro macro_args_read_wbwd 5
+%macro macro_args_read_wbwd 4
 sub esp,16
 regsave
 push word  %1
@@ -908,7 +908,7 @@ pop  bl
 pop  ax
 %endmacro
 
-%macro macro_args_read_dbwd 5
+%macro macro_args_read_dbwd 4
 sub esp,16
 regsave
 push dword %1
@@ -922,7 +922,7 @@ pop  bl
 pop eax
 %endmacro
 
-%macro macro_args_read_bwwd 5
+%macro macro_args_read_bwwd 4
 sub esp,16
 regsave
 push byte  %1
@@ -936,7 +936,7 @@ pop  bx
 pop  al
 %endmacro
 
-%macro macro_args_read_wwwd 5
+%macro macro_args_read_wwwd 4
 sub esp,16
 regsave
 push word  %1
@@ -950,7 +950,7 @@ pop  bx
 pop  ax
 %endmacro
 
-%macro macro_args_read_dwwd 5
+%macro macro_args_read_dwwd 4
 sub esp,16
 regsave
 push dword %1
@@ -964,7 +964,7 @@ pop  bx
 pop eax
 %endmacro
 
-%macro macro_args_read_bdwd 5
+%macro macro_args_read_bdwd 4
 sub esp,16
 regsave
 push byte  %1
@@ -978,7 +978,7 @@ pop ebx
 pop  al
 %endmacro
 
-%macro macro_args_read_wdwd 5
+%macro macro_args_read_wdwd 4
 sub esp,16
 regsave
 push word  %1
@@ -992,7 +992,7 @@ pop ebx
 pop  ax
 %endmacro
 
-%macro macro_args_read_ddwd 5
+%macro macro_args_read_ddwd 4
 sub esp,16
 regsave
 push dword %1
@@ -1006,7 +1006,7 @@ pop ebx
 pop eax
 %endmacro
 
-%macro macro_args_read_bbdd 5
+%macro macro_args_read_bbdd 4
 sub esp,16
 regsave
 push byte  %1
@@ -1020,7 +1020,7 @@ pop  bl
 pop  al
 %endmacro
 
-%macro macro_args_read_wbdd 5
+%macro macro_args_read_wbdd 4
 sub esp,16
 regsave
 push word  %1
@@ -1034,7 +1034,7 @@ pop  bl
 pop  ax
 %endmacro
 
-%macro macro_args_read_dbdd 5
+%macro macro_args_read_dbdd 4
 sub esp,16
 regsave
 push dword %1
@@ -1048,7 +1048,7 @@ pop  bl
 pop eax
 %endmacro
 
-%macro macro_args_read_bwdd 5
+%macro macro_args_read_bwdd 4
 sub esp,16
 regsave
 push byte  %1
@@ -1062,7 +1062,7 @@ pop  bx
 pop  al
 %endmacro
 
-%macro macro_args_read_wwdd 5
+%macro macro_args_read_wwdd 4
 sub esp,16
 regsave
 push word  %1
@@ -1076,7 +1076,7 @@ pop  bx
 pop  ax
 %endmacro
 
-%macro macro_args_read_dwdd 5
+%macro macro_args_read_dwdd 4
 sub esp,16
 regsave
 push dword %1
@@ -1090,7 +1090,7 @@ pop  bx
 pop eax
 %endmacro
 
-%macro macro_args_read_bddd 5
+%macro macro_args_read_bddd 4
 sub esp,16
 regsave
 push byte  %1
@@ -1104,7 +1104,7 @@ pop ebx
 pop  al
 %endmacro
 
-%macro macro_args_read_wddd 5
+%macro macro_args_read_wddd 4
 sub esp,16
 regsave
 push word  %1
@@ -1118,18 +1118,26 @@ pop ebx
 pop  ax
 %endmacro
 
-%macro macro_args_read_dddd 5
+%macro macro_args_read_dddd 4
+PUTCHAR 10
+regout
 sub esp,16
+regout
 regsave
+regout
 push dword %1
 push dword %2
 push dword %3
 push dword %4
+regout
 regnull
+regout
 pop edx
 pop ecx
 pop ebx
 pop eax
+regout
+PUTCHAR 10
 %endmacro
 
 %macro macro_args_read_ 0
