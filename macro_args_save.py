@@ -7,22 +7,35 @@ for r in ['','b','w','d']:
 					d.add(q+w+e+r)
 					print('%macro macro_args_save_'+q+w+e+r+' '+str(len([z for z in [q,w,e,r] if z])))
 					f={'d':4,'w':2,'b':1,'':0}
-					print('add esp, '+str(16+f[q]+f[w]+f[e]+f[r]))
+					g={'d':4,'w':4,'b':4,'':0}
+					print('add esp, '+str(16+g[q]+g[w]+g[e]+g[r]))
 					for t,y in list(enumerate([q,w,e,r]))[::-1]:
 						if y=='b':
-							print('push byte  %sl'%'abcd'[t])
+							print('push dword 0')
+							print('mov byte [esp], %sl'%'abcd'[t])
+							# print('push byte  %sl'%'abcd'[t])
 						if y=='w':
-							print('push word  %sx'%'abcd'[t])
+							print('push dword 0')
+							print('mov word [esp], %sx'%'abcd'[t])
+							# print('push word  %sx'%'abcd'[t])
 						if y=='d':
-							print('push dword e%sx'%'abcd'[t])
+							print('push dword 0')
+							print('mov dword[esp],e%sx'%'abcd'[t])
+							# print('push dword e%sx'%'abcd'[t])
 					print('sub esp, '+str(16))
 					print('regload')
 					for t,y in list(enumerate([q,w,e,r])):
 						if y=='b':
-							print('pop byte  %'+str(t+1))
+							print('mov %'+str(t+1)+', byte[esp]')
+							print('add esp 4')
+							# print('pop byte  %'+str(t+1))
 						if y=='w':
-							print('pop word  %'+str(t+1))
+							print('mov %'+str(t+1)+', word[esp]')
+							print('add esp 4')
+							# print('pop word  %'+str(t+1))
 						if y=='d':
-							print('pop dword %'+str(t+1))
-					print('add esp,'+str(16-f[q]-f[w]-f[e]-f[r]))
+							print('mov %'+str(t+1)+', dword[esp]')
+							print('add esp 4')
+							# print('pop dword %'+str(t+1))
+					print('add esp,'+str(16-g[q]-g[w]-g[e]-g[r]))
 					print('%endmacro\n')
