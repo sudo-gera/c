@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 d=set()
 for r in ['b','w','d']:
 	for e in ['b','w','d']:
@@ -10,11 +9,11 @@ for r in ['b','w','d']:
 					print('regsave')
 					for t,y in enumerate([q,w,e,r]):
 						if y=='b':
-							print('push byte  %'+str(t))
+							print('push byte  %'+str(t+1))
 						if y=='w':
-							print('push word  %'+str(t))
+							print('push word  %'+str(t+1))
 						if y=='d':
-							print('push dword %'+str(t))
+							print('push dword %'+str(t+1))
 					print('regnull')
 					for t,y in list(enumerate([q,w,e,r]))[::-1]:
 						if y=='b':
@@ -25,12 +24,3 @@ for r in ['b','w','d']:
 							print('pop e%sx'%"abcd"[t])
 
 					print('%endmacro')
-=======
-from h import *
-q=0
-def aa(a:int=0):
-	ic(q,a,2,{'1':2,3:'4'})
-aa(3)
-ic(4)
-ic()
->>>>>>> 7e277cf050509082352e5bb30554e2cdb1d01d9d
