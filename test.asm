@@ -3,17 +3,15 @@
 
 start
 
-mov ebx,13
-mov eax,4
+mov ebx,16
+mov eax,3
 
 
-regout
-_divmod [a],[s],ebx,eax
-regout
+_divmod ebx,eax,ebx,eax
 
-UNSINT [a]
+UNSINT ebx
 PUTCHAR 10
-UNSINT [s]
+UNSINT eax
 PUTCHAR 10
 
 
