@@ -50,741 +50,470 @@ int 0x80
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro daget 3
-regsave
-mov eax,%2
-mov ebx,%3
+macro_args_read_dd %2,%3
 lea ebx,[eax+ebx*4]
-mov ebx,[ebx]
-mov %1,bx
-regload
+mov eax,[ebx]
+macro_args_save_d %1
 %endmacro
 
 %macro waget 3
-regsave
-mov eax,%2
-mov ebx,%3
+macro_args_read_dd %2,%3
 lea ebx,[eax+ebx*2]
-mov bx,[ebx]
-mov %1,bx
-regload
+mov ax,[ebx]
+macro_args_save_w %1
 %endmacro
 
 %macro baget 3
-regsave
-mov eax,%2
-mov ebx,%3
+macro_args_read_dd %2,%3
 lea ebx,[eax+ebx*1]
-mov bl,[ebx]
-mov %1,bl
-regload
+mov al,[ebx]
+macro_args_save_b %1
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro daput 3
-regsave
-mov eax,%1
-mov ebx,%2
+macro_args_read_ddd %1,%2,%3
 lea ebx,[eax+ebx*4]
-mov eax,%3
-mov [ebx],eax
-regload
+mov [ebx],ecx
+macro_args_save_
 %endmacro
 
 %macro waput 3
-regsave
-mov eax,%1
-mov ebx,%2
+macro_args_read_ddw %1,%2,%3
 lea ebx,[eax+ebx*2]
-mov ax,%3
-mov [ebx],ax
-regload
+mov [ebx],cx
+macro_args_save_
 %endmacro
 
 %macro baput 3
-regsave
-mov eax,%1
-mov ebx,%2
+macro_args_read_ddb %1,%2,%3
 lea ebx,[eax+ebx*1]
-mov al,%3
-mov [ebx],al
-regload
+mov [ebx],cl
+macro_args_save_
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dmov 2
-regsave
-mov ebx,%2
-mov %1,ebx
-regload
+macro_args_read_d %2
+macro_args_save_d %1
 %endmacro
 
 %macro wmov 2
-regsave
-mov bx,%2
-mov %1,bx
-regload
+macro_args_read_w %2
+macro_args_save_w %1
 %endmacro
 
 %macro bmov 2
-regsave
-mov bl,%2
-mov %1,bl
-regload
+macro_args_read_b %2
+macro_args_save_b %1
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dxchg 2
-regsave
-mov ebx,%2
-xchg ebx,%1
-mov %2,ebx
-regload
+macro_args_read_dd %2,%1
+macro_args_save_dd %1,%2
 %endmacro
 
 %macro wxchg 2
-regsave
-mov bx,%2
-xchg bx,%1
-mov %2,bx
-regload
+macro_args_read_ww %2,%1
+macro_args_save_ww %1,%2
 %endmacro
 
 %macro bxchg 2
-regsave
-mov bx,%2
-xchg bl,%1
-mov %2,bl
-regload
+macro_args_read_bb %2,%1
+macro_args_save_bb %1,%2
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dadd 3
-regsave
-mov ebx,%2
-add ebx,%3
-mov %1,ebx
-regload
+macro_args_read_dd %2,%3
+add eax,ebx
+macro_args_save_d %1
 %endmacro
 
 %macro wadd 3
-regsave
-mov bx,%2
-add bx,%3
-mov %1,bx
-regload
+macro_args_read_ww %2,%3
+add ax,bx
+macro_args_save_w %1
 %endmacro
 
 %macro badd 3
-regsave
-mov bl,%2
-add bl,%3
-mov %1,bl
-regload
+macro_args_read_bb %2,%3
+add al,bl
+macro_args_save_b %1
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dsub 3
-regsave
-mov ebx,%2
-sub ebx,%3
-mov %1,ebx
-regload
+macro_args_read_dd %2,%3
+sub eax,ebx
+macro_args_save_d %1
 %endmacro
 
 %macro wsub 3
-regsave
-mov bx,%2
-sub bx,%3
-mov %1,bx
-regload
+macro_args_read_ww %2,%3
+sub ax,bx
+macro_args_save_w %1
 %endmacro
 
 %macro bsub 3
-regsave
-mov bl,%2
-sub bl,%3
-mov %1,bl
-regload
+macro_args_read_bb %2,%3
+sub al,bl
+macro_args_save_b %1
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dmul 3
-regsave
-mov eax,%2
-mov ebx,%3
+macro_args_read_dd %2,%3
 mul ebx
-mov %1,eax
-regload
+macro_args_save_d %1
 %endmacro
 
 %macro wmul 3
-regsave
-mov ax,%2
-mov bx,%3
+macro_args_read_ww %2,%3
 mul bx
-mov %1,ax
-regload
+macro_args_save_w %1
 %endmacro
 
 %macro bmul 3
-regsave
-mov al,%2
-mov bl,%3
+macro_args_read_bb %2,%3
 mul bl
-mov %1,bl
-regload
+macro_args_save_b %1
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dudiv 3
-regsave
-mov eax,%2
-mov ebx,%3
-mov edx,0
+macro_args_read_dd %2,%3
 div ebx
-mov %1,eax
-regload
+macro_args_save_d %1
 %endmacro
 
 %macro wudiv 3
-regsave
-mov ax,%2
-mov bx,%3
-mov dx,0
+macro_args_read_ww %2,%3
 div bx
-mov %1,ax
-regload
+macro_args_save_w %1
 %endmacro
 
 %macro budiv 3
-regsave
-mov al,%2
-mov bl,%3
+macro_args_read_bb %2,%3
 div bl
-mov %1,al
-regload
+macro_args_save_b %1
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dsdiv 3
-regsave
-mov eax,%2
-mov ebx,%3
-mov edx,0
+macro_args_read_dd %2,%3
 idiv ebx
-mov %1,eax
-regload
+macro_args_save_d %1
 %endmacro
 
 %macro wsdiv 3
-regsave
-mov ax,%2
-mov bx,%3
-mov dx,0
+macro_args_read_ww %2,%3
 idiv bx
-mov %1,ax
-regload
+macro_args_save_w %1
 %endmacro
 
 %macro bsdiv 3
-regsave
-mov al,%2
-mov bl,%3
+macro_args_read_bb %2,%3
 idiv bl
-mov %1,al
-regload
+macro_args_save_b %1
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dumod 3
-regsave
-mov eax,%2
-mov ebx,%3
-mov edx,0
+macro_args_read_dd %2,%3
 div ebx
-mov %1,edx
-regload
+mov eax,edx
+macro_args_save_d %1
 %endmacro
 
 %macro wumod 3
-regsave
-mov ax,%2
-mov bx,%3
-mov dx,0
+macro_args_read_ww %2,%3
 div bx
-mov %1,dx
-regload
+mov ax,dx
+macro_args_save_w %1
 %endmacro
 
 %macro bumod 3
-regsave
-mov al,%2
-mov bl,%3
+macro_args_read_bb %2,%3
 div bl
-mov %1,ah
-regload
+mov al,ah
+macro_args_save_b %1
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dsmod 3
-regsave
-mov eax,%2
-mov ebx,%3
-mov edx,0
+macro_args_read_dd %2,%3
 idiv ebx
-mov %1,edx
-regload
+mov eax,edx
+macro_args_save_d %1
 %endmacro
 
 %macro wsmod 3
-regsave
-mov ax,%2
-mov bx,%3
-mov dx,0
+macro_args_read_ww %2,%3
 idiv bx
-mov %1,dx
-regload
+mov ax,dx
+macro_args_save_w %1
 %endmacro
 
 %macro bsmod 3
-regsave
-mov al,%2
-mov bl,%3
+macro_args_read_bb %2,%3
 idiv bl
-mov %1,ah
-regload
+mov al,ah
+macro_args_save_b %1
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dslt 3
-regsave
-mov eax,%1
-mov ebx,%2
-cmp eax,ebx
-jl %3
-regload
+macro_cmp_d %1,%2,%3,jl
 %endmacro
 
 %macro wslt 3
-regsave
-mov ax,%1
-mov bx,%2
-cmp ax,bx
-jl %3
-regload
+macro_cmp_w %1,%2,%3,jl
 %endmacro
 
 %macro bslt 3
-regsave
-mov al,%1
-mov bl,%2
-cmp al,bl
-jl %3
-regload
+macro_cmp_b %1,%2,%3,jl
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dsle 3
-regsave
-mov eax,%1
-mov ebx,%2
-cmp eax,ebx
-jle %3
-regload
+macro_cmp_d %1,%2,%3,jle
 %endmacro
 
 %macro wsle 3
-regsave
-mov ax,%1
-mov bx,%2
-cmp ax,bx
-jle %3
-regload
+macro_cmp_w %1,%2,%3,jle
 %endmacro
 
 %macro bsle 3
-regsave
-mov al,%1
-mov bl,%2
-cmp al,bl
-jle %3
-regload
+macro_cmp_b %1,%2,%3,jle
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dsgt 3
-regsave
-mov eax,%1
-mov ebx,%2
-cmp eax,ebx
-jg %3
-regload
+macro_cmp_d %1,%2,%3,jg
 %endmacro
 
 %macro wsgt 3
-regsave
-mov ax,%1
-mov bx,%2
-cmp ax,bx
-jg %3
-regload
+macro_cmp_w %1,%2,%3,jg
 %endmacro
 
 %macro bsgt 3
-regsave
-mov al,%1
-mov bl,%2
-cmp al,bl
-jg %3
-regload
+macro_cmp_b %1,%2,%3,jg
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dsge 3
-regsave
-mov eax,%1
-mov ebx,%2
-cmp eax,ebx
-jge %3
-regload
+macro_cmp_d %1,%2,%3,jge
 %endmacro
 
 %macro wsge 3
-regsave
-mov ax,%1
-mov bx,%2
-cmp ax,bx
-jge %3
-regload
+macro_cmp_w %1,%2,%3,jge
 %endmacro
 
 %macro bsge 3
-regsave
-mov al,%1
-mov bl,%2
-cmp al,bl
-jge %3
-regload
+macro_cmp_b %1,%2,%3,jge
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro deq 3
-regsave
-mov eax,%1
-mov ebx,%2
-cmp eax,ebx
-je %3
-regload
+macro_cmp_d %1,%2,%3,je
 %endmacro
 
 %macro weq 3
-regsave
-mov ax,%1
-mov bx,%2
-cmp ax,bx
-je %3
-regload
+macro_cmp_w %1,%2,%3,je
 %endmacro
 
 %macro beq 3
-regsave
-mov al,%1
-mov bl,%2
-cmp al,bl
-je %3
-regload
+macro_cmp_b %1,%2,%3,je
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dne 3
-regsave
-mov eax,%1
-mov ebx,%2
-cmp eax,ebx
-jne %3
-regload
+macro_cmp_d %1,%2,%3,jne
 %endmacro
 
 %macro wne 3
-regsave
-mov ax,%1
-mov bx,%2
-cmp ax,bx
-jne %3
-regload
+macro_cmp_w %1,%2,%3,jne
 %endmacro
 
 %macro bne 3
-regsave
-mov al,%1
-mov bl,%2
-cmp al,bl
-jne %3
-regload
+macro_cmp_b %1,%2,%3,jne
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dult 3
-regsave
-mov eax,%1
-mov ebx,%2
-cmp eax,ebx
-jb %3
-regload
+macro_cmp_d %1,%2,%3,jb
 %endmacro
 
 %macro wult 3
-regsave
-mov ax,%1
-mov bx,%2
-cmp ax,bx
-jb %3
-regload
+macro_cmp_w %1,%2,%3,jb
 %endmacro
 
 %macro bult 3
-regsave
-mov al,%1
-mov bl,%2
-cmp al,bl
-jb %3
-regload
+macro_cmp_b %1,%2,%3,jb
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dule 3
-regsave
-mov eax,%1
-mov ebx,%2
-cmp eax,ebx
-jbe %3
-regload
+macro_cmp_d %1,%2,%3,jbe
 %endmacro
 
 %macro wule 3
-regsave
-mov ax,%1
-mov bx,%2
-cmp ax,bx
-jbe %3
-regload
+macro_cmp_w %1,%2,%3,jbe
 %endmacro
 
 %macro bule 3
-regsave
-mov al,%1
-mov bl,%2
-cmp al,bl
-jbe %3
-regload
+macro_cmp_b %1,%2,%3,jbe
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dugt 3
-regsave
-mov eax,%1
-mov ebx,%2
-cmp eax,ebx
-ja %3
-regload
+macro_cmp_d %1,%2,%3,ja
 %endmacro
 
 %macro wugt 3
-regsave
-mov ax,%1
-mov bx,%2
-cmp ax,bx
-ja %3
-regload
+macro_cmp_w %1,%2,%3,ja
 %endmacro
 
 %macro bugt 3
-regsave
-mov al,%1
-mov bl,%2
-cmp al,bl
-ja %3
-regload
+macro_cmp_b %1,%2,%3,ja
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro duge 3
-regsave
-mov eax,%1
-mov ebx,%2
-cmp eax,ebx
-jae %3
-regload
+macro_cmp_d %1,%2,%3,jae
 %endmacro
 
 %macro wuge 3
-regsave
-mov ax,%1
-mov bx,%2
-cmp ax,bx
-jae %3
-regload
+macro_cmp_w %1,%2,%3,jae
 %endmacro
 
 %macro buge 3
-regsave
-mov al,%1
-mov bl,%2
-cmp al,bl
-jae %3
-regload
+macro_cmp_b %1,%2,%3,jae
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dinc 1
-regsave
 inc dword %1
-regload
 %endmacro
 
 %macro winc 1
-regsave
-inc dword %1
-regload
+inc word %1
 %endmacro
 
 %macro binc 1
-regsave
-inc dword %1
-regload
+inc byte %1
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro ddec 1
-regsave
 dec dword %1
-regload
 %endmacro
 
 %macro wdec 1
-regsave
-dec dword %1
-regload
+dec word %1
 %endmacro
 
 %macro bdec 1
-regsave
-dec dword %1
-regload
+dec byte %1
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro darray 1
-regsave
 section .data
 len_ %+ %1 dd 0
 size_ %+ %1 dd 4
 %1 times 1024 dd 0
 section .text
-regload
 %endmacro
 
 %macro warray 1
-regsave
 section .data
 len_ %+ %1 dd 0
 size_ %+ %1 dd 2
 %1 times 1024 dw 0
 section .text
-regload
 %endmacro
 
 %macro barray 1
-regsave
 section .data
 len_ %+ %1 dd 0
 size_ %+ %1 dd 1
 %1 times 1024 db 0
 section .text
-regload
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-%macro aget 3
-regsave
-mov edx,%2
-daget ecx,edx,-1
-cmp ecx,1
-je %%_1
-cmp ecx,2
-je %%_2
-cmp ecx,4
-je %%_4
-%%_1:
-baget %1,edx,%3
-jmp %%_5
-%%_2:
-waget %1,edx,%3
-jmp %%_5
-%%_4:
-daget %1,edx,%3
-jmp %%_5
-%%_5:
-regload
+%macro dapush 2
+macro_args_read_dd %1,%2
+daput eax,[eax-8],ebx
+dinc [eax-8]
+macro_args_save_
+%endmacro
+
+%macro wapush 2
+macro_args_read_dw %1,%2
+waput eax,[eax-8],bx
+dinc [eax-8]
+macro_args_save_
+%endmacro
+
+%macro bapush 2
+macro_args_read_db %1,%2
+baput eax,[eax-8],bl
+dinc [eax-8]
+macro_args_save_
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-%macro aput 3
-regsave
-mov edx,%1
-daget ecx,edx,-1
-cmp ecx,1
-je %%_1
-cmp ecx,2
-je %%_2
-cmp ecx,4
-je %%_4
-%%_1:
-baput edx,%2,%3
-jmp %%_5
-%%_2:
-waput edx,%2,%3
-jmp %%_5
-%%_4:
-daput edx,%2,%3
-jmp %%_5
-%%_5:
-regload
+%macro dapop 2
+macro_args_read_d %2
+ddec [eax-8]
+daget eax,eax,[eax-8]
+macro_args_save_d %1
+%endmacro
+
+%macro wapop 2
+macro_args_read_d %2
+ddec [eax-8]
+waget cx,eax,[eax-8]
+mov eax,ecx
+macro_args_save_w %1
+%endmacro
+
+%macro bapop 2
+macro_args_read_d %2
+ddec [eax-8]
+baget cl,eax,[eax-8]
+mov eax,ecx
+macro_args_save_b %1
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; %macro apush 2
-; regsave
-; mov ebx,%1
-; mov ecx,[ebx-2]
-; aput ebx,ecx,%2
-; inc ecx
-; mov [ebx-2],ecx
-; regload
-; %endmacro

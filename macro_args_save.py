@@ -26,16 +26,18 @@ for r in ['','b','w','d']:
 					print('regload')
 					for t,y in list(enumerate([q,w,e,r])):
 						if y=='b':
-							print('mov %'+str(t+1)+', byte[esp]')
-							print('add esp 4')
-							# print('pop byte  %'+str(t+1))
+							# print('mov %'+str(t+1)+', byte[esp]')
+							# print('add esp,4')
+							print('popbw byte %'+str(t+1))
+							print('add esp,2')
 						if y=='w':
-							print('mov %'+str(t+1)+', word[esp]')
-							print('add esp 4')
-							# print('pop word  %'+str(t+1))
+							# print('mov %'+str(t+1)+', word[esp]')
+							# print('add esp,4')
+							print('pop   word %'+str(t+1))
+							print('add esp,2')
 						if y=='d':
-							print('mov %'+str(t+1)+', dword[esp]')
-							print('add esp 4')
-							# print('pop dword %'+str(t+1))
+							# print('mov %'+str(t+1)+', dword[esp]')
+							# print('add esp,4')
+							print('pop  dword %'+str(t+1))
 					print('add esp,'+str(16-g[q]-g[w]-g[e]-g[r]))
 					print('%endmacro\n')

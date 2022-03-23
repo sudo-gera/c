@@ -11,8 +11,8 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
+popbw byte %1
+add esp,2
 add esp,12
 %endmacro
 
@@ -22,8 +22,8 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
+pop   word %1
+add esp,2
 add esp,12
 %endmacro
 
@@ -33,8 +33,7 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
+pop  dword %1
 add esp,12
 %endmacro
 
@@ -46,10 +45,10 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
+popbw byte %1
+add esp,2
+popbw byte %2
+add esp,2
 add esp,8
 %endmacro
 
@@ -61,10 +60,10 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
+pop   word %1
+add esp,2
+popbw byte %2
+add esp,2
 add esp,8
 %endmacro
 
@@ -76,10 +75,9 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
+pop  dword %1
+popbw byte %2
+add esp,2
 add esp,8
 %endmacro
 
@@ -91,10 +89,10 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop   word %2
+add esp,2
 add esp,8
 %endmacro
 
@@ -106,10 +104,10 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop   word %2
+add esp,2
 add esp,8
 %endmacro
 
@@ -121,10 +119,9 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
+pop  dword %1
+pop   word %2
+add esp,2
 add esp,8
 %endmacro
 
@@ -136,10 +133,9 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop  dword %2
 add esp,8
 %endmacro
 
@@ -151,10 +147,9 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop  dword %2
 add esp,8
 %endmacro
 
@@ -166,15 +161,8 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-<<<<<<< HEAD
-pop dword %1
-pop dword %2
-=======
-mov %1, dword[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
->>>>>>> 57d5b18698fefe81f1e42c00ab133240dc1fa12a
+pop  dword %1
+pop  dword %2
 add esp,8
 %endmacro
 
@@ -188,12 +176,12 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
+popbw byte %1
+add esp,2
+popbw byte %2
+add esp,2
+popbw byte %3
+add esp,2
 add esp,4
 %endmacro
 
@@ -207,12 +195,12 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
+pop   word %1
+add esp,2
+popbw byte %2
+add esp,2
+popbw byte %3
+add esp,2
 add esp,4
 %endmacro
 
@@ -226,12 +214,11 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
+pop  dword %1
+popbw byte %2
+add esp,2
+popbw byte %3
+add esp,2
 add esp,4
 %endmacro
 
@@ -245,12 +232,12 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop   word %2
+add esp,2
+popbw byte %3
+add esp,2
 add esp,4
 %endmacro
 
@@ -264,12 +251,12 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop   word %2
+add esp,2
+popbw byte %3
+add esp,2
 add esp,4
 %endmacro
 
@@ -283,12 +270,11 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
+pop  dword %1
+pop   word %2
+add esp,2
+popbw byte %3
+add esp,2
 add esp,4
 %endmacro
 
@@ -302,12 +288,11 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop  dword %2
+popbw byte %3
+add esp,2
 add esp,4
 %endmacro
 
@@ -321,12 +306,11 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop  dword %2
+popbw byte %3
+add esp,2
 add esp,4
 %endmacro
 
@@ -340,12 +324,10 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
+pop  dword %1
+pop  dword %2
+popbw byte %3
+add esp,2
 add esp,4
 %endmacro
 
@@ -359,12 +341,12 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
+popbw byte %1
+add esp,2
+popbw byte %2
+add esp,2
+pop   word %3
+add esp,2
 add esp,4
 %endmacro
 
@@ -378,12 +360,12 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
+pop   word %1
+add esp,2
+popbw byte %2
+add esp,2
+pop   word %3
+add esp,2
 add esp,4
 %endmacro
 
@@ -397,12 +379,11 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
+pop  dword %1
+popbw byte %2
+add esp,2
+pop   word %3
+add esp,2
 add esp,4
 %endmacro
 
@@ -416,12 +397,12 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop   word %2
+add esp,2
+pop   word %3
+add esp,2
 add esp,4
 %endmacro
 
@@ -435,12 +416,12 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop   word %2
+add esp,2
+pop   word %3
+add esp,2
 add esp,4
 %endmacro
 
@@ -454,12 +435,11 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
+pop  dword %1
+pop   word %2
+add esp,2
+pop   word %3
+add esp,2
 add esp,4
 %endmacro
 
@@ -473,12 +453,11 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop  dword %2
+pop   word %3
+add esp,2
 add esp,4
 %endmacro
 
@@ -492,12 +471,11 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop  dword %2
+pop   word %3
+add esp,2
 add esp,4
 %endmacro
 
@@ -511,12 +489,10 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
+pop  dword %1
+pop  dword %2
+pop   word %3
+add esp,2
 add esp,4
 %endmacro
 
@@ -530,12 +506,11 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
+popbw byte %1
+add esp,2
+popbw byte %2
+add esp,2
+pop  dword %3
 add esp,4
 %endmacro
 
@@ -549,12 +524,11 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
+pop   word %1
+add esp,2
+popbw byte %2
+add esp,2
+pop  dword %3
 add esp,4
 %endmacro
 
@@ -568,12 +542,10 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
+pop  dword %1
+popbw byte %2
+add esp,2
+pop  dword %3
 add esp,4
 %endmacro
 
@@ -587,12 +559,11 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop   word %2
+add esp,2
+pop  dword %3
 add esp,4
 %endmacro
 
@@ -606,12 +577,11 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop   word %2
+add esp,2
+pop  dword %3
 add esp,4
 %endmacro
 
@@ -625,12 +595,10 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
+pop  dword %1
+pop   word %2
+add esp,2
+pop  dword %3
 add esp,4
 %endmacro
 
@@ -644,12 +612,10 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop  dword %2
+pop  dword %3
 add esp,4
 %endmacro
 
@@ -663,12 +629,10 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop  dword %2
+pop  dword %3
 add esp,4
 %endmacro
 
@@ -682,12 +646,9 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
+pop  dword %1
+pop  dword %2
+pop  dword %3
 add esp,4
 %endmacro
 
@@ -703,14 +664,14 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+popbw byte %1
+add esp,2
+popbw byte %2
+add esp,2
+popbw byte %3
+add esp,2
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -726,14 +687,14 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+pop   word %1
+add esp,2
+popbw byte %2
+add esp,2
+popbw byte %3
+add esp,2
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -749,14 +710,13 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+pop  dword %1
+popbw byte %2
+add esp,2
+popbw byte %3
+add esp,2
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -772,14 +732,14 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop   word %2
+add esp,2
+popbw byte %3
+add esp,2
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -795,14 +755,14 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop   word %2
+add esp,2
+popbw byte %3
+add esp,2
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -818,14 +778,13 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+pop  dword %1
+pop   word %2
+add esp,2
+popbw byte %3
+add esp,2
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -841,14 +800,13 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop  dword %2
+popbw byte %3
+add esp,2
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -864,14 +822,13 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop  dword %2
+popbw byte %3
+add esp,2
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -887,14 +844,12 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+pop  dword %1
+pop  dword %2
+popbw byte %3
+add esp,2
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -910,14 +865,14 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+popbw byte %1
+add esp,2
+popbw byte %2
+add esp,2
+pop   word %3
+add esp,2
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -933,14 +888,14 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+pop   word %1
+add esp,2
+popbw byte %2
+add esp,2
+pop   word %3
+add esp,2
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -956,14 +911,13 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+pop  dword %1
+popbw byte %2
+add esp,2
+pop   word %3
+add esp,2
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -979,14 +933,14 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop   word %2
+add esp,2
+pop   word %3
+add esp,2
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1002,14 +956,14 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop   word %2
+add esp,2
+pop   word %3
+add esp,2
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1025,14 +979,13 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+pop  dword %1
+pop   word %2
+add esp,2
+pop   word %3
+add esp,2
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1048,14 +1001,13 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop  dword %2
+pop   word %3
+add esp,2
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1071,14 +1023,13 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop  dword %2
+pop   word %3
+add esp,2
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1094,14 +1045,12 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+pop  dword %1
+pop  dword %2
+pop   word %3
+add esp,2
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1117,14 +1066,13 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+popbw byte %1
+add esp,2
+popbw byte %2
+add esp,2
+pop  dword %3
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1140,14 +1088,13 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+pop   word %1
+add esp,2
+popbw byte %2
+add esp,2
+pop  dword %3
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1163,14 +1110,12 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+pop  dword %1
+popbw byte %2
+add esp,2
+pop  dword %3
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1186,14 +1131,13 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop   word %2
+add esp,2
+pop  dword %3
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1209,14 +1153,13 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop   word %2
+add esp,2
+pop  dword %3
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1232,14 +1175,12 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+pop  dword %1
+pop   word %2
+add esp,2
+pop  dword %3
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1255,14 +1196,12 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop  dword %2
+pop  dword %3
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1278,14 +1217,12 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop  dword %2
+pop  dword %3
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1301,14 +1238,11 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, byte[esp]
-add esp 4
+pop  dword %1
+pop  dword %2
+pop  dword %3
+popbw byte %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1324,14 +1258,14 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+popbw byte %1
+add esp,2
+popbw byte %2
+add esp,2
+popbw byte %3
+add esp,2
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1347,14 +1281,14 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+pop   word %1
+add esp,2
+popbw byte %2
+add esp,2
+popbw byte %3
+add esp,2
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1370,14 +1304,13 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+pop  dword %1
+popbw byte %2
+add esp,2
+popbw byte %3
+add esp,2
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1393,14 +1326,14 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop   word %2
+add esp,2
+popbw byte %3
+add esp,2
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1416,14 +1349,14 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop   word %2
+add esp,2
+popbw byte %3
+add esp,2
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1439,14 +1372,13 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+pop  dword %1
+pop   word %2
+add esp,2
+popbw byte %3
+add esp,2
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1462,14 +1394,13 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop  dword %2
+popbw byte %3
+add esp,2
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1485,14 +1416,13 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop  dword %2
+popbw byte %3
+add esp,2
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1508,14 +1438,12 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+pop  dword %1
+pop  dword %2
+popbw byte %3
+add esp,2
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1531,14 +1459,14 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+popbw byte %1
+add esp,2
+popbw byte %2
+add esp,2
+pop   word %3
+add esp,2
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1554,14 +1482,14 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+pop   word %1
+add esp,2
+popbw byte %2
+add esp,2
+pop   word %3
+add esp,2
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1577,14 +1505,13 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+pop  dword %1
+popbw byte %2
+add esp,2
+pop   word %3
+add esp,2
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1600,14 +1527,14 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop   word %2
+add esp,2
+pop   word %3
+add esp,2
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1623,14 +1550,14 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop   word %2
+add esp,2
+pop   word %3
+add esp,2
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1646,14 +1573,13 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+pop  dword %1
+pop   word %2
+add esp,2
+pop   word %3
+add esp,2
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1669,14 +1595,13 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop  dword %2
+pop   word %3
+add esp,2
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1692,14 +1617,13 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop  dword %2
+pop   word %3
+add esp,2
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1715,14 +1639,12 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+pop  dword %1
+pop  dword %2
+pop   word %3
+add esp,2
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1738,14 +1660,13 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+popbw byte %1
+add esp,2
+popbw byte %2
+add esp,2
+pop  dword %3
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1761,14 +1682,13 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+pop   word %1
+add esp,2
+popbw byte %2
+add esp,2
+pop  dword %3
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1784,14 +1704,12 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+pop  dword %1
+popbw byte %2
+add esp,2
+pop  dword %3
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1807,14 +1725,13 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop   word %2
+add esp,2
+pop  dword %3
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1830,14 +1747,13 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop   word %2
+add esp,2
+pop  dword %3
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1853,14 +1769,12 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+pop  dword %1
+pop   word %2
+add esp,2
+pop  dword %3
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1876,14 +1790,12 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop  dword %2
+pop  dword %3
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1899,14 +1811,12 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop  dword %2
+pop  dword %3
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1922,14 +1832,11 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, word[esp]
-add esp 4
+pop  dword %1
+pop  dword %2
+pop  dword %3
+pop   word %4
+add esp,2
 add esp,0
 %endmacro
 
@@ -1945,14 +1852,13 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+popbw byte %1
+add esp,2
+popbw byte %2
+add esp,2
+popbw byte %3
+add esp,2
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -1968,14 +1874,13 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+pop   word %1
+add esp,2
+popbw byte %2
+add esp,2
+popbw byte %3
+add esp,2
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -1991,14 +1896,12 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+pop  dword %1
+popbw byte %2
+add esp,2
+popbw byte %3
+add esp,2
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2014,14 +1917,13 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop   word %2
+add esp,2
+popbw byte %3
+add esp,2
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2037,14 +1939,13 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop   word %2
+add esp,2
+popbw byte %3
+add esp,2
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2060,14 +1961,12 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+pop  dword %1
+pop   word %2
+add esp,2
+popbw byte %3
+add esp,2
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2083,14 +1982,12 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop  dword %2
+popbw byte %3
+add esp,2
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2106,14 +2003,12 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop  dword %2
+popbw byte %3
+add esp,2
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2129,14 +2024,11 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, byte[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+pop  dword %1
+pop  dword %2
+popbw byte %3
+add esp,2
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2152,14 +2044,13 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+popbw byte %1
+add esp,2
+popbw byte %2
+add esp,2
+pop   word %3
+add esp,2
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2175,14 +2066,13 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+pop   word %1
+add esp,2
+popbw byte %2
+add esp,2
+pop   word %3
+add esp,2
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2198,14 +2088,12 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+pop  dword %1
+popbw byte %2
+add esp,2
+pop   word %3
+add esp,2
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2221,14 +2109,13 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop   word %2
+add esp,2
+pop   word %3
+add esp,2
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2244,14 +2131,13 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop   word %2
+add esp,2
+pop   word %3
+add esp,2
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2267,14 +2153,12 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+pop  dword %1
+pop   word %2
+add esp,2
+pop   word %3
+add esp,2
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2290,14 +2174,12 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop  dword %2
+pop   word %3
+add esp,2
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2313,14 +2195,12 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop  dword %2
+pop   word %3
+add esp,2
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2336,14 +2216,11 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, word[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+pop  dword %1
+pop  dword %2
+pop   word %3
+add esp,2
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2359,14 +2236,12 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+popbw byte %1
+add esp,2
+popbw byte %2
+add esp,2
+pop  dword %3
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2382,14 +2257,12 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+pop   word %1
+add esp,2
+popbw byte %2
+add esp,2
+pop  dword %3
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2405,14 +2278,11 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, byte[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+pop  dword %1
+popbw byte %2
+add esp,2
+pop  dword %3
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2428,14 +2298,12 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop   word %2
+add esp,2
+pop  dword %3
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2451,14 +2319,12 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop   word %2
+add esp,2
+pop  dword %3
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2474,14 +2340,11 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, word[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+pop  dword %1
+pop   word %2
+add esp,2
+pop  dword %3
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2497,14 +2360,11 @@ push dword 0
 mov byte [esp], al
 sub esp, 16
 regload
-mov %1, byte[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+popbw byte %1
+add esp,2
+pop  dword %2
+pop  dword %3
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2520,14 +2380,11 @@ push dword 0
 mov word [esp], ax
 sub esp, 16
 regload
-mov %1, word[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+pop   word %1
+add esp,2
+pop  dword %2
+pop  dword %3
+pop  dword %4
 add esp,0
 %endmacro
 
@@ -2543,14 +2400,10 @@ push dword 0
 mov dword[esp],eax
 sub esp, 16
 regload
-mov %1, dword[esp]
-add esp 4
-mov %2, dword[esp]
-add esp 4
-mov %3, dword[esp]
-add esp 4
-mov %4, dword[esp]
-add esp 4
+pop  dword %1
+pop  dword %2
+pop  dword %3
+pop  dword %4
 add esp,0
 %endmacro
 

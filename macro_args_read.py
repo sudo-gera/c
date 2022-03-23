@@ -10,17 +10,19 @@ for r in ['b','w','d']:
 					print('regsave')
 					for t,y in enumerate([q,w,e,r]):
 						if y=='b':
-							print('push dword 0')
-							print('mov byte [esp],%'+str(t+1))
-							# print('push byte  %'+str(t+1))
+							# print('push dword 0')
+							# print('mov byte [esp],%'+str(t+1))
+							print('push word 0')
+							print('pushbw byte %'+str(t+1))
 						if y=='w':
-							print('push dword 0')
-							print('mov word [esp],%'+str(t+1))
-							# print('push word  %'+str(t+1))
+							# print('push dword 0')
+							# print('mov word [esp],%'+str(t+1))
+							print('push word 0')
+							print('push   word %'+str(t+1))
 						if y=='d':
-							print('push dword 0')
-							print('mov dword[esp],%'+str(t+1))
-							# print('push dword %'+str(t+1))
+							# print('push dword 0')
+							# print('mov dword[esp],%'+str(t+1))
+							print('push  dword %'+str(t+1))
 					print('regnull')
 					for t,y in list(enumerate([q,w,e,r]))[::-1]:
 						# if y=='b':
