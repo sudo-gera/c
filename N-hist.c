@@ -66,11 +66,11 @@ typedef char*    cstr;
 	}
 
 
-make_to_string(long long int,      int,   "%lli", q,      128                 );
-make_to_string(long long unsigned, uns,   "%llu", q,      128                 );
-make_to_string(long double,        float, "%Lf",  q,      128                 );
-make_to_string(char*,              str,   "%s",   q?q:"", q?128+strlen(q):128 );
-make_to_string(char,               char,  "%c",   q,      128                 );
+make_to_string(long long int,      int,   "%lli", q,      128                 )
+make_to_string(long long unsigned, uns,   "%llu", q,      128                 )
+make_to_string(long double,        float, "%Lf",  q,      128                 )
+make_to_string(cstr,               str,   "%s",   q?q:"", q?128+strlen(q):128 )
+make_to_string(char,               char,  "%c",   q,      128                 )
 #undef make_to_string
 #define func_name_generator(func)\
 	const char:func##_char,const char*const:func##_str,const char*:func##_str,\
@@ -91,10 +91,10 @@ make_to_string(char,               char,  "%c",   q,      128                 );
 #define to_str(q) generic_generator(q,to_string)(q)
 
 #define mkinput(type,name,str,acc) type input_##name(){type q=0;scanf(str,acc);return q;}
-mkinput(long long int,int,"%lli",&q);
-mkinput(long long uns,uns,"%llu",&q);
-mkinput(long double,float,"%Lf", &q);
-mkinput(char,char,"%c",&q);
+mkinput(long long int,int,"%lli",&q)
+mkinput(long long uns,uns,"%llu",&q)
+mkinput(long double,float,"%Lf", &q)
+mkinput(char,char,"%c",&q)
 #undef mkinput
 cstr input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 
@@ -110,6 +110,20 @@ cstr input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 #define bit_get(a,s)   (((a)[(s)/8/sizeof((a)[0])]>>(s)%(8*sizeof((a)[0])))&1)
 #define bit_set(a,s,d) {(a)[(s)/8/sizeof((a)[0])]&=~(1<<(s)%(8*sizeof((a)[0])));(a)[(s)/8/sizeof((a)[0])]+=(d)<<(s)%(8*sizeof((a)[0]));}
 
+/*
+ *
+ * repeater for pieces of code
+ *
+ * REPEAT(n) will repeat TO_REPEAT 2**n times separating by TO_REPEAT_SEP
+ *
+ * REPEAT(1) is TO_REPEAT TO_REPEAT_SEP TO_REPEAT
+ * 
+ * TO_REPEAT is not defined by default
+ *
+ * TO_REPEAT_SEP is empty by default
+ *
+ */
+
 #define TO_REPEAT_SEP
 #define RP_0(x) TO_REPEAT(x)
 #define RP_1(x) RP_0(x##0) TO_REPEAT_SEP RP_0(x##1)
@@ -123,40 +137,84 @@ cstr input_str(){static char t[1048576];scanf("%s",t);return to_str(t);}
 #define RP_9(x) RP_8(x##0) TO_REPEAT_SEP RP_8(x##1)
 #define REPEAT(x) RP_##x(0b0)
 
-size_t*access(size_t b,size_t e,size_t*a){
-	return a+(len(a)/2+b)/(e-b);
-}
+#define min(a,s) ((a)<(s)?(a):(s))
+#define max(a,s) ((a)>(s)?(a):(s))
 
-size_t init(size_t b,size_t e,size_t*a,size_t*h){
-	if (e==1+b){
-		if (b<len(h)){
-			return access(b,e,a)[0]=h[b];
+///////////////////////////////////////////////////end of lib
+
+typedef struct{
+	size_t* origin;
+	size_t* data;
+}min_tree;
+
+typedef struct{
+	size_t b;
+	size_t e;
+}min_tree_node;
+
+//for each node place to store min(orgin[b:e])
+static size_t* min_tree_place(min_tree*q,min_tree_node n){
+	if (n.e-n.b==1){
+		if (n.b<len(q->origin)){
+			return q->origin+n.b;
+		}else{
+			return q->data;
 		}
-		return -1;
+	}else{
+		return q->data+(len(q->data)+n.b)/(n.e-n.b);
 	}
-	size_t c=(e+b)/2;
-	size_t r1=init(b,c,a,h);
-	size_t r2=init(c,e,a,h);
-	r1=r1<r2?r1:r2;
-	access(b,e,a)[0]=r1;
-	return r1;
 }
 
-size_t min(size_t ub,size_t ue,size_t b,size_t e,size_t*a){
-	if (b==ub and ue==e){
-		return access(b,e,a)[0];
+static size_t min_tree_init(min_tree*q,min_tree_node n){
+	if (n.e==1+n.b){
+		return min_tree_place(q,n)[0];
 	}
-	size_t c=(b+e)/2;
-	if (b<=ub and ue<=c){
-		return min(ub,ue,b,c,a);
+	size_t c=(n.e+n.b)/2;
+	size_t r1=min_tree_init(q,(min_tree_node){n.b,c});
+	size_t r2=min_tree_init(q,(min_tree_node){c,n.e});
+	return min_tree_place(q,n)[0]=min(r1,r2);
+}
+
+min_tree* min_tree_new(size_t*origin){
+	min_tree* q=(min_tree*)malloc(sizeof(min_tree));
+	q->origin=origin;
+	q->data=0;
+	size_t d=1;
+	size_t n=len(origin);
+	while (n){
+		n>>=1;
+		d<<=1;
 	}
-	if (c<=ub and ue<=e){
-		return min(ub,ue,c,e,a);
+	resize(q->data,d);
+	min_tree_init(q,(min_tree_node){0,d});
+	return q;
+}
+
+void min_tree_del(min_tree*q){
+	del(q->data);
+	free(q);
+}
+
+static size_t min_tree_finder(min_tree*q,size_t ub,size_t ue,min_tree_node n){
+	if (n.b==ub and ue==n.e){
+		return min_tree_place(q,n)[0];
 	}
-	size_t r1=min(ub,c,b,c,a);
-	size_t r2=min(c,ue,c,e,a);
-	r1=r1<r2?r1:r2;
-	return r1;
+	size_t c=(n.b+n.e)/2;
+	min_tree_node l={n.b,c};
+	min_tree_node r={c,n.e};
+	if (n.b <= ub and ue <= c){
+		return min_tree_finder(q,ub,ue,l);
+	}
+	if (c <= ub and ue <= n.e){
+		return min_tree_finder(q,ub,ue,r);
+	}
+	size_t r1=min_tree_finder(q,ub,c,l);
+	size_t r2=min_tree_finder(q,c,ue,r);
+	return min(r1,r2);
+}
+
+size_t min_tree_min(min_tree*q,size_t ub,size_t ue){
+	return min_tree_finder(q,ub,ue,(min_tree_node){0,len(q->data)});
 }
 
 int main(){
@@ -165,22 +223,15 @@ int main(){
 	for (size_t w=0;w<n;++w){
 		read(,h[w]);
 	}
-	size_t d=2;
-	while (n){
-		n>>=1;
-		d<<=1;
-	}
-	n=len(h);
-	array(size_t,a,d);
-	init(0,d/2,a,h);
+	min_tree*q=min_tree_new(h);
 	size_t sq=0;
 	for (size_t w=0;w<=n;++w){
 		for (size_t e=0;e<w;++e){
-			size_t q=(w-e)*min(e,w,0,len(a),a);
-			sq=sq>q?sq:q;
+			size_t _q=(w-e)*min_tree_min(q,e,w);
+			sq=max(sq,_q);
 		}
 	}
 	print(sq);
+	min_tree_del(q);
 	del(h);
-	del(a);
 }

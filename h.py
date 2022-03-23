@@ -1,6 +1,4 @@
 HOME=1
-from icecream import ic
-ic.configureOutput(includeContext=1)
 from time import *
 from os import *
 from os.path import *
@@ -21,6 +19,25 @@ from base64 import *
 from itertools import *
 from timeit import *
 from bisect import *
+from builtins import *
+from re import *
+def outputFunction(*a):
+	a=a[0]
+	s=split(r'\:\d+ in ',a)
+	file=s[0]
+	a=a[len(file)+1:]
+	s=split(r' in ',a)
+	line=s[0]
+	a=a[len(s[0])+4:]
+	s=split(r'- ',a)
+	func=s[0]
+	a=a[len(func)+2:]
+	args=a
+	print("\x1b[92mline \x1b[94m"+line+"\x1b[92m file \x1b[94m"+file+"\x1b[92m func \x1b[94m"+func+"\x1b[92m \x1b[0m"+args)
+from icecream import ic
+ic.configureOutput(includeContext=1)
+ic.configureOutput(outputFunction=outputFunction)
+ic.configureOutput(prefix='')
 from builtins import *
 home=str(Path.home())+'/'
 def rand(q=2**64):

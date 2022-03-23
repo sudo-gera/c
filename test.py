@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 d=set()
 for r in ['b','w','d']:
 	for e in ['b','w','d']:
@@ -24,3 +25,12 @@ for r in ['b','w','d']:
 							print('pop e%sx'%"abcd"[t])
 
 					print('%endmacro')
+=======
+from h import *
+q=0
+def aa(a:int=0):
+	ic(q,a,2,{'1':2,3:'4'})
+aa(3)
+ic(4)
+ic()
+>>>>>>> 7e277cf050509082352e5bb30554e2cdb1d01d9d
