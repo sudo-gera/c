@@ -121,24 +121,14 @@ pop dword %2
 %endmacro
 
 %macro macro_args_save_dd 2
-PUTCHAR 10
-regout
 add esp, 24
-regout
 push dword ebx
 push dword eax
-regout
 sub esp, 16
-regout
-PUTCHAR 10
 regload
-regout
+add esp,8
 pop dword %1
 pop dword %2
-regout
-add esp,8
-regout
-PUTCHAR 10
 %endmacro
 
 %macro macro_args_save_bbb 3

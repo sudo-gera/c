@@ -1119,25 +1119,17 @@ pop  ax
 %endmacro
 
 %macro macro_args_read_dddd 4
-PUTCHAR 10
-regout
 sub esp,16
-regout
 regsave
-regout
 push dword %1
 push dword %2
 push dword %3
 push dword %4
-regout
 regnull
-regout
 pop edx
 pop ecx
 pop ebx
 pop eax
-regout
-PUTCHAR 10
 %endmacro
 
 %macro macro_args_read_ 0
