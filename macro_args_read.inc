@@ -1441,6 +1441,7 @@ pop eax
 %macro macro_args_read_dddd 4
 sub esp,16
 regsave
+<<<<<<< HEAD
 push dword 0
 mov dword[esp],%1
 push dword 0
@@ -1449,6 +1450,12 @@ push dword 0
 mov dword[esp],%3
 push dword 0
 mov dword[esp],%4
+=======
+push dword %1
+push dword %2
+push dword %3
+push dword %4
+>>>>>>> 0686d1c8de13d6973aef728e517705afb42a943d
 regnull
 pop edx
 pop ecx
