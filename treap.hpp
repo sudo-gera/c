@@ -275,9 +275,6 @@ class treap{
 	}
 
 	el* e=nullptr;
-	struct data_holder{
-		el* e;
-	};
 public:
 	template <typename y=std::initializer_list<T>>
 	treap(const y&l=std::initializer_list<T>(),
@@ -307,10 +304,14 @@ public:
 	treap(const treap&l){
 		e=copy(l.e);
 	}
-	treap(data_holder p){
-		e=p.e;
+	treap(treap&&l){
+		std::swap(e,l.e);
 	}
-	auto operator=(const treap&l){
+	auto&operator=(treap&&l){
+		std::swap(e,l.e);
+		return *this;
+	}
+	auto&operator=(const treap&l){
 		if (e!=l.e){
 			del(e);
 			e=copy(l.e);
@@ -342,11 +343,6 @@ public:
 		return get_by_index(e,n)->v;
 	}
 private:
-	data_holder transfer(){
-		auto q=e;
-		e=nullptr;
-		return data_holder{q};
-	}
 	int64_t __cmp__(const treap&d)const{
 		auto&s=*this;
 		int64_t min_len=d.size()<s.size()?d.size():s.size();
@@ -383,7 +379,7 @@ public:
 		e=tmp.second;
 		auto r=treap<T>();
 		r.e=tmp.first;
-		return r.transfer();
+		return r;
 	}
 	treap<T> cut_right(int64_t n){
 		assert(0<=n and n<=size());
@@ -393,14 +389,14 @@ public:
 		e=tmp.first;
 		auto r=treap<T>();
 		r.e=tmp.second;
-		return r.transfer();
+		return r;
 	}
 	treap<T> cut(int64_t l,int64_t r){
 		assert(0<=l and l<=r and  r<=size());
 		auto q=cut_left(l);
 		auto w=cut_left(r-l);
 		add_left(q);
-		return w.transfer();
+		return w;
 	}
 	void push_back(const T&a){
 		e=merge(e,new auto(el(a)));

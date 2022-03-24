@@ -172,6 +172,32 @@ int main(){
 	auto t=r.cut_left(1);
 	assert(t[0].d==2);
 	assert(r[0].d==1);
+	r.clear();
+	t.clear();
+	for (size_t w=0;w<102001;++w){
+		r.emplace_back(w);
+		t.emplace_back(w);
+	}
+	for (size_t w=0;w<102001;++w){
+		assert(r[w].d==t[w].d);
+		assert(r[w].d==w);
+	}
+	for (size_t w=0;w<y.size();++w){
+		auto q=r.cut_right(51001);
+		r.add_left(q);
+		assert(r.size()==t.size());
+		assert(q.empty());
+	}
+	for (size_t w=0;w<y.size();++w){
+		auto q=t.cut_left(51001);
+		t.add_right(q);
+		assert(t.size()==r.size());
+		assert(q.empty());
+	}
+	for (size_t w=0;w<102001;++w){
+		assert(r[w].d==t[w].d);
+		assert(r[w].d==w);
+	}
 	e.resize(102400);
 	e.resize(102001);
 	y=e;
@@ -183,10 +209,9 @@ int main(){
 	}
 	assert(e==y);
 	for (size_t w=0;w<y.size();++w){
-		auto t=y.begin()+51001;
-		auto q=y.cut_left(51001);
-		y.add_right(q);
-		assert(y.size()==e.size());
+		auto q=e.cut_left(51001);
+		e.add_right(q);
+		assert(e.size()==y.size());
 		assert(q.empty());
 	}
 	assert(e==y);
