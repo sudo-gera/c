@@ -147,6 +147,24 @@ add al,bl
 macro_args_save_b %1
 %endmacro
 
+%macro dadd 2
+macro_args_read_dd %1,%2
+add eax,ebx
+macro_args_save_d %1
+%endmacro
+
+%macro wadd 2
+macro_args_read_ww %1,%2
+add ax,bx
+macro_args_save_w %1
+%endmacro
+
+%macro badd 2
+macro_args_read_bb %1,%2
+add al,bl
+macro_args_save_b %1
+%endmacro
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dsub 3
@@ -163,6 +181,24 @@ macro_args_save_w %1
 
 %macro bsub 3
 macro_args_read_bb %2,%3
+sub al,bl
+macro_args_save_b %1
+%endmacro
+
+%macro dsub 2
+macro_args_read_dd %1,%2
+sub eax,ebx
+macro_args_save_d %1
+%endmacro
+
+%macro wsub 2
+macro_args_read_ww %1,%2
+sub ax,bx
+macro_args_save_w %1
+%endmacro
+
+%macro bsub 2
+macro_args_read_bb %1,%2
 sub al,bl
 macro_args_save_b %1
 %endmacro
@@ -187,6 +223,24 @@ mul bl
 macro_args_save_b %1
 %endmacro
 
+%macro dmul 2
+macro_args_read_dd %1,%2
+mul ebx
+macro_args_save_d %1
+%endmacro
+
+%macro wmul 2
+macro_args_read_ww %1,%2
+mul bx
+macro_args_save_w %1
+%endmacro
+
+%macro bmul 2
+macro_args_read_bb %1,%2
+mul bl
+macro_args_save_b %1
+%endmacro
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dudiv 3
@@ -207,6 +261,24 @@ div bl
 macro_args_save_b %1
 %endmacro
 
+%macro dudiv 2
+macro_args_read_dd %1,%2
+div ebx
+macro_args_save_d %1
+%endmacro
+
+%macro wudiv 2
+macro_args_read_ww %1,%2
+div bx
+macro_args_save_w %1
+%endmacro
+
+%macro budiv 2
+macro_args_read_bb %1,%2
+div bl
+macro_args_save_b %1
+%endmacro
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dsdiv 3
@@ -223,6 +295,24 @@ macro_args_save_w %1
 
 %macro bsdiv 3
 macro_args_read_bb %2,%3
+idiv bl
+macro_args_save_b %1
+%endmacro
+
+%macro dsdiv 2
+macro_args_read_dd %1,%2
+idiv ebx
+macro_args_save_d %1
+%endmacro
+
+%macro wsdiv 2
+macro_args_read_ww %1,%2
+idiv bx
+macro_args_save_w %1
+%endmacro
+
+%macro bsdiv 2
+macro_args_read_bb %1,%2
 idiv bl
 macro_args_save_b %1
 %endmacro
@@ -250,6 +340,27 @@ mov al,ah
 macro_args_save_b %1
 %endmacro
 
+%macro dumod 2
+macro_args_read_dd %1,%2
+div ebx
+mov eax,edx
+macro_args_save_d %1
+%endmacro
+
+%macro wumod 2
+macro_args_read_ww %1,%2
+div bx
+mov ax,dx
+macro_args_save_w %1
+%endmacro
+
+%macro bumod 2
+macro_args_read_bb %1,%2
+div bl
+mov al,ah
+macro_args_save_b %1
+%endmacro
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dsmod 3
@@ -268,6 +379,27 @@ macro_args_save_w %1
 
 %macro bsmod 3
 macro_args_read_bb %2,%3
+idiv bl
+mov al,ah
+macro_args_save_b %1
+%endmacro
+
+%macro dsmod 2
+macro_args_read_dd %1,%2
+idiv ebx
+mov eax,edx
+macro_args_save_d %1
+%endmacro
+
+%macro wsmod 2
+macro_args_read_ww %1,%2
+idiv bx
+mov ax,dx
+macro_args_save_w %1
+%endmacro
+
+%macro bsmod 2
+macro_args_read_bb %1,%2
 idiv bl
 mov al,ah
 macro_args_save_b %1
