@@ -480,6 +480,16 @@ public:
 		auto&operator++(){
 			return *this+=1;
 		}
+		auto operator--(int){
+			auto q=*this;
+			*this-=1;
+			return q;
+		}
+		auto operator++(int){
+			auto q=*this;
+			*this+=1;
+			return q;
+		}
 		auto&operator+=(long w){
 			w*=d;
 			w+=o;
