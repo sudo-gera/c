@@ -2,7 +2,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-
 template<typename T>
 void check(T q,T e){
 	vector<T> a;
@@ -37,7 +36,7 @@ void check(T q,T e){
 struct B {int d=0; B(B&&){} explicit B(int f):d(f){} };
 
 int main(){
-	treap<int> e({1,2,3,4,5});
+	treap<long> e({1,2,3,4,5});
 	auto q=treap<string>({"1","2","3"});
 	auto w=q;
 	assert(q==w);
@@ -76,17 +75,17 @@ int main(){
 	assert(vector<string>(q)==vector<string>({"-1","0","1","2","3","4","5","6"}));
 	assert(vector<string>(w)==vector<string>({"0","1","2"}));
 	check(e.begin(),e.end());
-	assert(vector<int>(e)==vector<int>({1,2,3,4,5}));
+	assert(vector<long>(e)==vector<long>({1,2,3,4,5}));
 	reverse(e.begin(),e.end());
-	assert(vector<int>(e)==vector<int>({5,4,3,2,1}));
+	assert(vector<long>(e)==vector<long>({5,4,3,2,1}));
 	sort(e.begin(),e.end());
-	assert(vector<int>(e)==vector<int>({1,2,3,4,5}));
+	assert(vector<long>(e)==vector<long>({1,2,3,4,5}));
 	check(e.begin()-20,e.end()+20);
 	check(e.rbegin(),e.rend());
 	sort(e.rbegin(),e.rend());
-	assert(vector<int>(e)==vector<int>({5,4,3,2,1}));
+	assert(vector<long>(e)==vector<long>({5,4,3,2,1}));
 	reverse(e.begin(),e.end());
-	assert(vector<int>(e)==vector<int>({1,2,3,4,5}));
+	assert(vector<long>(e)==vector<long>({1,2,3,4,5}));
 	check(e.rbegin()-20,e.rend()+20);
 	e.clear();
 	auto y=e;
@@ -152,7 +151,7 @@ int main(){
 	for (size_t w=0;w<102400-102001;++w){
 		e.insert(w*250+1,w);
 	}
-	assert(vector<int>(z,x)==vector<int>(e));
+	assert(vector<long>(z,x)==vector<long>(e));
 	y=e;
 	for (size_t w=0;w<102400;++w){
 		swap(y,e);

@@ -187,7 +187,7 @@ class treap{
 	static std::pair<el*,el*> split(el* t,int64_t n){
 		if (!t){
 			return {(el*)(nullptr),(el*)(nullptr)};
-		}else if (!(t->z())){
+		}else if (t->z()==nullptr){
 			if (n<1){
 				return {(el*)(nullptr),t};
 			}else{
