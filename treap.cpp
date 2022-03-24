@@ -1,5 +1,5 @@
-#include "treap.hpp"
 #include <bits/stdc++.h>
+#include "treap.hpp"
 using namespace std;
 
 template<typename T>
