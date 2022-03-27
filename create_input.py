@@ -13,7 +13,15 @@ def rand(q=2**64):
 # 	print()
 # print(99999)
 
-n=4
+n=9
 print(n)
-for w in range(n):
-	print(rand(3),rand(3))
+a=[]
+while 1:
+	for w in range(n):
+		a+=[[rand(9),rand(9)]]
+	if any([len(set(w))==1 for w in zip(*a)]):
+		a=[]
+	else:
+		for w in a:
+			print(*w)
+		break

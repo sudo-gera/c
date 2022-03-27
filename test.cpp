@@ -175,12 +175,13 @@ auto run(point *a, long n) {
     a = s;
     rotate(a, a + 1, a + n);
   }
-  // std::sort(a,a+n,is_less);
+  auto d=area(a, n);
+  std::sort(a,a+n,is_less);
   std::cout << n << std::endl;
   for (auto w = 0; w < n; ++w) {
     std::cout << a[w].x << ' ' << a[w].y << std::endl;
   }
-  std::cout << std::fixed << std::setprecision(1) << area(a, n) << std::endl;
+  std::cout << std::fixed << std::setprecision(1) << d << std::endl;
   return a;
 }
 
@@ -192,5 +193,6 @@ int main() {
     std::cin >> a[w].x;
     std::cin >> a[w].y;
   }
-  delete[] run(a, n);
+  auto s=run(a, n);
+  delete[] s;
 }
