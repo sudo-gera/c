@@ -29,7 +29,9 @@ struct queue{
 
 size_t tmpst=0;
 
-#define check {if(v->data){tmpst=access(0)[0];tmpst=access(v->size)[0];tmpst=access(v->used)[0];}while(v->size>v->dsize or v->used>v->size){assert(0);};}
+#define check {if(v->data){tmpst=access(0)[0];tmpst=access(v->size)[0];tmpst=access(v->used)[0];}if(v->size>v->dsize or v->used>v->size){tmpst=*(int*)0;};}
+// #define check {if(v->data){tmpst=*(char*)(v->data);tmpst=*((char*)(v->data)+v->size*v->elem_size);}while(v->size>v->dsize){};}
+
 
 #define access(index) ((uint8_t*)(v->data)+(index)*v->elem_size)
 
@@ -41,9 +43,9 @@ int queue_resize(struct queue *v, size_t new_size){
 	check
 	if (new_size+1>v->dsize){
 		void*tmp=realloc(v->data,(new_size+1)*v->elem_size);
-		if (!tmp){
-			return 1;
-		}
+		// if (!tmp){
+		// 	return 1;
+		// }
 		v->data=tmp;
 		// for (size_t w=v->dsize*v->elem_size;w<(new_size+1)*v->elem_size;++w){
 		// 	access(0)[w]=0;
@@ -200,7 +202,7 @@ size_t queue_size(struct queue const *v){
 #ifdef HOME
 static void print_int(void const *data) {
 	uint32_t r=0,t=0;
-	int y;
+	uint32_t y=0;
 	uint8_t*id=(uint8_t*)(data);
 	t=id[0];
 	r+=t;
@@ -213,38 +215,38 @@ static void print_int(void const *data) {
 	r<<=8;
 	r>>=8;
 	y=r;
-	if (y>=(1<<23)){
-		y-=1<<24;
-	}
-	printf("%d", y);
+	// if (y>=(1<<23)){
+	// 	y-=1<<24;
+	// }
+	printf("%u", y);
 }
 
 int main() {
-	struct queue*v=queue_new(11);;
+	struct queue*v=queue_new(3);
 	for (;1;){
-		int q=0,w=0,r=0,e=0;
+		uint32_t q=0,w=0,r=0,e=0;
 		__int128_t ww=0;
-		scanf("%i",&q);
+		scanf("%u",&q);
 		printf("- %i\n",q);
 		if (q==0){
 			v=queue_delete(v);
-			v=queue_new(11);
+			v=queue_new(3);
 		}else
 		if (q==1){
-			scanf("%i",&w);
+			scanf("%u",&w);
 			ww=w;
 			r=queue_push(v,&ww);
 			printf("%i\n",r);
 		}else
 		if (q==2){
 			r=queue_pop(v,&ww);
-			printf("%i ",r);
+			printf("%u ",r);
 			print_int(&ww);
 			printf("\n");
 		}else
 		if (q==3){
 			r=queue_empty(v);
-			printf("%i\n",r);
+			printf("%u\n",r);
 		}else
 		if (q==4){
 			queue_print(v,print_int);

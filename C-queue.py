@@ -1,4 +1,4 @@
-from queue import Queue
+from h import *
 v=Queue()
 while 1:
 	q,w,e,r=0,0,0,0
@@ -13,7 +13,7 @@ while 1:
 		print(0);
 	elif (q==2):
 		if v.empty():
-			print(1)
+			print(1,0)
 		else:
 			w=v.get()
 			print(0,w);
@@ -21,7 +21,7 @@ while 1:
 		r=v.empty()+0;
 		print(r)
 	elif (q==4):
-		a=[v.get() for w in Queue()]
+		a=[v.get() for w in range(v.qsize())]
 		print(a)
 		[v.put(w) for w in a]
 	else:
