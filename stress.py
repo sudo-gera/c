@@ -33,10 +33,10 @@ def how_to_run(filename,start_time,stop,log):
 		compiled_file+='.out'
 	if not exists(compiled_file):
 		if filename.endswith('.cpp'):
-			if run(['g++','-Ofast','-lgmpxx','-lgmp','-std=c++17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',compiled_file]).returncode:
+			if run(['g++','-Ofast','-lgmpxx','-lgmp','-std=c++17','-Wfatal-errors','-fsanitize=address,undefined','-g',filename,'-o',compiled_file]).returncode:
 				exit()
 		if filename.endswith('.c'):
-			if run(['g++','-Ofast','-lgmpxx','-lgmp','-std=c++17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',compiled_file]).returncode:
+			if run(['g++','-Ofast','-lgmpxx','-lgmp','-std=c++17','-Wfatal-errors','-fsanitize=address,undefined','-g',filename,'-o',compiled_file]).returncode:
 				exit()
 		if filename.endswith('.py'):
 			if run(['python3','-m','py_compile',filename]).returncode:

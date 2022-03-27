@@ -1,4 +1,5 @@
 HOME=1
+from dataclasses import *
 from time import *
 from os import *
 from os.path import *
@@ -8,6 +9,7 @@ from random import *
 from urllib.request import *
 from pprint import *
 from math import *
+from cmath import *
 from decimal import *
 from traceback import *
 from fractions import *
@@ -29,6 +31,9 @@ def outputFunction(*a):
 	s=split(r' in ',a)
 	line=s[0]
 	a=a[len(s[0])+4:]
+	if '\n' in a:
+		a=a.split('\n',1)
+		a='- \n'.join(a)
 	s=split(r'- ',a)
 	func=s[0]
 	a=a[len(func)+2:]

@@ -1,36 +1,68 @@
-d=set()
-for r in ['b','w','d']:
-	for e in ['b','w','d']:
-		for w in ['b','w','d']:
-			for q in ['b','w','d']:
-				if q+w+e+r not in d:
-					d.add(q+w+e+r)
-					print('%macro macro_args_read_'+q+w+e+r+' '+str(len([z for z in [q,w,e,r] if z])))
-					print('regsave')
-					for t,y in enumerate([q,w,e,r]):
-						if y=='b':
-							print('push byte  %'+str(t+1))
-						if y=='w':
-							print('push word  %'+str(t+1))
-						if y=='d':
-							print('push dword %'+str(t+1))
-					print('regnull')
-					for t,y in list(enumerate([q,w,e,r]))[::-1]:
-						if y=='b':
-							print('pop  %sl'%"abcd"[t])
-						if y=='w':
-							print('pop  %sx'%"abcd"[t])
-						if y=='d':
-							print('pop e%sx'%"abcd"[t])
+from h import *
 
-					print('%endmacro')
-for r in ['','b','w','d']:
-	for e in ['','b','w','d']:
-		for w in ['','b','w','d']:
-			for q in ['','b','w','d']:
-				if q+w+e+r not in d:
-					d.add(q+w+e+r)
-					l=len([z for z in [q,w,e,r] if z])
-					print('%macro macro_args_read_'+q+w+e+r+' '+str(l))
-					print('macro_args_read_'+q+w+e+r+('d'*(4-l)+''.join([' %1',' %2',' %3',' %4',][:l])+''.join(([' 0']*4)[:(4-l)]))         )
-					print('%endmacro')
+@dataclass(order=1)
+class point:
+  x:int
+  y:int
+
+def rotate(A,B,C):
+  return (B.x-A.x)*(C.y-B.y)-(B.y-A.y)*(C.x-B.x)
+
+def grahamscan(A):
+  n = len(A)
+  P = list(range(n))
+  for i in range(1,n):
+    if A[P[i]].x<A[P[0]].x:
+      P[i], P[0] = P[0], P[i]
+  for i in range(2,n):
+    j = i
+    while j>1 and (rotate(A[P[0]],A[P[j-1]],A[P[j]])<0): 
+      P[j], P[j-1] = P[j-1], P[j]
+      j -= 1
+  S = [P[0],P[1]]
+  for i in range(2,n):
+    while rotate(A[S[-2]],A[S[-1]],A[P[i]])<0:
+      S.pop()
+    S.append(P[i])
+  return S
+
+
+def vd(q,e):
+  return q.x*e.y-q.y*e.x;
+
+def vect(_x,_y):
+  x=_y.x-_x.x
+  y=_y.y-_x.y
+  return point(x,y)
+
+def area(vertices):
+  res=0;
+  for w in range(2,len(vertices)):
+    res+=vd(vect(vertices[0],vertices[w-1]),vect(vertices[w-1],vertices[w]));
+  return abs(res)/2;
+
+def run(a):
+  n=len(a)
+  a.sort()
+  a=reduce(lambda a,s:a+[s] if s not in a else a, a, [])
+  aa=grahamscan(a)
+  a=[a[w] for w in aa]
+  for w in range(len(a)):
+    a=reduce(lambda _a,_s:_a+[_s] if len(_a)<2 or vd(vect(_a[-1],_s),vect(_a[-1],_a[-2])) else _a[:-1]+[_s], a, [])
+    a=a[1:]+a[:1]
+  r=[]
+  for w in a:
+    r.append(w)
+  # r.sort()
+  r=[len(a)]+r
+  r.append(round(area(a),1))
+  return r
+
+if __name__ == '__main__':
+  n=scan(int)
+  a=[point(scan(int),scan(int)) for w in range(n)]
+  a=run(a)
+  print(a[0])
+  for w in a[1:-1]:
+    print(w.x,w.y)
+  print(a[-1])
