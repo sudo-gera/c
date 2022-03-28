@@ -8,6 +8,7 @@
 
 template <typename T>
 class treap{
+private:
 	struct el{
 		T v;
 		int64_t w;
@@ -149,6 +150,81 @@ class treap{
 		pr(q->x(),n+1);
 	}
 
+	static auto pri(el* q,vector<int64_t>*p=0){
+		if (!q){
+			return;
+		}
+		int c=0;
+		if (!p){
+			p=new vector<int64_t>();
+			c=1;
+		}
+		auto&l=*p;
+		int64_t s=0;
+		if (l.size()){
+			s=l[l.size()-1];
+			if (s==2){
+				l[l.size()-1]=0;
+			}
+		}
+		l.push_back(2);
+		pri(q->z(),p);
+		l.pop_back();
+		if (l.size()){
+			l[l.size()-1]=s;
+		}
+		//┓┛┏┗┃━
+		//━┃┏┓┗┛┣┫┳┻╋
+		//┫
+		for (auto w=0;w<l.size();++w){
+			if (l[w]==1){
+				if (w==l.size()-1){
+					cout<<"┗";
+				}else{
+					cout<<"┃";
+				}
+			}else
+			if (l[w]==2){
+				if (w==l.size()-1){
+					cout<<"┏";
+				}else{
+					cout<<"┃";
+				}
+			}else{
+				cout<<" ";
+			}
+		}
+		if (q->z()==nullptr and q->x()==nullptr){
+			cout<<"━";
+		}else
+		if (q->z()==nullptr){
+			cout<<"┳";
+		}else
+		if (q->x()==nullptr){
+			cout<<"┻";
+		}else{
+			cout<<"╋";
+		}
+		std::cout<<"► ";
+		std::cout<<q->v<<std::endl;
+		s=0;
+		if (l.size()){
+			s=l[l.size()-1];
+			if (s==1){
+				l[l.size()-1]=0;
+			}
+		}
+		l.push_back(1);
+		pri(q->x(),p);
+		l.pop_back();
+		if (l.size()){
+			l[l.size()-1]=s;
+		}
+		if (c){
+			delete p;
+		}
+	}
+
 	static el* copy(el* q){
 		if (!q){
 			return nullptr;
@@ -276,6 +352,9 @@ class treap{
 
 	el* e=nullptr;
 public:
+	void out(){
+		pri(e);
+	}
 	template <typename y=std::initializer_list<T>>
 	treap(const y&l=std::initializer_list<T>(),
 		std::enable_if_t<

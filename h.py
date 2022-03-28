@@ -7,6 +7,7 @@ from sys import *
 from json import *
 from random import *
 from urllib.request import *
+from urllib.parse import *
 from pprint import *
 from math import *
 from cmath import *

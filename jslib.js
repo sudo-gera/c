@@ -31,4 +31,3 @@ async function urlopen_text(url){
 function sleep(s) {
 	return new Promise(resolve => setTimeout(resolve, 1000*s));
 }
-
