@@ -10,16 +10,7 @@
 #include <assert.h>
 #include <iso646.h>
 
-int run(uint32_t q,uint32_t w,uint32_t e,uint32_t r){
-	printf("%x\n",q);
-	printf("%x\n",w);
-	printf("%x\n",e);
-	printf("%x\n",r);
-}
-
 
 int main(){
-	int (*p)();
-	p=run;
-	p((uint64_t)(0x1234567887654321));
+	char*a="\n\x1b[31mI \x1b[33ma\x1b[32mm \x1b[36mg\x1b[34ma\x1b[35my\x1b[00m\n";
 }
