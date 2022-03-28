@@ -150,13 +150,13 @@ private:
 		pr(q->x(),n+1);
 	}
 
-	static auto pri(el* q,vector<int64_t>*p=0){
+	static auto pri(el* q,std::vector<int64_t>*p=0){
 		if (!q){
 			return;
 		}
 		int c=0;
 		if (!p){
-			p=new vector<int64_t>();
+			p=new std::vector<int64_t>();
 			c=1;
 		}
 		auto&l=*p;
@@ -179,31 +179,31 @@ private:
 		for (auto w=0;w<l.size();++w){
 			if (l[w]==1){
 				if (w==l.size()-1){
-					cout<<"┗";
+					std::cout<<"┗";
 				}else{
-					cout<<"┃";
+					std::cout<<"┃";
 				}
 			}else
 			if (l[w]==2){
 				if (w==l.size()-1){
-					cout<<"┏";
+					std::cout<<"┏";
 				}else{
-					cout<<"┃";
+					std::cout<<"┃";
 				}
 			}else{
-				cout<<" ";
+				std::cout<<" ";
 			}
 		}
 		if (q->z()==nullptr and q->x()==nullptr){
-			cout<<"━";
+			std::cout<<"━";
 		}else
 		if (q->z()==nullptr){
-			cout<<"┳";
+			std::cout<<"┳";
 		}else
 		if (q->x()==nullptr){
-			cout<<"┻";
+			std::cout<<"┻";
 		}else{
-			cout<<"╋";
+			std::cout<<"╋";
 		}
 		std::cout<<"► ";
 		std::cout<<q->v<<std::endl;
