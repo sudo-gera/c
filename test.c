@@ -1,24 +1,25 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <tgmath.h>
+#include <stdarg.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <inttypes.h>
+#include <ctype.h>
+#include <assert.h>
+#include <iso646.h>
 
-int run(unsigned int q){
-	return q+1;
+int run(uint32_t q,uint32_t w,uint32_t e,uint32_t r){
+	printf("%x\n",q);
+	printf("%x\n",w);
+	printf("%x\n",e);
+	printf("%x\n",r);
 }
-
-int aaa(long t){
-	return t;
-}
-
-int bbb(){
-	return 0;
-}
-
 
 
 int main(){
 	int (*p)();
 	p=run;
-	printf("%i",p(9));
-	p=aaa;
-	printf("%i",p(48));
-	p=bbb;
+	p((uint64_t)(0x1234567887654321));
 }
