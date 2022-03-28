@@ -228,7 +228,7 @@ int main(){
 	// q.insert(q.begin(),w);
 	// assert(vector<string>(q)==vector<string>({"2","1","0","-1","0","1","2","3","4","5","6"}));
 	// assert(vector<string>(w)==vector<string>({}));
-	e.resize(2000);
+	e.resize(102400);
 	for (size_t w=0;w<e.size();++w){
 		e[w]=w;
 	}
