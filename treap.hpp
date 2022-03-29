@@ -150,78 +150,78 @@ private:
 		pr(q->x(),n+1);
 	}
 
-	static auto pri(el* q,std::vector<int64_t>*p=0){
-		if (!q){
+	static auto pri(el* root,size_t*prev_node=0){
+		if (!root){
 			return;
 		}
-		int c=0;
-		if (!p){
-			p=new std::vector<int64_t>();
-			c=1;
+		el*left=(root)->z();
+		el*right=(root)->x();
+
+		size_t node[3];
+		node[2]=(size_t)NULL;
+		node[0]=(size_t)prev_node;
+		if (prev_node){
+			prev_node[2]=(size_t)node;
 		}
-		auto&l=*p;
-		int64_t s=0;
-		if (l.size()){
-			s=l[l.size()-1];
-			if (s==2){
-				l[l.size()-1]=0;
-			}
+
+		size_t save=0;
+		if (prev_node and prev_node[1]==2){
+			save=prev_node[1];
+			prev_node[1]=0;
 		}
-		l.push_back(2);
-		pri(q->z(),p);
-		l.pop_back();
-		if (l.size()){
-			l[l.size()-1]=s;
+		node[1]=2;
+		pri(left,node);
+		if (save){
+			prev_node[1]=save;
 		}
-		//┓┛┏┗┃━
-		//━┃┏┓┗┛┣┫┳┻╋
-		//┫
-		for (auto w=0;w<l.size();++w){
-			if (l[w]==1){
-				if (w==l.size()-1){
-					std::cout<<"┗";
+
+		size_t*d=node;
+		while(d[0]){
+			d=(size_t*)d[0];
+		}
+
+		for (;d!=node;d=(size_t*)d[2]){
+			if (d[1]==1){
+				if (d==prev_node){
+					std::cout<<("┗");
 				}else{
-					std::cout<<"┃";
+					std::cout<<("┃");
 				}
 			}else
-			if (l[w]==2){
-				if (w==l.size()-1){
-					std::cout<<"┏";
+			if (d[1]==2){
+				if (d==prev_node){
+					std::cout<<("┏");
 				}else{
-					std::cout<<"┃";
+					std::cout<<("┃");
 				}
 			}else{
-				std::cout<<" ";
+				std::cout<<(" ");
 			}
 		}
-		if (q->z()==nullptr and q->x()==nullptr){
-			std::cout<<"━";
+
+		if (left==NULL && right==NULL){
+			std::cout<<("━");
 		}else
-		if (q->z()==nullptr){
-			std::cout<<"┳";
+		if (left==NULL){
+			std::cout<<("┳");
 		}else
-		if (q->x()==nullptr){
-			std::cout<<"┻";
+		if (right==NULL){
+			std::cout<<("┻");
 		}else{
-			std::cout<<"╋";
+			std::cout<<("╋");
 		}
-		std::cout<<"► ";
-		std::cout<<q->v<<std::endl;
-		s=0;
-		if (l.size()){
-			s=l[l.size()-1];
-			if (s==1){
-				l[l.size()-1]=0;
-			}
+		std::cout<<("► ");
+		std::cout<<root->v<<std::endl;
+
+		save=0;
+		if (prev_node and prev_node[1]==1){
+			save=prev_node[1];
+			prev_node[1]=0;
 		}
-		l.push_back(1);
-		pri(q->x(),p);
-		l.pop_back();
-		if (l.size()){
-			l[l.size()-1]=s;
-		}
-		if (c){
-			delete p;
+		node[1]=1;
+		pri(right,node);
+		if (save){
+			prev_node[1]=save;
 		}
 	}
 
