@@ -108,6 +108,7 @@ mov al,[esp+1]
 %endif
 %endif
 %endif
+mov [esp+1],byte 0
 add esp,2
 %endmacro
 

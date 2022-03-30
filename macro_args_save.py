@@ -8,7 +8,7 @@ for r in ['','b','w','d']:
 					print('%macro macro_args_save_'+q+w+e+r+' '+str(len([z for z in [q,w,e,r] if z])))
 					f={'d':4,'w':2,'b':1,'':0}
 					g={'d':4,'w':4,'b':4,'':0}
-					print('add esp, '+str(16+g[q]+g[w]+g[e]+g[r]))
+					print('add esp, '+str(32+g[q]+g[w]+g[e]+g[r]))
 					for t,y in list(enumerate([q,w,e,r]))[::-1]:
 						if y=='b':
 							print('push dword 0')
@@ -22,13 +22,15 @@ for r in ['','b','w','d']:
 							print('push dword 0')
 							print('mov dword[esp],e%sx'%'abcd'[t])
 							# print('push dword e%sx'%'abcd'[t])
-					print('sub esp, '+str(16))
-					print('regload')
+					print('sub esp, '+str(32))
+					# print('regload')
+					# print('regload')
+					print('popad')
 					for t,y in list(enumerate([q,w,e,r])):
 						if y=='b':
 							# print('mov %'+str(t+1)+', byte[esp]')
 							# print('add esp,4')
-							print('popbw byte %'+str(t+1))
+							print('popbw      %'+str(t+1))
 							print('add esp,2')
 						if y=='w':
 							# print('mov %'+str(t+1)+', word[esp]')

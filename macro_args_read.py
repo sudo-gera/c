@@ -7,13 +7,15 @@ for r in ['b','w','d']:
 					d.add(q+w+e+r)
 					print('%macro macro_args_read_'+q+w+e+r+' '+str(len([z for z in [q,w,e,r] if z])))
 					print('sub esp,16')
-					print('regsave')
+					# print('regsave')
+					# print('regsave')
+					print('pushad')
 					for t,y in enumerate([q,w,e,r]):
 						if y=='b':
 							# print('push dword 0')
 							# print('mov byte [esp],%'+str(t+1))
 							print('push word 0')
-							print('pushbw byte %'+str(t+1))
+							print('pushbw      %'+str(t+1))
 						if y=='w':
 							# print('push dword 0')
 							# print('mov word [esp],%'+str(t+1))
@@ -23,14 +25,16 @@ for r in ['b','w','d']:
 							# print('push dword 0')
 							# print('mov dword[esp],%'+str(t+1))
 							print('push  dword %'+str(t+1))
-					print('regnull')
+					# print('regnull')
 					for t,y in list(enumerate([q,w,e,r]))[::-1]:
 						# if y=='b':
 							# print('pop  %sl'%"abcd"[t])
 						# if y=='w':
 							# print('pop  %sx'%"abcd"[t])
 						# if y=='d':
-						print('pop e%sx'%"abcd"[t])
+						# print('pop e%sx'%"abcd"[t])
+						pass
+					print('regload')
 
 					print('%endmacro\n')
 for r in ['','b','w','d']:
