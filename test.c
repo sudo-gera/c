@@ -12,5 +12,12 @@
 
 
 int main(){
-	char*a="\n\x1b[31mI \x1b[33ma\x1b[32mm \x1b[36mg\x1b[34ma\x1b[35my\x1b[00m\n";
+	uint32_t a[999];
+	uint32_t l=0;
+	a[0]=0;
+	a[1]=12;
+	a[2]='+=';
+	a[3]=0;
+	a[4]=34;	
+	
 }
