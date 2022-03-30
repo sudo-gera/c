@@ -8,6 +8,7 @@
 
 template <typename T>
 class treap{
+private:
 	struct el{
 		T v;
 		int64_t w;
@@ -149,6 +150,81 @@ class treap{
 		pr(q->x(),n+1);
 	}
 
+	static auto pri(el* root,size_t*prev_node=0){
+		if (!root){
+			return;
+		}
+		el*left=(root)->z();
+		el*right=(root)->x();
+
+		size_t node[3];
+		node[2]=(size_t)NULL;
+		node[0]=(size_t)prev_node;
+		if (prev_node){
+			prev_node[2]=(size_t)node;
+		}
+
+		size_t save=0;
+		if (prev_node and prev_node[1]==2){
+			save=prev_node[1];
+			prev_node[1]=0;
+		}
+		node[1]=2;
+		pri(left,node);
+		if (save){
+			prev_node[1]=save;
+		}
+
+		size_t*d=node;
+		while(d[0]){
+			d=(size_t*)d[0];
+		}
+
+		for (;d!=node;d=(size_t*)d[2]){
+			if (d[1]==1){
+				if (d==prev_node){
+					std::cout<<("┗");
+				}else{
+					std::cout<<("┃");
+				}
+			}else
+			if (d[1]==2){
+				if (d==prev_node){
+					std::cout<<("┏");
+				}else{
+					std::cout<<("┃");
+				}
+			}else{
+				std::cout<<(" ");
+			}
+		}
+
+		if (left==NULL && right==NULL){
+			std::cout<<("━");
+		}else
+		if (left==NULL){
+			std::cout<<("┳");
+		}else
+		if (right==NULL){
+			std::cout<<("┻");
+		}else{
+			std::cout<<("╋");
+		}
+		std::cout<<("► ");
+		std::cout<<root->v<<std::endl;
+
+		save=0;
+		if (prev_node and prev_node[1]==1){
+			save=prev_node[1];
+			prev_node[1]=0;
+		}
+		node[1]=1;
+		pri(right,node);
+		if (save){
+			prev_node[1]=save;
+		}
+	}
+
 	static el* copy(el* q){
 		if (!q){
 			return nullptr;
@@ -276,6 +352,9 @@ class treap{
 
 	el* e=nullptr;
 public:
+	void out(){
+		pri(e);
+	}
 	template <typename y=std::initializer_list<T>>
 	treap(const y&l=std::initializer_list<T>(),
 		std::enable_if_t<
