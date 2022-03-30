@@ -1,79 +1,79 @@
 %macro regout 0
-PRINT "eax == "
-PUTCHAR 27
-PRINT "[32m"
-SIGNINT eax
-PUTCHAR 27
-PRINT "[0m"
+sput "eax == "
+cput 27
+sput "[32m"
+dsput eax
+cput 27
+sput "[0m"
 
-PUTCHAR 9
+cput 9
 
-PRINT "ebx == "
-PUTCHAR 27
-PRINT "[32m"
-SIGNINT ebx
-PUTCHAR 27
-PRINT "[0m"
+sput "ebx == "
+cput 27
+sput "[32m"
+dsput ebx
+cput 27
+sput "[0m"
 
-PUTCHAR 9
+cput 9
 
-PRINT "ecx == "
-PUTCHAR 27
-PRINT "[32m"
-SIGNINT ecx
-PUTCHAR 27
-PRINT "[0m"
+sput "ecx == "
+cput 27
+sput "[32m"
+dsput ecx
+cput 27
+sput "[0m"
 
-PUTCHAR 9
+cput 9
 
-PRINT "edx == "
-PUTCHAR 27
-PRINT "[32m"
-SIGNINT edx
-PUTCHAR 27
-PRINT "[0m"
+sput "edx == "
+cput 27
+sput "[32m"
+dsput edx
+cput 27
+sput "[0m"
 
-PUTCHAR 9
+cput 9
 
-PRINT " esi == "
-PUTCHAR 27
-PRINT "[32m"
-SIGNINT esi
-PUTCHAR 27
-PRINT "[0m"
+sput " esi == "
+cput 27
+sput "[32m"
+dsput esi
+cput 27
+sput "[0m"
 
-PUTCHAR 9
+cput 9
 
-PRINT " edi == "
-PUTCHAR 27
-PRINT "[32m"
-SIGNINT edi
-PUTCHAR 27
-PRINT "[0m"
+sput " edi == "
+cput 27
+sput "[32m"
+dsput edi
+cput 27
+sput "[0m"
 
-PUTCHAR 9
+cput 9
 
-PRINT " ebp == "
-PUTCHAR 27
-PRINT "[32m"
-SIGNINT ebp
-PUTCHAR 27
-PRINT "[0m"
+sput " ebp == "
+cput 27
+sput "[32m"
+dsput ebp
+cput 27
+sput "[0m"
 
-PUTCHAR 9
+cput 9
 
-PRINT " esp == "
-PUTCHAR 27
-PRINT "[32m"
+sput " esp == "
+cput 27
+sput "[32m"
 sub [esp_base],esp
 neg dword [esp_base]
-SIGNINT [esp_base]
+dsput [esp_base]
 neg dword [esp_base]
 add [esp_base],esp
-PUTCHAR 27
-PRINT "[0m"
+cput 27
+sput "[0m"
 
-PUTCHAR 10
+cput 10
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -91,7 +91,23 @@ mov [esp+1],byte 0
 mov [esp+1],al
 mov al,[esp]
 mov byte %1,al
+%ifnidni %1,al
+%ifnidni %1,byte al
+%ifnidni %1,byte byte al
+%ifnidni %1,byte byte byte al
+%ifnidni %1,byte byte byte byte al
+%ifnidni %1,byte byte byte byte byte al
+%ifnidni %1,byte byte byte byte byte byte al
+%ifnidni %1,byte byte byte byte byte byte byte al
 mov al,[esp+1]
+%endif
+%endif
+%endif
+%endif
+%endif
+%endif
+%endif
+%endif
 add esp,2
 %endmacro
 
@@ -156,7 +172,7 @@ jmp dword [esp-4]
 %macro macro_cmp_b 4
 push dword %3
 macro_args_read_bb %1,%2
-cmp ax,bx
+cmp al,bl
 %4 %%_jmp
 macro_args_save_
 add esp,4

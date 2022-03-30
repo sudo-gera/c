@@ -407,6 +407,52 @@ macro_args_save_b %1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+%macro dudivmod 4
+macro_args_read_dd %3,%4
+div ebx
+mov ebx,edx
+macro_args_save_dd %1,%2
+%endmacro
+
+%macro wudivmod 4
+macro_args_read_ww %3,%4
+div bx
+mov bx,dx
+macro_args_save_ww %1,%2
+%endmacro
+
+%macro budivmod 4
+macro_args_read_bb %3,%4
+div bl
+mov bl,ah
+macro_args_save_bb %1,%2
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro dsdivmod 4
+macro_args_read_dd %3,%4
+idiv ebx
+mov ebx,edx
+macro_args_save_dd %1,%2
+%endmacro
+
+%macro wsdivmod 4
+macro_args_read_ww %3,%4
+idiv bx
+mov bx,dx
+macro_args_save_ww %1,%2
+%endmacro
+
+%macro bsdivmod 4
+macro_args_read_bb %3,%4
+idiv bl
+mov bl,ah
+macro_args_save_bb %1,%2
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 %macro dslt 3
 macro_cmp_d %1,%2,%3,jl
 %endmacro
@@ -547,6 +593,20 @@ macro_cmp_b %1,%2,%3,jae
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+%macro dneg 1
+neg dword %1
+%endmacro
+
+%macro wneg 1
+neg word %1
+%endmacro
+
+%macro bneg 1
+neg byte %1
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 %macro dinc 1
 inc dword %1
 %endmacro
@@ -648,4 +708,422 @@ macro_args_save_b %1
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro lstop 0
+jmp %$__lstep
+%$__lstop:
+%pop
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro dulstart 4
+%push loop
+dmov %1,%2
+dsub %1,%4
+%$__lstep:
+dadd %1,%4
+dslt %4,0,%%_less
+duge %1,%3,%$__lstop
+jmp %%_end
+%%_less:
+dule %1,%3,%$__lstop
+%%_end:
+%endmacro
+
+%macro wulstart 4
+%push loop
+wmov %1,%2
+wsub %1,%4
+%$__lstep:
+wadd %1,%4
+wslt %4,0,%%_less
+wuge %1,%3,%$__lstop
+jmp %%_end
+%%_less:
+wule %1,%3,%$__lstop
+%%_end:
+%endmacro
+
+%macro bulstart 4
+%push loop
+bmov %1,%2
+bsub %1,%4
+%$__lstep:
+badd %1,%4
+bslt %4,0,%%_less
+buge %1,%3,%$__lstop
+jmp %%_end
+%%_less:
+bule %1,%3,%$__lstop
+%%_end:
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro dslstart 4
+%push loop
+dmov %1,%2
+dsub %1,%4
+%$__lstep:
+dadd %1,%4
+dslt %4,0,%%_less
+dsge %1,%3,%$__lstop
+jmp %%_end
+%%_less:
+dsle %1,%3,%$__lstop
+%%_end:
+%endmacro
+
+%macro wslstart 4
+%push loop
+wmov %1,%2
+wsub %1,%4
+%$__lstep:
+wadd %1,%4
+wslt %4,0,%%_less
+wsge %1,%3,%$__lstop
+jmp %%_end
+%%_less:
+wsle %1,%3,%$__lstop
+%%_end:
+%endmacro
+
+%macro bslstart 4
+%push loop
+bmov %1,%2
+bsub %1,%4
+%$__lstep:
+badd %1,%4
+bslt %4,0,%%_less
+bsge %1,%3,%$__lstop
+jmp %%_end
+%%_less:
+bsle %1,%3,%$__lstop
+%%_end:
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro dulstart 3
+dulstart %1,%2,%3,1
+%endmacro
+
+%macro wulstart 3
+wulstart %1,%2,%3,1
+%endmacro
+
+%macro bulstart 3
+bulstart %1,%2,%3,1
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro dslstart 3
+dslstart %1,%2,%3,1
+%endmacro
+
+%macro wslstart 3
+wslstart %1,%2,%3,1
+%endmacro
+
+%macro bslstart 3
+bslstart %1,%2,%3,1
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro dulstart 2
+dulstart %1,0,%2,1
+%endmacro
+
+%macro wulstart 2
+wulstart %1,0,%2,1
+%endmacro
+
+%macro bulstart 2
+bulstart %1,0,%2,1
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro dslstart 2
+dslstart %1,0,%2,1
+%endmacro
+
+%macro wslstart 2
+wslstart %1,0,%2,1
+%endmacro
+
+%macro bslstart 2
+bslstart %1,0,%2,1
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro duput 1
+macro_args_read_d %1
+dne eax,0,%%_5
+cput '0'
+jmp %%_4
+%%_5:
+dulstart edx,20
+dudivmod eax,ebx,eax,10
+add ebx,48
+dmul ebx,256
+mov ecx,ebx
+dudivmod eax,ebx,eax,10
+add ebx,48
+add ecx,ebx
+push cx
+lstop
+mov edx,esp
+add edx,40
+%%_1:
+mov eax,0
+pop ax
+wne ax,48*256+48,%%_2
+jmp %%_1
+%%_2:
+push ax
+wumod ax,256
+wne ax,48,%%_3
+sub edx,esp
+sub edx,1
+mov eax,4
+mov ebx,1
+mov ecx,esp
+add ecx,1
+int 0x80
+add edx,1
+add esp,edx
+jmp %%_4
+%%_3:
+sub edx,esp
+mov eax,4
+mov ebx,1
+mov ecx,esp
+int 0x80
+add esp,edx
+%%_4:
+macro_args_save_
+%endmacro
+
+%macro wuput 1
+macro_args_read_w %1
+duput eax
+macro_args_save_
+%endmacro
+
+%macro buput 1
+macro_args_read_b %1
+duput eax
+macro_args_save_
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro dsput 1
+macro_args_read_d %1
+dslt eax,0,%%_1
+duput eax
+jmp %%_2
+%%_1:
+cput '-'
+dneg eax
+duput eax
+%%_2:
+macro_args_save_
+%endmacro
+
+%macro wsput 1
+macro_args_read_w %1
+movsx eax,ax
+dsput eax
+macro_args_save_
+%endmacro
+
+%macro bsput 1
+macro_args_read_b %1
+movsx eax,al
+dsput eax
+macro_args_save_
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro cput 1
+macro_args_read_b %1
+pushbw al
+mov eax,4
+mov ebx,1
+mov ecx,esp
+mov edx,1
+int 0x80
+add esp,2
+macro_args_save_
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro duprint 1
+duput %1
+cput 10
+%endmacro
+
+%macro wuprint 1
+wuput %1
+cput 10
+%endmacro
+
+%macro buprint 1
+buput %1
+cput 10
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro duwrite 1
+duput %1
+cput 32
+%endmacro
+
+%macro wuwrite 1
+wuput %1
+cput 32
+%endmacro
+
+%macro buwrite 1
+buput %1
+cput 32
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro dsprint 1
+dsput %1
+cput 10
+%endmacro
+
+%macro wsprint 1
+wsput %1
+cput 10
+%endmacro
+
+%macro bsprint 1
+bsput %1
+cput 10
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro dswrite 1
+dsput %1
+cput 32
+%endmacro
+
+%macro wswrite 1
+wsput %1
+cput 32
+%endmacro
+
+%macro bswrite 1
+bsput %1
+cput 32
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro cprint 1
+cput %1
+cput 10
+%endmacro
+
+%macro cwrite 1
+cput %1
+cput 32
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro cget 1
+macro_args_read_
+push word 0
+mov eax,3
+mov ebx,2
+mov ecx,esp
+mov edx,1
+int 0x80
+pop ax
+macro_args_save_b %1
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro dget 1
+macro_args_read_
+%%_1:
+mov eax,0
+cget al
+bne al,'-',%%_2
+mov edx,1
+jmp %%_1
+%%_2:
+bult al,'0',%%_4
+bugt al,'9',%%_4
+jmp %%_3
+%%_4:
+deq ecx,0,%%_1
+jmp %%_6
+%%_3:
+mov ecx,1
+sub eax,48
+dmul ebx,10
+add ebx,eax
+jmp %%_1
+%%_6:
+dne edx,1,%%_5
+neg ebx
+%%_5:
+mov eax,ebx
+macro_args_save_d %1
+%endmacro
+
+%macro wget 1
+macro_args_read_
+dget eax
+macro_args_save_w %1
+%endmacro
+
+%macro bget 1
+macro_args_read_
+dget eax
+macro_args_save_b %1
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro sput 1
+macro_args_read_
+jmp %%_1
+%%_2:
+db %1
+%%_1:
+mov eax,4
+mov ebx,1
+mov ecx,%%_2
+mov edx,%%_1-%%_2
+int 0x80
+macro_args_save_
+%endmacro
+
+%macro sprint 1
+sput %1
+cput 10
+%endmacro
+
+%macro swrite 1
+sput %1
+cput 32
+%endmacro
 
