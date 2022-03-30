@@ -52,8 +52,21 @@ def run(a):
     a=a[1:]+a[:1]
   r=[]
 
-  for w in a:
-    r.append(w)
+
+  n=len(a)
+  perf_index = 0
+  for w in range(len(a)):
+    mp = 0;
+    if (a[w].x < a[perf_index].x):
+      mp = 1
+    if (a[w].x == a[perf_index].x and a[w].y < a[perf_index].y):
+      mp = 1
+    if (mp):
+      perf_index = w;
+  a=a[perf_index:]+a[:perf_index]
+
+  for w in range(n,0,-1):
+    r.append(a[w%n])
 
   r=[len(a)]+r
   r.append(round(area(a),1))
