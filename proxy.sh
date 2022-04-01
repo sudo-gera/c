@@ -1,4 +1,3 @@
-echo "source this";
 hp="8080"
 sp="1080"
 pradd="http://192.168.49.1"

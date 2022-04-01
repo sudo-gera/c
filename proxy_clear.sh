@@ -1,0 +1,12 @@
+export ftp_proxy="";
+export FTP_PROXY="";
+export http_proxy="";
+export HTTP_PROXY="";
+export https_proxy="";
+export HTTPS_PROXY="";
+export socks_PROXY="";
+export SOCKS_PROXY="";
+export socks4_PROXY="";
+export SOCKS4_PROXY="";
+export socks5_PROXY="";
+export SOCKS5_PROXY="";

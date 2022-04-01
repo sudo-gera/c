@@ -33,11 +33,40 @@ section .data
 alld
 esp_base dd 0
 section .text
+
+macro_print_call macro_duput
+macro_print_call macro_wuput
+macro_print_call macro_buput
+macro_print_call macro_dsput
+macro_print_call macro_wsput
+macro_print_call macro_bsput
+
+macro_print_call macro_cput
+
+macro_print_call macro_duprint
+macro_print_call macro_wuprint
+macro_print_call macro_buprint
+macro_print_call macro_dsprint
+macro_print_call macro_wsprint
+macro_print_call macro_bsprint
+
+macro_print_call macro_duwrite
+macro_print_call macro_wuwrite
+macro_print_call macro_buwrite
+macro_print_call macro_dswrite
+macro_print_call macro_wswrite
+macro_print_call macro_bswrite
+
 _start:
 mov [esp_base],esp
 %endmacro
 
 %macro stop 0-1 0
+_stop:
+cmp [esp_base],esp
+je %%_1
+sprint "warning: stack not empty"
+%%_1:
 mov ebx, %1
 mov eax, 1
 int 0x80
@@ -46,6 +75,7 @@ int 0x80
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %include "macro_tools.inc"
+%include "macro_usual.inc"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -709,97 +739,89 @@ macro_args_save_b %1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-%macro end 0
-jmp %$__jend
-%$__mend:
-%pop
-%endmacro
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 %macro dufor 4
-%push loop
+%push for
 dmov %1,%2
 dsub %1,%4
-%$__jend:
+%$__jup:
 dadd %1,%4
 dslt %4,0,%%_less
-duge %1,%3,%$__mend
+duge %1,%3,%$__jdown
 jmp %%_end
 %%_less:
-dule %1,%3,%$__mend
+dule %1,%3,%$__jdown
 %%_end:
 %endmacro
 
 %macro wufor 4
-%push loop
+%push for
 wmov %1,%2
 wsub %1,%4
-%$__jend:
+%$__jup:
 wadd %1,%4
 wslt %4,0,%%_less
-wuge %1,%3,%$__mend
+wuge %1,%3,%$__jdown
 jmp %%_end
 %%_less:
-wule %1,%3,%$__mend
+wule %1,%3,%$__jdown
 %%_end:
 %endmacro
 
 %macro bufor 4
-%push loop
+%push for
 bmov %1,%2
 bsub %1,%4
-%$__jend:
+%$__jup:
 badd %1,%4
 bslt %4,0,%%_less
-buge %1,%3,%$__mend
+buge %1,%3,%$__jdown
 jmp %%_end
 %%_less:
-bule %1,%3,%$__mend
+bule %1,%3,%$__jdown
 %%_end:
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dsfor 4
-%push loop
+%push for
 dmov %1,%2
 dsub %1,%4
-%$__jend:
+%$__jup:
 dadd %1,%4
 dslt %4,0,%%_less
-dsge %1,%3,%$__mend
+dsge %1,%3,%$__jdown
 jmp %%_end
 %%_less:
-dsle %1,%3,%$__mend
+dsle %1,%3,%$__jdown
 %%_end:
 %endmacro
 
 %macro wsfor 4
-%push loop
+%push for
 wmov %1,%2
 wsub %1,%4
-%$__jend:
+%$__jup:
 wadd %1,%4
 wslt %4,0,%%_less
-wsge %1,%3,%$__mend
+wsge %1,%3,%$__jdown
 jmp %%_end
 %%_less:
-wsle %1,%3,%$__mend
+wsle %1,%3,%$__jdown
 %%_end:
 %endmacro
 
 %macro bsfor 4
-%push loop
+%push for
 bmov %1,%2
 bsub %1,%4
-%$__jend:
+%$__jup:
 badd %1,%4
 bslt %4,0,%%_less
-bsge %1,%3,%$__mend
+bsge %1,%3,%$__jdown
 jmp %%_end
 %%_less:
-bsle %1,%3,%$__mend
+bsle %1,%3,%$__jdown
 %%_end:
 %endmacro
 
@@ -861,176 +883,346 @@ bsfor %1,0,%2,1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-%macro duput_eax 0
-mov ebx,10
-mov edi,eax
-
-%%_1:
-inc ecx
-div ebx
-mov edx,0
-cmp eax,0
-jne %%_1
-
-mov esi,ecx
-mov edx,0
-mov eax,1
-
-%%_2:
-push eax
-mul ebx
-loop %%_2
-
-mov ecx,esi
-mov eax,edi
-
-%%_3:
-pop ebx
-mov edx,0
-div ebx
-add eax,48
-cput al
-mov eax,edx
-loop %%_3
-%endmacro
-
 %macro duput 1
-macro_args_read_d %1
-duput_eax
-macro_args_save_
+push %%_1
+push dword %1
+jmp _macro_duput
+%%_1:
 %endmacro
 
 %macro wuput 1
-macro_args_read_w %1
-duput_eax
-macro_args_save_
+push %%_1
+push word 0
+push word %1
+jmp _macro_wuput
+%%_1:
 %endmacro
 
 %macro buput 1
-macro_args_read_b %1
-duput_eax
-macro_args_save_
+push %%_1
+push word 0
+pushbw %1
+jmp _macro_buput
+%%_1:
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro dsput 1
-macro_args_read_d %1
-cmp eax,0
-jge %%_1
-cput '-'
-neg eax
+push %%_1
+push dword %1
+jmp _macro_dsput
 %%_1:
-duput_eax
-macro_args_save_
 %endmacro
 
 %macro wsput 1
-macro_args_read_w %1
-movsx eax,ax
-dsput eax
-macro_args_save_
+push %%_1
+push word 0
+push word %1
+jmp _macro_wsput
+%%_1:
 %endmacro
 
 %macro bsput 1
-macro_args_read_b %1
-movsx eax,al
-dsput eax
-macro_args_save_
+push %%_1
+push word 0
+pushbw %1
+jmp _macro_bsput
+%%_1:
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro cput 1
-macro_args_read_b %1
-pushbw al
+push %%_1
+push word 0
+pushbw %1
+jmp _macro_cput
+%%_1:
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro duprint 1-*
+%if %0==1
+	push %%_1
+	push dword %1
+	jmp _macro_duprint
+	%%_1:
+%else
+	%rep %0-1
+	duput %1
+	cput 32
+	%rotate 1
+	%endrep
+	duput %1
+	cput 10
+%endif
+%endmacro
+
+%macro wuprint 1-*
+%if %0==1
+	push %%_1
+	push word 0
+	push word %1
+	jmp _macro_wuprint
+	%%_1:
+%else
+	%rep %0-1
+	wuput %1
+	cput 32
+	%rotate 1
+	%endrep
+	wuput %1
+	cput 10
+%endif
+%endmacro
+
+%macro buprint 1-*
+%if %0==1
+	push %%_1
+	push word 0
+	pushbw %1
+	jmp _macro_buprint
+	%%_1:
+%else
+	%rep %0-1
+	buput %1
+	cput 32
+	%rotate 1
+	%endrep
+	buput %1
+	cput 10
+%endif
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro duwrite 1-*
+%if %0==1
+	push %%_1
+	push dword %1
+	jmp _macro_duwrite
+	%%_1:
+%else
+	%rep %0
+	duput %1
+	cput 32
+	%rotate 1
+	%endrep
+%endif
+%endmacro
+
+%macro wuwrite 1-*
+%if %0==1
+	push %%_1
+	push word 0
+	push word %1
+	jmp _macro_wuwrite
+	%%_1:
+%else
+	%rep %0
+	wuput %1
+	cput 32
+	%rotate 1
+	%endrep
+%endif
+%endmacro
+
+%macro buwrite 1-*
+%if %0==1
+	push %%_1
+	push word 0
+	pushbw %1
+	jmp _macro_buwrite
+	%%_1:
+%else
+	%rep %0
+	buput %1
+	cput 32
+	%rotate 1
+	%endrep
+%endif
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro dsprint 1-*
+%if %0==1
+	push %%_1
+	push dword %1
+	jmp _macro_dsprint
+	%%_1:
+%else
+	%rep %0-1
+	dsput %1
+	cput 32
+	%rotate 1
+	%endrep
+	dsput %1
+	cput 10
+%endif
+%endmacro
+
+%macro wsprint 1-*
+%if %0==1
+	push %%_1
+	push word 0
+	push word %1
+	jmp _macro_wsprint
+	%%_1:
+%else
+	%rep %0-1
+	wsput %1
+	cput 32
+	%rotate 1
+	%endrep
+	wsput %1
+	cput 10
+%endif
+%endmacro
+
+%macro bsprint 1-*
+%if %0==1
+	push %%_1
+	push word 0
+	pushbw %1
+	jmp _macro_bsprint
+	%%_1:
+%else
+	%rep %0-1
+	bsput %1
+	cput 32
+	%rotate 1
+	%endrep
+	bsput %1
+	cput 10
+%endif
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro dswrite 1-*
+%if %0==1
+	push %%_1
+	push dword %1
+	jmp _macro_dswrite
+	%%_1:
+%else
+	%rep %0
+	dsput %1
+	cput 32
+	%rotate 1
+	%endrep
+%endif
+%endmacro
+
+%macro wswrite 1-*
+%if %0==1
+	push %%_1
+	push word 0
+	push word %1
+	jmp _macro_wswrite
+	%%_1:
+%else
+	%rep %0
+	wsput %1
+	cput 32
+	%rotate 1
+	%endrep
+%endif
+%endmacro
+
+%macro bswrite 1-*
+%if %0==1
+	push %%_1
+	push word 0
+	pushbw %1
+	jmp _macro_bswrite
+	%%_1:
+%else
+	%rep %0
+	bsput %1
+	cput 32
+	%rotate 1
+	%endrep
+%endif
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro cprint 1-*
+%if %0==1
+	push %%_1
+	push word 0
+	pushbw %1
+	jmp _macro_cprint
+	%%_1:
+%else
+	%rep %0-1
+	cput %1
+	cput 32
+	%rotate 1
+	%endrep
+	cput %1
+	cput 10
+%endif
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro cwrite 1-*
+%if %0==1
+	push %%_1
+	push word 0
+	pushbw %1
+	jmp _macro_cwrite
+	%%_1:
+%else
+	%rep %0
+	cput %1
+	cput 32
+	%rotate 1
+	%endrep
+%endif
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro sput 1
+macro_args_read_
+jmp %%_1
+%%_2:
+db %1
+%%_1:
 mov eax,4
 mov ebx,1
-mov ecx,esp
-mov edx,1
+mov ecx,%%_2
+mov edx,%%_1-%%_2
 int 0x80
-add esp,2
 macro_args_save_
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-%macro duprint 1
-duput %1
-cput 10
-%endmacro
-
-%macro wuprint 1
-wuput %1
-cput 10
-%endmacro
-
-%macro buprint 1
-buput %1
+%macro sprint 1-*
+%rep %0-1
+sput %1
+cput 32
+%rotate 1
+%endrep
+sput %1
 cput 10
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-%macro duwrite 1
-duput %1
+%macro swrite 1-*
+%rep %0
+sput %1
 cput 32
-%endmacro
-
-%macro wuwrite 1
-wuput %1
-cput 32
-%endmacro
-
-%macro buwrite 1
-buput %1
-cput 32
-%endmacro
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-%macro dsprint 1
-dsput %1
-cput 10
-%endmacro
-
-%macro wsprint 1
-wsput %1
-cput 10
-%endmacro
-
-%macro bsprint 1
-bsput %1
-cput 10
-%endmacro
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-%macro dswrite 1
-dsput %1
-cput 32
-%endmacro
-
-%macro wswrite 1
-wsput %1
-cput 32
-%endmacro
-
-%macro bswrite 1
-bsput %1
-cput 32
-%endmacro
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-%macro cprint 1
-cput %1
-cput 10
-%endmacro
-
-%macro cwrite 1
-cput %1
-cput 32
+%rotate 1
+%endrep
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1092,32 +1284,6 @@ macro_args_save_b %1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-%macro sput 1
-macro_args_read_
-jmp %%_1
-%%_2:
-db %1
-%%_1:
-mov eax,4
-mov ebx,1
-mov ecx,%%_2
-mov edx,%%_1-%%_2
-int 0x80
-macro_args_save_
-%endmacro
-
-%macro sprint 1
-sput %1
-cput 10
-%endmacro
-
-%macro swrite 1
-sput %1
-cput 32
-%endmacro
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 %macro dpush 1
 push dword %1
 %endmacro
@@ -1145,4 +1311,487 @@ popbw %1
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro duwhile 3
+%push while
+%$__jup:
+%ifidni %2,<
+duge %1,%3,%$__jdown
+%elifidni %2,<=
+dugt %1,%3,%$__jdown
+%elifidni %2,>=
+dult %1,%3,%$__jdown
+%elifidni %2,>
+dule %1,%3,%$__jdown
+%elifidni %2,==
+dne %1,%3,%$__jdown
+%elifidni %2,!=
+deq %1,%3,%$__jdown
+%endif
+%endmacro
+
+%macro wuwhile 3
+%push while
+%$__jup:
+%ifidni %2,<
+wuge %1,%3,%$__jdown
+%elifidni %2,<=
+wugt %1,%3,%$__jdown
+%elifidni %2,>=
+wult %1,%3,%$__jdown
+%elifidni %2,>
+wule %1,%3,%$__jdown
+%elifidni %2,==
+wne %1,%3,%$__jdown
+%elifidni %2,!=
+weq %1,%3,%$__jdown
+%endif
+%endmacro
+
+%macro buwhile 3
+%push while
+%$__jup:
+%ifidni %2,<
+buge %1,%3,%$__jdown
+%elifidni %2,<=
+bugt %1,%3,%$__jdown
+%elifidni %2,>=
+bult %1,%3,%$__jdown
+%elifidni %2,>
+bule %1,%3,%$__jdown
+%elifidni %2,==
+bne %1,%3,%$__jdown
+%elifidni %2,!=
+beq %1,%3,%$__jdown
+%endif
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro dswhile 3
+%push while
+%$__jup:
+%ifidni %2,<
+dsge %1,%3,%$__jdown
+%elifidni %2,<=
+dsgt %1,%3,%$__jdown
+%elifidni %2,>=
+dslt %1,%3,%$__jdown
+%elifidni %2,>
+dsle %1,%3,%$__jdown
+%elifidni %2,==
+dne %1,%3,%$__jdown
+%elifidni %2,!=
+deq %1,%3,%$__jdown
+%endif
+%endmacro
+
+%macro wswhile 3
+%push while
+%$__jup:
+%ifidni %2,<
+wsge %1,%3,%$__jdown
+%elifidni %2,<=
+wsgt %1,%3,%$__jdown
+%elifidni %2,>=
+wslt %1,%3,%$__jdown
+%elifidni %2,>
+wsle %1,%3,%$__jdown
+%elifidni %2,==
+wne %1,%3,%$__jdown
+%elifidni %2,!=
+weq %1,%3,%$__jdown
+%endif
+%endmacro
+
+%macro bswhile 3
+%push while
+%$__jup:
+%ifidni %2,<
+bsge %1,%3,%$__jdown
+%elifidni %2,<=
+bsgt %1,%3,%$__jdown
+%elifidni %2,>=
+bslt %1,%3,%$__jdown
+%elifidni %2,>
+bsle %1,%3,%$__jdown
+%elifidni %2,==
+bne %1,%3,%$__jdown
+%elifidni %2,!=
+beq %1,%3,%$__jdown
+%endif
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro end 0
+jmp %$__jup
+%$__jdown:
+%$__jelse:
+%pop
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro duif 3
+%push if
+jmp %%_1
+%$__jup:
+jmp %$__jdown
+%%_1:
+%ifidni %2,<
+duge %1,%3,%$__jelse
+%elifidni %2,<=
+dugt %1,%3,%$__jelse
+%elifidni %2,>=
+dult %1,%3,%$__jelse
+%elifidni %2,>
+dule %1,%3,%$__jelse
+%elifidni %2,==
+dne %1,%3,%$__jelse
+%elifidni %2,!=
+deq %1,%3,%$__jelse
+%endif
+%endmacro
+
+%macro wuif 3
+%push if
+jmp %%_1
+%$__jup:
+jmp %$__jdown
+%%_1:
+%ifidni %2,<
+wuge %1,%3,%$__jelse
+%elifidni %2,<=
+wugt %1,%3,%$__jelse
+%elifidni %2,>=
+wult %1,%3,%$__jelse
+%elifidni %2,>
+wule %1,%3,%$__jelse
+%elifidni %2,==
+wne %1,%3,%$__jelse
+%elifidni %2,!=
+weq %1,%3,%$__jelse
+%endif
+%endmacro
+
+%macro buif 3
+%push if
+jmp %%_1
+%$__jup:
+jmp %$__jdown
+%%_1:
+%ifidni %2,<
+buge %1,%3,%$__jelse
+%elifidni %2,<=
+bugt %1,%3,%$__jelse
+%elifidni %2,>=
+bult %1,%3,%$__jelse
+%elifidni %2,>
+bule %1,%3,%$__jelse
+%elifidni %2,==
+bne %1,%3,%$__jelse
+%elifidni %2,!=
+beq %1,%3,%$__jelse
+%endif
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro dsif 3
+%push if
+jmp %%_1
+%$__jup:
+jmp %$__jdown
+%%_1:
+%ifidni %2,<
+dsge %1,%3,%$__jelse
+%elifidni %2,<=
+dsgt %1,%3,%$__jelse
+%elifidni %2,>=
+dslt %1,%3,%$__jelse
+%elifidni %2,>
+dsle %1,%3,%$__jelse
+%elifidni %2,==
+dne %1,%3,%$__jelse
+%elifidni %2,!=
+deq %1,%3,%$__jelse
+%endif
+%endmacro
+
+%macro wsif 3
+%push if
+jmp %%_1
+%$__jup:
+jmp %$__jdown
+%%_1:
+%ifidni %2,<
+wsge %1,%3,%$__jelse
+%elifidni %2,<=
+wsgt %1,%3,%$__jelse
+%elifidni %2,>=
+wslt %1,%3,%$__jelse
+%elifidni %2,>
+wsle %1,%3,%$__jelse
+%elifidni %2,==
+wne %1,%3,%$__jelse
+%elifidni %2,!=
+weq %1,%3,%$__jelse
+%endif
+%endmacro
+
+%macro bsif 3
+%push if
+jmp %%_1
+%$__jup:
+jmp %$__jdown
+%%_1:
+%ifidni %2,<
+bsge %1,%3,%$__jelse
+%elifidni %2,<=
+bsgt %1,%3,%$__jelse
+%elifidni %2,>=
+bslt %1,%3,%$__jelse
+%elifidni %2,>
+bsle %1,%3,%$__jelse
+%elifidni %2,==
+bne %1,%3,%$__jelse
+%elifidni %2,!=
+beq %1,%3,%$__jelse
+%endif
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro else 0
+jmp %%_1
+%$__jelse:
+jmp %%_2
+%%_1:
+%$__jdown:
+%pop
+%push if
+%$__jup:
+jmp %$__jdown
+%%_2:
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro duelif 3
+jmp %%_1
+%$__jelse:
+jmp %%_2
+%%_1:
+%$__jdown:
+%pop
+%push if
+%$__jup:
+jmp %$__jdown
+%%_2:
+%ifidni %2,<
+duge %1,%3,%$__jelse
+%elifidni %2,<=
+dugt %1,%3,%$__jelse
+%elifidni %2,>=
+dult %1,%3,%$__jelse
+%elifidni %2,>
+dule %1,%3,%$__jelse
+%elifidni %2,==
+dne %1,%3,%$__jelse
+%elifidni %2,!=
+deq %1,%3,%$__jelse
+%endif
+%endmacro
+
+%macro wuelif 3
+jmp %%_1
+%$__jelse:
+jmp %%_2
+%%_1:
+%$__jdown:
+%pop
+%push if
+%$__jup:
+jmp %$__jdown
+%%_2:
+%ifidni %2,<
+wuge %1,%3,%$__jelse
+%elifidni %2,<=
+wugt %1,%3,%$__jelse
+%elifidni %2,>=
+wult %1,%3,%$__jelse
+%elifidni %2,>
+wule %1,%3,%$__jelse
+%elifidni %2,==
+wne %1,%3,%$__jelse
+%elifidni %2,!=
+weq %1,%3,%$__jelse
+%endif
+%endmacro
+
+%macro buelif 3
+jmp %%_1
+%$__jelse:
+jmp %%_2
+%%_1:
+%$__jdown:
+%pop
+%push if
+%$__jup:
+jmp %$__jdown
+%%_2:
+%ifidni %2,<
+buge %1,%3,%$__jelse
+%elifidni %2,<=
+bugt %1,%3,%$__jelse
+%elifidni %2,>=
+bult %1,%3,%$__jelse
+%elifidni %2,>
+bule %1,%3,%$__jelse
+%elifidni %2,==
+bne %1,%3,%$__jelse
+%elifidni %2,!=
+beq %1,%3,%$__jelse
+%endif
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro dselif 3
+jmp %%_1
+%$__jelse:
+jmp %%_2
+%%_1:
+%$__jdown:
+%pop
+%push if
+%$__jup:
+jmp %$__jdown
+%%_2:
+%ifidni %2,<
+dsge %1,%3,%$__jelse
+%elifidni %2,<=
+dsgt %1,%3,%$__jelse
+%elifidni %2,>=
+dslt %1,%3,%$__jelse
+%elifidni %2,>
+dsle %1,%3,%$__jelse
+%elifidni %2,==
+dne %1,%3,%$__jelse
+%elifidni %2,!=
+deq %1,%3,%$__jelse
+%endif
+%endmacro
+
+%macro wselif 3
+jmp %%_1
+%$__jelse:
+jmp %%_2
+%%_1:
+%$__jdown:
+%pop
+%push if
+%$__jup:
+jmp %$__jdown
+%%_2:
+%ifidni %2,<
+wsge %1,%3,%$__jelse
+%elifidni %2,<=
+wsgt %1,%3,%$__jelse
+%elifidni %2,>=
+wslt %1,%3,%$__jelse
+%elifidni %2,>
+wsle %1,%3,%$__jelse
+%elifidni %2,==
+wne %1,%3,%$__jelse
+%elifidni %2,!=
+weq %1,%3,%$__jelse
+%endif
+%endmacro
+
+%macro bselif 3
+jmp %%_1
+%$__jelse:
+jmp %%_2
+%%_1:
+%$__jdown:
+%pop
+%push if
+%$__jup:
+jmp %$__jdown
+%%_2:
+%ifidni %2,<
+bsge %1,%3,%$__jelse
+%elifidni %2,<=
+bsgt %1,%3,%$__jelse
+%elifidni %2,>=
+bslt %1,%3,%$__jelse
+%elifidni %2,>
+bsle %1,%3,%$__jelse
+%elifidni %2,==
+bne %1,%3,%$__jelse
+%elifidni %2,!=
+beq %1,%3,%$__jelse
+%endif
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro def 1-5
+%push func
+jmp %$__jdown
+func_ %+ %1:
+push eax
+mov eax,esp
+macro_args_read_dddd [eax+20],[eax+16],[eax+12],[eax+8]
+jmp %%_2
+
+%$__jup:
+macro_args_save_dddd [eax+8],[eax+12],[eax+16],[eax+20]
+pop eax
+add esp,4
+jmp [esp-4]
+
+%%_2:
+%endmacro
+
+%macro call0 1+
+macro_call %1
+add esp,16
+%endmacro
+
+%macro call1 2+
+macro_call %2
+pop dword %1
+add esp,12
+%endmacro
+
+%macro call2 3+
+macro_call %3
+pop dword %1
+pop dword %2
+add esp,8
+%endmacro
+
+%macro call3 4+
+macro_call %4
+pop dword %1
+pop dword %2
+pop dword %3
+add esp,4
+%endmacro
+
+%macro call4 5+
+macro_call %5
+pop dword %1
+pop dword %2
+pop dword %3
+pop dword %4
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+start
+
 

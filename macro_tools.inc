@@ -187,3 +187,211 @@ jmp dword [esp-4]
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+%macro macro_call 1-5
+push dword %2+0
+push dword %3+0
+push dword %4+0
+push dword %5+0
+push dword %%_1
+jmp func_ %+ %1
+%%_1:
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro macro_duput_eax 0
+mov ebx,10
+mov edi,eax
+
+%%_1:
+inc ecx
+div ebx
+mov edx,0
+cmp eax,0
+jne %%_1
+
+mov esi,ecx
+mov edx,0
+mov eax,1
+
+%%_2:
+push eax
+mul ebx
+loop %%_2
+
+mov ecx,esi
+mov eax,edi
+
+%%_3:
+pop ebx
+mov edx,0
+div ebx
+add eax,48
+cput al
+mov eax,edx
+loop %%_3
+%endmacro
+
+%macro macro_print_call 1
+_ %+ %1:
+push eax
+add esp,4
+pop eax
+sub esp,8
+%1 eax
+pop eax
+add esp,8
+jmp dword [esp-4]
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro macro_duput 1
+macro_args_read_d %1
+macro_duput_eax
+macro_args_save_
+%endmacro
+
+%macro macro_wuput 1
+macro_args_read_d %1
+macro_duput_eax
+macro_args_save_
+%endmacro
+
+%macro macro_buput 1
+macro_args_read_d %1
+macro_duput_eax
+macro_args_save_
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro macro_dsput 1
+macro_args_read_d %1
+cmp eax,0
+jge %%_1
+cput '-'
+neg eax
+%%_1:
+macro_duput_eax
+macro_args_save_
+%endmacro
+
+%macro macro_wsput 1
+macro_args_read_d %1
+movsx eax,ax
+dsput eax
+macro_args_save_
+%endmacro
+
+%macro macro_bsput 1
+macro_args_read_d %1
+movsx eax,al
+dsput eax
+macro_args_save_
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro macro_cput 1
+macro_args_read_d %1
+pushbw al
+mov eax,4
+mov ebx,1
+mov ecx,esp
+mov edx,1
+int 0x80
+add esp,2
+macro_args_save_
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro macro_duprint 1
+duput %1
+cput 10
+%endmacro
+
+%macro macro_wuprint 1
+macro_args_read_d %1
+macro_duput_eax
+macro_args_save_
+cput 10
+%endmacro
+
+%macro macro_buprint 1
+macro_args_read_d %1
+macro_duput_eax
+macro_args_save_
+cput 10
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro macro_dsprint 1
+dsput %1
+cput 10
+%endmacro
+
+%macro macro_wsprint 1
+macro_args_read_d %1
+movsx eax,ax
+dsput eax
+macro_args_save_
+cput 10
+%endmacro
+
+%macro macro_bsprint 1
+macro_args_read_d %1
+movsx eax,al
+dsput eax
+macro_args_save_
+cput 10
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro macro_duwrite 1
+duput %1
+cput 32
+%endmacro
+
+%macro macro_wuwrite 1
+macro_args_read_d %1
+macro_duput_eax
+macro_args_save_
+cput 32
+%endmacro
+
+%macro macro_buwrite 1
+macro_args_read_d %1
+macro_duput_eax
+macro_args_save_
+cput 32
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro macro_dswrite 1
+dsput %1
+cput 32
+%endmacro
+
+%macro macro_wswrite 1
+macro_args_read_d %1
+movsx eax,ax
+dsput eax
+macro_args_save_
+cput 32
+%endmacro
+
+%macro macro_bswrite 1
+macro_args_read_d %1
+movsx eax,al
+dsput eax
+macro_args_save_
+cput 32
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
