@@ -31,7 +31,7 @@ void treeprint_impl(void*root,func get_left,func get_right,func get_str,size_t* 
 	}
 
 	size_t save=0;
-	if (prev_node and prev_node[1]==2){
+	if (prev_node && prev_node[1]==2){
 		save=prev_node[1];
 		prev_node[1]=0;
 	}
@@ -81,7 +81,7 @@ void treeprint_impl(void*root,func get_left,func get_right,func get_str,size_t* 
 	free(str);
 
 	save=0;
-	if (prev_node and prev_node[1]==1){
+	if (prev_node && prev_node[1]==1){
 		save=prev_node[1];
 		prev_node[1]=0;
 	}
