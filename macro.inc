@@ -1792,6 +1792,10 @@ pop dword %4
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-start
-
-
+%macro duassert 1+
+duif %1
+else
+sprint "assertion failed"
+sprint "%1"
+end
+%endmacro
