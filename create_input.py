@@ -13,7 +13,7 @@ def rand(q=2**64):
 # 	print()
 # print(99999)
 
-n=100000
+n=100
 print(n)
 a=[]
 while 1:
