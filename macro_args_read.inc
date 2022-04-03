@@ -9,6 +9,9 @@ push word 0
 pushbw      %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -23,6 +26,9 @@ push word 0
 pushbw      %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -36,6 +42,9 @@ push word 0
 pushbw      %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -50,6 +59,9 @@ push word 0
 pushbw      %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -64,6 +76,9 @@ push word 0
 pushbw      %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -77,6 +92,9 @@ push word 0
 pushbw      %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -90,6 +108,9 @@ push word 0
 pushbw      %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -103,6 +124,9 @@ push word 0
 pushbw      %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -115,6 +139,9 @@ push word 0
 pushbw      %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -129,6 +156,9 @@ push word 0
 push   word %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -143,6 +173,9 @@ push word 0
 push   word %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -156,6 +189,9 @@ push word 0
 push   word %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -170,6 +206,9 @@ push word 0
 push   word %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -184,6 +223,9 @@ push word 0
 push   word %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -197,6 +239,9 @@ push word 0
 push   word %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -210,6 +255,9 @@ push word 0
 push   word %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -223,6 +271,9 @@ push word 0
 push   word %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -235,6 +286,9 @@ push word 0
 push   word %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -248,6 +302,9 @@ pushbw      %2
 push  dword %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -261,6 +318,9 @@ pushbw      %2
 push  dword %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -273,6 +333,9 @@ pushbw      %2
 push  dword %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -286,6 +349,9 @@ push   word %2
 push  dword %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -299,6 +365,9 @@ push   word %2
 push  dword %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -311,6 +380,9 @@ push   word %2
 push  dword %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -323,6 +395,9 @@ push  dword %2
 push  dword %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -335,6 +410,9 @@ push  dword %2
 push  dword %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -346,6 +424,9 @@ push  dword %2
 push  dword %3
 push word 0
 pushbw      %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -360,6 +441,9 @@ push word 0
 pushbw      %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -374,6 +458,9 @@ push word 0
 pushbw      %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -387,6 +474,9 @@ push word 0
 pushbw      %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -401,6 +491,9 @@ push word 0
 pushbw      %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -415,6 +508,9 @@ push word 0
 pushbw      %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -428,6 +524,9 @@ push word 0
 pushbw      %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -441,6 +540,9 @@ push word 0
 pushbw      %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -454,6 +556,9 @@ push word 0
 pushbw      %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -466,6 +571,9 @@ push word 0
 pushbw      %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -480,6 +588,9 @@ push word 0
 push   word %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -494,6 +605,9 @@ push word 0
 push   word %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -507,6 +621,9 @@ push word 0
 push   word %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -521,6 +638,9 @@ push word 0
 push   word %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -535,6 +655,9 @@ push word 0
 push   word %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -548,6 +671,9 @@ push word 0
 push   word %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -561,6 +687,9 @@ push word 0
 push   word %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -574,6 +703,9 @@ push word 0
 push   word %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -586,6 +718,9 @@ push word 0
 push   word %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -599,6 +734,9 @@ pushbw      %2
 push  dword %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -612,6 +750,9 @@ pushbw      %2
 push  dword %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -624,6 +765,9 @@ pushbw      %2
 push  dword %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -637,6 +781,9 @@ push   word %2
 push  dword %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -650,6 +797,9 @@ push   word %2
 push  dword %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -662,6 +812,9 @@ push   word %2
 push  dword %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -674,6 +827,9 @@ push  dword %2
 push  dword %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -686,6 +842,9 @@ push  dword %2
 push  dword %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -697,6 +856,9 @@ push  dword %2
 push  dword %3
 push word 0
 push   word %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -710,6 +872,9 @@ pushbw      %2
 push word 0
 pushbw      %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -723,6 +888,9 @@ pushbw      %2
 push word 0
 pushbw      %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -735,6 +903,9 @@ pushbw      %2
 push word 0
 pushbw      %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -748,6 +919,9 @@ push   word %2
 push word 0
 pushbw      %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -761,6 +935,9 @@ push   word %2
 push word 0
 pushbw      %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -773,6 +950,9 @@ push   word %2
 push word 0
 pushbw      %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -785,6 +965,9 @@ push  dword %2
 push word 0
 pushbw      %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -797,6 +980,9 @@ push  dword %2
 push word 0
 pushbw      %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -808,6 +994,9 @@ push  dword %2
 push word 0
 pushbw      %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -821,6 +1010,9 @@ pushbw      %2
 push word 0
 push   word %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -834,6 +1026,9 @@ pushbw      %2
 push word 0
 push   word %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -846,6 +1041,9 @@ pushbw      %2
 push word 0
 push   word %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -859,6 +1057,9 @@ push   word %2
 push word 0
 push   word %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -872,6 +1073,9 @@ push   word %2
 push word 0
 push   word %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -884,6 +1088,9 @@ push   word %2
 push word 0
 push   word %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -896,6 +1103,9 @@ push  dword %2
 push word 0
 push   word %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -908,6 +1118,9 @@ push  dword %2
 push word 0
 push   word %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -919,6 +1132,9 @@ push  dword %2
 push word 0
 push   word %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -931,6 +1147,9 @@ push word 0
 pushbw      %2
 push  dword %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -943,6 +1162,9 @@ push word 0
 pushbw      %2
 push  dword %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -954,6 +1176,9 @@ push word 0
 pushbw      %2
 push  dword %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -966,6 +1191,9 @@ push word 0
 push   word %2
 push  dword %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -978,6 +1206,9 @@ push word 0
 push   word %2
 push  dword %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -989,6 +1220,9 @@ push word 0
 push   word %2
 push  dword %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -1000,6 +1234,9 @@ pushbw      %1
 push  dword %2
 push  dword %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -1011,6 +1248,9 @@ push   word %1
 push  dword %2
 push  dword %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
@@ -1021,6 +1261,9 @@ push  dword %1
 push  dword %2
 push  dword %3
 push  dword %4
+mov esi,0
+mov edi,0
+mov ebp,0
 regload
 %endmacro
 
