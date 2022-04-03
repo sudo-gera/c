@@ -13,3 +13,4 @@ export socks4_PROXY="$pradd:$sp";
 export SOCKS4_PROXY="$pradd:$sp";
 export socks5_PROXY="$pradd:$sp";
 export SOCKS5_PROXY="$pradd:$sp";
+export ALL_PROXY="$pradd:$hp";

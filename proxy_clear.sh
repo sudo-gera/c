@@ -10,3 +10,4 @@ export socks4_PROXY="";
 export SOCKS4_PROXY="";
 export socks5_PROXY="";
 export SOCKS5_PROXY="";
+export ALL_PROXY="";
