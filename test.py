@@ -26,6 +26,27 @@ def grahamscan(A):
     S.append(P[i])
   return S
 
+def jarvismarch(A):
+  n = len(A)
+  P = list(range(n))
+  # start point
+  for i in range(1,n):
+    if A[P[i]].x<A[P[0]].y: 
+      P[i], P[0] = P[0], P[i]  
+  H = [P[0]]
+  del P[0]
+  P.append(H[0])
+  while True:
+    right = 0
+    for i in range(1,len(P)):
+      if rotate(A[H[-1]],A[P[right]],A[P[i]])<0:
+        right = i
+    if P[right]==H[0]: 
+      break
+    else:
+      H.append(P[right])
+      del P[right]
+  return H 
 
 def vd(q,e):
   return q.x*e.y-q.y*e.x;
@@ -41,11 +62,11 @@ def area(vertices):
     res+=vd(vect(vertices[0],vertices[w-1]),vect(vertices[w-1],vertices[w]));
   return abs(res)/2;
 
-def run(a):
+def run(a,al):
   n=len(a)
   a.sort()
   a=reduce(lambda a,s:a+[s] if s not in a else a, a, [])
-  aa=grahamscan(a)
+  aa=al(a)
   a=[a[w] for w in aa]
   for w in range(len(a)):
     a=reduce(lambda _a,_s:_a+[_s] if len(_a)<2 or vd(vect(_a[-1],_s),vect(_a[-1],_a[-2])) else _a[:-1]+[_s], a, [])
@@ -65,17 +86,21 @@ def run(a):
       perf_index = w;
   a=a[perf_index:]+a[:perf_index]
 
+  if len(a)>2 and rotate(a[0],a[1],a[2])<0:
+    a=a[::-1]
+
   for w in range(n,0,-1):
     r.append(a[w%n])
 
   r=[len(a)]+r
-  r.append(round(area(a),1))
+  r.append("%.1f"%area(a))
   return r
 
 if __name__ == '__main__':
   n=scan(int)
   a=[point(scan(int),scan(int)) for w in range(n)]
-  a=run(a)
+  ag=run(a,grahamscan)
+  a=ag
   print(a[0])
   for w in a[1:-1]:
     print(w.x,w.y)

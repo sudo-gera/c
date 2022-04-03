@@ -13,12 +13,12 @@ def rand(q=2**64):
 # 	print()
 # print(99999)
 
-n=100
+n=400
 print(n)
 a=[]
 while 1:
 	for w in range(n):
-		a+=[[randint(-10**3,10**3),randint(-10**3,10**3)]]
+		a+=[[randint(-10**9,10**9),randint(-10**9,10**9)]]
 	if any([len(set(w))==1 for w in zip(*a)]):
 		a=[]
 	else:
