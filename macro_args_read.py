@@ -34,6 +34,9 @@ for r in ['b','w','d']:
 						# if y=='d':
 						# print('pop e%sx'%"abcd"[t])
 						pass
+					print('mov esi,0')
+					print('mov edi,0')
+					print('mov ebp,0')
 					print('regload')
 
 					print('%endmacro\n')

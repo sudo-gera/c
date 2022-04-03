@@ -57,6 +57,9 @@ macro_print_call macro_dswrite
 macro_print_call macro_wswrite
 macro_print_call macro_bswrite
 
+macro_print_call macro_cprint
+macro_print_call macro_cwrite
+
 _start:
 mov [esp_base],esp
 %endmacro
@@ -70,6 +73,16 @@ sprint "warning: stack not empty"
 mov ebx, %1
 mov eax, 1
 int 0x80
+%endmacro
+
+%macro begin 0
+%push main
+start
+jmp %%_1
+%$__jup:
+stop
+jmp %$__jdown
+%%_1:
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1797,5 +1810,89 @@ duif %1
 else
 sprint "assertion failed"
 sprint "%1"
+jmp _stop
 end
 %endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro pass 0
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro dmemmove 3
+macro_args_read_ddd %1,%2,%3
+cmp eax,ebx
+jb %%left
+add eax,ecx
+add ebx,ecx
+%%right:
+dec eax
+dec ebx
+mov edx,[ebx]
+mov [eax],edx
+loop %%right
+jmp %%end
+%%left:
+mov edx,[ebx]
+mov [eax],edx
+inc eax
+inc ebx
+loop %%left
+%%end:
+macro_args_save_
+%endmacro
+
+%macro wmemmove 3
+macro_args_read_ddd %1,%2,%3
+cmp eax,ebx
+jb %%left
+add eax,ecx
+add ebx,ecx
+%%right:
+dec eax
+dec ebx
+mov dx,[ebx]
+mov [eax],dx
+loop %%right
+jmp %%end
+%%left:
+mov dx,[ebx]
+mov [eax],dx
+inc eax
+inc ebx
+loop %%left
+%%end:
+macro_args_save_
+%endmacro
+
+%macro bmemmove 3
+macro_args_read_ddd %1,%2,%3
+cmp eax,ebx
+jb %%left
+add eax,ecx
+add ebx,ecx
+%%right:
+dec eax
+dec ebx
+mov dl,[ebx]
+mov [eax],dl
+loop %%right
+jmp %%end
+%%left:
+mov dl,[ebx]
+mov [eax],dl
+inc eax
+inc ebx
+loop %%left
+%%end:
+macro_args_save_
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%include "macro_set.inc"
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

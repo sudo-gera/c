@@ -188,10 +188,26 @@ jmp dword [esp-4]
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro macro_call 1-5
-push dword %2+0
-push dword %3+0
-push dword %4+0
-push dword %5+0
+%if %0>1
+	push dword %2
+%else
+	push dword 0
+%endif
+%if %0>2
+	push dword %3
+%else
+	push dword 0
+%endif
+%if %0>3
+	push dword %4
+%else
+	push dword 0
+%endif
+%if %0>4
+	push dword %5
+%else
+	push dword 0
+%endif
 push dword %%_1
 jmp func_ %+ %1
 %%_1:
@@ -391,6 +407,33 @@ movsx eax,al
 dsput eax
 macro_args_save_
 cput 32
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro macro_cprint 1
+macro_args_read_d %1
+cput al
+macro_args_save_
+cput 10
+%endmacro
+
+%macro macro_cwrite 1
+macro_args_read_d %1
+cput al
+macro_args_save_
+cput 32
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro macro_args_offset 1
+macro_args_read_
+mov eax,esp
+macro_args_read_d eax
+sub eax,esp
+macro_args_save_d eax
+macro_args_save_d %1
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
