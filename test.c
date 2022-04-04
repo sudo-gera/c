@@ -12,12 +12,8 @@
 
 
 int main(){
-	uint32_t a[999];
-	uint32_t l=0;
-	a[0]=0;
-	a[1]=12;
-	a[2]='+=';
-	a[3]=0;
-	a[4]=34;	
-	
+	int q=rand();
+	int w=rand();
+	q+=q==0;
+	w+=w==0;
 }
