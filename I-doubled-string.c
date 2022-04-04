@@ -35,12 +35,10 @@ void*resize_f(void**a,uint64_t s,uint64_t y){
 		*a=OFFSET+(uint64_t*)realloc(_arr_meta(a),s*(y+1)+OFFSET*sizeof(uint64_t));
 		memset(((char*)(*a))+s*_arr_meta(a)[0],0,(y+1-_arr_meta(a)[0])*s);
 		_arr_meta(a)[0]=y+1;
-	// reducing
-	}else
-	if (_arr_meta(a)[0] > (y+1)*4){
-		*a=OFFSET+(uint64_t*)realloc(_arr_meta(a),s*(y+1)+OFFSET*sizeof(uint64_t));
-		_arr_meta(a)[0]=y+1;
-	// end of reducing
+	// }else
+	// if (_arr_meta(a)[0] > (y+1)*4){
+	// 	*a=OFFSET+(uint64_t*)realloc(_arr_meta(a),s*(y+1)+OFFSET*sizeof(uint64_t));
+	// 	_arr_meta(a)[0]=y+1;
 	}
 	_arr_meta(a)[1]=y;
 	return *a;
@@ -98,7 +96,7 @@ mkinput(long long uns,uns,"%llu",&q)
 mkinput(long double,float,"%Lf", &q)
 mkinput(char,char,"%c",&q)
 #undef mkinput
-cstr input_str(){static char t[1048576];scanf("%1048576s",t);return to_str(t);}
+cstr input_str(){static char t[1048576];scanf("%1048575s",t);return to_str(t);}
 
 #ifdef print
 #undef print
@@ -146,3 +144,98 @@ typedef int (*qsort_cmp_t)(const void *, const void *);
 
 ///////////////////////////////////////////////////end of lib
 
+uint64_t h(char*a,uint64_t l){
+	uint64_t p=0;
+	for (size_t w=0;w<l;++w){
+		p*=257;
+		p+=*a;
+		a++;
+	}
+	return p;
+}
+
+struct ht{
+	uint64_t h;
+	char*a;
+	uint64_t l;
+};
+
+typedef struct ht ht;
+
+int icmp(ht*a,ht*s){
+	if (a->h<s->h){
+		return -1;
+	}
+	if (a->h>s->h){
+		return 1;
+	}
+	return 0;
+}
+
+#ifdef HOME
+#undef to_str
+#undef print
+#undef write
+enable_print(ht,val.a,val.h,val.l)
+#endif
+
+int main(){
+	read(char*,a);
+	// ic(uint64_t(a))
+	uint16_t b=1;
+	uint64_t e=len(a);
+	array(ht,hs,len(a));
+	ht g=(ht){.h=0,.l=0,.a=0};
+	while (b+1<e){
+		resize(hs,0);
+		uint64_t c=(b+e)/2;
+		// ic(b,e,c)
+		uint64_t d=0;
+		for (uint64_t s=0;s+c<=len(a);++s){
+			append(hs,(ht){.h=h(a+s,c),.a=a+s,.l=c});
+		}
+		// ic(itervect(hs,hs+len(hs)))
+		qsort(hs,len(hs),sizeof(hs[0]),(qsort_cmp_t)icmp);
+		// ic(itervect(hs,hs+len(hs)))
+		for (size_t w=1;w<len(hs);++w){
+			// ic(hs[w-1],hs[w])
+			// ic(hs[w-1].h==hs[w].h)
+			// ic(memcmp(hs[w-1].a,hs[w].a,hs[w].l))
+			if (hs[w-1].h==hs[w].h and memcmp(hs[w-1].a,hs[w].a,hs[w].l)==0){
+				d=1;
+				g=hs[w];
+				break;
+			}
+		}
+		// ic(d)
+		if (d){
+			b=c;
+		}else{
+			e=c;
+		}
+	}
+	// ic(b)
+
+	resize(hs,0);
+	uint64_t c=(b+e)/2;
+	// ic(b,e,c)
+	for (uint64_t s=0;s+c<=len(a);++s){
+		append(hs,(ht){.h=h(a+s,c),.a=a+s,.l=c});
+	}
+	// ic(itervect(hs,hs+len(hs)))
+	qsort(hs,len(hs),sizeof(hs[0]),(qsort_cmp_t)icmp);
+	for (size_t w=1;w<len(hs);++w){
+		// ic(hs[w-1],hs[w])
+		// ic(hs[w-1].h==hs[w].h)
+		// ic(memcmp(hs[w-1].a,hs[w].a,hs[w].l))
+		if (hs[w-1].h==hs[w].h and memcmp(hs[w-1].a,hs[w].a,hs[w].l)==0){
+			g=hs[w];
+			break;
+		}
+	}
+	// print(g.l);
+	for (uint64_t w=0;w<g.l;++w){
+		putchar(g.a[w]);
+	}
+	putchar('\n');
+}

@@ -1,107 +1,14 @@
 from h import *
 
-@dataclass(order=1)
-class point:
-  x:int
-  y:int
-
-def rotate(A,B,C):
-  return (B.x-A.x)*(C.y-B.y)-(B.y-A.y)*(C.x-B.x)
-
-def grahamscan(A):
-  n = len(A)
-  P = list(range(n))
-  for i in range(1,n):
-    if A[P[i]].x<A[P[0]].x:
-      P[i], P[0] = P[0], P[i]
-  for i in range(2,n):
-    j = i
-    while j>1 and (rotate(A[P[0]],A[P[j-1]],A[P[j]])<0): 
-      P[j], P[j-1] = P[j-1], P[j]
-      j -= 1
-  S = [P[0],P[1]]
-  for i in range(2,n):
-    while rotate(A[S[-2]],A[S[-1]],A[P[i]])<0:
-      S.pop()
-    S.append(P[i])
-  return S
-
-def jarvismarch(A):
-  n = len(A)
-  P = list(range(n))
-  # start point
-  for i in range(1,n):
-    if A[P[i]].x<A[P[0]].y: 
-      P[i], P[0] = P[0], P[i]  
-  H = [P[0]]
-  del P[0]
-  P.append(H[0])
-  while True:
-    right = 0
-    for i in range(1,len(P)):
-      if rotate(A[H[-1]],A[P[right]],A[P[i]])<0:
-        right = i
-    if P[right]==H[0]: 
-      break
-    else:
-      H.append(P[right])
-      del P[right]
-  return H 
-
-def vd(q,e):
-  return q.x*e.y-q.y*e.x;
-
-def vect(_x,_y):
-  x=_y.x-_x.x
-  y=_y.y-_x.y
-  return point(x,y)
-
-def area(vertices):
-  res=0;
-  for w in range(2,len(vertices)):
-    res+=vd(vect(vertices[0],vertices[w-1]),vect(vertices[w-1],vertices[w]));
-  return abs(res)/2;
-
-def run(a,al):
-  n=len(a)
-  a.sort()
-  a=reduce(lambda a,s:a+[s] if s not in a else a, a, [])
-  aa=al(a)
-  a=[a[w] for w in aa]
-  for w in range(len(a)):
-    a=reduce(lambda _a,_s:_a+[_s] if len(_a)<2 or vd(vect(_a[-1],_s),vect(_a[-1],_a[-2])) else _a[:-1]+[_s], a, [])
-    a=a[1:]+a[:1]
-  r=[]
-
-
-  n=len(a)
-  perf_index = 0
-  for w in range(len(a)):
-    mp = 0;
-    if (a[w].x < a[perf_index].x):
-      mp = 1
-    if (a[w].x == a[perf_index].x and a[w].y < a[perf_index].y):
-      mp = 1
-    if (mp):
-      perf_index = w;
-  a=a[perf_index:]+a[:perf_index]
-
-  if len(a)>2 and rotate(a[0],a[1],a[2])<0:
-    a=a[::-1]
-
-  for w in range(n,0,-1):
-    r.append(a[w%n])
-
-  r=[len(a)]+r
-  r.append("%.1f"%area(a))
-  return r
-
-if __name__ == '__main__':
-  n=scan(int)
-  a=[point(scan(int),scan(int)) for w in range(n)]
-  ag=run(a,grahamscan)
-  a=ag
-  print(a[0])
-  for w in a[1:-1]:
-    print(w.x,w.y)
-  print(a[-1])
+a=input()
+mc=-1
+ms=''
+for w in range(len(a)):
+	for e in range(w):
+		for c in range(1,len(a)):
+			if a[w:w+c]==a[e:e+c]:
+				if c>mc:
+					mc=c
+					ms=a[w:w+c]
+print(ms)
+# print(mc)

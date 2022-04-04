@@ -13,15 +13,27 @@ def rand(q=2**64):
 # 	print()
 # print(99999)
 
-n=400
-print(n)
-a=[]
+ss='abocidure'
+
 while 1:
+	n=rand(9)+1
+	a=''
 	for w in range(n):
-		a+=[[randint(-10**9,10**9),randint(-10**9,10**9)]]
-	if any([len(set(w))==1 for w in zip(*a)]):
-		a=[]
-	else:
-		for w in a:
-			print(*w)
+		a+=choice(ss)
+	n=rand(9)+1
+	s=''
+	for w in range(n):
+		s+=choice(list(ss)+[a]*4)
+	a=s
+	mc=-1
+	ms=''
+	for w in range(len(a)):
+		for e in range(w):
+			for c in range(1,len(a)):
+				if a[w:w+c]==a[e:e+c]:
+					if c>mc:
+						mc=c
+						ms=a[w:w+c]
+	if ms:
 		break
+print(a)

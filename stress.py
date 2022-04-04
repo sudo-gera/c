@@ -20,6 +20,7 @@ from traceback import format_exc
 import signal
 from sys import stderr
 from ast import parse
+from json import *
 
 def how_to_run(filename,start_time,stop,log):
 	compiled_file='./tmp'+start_time+'_'+filename.replace('/','_')+'_.trash.trash'
@@ -92,11 +93,12 @@ def cmp(log,start_time,stop):
 					w.terminate()
 					log.put([p,'time limit'])
 					exit()
-				w=w.stdout.read()
+				w=w.stdout.read().decode()
 				r.append(w)
 			c=r
-			sc=set(c)
-			if len(sc)!=1:
+			if run(['python3','is_equal.py'],input=dumps([p]+c).encode()).returncode:
+			# sc=set(c)
+			# if len(sc)!=1:
 				log.put([p,'different output'])
 			else:
 				log.put(None)
