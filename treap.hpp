@@ -4,18 +4,11 @@
 #include <string>
 #include <vector>
 #include <type_traits>
-<<<<<<< HEAD
-// #include <assert.h>
-
-template <typename T>
-class treap{
-=======
 #include <assert.h>
 
 template <typename T>
 class treap{
 private:
->>>>>>> 69f6a62d480aff0e3345fa4a630df86baa905aeb
 	struct el{
 		T v;
 		int64_t w;
@@ -157,8 +150,6 @@ private:
 		pr(q->x(),n+1);
 	}
 
-<<<<<<< HEAD
-=======
 	static auto pri(el* root,size_t*prev_node=0){
 		if (!root){
 			return;
@@ -234,7 +225,6 @@ private:
 		}
 	}
 
->>>>>>> 69f6a62d480aff0e3345fa4a630df86baa905aeb
 	static el* copy(el* q){
 		if (!q){
 			return nullptr;
@@ -362,12 +352,9 @@ private:
 
 	el* e=nullptr;
 public:
-<<<<<<< HEAD
-=======
 	void out(){
 		pri(e);
 	}
->>>>>>> 69f6a62d480aff0e3345fa4a630df86baa905aeb
 	template <typename y=std::initializer_list<T>>
 	treap(const y&l=std::initializer_list<T>(),
 		std::enable_if_t<

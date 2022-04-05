@@ -1,12 +1,5 @@
-<<<<<<< HEAD
-#define private public
-#define class struct
-#include "treap.hpp"
-// #include <bits/stdc++.h>
-=======
 #include "treap.hpp"
 #include <bits/stdc++.h>
->>>>>>> 69f6a62d480aff0e3345fa4a630df86baa905aeb
 using namespace std;
 
 template<typename T>
