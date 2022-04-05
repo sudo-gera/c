@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include <iostream>
 #include <iterator>
 #include <vector>
@@ -485,4 +486,45 @@ int main(){
 	// assert(a.begin()<a.begin()+1);
 	sort(aa.begin(),aa.end());
 	// ic(aa)
+=======
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <tgmath.h>
+#include <stdarg.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <inttypes.h>
+#include <ctype.h>
+#include <assert.h>
+#include <iso646.h>
+#include <iostream>
+using namespace std;
+
+
+int main(){
+<<<<<<< HEAD
+	// while (1){
+	// 	int q=int(rand()%4)*"\x01\xff"[rand()%2];
+	// 	int w=int(rand()%4)*"\x01\xff"[rand()%2];
+	// 	print(q,w,bin_repr(q),bin_repr(w),bin_repr(q/w),bin_repr((unsigned&)(q)/(unsigned&)(w)))
+	// }
+	print(bin_repr(-39.77f))
+=======
+	float f=-39.77f;
+	uint8_t*a=(uint8_t*)(&f);
+	for (int w=0;w<sizeof(f);++w){
+		for (int e=0;e<8;++e){
+			uint8_t t=a[w];
+			t>>=w;
+			t%=2;
+			if (t){
+				cout<<1;
+			}else{
+				cout<<0;
+			}
+		}
+	}
+>>>>>>> f60d97d3e1ae6e8e211ddd96e0046aac28117008
+>>>>>>> 69f6a62d480aff0e3345fa4a630df86baa905aeb
 }

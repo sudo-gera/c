@@ -1,9 +1,7 @@
-p=pow
 from math import *
-pow=p
-def is_visitor(a,n,s,d):
-	if  gcd(a,n)!=1:
-		return 0
+from builtins import *
+mmh=[]
+def prime_checker(a,n,s,d):
 	ad=pow(a,d,n)
 	if ad==1:
 		return 1
@@ -27,6 +25,6 @@ def is_prime_Miller(n):
 	s=t
 	d=r
 	for a in range(2, min(ceil(2*log(n)**2),n) ):
-		if not is_visitor(a,n,s,d):
+		if not prime_checker(a,n,s,d):
 			return False
 	return True

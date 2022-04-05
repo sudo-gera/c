@@ -1,37 +1,42 @@
+<<<<<<< HEAD
+=======
 from random import *
 def rand(q=2**64):
 	assert q
 	return randint(0,q-1)
 
-<<<<<<< HEAD
-print(0,2**8)
-for w in range(128):
-	q=rand()%10
-	print(q)
-	if q in [0,1,6,7,8]:
-		print(rand(2**16))
-	if q in [6]:
-		print(rand(2**16))
-print(10000000000000)
-=======
-# for w in range(rand(10)):
-# 	q=rand(2)+1
-# 	print(q)
+# n=rand(9)
+# for w in range(n):
+# 	q=choice([0]+[1,2]*9+[3,4])
+# 	# q=rand(5)
+# 	print(q,end=' ')
 # 	if q==1:
-# 		print(rand(8*4),rand(2))
-# 	else:
-# 		print(rand(8*4))
-# print(0)
-# print(rand(92299339))
+# 		print(rand()%256**3,end=' ')
+# 	print()
+# print(99999)
 
+ss='abocidure'
 
-# n=randint(1,9)
-# q=randint(1,10**n-1)
-# print(q,n)
-
-# m=randint(1,999)
-# q=randint(1,m)
-# print(m,q)
-q=''.join([choice('qwertyuiopasdfghjklzxcvbnm') for w in range(rand(9)+1)])
-print(q)
->>>>>>> edd1a72a29bdf481718ea43e7194f3dbec21102a
+while 1:
+	n=rand(9)+1
+	a=''
+	for w in range(n):
+		a+=choice(ss)
+	n=rand(9)+1
+	s=''
+	for w in range(n):
+		s+=choice(list(ss)+[a]*4)
+	a=s
+	mc=-1
+	ms=''
+	for w in range(len(a)):
+		for e in range(w):
+			for c in range(1,len(a)):
+				if a[w:w+c]==a[e:e+c]:
+					if c>mc:
+						mc=c
+						ms=a[w:w+c]
+	if ms:
+		break
+print(a)
+>>>>>>> 63e0cbb4e069e3f02c93744f2a13b90ecdb0ea07

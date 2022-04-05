@@ -1,7 +1,12 @@
+<<<<<<< HEAD
 #define private public
 #define class struct
 #include "treap.hpp"
 // #include <bits/stdc++.h>
+=======
+#include "treap.hpp"
+#include <bits/stdc++.h>
+>>>>>>> 69f6a62d480aff0e3345fa4a630df86baa905aeb
 using namespace std;
 
 template<typename T>
@@ -77,6 +82,7 @@ int main(){
 	// assert(vector<string>(q)==vector<string>({"-1","0","1","2","3","4","5","6"}));
 	// assert(vector<string>(w)==vector<string>({"0","1","2"}));
 	// check(e.begin(),e.end());
+<<<<<<< HEAD
 	// assert(vector<int>(e)==vector<int>({1,2,3,4,5}));
 	// reverse(e.begin(),e.end());
 	// assert(vector<int>(e)==vector<int>({5,4,3,2,1}));
@@ -91,6 +97,22 @@ int main(){
 	// check(e.rbegin()-20,e.rend()+20);
 	// e.clear();
 	auto y=e;
+=======
+	// assert(vector<long>(e)==vector<long>({1,2,3,4,5}));
+	// reverse(e.begin(),e.end());
+	// assert(vector<long>(e)==vector<long>({5,4,3,2,1}));
+	// sort(e.begin(),e.end());
+	// assert(vector<long>(e)==vector<long>({1,2,3,4,5}));
+	// check(e.begin()-20,e.end()+20);
+	// check(e.rbegin(),e.rend());
+	// sort(e.rbegin(),e.rend());
+	// assert(vector<long>(e)==vector<long>({5,4,3,2,1}));
+	// reverse(e.begin(),e.end());
+	// assert(vector<long>(e)==vector<long>({1,2,3,4,5}));
+	// check(e.rbegin()-20,e.rend()+20);
+	// e.clear();
+	// auto y=e;
+>>>>>>> 69f6a62d480aff0e3345fa4a630df86baa905aeb
 	// auto z=e.begin();
 	// auto x=e.end();
 	// assert(z==x);
@@ -153,7 +175,11 @@ int main(){
 	// for (size_t w=0;w<102400-102001;++w){
 	// 	e.insert(w*250+1,w);
 	// }
+<<<<<<< HEAD
 	// assert(vector<int>(z,x)==vector<int>(e));
+=======
+	// assert(vector<long>(z,x)==vector<long>(e));
+>>>>>>> 69f6a62d480aff0e3345fa4a630df86baa905aeb
 	// y=e;
 	// for (size_t w=0;w<102400;++w){
 	// 	swap(y,e);
@@ -230,6 +256,7 @@ int main(){
 	// q.insert(q.begin(),w);
 	// assert(vector<string>(q)==vector<string>({"2","1","0","-1","0","1","2","3","4","5","6"}));
 	// assert(vector<string>(w)==vector<string>({}));
+<<<<<<< HEAD
 	ic(CLOCKS_PER_SEC)
 	e.resize(10240);
 	for (size_t w=0;w<e.size();++w){
@@ -298,4 +325,8 @@ int main(){
 		print()
 		print()
 	}
+=======
+	e.resize(20);
+	e.out();
+>>>>>>> 69f6a62d480aff0e3345fa4a630df86baa905aeb
 }

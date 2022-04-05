@@ -1,14 +1,16 @@
 HOME=1
-from icecream import ic
-ic.configureOutput(includeContext=1)
+from dataclasses import *
 from time import *
 from os import *
+from os.path import *
 from sys import *
 from json import *
 from random import *
 from urllib.request import *
+from urllib.parse import *
 from pprint import *
 from math import *
+from cmath import *
 from decimal import *
 from traceback import *
 from fractions import *
@@ -20,6 +22,28 @@ from base64 import *
 from itertools import *
 from timeit import *
 from bisect import *
+from builtins import *
+from re import *
+def outputFunction(*a):
+	a=a[0]
+	s=split(r'\:\d+ in ',a)
+	file=s[0]
+	a=a[len(file)+1:]
+	s=split(r' in ',a)
+	line=s[0]
+	a=a[len(s[0])+4:]
+	if '\n' in a:
+		a=a.split('\n',1)
+		a='- \n'.join(a)
+	s=split(r'- ',a)
+	func=s[0]
+	a=a[len(func)+2:]
+	args=a
+	print("\x1b[92mline \x1b[94m"+line+"\x1b[92m file \x1b[94m"+file+"\x1b[92m func \x1b[94m"+func+"\x1b[92m \x1b[0m"+args)
+from icecream import ic
+ic.configureOutput(includeContext=1)
+ic.configureOutput(outputFunction=outputFunction)
+ic.configureOutput(prefix='')
 from builtins import *
 home=str(Path.home())+'/'
 def rand(q=2**64):
@@ -39,7 +63,7 @@ true=True
 def bisect_in(a,s):
 	return bisect_left(a,s)!=bisect_right(a,s)
 # from primes import primes
-primes=[2]
+primes=[2,3,5]
 from is_prime import *
 from scan import *
 def is_prime_root(q):
@@ -161,4 +185,47 @@ def primes_count(start=0):
 	while 1:
 		start=next_prime(start)
 		yield start
+
+@cache
+def fast_next_prime(q):
+	if q<2:
+		return 2
+	q+=1
+	while q%30!=7:
+		q+=1
+	while 1:
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q+=6
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q+=4
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q+=6
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q+=14
+
+@cache
+def fast_prev_prime(q):
+	if q<1024:
+		return prev_prime(q)
+	q-=1
+	while q%30!=7:
+		q-=1
+	while 1:
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q-=14
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q-=6
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q-=4
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q-=6
+
 from builtins import *

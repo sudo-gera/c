@@ -1,8 +1,14 @@
-scan_cache=[]
-def scan(t=int):
+from queue import Queue
+scan_cache=Queue()
+def scan(*t):
+	t=list(t)
+	if len(t)==0:
+		t.append(int)
 	global scan_cache
-	while not scan_cache:
-		scan_cache+=input().split()
-	q=scan_cache[0]
-	scan_cache=scan_cache[1:]
-	return t(q)
+	while scan_cache.qsize()<len(t):
+		for w in input().split():
+			scan_cache.put(w)
+	t=[w(scan_cache.get_nowait()) for w in t]
+	if len(t)==1:
+		return t[0]
+	return t

@@ -2,6 +2,9 @@ def create_input_string():
 	from subprocess import run,PIPE
 	return run(['python3','create_input.py'],stdout=PIPE).stdout.decode()
 
+TIME_LIMIT=2
+PROCESS_COUNT=16
+
 from time import time,perf_counter
 start_time=str(int(time()*2**128)+int(perf_counter()*2**64))
 
@@ -17,6 +20,7 @@ from traceback import format_exc
 import signal
 from sys import stderr
 from ast import parse
+from json import *
 
 def how_to_run(filename,start_time,stop,log):
 	compiled_file='./tmp'+start_time+'_'+filename.replace('/','_')+'_.trash.trash'
@@ -30,17 +34,17 @@ def how_to_run(filename,start_time,stop,log):
 		compiled_file+='.out'
 	if not exists(compiled_file):
 		if filename.endswith('.cpp'):
-			if run(['g++','-Ofast','-std=c++17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',compiled_file]).returncode:
+			if run(['g++','-Ofast','-lgmpxx','-lgmp','-std=c++17','-Wfatal-errors','-fsanitize=address,undefined','-g',filename,'-o',compiled_file]).returncode:
 				exit()
 		if filename.endswith('.c'):
-			if run(['g++','-Ofast','-std=c++17','-Wfatal-errors','-fsanitize=address','-g',filename,'-o',compiled_file]).returncode:
+			if run(['g++','-Ofast','-lgmpxx','-lgmp','-std=c++17','-Wfatal-errors','-fsanitize=address,undefined','-g',filename,'-o',compiled_file]).returncode:
 				exit()
 		if filename.endswith('.py'):
 			if run(['python3','-m','py_compile',filename]).returncode:
 				print(file=stderr)
 				exit()
 			try:
-				compile(filename,cfile=compiled_file,optimize=2,doraise=True)
+				compile(filename,cfile=compiled_file,optimize=0,doraise=True)
 			except Exception:
 				print(format_exc(),stderr)
 				exit()
@@ -48,19 +52,9 @@ def how_to_run(filename,start_time,stop,log):
 			if run(['cp',filename,compiled_file]).returncode:
 				exit()
 	if filename.endswith('.cpp'):
-<<<<<<< HEAD
-		from time import time
-		t='./tmp'+str(time())+'.trash.trash'
-		return [['g++','-std=c++17','-Wfatal-errors','-g',filename,'-o',t],['valgrind','--leak-check=full',t],['rm',t]]
-	if filename.endswith('.c'):
-		from time import time
-		t='./tmp'+str(time())+'.trash.trash'
-		return [['cc',              '-Wfatal-errors','-g',filename,'-o',t],['valgrind','--leak-check=full',t],['rm',t]]
-=======
 		return [compiled_file]
 	if filename.endswith('.c'):
 		return [compiled_file]
->>>>>>> edd1a72a29bdf481718ea43e7194f3dbec21102a
 	if filename.endswith('.py'):
 		return [executable,compiled_file]
 	if filename.endswith('.out'):
@@ -69,28 +63,10 @@ def how_to_run(filename,start_time,stop,log):
 def cmp(log,start_time,stop):
 	signal.signal(signal.SIGINT, signal.SIG_IGN)
 	while 1:
-<<<<<<< HEAD
-		from sys import argv
-		from subprocess import run,PIPE
-		c=[how_to_run(w) for w in argv[1:]]
-		p=create_input_string()
-		c=[[run(e,stdout=PIPE,stderr=PIPE,input=p.encode()) for e in w] for w in c]
-		if any([any([e.returncode for e in w]) for w in c]):
-			log.put([p])
-		c=[['\n'.join([r.strip() for r in (e.stdout.decode() if hasattr(e,'stdout') and e.stdout!=None else '').strip().split('\n') if r.strip()])+\
-			'\n'.join([r.strip() for r in ([e.stderr.decode(),''][-1] if hasattr(e,'stderr') and e.stderr!=None else '').strip().split('\n') if r.strip()])
-			for e in w] for w in c]
-		c=[''.join(w) for w in c]
-		sc=set(c)
-		if len(sc)!=1:
-			log.put([p,c])
-		else:
-			log.put(None)
-=======
 		try:
 			p=create_input_string()
-		except:
-			log.put(['',''])
+		except Exception:
+			log.put([format_exc()])
 			exit()
 		try:
 			if not stop.empty():
@@ -100,6 +76,7 @@ def cmp(log,start_time,stop):
 			for w in c:
 				if not stop.empty():
 					break
+				rr=time()
 				try:
 					w=Popen(w,stdout=PIPE,stdin=PIPE)
 				except Exception:
@@ -108,7 +85,7 @@ def cmp(log,start_time,stop):
 				w.stdin.write(p.encode())
 				w.stdin.close()
 				try:
-					if w.wait(2):
+					if w.wait(TIME_LIMIT):
 						w.terminate()
 						log.put([p,'non-zero run code'])
 						exit()
@@ -116,11 +93,12 @@ def cmp(log,start_time,stop):
 					w.terminate()
 					log.put([p,'time limit'])
 					exit()
-				w=w.stdout.read()
+				w=w.stdout.read().decode()
 				r.append(w)
 			c=r
-			sc=set(c)
-			if len(sc)!=1:
+			if run(['python3','is_equal.py'],input=dumps([p]+c).encode()).returncode:
+			# sc=set(c)
+			# if len(sc)!=1:
 				log.put([p,'different output'])
 			else:
 				log.put(None)
@@ -129,44 +107,51 @@ def cmp(log,start_time,stop):
 			exit()
 		except:
 			break
->>>>>>> edd1a72a29bdf481718ea43e7194f3dbec21102a
 
 def logging(log,stop):
+	signal.signal(signal.SIGINT, signal.SIG_IGN)
 	c=0
 	t=time()
 	while 1:
-		if not stop.empty():
-			break
 		try:
 			q=log.get()
 		except KeyboardInterrupt:
 			exit()
-		if type(q)==list:
+		if not stop.empty():
+			break
+		if type(q)==list and len(q)==2:
+			print('\r                                                   \r',end='')
 			print('\x1b[91mERROR\x1b[0m')
-			print('\x1b[94minput(str version)\x1b[0m')
-			print(str(q[0]))
-			print('\x1b[94minput(repr version)\x1b[0m')
-			print(repr(q[0]))
-			print('\x1b[91mWHAT:\x1b[0m')
 			print(q[1])
+			open('created_input.txt','w').write(q[0])
+			print('\x1b[94minput saved to created_input.txt\x1b[0m')
 			print()
-			exit()
 			stop.put('stop')
+			exit()
+		if type(q)==list and len(q)==1:
+			print('\r                                                   \r',end='')
+			print('\x1b[91mERROR\x1b[0m')
+			print(q[0])
+			print()
+			stop.put('stop')
+			exit()
 		elif q==None:
 			c+=1
 			y=time()
-			if y-t>1:
-				print(f'{c} sucessfull tests')
+			if y-t>0.2:
+				print(f'   {c} sucessfull tests',end='\r')
 				t=y
 		else:
+			print('\r                                                   \r',end='')
 			print('\x1b[91mERROR: wrong log\x1b[0m')
 			exit()
 
 
 if __name__=='__main__':
-	if len(argv)<3:
-		raise\
-			ValueError('need at least 2 files to compare, got '+str(len(argv)-1))
+	assert TIME_LIMIT
+	# if len(argv)<3:
+	# 	raise\
+	# 		ValueError('need at least 2 files to compare, got '+str(len(argv)-1))
 	log=Queue()
 	stop=Queue()
 	[how_to_run(w,start_time,stop,log) for w in argv[1:]]
@@ -174,10 +159,26 @@ if __name__=='__main__':
 	a=Process(target=logging,args=(log,stop))
 	a.start()
 	s=[]
-	for w in range(16):
+	d=4
+	for w in range(PROCESS_COUNT):
+		if not stop.empty():
+			break
 		s.append(Process(target=cmp,args=(log,start_time,stop)))
 		s[-1].daemon = True
 		s[-1].start()
+		if d:
+			try:
+				st=0
+				while st<TIME_LIMIT:
+					sleep(0.2)
+					if not stop.empty():
+						break
+					st+=0.2
+			except KeyboardInterrupt:
+				print()
+				stop.put('stop')
+				log.put(None)
+			d-=1
 	try:
 		a.join()
 	except KeyboardInterrupt:
@@ -185,13 +186,19 @@ if __name__=='__main__':
 	except SystemExit:
 		pass
 	stop.put('stop')
-	print('exiting...')
-	for w in range(20):
-		print('####'*w+'----'*(20-w),end='\r')
+	not_print=0
+	if all([not w.is_alive() for w in s]):
+		not_print=1
+	for w in range(TIME_LIMIT*10):
+		if all([not w.is_alive() for w in s]):
+			break
+		w=round(w*8/TIME_LIMIT)
+		print('exiting:','#'*w+'-'*(80-w),end='\r')
 		sleep(0.2)
 	for w in s:
 		w.terminate()
 	system('rm -fr tmp*.trash.trash.*')
-	print('####'*20+'----'*(20-20),end='\r')
-	sleep(0.2)
-	print('    '*20+'    '*(20-20),end='\r')
+	if not_print==0:
+		print('exiting:','#'*80+'-'*(80-80),end='\r')
+		sleep(0.2)
+	print('        ',' '*80+' '*(80-80),end='\r')
