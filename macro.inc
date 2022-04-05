@@ -27,11 +27,12 @@ y dd 0
 z dd 0
 %endmacro
 
-%macro start 0
+%macro pre_start 0
 global _start
 section .data
 alld
 esp_base dd 0
+ch_val dd 0
 section .text
 
 macro_print_call macro_duput
@@ -60,6 +61,10 @@ macro_print_call macro_bswrite
 macro_print_call macro_cprint
 macro_print_call macro_cwrite
 
+%endmacro
+
+%macro start 0
+section .text
 _start:
 mov [esp_base],esp
 %endmacro
@@ -326,18 +331,21 @@ macro_args_save_b %1
 
 %macro dsdiv 3
 macro_args_read_dd %2,%3
+cdq
 idiv ebx
 macro_args_save_d %1
 %endmacro
 
 %macro wsdiv 3
 macro_args_read_ww %2,%3
+movsx eax,ax
 idiv bx
 macro_args_save_w %1
 %endmacro
 
 %macro bsdiv 3
 macro_args_read_bb %2,%3
+movsx ax,al
 idiv bl
 macro_args_save_b %1
 %endmacro
@@ -1752,9 +1760,10 @@ beq %1,%3,%$__jelse
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro def 1-5
+section .text
 %push func
 jmp %$__jdown
-func_ %+ %1:
+%1:
 push eax
 mov eax,esp
 macro_args_read_dddd [eax+20],[eax+16],[eax+12],[eax+8]
@@ -1801,17 +1810,6 @@ pop dword %1
 pop dword %2
 pop dword %3
 pop dword %4
-%endmacro
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-%macro duassert 1+
-duif %1
-else
-sprint "assertion failed"
-sprint "%1"
-jmp _stop
-end
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1893,6 +1891,10 @@ macro_args_save_
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %include "macro_set.inc"
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+pre_start
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

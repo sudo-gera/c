@@ -58,16 +58,48 @@ dsput %1
 dsfor %1
 %endmacro
 
-%macro while 1+
-dswhile %1
-%endmacro
+; %macro while 1+
+; dswhile %1
+; %endmacro
+
+; %macro if 1+
+; dsif %1
+; %endmacro
+
+; %macro elif 1+
+; dselif %1
+; %endmacro
 
 %macro if 1+
-dsif %1
+%push if
+jmp %%_1
+%$__jup:
+jmp %$__jdown
+%%_1:
+set [ch_val],=,(,%1,)
+deq [ch_val],0,%$__jelse
 %endmacro
 
 %macro elif 1+
-dselif %1
+jmp %%_1
+%$__jelse:
+jmp %%_2
+%%_1:
+%$__jdown:
+%pop
+%push if
+%$__jup:
+jmp %$__jdown
+%%_2:
+set [ch_val],=,(,%1,)
+deq [ch_val],0,%$__jelse
+%endmacro
+
+%macro while 1+
+%push while
+%$__jup:
+set [ch_val],=,(,%1,)
+deq [ch_val],0,%$__jdown
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

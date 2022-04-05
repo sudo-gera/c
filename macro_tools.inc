@@ -209,7 +209,7 @@ jmp dword [esp-4]
 	push dword 0
 %endif
 push dword %%_1
-jmp func_ %+ %1
+jmp %1
 %%_1:
 %endmacro
 
@@ -438,3 +438,7 @@ macro_args_save_d %1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+%macro prstr 1
+%defstr %$str %1
+sprint %$str
+%endmacro
