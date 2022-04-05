@@ -12,5 +12,12 @@
 
 
 int main(){
+<<<<<<< HEAD
 	
+=======
+	int q=rand();
+	int w=rand();
+	q+=q==0;
+	w+=w==0;
+>>>>>>> 63e0cbb4e069e3f02c93744f2a13b90ecdb0ea07
 }
