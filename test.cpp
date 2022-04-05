@@ -12,9 +12,10 @@
 
 
 int main(){
-	while (1){
-		int q=int(rand()%4)*"\x01\xff"[rand()%2];
-		int w=int(rand()%4)*"\x01\xff"[rand()%2];
-		print(q,w,bin_repr(q),bin_repr(w),bin_repr(q/w),bin_repr((unsigned&)(q)/(unsigned&)(w)))
-	}
+	// while (1){
+	// 	int q=int(rand()%4)*"\x01\xff"[rand()%2];
+	// 	int w=int(rand()%4)*"\x01\xff"[rand()%2];
+	// 	print(q,w,bin_repr(q),bin_repr(w),bin_repr(q/w),bin_repr((unsigned&)(q)/(unsigned&)(w)))
+	// }
+	print(bin_repr(-39.77f))
 }
