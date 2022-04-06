@@ -5,6 +5,7 @@
 #include <vector>
 #include <type_traits>
 #include <assert.h>
+#include <memory>
 
 template <typename T>
 class treap{
