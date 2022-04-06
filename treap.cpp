@@ -167,7 +167,10 @@ int main(){
 	assert(vector<string>(q)==vector<string>({"-1","0","1","2","0","1","2","3","4","5","6"}));
 	treap<B> r;
 	r.emplace_back(1);
+	assert(r[0].d==1);
 	r.emplace_front(2);
+	assert(r[0].d==2);
+	assert(r[1].d==1);
 	auto t=r.cut_left(1);
 	assert(t[0].d==2);
 	assert(r[0].d==1);
