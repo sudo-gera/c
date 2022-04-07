@@ -36,6 +36,9 @@ void check(T q,T e){
 struct B {int d=0; B(B&&){} explicit B(int f):d(f){} };
 
 int main(){
+	auto sr=1649333546;
+	std::cout<<"seed = "<<sr<<std::endl;
+	srand(sr);
 	treap<long> e({1,2,3,4,5});
 	auto q=treap<string>({"1","2","3"});
 	auto w=q;

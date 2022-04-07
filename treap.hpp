@@ -12,116 +12,116 @@ private:
 	struct el{
 		T v;
 		int64_t w;
-		el* _z=nullptr;
-		el* _x=nullptr;
-		el* _p=nullptr;
+		el* z_get=nullptr;
+		el* x_get=nullptr;
+		el* p=nullptr;
 		int64_t s=1;
 		int64_t d=1;
 		int r=0;
 		template<typename...Y>
 		el(const Y&..._v):v(_v...),w(rand()){}
 
-		el*& z(){
-			return _z;
-		}
 		template<typename y>
-		void z(y&& q){
-			_z=std::move(q);
+		void z_put(y q){
+			z_get=q;
 			update();
 		}
 
-		el*& x(){
-			return _x;
-		}
 		template<typename y>
-		void x(y&& q){
-			_x=std::move(q);
+		void x_put(y q){
+			x_get=q;
 			update();
 		}
 		void make(){
 			if (r){
-				auto t=z();
-				z(x());
-				x(t);
-				if (z()){
-					z()->r=1;
+				auto t=z_put();
+				z_put(x_put());
+				x_put(t);
+				if (z_put()){
+					z_put()->r=1;
 				}
-				if (x()){
-					x()->r=1;
+				if (x_put()){
+					x_put()->r=1;
 				}
 				r=0;
 			}
 		}
 		void update(){
 			auto t=this;
-			if (t->z()==nullptr and t->x()==nullptr){
+			if (t->z_get==nullptr and t->x_get==nullptr){
 				t->s=1;
 				t->d=1;
 			}
-			else if (t->z()==nullptr){
-				t->s=t->x()->s+1;
-				t->x()->_p=t;
-				t->d=t->x()->d+1;
+			else if (t->z_get==nullptr){
+				t->s=t->x_get->s+1;
+				t->x_get->p=t;
+				t->d=t->x_get->d+1;
 			}
-			else if (t->x()==nullptr){
-				t->s=t->z()->s+1;
-				t->z()->_p=t;
-				t->d=t->z()->d+1;
+			else if (t->x_get==nullptr){
+				t->s=t->z_get->s+1;
+				t->z_get->p=t;
+				t->d=t->z_get->d+1;
 			}else{
-				t->s=t->z()->s+t->x()->s+1;
-				t->x()->_p=t;
-				t->z()->_p=t;
-				t->d=(t->z()->d>t->x()->d?t->z()->d:t->x()->d)+1;
+				t->s=t->z_get->s+t->x_get->s+1;
+				t->x_get->p=t;
+				t->z_get->p=t;
+				t->d=(t->z_get->d>t->x_get->d?t->z_get->d:t->x_get->d)+1;
 			}
-			if (t->d>256){
+			if (t->d>64){
 				std::cerr<<"bamboo!! "<<t->d<<std::endl;
 				exit(0);
 			}
 		}
 		int64_t nz_find_index(){
 			auto q=this;
-			auto w=q->_p;
+			auto w=q->p;
 			if (w==nullptr){
-				return el_size(q->z());
-			}else if (w->z()==q){
-				return w->nz_find_index()-el_size(q->x())-1;
-			}else if (w->x()==q){
-				return w->nz_find_index()+el_size(q->z())+1;
+				return el_size(q->z_get);
+			}else if (w->z_get==q){
+				return w->nz_find_index()-el_size(q->x_get)-1;
+			}else if (w->x_get==q){
+				return w->nz_find_index()+el_size(q->z_get)+1;
 			}
 			assert(0);
 			return 0;
 		}
+		int64_t elsize(){
+			if(!this){
+				return 0;
+			}
+			return this->s;
+		}
 	};
 
-	static int64_t el_size(el*&s){
+	static int64_t el_size(el*s){
 		return s?s->s:0;
 	}
 
-	static int64_t find_index(el*const&s){
+	static int64_t find_index(el*s){
 		return s?s->nz_find_index():0;
 	}
 
-	static el* get_by_index(el*const&s,int64_t n){
+	static el* get_by_index(el*s,int64_t n){
 		if (!s){
 			return nullptr;
 		}
-		if (s->z()==nullptr){
+		if (s->z_get==nullptr){
 			if (n==0){
 				return s;
 			}
 			else{
-				return get_by_index(s->x(),n-1);
+				return get_by_index(s->x_get,n-1);
 			}
 		}
 		else{
-			if (n==s->z()->s){
+			if (n==s->z_get->s){
 				return s;
 			}
-			if (n<s->z()->s){
-				return get_by_index(s->z(),n);
+			if (n<s->z_get->s){
+				return get_by_index(s->z_get,n);
 			}
-			if (n>s->z()->s){
-				return get_by_index(s->x(),n-s->z()->s-1);
+			if (n>s->z_get->s){
+				return get_by_index(s->x_get,n-s->z_get->s-1);
 			}
 		}
 		assert(0);
@@ -132,9 +132,9 @@ private:
 		if (!q){
 			return;
 		}
-		to_list(q->z(),a);
+		to_list(q->z_get,a);
 		a.push_back(q->v);
-		to_list(q->x(),a);
+		to_list(q->x_get,a);
 		return;
 	}
 
@@ -142,20 +142,20 @@ private:
 		if (!q){
 			return;
 		}
-		pr(q->z(),n+1);
+		pr(q->z_get,n+1);
 		for (auto w=0;w<n;++w){
 			putchar('|');
 		}
 		std::cout<<q<<' '<<q->v<<' '<<q->w<<std::endl;
-		pr(q->x(),n+1);
+		pr(q->x_get,n+1);
 	}
 
 	static auto pri(el* root,size_t*prev_node=0){
 		if (!root){
 			return;
 		}
-		el*left=(root)->z();
-		el*right=(root)->x();
+		el*left=(root)->z_get;
+		el*right=(root)->x_get;
 
 		size_t node[3];
 		node[2]=(size_t)NULL;
@@ -199,7 +199,7 @@ private:
 			}
 		}
 
-		if (left==NULL && right==NULL){
+		if (left==NULL and right==NULL){
 			std::cout<<("━");
 		}else
 		if (left==NULL){
@@ -230,8 +230,8 @@ private:
 			return nullptr;
 		}
 		el*w=new el(q->v);
-		w=merge(copy(q->z()),w);
-		w=merge(w,copy(q->x()));
+		w=merge(copy(q->z_get),w);
+		w=merge(w,copy(q->x_get));
 		return w;
 	}
 
@@ -239,8 +239,8 @@ private:
 		if (!q){
 			return;
 		}
-		del(q->z());
-		del(q->x());
+		del(q->z_get);
+		del(q->x_get);
 		delete q;
 	}
 
@@ -252,62 +252,28 @@ private:
 			return t1;
 		}
 		if (t1->w<t2->w){
-			t2->z(merge(t1,t2->z()));
+			t2->z_put(merge(t1,t2->z_get));
 			return t2;
 		}else{
-			t1->x(merge(t1->x(),t2));
+			t1->x_put(merge(t1->x_get,t2));
 			return t1;
 		}
 	}
 
 	static std::pair<el*,el*> split(el* t,int64_t n){
 		if (!t){
-			return {(el*)(nullptr),(el*)(nullptr)};
-		}else if (t->z()==nullptr){
-			if (n<1){
-				return {(el*)(nullptr),t};
-			}else{
-				auto tmp=split(t->x(),n-1);
-				t->x(tmp.first);
-				auto t2=tmp.second;
-				if(t2){
-					t2->_p=nullptr;
-				}
-				return {t,t2};
-			}
-		}else if (t->z()->s==n){
-			auto t1=t->z();
-			t->z((el*)(nullptr));
-			if (t1){
-				t1->_p=nullptr;
-			}
-			return {t1,t};
-		}else if (t->z()->s+1==n){
-			auto t2=t->x();
-			t->x((el*)(nullptr));
-			if (t2){
-				t2->_p=nullptr;
-			}
-			return {t,t2};
-		}else if (t->z()->s+1<n){
-			auto tmp=split(t->x(),n-t->z()->s-1);
-			t->x(tmp.first);
-			auto t2=tmp.second;
-			if (t2){
-				t2->_p=nullptr;
-			}
-			return {t,t2};
-		}else if (t->z()->s>n){
-			auto tmp=split(t->z(),n);
-			auto t1=tmp.first;
-			t->z(tmp.second);
-			if (t1){
-				t1->_p=nullptr;
-			}
-			return {t1,t};
+			return {nullptr,nullptr};
 		}
-		assert(0);
-		return {(el*)(0),(el*)(0)};
+		int64_t ls=t->z_get?t->z_get->s:0;
+		if (n>ls){
+			auto tmp=split(t->x_get,n-ls-1);
+			t->x_put(tmp.first);
+			return {t,tmp.second};
+		}else{
+			auto tmp=split(t->z_get,n);
+			t->z_put(tmp.second);
+			return {tmp.first,t};
+		}
 	}
 
 	static el* add(el*q,int64_t n){
@@ -318,30 +284,30 @@ private:
 			return q;
 		}
 		if (n>0){
-			if (el_size(q->x())>=n){
-				return get_by_index(q->x(),n-1);
+			if (el_size(q->x_get)>=n){
+				return get_by_index(q->x_get,n-1);
 			}else{
-				auto w=q->_p;
+				auto w=q->p;
 				if (w==nullptr){
 					return nullptr;
-				}else if (w->z()==q){
-					return add(q->_p,-el_size(q->x())-1+n);
-				}else if (w->x()==q){
-					return add(q->_p,el_size(q->z())+1+n);
+				}else if (w->z_get==q){
+					return add(q->p,-el_size(q->x_get)-1+n);
+				}else if (w->x_get==q){
+					return add(q->p,el_size(q->z_get)+1+n);
 				}
 				assert(0);
 			}
 		}else if (n<0){
-			if (-el_size(q->z())<=n){
-				return get_by_index(q->z(),el_size(q->z())+n);
+			if (-el_size(q->z_get)<=n){
+				return get_by_index(q->z_get,el_size(q->z_get)+n);
 			}else{
-				auto w=q->_p;
+				auto w=q->p;
 				if (w==nullptr){
 					return nullptr;
-				}else if (w->z()==q){
-					return add(q->_p,-el_size(q->x())-1+n);
-				}else if (w->x()==q){
-					return add(q->_p,el_size(q->z())+1+n);
+				}else if (w->z_get==q){
+					return add(q->p,-el_size(q->x_get)-1+n);
+				}else if (w->x_get==q){
+					return add(q->p,el_size(q->z_get)+1+n);
 				}
 				assert(0);
 			}
@@ -610,8 +576,8 @@ public:
 			return iter{e,0};
 		}
 		auto q=e;
-		while (q->z()){
-			q=q->z();
+		while (q->z_get){
+			q=q->z_get;
 		}
 		return iter{q,0};
 	}
@@ -620,8 +586,8 @@ public:
 			return iter{e,0};
 		}
 		auto q=e;
-		while (q->x()){
-			q=q->x();
+		while (q->x_get){
+			q=q->x_get;
 		}
 		return iter{q,1};
 	}
