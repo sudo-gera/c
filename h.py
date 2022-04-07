@@ -229,3 +229,19 @@ def fast_prev_prime(q):
 		q-=6
 
 from builtins import *
+
+class Prime:
+	def __init__(s,p,n):
+		s.n=n
+		s.p=p
+	def __lt__(s,o):
+		return s.p(o)
+	def __le__(s,o):
+		return s.p(o+1)
+	def __gt__(s,o):
+		return s.n(o)
+	def __ge__(s,o):
+		return s.n(o-1)
+
+prime=Prime(prev_prime,next_prime)
+fast_prime=Prime(fast_prev_prime,fast_next_prime)
