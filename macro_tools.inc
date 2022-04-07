@@ -73,6 +73,15 @@ add [esp_base],esp
 cput 27
 sput "[0m"
 
+cput 9
+
+sput " line = "
+cput 27
+sput "[32m"
+dsput __LINE__
+cput 27
+sput "[0m"
+
 cput 10
 %endmacro
 

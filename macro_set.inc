@@ -5,213 +5,138 @@
 	%rep %0
 		%rotate -1
 		%ifidni %1,+
-			dpush 0
-			dpush '+'
-			dpush 2
+			push dword 0
+			push dword '+'
+			push dword 2
 		%elifidni %1,-
-			dpush 0
-			dpush '-'
-			dpush 2
+			push dword 0
+			push dword '-'
+			push dword 2
 		%elifidni %1,*
-			dpush 0
-			dpush '*'
-			dpush 2
+			push dword 0
+			push dword '*'
+			push dword 2
 		%elifidni %1,/
-			dpush 0
-			dpush '/'
-			dpush 2
+			push dword 0
+			push dword '/'
+			push dword 2
 		%elifidni %1,%
-			dpush 0
-			dpush '%'
-			dpush 2
+			push dword 0
+			push dword '%'
+			push dword 2
 		%elifidni %1,(
-			dpush 0
-			dpush '('
-			dpush 2
+			push dword 0
+			push dword '('
+			push dword 2
 		%elifidni %1,)
-			dpush 0
-			dpush ')'
-			dpush 2
+			push dword 0
+			push dword ')'
+			push dword 2
 		%elifidni %1,<
-			dpush 0
-			dpush '<'
-			dpush 2
+			push dword 0
+			push dword '<'
+			push dword 2
 		%elifidni %1,>
-			dpush 0
-			dpush '>'
-			dpush 2
+			push dword 0
+			push dword '>'
+			push dword 2
 		%elifidni %1,<=
-			dpush 0
-			dpush '<='
-			dpush 2
+			push dword 0
+			push dword '<='
+			push dword 2
 		%elifidni %1,>=
-			dpush 0
-			dpush '<='
-			dpush 2
+			push dword 0
+			push dword '<='
+			push dword 2
 		%elifidni %1,==
-			dpush 0
-			dpush '=='
-			dpush 2
+			push dword 0
+			push dword '=='
+			push dword 2
 		%elifidni %1,!=
-			dpush 0
-			dpush '!='
-			dpush 2
+			push dword 0
+			push dword '!='
+			push dword 2
 		%elifidni %1,and
-			dpush 0
-			dpush 'and'
-			dpush 2
+			push dword 0
+			push dword 'and'
+			push dword 2
 		%elifidni %1,or
-			dpush 0
-			dpush 'or'
-			dpush 2
+			push dword 0
+			push dword 'or'
+			push dword 2
+		%elifidni %1,&&
+			push dword 0
+			push dword '&&'
+			push dword 2
+		%elifidni %1,||
+			push dword 0
+			push dword '||'
+			push dword 2
 		%elifidni %1,[
-			dpush 0
-			dpush '['
-			dpush 2
+			push dword 0
+			push dword '['
+			push dword 2
 		%elifidni %1,]
-			dpush 0
-			dpush ']'
-			dpush 2
+			push dword 0
+			push dword ']'
+			push dword 2
 		%elifidni %1,b[
-			dpush 0
-			dpush 'b['
-			dpush 2
+			push dword 0
+			push dword 'b['
+			push dword 2
 		%elifidni %1,w[
-			dpush 0
-			dpush 'w['
-			dpush 2
+			push dword 0
+			push dword 'w['
+			push dword 2
 		%elifidni %1,d[
-			dpush 0
-			dpush 'd['
-			dpush 2
+			push dword 0
+			push dword 'd['
+			push dword 2
 		%elifidni %1,=
-			dpush 0
-			dpush '='
-			dpush 2
+			push dword 0
+			push dword '='
+			push dword 2
 		%elifidni %1,+=
-			dpush 0
-			dpush '+='
-			dpush 2
+			push dword 0
+			push dword '+='
+			push dword 2
 		%elifidni %1,-=
-			dpush 0
-			dpush '-='
-			dpush 2
+			push dword 0
+			push dword '-='
+			push dword 2
 		%elifidni %1,*=
-			dpush 0
-			dpush '*='
-			dpush 2
+			push dword 0
+			push dword '*='
+			push dword 2
 		%elifidni %1,/=
-			dpush 0
-			dpush '/='
-			dpush 2
+			push dword 0
+			push dword '/='
+			push dword 2
 		%elifidni %1,%=
-			dpush 0
-			dpush '%='
-			dpush 2
-		%elifidni %1,eax
-			dpush 4
-			dpush %1
-			dpush 3
-		%elifidni %1,ebx
-			dpush 4
-			dpush %1
-			dpush 4
-		%elifidni %1,ecx
-			dpush 4
-			dpush %1
-			dpush 5
-		%elifidni %1,edx
-			dpush 4
-			dpush %1
-			dpush 6
-		%elifidni %1,esi
-			dpush 4
-			dpush %1
-			dpush 7
-		%elifidni %1,edi
-			dpush 4
-			dpush %1
-			dpush 8
-		%elifidni %1,ebp
-			dpush 4
-			dpush %1
-			dpush 9
-		%elifidni %1,ax
-			dpush 2
-			wpush 0
-			wpush %1
-			dpush 3
-		%elifidni %1,bx
-			dpush 2
-			wpush 0
-			wpush %1
-			dpush 4
-		%elifidni %1,cx
-			dpush 2
-			wpush 0
-			wpush %1
-			dpush 5
-		%elifidni %1,dx
-			dpush 2
-			wpush 0
-			wpush %1
-			dpush 6
-		%elifidni %1,si
-			dpush 2
-			wpush 0
-			wpush %1
-			dpush 7
-		%elifidni %1,di
-			dpush 2
-			wpush 0
-			wpush %1
-			dpush 8
-		%elifidni %1,bp
-			dpush 2
-			wpush 0
-			wpush %1
-			dpush 9
-		%elifidni %1,al
-			dpush 1
-			wpush 0
-			bpush %1
-			dpush 3
-		%elifidni %1,bl
-			dpush 1
-			wpush 0
-			bpush %1
-			dpush 4
-		%elifidni %1,cl
-			dpush 1
-			wpush 0
-			bpush %1
-			dpush 5
-		%elifidni %1,dl
-			dpush 1
-			wpush 0
-			bpush %1
-			dpush 6
+			push dword 0
+			push dword '%='
+			push dword 2
 		%else
 			%defstr %$arg %1
 			%strlen %$lll %$arg
 			%substr %$arg1 %$arg 1,1
 			%substr %$arg2 %$arg %$lll,1
 			%if %$arg1 == '[' && %$arg2 == ']'
-				dpush 4
+				push dword 4
 				push dword %1
-				dpush 0
+				push dword 0
 				pushad
 				lea eax,%1
 				mov [esp+32],eax
 				popad
 			%else
-				dpush 0
+				push dword 0
 				push dword %1
-				dpush 1
+				push dword 1
 			%endif
 		%endif
 	%endrep
-	dpush (%0)*macro_set_len*4
+	push dword (%0)*macro_set_len*4
 	jmp macro_set_jmp
 	%%_1:
 %endmacro
@@ -246,45 +171,139 @@ end
 %endmacro
 
 
-%macro pr 0
-; cput 27
-; sput "[31m"
-; write __LINE__
-; cput 27
-; sput "[0m"
-; dufor ebp,eax,edx,macro_set_len*4
-; 	cput 27
-; 	sput "[34m"
-; 	write [ebp]
-; 	cput 27
-; 	sput "[0m"
-; 	write [ebp+4]
-; 	cput 27
-; 	sput "[35m"
-; 	write [ebp+8]
-; end
-; dufor ebp,edx,ebx,macro_set_len*4
-; 	cput 27
-; 	sput "[34m"
-; 	write [ebp]
-; 	cput 27
-; 	sput "[32m"
-; 	write [ebp+4]
-; 	cput 27
-; 	sput "[35m"
-; 	write [ebp+8]
-; end
-; cput 27
-; sput "[0m"
-; cput 10
+%macro macro_set_pr 0
+push %%_1
+push dword __LINE__
+jmp macro_pr_jmp
+%%_1:
 %endmacro
 
+; %define macro_set_log
+
+section .text
+	macro_pr_jmp:
+%ifdef macro_set_log
+	pushad
+	mov ebp,[esp+32]
+	cput 27
+	sput "[31m"
+	write ebp
+	cput 27
+	sput "[0m"
+	dufor ebp,eax,edx,macro_set_len*4
+		cput 27
+		sput "[34m"
+		write [ebp]
+		cput 27
+		sput "[0m"
+		write [ebp+4]
+		cput 27
+		sput "[35m"
+		write [ebp+8]
+	end
+	duif edx,<,ebx
+		cput 27
+		sput "[34m"
+		write [ebp]
+		cput 27
+		sput "[33m"
+		write [ebp+4]
+		cput 27
+		sput "[35m"
+		write [ebp+8]
+	end
+	add edx,macro_set_len*4
+	dufor ebp,edx,ebx,macro_set_len*4
+		cput 27
+		sput "[34m"
+		write [ebp]
+		cput 27
+		sput "[32m"
+		write [ebp+4]
+		cput 27
+		sput "[35m"
+		write [ebp+8]
+	end
+	sub edx,macro_set_len*4
+	cput 27
+	sput "[0m"
+	cput 10
+	popad
+%endif
+	add esp,8
+	jmp [esp-4]
+
+
 def macro_ops
+	mov edx,ebx
+	_________macro_ops_for_begin8:
+	cmp edx,eax
+	jbe _________macro_ops_for_end8
+	sub edx,macro_set_len*4
+		macro_set_pr
+		cmp [edx],dword 2
+		jne _________macro_ops_part8
+			mov ebp,[edx+4]
+			cmp ebp,'*'
+			jne _________macro_ops_not8_1
+				mov ebp,edx
+				sub ebp,macro_set_len*4
+				cmp eax,ebp
+				ja _________macro_ops_un8_1
+				cmp [edx-macro_set_len*4],dword 2
+				jne _________macro_ops_bin8_1
+					_________macro_ops_un8_1:
+					pushad
+					mov eax,[edx+4+macro_set_len*4]
+					mov ebx,[eax]
+					mov [edx+4+macro_set_len*4],ebx
+					mov [edx+macro_set_len*4],eax
+					mov [edx+8+macro_set_len*4],dword 4
+					popad
+					macro_set_memmove 1
+					add edx,macro_set_len*4
+				_________macro_ops_bin8_1:
+			jmp _________macro_ops_end8
+			_________macro_ops_not8_1:
+			cmp ebp,'-'
+			jne _________macro_ops_not8_2
+				mov ebp,edx
+				sub ebp,macro_set_len*4
+				cmp eax,ebp
+				ja _________macro_ops_un8_2
+				cmp [edx-macro_set_len*4],dword 2
+				jne _________macro_ops_bin8_2
+					_________macro_ops_un8_2:
+					neg dword [edx+4+macro_set_len*4]
+					macro_set_memmove 1
+					add edx,macro_set_len*4
+				_________macro_ops_bin8_2:
+			jmp _________macro_ops_end8
+			_________macro_ops_not8_2:
+			cmp ebp,'+'
+			jne _________macro_ops_not8_3
+				mov ebp,edx
+				sub ebp,macro_set_len*4
+				cmp eax,ebp
+				ja _________macro_ops_un8_3
+				cmp [edx-macro_set_len*4],dword 2
+				jne _________macro_ops_bin8_3
+					_________macro_ops_un8_3:
+					macro_set_memmove 1
+					add edx,macro_set_len*4
+				_________macro_ops_bin8_3:
+			jmp _________macro_ops_end8
+			_________macro_ops_not8_3:
+			_________macro_ops_end8:
+		_________macro_ops_part8:
+	jmp _________macro_ops_for_begin8
+	_________macro_ops_for_end8:
+
 	mov edx,eax
 	_________macro_ops_for_begin1:
 	cmp edx,ebx
 	jae _________macro_ops_for_end1
-		pr
+		macro_set_pr
 		cmp [edx],dword 2
 		jne _________macro_ops_part1
 			mov ebp,[edx+4]
@@ -336,7 +355,7 @@ def macro_ops
 	_________macro_ops_for_begin2:
 	cmp edx,ebx
 	jae _________macro_ops_for_end2
-		pr
+		macro_set_pr
 		cmp [edx],dword 2
 		jne _________macro_ops_part2
 			mov ebp,[edx+4]
@@ -370,7 +389,7 @@ def macro_ops
 	_________macro_ops_for_begin3:
 	cmp edx,ebx
 	jae _________macro_ops_for_end3
-		pr
+		macro_set_pr
 		cmp [edx],dword 2
 		jne _________macro_ops_part3
 			mov ebp,[edx+4]
@@ -462,7 +481,7 @@ def macro_ops
 	_________macro_ops_for_begin4:
 	cmp edx,ebx
 	jae _________macro_ops_for_end4
-		pr
+		macro_set_pr
 		cmp [edx],dword 2
 		jne _________macro_ops_part4
 			mov ebp,[edx+4]
@@ -486,6 +505,26 @@ def macro_ops
 				macro_set_memmove 2
 			jmp _________macro_ops_end4
 			_________macro_ops_not4_1:
+			cmp ebp,'&&'
+			jne _________macro_ops_not4_2
+				mov esi,[edx+4-macro_set_len*4]
+				cmp esi,0
+				je _________macro_ops_cmp_begin11
+					mov esi,[edx+4+macro_set_len*4]
+					cmp esi,0
+					je _________macro_ops_cmp_begin12
+						mov dword [edx+4+macro_set_len*4],1
+					jmp _________macro_ops_cmp_end12
+					_________macro_ops_cmp_begin12:
+						mov dword [edx+4+macro_set_len*4],0
+					_________macro_ops_cmp_end12:
+				jmp _________macro_ops_cmp_end11
+				_________macro_ops_cmp_begin11:
+					mov dword [edx+4+macro_set_len*4],0
+				_________macro_ops_cmp_end11:
+				macro_set_memmove 2
+			jmp _________macro_ops_end4
+			_________macro_ops_not4_2:
 			_________macro_ops_end4:
 		_________macro_ops_part4:
 	add edx,macro_set_len*4
@@ -496,7 +535,7 @@ def macro_ops
 	_________macro_ops_for_begin5:
 	cmp edx,ebx
 	jae _________macro_ops_for_end5
-		pr
+		macro_set_pr
 		cmp [edx],dword 2
 		jne _________macro_ops_part5
 			mov ebp,[edx+4]
@@ -520,6 +559,26 @@ def macro_ops
 				macro_set_memmove 2
 			jmp _________macro_ops_end5
 			_________macro_ops_not5_1:
+			cmp ebp,'||'
+			jne _________macro_ops_not5_2
+				mov esi,[edx+4-macro_set_len*4]
+				cmp esi,0
+				je _________macro_ops_cmp_begin13
+					mov dword [edx+4+macro_set_len*4],1
+				jmp _________macro_ops_cmp_end13
+				_________macro_ops_cmp_begin13:
+					mov esi,[edx+4+macro_set_len*4]
+					cmp esi,0
+					je _________macro_ops_cmp_begin14
+						mov dword [edx+4+macro_set_len*4],1
+					jmp _________macro_ops_cmp_end13
+					_________macro_ops_cmp_begin14:
+						mov dword [edx+4+macro_set_len*4],0
+					_________macro_ops_cmp_end14:
+				_________macro_ops_cmp_end13:
+				macro_set_memmove 2
+			jmp _________macro_ops_end5
+			_________macro_ops_not5_2:
 			_________macro_ops_end5:
 		_________macro_ops_part5:
 	add edx,macro_set_len*4
@@ -532,7 +591,7 @@ def macro_ops
 	cmp edx,eax
 	jbe _________macro_ops_for_end7
 	sub edx,macro_set_len*4
-		pr
+		macro_set_pr
 		cmp [edx],dword 2
 		jne _________macro_ops_part7
 			mov ebp,[edx+4]
@@ -721,7 +780,7 @@ def macro_bops
 	_________macro_ops_for_begin6:
 	cmp edx,ebx
 	jae _________macro_ops_for_end6
-		pr
+		macro_set_pr
 		cmp [edx],dword 2
 		jne _________macro_ops_part6
 			mov ebp,[edx+4]
@@ -789,8 +848,9 @@ def macro_bops
 					dsub esi,macro_set_len*4
 				jmp _________macro_ops_par_end
 				_________macro_ops_par:
-					mov dword [edx],1
+					dmov [edx],[edx-macro_set_len*4]
 					dmov [edx+4],[edx+4-macro_set_len*4]
+					dmov [edx+8],[edx+8-macro_set_len*4]
 				_________macro_ops_par_end:
 				push eax
 				mov eax,edx
@@ -901,3 +961,462 @@ def macro_bops
 end
 
 
+%macro macro_set_hash 3
+push %%_1
+push dword %2
+push dword %3
+jmp macro_expr_hash_jmp
+%%_1:
+pop dword %1
+%endmacro
+
+section .text
+	macro_expr_hash_jmp:
+	pushad
+	add esp,32
+	pop ebx
+	pop eax
+	sub esp,40
+
+	mov ebp,eax
+	mov edi,ebx
+	mov ecx,ebx
+	mov ebx,eax
+	mov eax,0
+	mov esi,75
+	_________macro_expr_hash_1:
+	mul esi
+	mov edx,0
+	mov dl,[ebx]
+	sub dl,48
+	add eax,edx
+	inc ebx
+	loop _________macro_expr_hash_1
+	div dword [len_vars_names]
+	lea eax,[vars_names+edx*4]
+	mov ebx,[esp+40]
+	mov [esp+40],eax
+	mov [esp+36],ebx
+	popad
+	add esp,8
+	jmp [esp-4]	
+
+%define macro_var
+%macro var 1
+%defstr %%varstr %1
+push %%_3
+push dword %1
+push %%_1
+jmp macro_var_jmp
+%%_1:
+db %%varstr
+%%_3:
+%endmacro
+
+section .text
+	macro_var_jmp:
+	pushad
+	mov esi,[esp+32]
+	mov edi,[esp+40]
+	mov ebp,edi
+	sub ebp,esi
+	mov ecx,ebp
+	mov ebx,esi
+	macro_set_hash ebx,esi,ebp
+	mov ecx,[esp+36]
+	cmp [ebx],dword 0
+	je _________macro_var_stay_calm
+		swrite "warning:"
+		pushad
+		mov eax,4
+		mov ebx,1
+		mov ecx,esi
+		mov edx,ebp
+		int 0x80
+		popad
+		sprint " redefined"
+	_________macro_var_stay_calm:
+	mov [ebx],ecx
+	popad
+	add esp,12
+	jmp [esp-4]
+
+
+section .text
+	macro_expr_jmp:
+	pushad
+	add esp,32
+	pop ebp
+	pop edi
+	sub esp,40
+	push esp
+	mov eax,0
+	mov ebx,0
+	mov ecx,0
+	mov esi,0
+	mov dh,-1
+	mov ebx,ebp
+	_________macro_expr_main_loop_begin:
+	cmp ebx,edi
+	jae _________macro_expr_main_loop_end
+		mov cl,[ebx]
+		mov ch,0
+		cmp cl,'0'
+		jb _________macro_expr_l0
+			cmp cl,'9'
+			ja _________macro_expr_g9
+				mov ch,1
+			_________macro_expr_g9:
+		_________macro_expr_l0:
+		cmp cl,'a'
+		jb _________macro_expr_la
+			cmp cl,'z'
+			ja _________macro_expr_gz
+				mov ch,2
+			_________macro_expr_gz:
+		_________macro_expr_la:
+		cmp cl,'A'
+		jb _________macro_expr_lA
+			cmp cl,'Z'
+			ja _________macro_expr_gZ
+				mov ch,2
+			_________macro_expr_gZ:
+		_________macro_expr_lA:
+		cmp cl,'_'
+		jne _________macro_expr_nu
+			mov ch,2
+		_________macro_expr_nu:
+		cmp cl,'@'
+		jne _________macro_expr_na
+			mov ch,2
+		_________macro_expr_na:
+		cmp cl,'.'
+		jne _________macro_expr_nd
+			mov ch,2
+		_________macro_expr_nd:
+		cmp cl,' '
+		jne _________macro_expr_ns
+			mov ch,3
+		_________macro_expr_ns:
+		cmp cl,9
+		jne _________macro_expr_nt
+			mov ch,3
+		_________macro_expr_nt:
+		cmp cl,','
+		jne _________macro_expr_nc
+			mov ch,4
+		_________macro_expr_nc:
+		cmp cl,'|'
+		jne _________macro_expr_nv
+			mov ch,5
+		_________macro_expr_nv:
+		cmp ch,dh
+		je _________macro_expr_continuing
+			cmp dh,0
+			jne _________macro_expr_dh_n0
+				pop dword eax
+				push dword 2
+				push dword esi
+				push dword 0
+				push dword eax
+			jmp _________macro_expr_dh_end
+			_________macro_expr_dh_n0:
+			cmp dh,1
+			jne _________macro_expr_dh_n1
+				pop dword eax
+				push dword 1
+				push dword esi
+				push dword 0
+				push dword eax
+			jmp _________macro_expr_dh_end
+			_________macro_expr_dh_n1:
+			cmp dh,2
+			jne _________macro_expr_dh_n2
+				sub ebx,esi
+				macro_set_hash eax,esi,ebx
+				cmp [eax],dword 0
+				jne _________macro_expr_stay_calm
+					swrite "warning:"
+					pushad
+					mov edx,ebx
+					mov eax,4
+					mov ebx,2
+					mov ecx,esi
+					int 0x80
+					popad
+					sprint " not found"
+				_________macro_expr_stay_calm:
+				add ebx,esi
+				mov eax,[eax]
+				mov esi,eax
+				pop dword eax
+				push dword 1
+				push dword esi
+				push dword 0
+				push dword eax
+			_________macro_expr_dh_n2:
+			_________macro_expr_dh_end:
+			cmp ch,0
+			jne _________macro_expr_ch_n0
+				movzx esi,cl
+			jmp _________macro_expr_ch_end
+			_________macro_expr_ch_n0:
+			cmp ch,1
+			jne _________macro_expr_ch_n1
+				movzx esi,cl
+				sub esi,'0'
+			jmp _________macro_expr_ch_end
+			_________macro_expr_ch_n1:
+			cmp ch,2
+			jne _________macro_expr_ch_n2
+				mov esi,ebx
+			jmp _________macro_expr_ch_end
+			_________macro_expr_ch_n2:
+			cmp ch,4
+			jne _________macro_expr_ch_n4
+				pop dword eax
+				push dword 1
+				push dword 0
+				push dword 0
+				push dword 2
+				push dword '+'
+				push dword 0
+				push dword eax
+			jmp _________macro_expr_ch_end
+			_________macro_expr_ch_n4:
+			cmp ch,5
+			jne _________macro_expr_ch_n5
+				pop dword eax
+				push dword 2
+				push dword ')'
+				push dword 0
+				push dword 1
+				push dword 0
+				push dword 0
+				push dword 2
+				push dword '+'
+				push dword 0
+				push dword 2
+				push dword '('
+				push dword 0
+				push dword eax
+			_________macro_expr_ch_end:
+			_________macro_expr_ch_n5:
+		jmp _________macro_expr_contend
+		_________macro_expr_continuing:
+			cmp ch,0
+			jne _________macro_expr_same_n0
+				cmp esi,256
+				jae _________macro_expr_oper_ge256
+					mov eax,0
+					mov al,cl
+					push edx
+					mov edx,256
+					mul edx
+					pop edx
+					add esi,eax
+					push edx
+					push ebx
+					push ebp
+					mov edx,0
+					mov ebx,0
+					_________macro_expr_oper_1_for_begin:
+					cmp ebx,[len_operators]
+					jae _________macro_expr_oper_1_for_end
+						lea ebp,[operators+ebx*4]
+						mov ebp,[ebp]
+						cmp ebp,esi
+						jne _________macro_expr_oper_1_nc
+							mov edx,1
+						_________macro_expr_oper_1_nc:
+					inc ebx
+					jmp _________macro_expr_oper_1_for_begin
+					_________macro_expr_oper_1_for_end:
+					cmp edx,0
+					jne _________macro_expr_oper_1_f
+						sub esi,eax
+						pop ebp
+						pop ebx
+						pop edx
+						pop dword eax
+						push dword 2
+						push dword esi
+						push dword 0
+						push dword eax
+						push edx
+						push ebx
+						push ebp
+						mov esi,0
+						mov eax,0
+						mov al,cl
+						mov esi,eax
+					_________macro_expr_oper_1_f:
+					pop ebp
+					pop ebx
+					pop edx
+				jmp _________macro_expr_oper_end
+				_________macro_expr_oper_ge256:
+				cmp esi,256*256
+				jae _________macro_expr_oper_ge256_256
+					mov eax,0
+					mov al,cl
+					push edx
+					mov edx,256*256
+					mul edx
+					pop edx
+					add esi,eax
+					push edx
+					push ebx
+					push ebp
+					mov edx,0
+					mov ebx,0
+					_________macro_expr_oper_2_for_begin:
+					cmp ebx,[len_operators]
+					jae _________macro_expr_oper_2_for_end
+						lea ebp,[operators+ebx*4]
+						mov ebp,[ebp]
+						cmp ebp,esi
+						jne _________macro_expr_oper_2_nc
+							mov edx,1
+						_________macro_expr_oper_2_nc:
+					inc ebx
+					jmp _________macro_expr_oper_2_for_begin
+					_________macro_expr_oper_2_for_end:
+					cmp edx,0
+					jne _________macro_expr_oper_2_f
+						sub esi,eax
+						pop ebp
+						pop ebx
+						pop edx
+						pop dword eax
+						push dword 2
+						push dword esi
+						push dword 0
+						push dword eax
+						push edx
+						push ebx
+						push ebp
+						mov esi,0
+						mov eax,0
+						mov al,cl
+						mov esi,eax
+					_________macro_expr_oper_2_f:
+					pop ebp
+					pop ebx
+					pop edx
+				jmp _________macro_expr_oper_end
+				_________macro_expr_oper_ge256_256:
+				cmp esi,256*256*256
+				jae _________macro_expr_oper_ge256_256_256
+					mov eax,0
+					mov al,cl
+					push edx
+					mov edx,256*256*256
+					mul edx
+					pop edx
+					add esi,eax
+					push edx
+					push ebx
+					push ebp
+					mov edx,0
+					mov ebx,0
+					_________macro_expr_oper_3_for_begin:
+					cmp ebx,[len_operators]
+					jae _________macro_expr_oper_3_for_end
+						lea ebp,[operators+ebx*4]
+						mov ebp,[ebp]
+						cmp ebp,esi
+						jne _________macro_expr_oper_3_nc
+							mov edx,1
+						_________macro_expr_oper_3_nc:
+					inc ebx
+					jmp _________macro_expr_oper_3_for_begin
+					_________macro_expr_oper_3_for_end:
+					cmp edx,0
+					jne _________macro_expr_oper_3_f
+						sub esi,eax
+						pop ebp
+						pop ebx
+						pop edx
+						pop dword eax
+						push dword 2
+						push dword esi
+						push dword 0
+						push dword eax
+						push edx
+						push ebx
+						push ebp
+						mov esi,0
+						mov eax,0
+						mov al,cl
+						mov esi,eax
+					_________macro_expr_oper_3_f:
+					pop ebp
+					pop ebx
+					pop edx
+				_________macro_expr_oper_end:
+				_________macro_expr_oper_ge256_256_256:
+			jmp _________macro_expr_same_end
+			_________macro_expr_same_n0:
+			cmp ch,1
+			jne _________macro_expr_same_n1
+				mov eax,0
+				mov al,cl
+				sub eax,'0'
+				push eax
+				push edx
+				mov eax,esi
+				mov edx,10
+				mul edx
+				mov esi,eax
+				pop edx
+				pop eax
+				add esi,eax
+			_________macro_expr_same_end:
+			_________macro_expr_same_n1:
+		_________macro_expr_contend:
+		mov dh,ch
+	inc ebx
+	jmp _________macro_expr_main_loop_begin
+	_________macro_expr_main_loop_end:
+	pop ebx
+	mov eax,esp
+	mov edx,eax
+
+	mov esi,eax
+	mov edi,ebx
+
+	_________macro_expr_swap_begin:
+	cmp eax,ebx
+	jae _________macro_expr_swap_end
+		mov ecx,[eax]
+		mov ebp,[ebx-4]
+		mov [eax],ebp
+		mov [ebx-4],ecx
+		add eax,4
+		sub ebx,4
+	jmp _________macro_expr_swap_begin
+	_________macro_expr_swap_end:
+
+	mov eax,esi
+	mov ebx,edi
+
+	macro_set_pr
+	call0 macro_bops,eax,ebx,ebx
+
+	mov esp,ebx
+	popad
+	add esp,8
+	jmp dword [esp-4]
+
+%macro expr 1+
+%defstr %%varstr %1
+push %%_3
+push %%_1
+jmp macro_expr_jmp
+%%_1:
+db ' ('
+db %%varstr
+db ') '
+%%_3:
+%endmacro
