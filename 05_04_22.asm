@@ -115,9 +115,9 @@ _while:
 jmp _while
 _lend:
 cmp [g],dword 0
-je _
+je _yend
 	jmp _nend
-_:
+_yend:
 
 mov eax,4
 mov ebx,1

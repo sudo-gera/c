@@ -61,12 +61,43 @@ macro_print_call macro_bswrite
 macro_print_call macro_cprint
 macro_print_call macro_cwrite
 
+section .data
+vars_names times 100003 dd 0
+len_vars_names dd 100003
+operators dd '+','-','*','/','%','(',')','<','>','<=','>=','==','!=','&&','||','[',']','=','+=','-=','*=','/=','%='
+len_operators dd 23
 %endmacro
 
 %macro start 0
 section .text
 _start:
 mov [esp_base],esp
+var a
+var b
+var c
+var d
+var e
+var f
+var g
+var h
+var i
+var j
+var k
+var l
+var m
+var n
+var o
+var p
+var q
+var r
+var s
+var t
+var u
+var v
+var w
+var x
+var y
+var z
 %endmacro
 
 %macro stop 0-1 0
@@ -1759,9 +1790,12 @@ beq %1,%3,%$__jelse
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-%macro def 1-5
+%macro def 1
 section .text
 %push func
+%ifdef macro_var
+var %1
+%endif
 jmp %$__jdown
 %1:
 push eax
