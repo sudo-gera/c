@@ -98,7 +98,7 @@ mkinput(long long uns,uns,"%llu",&q)
 mkinput(long double,float,"%Lf", &q)
 mkinput(char,char,"%c",&q)
 #undef mkinput
-cstr input_str(){static char t[1048576];scanf("%1048575s",t);return to_str(t);}
+cstr input_str(){static char t[1048576];scanf("%1048576s",t);return to_str(t);}
 
 #ifdef print
 #undef print
@@ -146,3 +146,29 @@ typedef int (*qsort_cmp_t)(const void *, const void *);
 
 ///////////////////////////////////////////////////end of lib
 
+#include <stdio.h>
+#include <stdlib.h>
+
+int icmp(int*q,int*w){
+	return *q-*w;
+}
+
+int main(int argc, char const *argv[])
+{
+	int n;
+	scanf("%i",&n);
+	int a[2*n];
+	for (int q=0;q<n;++q){
+		scanf("%i",a+q);
+	}
+	for (int q=0;q<n;++q){
+		scanf("%i",a+n+q);
+	}
+	qsort(a,n+n,sizeof(a[0]),(qsort_cmp_t)icmp);
+	int64_t s=0;
+	for (int q=0;q<n*2;q+=2){
+		s+=a[q];
+	}
+	printf("%li\n",s%1000000000);
+	return 0;
+}

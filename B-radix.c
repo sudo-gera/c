@@ -98,7 +98,7 @@ mkinput(long long uns,uns,"%llu",&q)
 mkinput(long double,float,"%Lf", &q)
 mkinput(char,char,"%c",&q)
 #undef mkinput
-cstr input_str(){static char t[1048576];scanf("%1048575s",t);return to_str(t);}
+cstr input_str(){static char t[1048576];scanf("%1048576s",t);return to_str(t);}
 
 #ifdef print
 #undef print
@@ -146,3 +146,8 @@ typedef int (*qsort_cmp_t)(const void *, const void *);
 
 ///////////////////////////////////////////////////end of lib
 
+int main(){
+	read(int64_t,p);
+	read(int64_t,q);
+	
+}

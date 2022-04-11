@@ -146,3 +146,90 @@ typedef int (*qsort_cmp_t)(const void *, const void *);
 
 ///////////////////////////////////////////////////end of lib
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+typedef struct num{
+	char*b;
+	char*e;
+}num;
+
+num num_cc(char*d){
+	num t;
+	t.e=d;
+	--d;
+	while(*d!='\n'){
+		--d;
+	}
+	++d;
+	t.b=d;
+	return t;
+}
+
+num num_c(){
+	num t;
+	t.b=0;
+	t.e=0;
+	return t;
+}
+
+bool is_less(num q,num e){
+	num z=q,x=e;
+	while (q.b!=q.e and e.e!=e.b){
+		if (q.b[0]!=e.b[0]){
+			return q.b[0]<e.b[0];
+		}
+		q.b+=1;
+		e.b+=1;
+	}
+	if (q.b==q.e and e.b==e.e){
+		return false;
+	}else
+	if (q.b==q.e){
+		q=x;
+		q.e=q.b+(e.e-e.b);
+		return is_less(q,e);
+	}else
+	if (e.b==e.e){
+		e=z;
+		e.e=e.b+(q.e-q.b);
+		return is_less(q,e);
+	}
+	return false;
+}
+
+int ncmp(num*q,num*e){
+	if (is_less(*q,*e)){
+		return -1;
+	}
+	if (is_less(*e,*q)){
+		return 1;
+	}
+	return 0;
+}
+
+
+int main(){
+	int c;
+	array(char,data,12345);
+	int ds=0;
+	data[ds++]='\n';
+	array(num,nums,12345);
+	int ns=0;
+	while ((c = fgetc(stdin)) != EOF) {
+		data[ds++]=c;
+		if (isspace(data[ds-1])){
+			data[ds-1]='\n';
+			if (data[ds-2]!='\n'){
+				nums[ns++]=num_cc(data+ds-1);
+			}
+		}
+	}
+	// qsort(nums,ns,sizeof(nums[0]),(qsort_cmp_t)ncmp);
+	for (int w=0;w<ns;++w){
+		for (char* e=nums[ns-1-w].b;e<nums[ns-1-w].e;++e){
+			printf("%c",*e);
+		}
+	}
+	printf("\n");
+}
