@@ -86,10 +86,7 @@ private:
 			return 0;
 		}
 		int64_t elsize(){
-			if(!this){
-				return 0;
-			}
-			return this->s;
+			return el_size(this);
 		}
 	};
 
@@ -263,17 +260,67 @@ private:
 	static std::pair<el*,el*> split(el* t,int64_t n){
 		if (!t){
 			return {nullptr,nullptr};
-		}
-		int64_t ls=t->z_get?t->z_get->s:0;
-		if (n>ls){
-			auto tmp=split(t->x_get,n-ls-1);
+		}else if (t->z_get==nullptr){
+			if (n<1){
+				return {(el*)(nullptr),t};
+			}else{
+				auto tmp=split(t->x_get,n-1);
+				t->x_put(tmp.first);
+				auto t2=tmp.second;
+				if(t2){
+					t2->p=nullptr;
+				}
+				return {t,t2};
+			}
+		}else if (t->z_get->s==n){
+			auto t1=t->z_get;
+			t->z_put((el*)(nullptr));
+			if (t1){
+				t1->p=nullptr;
+			}
+			return {t1,t};
+		}else if (t->z_get->s+1==n){
+			auto t2=t->x_get;
+			t->x_put((el*)(nullptr));
+			if (t2){
+				t2->p=nullptr;
+			}
+			return {t,t2};
+		}else if (t->z_get->s+1<n){
+			auto tmp=split(t->x_get,n-t->z_get->s-1);
 			t->x_put(tmp.first);
-			return {t,tmp.second};
-		}else{
+			auto t2=tmp.second;
+			if (t2){
+				t2->p=nullptr;
+			}
+			return {t,t2};
+		}else if (t->z_get->s>n){
 			auto tmp=split(t->z_get,n);
+			auto t1=tmp.first;
 			t->z_put(tmp.second);
-			return {tmp.first,t};
+			if (t1){
+				t1->p=nullptr;
+			}
+			return {t1,t};
+			return {nullptr,nullptr};
 		}
+		assert(0);
+		return {nullptr,nullptr};
+		// if (!t){
+		// 	return {nullptr,nullptr};
+		// }
+		// int64_t ls=t->z_get?t->z_get->s:0;
+		// if (n>ls){
+		// 	auto tmp=split(t->x_get,n-ls-1);
+		// 	t->x_put(tmp.first);
+		// 	return {t,tmp.second};
+		// }else{
+		// 	auto tmp=split(t->z_get,n);
+		// 	t->z_put(tmp.second);
+		// 	return {tmp.first,t};
+		// }		
+		// assert(0);
+		// return {nullptr,nullptr};
 	}
 
 	static el* add(el*q,int64_t n){
