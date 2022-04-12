@@ -528,6 +528,7 @@ int bn_M_div_to(bn*q , bn*e) {
 	while (es and ev[es-1] == 0) {
 		--es ;
 	}
+	assert(es);
 	bn data[2] ;
 	memset(data , 0 , sizeof(data)) ;
 	if(qs >= es) {
@@ -673,7 +674,7 @@ int bn_mod_to(bn*q , const bn*e) {
 		return 0 ;
 	} else {
 		bn_del(d) ;
-		a -> sign = q -> sign ;
+		a -> sign *= q -> sign ;
 		bn_swap(q , a) ;
 		// bn_init_bn(q , a) ;
 		bn_del(a) ;
