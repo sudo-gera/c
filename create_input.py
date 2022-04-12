@@ -39,22 +39,31 @@ def rand(q=2**64):
 # 		break
 # print(a)
 
-while 1:
-	q=rand(1000)
-	p=rand(1000)
-	c=0
-	n=2
-	f=2
-	a=Fraction(p,q)
-	while a:
-		d=Fraction(0)
-		while d/f<=a:
-			d+=1
-		d-=1
-		c+=1
-		a-=d/f
-		n+=1
-		f*=n
-	if c<1000:
-		print(p,q)
-		break
+# while 1:
+# 	q=rand(1000)
+# 	p=rand(1000)
+# 	c=0
+# 	n=2
+# 	f=2
+# 	a=Fraction(p,q)
+# 	while a:
+# 		d=Fraction(0)
+# 		while d/f<=a:
+# 			d+=1
+# 		d-=1
+# 		c+=1
+# 		a-=d/f
+# 		n+=1
+# 		f*=n
+# 	if c<1000:
+# 		print(p,q)
+# 		break
+
+print(rand(17))
+print(rand(17))
+print(rand(17))
+print(rand(17))
+print(rand(17))
+print(rand(17))
+print(rand(17))
+print(rand(17))

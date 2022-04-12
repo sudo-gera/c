@@ -764,8 +764,17 @@ public:
 		value%=N;
 		return *this;
 	}
+	// template <typename TT=Residue&>
+	// std::enable_if_t<is_prime<N>,TT> operator%=(const Residue&e){
+	// 	*this=*this-*this/e*e;
+	// 	return *this;
+	// }
 	friend auto&operator<<(std::ostream&q,const Residue&e){
 		q<<e.value;
+		return q;
+	}
+	friend auto&operator>>(std::istream&q,Residue&e){
+		q>>e.value;
 		return q;
 	}
 	auto operator-(){
@@ -989,6 +998,21 @@ public:
 		auto tmp=*this;
 		tmp.invert();
 		return tmp;
+	}
+	auto& out(std::ostream&cout)const{
+		for (size_t w=0;w<data.size();++w){
+			cout<<'[';
+			size_t c=0;
+			for (size_t e=0;e<data[w].size();++e){
+				cout<<(c++?" ":"");
+				cout<<data[w][e];
+			}
+			cout<<"]\n";
+		}
+		return cout;
+	}
+	friend auto&operator<<(std::ostream&q,const Matrix&e){
+		return e.out(q);
 	}
 };
 
