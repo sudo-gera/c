@@ -27,16 +27,38 @@ ro=2**30
 # ro = 8
 assert bin(ro).count('1')==1
 
+rp0=[0]*2**16
+rp1=[0]*2**16
+
+rp0[0]=1
+
+for w in range(1,len(rp0)):
+	rp0[w]=rp0[w-1]*root%mod
+
+rp1[0]=1
+rp1[1]=root*rp0[len(rp0)-1]
+
+for w in range(2,len(rp1)):
+	rp1[w]=rp1[w-1]*rp1[1]%mod
 
 def roots(n,k=1):
 	k%=n
-	p=root
-	while n<ro:
-		n*=2
-		p*=p
-		p%=mod
-	assert n==ro
-	return pow(p,k,mod)
+	p=ro//n*k
+	z=rp0[p%2**16]*rp1[p//2**16]%mod
+	return z
+
+bi=[]
+
+def bitinv(t,l):
+	while len(bi)<=t:
+		r=len(bi)
+		x=0
+		for c in range(32):
+			x*=2
+			x+=r%2
+			r//=2
+		bi.append(x)
+	return bi[t]>>(32-l)
 
 def prep(a):
 	l=-1
@@ -47,36 +69,47 @@ def prep(a):
 	for w in range(len(a)):
 		x=0
 		r=w
-		for c in range(l):
-			x*=2
-			x+=r%2
-			r//=2
+		x=bitinv(r,l)
 		if w<x:
 			a[w],a[x]=a[x],a[w]
 
-
-def fft(a,inv,b=0,e=None,o=1):
-	if e==None:
-		e=len(a)
+def fft(a,inv):
+	b=0
+	e=len(a)
 	n=e-b
-	if n==1:
-		return a
 	assert bin(n).count('1')==1
-	if o==1:
-		prep(a)
-	fft(a,inv,b,b+n//2,o+1)
-	fft(a,inv,b+n//2,e,o+1)
-	for k in range(n//2):
-		a0=a[b+k]
-		a1=a[b+k+n//2]
-		a[b+k]=a0+roots(n,inv*k)*a1
-		a[b+k+n//2]=a0-roots(n,inv*k)*a1
+	assert inv==-1 or max(a)**2*len(a)<mod
+	perf()
+	print()
+	prep(a)
+	perf()
+	fftr(a,inv,b,e)
+	perf()
+	print()
 	if inv==-1:
 		for w in range(n):
-			a[b+w]=a[b+w]*pow(2,-1,mod)%mod
-	else:
-		for w in range(n):
-			a[b+w]=a[b+w]%mod
+			a[w]*=pow(n,-1,mod)
+			a[w]%=mod
+	return a
+
+def fftr(a,inv,b,e):
+	n=e-b
+	h=n//2
+	_n=n
+	_b=b
+	_e=e
+	_h=h
+	n=2
+	while n<=_n:
+		for b in range(_b,_e,n):
+			e=b+n
+			h=n//2
+			for k in range(h):
+				a0=a[b+k]
+				a1=a[b+k+h]
+				a[b+k]=(a0+roots(n,inv*k)*a1)%mod
+				a[b+k+h]=(a0-roots(n,inv*k)*a1)%mod
+		n*=2
 	return a
 
 # a=[scan() for w in range(8)]
@@ -86,49 +119,36 @@ def fft(a,inv,b=0,e=None,o=1):
 # print(*s,end=' \n')
 # assert fft(fft(a[:],1),-1)==a
 # assert fft(fft(a[:],-1,),1)==a
-base=2
-q=scan(str)
-oq=int(q,2)
-# l=[]
-# while q:
-# 	l.append(q%base)
-# 	q//=base
-q=q[::-1]
-q=[int(w) for w in q]
-e=scan(str)
-oe=int(e,2)
-# l=[]
-# while e:
-# 	l.append(e%base)
-# 	e//=base
-e=e[::-1]
-e=[int(w) for w in e]
-l=max(len(q),len(e))
-l=2**len(bin(l))
-q+=[0]*(l-len(q))
-e+=[0]*(l-len(e))
-# print(q,e,oq,oe)
-t=perf_counter()
-fft(q,1)
-fft(e,1)
-print(perf_counter()-t)
-# print(q,e)
-r=q[:]
-# t=[0]*(len(q)+len(e))
-# for w in range(len(q)):
-# 	for s in range(len(e)):
-# 		t[w+s]+=q[w]*e[s]
-# print(t)
-for w in range(len(q)):
-	q[w]*=e[w]
-	q[w]%=mod
-# print(q)
-fft(q,-1)
-# print(q)
-q=q[::-1]
-r=0
-for w in q:
-	r*=base
-	r+=w
-# print(r,oq*oe)
-assert r==oq*oe
+
+def mul(q,e):
+	l=max(len(q),len(e))
+	dl=1
+	while dl<l:
+		dl*=2
+	l=dl*2
+	q+=[0]*(l-len(q))
+	e+=[0]*(l-len(e))
+	fft(q,1)
+	fft(e,1)
+	for w in range(len(q)):
+		q[w]*=e[w]
+		q[w]%=mod
+	fft(q,-1)
+
+for w in range(9):
+	base=16
+	q=scan(str)
+	oq=int(q,base)
+	q=q[::-1]
+	q=[int(w,base) for w in q]
+	e=scan(str)
+	oe=int(e,base)
+	e=e[::-1]
+	e=[int(w,base) for w in e]
+	mul(q,e)
+	q=q[::-1]
+	r=0
+	for w in q:
+		r*=base
+		r+=w
+	assert r==oq*oe

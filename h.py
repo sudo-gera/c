@@ -1,72 +1,16 @@
 HOME=1
-from sys import *
+from inspect import *
+from dataclasses import *
+from time import *
 from os import *
-from re import *
-from difflib import *
-from collections import *
-from collections.abc import *
-from heapq import *
-from bisect import *
-from weakref import *
-from types import *
-from copy import *
-from pprint import *
-from reprlib import *
-from enum import *
-from cmath import *
-from decimal import *
-from fractions import *
-from random import *
-from itertools import *
-from functools import *
-from operator import *
-from pathlib import *
 from os.path import *
-from fnmatch import *
-from shutil import *
-from copyreg import *
-from marshal import *
-from bz2 import *
-from bz2 import *
-from html.entities import *
-from urllib.parse import *
-from http import *
-from http.client import *
-from locale import *
-from shlex import *
-from tkinter.messagebox import *
-from pydoc import *
-from unittest.mock import *
-from unittest.mock import *
-from bdb import *
-from pdb import *
-from timeit import *
-from sysconfig import *
-from warnings import *
-from dataclasses import *
-from contextlib import *
-from abc import *
-from atexit import *
-from traceback import *
-from code import *
-from codeop import *
-from zipimport import *
-from runpy import *
-from importlib import *
-from keyword import *
-from tokenize import *
-from pwd import *
-from grp import *
-from audioop import *
-from chunk import *
-from uu import *
-from dataclasses import *
-from copy import *
-from os.path import *
+from sys import *
 from json import *
 from random import *
+from urllib.request import *
 from urllib.parse import *
 from pprint import *
+from math import *
 from cmath import *
 from decimal import *
 from traceback import *
@@ -79,6 +23,7 @@ from base64 import *
 from itertools import *
 from timeit import *
 from bisect import *
+from builtins import *
 from re import *
 def outputFunction(*a):
 	a=a[0]
@@ -307,3 +252,13 @@ def euler(q):
 		q*=w-1
 		q//=w
 	return q
+def perf():
+	global _perf_prev_
+	args=('%.9f'%(perf_counter()-_perf_prev_)).replace('0','\x1b[34m0\x1b[0m')
+	g=getframeinfo(stack()[1][0])
+	line=str(g.lineno)
+	file=g.filename
+	func=g.function
+	print("\x1b[92mline \x1b[94m"+line+"\x1b[92m file \x1b[94m"+file+"\x1b[92m func \x1b[94m"+func+"\x1b[92m \x1b[0m"+args)
+	_perf_prev_=perf_counter()
+_perf_prev_=perf_counter()
