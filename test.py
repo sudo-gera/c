@@ -1,9 +1,9 @@
 from numpy import *
 from h import *
 
-# mod=3221225473
-# root=13
-# ro=2**30
+mod=3221225473
+root=13
+ro=2**30
 
 # for m in count(2):
 # m=mod
@@ -22,9 +22,9 @@ from h import *
 # root=5**3
 # ro=2**30
 
-mod = 17
-root = 2
-ro = 8
+# mod = 17
+# root = 2
+# ro = 8
 assert bin(ro).count('1')==1
 
 
@@ -86,37 +86,49 @@ def fft(a,inv,b=0,e=None,o=1):
 # print(*s,end=' \n')
 # assert fft(fft(a[:],1),-1)==a
 # assert fft(fft(a[:],-1,),1)==a
-
-
-q=scan()
-oq=q
-l=[]
-while q:
-	l.append(q%10)
-	q//=10
-q=l
-e=scan()
-oe=e
-l=[]
-while e:
-	l.append(e%10)
-	e//=10
-e=l
-q+=[0]*(8-len(q))
-e+=[0]*(8-len(e))
-print(q,e,oq,oe)
+base=2
+q=scan(str)
+oq=int(q,2)
+# l=[]
+# while q:
+# 	l.append(q%base)
+# 	q//=base
+q=q[::-1]
+q=[int(w) for w in q]
+e=scan(str)
+oe=int(e,2)
+# l=[]
+# while e:
+# 	l.append(e%base)
+# 	e//=base
+e=e[::-1]
+e=[int(w) for w in e]
+l=max(len(q),len(e))
+l=2**len(bin(l))
+q+=[0]*(l-len(q))
+e+=[0]*(l-len(e))
+# print(q,e,oq,oe)
+t=perf_counter()
 fft(q,1)
 fft(e,1)
-print(q,e)
+print(perf_counter()-t)
+# print(q,e)
+r=q[:]
+# t=[0]*(len(q)+len(e))
+# for w in range(len(q)):
+# 	for s in range(len(e)):
+# 		t[w+s]+=q[w]*e[s]
+# print(t)
 for w in range(len(q)):
 	q[w]*=e[w]
-print(q)
+	q[w]%=mod
+# print(q)
 fft(q,-1)
-print(q)
+# print(q)
 q=q[::-1]
 r=0
 for w in q:
-	r*=10
+	r*=base
 	r+=w
-print(r,oq*oe)
+# print(r,oq*oe)
 assert r==oq*oe

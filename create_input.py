@@ -72,7 +72,17 @@ def rand(q=2**64):
 # 	print(to_radix(rand(999999),3))
 # print(*to_radix(rand(),3).split('0')[:10])
 # print('-'*100,*to_radix(int(argv[1])*999999999,3).split('0'),file=stderr)
-n=rand(16)
-print(n)
+# n=rand(16)
+# print(n)
+# for w in range(n):
+# 	print(rand(9)-4)
+# print(rand(2**2**10))
+# print(rand(2**2**10))
+n=rand(2**12)+1
 for w in range(n):
-	print(rand(9)-4)
+	print(rand(2),end='')
+print()
+n=rand(2**12)+1
+for w in range(n):
+	print(rand(2),end='')
+print()
