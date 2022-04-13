@@ -81,13 +81,8 @@ def fft(a,inv):
 	n=e-b
 	assert bin(n).count('1')==1
 	assert inv==-1 or max(a)**2*len(a)<mod
-	perf()
-	print()
 	prep(a)
-	perf()
 	fftr(a,inv,b,e)
-	perf()
-	print()
 	if inv==-1:
 		for w in range(n):
 			a[w]*=pow(n,-1,mod)
@@ -103,14 +98,21 @@ def fftr(a,inv,b,e):
 	_h=h
 	n=2
 	while n<=_n:
+		# ic(a)
 		for b in range(_b,_e,n):
+			# ic(a)
 			e=b+n
 			h=n//2
 			for k in range(h):
 				a0=a[b+k]
 				a1=a[b+k+h]
-				a[b+k]=(a0+roots(n,inv*k)*a1)%mod
-				a[b+k+h]=(a0-roots(n,inv*k)*a1)%mod
+				t=n-k if inv<0 else n+k
+				r=roots(n,t)
+				ic(n,t,r)
+				r*=a1
+				r%=mod
+				a[b+k]=(a0+r)%mod
+				a[b+k+h]=(a0+mod-r)%mod
 		n*=2
 	return a
 
@@ -137,20 +139,20 @@ def mul(q,e):
 		q[w]%=mod
 	fft(q,-1)
 
-for w in range(9):
-	base=16
-	q=scan(str)
-	oq=int(q,base)
-	q=q[::-1]
-	q=[int(w,base) for w in q]
-	e=scan(str)
-	oe=int(e,base)
-	e=e[::-1]
-	e=[int(w,base) for w in e]
-	mul(q,e)
-	q=q[::-1]
-	r=0
-	for w in q:
-		r*=base
-		r+=w
-	assert r==oq*oe
+# for w in range(9):
+base=16
+q=scan(str)
+oq=int(q,base)
+q=q[::-1]
+q=[int(w,base) for w in q]
+e=scan(str)
+oe=int(e,base)
+e=e[::-1]
+e=[int(w,base) for w in e]
+mul(q,e)
+q=q[::-1]
+r=0
+for w in q:
+	r*=base
+	r+=w
+assert r==oq*oe
