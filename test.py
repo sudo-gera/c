@@ -71,7 +71,9 @@ def prep(a):
 		r=w
 		x=bitinv(r,l)
 		if w<x:
-			a[w],a[x]=a[x],a[w]
+			t=a[w]
+			a[w]=a[x]
+			a[x]=t
 
 def fft(a,inv):
 	b=0
