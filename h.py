@@ -1,4 +1,5 @@
 HOME=1
+from sys import *
 from os import *
 from re import *
 from difflib import *

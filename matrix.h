@@ -712,8 +712,9 @@ const bool is_prime<0> = 0;
 template<>
 const bool is_prime<1> = 0;
 
-size_t pow(size_t q,size_t w,size_t e){
-	size_t res=1;
+template<typename T>
+T pow(T q,T w,T e){
+	T res=1;
 	while (w){
 		if (w%2){
 			res*=q;
@@ -734,7 +735,7 @@ public:
 	template<typename T>
 	Residue(const T&q){
 		if (q<0){
-			value=__uint128_t(-q)%N;
+			value=__uint128_t(0-q)%N;
 			value=N-value;
 		}else{
 			value=__uint128_t(q)%N;
@@ -806,6 +807,10 @@ public:
 		auto w=q;
 		w/=e;
 		return w;
+	}
+	template<typename TT=Residue<N>>
+	explicit operator TT(){
+		return value;
 	}
 };
 

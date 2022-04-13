@@ -59,11 +59,20 @@ def rand(q=2**64):
 # 		print(p,q)
 # 		break
 
-print(rand(17))
-print(rand(17))
-print(rand(17))
-print(rand(17))
-print(rand(17))
-print(rand(17))
-print(rand(17))
-print(rand(17))
+# mod=17
+# # mod=3221225473
+# for w in range(8):
+# 	print(rand(mod))
+# print(rand(mod//4))
+# print(rand(mod//4))
+
+# from h import *
+# n=rand(10)
+# for w in range(n):
+# 	print(to_radix(rand(999999),3))
+# print(*to_radix(rand(),3).split('0')[:10])
+# print('-'*100,*to_radix(int(argv[1])*999999999,3).split('0'),file=stderr)
+n=rand(16)
+print(n)
+for w in range(n):
+	print(rand(9)-4)

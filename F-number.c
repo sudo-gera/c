@@ -208,28 +208,53 @@ int ncmp(num*q,num*e){
 	return 0;
 }
 
+int cmp1(char**q,char**w){
+	// size_t ml=min(len(*q),len(*w));
+	// for (size_t e=0;e<ml;++e){
+	// 	if (q[0][e]!=w[0][e]){
+	// 		return -q[0][e]+w[0][e];
+	// 	}
+	// }
+	// if (len(*q)<len(*w)){
+	// 	for (size_t e=len(*q);e<len(*w);++e){
+	// 		if (q[0][e%len(*q)]!=w[0][e]){
+	// 			return -q[0][e%len(*q)]+w[0][e];
+	// 		}
+	// 	}
+	// }
+	// if (len(*q)>len(*w)){
+	// 	for (size_t e=len(*w);e<len(*q);++e){
+	// 		if (w[0][e%len(*w)]!=q[0][e]){
+	// 			return w[0][e%len(*w)]-q[0][e];
+	// 		}
+	// 	}
+	// }
+	for (size_t e=0;e<len(*w)*len(*q);++e){
+		if (q[0][e%len(*q)]!=w[0][e%len(*w)]){
+			return -q[0][e%len(*q)]+w[0][e%len(*w)];
+		}
+	}
+	return 0;
+}
 
 int main(){
 	int c;
-	array(char,data,12345);
-	int ds=0;
-	data[ds++]='\n';
-	array(num,nums,12345);
-	int ns=0;
-	while ((c = fgetc(stdin)) != EOF) {
-		data[ds++]=c;
-		if (isspace(data[ds-1])){
-			data[ds-1]='\n';
-			if (data[ds-2]!='\n'){
-				nums[ns++]=num_cc(data+ds-1);
+	array(char*,nums);
+	size_t b=1;
+	while ((c=getchar())!=EOF){
+		if (isdigit(c)){
+			if (b){
+				append(nums,0);
 			}
+			append(nums[len(nums)-1],c);
+			b=0;
+		}else{
+			b=1;
 		}
 	}
-	// qsort(nums,ns,sizeof(nums[0]),(qsort_cmp_t)ncmp);
-	for (int w=0;w<ns;++w){
-		for (char* e=nums[ns-1-w].b;e<nums[ns-1-w].e;++e){
-			printf("%c",*e);
-		}
+	qsort(nums,len(nums),sizeof(nums[0]),(qsort_cmp_t)cmp1);
+	for (size_t w=0;w<len(nums);w++){
+		put(nums[w]);
 	}
-	printf("\n");
+	putchar(10);
 }
