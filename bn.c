@@ -545,7 +545,7 @@ int bn_mul_to(bn *q , const bn*e) {
 	bn data[2] ;
 	memset(data , 0 , sizeof(data)) ;
 	bn*res = data+1 ;
-	if (qs+es > 2048) {
+	if (qs+es > 512) {
 		uint8_t*qb=(uint8_t*)qv;
 		uint8_t*eb=(uint8_t*)ev;
 		size_t l=qs;
@@ -697,13 +697,6 @@ bn* bn_mul(const bn*q , const bn*w) {
 	bn_mul_to(h , w) ;
 	return h ;
 }
-
-// int bn_mul_to(bn*q , bn const*w) {
-// bn*u = bn_mul(q , w) ;
-// bn_init_bn(q , u) ;
-// bn_delete(u) ;
-// return 0 ;
-//}
 
 int bn_neg(bn*q) {
 	q -> sign *= -1 ;

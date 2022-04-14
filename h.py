@@ -47,8 +47,13 @@ ic.configureOutput(outputFunction=outputFunction)
 ic.configureOutput(prefix='')
 from builtins import *
 home=str(Path.home())+'/'
-def rand(q=2**64):
-	return randint(0,q-1)
+def rand(q=2**64,e=None):
+	if e!=None:
+		q,e=e,q
+	else:
+		e=0
+	assert q
+	return randint(e,q-1)
 exec(open(str(Path.home())+'/.pythonrc').read())
 def urlread(*a,**s):
 	return urlopen(*a,**s).read().decode()

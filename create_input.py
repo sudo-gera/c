@@ -1,24 +1,14 @@
 from random import *
 from fractions import Fraction
-def rand(q=2**64):
+def rand(q=2**64,e=None):
+	if e!=None:
+		q,e=e,q
+	else:
+		e=0
 	assert q
-	return randint(0,q-1)
+	return randint(e,q-1)
 
-# from h import *
-# for w in range(9):
-# 	n=rand(2**15)+1
-# 	for w in range(n):
-# 		print(to_radix(rand(16),16),end='')
-# 	print()
-# 	n=rand(2**15)+1
-# 	for w in range(n):
-# 		print(to_radix(rand(16),16),end='')
-# 	print()
-for w in range(40):
-	for w in range(rand(16000)):
-		print(rand(10),end='')
-	print()
-	for w in range(rand(1600)):
-		print(rand(10),end='')
-	print()
-
+n=rand(1,300)
+print(n)
+for w in range(n):
+	print(rand(9))

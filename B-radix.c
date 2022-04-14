@@ -147,50 +147,15 @@ typedef int (*qsort_cmp_t)(const void *, const void *);
 
 ///////////////////////////////////////////////////end of lib
 
-cpp_int gcd(cpp_int q,cpp_int w){
-	return q?gcd(w%q,q):w;
-}
-
 int main(){
-	cpp_int p=input_int();
-	cpp_int q=input_int();
-	cpp_int g=gcd(p,q);
-	p/=g;
-	q/=g;
-	array(cpp_int,a);
-	while (1){
-		cpp_int b=0;
-		cpp_int e=cpp_int(18446744073709551615)+1;
-		ic(b,e,len(a))
-		while (b+1<e){
-			cpp_int c=(b+e)/2;
-			append(a,c);
-			cpp_int rp=0;
-			cpp_int rq=1;
-			cpp_int w=len(a)-1;
-			while (w>-1){
-				rp+=rq*a[(size_t)(w)];
-				rq*=w+2;
-				g=gcd(rp,rq);
-				rp/=g;
-				rq/=g;
-				w-=1;
-			}
-			if (rp*q>rq*p){
-				e=c;
-			}
-			if (rp*q<rq*p){
-				b=c;
-			}
-			if (rp*q==rq*p){
-				for (size_t w=0;w<len(a);++w){
-					write((size_t)(a[(size_t)(w)]));
-				}
-				putchar(10);
-				exit(0);
-			}
-			pop(a);
-		}
-		append(a,b);
+	read(int64_t,p);
+	read(int64_t,q);
+	int64_t n=2;
+	while (p){
+		p*=n;
+		n+=1;
+		write(p/q)
+		p%=q;
 	}
+	putchar(10);
 }
