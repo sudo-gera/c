@@ -37,6 +37,7 @@ for w in range(1,len(rp0)):
 
 rp1[0]=1
 rp1[1]=root*rp0[len(rp0)-1]
+rp1[1]%=mod
 
 for w in range(2,len(rp1)):
 	rp1[w]=rp1[w-1]*rp1[1]%mod
@@ -44,8 +45,8 @@ for w in range(2,len(rp1)):
 def roots(n,k=1):
 	k%=n
 	p=ro//n*k
-	z=rp0[p%2**16]*rp1[p//2**16]%mod
-	return z
+	return rp0[p%2**16]*rp1[p//2**16]%mod
+	return pow(root,p,mod)
 
 bi=[]
 
@@ -74,6 +75,7 @@ def prep(a):
 			t=a[w]
 			a[w]=a[x]
 			a[x]=t
+	return a
 
 def fft(a,inv):
 	b=0
@@ -98,9 +100,7 @@ def fftr(a,inv,b,e):
 	_h=h
 	n=2
 	while n<=_n:
-		# ic(a)
 		for b in range(_b,_e,n):
-			# ic(a)
 			e=b+n
 			h=n//2
 			for k in range(h):
@@ -108,7 +108,6 @@ def fftr(a,inv,b,e):
 				a1=a[b+k+h]
 				t=n-k if inv<0 else n+k
 				r=roots(n,t)
-				ic(n,t,r)
 				r*=a1
 				r%=mod
 				a[b+k]=(a0+r)%mod
@@ -138,21 +137,25 @@ def mul(q,e):
 		q[w]*=e[w]
 		q[w]%=mod
 	fft(q,-1)
+	return q
 
-# for w in range(9):
-base=16
-q=scan(str)
-oq=int(q,base)
-q=q[::-1]
-q=[int(w,base) for w in q]
-e=scan(str)
-oe=int(e,base)
-e=e[::-1]
-e=[int(w,base) for w in e]
-mul(q,e)
-q=q[::-1]
-r=0
-for w in q:
-	r*=base
-	r+=w
-assert r==oq*oe
+if __name__ == '__main__':
+	# for w in range(9):
+	# base=16
+	# q=scan(str)
+	# oq=int(q,base)
+	# q=q[::-1]
+	# q=[int(w,base) for w in q]
+	# e=scan(str)
+	# oe=int(e,base)
+	# e=e[::-1]
+	# e=[int(w,base) for w in e]
+	# mul(q,e)
+	# q=q[::-1]
+	# r=0
+	# for w in q:
+	# 	r*=base
+	# 	r+=w
+	# assert r==oq*oe
+	for w in range(40):
+		print(scan()*scan())

@@ -198,7 +198,6 @@ auto print_one(bn*q) {
 }
 #endif
 
-
 bn *bn_new() {
 // #if STACK
 // adata[dsize].sign = 0 ;
@@ -547,7 +546,243 @@ bn* bn_sub(const bn*q , const bn*w) {
 	return h ;
 }
 
+uint64_t bn_fft_pow(uint64_t q,uint64_t w,uint64_t e){
+	uint64_t res=1;
+	while (w){
+		if (w%2){
+			res*=q;
+			res%=e;
+		}
+		q*=q;
+		q%=e;
+		w/=2;
+	}
+	return res;
+}
+
+uint64_t bn_fft_mod=3221225473;
+uint64_t bn_fft_root=13;
+uint64_t bn_fft_ro=1073741824;
+
+uint64_t bn_fft_rp0[65536];
+uint64_t bn_fft_rp1[65536];
+
+void bn_fft_prepare(){
+	bn_fft_rp0[0]=1;
+
+	for (size_t w=1;w<65536;++w){
+		bn_fft_rp0[w]=bn_fft_rp0[w-1]*bn_fft_root%bn_fft_mod;
+	}
+
+	bn_fft_rp1[0]=1;
+	bn_fft_rp1[1]=bn_fft_root*bn_fft_rp0[65536-1];
+	bn_fft_rp1[1]%=bn_fft_mod;
+
+	for (size_t w=2;w<65536;++w){
+		bn_fft_rp1[w]=bn_fft_rp1[w-1]*bn_fft_rp1[1]%bn_fft_mod;
+	}
+}
+
+uint64_t bn_fft_roots(uint64_t n,uint64_t k){
+	assert(bn_fft_rp0[0]==1);
+	k%=n;
+	uint64_t p=(size_t)(bn_fft_ro/n*k);
+	uint16_t*pp=(uint16_t*)&p;
+	return (bn_fft_rp0[pp[0]]*bn_fft_rp1[pp[1]])%bn_fft_mod;
+}
+
+uint64_t* bn_fft_bi=0;
+uint64_t bn_fft_bil=0;
+uint64_t bn_fft_bim=0;
+
+uint64_t bn_fft_bitinv(uint64_t t,uint64_t l){
+	while (bn_fft_bil<=t){
+		uint64_t r=bn_fft_bil;
+		uint64_t x=0;
+		for (uint64_t c=0;c<32;++c){
+			x*=2;
+			x+=r%2;
+			r/=2;
+		}
+		if (bn_fft_bil==bn_fft_bim){
+			uint64_t*t=(uint64_t*)malloc(sizeof(uint64_t)*(bn_fft_bim*2+1));
+			memcpy(t,bn_fft_bi,bn_fft_bim*sizeof(bn_fft_bi[0]));
+			free(bn_fft_bi);
+			bn_fft_bi=t;
+			bn_fft_bim*=2;
+			bn_fft_bim+=1;
+		}
+		bn_fft_bi[bn_fft_bil++]=x;
+	}
+	return bn_fft_bi[t]>>(32-l);
+}
+
+void bn_fft_prep(uint64_t*a,uint64_t n){
+	uint64_t l=0;
+	uint64_t o=n;
+	while (o){
+		o/=2;
+		l+=1;
+	}
+	l-=1;
+	for (size_t w=0;w<n;++w){
+		size_t r=w;
+		size_t x=(size_t)bn_fft_bitinv(r,l);
+		if (w<x){
+			uint64_t t=a[w];
+			a[w]=a[x];
+			a[x]=t;
+		}
+	}
+}
+
+void bn_fft_fftr(uint64_t*a,int inv,uint64_t b,uint64_t e){
+	if (bn_fft_rp0[0]!=1){
+		bn_fft_prepare();
+	}
+	uint64_t n=e-b;
+	uint64_t h=n/2;
+	uint64_t _n=n;
+	uint64_t _b=b;
+	uint64_t _e=e;
+	n=2;
+	while (n<=_n){
+		for (b=_b;b!=_e;b+=n){
+			e=b+n;
+			h=n/2;
+			for (uint64_t k=0;k<h;k++){
+				uint64_t a0=a[b+k];
+				uint64_t a1=a[b+k+h];
+				uint64_t t=inv<0?n-k:n+k;
+				uint64_t r=bn_fft_roots(n,t);
+				r*=a1;
+				r%=bn_fft_mod;
+				a[b+k]=(a0+r)%bn_fft_mod;
+				a[b+k+h]=(a0+bn_fft_mod-r)%bn_fft_mod;
+			}
+		}
+		n*=2;
+	}
+}
+
+void bn_fft_fft(uint64_t*a,uint64_t n,int inv){
+	uint64_t b=0;
+	uint64_t e=n;
+	bn_fft_prep(a,n);
+	bn_fft_fftr(a,inv,b,e);
+	if (inv==-1){
+		for (uint64_t w=0;w<n;++w){
+			a[w]*=bn_fft_pow(n,bn_fft_mod-2,bn_fft_mod);
+			a[w]%=bn_fft_mod;
+		}
+	}
+}
+
+
 int bn_mul_to(bn *q , const bn*e) {
+	uint64_t base=16;
+	uint32_t* qv = q -> size ? q -> vect : (uint32_t*)&(q -> vect) ;
+	uint32_t qs = q -> size ? q -> size : 2 ;
+	const uint32_t* ev = e -> size ? e -> vect : (const uint32_t*)&(e -> vect) ;
+	uint32_t es = e -> size ? e -> size : 2 ;
+	while (qs and qv[qs-1] == 0) {
+		--qs ;
+	}
+	while (es and ev[es-1] == 0) {
+		--es ;
+	}
+	bn data[2] ;
+	memset(data , 0 , sizeof(data)) ;
+	bn*res = data+1 ;
+	if (qs+es > 2048) {
+		uint8_t*qb=(uint8_t*)qv;
+		uint8_t*eb=(uint8_t*)ev;
+		size_t l=qs;
+		if (es>qs){
+			l=es;
+		}
+		size_t dl=1;
+		while (dl<l){
+			dl*=2;
+		}
+		l=dl*2*8;
+		uint64_t*a=(uint64_t*)calloc(l,sizeof(uint64_t));
+		for (size_t w=0;w<qs*4;w++){
+			a[w*2]=qb[w]&0xF;
+			a[w*2+1]=qb[w]>>4;
+		}
+		uint64_t*s=(uint64_t*)calloc(l,sizeof(uint64_t));
+		for (size_t w=0;w<es*4;w++){
+			s[w*2]=eb[w]&0xF;
+			s[w*2+1]=eb[w]>>4;
+		}
+		bn_fft_fft(a,l,1);
+		bn_fft_fft(s,l,1);
+		for (size_t w=0;w<l;w++){
+			a[w]*=s[w];
+			a[w]%=bn_fft_mod;
+		}
+		bn_fft_fft(a,l,-1);
+		for (size_t w=1;w<l;w++){
+			a[w]+=a[w-1]/base;
+			a[w-1]%=base;
+		}
+		res -> size = qs+es;
+		res -> vect = (uint32_t*)calloc(1 , res -> size*sizeof(uint32_t)) ;
+		res -> sign = q -> sign*e -> sign ;
+
+		uint8_t*rb=(uint8_t*)(res->vect);
+
+		for (size_t w=0;w<res->size*4;++w){
+			rb[w]|=a[2*w];
+			rb[w]|=a[2*w+1]<<4;
+		}
+		free(a);
+		free(s);
+	} else 
+	if (qs+es > 2) {
+		// ic(itervect(qv , qv+qs))
+		bn*tmp = data+0 ;
+		res -> size = qs+es ;
+		tmp -> size = qs+es ;
+		res -> vect = (uint32_t*)calloc(1 , res -> size*sizeof(uint32_t)) ;
+		tmp -> vect = (uint32_t*)calloc(1 , tmp -> size*sizeof(uint32_t)) ;
+		// memset(res -> vect , 0 , (res -> size)*sizeof(uint32_t)) ;
+		// memset(tmp -> vect , 0 , (tmp -> size)*sizeof(uint32_t)) ;
+		// for (size_t w = 0 ; w < res -> size ; ++w) {
+		// res -> vect[w] = 0 ;
+		// tmp -> vect[w] = 0 ;
+		//}
+		// ic(itervect(qv , qv+qs))
+		tmp -> sign = 1 ;
+		for (size_t w = 0 ; w < qs ; ++w) {
+			if (qv[w]) {
+				for (size_t r = 0 ; r < es ; ++r) {
+					uint64_t _tmp = ((uint64_t)(qv[w]))*((uint64_t)(ev[r])) ;
+					*(tmp -> vect+w+r) = _tmp&4294967295 ;
+					*(tmp -> vect+w+r+1) = _tmp >> 32 ;
+					bn_M_add_to_fast(res , tmp , w+r) ;
+					*(tmp -> vect+w+r) = 0 ;
+					*(tmp -> vect+w+r+1) = 0 ;
+				}
+			}
+		}
+		res -> sign = q -> sign*e -> sign ;
+		bn_del(tmp) ;
+	} else {
+		res -> sign = q -> sign*e -> sign ;
+		res -> size = 0 ;
+
+		uint64_t*tmp_wp = (uint64_t*)&(res -> vect) ;
+		*tmp_wp = *(uint64_t*)(qv)* *(const uint64_t*)(ev) ;
+	}
+	bn_swap(res , q) ;
+	bn_del(res) ;
+	return 0 ;
+}
+
+
+int bn_mul__to(bn *q , const bn*e) {
 	// ic(q , e)
 	uint32_t* qv = q -> size ? q -> vect : (uint32_t*)&(q -> vect) ;
 	uint32_t qs = q -> size ? q -> size : 2 ;
@@ -1108,6 +1343,7 @@ bn* bn_pow(bn*q , int w) {
 	bn_pow_to(h , w) ;
 	return h ;
 }
+
 
 
 
