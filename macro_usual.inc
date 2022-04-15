@@ -58,18 +58,6 @@ dsput %1
 dsfor %1
 %endmacro
 
-; %macro while 1+
-; dswhile %1
-; %endmacro
-
-; %macro if 1+
-; dsif %1
-; %endmacro
-
-; %macro elif 1+
-; dselif %1
-; %endmacro
-
 %macro if 1+
 %push if
 jmp %%_1

@@ -1,3 +1,4 @@
+%define macro
 %macro alld 0
 a dd 0
 b dd 0
@@ -34,33 +35,9 @@ alld
 esp_base dd 0
 ch_val dd 0
 section .text
-
-macro_print_call macro_duput
-macro_print_call macro_wuput
-macro_print_call macro_buput
-macro_print_call macro_dsput
-macro_print_call macro_wsput
-macro_print_call macro_bsput
-
-macro_print_call macro_cput
-
-macro_print_call macro_duprint
-macro_print_call macro_wuprint
-macro_print_call macro_buprint
-macro_print_call macro_dsprint
-macro_print_call macro_wsprint
-macro_print_call macro_bsprint
-
-macro_print_call macro_duwrite
-macro_print_call macro_wuwrite
-macro_print_call macro_buwrite
-macro_print_call macro_dswrite
-macro_print_call macro_wswrite
-macro_print_call macro_bswrite
-
-macro_print_call macro_cprint
-macro_print_call macro_cwrite
-
+push %%_1
+jmp macro_pre_start
+%%_1:
 section .data
 vars_names times 100003 dd 0
 len_vars_names dd 100003
@@ -1255,8 +1232,6 @@ int 0x80
 macro_args_save_
 %endmacro
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 %macro sprint 1-*
 %rep %0-1
 sput %1
@@ -1267,13 +1242,41 @@ sput %1
 cput 10
 %endmacro
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 %macro swrite 1-*
 %rep %0
 sput %1
 cput 32
 %rotate 1
+%endrep
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro snput 2
+macro_args_read_dd %1,%2
+mov ecx,eax
+mov edx,ebx
+mov eax,4
+mov ebx,1
+int 0x80
+macro_args_save_
+%endmacro
+
+%macro snprint 1-*
+%rep %0/2-1
+snput %1,%2
+cput 32
+%rotate 2
+%endrep
+snput %1,%2
+cput 10
+%endmacro
+
+%macro snwrite 1-*
+%rep %0/2
+snput %1,%2
+cput 32
+%rotate 2
 %endrep
 %endmacro
 
@@ -1925,6 +1928,7 @@ macro_args_save_
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %include "macro_set.inc"
+%include "macro_code.inc"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

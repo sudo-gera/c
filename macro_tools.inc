@@ -1,88 +1,9 @@
 %macro regout 0
-sput "eax == "
-cput 27
-sput "[32m"
-dsput eax
-cput 27
-sput "[0m"
-
-cput 9
-
-sput "ebx == "
-cput 27
-sput "[32m"
-dsput ebx
-cput 27
-sput "[0m"
-
-cput 9
-
-sput "ecx == "
-cput 27
-sput "[32m"
-dsput ecx
-cput 27
-sput "[0m"
-
-cput 9
-
-sput "edx == "
-cput 27
-sput "[32m"
-dsput edx
-cput 27
-sput "[0m"
-
-cput 9
-
-sput " esi == "
-cput 27
-sput "[32m"
-dsput esi
-cput 27
-sput "[0m"
-
-cput 9
-
-sput " edi == "
-cput 27
-sput "[32m"
-dsput edi
-cput 27
-sput "[0m"
-
-cput 9
-
-sput " ebp == "
-cput 27
-sput "[32m"
-dsput ebp
-cput 27
-sput "[0m"
-
-cput 9
-
-sput " esp == "
-cput 27
-sput "[32m"
-sub [esp_base],esp
-neg dword [esp_base]
-dsput [esp_base]
-neg dword [esp_base]
-add [esp_base],esp
-cput 27
-sput "[0m"
-
-cput 9
-
-sput " line = "
-cput 27
-sput "[32m"
-dsput __LINE__
-cput 27
-sput "[0m"
-
-cput 10
+push %%_1
+push dword __LINE__
+push dword [esp_base]
+jmp macro_regout
+%%_1:
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
