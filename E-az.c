@@ -146,3 +146,36 @@ typedef int (*qsort_cmp_t)(const void *, const void *);
 
 ///////////////////////////////////////////////////end of lib
 
+typedef struct ct{
+	int64_t c;
+	char l;
+}ct;
+
+int icmp(ct*a,ct*s){
+	if (a->c>s->c){
+		return -1;
+	}
+	if (a->c<s->c){
+		return 1;
+	}
+	return a->l-s->l;
+}
+
+int main(){
+	read(char*,s);
+	array(ct,c,128);
+	for (uint64_t w=0;w<len(c);++w){
+		c[w].l=w;
+		c[w].c=0;
+	}
+	for (uint64_t w=0;w<len(s);++w){
+		c[(uint64_t)(s[w])].c++;
+	}
+	qsort(c,len(c),sizeof(c[0]),(qsort_cmp_t)icmp);
+	for (uint64_t w=0;w<len(c);++w){
+		if (c[w].c){
+			write(c[w].l);
+			print(c[w].c);
+		}
+	}
+}

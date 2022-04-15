@@ -36,7 +36,7 @@ void check(T q,T e){
 struct B {int d=0; B(B&&){} explicit B(int f):d(f){} };
 
 int main(){
-	auto sr=1649333546;
+	auto sr=time(0);
 	std::cout<<"seed = "<<sr<<std::endl;
 	srand(sr);
 	treap<long> e({1,2,3,4,5});
@@ -92,6 +92,12 @@ int main(){
 	check(e.rbegin()-20,e.rend()+20);
 	e.clear();
 	auto y=e;
+	for (size_t w=0;w<e.size();w++){
+		auto t=e.cut_left(1);
+		e.add_left(t);
+		assert(e.size()==y.size());
+	}
+	assert(e==y);
 	auto z=e.begin();
 	auto x=e.end();
 	assert(z==x);
@@ -234,6 +240,6 @@ int main(){
 	q.insert(q.begin(),w);
 	assert(vector<string>(q)==vector<string>({"2","1","0","-1","0","1","2","3","4","5","6"}));
 	assert(vector<string>(w)==vector<string>({}));
-	e.resize(20);
+	e.resize(64);
 	e.out();
 }

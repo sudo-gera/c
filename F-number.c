@@ -146,3 +146,115 @@ typedef int (*qsort_cmp_t)(const void *, const void *);
 
 ///////////////////////////////////////////////////end of lib
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+typedef struct num{
+	char*b;
+	char*e;
+}num;
+
+num num_cc(char*d){
+	num t;
+	t.e=d;
+	--d;
+	while(*d!='\n'){
+		--d;
+	}
+	++d;
+	t.b=d;
+	return t;
+}
+
+num num_c(){
+	num t;
+	t.b=0;
+	t.e=0;
+	return t;
+}
+
+bool is_less(num q,num e){
+	num z=q,x=e;
+	while (q.b!=q.e and e.e!=e.b){
+		if (q.b[0]!=e.b[0]){
+			return q.b[0]<e.b[0];
+		}
+		q.b+=1;
+		e.b+=1;
+	}
+	if (q.b==q.e and e.b==e.e){
+		return false;
+	}else
+	if (q.b==q.e){
+		q=x;
+		q.e=q.b+(e.e-e.b);
+		return is_less(q,e);
+	}else
+	if (e.b==e.e){
+		e=z;
+		e.e=e.b+(q.e-q.b);
+		return is_less(q,e);
+	}
+	return false;
+}
+
+int ncmp(num*q,num*e){
+	if (is_less(*q,*e)){
+		return -1;
+	}
+	if (is_less(*e,*q)){
+		return 1;
+	}
+	return 0;
+}
+
+int cmp1(char**q,char**w){
+	// size_t ml=min(len(*q),len(*w));
+	// for (size_t e=0;e<ml;++e){
+	// 	if (q[0][e]!=w[0][e]){
+	// 		return -q[0][e]+w[0][e];
+	// 	}
+	// }
+	// if (len(*q)<len(*w)){
+	// 	for (size_t e=len(*q);e<len(*w);++e){
+	// 		if (q[0][e%len(*q)]!=w[0][e]){
+	// 			return -q[0][e%len(*q)]+w[0][e];
+	// 		}
+	// 	}
+	// }
+	// if (len(*q)>len(*w)){
+	// 	for (size_t e=len(*w);e<len(*q);++e){
+	// 		if (w[0][e%len(*w)]!=q[0][e]){
+	// 			return w[0][e%len(*w)]-q[0][e];
+	// 		}
+	// 	}
+	// }
+	for (size_t e=0;e<len(*w)*len(*q);++e){
+		if (q[0][e%len(*q)]!=w[0][e%len(*w)]){
+			return -q[0][e%len(*q)]+w[0][e%len(*w)];
+		}
+	}
+	return 0;
+}
+
+int main(){
+	int c;
+	array(char*,nums);
+	size_t b=1;
+	while ((c=getchar())!=EOF){
+		if (isdigit(c)){
+			if (b){
+				append(nums,0);
+			}
+			append(nums[len(nums)-1],c);
+			b=0;
+		}else{
+			b=1;
+		}
+	}
+	qsort(nums,len(nums),sizeof(nums[0]),(qsort_cmp_t)cmp1);
+	for (size_t w=0;w<len(nums);w++){
+		put(nums[w]);
+	}
+	putchar(10);
+}

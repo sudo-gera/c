@@ -146,3 +146,96 @@ typedef int (*qsort_cmp_t)(const void *, const void *);
 
 ///////////////////////////////////////////////////end of lib
 
+uint64_t count(int64_t*b,int64_t*e){
+	uint64_t n=e-b;
+	if (n<2){
+		return 0;
+	}
+	int64_t*c=b+n/2;
+	uint64_t z=0;
+	z+=count(b,c);
+	z+=count(c,e);
+	array(int64_t,x);
+	int64_t*w=b,*r=c;
+	for (;w!=c and r!=e;){
+		if (*w>*r){
+			z+=c-w;
+			append(x,*r);
+			r++;
+		}else{
+			append(x,*w);
+			w++;
+		}
+	}
+	while (w!=c){
+		append(x,*w);
+		w++;
+	}
+	while (r!=e){
+		z+=c-w;
+		append(x,*r);
+		r++;
+	}
+	memcpy(b,x,len(x)*sizeof(x[0]));
+	del(x);
+	return z;
+}
+
+typedef struct indexed{
+	int64_t val;
+	uint64_t ind;
+}indexed;
+
+int cmp1(indexed*_q,indexed*_w){
+	indexed q=*_q;
+	indexed w=*_w;
+	if (q.val<w.val){
+		return -1;
+	}
+	if (q.val>w.val){
+		return 1;
+	}
+	if (q.ind<w.ind){
+		return -1;
+	}
+	if (q.ind>w.ind){
+		return 1;
+	}
+	return 0;
+}
+
+int icmp(uint64_t*q,uint64_t*w){
+	if (*q<*w){
+		return -1;
+	}
+	if (*q>*w){
+		return 1;
+	}
+	return 0;
+}
+
+int main(){
+	read(uint64_t,n);
+	array(int64_t,a,n);
+	for (uint64_t w=0;w<n;++w){
+		read(,a[w]);
+		// a[w].ind=w;
+	}
+	// qsort(a,len(a),sizeof(a[0]),(qsort_cmp_t)cmp1);
+	// // ic(itervect(a,a+len(a)))
+	// array(uint64_t,x);
+	// uint64_t z=0;
+	// for (size_t w=0;w<n;++w){
+	// 	// if (a[w].ind>w){
+	// 	// 	z+=a[w].ind-w;
+	// 	// }
+	// 	for (size_t e=0;e<len(x);++e){
+	// 		if (x[e]>a[w].ind){
+	// 			z++;
+	// 		}
+	// 	}
+	// 	append(x,a[w].ind);
+	// }
+	uint64_t z=count(a,a+len(a));
+	print(z);
+}

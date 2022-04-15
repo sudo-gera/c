@@ -98,7 +98,7 @@ mkinput(long long uns,uns,"%llu",&q)
 mkinput(long double,float,"%Lf", &q)
 mkinput(char,char,"%c",&q)
 #undef mkinput
-cstr input_str(){static char t[1048576];scanf("%1048575s",t);return to_str(t);}
+cstr input_str(){static char t[1048576];scanf("%1048576s",t);return to_str(t);}
 
 #ifdef print
 #undef print
@@ -146,3 +146,46 @@ typedef int (*qsort_cmp_t)(const void *, const void *);
 
 ///////////////////////////////////////////////////end of lib
 
+int main(){
+	read(uint64_t,n);
+	array(int64_t,entered,86420);
+	array(int64_t,exited,86420);
+	// int64_t entered[86420];
+	// memset(entered, 0, sizeof(entered));
+	// int64_t exited[86420];
+	// memset(exited, 0, sizeof(exited));
+	for (uint64_t w=0;w<n;++w){
+		int64_t a,s,d;
+		int c=0;
+		while (not isdigit(c=getchar())){}
+		a=(c-'0')*10;
+		a+=(getchar()-'0');
+		getchar();
+		s=(getchar()-'0')*10;
+		s+=(getchar()-'0');
+		getchar();
+		d=(getchar()-'0')*10;
+		d+=(getchar()-'0');
+		entered[a*3600+s*60+d]++;
+		while (not isdigit(c=getchar())){}
+		a=(c-'0')*10;
+		a+=(getchar()-'0');
+		getchar();
+		s=(getchar()-'0')*10;
+		s+=(getchar()-'0');
+		getchar();
+		d=(getchar()-'0')*10;
+		d+=(getchar()-'0');
+		exited[a*3600+s*60+d]++;
+	}
+	int64_t now=0;
+	int64_t mnow=0;
+	for (uint64_t w=0;w<86420;++w){
+		now+=entered[w];
+		if (now>mnow){
+			mnow=now;
+		}
+		now-=exited[w];
+	}
+	print(mnow);
+}

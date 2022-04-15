@@ -146,3 +146,38 @@ typedef int (*qsort_cmp_t)(const void *, const void *);
 
 ///////////////////////////////////////////////////end of lib
 
+int main(){
+	read(uint64_t,_k);
+	read(uint64_t,n);
+	array(uint64_t,v,n);
+	for (size_t w=0;w<n;w++){
+		read(,v[w]);
+	}
+	uint64_t b=0;
+	uint64_t e=-1;
+	while (b+1<e){
+		uint64_t m=(b+e)/2;
+		uint64_t u=0;
+		uint64_t k=0;
+		for (uint64_t w=0;w<n;++w){
+			if (u+v[w]>m){
+				k++;
+				u=0;
+			}
+			if (v[w]>m){
+				k=(unsigned)(-1);
+			}
+			u+=v[w];
+		}
+		if (u){
+			k++;
+			u=0;
+		}
+		if (k>_k){
+			b=m;
+		}else{
+			e=m;
+		}
+	}
+	print(e);
+}

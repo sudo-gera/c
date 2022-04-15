@@ -851,42 +851,47 @@
 #endif
 #ifndef HIDE_170
 	t=monotonic();
-	/* << * */check_output(str(bn_class("10",10)<< *bn_class("10",10)),"10")
+	/* % */check_output(str(bn_class("2",10)%bn_class("1",10)),"0")
 	print("test 170",output_time(monotonic()-t));
 #endif
 #ifndef HIDE_171
 	t=monotonic();
-	/* / */check_output(str(bn_class("453234523460009834520987234598234502345987029345436345634563",10)/bn_class("234523452034623049872345234520983475325345234232578",10)),"1932576548")
+	/* << * */check_output(str(bn_class("10",10)<< *bn_class("10",10)),"10")
 	print("test 171",output_time(monotonic()-t));
 #endif
 #ifndef HIDE_172
 	t=monotonic();
-	/* / */check_output(str(bn_class("-23534576554950000000000000009999990000999900000",10)/bn_class("8888888888884444444444433333333333332222222222222111112222777777777",10)),"-1")
+	/* / */check_output(str(bn_class("453234523460009834520987234598234502345987029345436345634563",10)/bn_class("234523452034623049872345234520983475325345234232578",10)),"1932576548")
 	print("test 172",output_time(monotonic()-t));
 #endif
 #ifndef HIDE_173
 	t=monotonic();
-	/* / */check_output(str(bn_class("-1",10)/bn_class("1",10)),"-1")
+	/* / */check_output(str(bn_class("-23534576554950000000000000009999990000999900000",10)/bn_class("8888888888884444444444433333333333332222222222222111112222777777777",10)),"-1")
 	print("test 173",output_time(monotonic()-t));
 #endif
 #ifndef HIDE_174
 	t=monotonic();
-	/* % */check_output(str(bn_class("1000000000000000000000000000000000",10)%bn_class("-1000000",10)),"0")
+	/* / */check_output(str(bn_class("-1",10)/bn_class("1",10)),"-1")
 	print("test 174",output_time(monotonic()-t));
 #endif
 #ifndef HIDE_175
 	t=monotonic();
-	/* % */check_output(str(bn_class("453234523460009834520987234598234502345987029345436345634563",10)%bn_class("234523452034623049872345234520983475325345234232578",10)),"101894444317458440603421824036688159663989325253819")
+	/* % */check_output(str(bn_class("1000000000000000000000000000000000",10)%bn_class("-1000000",10)),"0")
 	print("test 175",output_time(monotonic()-t));
 #endif
 #ifndef HIDE_176
 	t=monotonic();
-	/* % */check_output(str(bn_class("-23534576554950000000000000009999990000999900000",10)%bn_class("8888888888884444444444433333333333332222222222222111112222777777777",10)),"8888888888884444444420898756778383332222222222212111122221777877777")
+	/* % */check_output(str(bn_class("453234523460009834520987234598234502345987029345436345634563",10)%bn_class("234523452034623049872345234520983475325345234232578",10)),"101894444317458440603421824036688159663989325253819")
 	print("test 176",output_time(monotonic()-t));
 #endif
 #ifndef HIDE_177
 	t=monotonic();
-	/* / */check_output(str(bn_class("-1",10)/bn_class("1",10)),"-1")
+	/* % */check_output(str(bn_class("-23534576554950000000000000009999990000999900000",10)%bn_class("8888888888884444444444433333333333332222222222222111112222777777777",10)),"8888888888884444444420898756778383332222222222212111122221777877777")
 	print("test 177",output_time(monotonic()-t));
+#endif
+#ifndef HIDE_178
+	t=monotonic();
+	/* / */check_output(str(bn_class("-1",10)/bn_class("1",10)),"-1")
+	print("test 178",output_time(monotonic()-t));
 #endif
 print("stopping...");

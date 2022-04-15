@@ -12,4 +12,10 @@
 
 
 int main(){
+	int q=1;
+	int w=2;
+	scanf("%i",&q);
+	scanf("%i",&w);
+	int e=q*w;
+	printf("%i",e);
 }

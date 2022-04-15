@@ -1,4 +1,5 @@
 HOME=1
+from inspect import *
 from dataclasses import *
 from time import *
 from os import *
@@ -39,15 +40,20 @@ def outputFunction(*a):
 	func=s[0]
 	a=a[len(func)+2:]
 	args=a
-	print("\x1b[92mline \x1b[94m"+line+"\x1b[92m file \x1b[94m"+file+"\x1b[92m func \x1b[94m"+func+"\x1b[92m \x1b[0m"+args)
+	print("\x1b[92mline \x1b[94m"+line+"\x1b[92m file \x1b[94m"+file+"\x1b[92m func \x1b[94m"+func+"\x1b[92m \x1b[0m"+args,file=stderr)
 from icecream import ic
 ic.configureOutput(includeContext=1)
 ic.configureOutput(outputFunction=outputFunction)
 ic.configureOutput(prefix='')
 from builtins import *
 home=str(Path.home())+'/'
-def rand(q=2**64):
-	return randint(0,q-1)
+def rand(q=2**64,e=None):
+	if e!=None:
+		q,e=e,q
+	else:
+		e=0
+	assert q
+	return randint(e,q-1)
 exec(open(str(Path.home())+'/.pythonrc').read())
 def urlread(*a,**s):
 	return urlopen(*a,**s).read().decode()
@@ -245,3 +251,23 @@ class Prime:
 
 prime=Prime(prev_prime,next_prime)
 fast_prime=Prime(fast_prev_prime,fast_next_prime)
+def euler(q):
+	f=set(factor(q))
+	for w in f:
+		q*=w-1
+		q//=w
+	return q
+def perf():
+	global _perf_prev_
+	args=('%.9f'%(perf_counter()-_perf_prev_)).replace('0','\x1b[34m0\x1b[0m')
+	g=getframeinfo(stack()[1][0])
+	line=str(g.lineno)
+	file=g.filename
+	func=g.function
+	print("\x1b[92mline \x1b[94m"+line+"\x1b[92m file \x1b[94m"+file+"\x1b[92m func \x1b[94m"+func+"\x1b[92m \x1b[0m"+args)
+	_perf_prev_=perf_counter()
+_perf_prev_=perf_counter()
+def append(a,s):
+	a.append(s)
+def pop(a):
+	return a.pop()
