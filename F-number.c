@@ -1,148 +1,110 @@
+#include <assert.h>
+#include <ctype.h>
+#include <inttypes.h>
+#include <iso646.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <tgmath.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <inttypes.h>
-#include <ctype.h>
-#include <assert.h>
-#include <iso646.h>
-/*
- * array
- *
- * interface: len(a), append(a,n), pop(a), resize(a,l), a[i]
- */
-#define OFFSET 2
-#define _arr_meta(q) (( (uint64_t*)*(q) )- OFFSET)
-uint64_t len(void*a){if (!a){return 0;}return _arr_meta(&a)[1];}
-void*resize_f(void**a,uint64_t s,uint64_t y){
-	void*p=0;
-	if (!a){                  // resize_f(0,12);
-		a=&p;
+
+struct array_s {
+	size_t mem_size;
+	size_t el_count;
+	char data[0];
+};
+
+static inline size_t len(void *a) {
+	if (a == NULL) {
+		return 0;
 	}
-	if (!*a){                 // int*a=0; resize(a,12);
-		*a=OFFSET+(uint64_t*)calloc(1,s*(y+1)+OFFSET*sizeof(uint64_t));
-		_arr_meta(a)[0]=y+1;
-	}else
-	if (_arr_meta(a)[0] < y+1 and y+1 <= 2*_arr_meta(a)[0]){
-		*a=OFFSET+(uint64_t*)realloc(_arr_meta(a),s*_arr_meta(a)[0]*2+OFFSET*sizeof(uint64_t));
-		memset(((char*)(*a))+s*_arr_meta(a)[0],0,s*_arr_meta(a)[0]);
-		_arr_meta(a)[0]*=2;
-	}else
-	if (_arr_meta(a)[0] < y+1){
-		*a=OFFSET+(uint64_t*)realloc(_arr_meta(a),s*(y+1)+OFFSET*sizeof(uint64_t));
-		memset(((char*)(*a))+s*_arr_meta(a)[0],0,(y+1-_arr_meta(a)[0])*s);
-		_arr_meta(a)[0]=y+1;
-	// reducing
-	}else
-	if (_arr_meta(a)[0] > (y+1)*4){
-		*a=OFFSET+(uint64_t*)realloc(_arr_meta(a),s*(y+1)+OFFSET*sizeof(uint64_t));
-		_arr_meta(a)[0]=y+1;
-	// end of reducing
-	}
-	_arr_meta(a)[1]=y;
-	return *a;
+	return ((struct array_s *)(a))[-1].el_count;
 }
-#define resize(a,...) resize_f((void**)(&(a)),sizeof(*(a)),__VA_ARGS__)
-void del(void*a){if (!a){return;}free(_arr_meta(&a));}
-#define append(a,...) (resize((a),len(a)+1),(a)[len(a)-1]=(__VA_ARGS__))
-#define pop(a,...) (resize((a),len(a)-1),(a)[len(a)])
-#define array(type,name,...) type* name=(type*)resize_f(0,sizeof(type),__VA_ARGS__-0);
 
-
-/*
- * type casts and i/o
- */
-
-#define uns unsigned
-typedef char*    cstr;
-
-#define make_to_string(type,name,str_,acc,size) \
-	cstr to_string_##name(const type q){\
-		array(char,res,size);\
-		sprintf(res,str_,acc);\
-		resize(res,strlen(res));\
-		return res;\
+static inline void del(void *a) {
+	if (a != NULL) {
+		free(((struct array_s *)(a)) - 1);
 	}
+}
 
+static inline struct array_s *resize_f(struct array_s **vp, size_t el_size, size_t n) {
+	if (*vp == NULL) {
+		*vp = (struct array_s *)calloc(1, sizeof(struct array_s));
+		*vp += 1;
+	}
+	struct array_s *a = *vp - 1;
+	assert(a->data == *(char **)vp);
+	if (a->mem_size < n + 1) {
+		size_t cur_size = a->mem_size * el_size;
+		size_t new_size;
+		if (a->mem_size * 2 > n) {
+			new_size = a->mem_size * 2 * el_size;
+		} else {
+			new_size = (n + 1) * el_size;
+		}
+		a = (struct array_s *)realloc(a, sizeof(struct array_s) + new_size);
+		memset(a->data + a->mem_size * el_size, 0, new_size - cur_size);
+		a->mem_size = new_size / el_size;
+	}
+	a->el_count = n;
+	*vp = a + 1;
+	return a + 1;
+}
+/////// resize(a, n) is resize_f(&a, sizeof(a[0]), n)
+#define resize(a, n) (resize_f((struct array_s **)&(a), sizeof((a)[0]), (n)))
+#define append(a, v) (resize((a), len(a) + 1), (a)[len(a) - 1] = (v))
+#define pop(a) (resize((a), len(a) - 1), (a)[len(a)])
 
-make_to_string(long long int,      int,   "%lli", q,      128                 )
-make_to_string(long long unsigned, uns,   "%llu", q,      128                 )
-make_to_string(long double,        float, "%Lf",  q,      128                 )
-make_to_string(cstr,               str,   "%s",   q?q:"", q?128+strlen(q):128 )
-make_to_string(char,               char,  "%c",   q,      128                 )
-#undef make_to_string
-#define func_name_generator(func)\
-	const char:func##_char,const char*const:func##_str,const char*:func##_str,\
-	const long long int:func##_int,const long int:func##_int,const int:func##_int,\
-	const long long uns:func##_uns,const long uns:func##_uns,const uns:func##_uns,\
-	const long double:func##_float,const double:func##_float,const float:func##_float,\
-	char:func##_char,char*const:func##_str,char*:func##_str,\
-	long long int:func##_int,long int:func##_int,int:func##_int,\
-	long long uns:func##_uns,long uns:func##_uns,uns:func##_uns,\
-	long double:func##_float,double:func##_float,float:func##_float,\
-	int8_t:func##_int,const int8_t:func##_int,\
-	uint8_t:func##_uns,const uint8_t:func##_uns,\
-	int16_t:func##_int,const int16_t:func##_int,\
-	uint16_t:func##_uns,const uint16_t:func##_uns
+static inline int64_t getint() {
+	int sign = 1;
+	int c;
+	size_t res = 0;
+	while (c = getchar_unlocked(), isspace(c))
+		;
+	if (c == '-') {
+		sign = -1;
+	} else {
+		res = c - '0';
+	}
+	while (c = getchar_unlocked(), isdigit(c)) {
+		res *= 10;
+		res += c - '0';
+	}
+	return (int64_t)(res)*sign;
+}
 
-#define generic_generator(q,f) _Generic((q),func_name_generator(f))
+static inline void putint(uint64_t out) {
+	if (out > (1LLU << 63) - 1) {
+		putchar_unlocked('-');
+		out = 1 + ~out;
+	}
+	char data[44];
+	char *dend = data;
+	while (out) {
+		*++dend = (unsigned)('0') + out % 10;
+		out /= 10;
+	}
+	if (dend == data) {
+		putchar_unlocked('0');
+	}
+	for (; dend != data; --dend) {
+		putchar_unlocked(*dend);
+	}
+}
 
-#define to_str(q) generic_generator(q,to_string)(q)
+static inline void print(uint64_t out) {
+	putint(out);
+	putchar('\n');
+}
 
-#define mkinput(type,name,str,acc) type input_##name(){type q=0;scanf(str,acc);return q;}
-mkinput(long long int,int,"%lli",&q)
-mkinput(long long uns,uns,"%llu",&q)
-mkinput(long double,float,"%Lf", &q)
-mkinput(char,char,"%c",&q)
-#undef mkinput
-cstr input_str(){static char t[1048576];scanf("%1048575s",t);return to_str(t);}
+static inline void write(uint64_t out) {
+	putint(out);
+	putchar(' ');
+}
 
-#ifdef print
-#undef print
-#endif
-
-#define read(type,name) type name = generic_generator(name,input)();
-#define write(q) {cstr __t=to_str(q);printf("%s " ,__t);del(__t);}
-#define print(q) {cstr __t=to_str(q);printf("%s\n",__t);del(__t);}
-#define put(q)   {cstr __t=to_str(q);printf("%s"  ,__t);del(__t);}
-
-#define bit_get(a,s)   (((a)[(s)/8/sizeof((a)[0])]>>(s)%(8*sizeof((a)[0])))&1)
-#define bit_set(a,s,d) {(a)[(s)/8/sizeof((a)[0])]&=~(1<<(s)%(8*sizeof((a)[0])));(a)[(s)/8/sizeof((a)[0])]+=(d)<<(s)%(8*sizeof((a)[0]));}
-
-/*
- *
- * repeater for pieces of code
- *
- * REPEAT(n) will repeat TO_REPEAT 2**n times separating by TO_REPEAT_SEP
- *
- * REPEAT(1) is TO_REPEAT TO_REPEAT_SEP TO_REPEAT
- * 
- * TO_REPEAT is not defined by default
- *
- * TO_REPEAT_SEP is empty by default
- *
- */
-
-#define TO_REPEAT_SEP
-#define RP_0(x) TO_REPEAT(x)
-#define RP_1(x) RP_0(x##0) TO_REPEAT_SEP RP_0(x##1)
-#define RP_2(x) RP_1(x##0) TO_REPEAT_SEP RP_1(x##1)
-#define RP_3(x) RP_2(x##0) TO_REPEAT_SEP RP_2(x##1)
-#define RP_4(x) RP_3(x##0) TO_REPEAT_SEP RP_3(x##1)
-#define RP_5(x) RP_4(x##0) TO_REPEAT_SEP RP_4(x##1)
-#define RP_6(x) RP_5(x##0) TO_REPEAT_SEP RP_5(x##1)
-#define RP_7(x) RP_6(x##0) TO_REPEAT_SEP RP_6(x##1)
-#define RP_8(x) RP_7(x##0) TO_REPEAT_SEP RP_7(x##1)
-#define RP_9(x) RP_8(x##0) TO_REPEAT_SEP RP_8(x##1)
-#define REPEAT(x) RP_##x(0b0)
-
-#define min(a,s) ((a)<(s)?(a):(s))
-#define max(a,s) ((a)<(s)?(a):(s))
-
-typedef int (*qsort_cmp_t)(const void *, const void *);
+typedef int (*cmp_f_t)(const void *, const void *);
 
 ///////////////////////////////////////////////////end of lib
 
@@ -150,85 +112,11 @@ typedef int (*qsort_cmp_t)(const void *, const void *);
 #include <stdlib.h>
 #include <ctype.h>
 typedef struct num{
-	char*b;
+	char*need_new;
 	char*e;
 }num;
 
-num num_cc(char*d){
-	num t;
-	t.e=d;
-	--d;
-	while(*d!='\n'){
-		--d;
-	}
-	++d;
-	t.b=d;
-	return t;
-}
-
-num num_c(){
-	num t;
-	t.b=0;
-	t.e=0;
-	return t;
-}
-
-bool is_less(num q,num e){
-	num z=q,x=e;
-	while (q.b!=q.e and e.e!=e.b){
-		if (q.b[0]!=e.b[0]){
-			return q.b[0]<e.b[0];
-		}
-		q.b+=1;
-		e.b+=1;
-	}
-	if (q.b==q.e and e.b==e.e){
-		return false;
-	}else
-	if (q.b==q.e){
-		q=x;
-		q.e=q.b+(e.e-e.b);
-		return is_less(q,e);
-	}else
-	if (e.b==e.e){
-		e=z;
-		e.e=e.b+(q.e-q.b);
-		return is_less(q,e);
-	}
-	return false;
-}
-
-int ncmp(num*q,num*e){
-	if (is_less(*q,*e)){
-		return -1;
-	}
-	if (is_less(*e,*q)){
-		return 1;
-	}
-	return 0;
-}
-
 int cmp1(char**q,char**w){
-	// size_t ml=min(len(*q),len(*w));
-	// for (size_t e=0;e<ml;++e){
-	// 	if (q[0][e]!=w[0][e]){
-	// 		return -q[0][e]+w[0][e];
-	// 	}
-	// }
-	// if (len(*q)<len(*w)){
-	// 	for (size_t e=len(*q);e<len(*w);++e){
-	// 		if (q[0][e%len(*q)]!=w[0][e]){
-	// 			return -q[0][e%len(*q)]+w[0][e];
-	// 		}
-	// 	}
-	// }
-	// if (len(*q)>len(*w)){
-	// 	for (size_t e=len(*w);e<len(*q);++e){
-	// 		if (w[0][e%len(*w)]!=q[0][e]){
-	// 			return w[0][e%len(*w)]-q[0][e];
-	// 		}
-	// 	}
-	// }
 	for (size_t e=0;e<len(*w)*len(*q);++e){
 		if (q[0][e%len(*q)]!=w[0][e%len(*w)]){
 			return -q[0][e%len(*q)]+w[0][e%len(*w)];
@@ -239,22 +127,26 @@ int cmp1(char**q,char**w){
 
 int main(){
 	int c;
-	array(char*,nums);
-	size_t b=1;
+	char**nums=0;
+	size_t need_new=1;
 	while ((c=getchar())!=EOF){
 		if (isdigit(c)){
-			if (b){
+			if (need_new){
 				append(nums,0);
 			}
 			append(nums[len(nums)-1],c);
-			b=0;
+			need_new=0;
 		}else{
-			b=1;
+			need_new=1;
 		}
 	}
-	qsort(nums,len(nums),sizeof(nums[0]),(qsort_cmp_t)cmp1);
+	qsort(nums,len(nums),sizeof(nums[0]),(cmp_f_t)cmp1);
 	for (size_t w=0;w<len(nums);w++){
-		put(nums[w]);
+		printf("%s",nums[w]);
 	}
+	for (int64_t w=0;w<len(nums);w++){
+		del(nums[w]);
+	}
+	del(nums);
 	putchar(10);
 }
