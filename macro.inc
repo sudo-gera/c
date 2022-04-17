@@ -77,22 +77,15 @@ var y
 var z
 %endmacro
 
-%macro stop 0-1 0
-_stop:
-cmp [esp_base],esp
-je %%_1
-sprint "warning: stack not empty"
-%%_1:
-mov ebx, %1
-mov eax, 1
-int 0x80
-%endmacro
-
 %macro begin 0
 %push main
 start
 jmp %%_1
 %$__jup:
+cmp [esp_base],esp
+je %%_2
+sprint "warning: stack not empty"
+%%_2:
 stop
 jmp %$__jdown
 %%_1:
@@ -100,6 +93,7 @@ jmp %$__jdown
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+%include "best_io.inc"
 %include "macro_tools.inc"
 %include "macro_usual.inc"
 
@@ -912,343 +906,343 @@ bsfor %1,0,%2,1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-%macro duput 1
-push %%_1
-push dword %1
-jmp _macro_duput
-%%_1:
-%endmacro
+; %macro duput 1
+; push %%_1
+; push dword %1
+; jmp _macro_duput
+; %%_1:
+; %endmacro
 
-%macro wuput 1
-push %%_1
-push word 0
-push word %1
-jmp _macro_wuput
-%%_1:
-%endmacro
+; %macro wuput 1
+; push %%_1
+; push word 0
+; push word %1
+; jmp _macro_wuput
+; %%_1:
+; %endmacro
 
-%macro buput 1
-push %%_1
-push word 0
-pushbw %1
-jmp _macro_buput
-%%_1:
-%endmacro
+; %macro buput 1
+; push %%_1
+; push word 0
+; pushbw %1
+; jmp _macro_buput
+; %%_1:
+; %endmacro
+
+; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; %macro dsput 1
+; push %%_1
+; push dword %1
+; jmp _macro_dsput
+; %%_1:
+; %endmacro
+
+; %macro wsput 1
+; push %%_1
+; push word 0
+; push word %1
+; jmp _macro_wsput
+; %%_1:
+; %endmacro
+
+; %macro bsput 1
+; push %%_1
+; push word 0
+; pushbw %1
+; jmp _macro_bsput
+; %%_1:
+; %endmacro
+
+; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; %macro cput 1
+; push %%_1
+; push word 0
+; pushbw %1
+; jmp _macro_cput
+; %%_1:
+; %endmacro
+
+; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; %macro duprint 1-*
+; %if %0==1
+; 	push %%_1
+; 	push dword %1
+; 	jmp _macro_duprint
+; 	%%_1:
+; %else
+; 	%rep %0-1
+; 	duput %1
+; 	cput 32
+; 	%rotate 1
+; 	%endrep
+; 	duput %1
+; 	cput 10
+; %endif
+; %endmacro
+
+; %macro wuprint 1-*
+; %if %0==1
+; 	push %%_1
+; 	push word 0
+; 	push word %1
+; 	jmp _macro_wuprint
+; 	%%_1:
+; %else
+; 	%rep %0-1
+; 	wuput %1
+; 	cput 32
+; 	%rotate 1
+; 	%endrep
+; 	wuput %1
+; 	cput 10
+; %endif
+; %endmacro
+
+; %macro buprint 1-*
+; %if %0==1
+; 	push %%_1
+; 	push word 0
+; 	pushbw %1
+; 	jmp _macro_buprint
+; 	%%_1:
+; %else
+; 	%rep %0-1
+; 	buput %1
+; 	cput 32
+; 	%rotate 1
+; 	%endrep
+; 	buput %1
+; 	cput 10
+; %endif
+; %endmacro
+
+; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; %macro duwrite 1-*
+; %if %0==1
+; 	push %%_1
+; 	push dword %1
+; 	jmp _macro_duwrite
+; 	%%_1:
+; %else
+; 	%rep %0
+; 	duput %1
+; 	cput 32
+; 	%rotate 1
+; 	%endrep
+; %endif
+; %endmacro
+
+; %macro wuwrite 1-*
+; %if %0==1
+; 	push %%_1
+; 	push word 0
+; 	push word %1
+; 	jmp _macro_wuwrite
+; 	%%_1:
+; %else
+; 	%rep %0
+; 	wuput %1
+; 	cput 32
+; 	%rotate 1
+; 	%endrep
+; %endif
+; %endmacro
+
+; %macro buwrite 1-*
+; %if %0==1
+; 	push %%_1
+; 	push word 0
+; 	pushbw %1
+; 	jmp _macro_buwrite
+; 	%%_1:
+; %else
+; 	%rep %0
+; 	buput %1
+; 	cput 32
+; 	%rotate 1
+; 	%endrep
+; %endif
+; %endmacro
+
+; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; %macro dsprint 1-*
+; %if %0==1
+; 	push %%_1
+; 	push dword %1
+; 	jmp _macro_dsprint
+; 	%%_1:
+; %else
+; 	%rep %0-1
+; 	dsput %1
+; 	cput 32
+; 	%rotate 1
+; 	%endrep
+; 	dsput %1
+; 	cput 10
+; %endif
+; %endmacro
+
+; %macro wsprint 1-*
+; %if %0==1
+; 	push %%_1
+; 	push word 0
+; 	push word %1
+; 	jmp _macro_wsprint
+; 	%%_1:
+; %else
+; 	%rep %0-1
+; 	wsput %1
+; 	cput 32
+; 	%rotate 1
+; 	%endrep
+; 	wsput %1
+; 	cput 10
+; %endif
+; %endmacro
+
+; %macro bsprint 1-*
+; %if %0==1
+; 	push %%_1
+; 	push word 0
+; 	pushbw %1
+; 	jmp _macro_bsprint
+; 	%%_1:
+; %else
+; 	%rep %0-1
+; 	bsput %1
+; 	cput 32
+; 	%rotate 1
+; 	%endrep
+; 	bsput %1
+; 	cput 10
+; %endif
+; %endmacro
+
+; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; %macro dswrite 1-*
+; %if %0==1
+; 	push %%_1
+; 	push dword %1
+; 	jmp _macro_dswrite
+; 	%%_1:
+; %else
+; 	%rep %0
+; 	dsput %1
+; 	cput 32
+; 	%rotate 1
+; 	%endrep
+; %endif
+; %endmacro
+
+; %macro wswrite 1-*
+; %if %0==1
+; 	push %%_1
+; 	push word 0
+; 	push word %1
+; 	jmp _macro_wswrite
+; 	%%_1:
+; %else
+; 	%rep %0
+; 	wsput %1
+; 	cput 32
+; 	%rotate 1
+; 	%endrep
+; %endif
+; %endmacro
+
+; %macro bswrite 1-*
+; %if %0==1
+; 	push %%_1
+; 	push word 0
+; 	pushbw %1
+; 	jmp _macro_bswrite
+; 	%%_1:
+; %else
+; 	%rep %0
+; 	bsput %1
+; 	cput 32
+; 	%rotate 1
+; 	%endrep
+; %endif
+; %endmacro
+
+; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; %macro cprint 1-*
+; %if %0==1
+; 	push %%_1
+; 	push word 0
+; 	pushbw %1
+; 	jmp _macro_cprint
+; 	%%_1:
+; %else
+; 	%rep %0-1
+; 	cput %1
+; 	cput 32
+; 	%rotate 1
+; 	%endrep
+; 	cput %1
+; 	cput 10
+; %endif
+; %endmacro
+
+; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; %macro cwrite 1-*
+; %if %0==1
+; 	push %%_1
+; 	push word 0
+; 	pushbw %1
+; 	jmp _macro_cwrite
+; 	%%_1:
+; %else
+; 	%rep %0
+; 	cput %1
+; 	cput 32
+; 	%rotate 1
+; 	%endrep
+; %endif
+; %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-%macro dsput 1
-push %%_1
-push dword %1
-jmp _macro_dsput
-%%_1:
-%endmacro
+; %macro sput 1
+; macro_args_read_
+; jmp %%_1
+; %%_2:
+; db %1
+; %%_1:
+; mov eax,4
+; mov ebx,1
+; mov ecx,%%_2
+; mov edx,%%_1-%%_2
+; int 0x80
+; macro_args_save_
+; %endmacro
 
-%macro wsput 1
-push %%_1
-push word 0
-push word %1
-jmp _macro_wsput
-%%_1:
-%endmacro
+; %macro sprint 1-*
+; %rep %0-1
+; sput %1
+; cput 32
+; %rotate 1
+; %endrep
+; sput %1
+; cput 10
+; %endmacro
 
-%macro bsput 1
-push %%_1
-push word 0
-pushbw %1
-jmp _macro_bsput
-%%_1:
-%endmacro
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-%macro cput 1
-push %%_1
-push word 0
-pushbw %1
-jmp _macro_cput
-%%_1:
-%endmacro
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-%macro duprint 1-*
-%if %0==1
-	push %%_1
-	push dword %1
-	jmp _macro_duprint
-	%%_1:
-%else
-	%rep %0-1
-	duput %1
-	cput 32
-	%rotate 1
-	%endrep
-	duput %1
-	cput 10
-%endif
-%endmacro
-
-%macro wuprint 1-*
-%if %0==1
-	push %%_1
-	push word 0
-	push word %1
-	jmp _macro_wuprint
-	%%_1:
-%else
-	%rep %0-1
-	wuput %1
-	cput 32
-	%rotate 1
-	%endrep
-	wuput %1
-	cput 10
-%endif
-%endmacro
-
-%macro buprint 1-*
-%if %0==1
-	push %%_1
-	push word 0
-	pushbw %1
-	jmp _macro_buprint
-	%%_1:
-%else
-	%rep %0-1
-	buput %1
-	cput 32
-	%rotate 1
-	%endrep
-	buput %1
-	cput 10
-%endif
-%endmacro
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-%macro duwrite 1-*
-%if %0==1
-	push %%_1
-	push dword %1
-	jmp _macro_duwrite
-	%%_1:
-%else
-	%rep %0
-	duput %1
-	cput 32
-	%rotate 1
-	%endrep
-%endif
-%endmacro
-
-%macro wuwrite 1-*
-%if %0==1
-	push %%_1
-	push word 0
-	push word %1
-	jmp _macro_wuwrite
-	%%_1:
-%else
-	%rep %0
-	wuput %1
-	cput 32
-	%rotate 1
-	%endrep
-%endif
-%endmacro
-
-%macro buwrite 1-*
-%if %0==1
-	push %%_1
-	push word 0
-	pushbw %1
-	jmp _macro_buwrite
-	%%_1:
-%else
-	%rep %0
-	buput %1
-	cput 32
-	%rotate 1
-	%endrep
-%endif
-%endmacro
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-%macro dsprint 1-*
-%if %0==1
-	push %%_1
-	push dword %1
-	jmp _macro_dsprint
-	%%_1:
-%else
-	%rep %0-1
-	dsput %1
-	cput 32
-	%rotate 1
-	%endrep
-	dsput %1
-	cput 10
-%endif
-%endmacro
-
-%macro wsprint 1-*
-%if %0==1
-	push %%_1
-	push word 0
-	push word %1
-	jmp _macro_wsprint
-	%%_1:
-%else
-	%rep %0-1
-	wsput %1
-	cput 32
-	%rotate 1
-	%endrep
-	wsput %1
-	cput 10
-%endif
-%endmacro
-
-%macro bsprint 1-*
-%if %0==1
-	push %%_1
-	push word 0
-	pushbw %1
-	jmp _macro_bsprint
-	%%_1:
-%else
-	%rep %0-1
-	bsput %1
-	cput 32
-	%rotate 1
-	%endrep
-	bsput %1
-	cput 10
-%endif
-%endmacro
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-%macro dswrite 1-*
-%if %0==1
-	push %%_1
-	push dword %1
-	jmp _macro_dswrite
-	%%_1:
-%else
-	%rep %0
-	dsput %1
-	cput 32
-	%rotate 1
-	%endrep
-%endif
-%endmacro
-
-%macro wswrite 1-*
-%if %0==1
-	push %%_1
-	push word 0
-	push word %1
-	jmp _macro_wswrite
-	%%_1:
-%else
-	%rep %0
-	wsput %1
-	cput 32
-	%rotate 1
-	%endrep
-%endif
-%endmacro
-
-%macro bswrite 1-*
-%if %0==1
-	push %%_1
-	push word 0
-	pushbw %1
-	jmp _macro_bswrite
-	%%_1:
-%else
-	%rep %0
-	bsput %1
-	cput 32
-	%rotate 1
-	%endrep
-%endif
-%endmacro
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-%macro cprint 1-*
-%if %0==1
-	push %%_1
-	push word 0
-	pushbw %1
-	jmp _macro_cprint
-	%%_1:
-%else
-	%rep %0-1
-	cput %1
-	cput 32
-	%rotate 1
-	%endrep
-	cput %1
-	cput 10
-%endif
-%endmacro
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-%macro cwrite 1-*
-%if %0==1
-	push %%_1
-	push word 0
-	pushbw %1
-	jmp _macro_cwrite
-	%%_1:
-%else
-	%rep %0
-	cput %1
-	cput 32
-	%rotate 1
-	%endrep
-%endif
-%endmacro
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-%macro sput 1
-macro_args_read_
-jmp %%_1
-%%_2:
-db %1
-%%_1:
-mov eax,4
-mov ebx,1
-mov ecx,%%_2
-mov edx,%%_1-%%_2
-int 0x80
-macro_args_save_
-%endmacro
-
-%macro sprint 1-*
-%rep %0-1
-sput %1
-cput 32
-%rotate 1
-%endrep
-sput %1
-cput 10
-%endmacro
-
-%macro swrite 1-*
-%rep %0
-sput %1
-cput 32
-%rotate 1
-%endrep
-%endmacro
+; %macro swrite 1-*
+; %rep %0
+; sput %1
+; cput 32
+; %rotate 1
+; %endrep
+; %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
