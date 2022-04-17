@@ -1,229 +1,93 @@
-Script started on Mon Mar 14 03:50:00 2022
-[?1034h[31m03:50:00[0m:[33marm64[0m:[32m~/c[0m$ 
-[31m03:50:42[0m:[33marm64[0m:[32m~/c[0m$ 
-[31m03:50:42[0m:[33marm64[0m:[32m~/c[0m$ 
-[31m03:50:45[0m:[33marm64[0m:[32m~/c[0m$ 
-[31m03:50:45[0m:[33marm64[0m:[32m~/c[0m$ 
-[31m03:51:00[0m:[33marm64[0m:[32m~/c[0m$ 
-[31m03:51:00[0m:[33marm64[0m:[32m~/c[0m$ 
-[31m03:51:00[0m:[33marm64[0m:[32m~/c[0m$ 
-[31m03:51:00[0m:[33marm64[0m:[32m~/c[0m$ 
-[31m03:51:01[0m:[33marm64[0m:[32m~/c[0m$ 
-[31m03:51:01[0m:[33marm64[0m:[32m~/c[0m$ 
-[31m03:51:01[0m:[33marm64[0m:[32m~/c[0m$ 
-[31m03:51:01[0m:[33marm64[0m:[32m~/c[0m$ 
-[31m03:51:01[0m:[33marm64[0m:[32m~/c[0m$ 
-[31m03:51:01[0m:[33marm64[0m:[32m~/c[0m$ 
-[31m03:51:01[0m:[33marm64[0m:[32m~/c[0m$ 
-[31m03:51:02[0m:[33marm64[0m:[32m~/c[0m$ 
-[31m03:51:18[0m:[33marm64[0m:[32m~/c[0m$ 
-[31m03:51:18[0m:[33marm64[0m:[32m~/c[0m$ 
-[31m03:51:18[0m:[33marm64[0m:[32m~/c[0m$ 
-[31m03:51:18[0m:[33marm64[0m:[32m~/c[0m$ 
-[31m03:51:18[0m:[33marm64[0m:[32m~/c[0m$ 
-[31m03:51:18[0m:[33marm64[0m:[32m~/c[0m$ 
-[31m03:51:19[0m:[33marm64[0m:[32m~/c[0m$ ls
-010322.asm                           [31mcd[39;49m[0m*                                  kol.py                               paper_root.py                        task.py
-01_03_22_2a.asm                      [31mcfileserver[39;49m[0m*                         kpml.bot.token                       parser.py                            task.txt
-01_03_22_2b.asm                      cfr.py                               ktf.kt                               pd.es.py                             [31mtask9.exe[39;49m[0m*
-01_03_22_3.asm                       chf                                  lancom.py                            pd.py                                task9.pas
-01_03_22_4.asm                       circle                               langparser.py                        pdf.xml                              task_A.html
-[31m0bp2.py[39;49m[0m*                             cloud.py                             latex.py                             pdp.py                               task_B
-1                                    code.cpp                             led.cpp                              petooh.py                            task_C
-1.cpp                                colorcount.py                        led.py                               pfr.cpp                              task_D
-1.csv                                complement.cpp                       lib                                  pfr.py                               task_E
-1.html                               [31mcompy.py[39;49m[0m*                            libinstall.py                        pft.py                               task_F
-[31m1.py[39;49m[0m*                                conbase.c                            libparse.py                          pft.py.cpp                           task_G
-[31m1.txt[39;49m[0m*                               conbase.cpp                          lines.txt                            [31mpft.py.exe[39;49m[0m*                          task_H
-103ES.cpp                            [31mconn.py[39;49m[0m*                             list.py                              pft1.py                              task_I
-103battle.cpp                        controller.pas                       lnk.py                               pft2.py                              task_J
-103bn.cpp                            controller.py                        [31mlog[39;49m[0m*                                 pft2.py.stdin                        task_K
-103bn.s                              controllercenter.py                  log.txt                              pft2.py.stdout                       task_L
-103brokers.cpp                       cpp.cpp                              log1                                 pft3.cpp                             task_M
-103cascades.cpp                      cpt.cpp                              log2                                 pft3.py                              task_N
-103complex.cpp                       cr.py                                longs.cpp                            pft3.py.stdin                        task_O
-103diplomas.cpp                      create_input.py                      longs2.cpp                           pftC.py                              taskz.txt
-103eling_10_ptr.cpp                  created_input.txt                    lsp.py                               pftE.py                              tc.cpp
-103exact-pair-sum.cpp                csite.html                           lss.py                               pftF.cpp                             tc.py
-103greatest_k                        d                                    lst.py                               pftF.py                              tco.py
-103greatest_k.cpp                    ddata                                mac.side                             pftG.cpp                             termux-api_0.52_aarch64.deb
-103greatest_k.cpp.stdin              de-apt-awesome.sh                    main.cpp                             pftG.py                              [31mtermuxopen[39;49m[0m*
-103greatest_k.py                     [31mdefserver[39;49m[0m*                           main.py                              pftI.py                              [34mtest.app[39;49m[0m/
-103greatest_k1.cpp                   dem.py                               main.py1                             pftJ.py                              test.asm
-103histogram.cpp                     dep.py                               makeinternet.py                      pftK.py                              test.aux
-103median.cpp                        dijkstra.cpp                         malsudo                              pftL.py                              test.c
-103merge.cpp                         dir.pas                              malsudo.sh                           pftM.py                              test.c.stdin
-103minimax.cpp                       div.c                                matrix.h                             pftN.py                              test.cpp
-103rmq.cpp                           div.cpp                              matrixtest.cpp                       pftO.py                              test.cpp.cpp
-103vega.cpp                          div.py                               mbs.py                               pftS.py                              [31mtest.cpp.exe[39;49m[0m*
-103vega.s                            dk.py                                mcw.cpp                              pftT.py                              test.cpp.stdin
-10a.py                               dln.py                               mcw.cpp.stdin                        pftU.py                              test.cpp.stdout
-[31m1outcode[39;49m[0m*                            dmm.py                               mcw.cpp.stdout                       pgd.py                               test.dvi
-31182A.cpp                           dmr.py                               mcw.pn                               photo_2021-09-30_19-08-15.jpg        [31mtest.exe[39;49m[0m*
-31182A.py                            dmt.py                               mcw.pn.cpp                           photo_2021-09-30_19-08-16.jpg        test.hpp
-31182A.s                             dosbox.txt                           [31mmcw.pn.exe[39;49m[0m*                          phys.py                              test.js
-31182B.cpp                           dot.cpp                              mcw.pn.stdin                         pi.cpp                               test.log
-31182C.cpp                           dtt.py                               mcw.pn.stdout                        playcover.py                         test.oy
-31182D.cpp                           edi                                  mcw.py                               pmd.py                               test.pas
-31182E.cpp                           ege.py                               mcw.py.stdin                         pointer.cpp                          test.pas.stdin
-4.asm                                ege.py.stdin                         mcw.py.stdout                        pointer.cpp.save                     test.pas.stdout
-8LSD.cpp                             ege.py.stdout                        mdc.rb                               pointer.hpp                          test.pdf
-8antiqsort.cpp                       ei                                   mem.py                               pony.hpp                             test.pn
-8circle.cpp                          eil.cpp                              mergesort.cpp                        post.py                              test.pn.cpp
-8circle.py                           [31meiler.py[39;49m[0m*                            messenger.py                         [31mpr.txt[39;49m[0m*                              [31mtest.pn.exe[39;49m[0m*
-8extract-pair-sum.cpp                ejudge.css                           meteorit.c                           prime_creator.cpp                    test.py
-8fffenwik.cpp                        ell.py                               [31mmeu[39;49m[0m*                                 prime_parser.py                      test.py.cpp
-8first.cpp                           elong_add.c                          mfb.py                               primes.c                             [31mtest.py.exe[39;49m[0m*
-8flat.cpp                            epc.py                               mfc.py                               primes.py                            test.py.stdin
-8heap.cpp                            epc.rb                               mfs.py                               print.cpp                            test.py.stdin.stdin
-8histogram.cpp                       era.rb                               mft.py                               [31mprog[39;49m[0m*                                test.py.stdin.stdout
-8matrixes.cpp                        eratosfen.cpp                        mhw.py                               proxy                                test.py.stdout
-8median.cpp                          [31meserver[39;49m[0m*                             mhw2.py                              proxy.pac                            test.py.stdout.stdin
-8median.py                           eval.py                              mnr.py                               proxy.sh                             test.py.stdout.stdout
-8merge.cpp                           ex.py                                mnr1.py                              ps.cpp                               test.s
-8minimax.cpp                         example_compy                        mns.cpp                              psum.py                              test.sh
-8numbers.cpp                         exe.py                               mns.py                               puv.py                               test.tex
-8numbers.py                          ext_rope                             mns.rb                               pvg.py                               test.tex.tmp.aux
-8qsort_1.c                           f.txt                                mo.py                                [31mpythonstartup[39;49m[0m*                       test.tex.tmp.log
-8qsort_1.cpp                         factor                               [34mmobilepythonbook[39;49m[0m/                    q.py                                 test.tex.tmp.pdf
-8rvq.cpp                             [31mfallback.html[39;49m[0m*                       mod                                  quant.py                             test.tex.tmp.tex
-8se-book.cpp                         farad.py                             mod.cpp                              r.txt                                test.txt
-8set.cpp                             fastrand.c                           mon                                  ra.py                                test1.cpp
-8stars.cpp                           fib.py                               mono_crash.22cb579ad.0.json          radixsort.cpp                        test1.pdf
-8stars.py                            file.cpp                             mono_crash.22cb579ad.1.json          radixsort.py                         test1.py
-8stars1.cpp                          file.hpp                             mono_crash.22cb579ad.10.json         range.hpp                            test1.tex
-8structure.cpp                       file.hpp.gch                         mono_crash.22cb579ad.11.json         range.py                             test2.py
-8subarrays-adding.cpp                flagsort.cpp                         mono_crash.22cb579ad.12.json         rational.c                           test_compy.cpp
-8system3.cpp                         flagsort.py                          mono_crash.22cb579ad.13.json         rc.py                                tew
-8tiles.cpp                           float.cpp                            mono_crash.22cb579ad.14.json         reader.py                            tew.stdin
-9.s                                  fm.py                                mono_crash.22cb579ad.15.json         restore                              tew.stdout
-A-change.c                           for.py                               mono_crash.22cb579ad.16.json         [31mrewr[39;49m[0m*                                texput.log
-B-poly.c                             form.py                              mono_crash.22cb579ad.17.json         rexx                                 text
-C-money.c                            fraction.hpp                         mono_crash.22cb579ad.18.json         rfp.py                               texx
-D-multsort.c                         frag.hpp                             mono_crash.22cb579ad.19.json         [31mrgk.py[39;49m[0m*                              texx.py
-D-seq.c                              [31mftp[39;49m[0m*                                 mono_crash.22cb579ad.2.json          rhw.py                               tezx
-E-grey.c                             g.py                                 mono_crash.22cb579ad.20.json         rome2arabic.c                        timeto.py
-E-next.c                             g.txt                                mono_crash.22cb579ad.21.json         root.py                              tme.rb
-F-lex.c                              g1.py                                mono_crash.22cb579ad.3.json          rope.cpp                             tmmp
-F-recovery.c                         game.py                              mono_crash.22cb579ad.4.json          rosatom.py                           tmmp.html
-G-period.c                           gcd.py                               mono_crash.22cb579ad.5.json          rot.rb                               tmp
-G-sets.c                             gcu.py                               mono_crash.22cb579ad.6.json          rrr.rr                               tmp.cpp
-H-coins.c                            gen                                  mono_crash.22cb579ad.7.json          rrr.rr.stdin                         tmp.html
-H-fastest-sort.c                     gen.py                               mono_crash.22cb579ad.8.json          rrr.rr.stdout                        tmp.sh
-I-external-sort.c                    geometry.h                           mono_crash.22cb579ad.9.json          rst.py                               tmp.txt
-J-remove.c                           [34mgera[39;49m[0m/                                mono_crash.aee52818b.0.json          run.pas                              toLongN.c
-K-diff.c                             ginst.cpp                            mono_crash.aee52818b.1.json          rus                                  torun
-KtfKt.class                          ginst1.py                            mono_crash.aee52818b.2.json          rushia.jpg                           tp.py
-M-brackets.c                         ginst2.py                            mono_crash.aee52818b.3.json          rzb.py                               tp.txt
-[34mMETA-INF[39;49m[0m/                            [31mgitpush[39;49m[0m*                             mosh.py                              s_graph.py                           tpq.py
-Makefile                             global.cpp                           mpp.py                               sbt.py                               trace.py
-N-hist.c                             goto.in                              mps.rb                               scan.py                              trace.py.cpp
-O-summax.c                           goto.out                             mqe.cpp                              scio.cpp                             trap.cpp
-R-exasum.c                           [31mgov[39;49m[0m*                                 mqeA.py                              screen.py                            treap.cpp
-README.md                            gpd.es.py                            mqeB.cpp                             sct.cpp                              treap.py
-S-subarr.c                           gpd.py                               mqeB.py                              [31msct.py[39;49m[0m*                              tree.cpp
-T-subadd.c                           gs.py                                mqeC.py                              scv.py                               tree.py
-X.s                                  gsite                                mqeD.cpp                             scv.rb                               tt.cpp
-[34m__pycache__[39;49m[0m/                         gsite.html                           mqeD.py                              [31mse.py[39;49m[0m*                               turlom.py
-a.asm                                gsr.py                               mqeE.py                              search.py                            tweaks.py
-a.jar                                h                                    mqeG.cpp                             [31mserver.py[39;49m[0m*                           typed.py
-[31ma.out[39;49m[0m*                               h.py                                 mqeG.py                              server_example.py                    typelink.cpp
-[34ma.out.dSYM[39;49m[0m/                          hashmap.c                            [31mmsq.exe[39;49m[0m*                             setun.c                              [31mub[39;49m[0m*
-a_heaps.c                            header.hpp                           msq.pas                              [31mside.py[39;49m[0m*                             [34mubuntu[39;49m[0m/
-a_heaps2.c                           header.hpp.gch                       msq.py                               simpleset.c                          ubuntu.sh
-a_heaps3.c                           heap.cpp                             mss.py                               simpleset.py                         ubuntu.sublime-project
-ahw7                                 heap.h                               mxnt                                 site                                 ubuntu.sublime-workspace
-al.py                                help.cpp                             nano.save                            site.html                            [34mubuntux[39;49m[0m/
-alic.py                              hl                                   nanorc                               slowfast.cpp                         ulb.py
-altpress.py                          hl.py                                naut.py                              snake.py                             umsh.py
-analys.py                            hlm.py                               nbt.py                               [31mso[39;49m[0m*                                  urc.py
-analyser                             [31mho[39;49m[0m*                                  nce.cpp                              sort                                 url
-analyser.db                          hse.cpp                              ncs.cpp                              sort.cpp                             url.py
-any.c                                hse.py                               [31mne.py[39;49m[0m*                               sort.h                               url1
-any.cpp                              hw.cpp                               net.zip                              sort.h.gch                           [31murlopen.exe[39;49m[0m*
-anyfriendly.py                       hw.py                                neur.py                              sort1.py                             urlopen.pas
-api.py                               iat.cpp                              nobars.py                            sort2.py                             urlopen.pas.stdin
-api.rb                               ic.txt                               [31mnohup.out[39;49m[0m*                           sorttest.cpp                         urlopen.pas.stdout
-arrman.cpp                           iconcast.py                          norand.cpp                           sot.py                               utf.py
-askpass_generator.py                 icpcE.cpp                            norand.cpp.cpp                       spb.py                               v.py
-asm.py                               icpcE.py                             [31mnorand.cpp.exe[39;49m[0m*                      speed.py                             v1.py
-astparser.py                         icpcF.py                             notification.py                      ssh.py                               var.py
-aud.py                               icpcH.cpp                            npm-debug.log                        st_io.inc                            vdo.py
-auto_print_service.py                icpcH.py                             oet.cpp                              stack.c                              vector.c
-autolib.py                           icpcH1.py                            oet.cpp.cpp                          stack.cpp                            vector.cpp
-avd.py                               icpcH2.py                            [31moet.cpp.exe[39;49m[0m*                         [31mstart-ubuntu.sh[39;49m[0m*                     vector.py
-avl.cpp                              icpcH3.py                            oet.py                               std                                  vector_23.c
-ayame.jpg                            icpcH_.py                            ogd.py                               stdc++ 2.h                           [31mviewserver[39;49m[0m*
-b.asm                                icpcI.cpp                            olf.py                               stdc++.h                             vint
-b.cpp                                icpcN.py                             ommo.py                              stdin                                vint.cpp
-[31mb.out[39;49m[0m*                               icr.rb                               oncode                               stdin.cpp                            virus.c
-b.py                                 icreader.py                          [31mone.cpp[39;49m[0m*                             stdin.py                             virus.cpp
-b1.py                                ie                                   one.pas                              stdin.txt                            vkdelete.py
-base.c                               ie1                                  openjdk-15_linux-aarch64_bin.tar.xz  stdin.txt1                           vkfeedstart.py
-bf.py                                in                                   opers.cpp                            stdout                               vn.py
-biginteger.h                         in.a                                 [31mopers.py[39;49m[0m*                            stdout.cpp                           [31mvnc_start.sh[39;49m[0m*
-biginteger.h.gch                     in.b                                 opn.py                               stdout.txt                           vsesib.py
-biginteger.s                         inf.hpp                              os                                   stdout1.txt                          wait.py
-bin.c                                ino.py                               osa.py                               stdout2.txt                          wallpaperbetter.com_1600x900.jpg
-binheap.cpp                          input                                osa.py.stdin                         sth.cpp                              wallpaperbetter.com_7680x4320.jpg
-bit.cpp                              input.cpp                            osa.py.stdout                        sth.cpp.stdin                        [31mwelcome.html[39;49m[0m*
-bit_0.cpp                            input.py                             ost.py                               sth.cpp.stdout                       wnt.py
-bits_stl_construct.h                 input.txt                            otg.rb                               sth.py                               wnt.rb
-bn.c                                 internet_notification.py             out                                  sth.py.stdin                         x11win.py
-bn.h                                 inv.py                               out.json                             sth.py.stdout                        x1b.py
-bn.s                                 io.py                                out1.json                            str.cpp                              yig.py
-bn1.c                                is_prime.py                          outcode                              str.py                               [31mzft.exe[39;49m[0m*
-bn_test.py                           iterator.cpp                         outcode.c                            stress.py                            zft.pas
-bn_test.txt                          itmo.py                              [31moutcode.cpp[39;49m[0m*                         [31mstress.py.out[39;49m[0m*                       zft.pas.stdin
-bnd.c                                itoa.cpp                             outcode.out                          string.h                             zft.pas.stdout
-[31mbp2.py[39;49m[0m*                              joinrep                              outcode.py                           string.h.gch                         zft.py
-[31mbp3.py[39;49m[0m*                              json                                 [31moutput.txt[39;49m[0m*                          string.s                             zft.py.stdin
-brackets-1.cpp                       json.cpp                             outvars                              subl                                 zft.py.stdout
-[31mbro.py[39;49m[0m*                              json_reader.py                       outvars.out                          subl_open.py                         zft.py]
-broadcast.cpp                        kanata.jpg                           p.cpp                                subl_u.py                            zft.py].stdin
-buildozer.spec                       karabiner.json                       pabr                                 [31msudo.sh[39;49m[0m*                             zip_test.pdf
-c++config.h                          karabiner.json1                      pabr1                                symb.py                              zme.py
-c_sequence.c                         key                                  pabr2                                symbol.py                            ~?
-[31mcache.appcache[39;49m[0m*                      key.a                                pabr3                                synt.hpp                             Без названия.ipynb
-cbase.c                              key.py                               pabr4                                syntt                                [31mВКонтакте[39;49m[0m*
-cbase.cpp                            kk.py                                packages-microsoft-prod.deb          [31mtalkshell[39;49m[0m*
-[31m03:51:22[0m:[33marm64[0m:[32m~/c[0m$ nano test.txt
-[?2004h[?1049h[22;0;0t[1;51r(B[m[4l[?7h[39;49m[?1h=[?1h=[?25l[39;49m(B[m[H[2J[49;97H(B[0;7m[ Чтение… ](B[m[49;91H(B[0;7m[ Прочитана 191 строка ](B[m[H(B[0;7m  GNU nano 5.8                                                                                      test.txt                                                                                                [1;203H(B[m[50d(B[0;7m^G(B[m Справка[18G(B[0;7m^O(B[m Записать[35G(B[0;7m^W(B[m Поиск[50;52H(B[0;7m^K(B[m Вырезать[69G(B[0;7m^T(B[m Выполнить     (B[0;7m^C(B[m Позиция[103G(B[0;7mM-U(B[m Отмена[120G(B[0;7mM-A(B[m Установить ме(B[0;7mM-](B[m На скобку    (B[0;7mM-Q(B[m Предыдущий   (B[0;7m^B(B[m Назад[50;188H(B[0;7m^◂(B[m ПредСлово[51d(B[0;7m^X(B[m Выход[51;18H(B[0;7m^R(B[m ЧитФайл[35G(B[0;7m^\(B[m Замена[51;52H(B[0;7m^U(B[m Вставить[69G(B[0;7m^J(B[m Выровнять     (B[0;7m^/(B[m К строке[103G(B[0;7mM-E(B[m Повтор[120G(B[0;7mM-6(B[m Копировать   (B[0;7m^Q(B[m Обр. поиск    (B[0;7mM-W(B[m Следующий    (B[0;7m^F(B[m Вперёд[51;188H(B[0;7m^▸(B[m СледСлово[2dScript started on Mon Mar 14 03:50:00 2022[3d^[[?1034h^[[31m03:50:00^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$ ^G[4d^[[31m03:50:42^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$[5d^[[31m03:50:42^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$[6d^[[31m03:50:45^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$[7d^[[31m03:50:45^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$[8d^[[31m03:51:00^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$[9d^[[31m03:51:00^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$[10d^[[31m03:51:00^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$[11d^[[31m03:51:00^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$[12d^[[31m03:51:01^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$[13d^[[31m03:51:01^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$[14d^[[31m03:51:01^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$[15d^[[31m03:51:01^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$[16d^[[31m03:51:01^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$[17d^[[31m03:51:01^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$[18d^[[31m03:51:01^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$[19d^[[31m03:51:02^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$[20d^[[31m03:51:18^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$[21d^[[31m03:51:18^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$[22d^[[31m03:51:18^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$[23d^[[31m03:51:18^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$[24d^[[31m03:51:18^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$[25d^[[31m03:51:18^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$[26d^[[31m03:51:19^[[0m:^[[33marm64^[[0m:^[[32m~/c^[[0m$ ls[27d010322.asm[27;38H^[[31mcd^[[39;49m^[[0m*[27;95Hkol.py[27;132Hpaper_root.py[27;169Htask.py[28d01_03_22_2a.asm[28;38H^[[31mcfileserver^[[39;49m^[[0m*[28;95Hkpml.bot.token[28;132Hparser.py[28;169Htask.txt[29d01_03_22_2b.asm[29;38Hcfr.py[29;75Hktf.kt[29;112Hpd.es.py[29;149H^[[31mtask9.exe^[[39;49m^[[0m*[30d01_03_22_3.asm[30;38Hchf[30;75Hlancom.py[30;112Hpd.py[30;149Htask9.pas[31d01_03_22_4.asm[31;38Hcircle[31;75Hlangparser.py[31;112Hpdf.xml[31;149Htask_A.html[32d^[[31m0bp2.py^[[39;49m^[[0m*[32;58Hcloud.py[32;95Hlatex.py[32;132Hpdp.py[32;169Htask_B[33d1[33;38Hcode.cpp[33;75Hled.cpp[33;112Hpetooh.py[33;149Htask_C[34d1.cpp[34;38Hcolorcount.py[34;75Hled.py[34;112Hpfr.cpp[34;149Htask_D[35d1.csv[35;38Hcomplement.cpp[35;75Hlib[35;112Hpfr.py[35;149Htask_E[36d1.html[36;38H^[[31mcompy.py^[[39;49m^[[0m*[36;95Hlibinstall.py[36;132Hpft.py[36;169Htask_F[37d^[[31m1.py^[[39;49m^[[0m*[37;58Hconbase.c[37;95Hlibparse.py[37;132Hpft.py.cpp[37;169Htask_G[38d^[[31m1.txt^[[39;49m^[[0m*[38;58Hconbase.cpp[38;95Hlines.txt[38;132H^[[31mpft.py.exe^[[39;49m^[[0m*[38;189Htask_H[39d103ES.cpp[39;38H^[[31mconn.py^[[39;49m^[[0m*[39;95Hlist.py[39;132Hpft1.py[39;169Htask_I[40d103battle.cpp[40;38Hcontroller.pas[40;75Hlnk.py[40;112Hpft2.py[40;149Htask_J[41d103bn.cpp[41;38Hcontroller.py[41;75H^[[31mlog^[[39;49m^[[0m*[41;132Hpft2.py.stdin[41;169Htask_K[42d103bn.s[42;38Hcontrollercenter.py[42;75Hlog.txt[42;112Hpft2.py.stdout[42;149Htask_L[43d103brokers.cpp[43;38Hcpp.cpp[43;75Hlog1[43;112Hpft3.cpp[43;149Htask_M[44d103cascades.cpp[44;38Hcpt.cpp[44;75Hlog2[44;112Hpft3.py[44;149Htask_N[45d103complex.cpp[45;38Hcr.py[45;75Hlongs.cpp[45;112Hpft3.py.stdin[45;149Htask_O[46d103diplomas.cpp[46;38Hcreate_input.py[46;75Hlongs2.cpp[46;112HpftC.py[46;149Htaskz.txt[47d103eling_10_ptr.cpp[47;38Hcreated_input.txt[47;75Hlsp.py[47;112HpftE.py[47;149Htc.cpp[48d103exact-pair-sum.cpp[48;38Hcsite.html[48;75Hlss.py[48;112HpftF.cpp[48;149Htc.py[2d[?12l[?25h[?25l[49d[J[51d[?12l[?25h[51;1H[?1049l[23;0;0t[?1l>[?2004l[31m03:51:28[0m:[33marm64[0m:[32m~/c[0m$ cd ..
-[31m03:51:32[0m:[33marm64[0m:[32m~[0m$     [K[K[K[Kls
-200406a2a5f04e1f34f049c9dcd21a57b29b4d8b7349d7005a    [34mVideos[39;49m[0m/                                               [34mnobars.app[39;49m[0m/
-5880d3df-6727-477b-97a0-4cbad8a9d81d.mobileprovision  [34mVirtualBox VMs[39;49m[0m/                                       [34mopen_apps[39;49m[0m/
-[34m9faf50deaaefafa9a147e48ba39bb4b0[39;49m[0m/                     [34mapp4ios[39;49m[0m/                                              [34mopen_control_center.app[39;49m[0m/
-[34mADBKeyBoard[39;49m[0m/                                          [34mappdb[39;49m[0m/                                                open_control_center.scpt
-[34mAndroidStudioProjects[39;49m[0m/                                [35mapps[39;49m[0m@                                                 [34mpony[39;49m[0m/
-[34mApplications[39;49m[0m/                                         [31mb[39;49m[0m*                                                    [35mpony.py[39;49m[0m@
-[34mApplications (Parallels)[39;49m[0m/                             [35mbochrc[39;49m[0m@                                               proxy.pac
-[34mDOSBox[39;49m[0m/                                               bochrc.txt                                            [31mproxy.sh[39;49m[0m*
-[34mDesktop[39;49m[0m/                                              [34mbochs_tiny[39;49m[0m/                                           [34mproxysocket[39;49m[0m/
-[34mDocuments[39;49m[0m/                                            [34mbochs_ubuntu[39;49m[0m/                                         [31mpython3.exe[39;49m[0m*
-[34mDownloads[39;49m[0m/                                            [35mbochsrc[39;49m[0m@                                              [34mqemu[39;49m[0m/
-[34mFar[39;49m[0m/                                                  [35mbochsrc.txt[39;49m[0m@                                          [34mredsocks[39;49m[0m/
-Genshin Impact 2.0.0.ipa                              [34mboost-iosx[39;49m[0m/                                           requested.txt
-[35mGoogle Drive[39;49m[0m@                                         [34mbuildforandroid[39;49m[0m/                                      [31mrestore_ports.tcl[39;49m[0m*
-[34mGrover-s-Algorithm-IBM-Qiskit[39;49m[0m/                        [34mc[39;49m[0m/                                                    [31mrun[39;49m[0m*
-[30m[43mLKTG_2021[39;49m[0m/                                            [34mcleanHUD[39;49m[0m/                                             [34mscrcpy-input.py[39;49m[0m/
-[34mLibrary[39;49m[0m/                                              [34mcontroller[39;49m[0m/                                           [34mshare[39;49m[0m/
-[34mMovies[39;49m[0m/                                               [34mcppython[39;49m[0m/                                             [31mside[39;49m[0m*
-[34mMultiMC5-Cracked[39;49m[0m/                                     fc79cbbb11d923c72a6135866df135af.jpeg                 [34msnake[39;49m[0m/
-[34mMusic[39;49m[0m/                                                [34mfrida-ios-dump[39;49m[0m/                                       [35msubl[39;49m[0m@
-[34mNew folder[39;49m[0m/                                           [31mg[39;49m[0m*                                                    tl.jar
-Old-tl.jar                                            [34mgcc[39;49m[0m/                                                  trace.py.cpp
-[34mParallels[39;49m[0m/                                            [31mgitpush[39;49m[0m*                                              [34mubuntu[39;49m[0m/
-[34mPictures[39;49m[0m/                                             [34mkbd-audio[39;49m[0m/                                            [34mubuntux[39;49m[0m/
-[35mPlayOnMac's virtual drives[39;49m[0m@                           [34mkeyboard[39;49m[0m/                                             [31mv[39;49m[0m*
-[30m[43mPublic[39;49m[0m/                                               [34mlibs[39;49m[0m/                                                 [34mvalgrind-macos[39;49m[0m/
-SDL2-2.0.12.dmg                                       log                                                   [34mvkfeed[39;49m[0m/
-SDL2_image-2.0.5.dmg                                  [34mm1-multimc-hack[39;49m[0m/                                      [34mwind[39;49m[0m/
-SDL2_mixer-2.0.4.dmg                                  mini.iso                                              windows_arm_vhdx_pass_1111.zip
-SDL2_ttf-2.0.15.dmg                                   mono_crash.aee52818b.0.json                           [34mБез названия.app[39;49m[0m/
-[34mSMSBomber300[39;49m[0m/                                         mono_crash.aee52818b.1.json                           Документ 64.pdf
-[34mSimpleRT[39;49m[0m/                                             myports.txt                                           Документ 66.pdf
-[34mTLauncher.app[39;49m[0m/                                        new-client                                            [35mПеремещенные объекты.nosync[39;49m[0m@
-Untitled.p12                                          [34mnoVNC[39;49m[0m/
-[31m03:51:47[0m:[33marm64[0m:[32m~[0m$ exit
-
-Script done on Mon Mar 14 03:52:00 2022
+swagger: '2.0'
+info:
+	description: JDoodle Compiler API
+	version: 1.0.0
+	title: JDoodle Compiler API
+	termsOfService: https://www.jdoodle.com/terms
+	contact:
+		email: jdoodle@nutpan.com
+host: api.jdoodle.com
+basePath: /v1
+consumes:
+	- application/json
+produces:
+	- application/json
+paths:
+	/execute:
+		post:
+			summary: Execute Program
+			description: Endpoint to execute code
+			tags:
+				- execute
+			parameters:
+				- name: execute
+					in: body
+					description: the body
+					required: true
+					schema:
+						properties:
+							clientId:
+								type: string
+							clientSecret:
+								type: string
+							script:
+								type: string
+							stdin:
+								type: string
+							language:
+								type: string
+							versionIndex:
+								type: string
+			responses:
+				'200':
+					description: Execution success
+					schema:
+						type: object
+						properties:
+							output:
+								type: string
+								description: Output
+							statusCode:
+								type: integer
+								description: Status Code
+							memory:
+								type: number
+								description: Memory used
+							cpuTime:
+								type: number
+								description: CPU Time used
+				'401':
+					description: Unauthorized
+				'429':
+					description: Daily limit reached
+	/credit-spent:
+		post:
+			summary: Credit Spent
+			description: Endpoint to execute code
+			tags:
+				- credit-spent
+			parameters:
+				- name: credit
+					in: body
+					description: the body
+					required: true
+					schema:
+						properties:
+							clientId:
+								type: string
+							clientSecret:
+								type: string
+			responses:
+				'200':
+					description: Execution success
+					schema:
+						type: object
+						properties:
+							used:
+								type: integer
+								description: No of credits used today
+				'401':
+					description: Unauthorized
+externalDocs:
+	description: Find out more about JDoodle Compiler API
+	url: https://www.jdoodle.com/compiler-api
