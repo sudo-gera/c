@@ -1,6 +1,9 @@
 HOME=1
 from inspect import *
-from dataclasses import *
+try:
+	from dataclasses import *
+except:
+	pass
 from time import *
 from os import *
 from os.path import *
