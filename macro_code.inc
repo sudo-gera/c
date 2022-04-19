@@ -44,6 +44,31 @@ macro_eg _macro_bswrite
 macro_eg _macro_cprint
 macro_eg _macro_cwrite
 
+macro_eg __best_duput
+macro_eg __best_dsput
+macro_eg __best_wuput
+macro_eg __best_wsput
+macro_eg __best_buput
+macro_eg __best_bsput
+macro_eg __best_cput
+macro_eg __best_sput
+macro_eg __best_duwrite
+macro_eg __best_dswrite
+macro_eg __best_wuwrite
+macro_eg __best_wswrite
+macro_eg __best_buwrite
+macro_eg __best_bswrite
+macro_eg __best_cwrite
+macro_eg __best_swrite
+macro_eg __best_duprint
+macro_eg __best_dsprint
+macro_eg __best_wuprint
+macro_eg __best_wsprint
+macro_eg __best_buprint
+macro_eg __best_bsprint
+macro_eg __best_cprint
+macro_eg __best_sprint
+
 %ifndef macro
 	%define macro_code
 	%include "macro.inc"
@@ -1376,33 +1401,134 @@ macro_eg _macro_cwrite
 
 	section .text
 		macro_pre_start:
-		macro_print_call macro_duput
-		macro_print_call macro_wuput
-		macro_print_call macro_buput
-		macro_print_call macro_dsput
-		macro_print_call macro_wsput
-		macro_print_call macro_bsput
+		ret
 
-		macro_print_call macro_cput
 
-		macro_print_call macro_duprint
-		macro_print_call macro_wuprint
-		macro_print_call macro_buprint
-		macro_print_call macro_dsprint
-		macro_print_call macro_wsprint
-		macro_print_call macro_bsprint
+section .text
 
-		macro_print_call macro_duwrite
-		macro_print_call macro_wuwrite
-		macro_print_call macro_buwrite
-		macro_print_call macro_dswrite
-		macro_print_call macro_wswrite
-		macro_print_call macro_bswrite
+	__best_duput_one:
+		pushfd
+		pushad
 
-		macro_print_call macro_cprint
-		macro_print_call macro_cwrite
+		mov edx,0
+		mov ecx,0
+		mov esi,0
+		mov ebp,0
+
+		mov ebx,10
+		mov edi,eax
+
+		__best_duput_one_1:
+		inc ecx
+		div ebx
+		mov edx,0
+		cmp eax,0
+		jne __best_duput_one_1
+
+		mov esi,ecx
+		mov edx,0
+		mov eax,1
+
+		__best_duput_one_2:
+		push eax
+		mul ebx
+		loop __best_duput_one_2
+
+		mov ecx,esi
+		mov eax,edi
+
+		__best_duput_one_3:
+		pop ebx
+		mov edx,0
+		div ebx
+		add eax,48
+		cput al
+		mov eax,edx
+		loop __best_duput_one_3
+
+		popad
+		popfd
+		ret
+
+	__best_dsput_one:
+		cmp eax,0
+		jge __best_dsput_one_1		
+			cput '-'
+			neg eax
+		__best_dsput_one_1:
+		call __best_duput_one
+		ret
+
+	__best_wuput_one:
+		movzx eax,ax
+		call __best_duput_one
+		ret
+
+	__best_wsput_one:
+		movsx eax,ax
+		call __best_dsput_one
+		ret
+
+	__best_buput_one:
+		__best_byte_get
+		call __best_duput_one
+		__best_byte_set
+		ret
+
+	__best_bsput_one:
+		__best_byte_get
+		movsx eax,al
+		call __best_dsput_one
+		__best_byte_set
+		ret
+
+	__best_cput_one:
+		__best_byte_get
+		pushfd
+		pushad
+		push eax
+		mov eax,4
+		mov ebx,1
+		mov ecx,esp
+		mov edx,1
+		int 0x80
 		add esp,4
-		jmp [esp-4]
+		popad
+		popfd
+		__best_byte_set
+		ret
+
+	__best_sput_one:
+		cput al
+		ret
+
+
+
+	__best_duput:   __best_multiple 4,__best_duput_one,nop,nop,32,0
+	__best_dsput:   __best_multiple 4,__best_dsput_one,nop,nop,32,0
+	__best_wuput:   __best_multiple 2,__best_wuput_one,nop,nop,32,0
+	__best_wsput:   __best_multiple 2,__best_wsput_one,nop,nop,32,0
+	__best_buput:   __best_multiple 2,__best_buput_one,__best_alr,nop,32,0
+	__best_bsput:   __best_multiple 2,__best_bsput_one,__best_alr,nop,32,0
+	__best_cput:    __best_multiple 2, __best_cput_one,__best_alr,nop,32,0
+	__best_sput:    __best_multiple 1, __best_sput_one,nop,__best_strp,0,0
+	__best_duwrite: __best_multiple 4,__best_duput_one,nop,nop,32,32
+	__best_dswrite: __best_multiple 4,__best_dsput_one,nop,nop,32,32
+	__best_wuwrite: __best_multiple 2,__best_wuput_one,nop,nop,32,32
+	__best_wswrite: __best_multiple 2,__best_wsput_one,nop,nop,32,32
+	__best_buwrite: __best_multiple 2,__best_buput_one,__best_alr,nop,32,32
+	__best_bswrite: __best_multiple 2,__best_bsput_one,__best_alr,nop,32,32
+	__best_cwrite:  __best_multiple 2, __best_cput_one,__best_alr,nop,32,32
+	__best_swrite:  __best_multiple 1, __best_sput_one,nop,__best_strp,0,32
+	__best_duprint: __best_multiple 4,__best_duput_one,nop,nop,32,10
+	__best_dsprint: __best_multiple 4,__best_dsput_one,nop,nop,32,10
+	__best_wuprint: __best_multiple 2,__best_wuput_one,nop,nop,32,10
+	__best_wsprint: __best_multiple 2,__best_wsput_one,nop,nop,32,10
+	__best_buprint: __best_multiple 2,__best_buput_one,__best_alr,nop,32,10
+	__best_bsprint: __best_multiple 2,__best_bsput_one,__best_alr,nop,32,10
+	__best_cprint:  __best_multiple 2, __best_cput_one,__best_alr,nop,32,10
+	__best_sprint:  __best_multiple 1, __best_sput_one,nop,__best_strp,0,10
+
 
 
 %endif

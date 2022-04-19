@@ -21,7 +21,7 @@ mov ebx,[a]
 mov [w],ebx
 mov ebx,[h]
 sub [w],ebx
-do:
+do: ; for (w=a;w<=b;w+=h)
 mov ebx,[h]
 add [w],ebx
 mov ebx,[w]
@@ -52,7 +52,7 @@ je end
 pr:
 dec ecx
 mov ebx,ecx
-sub ebx,[l]
+sub ebx,[l] ; ebx=[l]-ebx
 neg ebx
 dec ebx
 dec ebx
