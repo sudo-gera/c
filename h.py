@@ -175,20 +175,61 @@ def divizors(q):
 	for e in f[:l][::-1]:
 		f.append(q//e)
 	return f
-def to_radix(_q,_e):
-	q,e=_q,_e
+
+def from_radix_list(q,e):
+	r=0
+	for w in q:
+		r*=e
+		r+=w
+	return r
+
+def to_radix_list(q,e):
 	z=abs(q)
-	s=''
+	x=z
+	if bin(e).count('1')==1:
+		s=list(bin(z)[2:][::-1])
+		s=[int(w) for w in s]
+		l=len(bin(e))-3
+		while len(s)%l:
+			s.append(0)
+		r=[]
+		s=s[::-1]
+		for w in range(0,len(s),l):
+			a=0
+			for t in range(l):
+				a*=2
+				a+=s[w+t]
+			r.append(a)
+		if not r:
+			r=[0]
+		assert x==from_radix_list(r,e)
+		if q<0:
+			r+=[-1]
+		return r
+	s=[]
 	while z:
-		s+=str("0123456789abcdefghijklmnopqrstuvwxyz".upper()[z%e])
+		s.append(z%e)
 		z//=e
-	if q<0:
-		s+='-'
 	if not s:
-		s='0'
+		s=[0]
 	s=s[::-1]
-	assert int(s,e)==q
+	assert x==from_radix_list(s,e)
+	if q<0:
+		s=[-1]+s
 	return s
+
+def to_radix(q,e):
+	s=to_radix_list(q,e)
+	s=''.join(["0123456789abcdefghijklmnopqrstuvwxyz".upper()[w] for w in s])
+	return s
+
+def from_radix(q,e):
+	if e<37:
+		return int(q,e)
+	q=[int(w,36) for w in q]
+	s=from_radix_list(q,e)
+	return s
+
 def primes_count(start=0):
 	start-=1
 	while 1:
