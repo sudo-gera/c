@@ -16,20 +16,20 @@ struct array_s {
   char data[0];
 };
 
-size_t len(void *a) {
+static inline size_t len(void *a) {
   if (a == NULL) {
     return 0;
   }
   return ((struct array_s *)(a))[-1].el_count;
 }
 
-void del(void *a) {
+static inline void del(void *a) {
   if (a != NULL) {
     free(((struct array_s *)(a)) - 1);
   }
 }
 
-struct array_s *resize_f(struct array_s **vp, size_t el_size, size_t n) {
+static inline struct array_s *resize_f(struct array_s **vp, size_t el_size, size_t n) {
   if (*vp == NULL) {
     *vp = (struct array_s *)calloc(1, sizeof(struct array_s));
     *vp += 1;
@@ -57,7 +57,7 @@ struct array_s *resize_f(struct array_s **vp, size_t el_size, size_t n) {
 #define append(a, v) (resize((a), len(a) + 1), (a)[len(a) - 1] = (v))
 #define pop(a) (resize((a), len(a) - 1), (a)[len(a)])
 
-int64_t getint() {
+static inline int64_t getint() {
   int sign = 1;
   int c;
   size_t res = 0;
@@ -75,7 +75,7 @@ int64_t getint() {
   return (int64_t)(res)*sign;
 }
 
-void putint(uint64_t out) {
+static inline void putint(uint64_t out) {
   if (out > (1LLU << 63) - 1) {
     putchar_unlocked('-');
     out = 1 + ~out;
@@ -94,12 +94,12 @@ void putint(uint64_t out) {
   }
 }
 
-void print(uint64_t out) {
+static inline void print(uint64_t out) {
   putint(out);
   putchar('\n');
 }
 
-void write(uint64_t out) {
+static inline void write(uint64_t out) {
   putint(out);
   putchar(' ');
 }

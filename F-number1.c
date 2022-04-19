@@ -108,69 +108,99 @@ typedef int (*cmp_f_t)(const void *, const void *);
 
 ///////////////////////////////////////////////////end of lib
 
-size_t get(int l,int64_t**a,int64_t**b,int i,int j){
-	size_t z=0,x,c,v=l-1;
-	while(v-z>2){
-		x=(z+z+v)/3;
-		c=(z+v+v)/3;
-		int64_t _b=a[i-1][x]>b[j-1][x]?a[i-1][x]:b[j-1][x];
-		int64_t _n=a[i-1][c]>b[j-1][c]?a[i-1][c]:b[j-1][c];
-		if (_b<_n){
-			v=c;
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+typedef struct num{
+	char*b;
+	char*e;
+}num;
+
+num num_cc(char*d){
+	num t;
+	t.e=d;
+	--d;
+	while(*d!='\n'){
+		--d;
+	}
+	++d;
+	t.b=d;
+	return t;
+}
+
+num num_c(){
+	num t;
+	t.b=0;
+	t.e=0;
+	return t;
+}
+
+bool is_less(num q,num e){
+	num z=q,x=e;
+	while (q.b!=q.e and e.e!=e.b){
+		if (q.b[0]!=e.b[0]){
+			return q.b[0]<e.b[0];
 		}
-		if (_b>_n){
-			z=x;
-		}
-		if (_b==_n){
-			z=x;
-			v=c;
+		q.b+=1;
+		e.b+=1;
+	}
+	if (q.b==q.e and e.b==e.e){
+		return false;
+	}else
+	if (q.b==q.e){
+		q=x;
+		q.e=q.b+(e.e-e.b);
+		return is_less(q,e);
+	}else
+	if (e.b==e.e){
+		e=z;
+		e.e=e.b+(q.e-q.b);
+		return is_less(q,e);
+	}
+	return false;
+}
+
+int ncmp(num*q,num*e){
+	if (is_less(*q,*e)){
+		return -1;
+	}
+	if (is_less(*e,*q)){
+		return 1;
+	}
+	return 0;
+}
+
+int cmp1(char**q,char**w){
+	for (size_t e=0;e<len(*w)*len(*q);++e){
+		if (q[0][e%len(*q)]!=w[0][e%len(*w)]){
+			return -q[0][e%len(*q)]+w[0][e%len(*w)];
 		}
 	}
-	size_t m=1000000000000000;
-	size_t k=0;
-	for (size_t e=z;e<v+1;++e){
-		int64_t z=a[i-1][e]>b[j-1][e]?a[i-1][e]:b[j-1][e];
-		if (z<m){
-			k=e+1;
-			m=z;
-		}
-	}
-	return k;
+	return 0;
 }
 
 int main(){
-	int n=getint(),m=getint(),l=getint();
-	int64_t**a=0;
-	resize(a,n);
-	for (size_t w=0;w<n;++w){
-		resize(a[w],l);
-		for (size_t e=0;e<l;++e){
-			a[w][e]=getint();
-			a[w][e]*=10000;
-			a[w][e]+=e;
+	int c;
+	char**nums=0;
+	size_t b=1;
+	while ((c=getchar())!=EOF){
+		if (isdigit(c)){
+			if (b){
+				resize(nums,len(nums)+1);
+				nums[len(nums)-1]=0;
+				// append(nums,0);
+			}
+			resize(nums[len(nums)-1],len(nums[len(nums)-1])+1);
+			nums[len(nums)-1][len(nums[len(nums)-1])-1]=c;
+			// append(nums[len(nums)-1],c);
+			b=0;
+		}else{
+			b=1;
 		}
 	}
-	int64_t**b=0;
-	resize(b,m);
-	for (size_t w=0;w<m;++w){
-		resize(b[w],l);
-		for (size_t e=0;e<l;++e){
-			b[w][e]=getint();
-			b[w][e]*=10000;
-			b[w][e]+=999-e;
-		}
+	qsort(nums,len(nums),sizeof(nums[0]),(cmp_f_t)cmp1);
+	for (size_t w=0;w<len(nums);w++){
+		printf("%s",nums[w]);
 	}
-	int q=getint();
-	for (size_t w=0;w<q;++w){
-		int i=getint(),j=getint();
-		print(get_k(l,a,b,i,j));
-	}
-	for (size_t w=0;w<n;++w){
-		del(a[w]);
-	}
-	del(a);
-	for (size_t w=0;w<m;++w){
-		del(b[w]);
-	}
-	del(b);
+	putchar(10);
 }

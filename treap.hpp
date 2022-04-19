@@ -67,7 +67,7 @@ private:
 				t->z_get->p=t;
 				t->d=(t->z_get->d>t->x_get->d?t->z_get->d:t->x_get->d)+1;
 			}
-			if (t->d>64){
+			if (t->d>128){
 				std::cerr<<"bamboo!! "<<t->d<<std::endl;
 				exit(0);
 			}
