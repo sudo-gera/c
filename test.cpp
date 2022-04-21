@@ -1,11 +1,10 @@
-#include "stdio.h"
 
 
 
 int main(){
-    char a[123];
-    while (a[0]!='e'){
-        scanf("%s",a);
-        printf("%s\n",a);
+    float q=1;
+    while (q){
+        q/=2;
+        print(bin_repr(q),q)
     }
 }
