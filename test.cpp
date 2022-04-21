@@ -1,7 +1,8 @@
 #include "stdio.h"
 int main(){
-    int q[12];
-    while (1){
-        scanf("%i",q+q[0]);
+    char a[123];
+    while (a[0]!='e'){
+        scanf("%s",a);
+        printf("%s\n",a);
     }
 }
