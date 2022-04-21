@@ -8,14 +8,17 @@ def rand(q=2**64,e=None):
 	assert q
 	return randint(e,q-1)
 
-# for w in range(rand(100)):
-# 	for e in range(rand(100)):
-# 		print(rand(10))
-
-n=rand(100)+1
-print(n)
-a=[]
-for w in range(n):
-	a.append(rand(100))
-a.sort()
-print(*a)
+n=rand(999)
+e=rand(n+1)
+x=rand(e+1)
+b=rand(x+1)
+print(n,b,e)
+for w in range(b):
+	print([-1,1][rand(2)],end=' ')
+for w in range(b,x):
+	print(-1,end=' ')
+for w in range(x,e):
+	print(1,end=' ')
+for w in range(e,n):
+	print([-1,1][rand(2)],end=' ')
+print()
