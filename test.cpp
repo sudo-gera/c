@@ -1,10 +1,5 @@
-
-
-
 int main(){
-    float q=1;
-    while (q){
-        q/=2;
-        print(bin_repr(q),q)
-    }
+	for(double f=0;f<20;++f){
+		print(bin_repr(f));
+	}
 }
