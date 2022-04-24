@@ -172,3 +172,101 @@ popfd
 ret
 %endmacro
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; extern printf
+; extern scanf
+
+; section .data
+; __quprint db '%d',10,0
+; __quget db '%d',0
+; __quvar8 dq 0
+; __cprint db '%c',10,0
+; __cput db '%c',0
+
+; %macro stop 0-1 0
+; mov rax,0
+; mov rbx,%1
+; int 0x80
+; %endmacro
+
+; %macro regsave 0
+; push rax
+; push rbx
+; push rcx
+; push rdx
+; push rdi
+; push rsi
+; %endmacro
+
+; %macro regload 0
+; pop rsi
+; pop rdi
+; pop rdx
+; pop rcx
+; pop rbx
+; pop rax
+; %endmacro
+
+; %macro quprint 1
+; regsave
+; mov rsi,%1
+; mov rdi,__quprint
+; mov rax,0
+; call printf
+; regload
+; %endmacro
+
+; %macro quget 1
+; regsave
+; push qword 0
+; mov rsi,__quvar8
+; mov rdi,__quget
+; mov rax,0
+; call scanf
+; add rsp,8
+; regload
+; push qword [__quvar8]
+; pop qword %1
+; %endmacro
+
+; %macro cput 1
+; regsave
+; mov rsi,%1
+; mov rdi,__cput
+; mov rax,0
+; call printf
+; regload
+; %endmacro
+
+; %macro scan 2
+; regsave
+; jmp %%_2
+; %%_1:
+; db %1,0
+; %%_2:
+; push qword 0
+; mov rsi,__quvar8
+; mov rdi,%%_1
+; mov rax,0
+; call scanf
+; regload
+; push qword [__quvar8]
+; pop qword %2
+; %endmacro
+
+; %macro print 1-2
+; regsave
+; jmp %%_2
+; %%_1:
+; db %1,0
+; %%_2:
+; %if %0>1
+; mov rsi,%2
+; %endif
+; mov rdi,%%_1
+; mov rax,0
+; call printf
+; regload
+; %endmacro
+

@@ -45,7 +45,9 @@ push dword 0
 mov dword [g],0
 _while:
 	mov dword [c],0
-	mov al,[e]
+	mov esi,[e]
+	mov eax,0
+	mov al,[esi]
 	mov [c],al
 	cmp [c],dword 10
 	jne cont
@@ -71,11 +73,11 @@ _while:
 	_3:
 	cmp [c],dword')'
 	jne _4
-		dec dword [g]
 		cmp [g],dword 0
 		jge ___4
 			jmp _nend
 		___4:
+		dec dword [g]
 		pop dword [d]
 		mov eax,[d]
 		cmp eax,[c]
@@ -85,11 +87,11 @@ _while:
 	_4:
 	cmp [c],dword']'
 	jne _5
-		dec dword [g]
 		cmp [g],dword 0
 		jge ___5
 			jmp _nend
 		___5:
+		dec dword [g]
 		pop dword [d]
 		mov eax,[d]
 		cmp eax,[c]
@@ -99,11 +101,11 @@ _while:
 	_5:
 	cmp [c],dword'}'
 	jne _6
-		dec dword [g]
 		cmp [g],dword 0
 		jge ___6
 			jmp _nend
 		___6:
+		dec dword [g]
 		pop dword [d]
 		mov eax,[d]
 		cmp eax,[c]
