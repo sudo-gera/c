@@ -1,5 +1,3 @@
-from itertools import *
-from operator import *
 from bisect import *
 def len_month(y,m):
 	return 1-((m-3)//10*m+1)%(5-((y%4-1)//4+(y%100-1)//100+(y%400-1)//400)%2)+31-(m-3)%5%2
@@ -54,11 +52,12 @@ def from_timestamp(t):
 	return [year,month,day,hour,minute,second]
 
 
-from h import *
-a=loads(open('stdin.txt').read()) 
-a={tuple(loads(w)):a[w] for w in a}
-a={w:a[w] for w in list(a)[:]}
-d=[w for w in enumerate([to_timestamp(list(w)+[0,0,0])==a[w] for w in a]) if w[1]==0]
-assert len(d)==0
-d=[w for w in enumerate([list(w)+[0,0,0]==from_timestamp(a[w]) for w in a]) if w[1]==0]
-assert len(d)==0
+if __name__ == '__main__':
+	from json import *
+	a=loads(open('stdin.txt').read()) 
+	a={tuple(loads(w)):a[w] for w in a}
+	a={w:a[w] for w in list(a)[:]}
+	d=[w for w in enumerate([to_timestamp(list(w)+[0,0,0])==a[w] for w in a]) if w[1]==0]
+	assert len(d)==0
+	d=[w for w in enumerate([list(w)+[0,0,0]==from_timestamp(a[w]) for w in a]) if w[1]==0]
+	assert len(d)==0
