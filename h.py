@@ -1,4 +1,5 @@
 HOME=1
+from operator import *
 from inspect import *
 try:
 	from dataclasses import *
