@@ -104,6 +104,9 @@ static inline void write(uint64_t out) {
 	putchar(' ');
 }
 
+#define min(a,s) ((a)<(s)?(a):(s))
+#define max(a,s) ((a)>(s)?(a):(s))
+
 typedef int (*cmp_f_t)(const void *, const void *);
 
 ///////////////////////////////////////////////////end of lib

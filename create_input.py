@@ -8,26 +8,14 @@ def rand(q=2**64,e=None):
 	assert q
 	return randint(e,q-1)
 
-# n=rand(999)
-# e=rand(n+1)
-# x=rand(e+1)
-# b=rand(x+1)
-# print(n,b,e)
-# for w in range(b):
-# 	print([-1,1][rand(2)],end=' ')
-# for w in range(b,x):
-# 	print(-1,end=' ')
-# for w in range(x,e):
-# 	print(1,end=' ')
-# for w in range(e,n):
-# 	print([-1,1][rand(2)],end=' ')
-# print()
-
-n=rand(10**5)+1
-s=rand(10**9)
-print(n,s)
+n=m=10**6
+# n=rand(10**6)+1
+# m=rand(10**6)+1
+print(n,m)
 for w in range(n):
-	b=rand(10**9)
-	a=rand(b+1)
-	c=rand(n)+1
-	print(a,b,c)
+	print(rand(99),end=' ')
+print()
+for w in range(m):
+	y=rand(n)
+	x=rand(y+1)
+	print(x,y)
