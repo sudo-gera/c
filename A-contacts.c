@@ -53,10 +53,9 @@ static inline struct array_s *resize_f(struct array_s **vp, size_t el_size, size
 	return a + 1;
 }
 /////// resize(a, n) is resize_f(&a, sizeof(a[0]), n)
-#define resize(a, ...) (resize_f((struct array_s **)&(a), sizeof((a)[0]), (__VA_ARGS__)))
-#define append(a, ...) (resize((a), len(a) + 1), (a)[len(a) - 1] = (__VA_ARGS__))
+#define resize(a, n) (resize_f((struct array_s **)&(a), sizeof((a)[0]), (n)))
+#define append(a, v) (resize((a), len(a) + 1), (a)[len(a) - 1] = (v))
 #define pop(a) (resize((a), len(a) - 1), (a)[len(a)])
-#define back(a) (a[len(a)-1])
 
 static inline int64_t getint() {
 	int sign = 1;
@@ -112,3 +111,23 @@ typedef int (*cmp_f_t)(const void *, const void *);
 
 ///////////////////////////////////////////////////end of lib
 
+typedef struct item{
+	char* name;
+	char* num;
+}item;
+
+
+
+
+int main(){
+	uint64_t n=getint();
+	char tmp[31];
+	ui 
+	for (uint64_t w=0;w<n;++w){
+		scanf("%30s",tmp);
+		if (strcmp(tmp,"ADD")==0){
+			item t;
+			t.
+		}
+	}
+}

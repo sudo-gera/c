@@ -1,5 +1,5 @@
-struct hashmap{
-
-};
+typedef struct hashmap{
+	
+}hashmap;
 
 
