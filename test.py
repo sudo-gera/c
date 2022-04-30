@@ -1,8 +1,7 @@
 from h import *
-n,b,e=scan(int,int,int)
-a=[scan(int) for w in range(n)]
-a=a[b:e]
-x=([w>0 for w in a]+[1]).index(1)
-z=[(w>0) ^ (q<x) for q,w in enumerate(a)]
-assert(all(z))
-print(x+b)
+# n,m=scan(),scan()
+# a=[scan() for w in range(n)]
+# for w in range(m):
+# 	x,y=scan(),scan()
+# 	print(max(a[x:y+1]))
+print(len(bin(scan()))-2)

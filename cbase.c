@@ -140,7 +140,7 @@ cstr input_str(){static char t[1048576];scanf("%1048575s",t);return to_str(t);}
 #define REPEAT(x) RP_##x(0b0)
 
 #define min(a,s) ((a)<(s)?(a):(s))
-#define max(a,s) ((a)<(s)?(a):(s))
+#define max(a,s) ((a)>(s)?(a):(s))
 
 typedef int (*qsort_cmp_t)(const void *, const void *);
 

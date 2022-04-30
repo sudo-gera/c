@@ -53,9 +53,10 @@ static inline struct array_s *resize_f(struct array_s **vp, size_t el_size, size
 	return a + 1;
 }
 /////// resize(a, n) is resize_f(&a, sizeof(a[0]), n)
-#define resize(a, n) (resize_f((struct array_s **)&(a), sizeof((a)[0]), (n)))
-#define append(a, v) (resize((a), len(a) + 1), (a)[len(a) - 1] = (v))
+#define resize(a, ...) (resize_f((struct array_s **)&(a), sizeof((a)[0]), (__VA_ARGS__)))
+#define append(a, ...) (resize((a), len(a) + 1), (a)[len(a) - 1] = (__VA_ARGS__))
 #define pop(a) (resize((a), len(a) - 1), (a)[len(a)])
+#define back(a) (a[len(a)-1])
 
 static inline int64_t getint() {
 	int sign = 1;
@@ -103,6 +104,9 @@ static inline void write(uint64_t out) {
 	putint(out);
 	putchar(' ');
 }
+
+#define min(a,s) ((a)<(s)?(a):(s))
+#define max(a,s) ((a)>(s)?(a):(s))
 
 typedef int (*cmp_f_t)(const void *, const void *);
 
