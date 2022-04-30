@@ -1,86 +1,80 @@
+; %if __BITS__ == 32
 %assign max_args 32
 
-%macro stop 0-1 0
-mov eax,1
-mov ebx,%1
-int 0x80
-%endmacro
-
 %macro multiput 1-*
-%define __best_modificator1 %2
-%define __best_modificator2 %3
-%rep %0-3
+%define __best_modificator %2
+%rep %0-2
 %rotate -1
-__best_modificator1
-__best_modificator2 %1
+__best_modificator %1
 %endrep
-%rotate -3
-call (%1)+(%0-3)*2
-%undef __best_modificator1
-%undef __best_modificator2
+%rotate -2
+call (%1)+(%0-2)*2
+%undef __best_modificator
 %endmacro
 
-%macro __best_moval 1
-mov al,%1
+%macro multiget 1-*
+%define __best_modificator %2
+call (%1)+(%0-2)*2
+%rep %0-2
+%rotate -1
+__best_modificator %1
+%endrep
+%rotate -2
+%undef __best_modificator
 %endmacro
 
-%macro __best_alr 0
-mov ax,[esp-40]
-%endmacro
-
-%macro __best_strp 0
-mov ecx,[edx]
-add [edx],ebx
-mov edx,ecx
-sub edx,4
-mov ecx,0
-%endmacro
-
-%macro __best_byte_get 0
-mov eax,edi
-cmp ah,0
-je %%_1
-	mov eax,0
-	mov esi,[esp+8]
-	mov al,[esi-2]
+%macro __best__sign 1
+%rep rsize-%1
+shl _ax,8
+%endrep
+cmp _ax,0
+jge %%_1
+	cput '-'
+	neg _ax
 %%_1:
+%rep rsize-%1
+shr _ax,8
+%endrep
 %endmacro
 
-%macro __best_byte_set 0
-mov ah,1
-mov edi,eax
-%endmacro
+%define _uput _ %+ uput
+%define _sput _ %+ sput
 
-%define duput multiput __best_duput,nop,push dword,
-%define dsput multiput __best_dsput,nop,push dword,
-%define wuput multiput __best_wuput,nop,push word,
-%define wsput multiput __best_wsput,nop,push word,
-%define buput multiput __best_buput,push ax,__best_moval,
-%define bsput multiput __best_bsput,push ax,__best_moval,
-%define cput  multiput __best_cput, push ax,__best_moval,
+%define quput multiput __best_quput,qpush,
+%define qsput multiput __best_qsput,qpush,
+%define duput multiput __best_duput,dpush,
+%define dsput multiput __best_dsput,dpush,
+%define wuput multiput __best_wuput,wpush,
+%define wsput multiput __best_wsput,wpush,
+%define buput multiput __best_buput,bpush,
+%define bsput multiput __best_bsput,bpush,
+%define cput  multiput __best_cput, bpush,
 
-%define duwrite multiput __best_duwrite,nop,push dword,
-%define dswrite multiput __best_dswrite,nop,push dword,
-%define wuwrite multiput __best_wuwrite,nop,push word,
-%define wswrite multiput __best_wswrite,nop,push word,
-%define buwrite multiput __best_buwrite,push ax,__best_moval,
-%define bswrite multiput __best_bswrite,push ax,__best_moval,
-%define cwrite  multiput __best_cwrite, push ax,__best_moval,
+%define _uwrite _ %+ uwrite
+%define _swrite _ %+ swrite
 
-%define duprint multiput __best_duprint,nop,push dword,
-%define dsprint multiput __best_dsprint,nop,push dword,
-%define wuprint multiput __best_wuprint,nop,push word,
-%define wsprint multiput __best_wsprint,nop,push word,
-%define buprint multiput __best_buprint,push ax,__best_moval,
-%define bsprint multiput __best_bsprint,push ax,__best_moval,
-%define cprint  multiput __best_cprint, push ax,__best_moval,
+%define quwrite multiput __best_quwrite,qpush,
+%define qswrite multiput __best_qswrite,qpush,
+%define duwrite multiput __best_duwrite,dpush,
+%define dswrite multiput __best_dswrite,dpush,
+%define wuwrite multiput __best_wuwrite,wpush,
+%define wswrite multiput __best_wswrite,wpush,
+%define buwrite multiput __best_buwrite,bpush,
+%define bswrite multiput __best_bswrite,bpush,
+%define cwrite  multiput __best_cwrite, bpush,
 
-%macro sput 1
-call __best_sput+(%%_2-%%_1)*2
-%%_1:
-db %1
-%%_2:
-%endmacro
+%define _uprint _ %+ uprint
+%define _sprint _ %+ sprint
+
+%define quprint multiput __best_quprint,qpush,
+%define qsprint multiput __best_qsprint,qpush,
+%define duprint multiput __best_duprint,dpush,
+%define dsprint multiput __best_dsprint,dpush,
+%define wuprint multiput __best_wuprint,wpush,
+%define wsprint multiput __best_wsprint,wpush,
+%define buprint multiput __best_buprint,bpush,
+%define bsprint multiput __best_bsprint,bpush,
+%define cprint  multiput __best_cprint, bpush,
 
 %macro swrite 1
 call __best_swrite+(%%_2-%%_1)*2
@@ -96,177 +90,266 @@ db %1
 %%_2:
 %endmacro
 
-%macro __best_multiple 6
-%rep max_args
-push dword 0
-%endrep
-push dword max_args
-pushfd
-pushad
-mov edi,0
-mov ah,0
-mov di,ax
-mov eax,esp
-add eax,36
-mov ecx,[eax]
-add eax,4
+%macro sput 1
+call __best_sput+(%%_2-%%_1)*2
 %%_1:
-cmp [eax],dword 0
-jne %%_2
-	dec ecx
-	add eax,4
-jmp %%_1
+db %1
 %%_2:
-mov ebx,ecx
-mov edx,eax
-%4
-pushad
-mov ecx,ebx
-add edx,4
-%%__1:
-cmp ecx,1
-jl %%__2
-	push dword edx
-	push dword [edx]
-	mov eax,[edx]
-	call %2
-	add esp,8
-	add edx,%1
-dec ecx
-cmp ecx,1
-jl %%__2
-	%if %5
-		cput %5
-	%endif
-jmp %%__1
-%%__2:
-%if %6
-cput %6
-%endif
-popad
-mov ebx,ecx
-mov edx,eax
-inc ecx
-%%_4:
-add edx,%1
-loop %%_4
-sub edx,%1
-mov ebp,[edx+2]
-mov ecx,ebx
-mov esi,[eax]
-mov [edx],esi
-mov eax,edx
-sub eax,36
-mov edi,eax
-mov esi,esp
-cld
-mov ecx,36
-mov ebx,ecx
-rep movsb
-mov esp,eax
-push ebp
-add esp,4
-popad
-popfd
-%3
-ret
 %endmacro
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;
+%macro count_args 0
+%%_1:
+mov _bp,0
+cmp [_sp+rsize],_bp
+jne %%_2
+dec _word [_sp]
+pop _word [_sp]
+jmp %%_1
+%%_2:
+%endmacro
+
+%macro __best_strp 0
+mov _dx,[_sp+(8+1)*rsize]
+add [_sp+(8+1)*rsize],_cx
+mov _cx,0
+%endmacro
+
+%macro __best_multiple 7
+%rep max_args
+push _word 0
+%endrep
+push _word max_args
+count_args
+pushad
+mov _cx,[_sp+8*rsize]
+mov _dx,_sp
+add _dx,(8+2)*rsize
+mov _bx,_cx
+%5
+pushad
+mov _cx,_bx
+
+%%_2:
+cmp _cx,1
+jl %%_1
+mov _ax,0
+mov _ax,[_dx]
+%rep rsize-%1
+shl _ax,8
+%endrep
+%rep rsize-%1
+shr _ax,8
+%endrep
+call %3
+add _dx,%1
+dec _cx
+cmp _cx,1
+jl %%_1
+%if %6
+	cput %6
+%endif
+jmp %%_2
+%%_1:
+%if %7
+	cput %7
+%endif
+
+popad
+
+mov _ax,_cx
+mov _bx,%1
+mul _bx
+
+mov _bx,_sp
+mov _si,_bx
+mov _di,_bx
+add _di,_ax
+mov _cx,rsize*(8+2)
+add _di,_cx
+add _si,_cx
+dec _di
+dec _si
+std
+rep movsb
+cld
+
+add _sp,_ax
+popad
+add _sp,rsize
+
+ret
+
+
+%endmacro
+
+; %else;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; extern printf
 ; extern scanf
 
-; section .data
-; __quprint db '%d',10,0
-; __quget db '%d',0
-; __quvar8 dq 0
-; __cprint db '%c',10,0
-; __cput db '%c',0
+section .data
+__quprint db '%d',10,0
+__quget db '%d',0
+__quvar8 dq 0
+__cprint db '%c',10,0
+__cput db '%c',0
 
-; %macro stop 0-1 0
-; mov rax,0
-; mov rbx,%1
-; int 0x80
-; %endmacro
+%macro scan_f 2
+pushad
+sub rsp,4096
+jmp %%_2
+%%_1:
+db %1,0
+%%_2:
+push qword 0
+mov rsi,__quvar8
+mov rdi,%%_1
+mov rax,0
+call scanf
+add rsp,4096
+popad
+push qword [__quvar8]
+pop qword %2
+%endmacro
 
-; %macro regsave 0
+%macro print_f 1-2
+pushad
+sub rsp,4096
+jmp %%_2
+%%_1:
+db %1,0
+%%_2:
+%if %0>1
+mov rsi,%2
+%endif
+mov rdi,%%_1
+mov rax,0
+call printf
+add rsp,4096
+popad
+%endmacro
+
+; %macro qsget 1
+; macro_args_read
 ; push rax
-; push rbx
-; push rcx
-; push rdx
-; push rdi
-; push rsi
-; %endmacro
-
-; %macro regload 0
-; pop rsi
-; pop rdi
-; pop rdx
-; pop rcx
-; pop rbx
+; mov rax,rsp
+; scan_f "%li",rax
 ; pop rax
+; macro_args_save q,%1
 ; %endmacro
 
-; %macro quprint 1
-; regsave
-; mov rsi,%1
-; mov rdi,__quprint
-; mov rax,0
-; call printf
-; regload
+%macro _quprint 1
+macro_args_read q,%1
+xchg rax,rbx
+print_f {27,"[34m%lu",27,"[0m",10},rbx
+macro_args_save
+%endmacro
+
+%macro _quwrite 1
+macro_args_read q,%1
+xchg rax,rbx
+print_f {27,"[34m%lu",27,"[0m",32},rbx
+macro_args_save
+%endmacro
+
+%macro _quput 1
+macro_args_read q,%1
+xchg rax,rbx
+print_f {27,"[34m%lu",27,"[0m"},rbx
+macro_args_save
+%endmacro
+
+%macro _qsput 1
+macro_args_read q,%1
+xchg rax,rbx
+print_f {27,"[34m%li",27,"[0m"},rbx
+macro_args_save
+%endmacro
+
+%macro _qswrite 1
+macro_args_read q,%1
+xchg rax,rbx
+print_f {27,"[34m%li",27,"[0m",32},rbx
+macro_args_save
+%endmacro
+
+%macro _qsprint 1
+macro_args_read q,%1
+xchg rax,rbx
+print_f {27,"[34m%li",27,"[0m",10},rbx
+macro_args_save
+%endmacro
+
+%macro _cput 1
+macro_args_read b,%1
+xchg rax,rbx
+print_f {27,"[34m%c",27,"[0m"},rbx
+macro_args_save
+%endmacro
+
+%macro _sput 1
+jmp %%_2
+%%_1:
+db %1,0
+%%_2:
+print_f {27,"[34m%s",27,"[0m"},%%_1
+%endmacro
+
+
+; %macro duput 1
+; macro_args_read d,%1
+; movzx rbx,eax
+; print_f "%lu",rbx
+; macro_args_save
 ; %endmacro
 
-; %macro quget 1
-; regsave
-; push qword 0
-; mov rsi,__quvar8
-; mov rdi,__quget
-; mov rax,0
-; call scanf
-; add rsp,8
-; regload
-; push qword [__quvar8]
-; pop qword %1
+; %macro dsput 1
+; macro_args_read d,%1
+; movsx rbx,eax
+; print_f "%li",rbx
+; macro_args_save
 ; %endmacro
 
-; %macro cput 1
-; regsave
-; mov rsi,%1
-; mov rdi,__cput
-; mov rax,0
-; call printf
-; regload
+; %macro wuput 1
+; macro_args_read w,%1
+; movzx rbx,ax
+; print_f "%lu",rbx
+; macro_args_save
 ; %endmacro
 
-; %macro scan 2
-; regsave
-; jmp %%_2
-; %%_1:
-; db %1,0
-; %%_2:
-; push qword 0
-; mov rsi,__quvar8
-; mov rdi,%%_1
-; mov rax,0
-; call scanf
-; regload
-; push qword [__quvar8]
-; pop qword %2
+; %macro wsput 1
+; macro_args_read w,%1
+; movsx rbx,ax
+; print_f "%li",rbx
+; macro_args_save
 ; %endmacro
 
-; %macro print 1-2
-; regsave
-; jmp %%_2
-; %%_1:
-; db %1,0
-; %%_2:
-; %if %0>1
-; mov rsi,%2
+; %macro buput 1
+; macro_args_read b,%1
+; movzx rbx,al
+; print_f "%lu",rbx
+; macro_args_save
+; %endmacro
+
+; %macro bsput 1
+; macro_args_read b,%1
+; movsx rbx,al
+; print_f "%li",rbx
+; macro_args_save
+; %endmacro
+
+%define _uput _ %+ uput
+%define _sput _ %+ sput
+
+
+
+
+
+
+
+
+
+
+
+
 ; %endif
-; mov rdi,%%_1
-; mov rax,0
-; call printf
-; regload
-; %endmacro
-

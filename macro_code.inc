@@ -44,6 +44,8 @@ macro_eg _macro_bswrite
 macro_eg _macro_cprint
 macro_eg _macro_cwrite
 
+macro_eg __best_quput
+macro_eg __best_qsput
 macro_eg __best_duput
 macro_eg __best_dsput
 macro_eg __best_wuput
@@ -52,6 +54,8 @@ macro_eg __best_buput
 macro_eg __best_bsput
 macro_eg __best_cput
 macro_eg __best_sput
+macro_eg __best_quwrite
+macro_eg __best_qswrite
 macro_eg __best_duwrite
 macro_eg __best_dswrite
 macro_eg __best_wuwrite
@@ -60,6 +64,8 @@ macro_eg __best_buwrite
 macro_eg __best_bswrite
 macro_eg __best_cwrite
 macro_eg __best_swrite
+macro_eg __best_quprint
+macro_eg __best_qsprint
 macro_eg __best_duprint
 macro_eg __best_dsprint
 macro_eg __best_wuprint
@@ -74,6 +80,7 @@ macro_eg __best_sprint
 	%include "macro.inc"
 	; %define macro_set_log
 
+	%if 0
 	section .text
 		macro_pr_jmp:
 	%ifdef macro_set_log
@@ -1284,7 +1291,7 @@ macro_eg __best_sprint
 
 	section .text
 		macro_set_jmp:
-		macro_args_read_
+		macro_args_read
 		macro_args_offset eax
 		add eax,esp
 		mov ecx,[eax]
@@ -1293,91 +1300,108 @@ macro_eg __best_sprint
 		add ebx,ecx
 		call0 macro_bops,eax,ebx,ebx
 		dmov [ebx-4],[eax+4]
-		macro_args_save_
+		macro_args_save
 		add esp,[esp]
 		add esp,8
 		jmp [esp-8+4]
+
+	%endif
 
 	section .text
 		macro_regout:
 
 
-		sput "eax == "
+		aput _ax
+		sput " == "
 		cput 27
 		sput "[32m"
-		dsput eax
+		_sput _ax
 		cput 27
 		sput "[0m"
 
 		cput 9
 
-		sput "ebx == "
+		sput " "
+		aput _bx
+		sput " == "
 		cput 27
 		sput "[32m"
-		dsput ebx
+		_sput _bx
 		cput 27
 		sput "[0m"
 
 		cput 9
 
-		sput "ecx == "
+		sput " "
+		aput _cx
+		sput " == "
 		cput 27
 		sput "[32m"
-		dsput ecx
+		_sput _cx
 		cput 27
 		sput "[0m"
 
 		cput 9
 
-		sput "edx == "
+		sput " "
+		aput _dx
+		sput " == "
 		cput 27
 		sput "[32m"
-		dsput edx
+		_sput _dx
 		cput 27
 		sput "[0m"
 
 		cput 9
 
-		sput " esi == "
+		sput " "
+		aput _si
+		sput " == "
 		cput 27
 		sput "[32m"
-		dsput esi
+		_sput _si
 		cput 27
 		sput "[0m"
 
 		cput 9
 
-		sput " edi == "
+		sput " "
+		aput _di
+		sput " == "
 		cput 27
 		sput "[32m"
-		dsput edi
+		_sput _di
 		cput 27
 		sput "[0m"
 
 		cput 9
 
-		sput " ebp == "
+		sput " "
+		aput _bp
+		sput " == "
 		cput 27
 		sput "[32m"
-		dsput ebp
+		_sput _bp
 		cput 27
 		sput "[0m"
 
 		cput 9
 
-		sput " esp == "
+		sput " "
+		aput _sp
+		sput " == "
 		cput 27
 		sput "[32m"
 
-		sub [esp],esp
-		neg dword [esp]
-		xchg eax,[esp]
-		add eax,12
-		dsput eax
-		sub eax,12
-		xchg eax,[esp]
-		neg dword [esp]
-		add [esp],esp
+		sub [_sp],_sp
+		neg _word [_sp]
+		xchg _ax,[_sp]
+		add _ax,rsize*3
+		_sput _ax
+		sub _ax,rsize*3
+		xchg _ax,[_sp]
+		neg _word [_sp]
+		add [_sp],_sp
 
 		cput 27
 		sput "[0m"
@@ -1388,114 +1412,123 @@ macro_eg __best_sprint
 		cput 27
 		sput "[32m"
 
-		xchg eax,[esp+4]
-		dsput eax
-		xchg eax,[esp+4]
+		xchg _ax,[_sp+rsize]
+		_sput _ax
+		xchg _ax,[_sp+rsize]
 		cput 27
 		sput "[0m"
 
 		cput 10
 
-		add esp,12
-		jmp [esp-4]
-
-	section .text
-		macro_pre_start:
+		add _sp,2*rsize
 		ret
 
+	; section .text
+	; 	macro_pre_start:
+	; 	ret
 
+
+	; %if __BITS__ == 32
 section .text
 
-	__best_duput_one:
-		pushfd
+	__best__uput_one:
+		sub _sp,4
 		pushad
 
-		mov edx,0
-		mov ecx,0
-		mov esi,0
-		mov ebp,0
+		mov _dx,0
+		mov _cx,0
+		mov _si,0
+		mov _bp,0
 
-		mov ebx,10
-		mov edi,eax
+		mov _bx,10
+		mov _di,_ax
 
-		__best_duput_one_1:
-		inc ecx
-		div ebx
-		mov edx,0
-		cmp eax,0
-		jne __best_duput_one_1
+		__best__uput_one_1:
+		inc _cx
+		div _bx
+		mov _dx,0
+		cmp _ax,0
+		jne __best__uput_one_1
 
-		mov esi,ecx
-		mov edx,0
-		mov eax,1
+		mov _si,_cx
+		mov _dx,0
+		mov _ax,1
 
-		__best_duput_one_2:
-		push eax
-		mul ebx
-		loop __best_duput_one_2
+		__best__uput_one_2:
+		push _ax
+		mul _bx
+		loop __best__uput_one_2
 
-		mov ecx,esi
-		mov eax,edi
+		mov _cx,_si
+		mov _ax,_di
 
-		__best_duput_one_3:
-		pop ebx
-		mov edx,0
-		div ebx
-		add eax,48
+		__best__uput_one_3:
+		pop _bx
+		mov _dx,0
+		div _bx
+		add _ax,48
 		cput al
-		mov eax,edx
-		loop __best_duput_one_3
+		mov _ax,_dx
+		loop __best__uput_one_3
 
 		popad
-		popfd
+		add _sp,4
+		ret
+
+	__best_quput_one:
+		call __best__uput_one
+		ret
+
+	__best_qsput_one:
+		__best__sign 8
+		call __best__uput_one
+		ret
+
+	__best_duput_one:
+		call __best__uput_one
 		ret
 
 	__best_dsput_one:
-		cmp eax,0
-		jge __best_dsput_one_1		
-			cput '-'
-			neg eax
-		__best_dsput_one_1:
-		call __best_duput_one
+		__best__sign 4
+		call __best__uput_one
 		ret
 
 	__best_wuput_one:
-		movzx eax,ax
-		call __best_duput_one
+		call __best__uput_one
 		ret
 
 	__best_wsput_one:
-		movsx eax,ax
-		call __best_dsput_one
+		__best__sign 2
+		call __best__uput_one
 		ret
 
 	__best_buput_one:
-		__best_byte_get
-		call __best_duput_one
-		__best_byte_set
+		call __best__uput_one
 		ret
 
 	__best_bsput_one:
-		__best_byte_get
-		movsx eax,al
-		call __best_dsput_one
-		__best_byte_set
+		__best__sign 1
+		call __best__uput_one
 		ret
 
 	__best_cput_one:
-		__best_byte_get
-		pushfd
 		pushad
-		push eax
-		mov eax,4
-		mov ebx,1
-		mov ecx,esp
-		mov edx,1
-		int 0x80
-		add esp,4
+		push ax
+		%if __BITS__==32
+			mov _ax,4
+			mov _bx,1
+			mov _cx,_sp
+			mov _dx,1
+			int 0x80
+		%else
+			mov _ax,1
+			mov _di,1
+			mov _si,_sp
+			mov _dx,1
+			syscall
+		%endif
+		add _sp,2
 		popad
-		popfd
-		__best_byte_set
 		ret
 
 	__best_sput_one:
@@ -1504,31 +1537,62 @@ section .text
 
 
 
-	__best_duput:   __best_multiple 4,__best_duput_one,nop,nop,32,0
-	__best_dsput:   __best_multiple 4,__best_dsput_one,nop,nop,32,0
-	__best_wuput:   __best_multiple 2,__best_wuput_one,nop,nop,32,0
-	__best_wsput:   __best_multiple 2,__best_wsput_one,nop,nop,32,0
-	__best_buput:   __best_multiple 2,__best_buput_one,__best_alr,nop,32,0
-	__best_bsput:   __best_multiple 2,__best_bsput_one,__best_alr,nop,32,0
-	__best_cput:    __best_multiple 2, __best_cput_one,__best_alr,nop,32,0
-	__best_sput:    __best_multiple 1, __best_sput_one,nop,__best_strp,0,0
-	__best_duwrite: __best_multiple 4,__best_duput_one,nop,nop,32,32
-	__best_dswrite: __best_multiple 4,__best_dsput_one,nop,nop,32,32
-	__best_wuwrite: __best_multiple 2,__best_wuput_one,nop,nop,32,32
-	__best_wswrite: __best_multiple 2,__best_wsput_one,nop,nop,32,32
-	__best_buwrite: __best_multiple 2,__best_buput_one,__best_alr,nop,32,32
-	__best_bswrite: __best_multiple 2,__best_bsput_one,__best_alr,nop,32,32
-	__best_cwrite:  __best_multiple 2, __best_cput_one,__best_alr,nop,32,32
-	__best_swrite:  __best_multiple 1, __best_sput_one,nop,__best_strp,0,32
-	__best_duprint: __best_multiple 4,__best_duput_one,nop,nop,32,10
-	__best_dsprint: __best_multiple 4,__best_dsput_one,nop,nop,32,10
-	__best_wuprint: __best_multiple 2,__best_wuput_one,nop,nop,32,10
-	__best_wsprint: __best_multiple 2,__best_wsput_one,nop,nop,32,10
-	__best_buprint: __best_multiple 2,__best_buput_one,__best_alr,nop,32,10
-	__best_bsprint: __best_multiple 2,__best_bsput_one,__best_alr,nop,32,10
-	__best_cprint:  __best_multiple 2, __best_cput_one,__best_alr,nop,32,10
-	__best_sprint:  __best_multiple 1, __best_sput_one,nop,__best_strp,0,10
+	__best_quput:   __best_multiple 8,rax,__best_quput_one,nop,nop,32,0
+	__best_qsput:   __best_multiple 8,rax,__best_qsput_one,nop,nop,32,0
+	__best_duput:   __best_multiple 4,eax,__best_duput_one,nop,nop,32,0
+	__best_dsput:   __best_multiple 4,eax,__best_dsput_one,nop,nop,32,0
+	__best_wuput:   __best_multiple 2,ax,__best_wuput_one,nop,nop,32,0
+	__best_wsput:   __best_multiple 2,ax,__best_wsput_one,nop,nop,32,0
+	__best_buput:   __best_multiple 2,al,__best_buput_one,__best_alr,nop,32,0
+	__best_bsput:   __best_multiple 2,al,__best_bsput_one,__best_alr,nop,32,0
+	__best_cput:    __best_multiple 2,al,__best_cput_one,__best_alr,nop,32,0
+	__best_sput:    __best_multiple 1,al,__best_sput_one,nop,__best_strp,0,0
+	__best_quwrite: __best_multiple 8,eax,__best_quput_one,nop,nop,32,32
+	__best_qswrite: __best_multiple 8,eax,__best_qsput_one,nop,nop,32,32
+	__best_duwrite: __best_multiple 4,eax,__best_duput_one,nop,nop,32,32
+	__best_dswrite: __best_multiple 4,eax,__best_dsput_one,nop,nop,32,32
+	__best_wuwrite: __best_multiple 2,ax,__best_wuput_one,nop,nop,32,32
+	__best_wswrite: __best_multiple 2,ax,__best_wsput_one,nop,nop,32,32
+	__best_buwrite: __best_multiple 2,al,__best_buput_one,__best_alr,nop,32,32
+	__best_bswrite: __best_multiple 2,al,__best_bsput_one,__best_alr,nop,32,32
+	__best_cwrite:  __best_multiple 2,al,__best_cput_one,__best_alr,nop,32,32
+	__best_swrite:  __best_multiple 1,al,__best_sput_one,nop,__best_strp,0,32
+	__best_quprint: __best_multiple 8,eax,__best_quput_one,nop,nop,32,10
+	__best_qsprint: __best_multiple 8,eax,__best_qsput_one,nop,nop,32,10
+	__best_duprint: __best_multiple 4,eax,__best_duput_one,nop,nop,32,10
+	__best_dsprint: __best_multiple 4,eax,__best_dsput_one,nop,nop,32,10
+	__best_wuprint: __best_multiple 2,ax,__best_wuput_one,nop,nop,32,10
+	__best_wsprint: __best_multiple 2,ax,__best_wsput_one,nop,nop,32,10
+	__best_buprint: __best_multiple 2,al,__best_buput_one,__best_alr,nop,32,10
+	__best_bsprint: __best_multiple 2,al,__best_bsput_one,__best_alr,nop,32,10
+	__best_cprint:  __best_multiple 2,al,__best_cput_one,__best_alr,nop,32,10
+	__best_sprint:  __best_multiple 1,al,__best_sput_one,nop,__best_strp,0,10
 
+	; __best_duput:   __best_multiple 4,__best_duput_one,nop,nop,32,0
+	; __best_dsput:   __best_multiple 4,__best_dsput_one,nop,nop,32,0
+	; __best_wuput:   __best_multiple 2,__best_wuput_one,nop,nop,32,0
+	; __best_wsput:   __best_multiple 2,__best_wsput_one,nop,nop,32,0
+	; __best_buput:   __best_multiple 2,__best_buput_one,__best_alr,nop,32,0
+	; __best_bsput:   __best_multiple 2,__best_bsput_one,__best_alr,nop,32,0
+	; __best_cput:    __best_multiple 2, __best_cput_one,__best_alr,nop,32,0
+	; __best_sput:    __best_multiple 1, __best_sput_one,nop,__best_strp,0,0
+	; __best_duwrite: __best_multiple 4,__best_duput_one,nop,nop,32,32
+	; __best_dswrite: __best_multiple 4,__best_dsput_one,nop,nop,32,32
+	; __best_wuwrite: __best_multiple 2,__best_wuput_one,nop,nop,32,32
+	; __best_wswrite: __best_multiple 2,__best_wsput_one,nop,nop,32,32
+	; __best_buwrite: __best_multiple 2,__best_buput_one,__best_alr,nop,32,32
+	; __best_bswrite: __best_multiple 2,__best_bsput_one,__best_alr,nop,32,32
+	; __best_cwrite:  __best_multiple 2, __best_cput_one,__best_alr,nop,32,32
+	; __best_swrite:  __best_multiple 1, __best_sput_one,nop,__best_strp,0,32
+	; __best_duprint: __best_multiple 4,__best_duput_one,nop,nop,32,10
+	; __best_dsprint: __best_multiple 4,__best_dsput_one,nop,nop,32,10
+	; __best_wuprint: __best_multiple 2,__best_wuput_one,nop,nop,32,10
+	; __best_wsprint: __best_multiple 2,__best_wsput_one,nop,nop,32,10
+	; __best_buprint: __best_multiple 2,__best_buput_one,__best_alr,nop,32,10
+	; __best_bsprint: __best_multiple 2,__best_bsput_one,__best_alr,nop,32,10
+	; __best_cprint:  __best_multiple 2, __best_cput_one,__best_alr,nop,32,10
+	; __best_sprint:  __best_multiple 1, __best_sput_one,nop,__best_strp,0,10
 
+	; %endif
 
 %endif

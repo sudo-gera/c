@@ -1,146 +1,227 @@
+%macro macro_args_read_near 0-8
+mov _word [args_tmp+rsize*0],_word 0
+mov _word [args_tmp+rsize*1],_word 0
+mov _word [args_tmp+rsize*2],_word 0
+mov _word [args_tmp+rsize*3],_word 0
+%assign __args__w 0
+%rep %0/2
+	%1 %+ mov [args_tmp+rsize*__args__w],%2
+	%rotate 2
+	%assign __args__w __args__w+1
+%endrep
+pushad
+mov _ax,[args_tmp+rsize*0]
+mov _bx,[args_tmp+rsize*1]
+mov _cx,[args_tmp+rsize*2]
+mov _dx,[args_tmp+rsize*3]
+mov _si,0
+mov _di,0
+mov _bp,0
+%endmacro
+
+%macro macro_args_save_near 0-8
+mov [args_tmp+rsize*0],_ax
+mov [args_tmp+rsize*1],_bx
+mov [args_tmp+rsize*2],_cx
+mov [args_tmp+rsize*3],_dx
+%assign __args__w 0
+popad
+%rep %0/2
+	%1 %+ mov %2,[args_tmp+rsize*__args__w]
+	%rotate 2
+	%assign __args__w __args__w+1
+%endrep
+%endmacro
+
+%macro macro_args_con 1-9
+%rotate 1
+%if %0==1
+	%1
+%elif %0==3
+	%3 %1,%2
+%elif %0==5
+	%5 %1,%3,%2,%4
+%elif %0==7
+	%7 %1,%4,%2,%5,%3,%6
+%elif %0==9
+	%9 %1,%5,%2,%6,%3,%7,%4,%8
+%endif
+%endmacro
+
+%macro macro_args_read 1+
+macro_args_con macro_args_read_near,%1
+%endmacro
+
+%macro macro_args_save 1+
+macro_args_con macro_args_save_near,%1
+%endmacro
+
+%macro macro_args_read 0
+macro_args_con macro_args_read_near
+%endmacro
+
+%macro macro_args_save 0
+macro_args_con macro_args_save_near
+%endmacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 %macro regout 0
 push %%_1
-push dword __LINE__
-push dword [esp_base]
+push _word __LINE__
+push _word [esp_base]
 jmp macro_regout
 %%_1:
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-%macro pushbw 1
-push word 0
-mov [esp+1],al
-mov al,byte %1
-mov [esp],al
-mov al,[esp+1]
-mov [esp+1],byte 0
-%endmacro
+; %macro pushbw 1
+; push word 0
+; mov [esp+1],al
+; mov al,byte %1
+; mov [esp],al
+; mov al,[esp+1]
+; mov [esp+1],byte 0
+; %endmacro
 
-%macro popbw 1
-mov [esp+1],al
-mov al,[esp]
-mov byte %1,al
-%ifnidni %1,al
-%ifnidni %1,byte al
-%ifnidni %1,byte byte al
-%ifnidni %1,byte byte byte al
-%ifnidni %1,byte byte byte byte al
-%ifnidni %1,byte byte byte byte byte al
-%ifnidni %1,byte byte byte byte byte byte al
-%ifnidni %1,byte byte byte byte byte byte byte al
-mov al,[esp+1]
-%endif
-%endif
-%endif
-%endif
-%endif
-%endif
-%endif
-%endif
-mov [esp+1],byte 0
-add esp,2
-%endmacro
+; %macro popbw 1
+; mov [esp+1],al
+; mov al,[esp]
+; mov byte %1,al
+; %ifnidni %1,al
+; %ifnidni %1,byte al
+; %ifnidni %1,byte byte al
+; %ifnidni %1,byte byte byte al
+; %ifnidni %1,byte byte byte byte al
+; %ifnidni %1,byte byte byte byte byte al
+; %ifnidni %1,byte byte byte byte byte byte al
+; %ifnidni %1,byte byte byte byte byte byte byte al
+; mov al,[esp+1]
+; %endif
+; %endif
+; %endif
+; %endif
+; %endif
+; %endif
+; %endif
+; %endif
+; mov [esp+1],byte 0
+; add esp,2
+; %endmacro
 
-%macro regsave 0
-push eax
-push ebx
-push ecx
-push edx
-%endmacro
+; %macro regsave 0
+; push eax
+; push ebx
+; push ecx
+; push edx
+; %endmacro
 
-%macro regload 0
-pop edx
-pop ecx
-pop ebx
-pop eax
-%endmacro
+; %macro regload 0
+; pop edx
+; pop ecx
+; pop ebx
+; pop eax
+; %endmacro
 
-%macro regnull 0
-mov eax,0
-mov ebx,0
-mov ecx,0
-mov edx,0
-%endmacro
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-%include "macro_args_read.inc"
-%include "macro_args_save.inc"
+; %macro regnull 0
+; mov eax,0
+; mov ebx,0
+; mov ecx,0
+; mov edx,0
+; %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-%macro macro_cmp_d 4
-push dword %3
-macro_args_read_dd %1,%2
-cmp eax,ebx
+; %include "macro_args_read.inc"
+; %include "macro_args_save.inc"
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%macro macro_cmp_q 4
+push _word %3
+macro_args_read q,q, %1,%2
+cmp rax,rbx
 %4 %%_jmp
-macro_args_save_
-add esp,4
+macro_args_save
+add _sp,rsize
 jmp %%_end
 %%_jmp:
-macro_args_save_
-add esp,4
-jmp dword [esp-4]
+macro_args_save
+add _sp,rsize
+jmp [_sp-rsize]
+%%_end:
+%endmacro
+
+%macro macro_cmp_d 4
+push _word %3
+macro_args_read d,d, %1,%2
+cmp eax,ebx
+%4 %%_jmp
+macro_args_save
+add _sp,rsize
+jmp %%_end
+%%_jmp:
+macro_args_save
+add _sp,rsize
+jmp [_sp-rsize]
 %%_end:
 %endmacro
 
 %macro macro_cmp_w 4
-push dword %3
-macro_args_read_ww %1,%2
+push _word %3
+macro_args_read __args__w,__args__w, %1,%2
 cmp ax,bx
 %4 %%_jmp
-macro_args_save_
-add esp,4
+macro_args_save
+add _sp,rsize
 jmp %%_end
 %%_jmp:
-macro_args_save_
-add esp,4
-jmp dword [esp-4]
+macro_args_save
+add _sp,rsize
+jmp [_sp-rsize]
 %%_end:
 %endmacro
 
 %macro macro_cmp_b 4
-push dword %3
-macro_args_read_bb %1,%2
+push _word %3
+macro_args_read b,b, %1,%2
 cmp al,bl
 %4 %%_jmp
-macro_args_save_
-add esp,4
+macro_args_save
+add _sp,rsize
 jmp %%_end
 %%_jmp:
-macro_args_save_
-add esp,4
-jmp dword [esp-4]
+macro_args_save
+add _sp,rsize
+jmp [_sp-rsize]
 %%_end:
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-%macro macro_call 1-5
+%macro macro_call 0-5
 %if %0>1
-	push dword %2
+	_push %2
 %else
-	push dword 0
+	_push 0
 %endif
 %if %0>2
-	push dword %3
+	_push %3
 %else
-	push dword 0
+	_push 0
 %endif
 %if %0>3
-	push dword %4
+	_push %4
 %else
-	push dword 0
+	_push 0
 %endif
 %if %0>4
-	push dword %5
+	_push %5
 %else
-	push dword 0
+	_push 0
 %endif
-push dword %%_1
-jmp %1
-%%_1:
+call %1
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -358,17 +439,27 @@ jmp %1
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro macro_args_offset 1
-macro_args_read_
-mov eax,esp
-macro_args_read_d eax
-sub eax,esp
-macro_args_save_d eax
-macro_args_save_d %1
+macro_args_read
+mov _ax,_sp
+macro_args_read d, _ax
+sub _ax,_sp
+macro_args_save d, _ax
+macro_args_save d, %1
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-%macro prstr 1
-%defstr %$str %1
-sprint %$str
+%macro aput 1
+%defstr %%str %1
+sput %%str
+%endmacro
+
+%macro awrite 1
+%defstr %%str %1
+swrite %%str
+%endmacro
+
+%macro aprint 1
+%defstr %%str %1
+sprint %%str
 %endmacro

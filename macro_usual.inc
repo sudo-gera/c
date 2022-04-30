@@ -1,3 +1,9 @@
+%define _div _ %+ div
+
+%macro qdiv 1+
+qsdiv %1
+%endmacro
+
 %macro ddiv 1+
 dsdiv %1
 %endmacro
@@ -12,6 +18,12 @@ bsdiv %1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+%define _mod _ %+ mod
+
+%macro qmod 1+
+qsmod %1
+%endmacro
+
 %macro dmod 1+
 dsmod %1
 %endmacro
@@ -25,6 +37,12 @@ bsmod %1
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+%define _divmod _ %+ divmod
+
+%macro qdivmod 1+
+qsdivmod %1
+%endmacro
 
 %macro ddivmod 1+
 dsdivmod %1
@@ -41,21 +59,21 @@ bsdivmod %1
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro write 1+
-dswrite %1
+_swrite %1
 %endmacro
 
 %macro print 1+
-dsprint %1
+_sprint %1
 %endmacro
 
 %macro put 1+
-dsput %1
+_sput %1
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 %macro for 1+
-dsfor %1
+_sfor %1
 %endmacro
 
 %macro if 1+
@@ -65,7 +83,7 @@ jmp %%_1
 jmp %$__jdown
 %%_1:
 set [ch_val],=,(,%1,)
-deq [ch_val],0,%$__jelse
+_eq [ch_val],0,%$__jelse
 %endmacro
 
 %macro elif 1+
@@ -80,14 +98,14 @@ jmp %%_2
 jmp %$__jdown
 %%_2:
 set [ch_val],=,(,%1,)
-deq [ch_val],0,%$__jelse
+_eq [ch_val],0,%$__jelse
 %endmacro
 
 %macro while 1+
 %push while
 %$__jup:
 set [ch_val],=,(,%1,)
-deq [ch_val],0,%$__jdown
+_eq [ch_val],0,%$__jdown
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
