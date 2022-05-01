@@ -8,14 +8,17 @@ def rand(q=2**64,e=None):
 	assert q
 	return randint(e,q-1)
 
-n=m=10**6
-# n=rand(10**6)+1
-# m=rand(10**6)+1
-print(n,m)
+n=rand(20)
+print(n)
 for w in range(n):
-	print(rand(99),end=' ')
-print()
-for w in range(m):
-	y=rand(n)
-	x=rand(y+1)
-	print(x,y)
+	a=rand(4)
+	print('ADD DELETE EDITPHONE PRINT'.split()[a])
+	if a==0:
+		print(chr(ord('a')+rand(4)),rand(20))
+	if a==1:
+		print(chr(ord('a')+rand(4)))
+	if a==2:
+		print(chr(ord('a')+rand(4)),rand(20))
+	if a==3:
+		print(chr(ord('a')+rand(4)))
+
