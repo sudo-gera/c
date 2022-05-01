@@ -56,32 +56,32 @@ section .text
 _start:
 main:
 mov [esp_base],_sp
-; var a
-; var b
-; var c
-; var d
-; var e
-; var f
-; var g
-; var h
-; var i
-; var j
-; var k
-; var l
-; var m
-; var n
-; var o
-; var p
-; var q
-; var r
-; var s
-; var t
-; var u
-; var v
-; var w
-; var x
-; var y
-; var z
+var a
+var b
+var c
+var d
+var e
+var f
+var g
+var h
+var i
+var j
+var k
+var l
+var m
+var n
+var o
+var p
+var q
+var r
+var s
+var t
+var u
+var v
+var w
+var x
+var y
+var z
 %endmacro
 
 %macro begin 0
@@ -1220,6 +1220,10 @@ bufor %1,0,%2,1
 qsfor %1,0,%2,1
 %endmacro
 
+%macro dsfor 2
+dsfor %1,0,%2,1
+%endmacro
+
 %macro wsfor 2
 wsfor %1,0,%2,1
 %endmacro
@@ -2268,9 +2272,9 @@ beq %1,%3,%$__jelse
 %macro def 1
 section .text
 %push func
-; %ifdef macro_var
-; var %1
-; %endif
+%ifdef macro_var
+var %1
+%endif
 jmp %$__jdown
 %1:
 macro_args_read _,_,_,_, [_sp+rsize*4],[_sp+rsize*3],[_sp+rsize*2],[_sp+rsize*1]

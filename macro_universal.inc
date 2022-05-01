@@ -12,6 +12,7 @@
 	%define d_ dq
 	%define res_ resq
 	%define _ q
+	%define c__ cqo
 	%macro pushad 0
 		mov [ad_tmp],_sp
 		push _ax
@@ -47,6 +48,7 @@
 	%define d_ dd
 	%define res_ resd
 	%define _ d
+	%define c__ cdq
 %endif
 
 %macro macro_restore 3

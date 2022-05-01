@@ -99,8 +99,7 @@ db %1
 
 %macro count_args 0
 %%_1:
-mov _bp,0
-cmp [_sp+rsize],_bp
+cmp _word [_sp+rsize], _word 0
 jne %%_2
 dec _word [_sp]
 pop _word [_sp]
@@ -340,6 +339,10 @@ print_f {27,"[34m%s",27,"[0m"},%%_1
 
 %define _uput _ %+ uput
 %define _sput _ %+ sput
+%define _uprint _ %+ uprint
+%define _sprint _ %+ sprint
+%define _uwrite _ %+ uwrite
+%define _swrite _ %+ swrite
 
 
 

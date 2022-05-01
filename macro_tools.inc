@@ -441,10 +441,10 @@ call %1
 %macro macro_args_offset 1
 macro_args_read
 mov _ax,_sp
-macro_args_read d, _ax
+macro_args_read _, _ax
 sub _ax,_sp
-macro_args_save d, _ax
-macro_args_save d, %1
+macro_args_save _, _ax
+macro_args_save _, %1
 %endmacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

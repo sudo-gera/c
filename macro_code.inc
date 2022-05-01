@@ -80,118 +80,117 @@ macro_eg __best_sprint
 	%include "macro.inc"
 	; %define macro_set_log
 
-	%if 0
 	section .text
 		macro_pr_jmp:
 	%ifdef macro_set_log
 		pushad
-		mov ebp,[esp+32]
+		mov _bp,[_sp+rsize*8]
 		cput 27
 		sput "[31m"
-		write ebp
+		_swrite _bp
 		cput 27
 		sput "[0m"
-		dufor ebp,eax,edx,macro_set_len*4
+		_ufor _bp,_ax,_dx,macro_set_len*rsize
 			cput 27
 			sput "[34m"
-			write [ebp]
+			write [_bp]
 			cput 27
 			sput "[0m"
-			write [ebp+4]
+			write [_bp+rsize]
 			cput 27
 			sput "[35m"
-			write [ebp+8]
+			write [_bp+rsize*2]
 		end
-		duif edx,<,ebx
+		_uif _dx,<,_bx
 			cput 27
 			sput "[34m"
-			write [ebp]
+			write [_bp]
 			cput 27
 			sput "[33m"
-			write [ebp+4]
+			write [_bp+rsize]
 			cput 27
 			sput "[35m"
-			write [ebp+8]
+			write [_bp+rsize*2]
 		end
-		add edx,macro_set_len*4
-		dufor ebp,edx,ebx,macro_set_len*4
+		add _dx,macro_set_len*rsize
+		_ufor _bp,_dx,_bx,macro_set_len*rsize
 			cput 27
 			sput "[34m"
-			write [ebp]
+			write [_bp]
 			cput 27
 			sput "[32m"
-			write [ebp+4]
+			write [_bp+rsize]
 			cput 27
 			sput "[35m"
-			write [ebp+8]
+			write [_bp+rsize*2]
 		end
-		sub edx,macro_set_len*4
+		sub _dx,macro_set_len*rsize
 		cput 27
 		sput "[0m"
 		cput 10
 		popad
 	%endif
-		add esp,8
-		jmp [esp-4]
+		add _sp,rsize*2
+		jmp [_sp-rsize]
 
 
 	def macro_ops
-		mov edx,ebx
+		mov _dx,_bx
 		_________macro_ops_for_begin8:
-		cmp edx,eax
+		cmp _dx,_ax
 		jbe _________macro_ops_for_end8
-		sub edx,macro_set_len*4
+		sub _dx,macro_set_len*rsize
 			macro_set_pr
-			cmp [edx],dword 2
+			cmp _word [_dx],_word 2
 			jne _________macro_ops_part8
-				mov ebp,[edx+4]
-				cmp ebp,'*'
+				mov _bp,[_dx+rsize]
+				cmp _bp,'*'
 				jne _________macro_ops_not8_1
-					mov ebp,edx
-					sub ebp,macro_set_len*4
-					cmp eax,ebp
+					mov _bp,_dx
+					sub _bp,macro_set_len*rsize
+					cmp _ax,_bp
 					ja _________macro_ops_un8_1
-					cmp [edx-macro_set_len*4],dword 2
+					cmp _word [_dx-macro_set_len*rsize],_word 2
 					jne _________macro_ops_bin8_1
 						_________macro_ops_un8_1:
 						pushad
-						mov eax,[edx+4+macro_set_len*4]
-						mov ebx,[eax]
-						mov [edx+4+macro_set_len*4],ebx
-						mov [edx+macro_set_len*4],eax
-						mov [edx+8+macro_set_len*4],dword 4
+						mov _ax,[_dx+rsize+macro_set_len*rsize]
+						mov _bx,[_ax]
+						mov _word[_dx+rsize+macro_set_len*rsize],_bx
+						mov _word[_dx+macro_set_len*rsize],_ax
+						mov _word [_dx+rsize*2+macro_set_len*rsize],_word rsize
 						popad
 						macro_set_memmove 1
-						add edx,macro_set_len*4
+						add _dx,macro_set_len*rsize
 					_________macro_ops_bin8_1:
 				jmp _________macro_ops_end8
 				_________macro_ops_not8_1:
-				cmp ebp,'-'
+				cmp _bp,'-'
 				jne _________macro_ops_not8_2
-					mov ebp,edx
-					sub ebp,macro_set_len*4
-					cmp eax,ebp
+					mov _bp,_dx
+					sub _bp,macro_set_len*rsize
+					cmp _ax,_bp
 					ja _________macro_ops_un8_2
-					cmp [edx-macro_set_len*4],dword 2
+					cmp _word [_dx-macro_set_len*rsize],_word 2
 					jne _________macro_ops_bin8_2
 						_________macro_ops_un8_2:
-						neg dword [edx+4+macro_set_len*4]
+						neg _word [_dx+rsize+macro_set_len*rsize]
 						macro_set_memmove 1
-						add edx,macro_set_len*4
+						add _dx,macro_set_len*rsize
 					_________macro_ops_bin8_2:
 				jmp _________macro_ops_end8
 				_________macro_ops_not8_2:
-				cmp ebp,'+'
+				cmp _bp,'+'
 				jne _________macro_ops_not8_3
-					mov ebp,edx
-					sub ebp,macro_set_len*4
-					cmp eax,ebp
+					mov _bp,_dx
+					sub _bp,macro_set_len*rsize
+					cmp _ax,_bp
 					ja _________macro_ops_un8_3
-					cmp [edx-macro_set_len*4],dword 2
+					cmp _word [_dx-macro_set_len*rsize],_word 2
 					jne _________macro_ops_bin8_3
 						_________macro_ops_un8_3:
 						macro_set_memmove 1
-						add edx,macro_set_len*4
+						add _dx,macro_set_len*rsize
 					_________macro_ops_bin8_3:
 				jmp _________macro_ops_end8
 				_________macro_ops_not8_3:
@@ -200,281 +199,267 @@ macro_eg __best_sprint
 		jmp _________macro_ops_for_begin8
 		_________macro_ops_for_end8:
 
-		mov edx,eax
+		mov _dx,_ax
 		_________macro_ops_for_begin1:
-		cmp edx,ebx
+		cmp _dx,_bx
 		jae _________macro_ops_for_end1
 			macro_set_pr
-			cmp [edx],dword 2
+			cmp _word [_dx],_word 2
 			jne _________macro_ops_part1
-				mov ebp,[edx+4]
-				cmp ebp,'*'
+				mov _bp,[_dx+rsize]
+				cmp _bp,'*'
 				jne _________macro_ops_not1_1
 					pushad
-					mov eax,[edx+4+macro_set_len*4]
-					mov ebx,[edx+4-macro_set_len*4]
-					mov ecx,edx
-					mul ebx
-					mov [ecx+4+macro_set_len*4],eax
+					mov _ax,[_dx+rsize+macro_set_len*rsize]
+					mov _bx,[_dx+rsize-macro_set_len*rsize]
+					mov _cx,_dx
+					mul _bx
+					mov _word[_cx+rsize+macro_set_len*rsize],_ax
 					popad
 					macro_set_memmove 2
 				jmp _________macro_ops_end1
 				_________macro_ops_not1_1:
-				cmp ebp,'/'
+				cmp _bp,'/'
 				jne _________macro_ops_not1_2
-					pushad
-					mov eax,[edx+4-macro_set_len*4]
-					mov ebx,[edx+4+macro_set_len*4]
-					mov ecx,edx
-					cdq
-					idiv ebx
-					mov [ecx+4+macro_set_len*4],eax
-					popad
+					_sdiv [_dx+rsize+macro_set_len*rsize],[_dx+rsize-macro_set_len*rsize],[_dx+rsize+macro_set_len*rsize]
 					macro_set_memmove 2
 				jmp _________macro_ops_end1
 				_________macro_ops_not1_2:
-				cmp ebp,'%'
+				cmp _bp,'%'
 				jne _________macro_ops_not1_3
-					pushad
-					mov eax,[edx+4-macro_set_len*4]
-					mov ebx,[edx+4+macro_set_len*4]
-					mov ecx,edx
-					cdq
-					idiv ebx
-					mov [ecx+4+macro_set_len*4],edx
-					popad
+					_smod [_dx+rsize+macro_set_len*rsize],[_dx+rsize-macro_set_len*rsize],[_dx+rsize+macro_set_len*rsize]
 					macro_set_memmove 2
 				jmp _________macro_ops_end1
 				_________macro_ops_not1_3:
 				_________macro_ops_end1:
 			_________macro_ops_part1:
-		add edx,macro_set_len*4
+		add _dx,macro_set_len*rsize
 		jmp _________macro_ops_for_begin1
 		_________macro_ops_for_end1:
 
-		mov edx,eax
+		mov _dx,_ax
 		_________macro_ops_for_begin2:
-		cmp edx,ebx
+		cmp _dx,_bx
 		jae _________macro_ops_for_end2
 			macro_set_pr
-			cmp [edx],dword 2
+			cmp _word [_dx],_word 2
 			jne _________macro_ops_part2
-				mov ebp,[edx+4]
-				cmp ebp,'+'
+				mov _bp,[_dx+rsize]
+				cmp _bp,'+'
 				jne _________macro_ops_not2_1
 					pushad
-					mov eax,[edx+4-macro_set_len*4]
-					add eax,[edx+4+macro_set_len*4]
-					mov [edx+4+macro_set_len*4],eax
+					mov _ax,[_dx+rsize-macro_set_len*rsize]
+					add _ax,[_dx+rsize+macro_set_len*rsize]
+					mov _word[_dx+rsize+macro_set_len*rsize],_ax
 					popad
 					macro_set_memmove 2
 				jmp _________macro_ops_end2
 				_________macro_ops_not2_1:
-				cmp ebp,'-'
+				cmp _bp,'-'
 				jne _________macro_ops_not2_2
 					pushad
-					mov eax,[edx+4-macro_set_len*4]
-					sub eax,[edx+4+macro_set_len*4]
-					mov [edx+4+macro_set_len*4],eax
+					mov _ax,[_dx+rsize-macro_set_len*rsize]
+					sub _ax,[_dx+rsize+macro_set_len*rsize]
+					mov _word[_dx+rsize+macro_set_len*rsize],_ax
 					popad
 					macro_set_memmove 2
 				jmp _________macro_ops_end2
 				_________macro_ops_not2_2:
 				_________macro_ops_end2:
 			_________macro_ops_part2:
-		add edx,macro_set_len*4
+		add _dx,macro_set_len*rsize
 		jmp _________macro_ops_for_begin2
 		_________macro_ops_for_end2:
 
-		mov edx,eax
+		mov _dx,_ax
 		_________macro_ops_for_begin3:
-		cmp edx,ebx
+		cmp _dx,_bx
 		jae _________macro_ops_for_end3
 			macro_set_pr
-			cmp [edx],dword 2
+			cmp _word [_dx],_word 2
 			jne _________macro_ops_part3
-				mov ebp,[edx+4]
-				cmp ebp,'<'
+				mov _bp,[_dx+rsize]
+				cmp _bp,'<'
 				jne _________macro_ops_not3_1
-					mov esi,[edx+4-macro_set_len*4]
-					cmp esi,[edx+4+macro_set_len*4]
+					mov _si,[_dx+rsize-macro_set_len*rsize]
+					cmp _si,[_dx+rsize+macro_set_len*rsize]
 					jge _________macro_ops_cmp_begin1
-						mov dword [edx+4+macro_set_len*4],1
+						mov _word [_dx+rsize+macro_set_len*rsize],1
 					jmp _________macro_ops_cmp_end1
 					_________macro_ops_cmp_begin1:
-						mov dword [edx+4+macro_set_len*4],0
+						mov _word [_dx+rsize+macro_set_len*rsize],0
 					_________macro_ops_cmp_end1:
 					macro_set_memmove 2
 				jmp _________macro_ops_end3
 				_________macro_ops_not3_1:
-				cmp ebp,'>'
+				cmp _bp,'>'
 				jne _________macro_ops_not3_2
-					mov esi,[edx+4-macro_set_len*4]
-					cmp esi,[edx+4+macro_set_len*4]
+					mov _si,[_dx+rsize-macro_set_len*rsize]
+					cmp _si,[_dx+rsize+macro_set_len*rsize]
 					jle _________macro_ops_cmp_begin2
-						mov dword [edx+4+macro_set_len*4],1
+						mov _word [_dx+rsize+macro_set_len*rsize],1
 					jmp _________macro_ops_cmp_end2
 					_________macro_ops_cmp_begin2:
-						mov dword [edx+4+macro_set_len*4],0
+						mov _word [_dx+rsize+macro_set_len*rsize],0
 					_________macro_ops_cmp_end2:
 					macro_set_memmove 2
 				jmp _________macro_ops_end3
 				_________macro_ops_not3_2:
-				cmp ebp,'>='
+				cmp _bp,'>='
 				jne _________macro_ops_not3_3
-					mov esi,[edx+4-macro_set_len*4]
-					cmp esi,[edx+4+macro_set_len*4]
+					mov _si,[_dx+rsize-macro_set_len*rsize]
+					cmp _si,[_dx+rsize+macro_set_len*rsize]
 					jl _________macro_ops_cmp_begin3
-						mov dword [edx+4+macro_set_len*4],1
+						mov _word [_dx+rsize+macro_set_len*rsize],1
 					jmp _________macro_ops_cmp_end3
 					_________macro_ops_cmp_begin3:
-						mov dword [edx+4+macro_set_len*4],0
+						mov _word [_dx+rsize+macro_set_len*rsize],0
 					_________macro_ops_cmp_end3:
 					macro_set_memmove 2
 				jmp _________macro_ops_end3
 				_________macro_ops_not3_3:
-				cmp ebp,'<='
+				cmp _bp,'<='
 				jne _________macro_ops_not3_4
-					mov esi,[edx+4-macro_set_len*4]
-					cmp esi,[edx+4+macro_set_len*4]
+					mov _si,[_dx+rsize-macro_set_len*rsize]
+					cmp _si,[_dx+rsize+macro_set_len*rsize]
 					jg _________macro_ops_cmp_begin4
-						mov dword [edx+4+macro_set_len*4],1
+						mov _word [_dx+rsize+macro_set_len*rsize],1
 					jmp _________macro_ops_cmp_end4
 					_________macro_ops_cmp_begin4:
-						mov dword [edx+4+macro_set_len*4],0
+						mov _word [_dx+rsize+macro_set_len*rsize],0
 					_________macro_ops_cmp_end4:
 					macro_set_memmove 2
 				jmp _________macro_ops_end3
 				_________macro_ops_not3_4:
-				cmp ebp,'=='
+				cmp _bp,'=='
 				jne _________macro_ops_not3_5
-					mov esi,[edx+4-macro_set_len*4]
-					cmp esi,[edx+4+macro_set_len*4]
+					mov _si,[_dx+rsize-macro_set_len*rsize]
+					cmp _si,[_dx+rsize+macro_set_len*rsize]
 					jne _________macro_ops_cmp_begin5
-						mov dword [edx+4+macro_set_len*4],1
+						mov _word [_dx+rsize+macro_set_len*rsize],1
 					jmp _________macro_ops_cmp_end5
 					_________macro_ops_cmp_begin5:
-						mov dword [edx+4+macro_set_len*4],0
+						mov _word [_dx+rsize+macro_set_len*rsize],0
 					_________macro_ops_cmp_end5:
 					macro_set_memmove 2
 				jmp _________macro_ops_end3
 				_________macro_ops_not3_5:
-				cmp ebp,'!='
+				cmp _bp,'!='
 				jne _________macro_ops_not3_6
-					mov esi,[edx+4-macro_set_len*4]
-					cmp esi,[edx+4+macro_set_len*4]
+					mov _si,[_dx+rsize-macro_set_len*rsize]
+					cmp _si,[_dx+rsize+macro_set_len*rsize]
 					je _________macro_ops_cmp_begin6
-						mov dword [edx+4+macro_set_len*4],1
+						mov _word [_dx+rsize+macro_set_len*rsize],1
 					jmp _________macro_ops_cmp_end6
 					_________macro_ops_cmp_begin6:
-						mov dword [edx+4+macro_set_len*4],0
+						mov _word [_dx+rsize+macro_set_len*rsize],0
 					_________macro_ops_cmp_end6:
 					macro_set_memmove 2
 				jmp _________macro_ops_end3
 				_________macro_ops_not3_6:
 				_________macro_ops_end3:
 			_________macro_ops_part3:
-		add edx,macro_set_len*4
+		add _dx,macro_set_len*rsize
 		jmp _________macro_ops_for_begin3
 		_________macro_ops_for_end3:
 
-		mov edx,eax
+		mov _dx,_ax
 		_________macro_ops_for_begin4:
-		cmp edx,ebx
+		cmp _dx,_bx
 		jae _________macro_ops_for_end4
 			macro_set_pr
-			cmp [edx],dword 2
+			cmp _word[_dx],_word 2
 			jne _________macro_ops_part4
-				mov ebp,[edx+4]
-				cmp ebp,'and'
+				mov _bp,[_dx+rsize]
+				cmp _bp,'and'
 				jne _________macro_ops_not4_1
-					mov esi,[edx+4-macro_set_len*4]
-					cmp esi,0
+					mov _si,[_dx+rsize-macro_set_len*rsize]
+					cmp _si,0
 					je _________macro_ops_cmp_begin7
-						mov esi,[edx+4+macro_set_len*4]
-						cmp esi,0
+						mov _si,[_dx+rsize+macro_set_len*rsize]
+						cmp _si,0
 						je _________macro_ops_cmp_begin8
-							mov dword [edx+4+macro_set_len*4],1
+							mov _word [_dx+rsize+macro_set_len*rsize],1
 						jmp _________macro_ops_cmp_end8
 						_________macro_ops_cmp_begin8:
-							mov dword [edx+4+macro_set_len*4],0
+							mov _word [_dx+rsize+macro_set_len*rsize],0
 						_________macro_ops_cmp_end8:
 					jmp _________macro_ops_cmp_end7
 					_________macro_ops_cmp_begin7:
-						mov dword [edx+4+macro_set_len*4],0
+						mov _word [_dx+rsize+macro_set_len*rsize],0
 					_________macro_ops_cmp_end7:
 					macro_set_memmove 2
 				jmp _________macro_ops_end4
 				_________macro_ops_not4_1:
-				cmp ebp,'&&'
+				cmp _bp,'&&'
 				jne _________macro_ops_not4_2
-					mov esi,[edx+4-macro_set_len*4]
-					cmp esi,0
+					mov _si,[_dx+rsize-macro_set_len*rsize]
+					cmp _si,0
 					je _________macro_ops_cmp_begin11
-						mov esi,[edx+4+macro_set_len*4]
-						cmp esi,0
+						mov _si,[_dx+rsize+macro_set_len*rsize]
+						cmp _si,0
 						je _________macro_ops_cmp_begin12
-							mov dword [edx+4+macro_set_len*4],1
+							mov _word [_dx+rsize+macro_set_len*rsize],1
 						jmp _________macro_ops_cmp_end12
 						_________macro_ops_cmp_begin12:
-							mov dword [edx+4+macro_set_len*4],0
+							mov _word [_dx+rsize+macro_set_len*rsize],0
 						_________macro_ops_cmp_end12:
 					jmp _________macro_ops_cmp_end11
 					_________macro_ops_cmp_begin11:
-						mov dword [edx+4+macro_set_len*4],0
+						mov _word [_dx+rsize+macro_set_len*rsize],0
 					_________macro_ops_cmp_end11:
 					macro_set_memmove 2
 				jmp _________macro_ops_end4
 				_________macro_ops_not4_2:
 				_________macro_ops_end4:
 			_________macro_ops_part4:
-		add edx,macro_set_len*4
+		add _dx,macro_set_len*rsize
 		jmp _________macro_ops_for_begin4
 		_________macro_ops_for_end4:
 
-		mov edx,eax
+		mov _dx,_ax
 		_________macro_ops_for_begin5:
-		cmp edx,ebx
+		cmp _dx,_bx
 		jae _________macro_ops_for_end5
 			macro_set_pr
-			cmp [edx],dword 2
+			cmp _word [_dx],_word 2
 			jne _________macro_ops_part5
-				mov ebp,[edx+4]
-				cmp ebp,'or'
+				mov _bp,[_dx+rsize]
+				cmp _bp,'or'
 				jne _________macro_ops_not5_1
-					mov esi,[edx+4-macro_set_len*4]
-					cmp esi,0
+					mov _si,[_dx+rsize-macro_set_len*rsize]
+					cmp _si,0
 					je _________macro_ops_cmp_begin9
-						mov dword [edx+4+macro_set_len*4],1
+						mov _word [_dx+rsize+macro_set_len*rsize],1
 					jmp _________macro_ops_cmp_end9
 					_________macro_ops_cmp_begin9:
-						mov esi,[edx+4+macro_set_len*4]
-						cmp esi,0
+						mov _si,[_dx+rsize+macro_set_len*rsize]
+						cmp _si,0
 						je _________macro_ops_cmp_begin10
-							mov dword [edx+4+macro_set_len*4],1
+							mov _word [_dx+rsize+macro_set_len*rsize],1
 						jmp _________macro_ops_cmp_end10
 						_________macro_ops_cmp_begin10:
-							mov dword [edx+4+macro_set_len*4],0
+							mov _word [_dx+rsize+macro_set_len*rsize],0
 						_________macro_ops_cmp_end10:
 					_________macro_ops_cmp_end9:
 					macro_set_memmove 2
 				jmp _________macro_ops_end5
 				_________macro_ops_not5_1:
-				cmp ebp,'||'
+				cmp _bp,'||'
 				jne _________macro_ops_not5_2
-					mov esi,[edx+4-macro_set_len*4]
-					cmp esi,0
+					mov _si,[_dx+rsize-macro_set_len*rsize]
+					cmp _si,0
 					je _________macro_ops_cmp_begin13
-						mov dword [edx+4+macro_set_len*4],1
+						mov _word [_dx+rsize+macro_set_len*rsize],1
 					jmp _________macro_ops_cmp_end13
 					_________macro_ops_cmp_begin13:
-						mov esi,[edx+4+macro_set_len*4]
-						cmp esi,0
+						mov _si,[_dx+rsize+macro_set_len*rsize]
+						cmp _si,0
 						je _________macro_ops_cmp_begin14
-							mov dword [edx+4+macro_set_len*4],1
+							mov _word [_dx+rsize+macro_set_len*rsize],1
 						jmp _________macro_ops_cmp_end13
 						_________macro_ops_cmp_begin14:
-							mov dword [edx+4+macro_set_len*4],0
+							mov _word [_dx+rsize+macro_set_len*rsize],0
 						_________macro_ops_cmp_end14:
 					_________macro_ops_cmp_end13:
 					macro_set_memmove 2
@@ -482,190 +467,226 @@ macro_eg __best_sprint
 				_________macro_ops_not5_2:
 				_________macro_ops_end5:
 			_________macro_ops_part5:
-		add edx,macro_set_len*4
+		add _dx,macro_set_len*rsize
 		jmp _________macro_ops_for_begin5
 		_________macro_ops_for_end5:
 
 
-		mov edx,ebx
+		mov _dx,_bx
 		_________macro_ops_for_begin7:
-		cmp edx,eax
+		cmp _dx,_ax
 		jbe _________macro_ops_for_end7
-		sub edx,macro_set_len*4
+		sub _dx,macro_set_len*rsize
 			macro_set_pr
-			cmp [edx],dword 2
+			cmp _word[_dx],_word 2
 			jne _________macro_ops_part7
-				mov ebp,[edx+4]
-				cmp ebp,'='
+				mov _bp,[_dx+rsize]
+				cmp _bp,'='
 				jne _________macro_ops_not7_1
 					pushad
-					mov eax,[edx+4+macro_set_len*4]
-					mov ebx,[edx-macro_set_len*4]
-					mov [edx+macro_set_len*4],ebx
-					mov esi,[edx+8-macro_set_len*4]
-					mov [edx+8+macro_set_len*4],esi
-					cmp esi,4
+					mov _ax,[_dx+rsize+macro_set_len*rsize]
+					mov _bx,[_dx-macro_set_len*rsize]
+					mov _word[_dx+macro_set_len*rsize],_bx
+					mov _si,[_dx+rsize*2-macro_set_len*rsize]
+					mov _word[_dx+rsize*2+macro_set_len*rsize],_si
+				%if __BITS__==64
+					cmp _si,8
+					jne _________macro_ops_assign7_1_n8
+						mov [_bx],rax
+					_________macro_ops_assign7_1_n8:
+				%endif
+					cmp _si,4
 					jne _________macro_ops_assign7_1_n4
-						mov [ebx],eax
+						mov [_bx],eax
 					_________macro_ops_assign7_1_n4:
-					cmp esi,2
+					cmp _si,2
 					jne _________macro_ops_assign7_1_n2
-						mov [ebx],ax
+						mov [_bx],ax
 					_________macro_ops_assign7_1_n2:
-					cmp esi,1
+					cmp _si,1
 					jne _________macro_ops_assign7_1_n1
-						mov [ebx],al
+						mov [_bx],al
 					_________macro_ops_assign7_1_n1:
 					popad
 					macro_set_memmove 2
-					add edx,macro_set_len*4*2
+					add _dx,macro_set_len*rsize*2
 				jmp _________macro_ops_end7
 				_________macro_ops_not7_1:
-				cmp ebp,'+='
+				cmp _bp,'+='
 				jne _________macro_ops_not7_2
 					pushad
-					mov eax,[edx+4-macro_set_len*4]
-					add eax,[edx+4+macro_set_len*4]
-					mov [edx+4+macro_set_len*4],eax
-					mov ebx,[edx-macro_set_len*4]
-					mov [edx+macro_set_len*4],ebx
-					mov esi,[edx+8-macro_set_len*4]
-					mov [edx+8+macro_set_len*4],esi
-					cmp esi,4
-					jne _________macro_ops_assign7_1_n4
-						mov [ebx],eax
+					mov _ax,[_dx+rsize-macro_set_len*rsize]
+					add _ax,[_dx+rsize+macro_set_len*rsize]
+					mov _word[_dx+rsize+macro_set_len*rsize],_ax
+					mov _bx,[_dx-macro_set_len*rsize]
+					mov _word[_dx+macro_set_len*rsize],_bx
+					mov _si,[_dx+rsize*2-macro_set_len*rsize]
+					mov _word[_dx+rsize*2+macro_set_len*rsize],_si
+				%if __BITS__==64
+					cmp _si,8
+					jne _________macro_ops_assign7_2_n8
+						mov [_bx],rax
+					_________macro_ops_assign7_2_n8:
+				%endif
+					cmp _si,4
+					jne _________macro_ops_assign7_2_n4
+						mov [_bx],eax
 					_________macro_ops_assign7_2_n4:
-					cmp esi,2
+					cmp _si,2
 					jne _________macro_ops_assign7_2_n2
-						mov [ebx],ax
+						mov [_bx],ax
 					_________macro_ops_assign7_2_n2:
-					cmp esi,1
+					cmp _si,1
 					jne _________macro_ops_assign7_2_n1
-						mov [ebx],al
+						mov [_bx],al
 					_________macro_ops_assign7_2_n1:
 					popad
 					macro_set_memmove 2
-					add edx,macro_set_len*4*2
+					add _dx,macro_set_len*rsize*2
 				jmp _________macro_ops_end7
 				_________macro_ops_not7_2:
-				cmp ebp,'-='
+				cmp _bp,'-='
 				jne _________macro_ops_not7_3
 					pushad
-					mov eax,[edx+4-macro_set_len*4]
-					sub eax,[edx+4+macro_set_len*4]
-					mov [edx+4+macro_set_len*4],eax
-					mov ebx,[edx-macro_set_len*4]
-					mov [edx+macro_set_len*4],ebx
-					mov esi,[edx+8-macro_set_len*4]
-					mov [edx+8+macro_set_len*4],esi
-					cmp esi,4
+					mov _ax,[_dx+rsize-macro_set_len*rsize]
+					sub _ax,[_dx+rsize+macro_set_len*rsize]
+					mov _word[_dx+rsize+macro_set_len*rsize],_ax
+					mov _bx,[_dx-macro_set_len*rsize]
+					mov _word[_dx+macro_set_len*rsize],_bx
+					mov _si,[_dx+rsize*2-macro_set_len*rsize]
+					mov _word[_dx+rsize*2+macro_set_len*rsize],_si
+				%if __BITS__==64
+					cmp _si,8
+					jne _________macro_ops_assign7_3_n8
+						mov [_bx],rax
+					_________macro_ops_assign7_3_n8:
+				%endif
+					cmp _si,4
 					jne _________macro_ops_assign7_3_n4
-						mov [ebx],eax
+						mov [_bx],eax
 					_________macro_ops_assign7_3_n4:
-					cmp esi,2
+					cmp _si,2
 					jne _________macro_ops_assign7_3_n2
-						mov [ebx],ax
+						mov [_bx],ax
 					_________macro_ops_assign7_3_n2:
-					cmp esi,1
+					cmp _si,1
 					jne _________macro_ops_assign7_3_n1
-						mov [ebx],al
+						mov [_bx],al
 					_________macro_ops_assign7_3_n1:
 					popad
 					macro_set_memmove 2
-					add edx,macro_set_len*4*2
+					add _dx,macro_set_len*rsize*2
 				jmp _________macro_ops_end7
 				_________macro_ops_not7_3:
-				cmp ebp,'*='
+				cmp _bp,'*='
 				jne _________macro_ops_not7_4
 					pushad
-					mov ecx,edx
-					mov eax,[ecx+4-macro_set_len*4]
-					mov ebx,[ecx+4+macro_set_len*4]
-					mul ebx
-					mov edx,ecx
-					mov [ecx+4+macro_set_len*4],eax
-					mov ebx,[edx-macro_set_len*4]
-					mov [edx+macro_set_len*4],ebx
-					mov esi,[edx+8-macro_set_len*4]
-					mov [edx+8+macro_set_len*4],esi
-					cmp esi,4
+					mov _cx,_dx
+					mov _ax,[_cx+rsize-macro_set_len*rsize]
+					mov _bx,[_cx+rsize+macro_set_len*rsize]
+					mul _bx
+					mov _dx,_cx
+					mov _word[_cx+rsize+macro_set_len*rsize],_ax
+					mov _bx,[_dx-macro_set_len*rsize]
+					mov _word[_dx+macro_set_len*rsize],_bx
+					mov _si,[_dx+rsize*2-macro_set_len*rsize]
+					mov _word[_dx+rsize*2+macro_set_len*rsize],_si
+				%if __BITS__==64
+					cmp _si,8
+					jne _________macro_ops_assign7_4_n8
+						mov [_bx],rax
+					_________macro_ops_assign7_4_n8:
+				%endif
+					cmp _si,4
 					jne _________macro_ops_assign7_4_n4
-						mov [ebx],eax
+						mov [_bx],eax
 					_________macro_ops_assign7_4_n4:
-					cmp esi,2
+					cmp _si,2
 					jne _________macro_ops_assign7_4_n2
-						mov [ebx],ax
+						mov [_bx],ax
 					_________macro_ops_assign7_4_n2:
-					cmp esi,1
+					cmp _si,1
 					jne _________macro_ops_assign7_4_n1
-						mov [ebx],al
+						mov [_bx],al
 					_________macro_ops_assign7_4_n1:
 					popad
 					macro_set_memmove 2
-					add edx,macro_set_len*4*2
+					add _dx,macro_set_len*rsize*2
 				jmp _________macro_ops_end7
 				_________macro_ops_not7_4:
-				cmp ebp,'/='
+				cmp _bp,'/='
 				jne _________macro_ops_not7_5
 					pushad
-					mov ecx,edx
-					mov eax,[ecx+4-macro_set_len*4]
-					mov ebx,[ecx+4+macro_set_len*4]
-					cdq
-					idiv ebx
-					mov edx,ecx
-					mov [ecx+4+macro_set_len*4],eax
-					mov ebx,[edx-macro_set_len*4]
-					mov [edx+macro_set_len*4],ebx
-					mov esi,[edx+8-macro_set_len*4]
-					mov [edx+8+macro_set_len*4],esi
-					cmp esi,4
+					mov _cx,_dx
+					mov _ax,[_cx+rsize-macro_set_len*rsize]
+					mov _bx,[_cx+rsize+macro_set_len*rsize]
+					c__
+					idiv _bx
+					mov _dx,_cx
+					mov _word[_cx+rsize+macro_set_len*rsize],_ax
+					mov _bx,[_dx-macro_set_len*rsize]
+					mov _word[_dx+macro_set_len*rsize],_bx
+					mov _si,[_dx+rsize*2-macro_set_len*rsize]
+					mov _word[_dx+rsize*2+macro_set_len*rsize],_si
+				%if __BITS__==64
+					cmp _si,8
+					jne _________macro_ops_assign7_5_n8
+						mov [_bx],rax
+					_________macro_ops_assign7_5_n8:
+				%endif
+					cmp _si,4
 					jne _________macro_ops_assign7_5_n4
-						mov [ebx],eax
+						mov [_bx],eax
 					_________macro_ops_assign7_5_n4:
-					cmp esi,2
+					cmp _si,2
 					jne _________macro_ops_assign7_5_n2
-						mov [ebx],ax
+						mov [_bx],ax
 					_________macro_ops_assign7_5_n2:
-					cmp esi,1
+					cmp _si,1
 					jne _________macro_ops_assign7_5_n1
-						mov [ebx],al
+						mov [_bx],al
 					_________macro_ops_assign7_5_n1:
 					popad
 					macro_set_memmove 2
-					add edx,macro_set_len*4*2
+					add _dx,macro_set_len*rsize*2
 				jmp _________macro_ops_end7
 				_________macro_ops_not7_5:
-				cmp ebp,'%='
+				cmp _bp,'%='
 				jne _________macro_ops_not7_6
 					pushad
-					mov ecx,edx
-					mov eax,[ecx+4-macro_set_len*4]
-					mov ebx,[ecx+4+macro_set_len*4]
-					cdq
-					idiv ebx
-					mov eax,edx
-					mov edx,ecx
-					mov [ecx+4+macro_set_len*4],eax
-					mov ebx,[edx-macro_set_len*4]
-					mov [edx+macro_set_len*4],ebx
-					mov esi,[edx+8-macro_set_len*4]
-					mov [edx+8+macro_set_len*4],esi
-					cmp esi,4
+					mov _cx,_dx
+					mov _ax,[_cx+rsize-macro_set_len*rsize]
+					mov _bx,[_cx+rsize+macro_set_len*rsize]
+					c__
+					idiv _bx
+					mov _ax,_dx
+					mov _dx,_cx
+					mov _word[_cx+rsize+macro_set_len*rsize],_ax
+					mov _bx,[_dx-macro_set_len*rsize]
+					mov _word[_dx+macro_set_len*rsize],_bx
+					mov _si,[_dx+rsize*2-macro_set_len*rsize]
+					mov _word[_dx+rsize*2+macro_set_len*rsize],_si
+				%if __BITS__==64
+					cmp _si,8
+					jne _________macro_ops_assign7_6_n8
+						mov [_bx],rax
+					_________macro_ops_assign7_6_n8:
+				%endif
+					cmp _si,4
 					jne _________macro_ops_assign7_6_n4
-						mov [ebx],eax
+						mov [_bx],eax
 					_________macro_ops_assign7_6_n4:
-					cmp esi,2
+					cmp _si,2
 					jne _________macro_ops_assign7_6_n2
-						mov [ebx],ax
+						mov [_bx],ax
 					_________macro_ops_assign7_6_n2:
-					cmp esi,1
+					cmp _si,1
 					jne _________macro_ops_assign7_6_n1
-						mov [ebx],al
+						mov [_bx],al
 					_________macro_ops_assign7_6_n1:
 					popad
 					macro_set_memmove 2
-					add edx,macro_set_len*4*2
+					add _dx,macro_set_len*rsize*2
 				jmp _________macro_ops_end7
 				_________macro_ops_not7_6:
 				_________macro_ops_end7:
@@ -673,273 +694,295 @@ macro_eg __best_sprint
 		jmp _________macro_ops_for_begin7
 		_________macro_ops_for_end7:
 
-		mov eax,ecx
+		mov _ax,_cx
 	end
 
 	def macro_bops
-		mov edx,eax
+		mov _dx,_ax
 		_________macro_ops_for_begin6:
-		cmp edx,ebx
+		cmp _dx,_bx
 		jae _________macro_ops_for_end6
 			macro_set_pr
-			cmp [edx],dword 2
+			cmp _word[_dx],_word 2
 			jne _________macro_ops_part6
-				mov ebp,[edx+4]
-				cmp ebp,'('
+				mov _bp,[_dx+rsize]
+				cmp _bp,'('
 				jne _________macro_ops_not6_1
-					add edx,macro_set_len*4
-					push edx
-					push dword 0
-					sub edx,macro_set_len*4
+					add _dx,macro_set_len*rsize
+					push _dx
+					push _word 0
+					sub _dx,macro_set_len*rsize
 				jmp _________macro_ops_end6
 				_________macro_ops_not6_1:
-				cmp ebp,')'
+				cmp _bp,')'
 				jne _________macro_ops_not6_2
-					mov edi,edx
-					pop ebp
-					pop esi
-					call2 ecx,edx,macro_ops,esi,edx,ecx
-					sub edi,edx
-					sub ebx,edi
-					mov ebp,esi
-					sub ebp,macro_set_len*4*2
-					cmp eax,ebp
+					mov _di,_dx
+					pop _bp
+					pop _si
+					call2 _cx,_dx,macro_ops,_si,_dx,_cx
+					sub _di,_dx
+					sub _bx,_di
+					mov _bp,_si
+					sub _bp,macro_set_len*rsize*2
+					cmp _ax,_bp
 					ja _________macro_ops_ncall
-						cmp [ebp],dword 1
+						cmp _word[_bp],_word 1
 						jne _________macro_ops_nfunc
-							mov ebp,1
+							mov _bp,1
 						jmp _________macro_ops_func
 						_________macro_ops_nfunc:
-							mov ebp,0
+							mov _bp,0
 						_________macro_ops_func:
 					jmp _________macro_ops_call
 					_________macro_ops_ncall:
-						mov ebp,0
+						mov _bp,0
 					_________macro_ops_call:
-					cmp ebp,0
+					cmp _bp,0
 					je _________macro_ops_par
-						mov ebp,esi
-						sub ebp,macro_set_len*4*2
-						mov edi,edx
-						sub edi,esi
-						ddiv edi,macro_set_len*4
-						mov dword [edx],1
-						cmp edi,0
+						mov _bp,_si
+						sub _bp,macro_set_len*rsize*2
+						mov _di,_dx
+						sub _di,_si
+						_sdiv _di,macro_set_len*rsize
+						mov _word [_dx],1
+						cmp _di,0
 						jne _________macro_ops_call_args_0
-							call1 [edx+4],[ebp+4]
+							call1 [_dx+rsize],[_bp+rsize]
 						jmp _________macro_ops_call_args_end
 						_________macro_ops_call_args_0:
-						cmp edi,1
+						cmp _di,1
 						jne _________macro_ops_call_args_1
-							call1 [edx+4],[ebp+4],[esi+4]
+							call1 [_dx+rsize],[_bp+rsize],[_si+rsize]
 						jmp _________macro_ops_call_args_end
 						_________macro_ops_call_args_1:
-						cmp edi,2
+						cmp _di,2
 						jne _________macro_ops_call_args_2
-							call1 [edx+4],[ebp+4],[esi+4],[esi+4+macro_set_len*4]
+							call1 [_dx+rsize],[_bp+rsize],[_si+rsize],[_si+rsize+macro_set_len*rsize]
 						jmp _________macro_ops_call_args_end
 						_________macro_ops_call_args_2:
-						cmp edi,3
+						cmp _di,3
 						jne _________macro_ops_call_args_3
-							call1 [edx+4],[ebp+4],[esi+4],[esi+4+macro_set_len*4],[esi+4+macro_set_len*4*2]
+							call1 [_dx+rsize],[_bp+rsize],[_si+rsize],[_si+rsize+macro_set_len*rsize],[_si+rsize+macro_set_len*rsize*2]
 						jmp _________macro_ops_call_args_end
 						_________macro_ops_call_args_3:
-							call1 [edx+4],[ebp+4],[esi+4],[esi+4+macro_set_len*4],[esi+4+macro_set_len*4*2],[esi+4+macro_set_len*4*3]
+							call1 [_dx+rsize],[_bp+rsize],[_si+rsize],[_si+rsize+macro_set_len*rsize],[_si+rsize+macro_set_len*rsize*2],[_si+rsize+macro_set_len*rsize*3]
 						_________macro_ops_call_args_end:
-						dsub esi,macro_set_len*4
+						_sub _si,macro_set_len*rsize
 					jmp _________macro_ops_par_end
 					_________macro_ops_par:
-						dmov [edx],[edx-macro_set_len*4]
-						dmov [edx+4],[edx+4-macro_set_len*4]
-						dmov [edx+8],[edx+8-macro_set_len*4]
+						_mov _word[_dx],[_dx-macro_set_len*rsize]
+						_mov _word[_dx+rsize],[_dx+rsize-macro_set_len*rsize]
+						_mov _word[_dx+rsize*2],[_dx+rsize*2-macro_set_len*rsize]
 					_________macro_ops_par_end:
-					push eax
-					mov eax,edx
-					sub eax,esi
-					add eax,macro_set_len*4
-					ddiv eax,macro_set_len*4
-					sub edx,macro_set_len*4
-					macro_set_memmove eax
-					add edx,macro_set_len*4
-					pop eax
+					push _ax
+					mov _ax,_dx
+					sub _ax,_si
+					add _ax,macro_set_len*rsize
+					_div _ax,macro_set_len*rsize
+					sub _dx,macro_set_len*rsize
+					macro_set_memmove _ax
+					add _dx,macro_set_len*rsize
+					pop _ax
 				jmp _________macro_ops_end6
 				_________macro_ops_not6_2:
-				cmp ebp,'b['
+				cmp _bp,'b['
 				jne _________macro_ops_not6_3
-					add edx,macro_set_len*4
-					push edx
-					push dword 1
-					sub edx,macro_set_len*4
+					add _dx,macro_set_len*rsize
+					push _dx
+					push _word 1
+					sub _dx,macro_set_len*rsize
 				jmp _________macro_ops_end6
 				_________macro_ops_not6_3:
-				cmp ebp,'w['
+				cmp _bp,'w['
 				jne _________macro_ops_not6_4
-					add edx,macro_set_len*4
-					push edx
-					push dword 2
-					sub edx,macro_set_len*4
+					add _dx,macro_set_len*rsize
+					push _dx
+					push _word 2
+					sub _dx,macro_set_len*rsize
 				jmp _________macro_ops_end6
 				_________macro_ops_not6_4:
-				cmp ebp,'d['
+				cmp _bp,'d['
 				jne _________macro_ops_not6_5
-					add edx,macro_set_len*4
-					push edx
-					push dword 4
-					sub edx,macro_set_len*4
+					add _dx,macro_set_len*rsize
+					push _dx
+					push _word 4
+					sub _dx,macro_set_len*rsize
 				jmp _________macro_ops_end6
 				_________macro_ops_not6_5:
-				cmp ebp,'['
+				cmp _bp,'q['
+				jne _________macro_ops_not6_7
+					add _dx,macro_set_len*rsize
+					push _dx
+					push _word 8
+					sub _dx,macro_set_len*rsize
+				jmp _________macro_ops_end6
+				_________macro_ops_not6_7:
+				cmp _bp,'['
 				jne _________macro_ops_not6_6
-					add edx,macro_set_len*4
-					push edx
-					push dword 4
-					sub edx,macro_set_len*4
+					add _dx,macro_set_len*rsize
+					push _dx
+					push _word rsize
+					sub _dx,macro_set_len*rsize
 				jmp _________macro_ops_end6
 				_________macro_ops_not6_6:
-				cmp ebp,']'
-				jne _________macro_ops_not6_7
-					mov edi,edx
-					pop ebp
-					pop esi
-					call2 ecx,edx,macro_ops,esi,edx,ecx
-					sub edi,edx
-					sub ebx,edi
-					cmp ebp,1
+				cmp _bp,']'
+				jne _________macro_ops_not6_8
+					mov _di,_dx
+					pop _bp
+					pop _si
+					call2 _cx,_dx,macro_ops,_si,_dx,_cx
+					sub _di,_dx
+					sub _bx,_di
+					cmp _bp,1
 					jne _________macro_ops_get_n1
 						pushad
-						mov ebx,[edx+4-macro_set_len*4]
-						mov ecx,[edx+4-macro_set_len*4*3]
-						lea ebx,[ecx+ebx*1]
-						mov al,[ebx]
-						movsx eax,al
-						mov [edx+4],eax
-						mov [edx],ebx
-						mov [edx+8],dword 1
+						mov _bx,[_dx+rsize-macro_set_len*rsize]
+						mov _cx,[_dx+rsize-macro_set_len*rsize*3]
+						lea _bx,[_cx+_bx*1]
+						mov al,[_bx]
+						movsx _ax,al
+						mov _word[_dx+rsize],_ax
+						mov _word[_dx],_bx
+						mov _word[_dx+rsize*2],_word 1
 						popad
 					jmp _________macro_ops_get_end
 					_________macro_ops_get_n1:
-					cmp ebp,2
+					cmp _bp,2
 					jne _________macro_ops_get_n2
 						pushad
-						mov ebx,[edx+4-macro_set_len*4]
-						mov ecx,[edx+4-macro_set_len*4*3]
-						lea ebx,[ecx+ebx*2]
-						mov ax,[ebx]
-						movsx eax,ax
-						mov [edx+4],eax
-						mov [edx],ebx
-						mov [edx+8],dword 2
+						mov _bx,[_dx+rsize-macro_set_len*rsize]
+						mov _cx,[_dx+rsize-macro_set_len*rsize*3]
+						lea _bx,[_cx+_bx*2]
+						mov ax,[_bx]
+						movsx _ax,ax
+						mov [_dx+rsize],_ax
+						mov _word[_dx],_bx
+						mov _word[_dx+rsize*2],_word 2
 						popad
 					jmp _________macro_ops_get_end
 					_________macro_ops_get_n2:
-					cmp ebp,4
+					cmp _bp,4
 					jne _________macro_ops_get_n4
 						pushad
-						mov ebx,[edx+4-macro_set_len*4]
-						mov ecx,[edx+4-macro_set_len*4*3]
-						lea ebx,[ecx+ebx*4]
-						mov eax,[ebx]
-						mov [edx+4],eax
-						mov [edx],ebx
-						mov [edx+8],dword 4
+						mov _bx,[_dx+rsize-macro_set_len*rsize]
+						mov _cx,[_dx+rsize-macro_set_len*rsize*3]
+						lea _bx,[_cx+_bx*4]
+						mov eax,[_bx]
+						mov [_dx+rsize],eax
+						mov _word[_dx],_bx
+						mov _word[_dx+rsize*2],_word 4
 						popad
 					jmp _________macro_ops_get_end
 					_________macro_ops_get_n4:
+				%if __BITS__=64
+					cmp _bp,8
+					jne _________macro_ops_get_n8
+						pushad
+						mov _bx,[_dx+rsize-macro_set_len*rsize]
+						mov _cx,[_dx+rsize-macro_set_len*rsize*3]
+						lea _bx,[_cx+_bx*8]
+						mov rax,[_bx]
+						mov [_dx+rsize],rax
+						mov _word[_dx],_bx
+						mov _word[_dx+rsize*2],_word 8
+						popad
+					jmp _________macro_ops_get_end
+					_________macro_ops_get_n8:
+				%endif
 					_________macro_ops_get_end:
-					sub edx,macro_set_len*4
+					sub _dx,macro_set_len*rsize
 					macro_set_memmove 3
-					add edx,macro_set_len*4
+					add _dx,macro_set_len*rsize
 				jmp _________macro_ops_end6
-				_________macro_ops_not6_7:
+				_________macro_ops_not6_8:
 				_________macro_ops_end6:
-			cmp [edx],dword 2
 			_________macro_ops_part6:
-		add edx,macro_set_len*4
+		add _dx,macro_set_len*rsize
 		jmp _________macro_ops_for_begin6
 		_________macro_ops_for_end6:
-		call2 ecx,ebx,macro_ops,eax,ebx,ecx	
-		mov eax,ecx
+		call2 _cx,_bx,macro_ops,_ax,_bx,_cx	
+		mov _ax,_cx
 	end
 
 
 	section .text
 		macro_expr_hash_jmp:
 		pushad
-		add esp,32
-		pop ebx
-		pop eax
-		sub esp,40
+		add _sp,rsize*8
+		pop _bx
+		pop _ax
+		sub _sp,rsize*10
 
-		mov ebp,eax
-		mov edi,ebx
-		mov ecx,ebx
-		mov ebx,eax
-		mov eax,0
-		mov esi,75
+		mov _bp,_ax
+		mov _di,_bx
+		mov _cx,_bx
+		mov _bx,_ax
+		mov _ax,0
+		mov _si,75
 		_________macro_expr_hash_1:
-		mul esi
-		mov edx,0
-		mov dl,[ebx]
+		mul _si
+		mov _dx,0
+		mov dl,[_bx]
 		sub dl,48
-		add eax,edx
-		inc ebx
+		add _ax,_dx
+		inc _bx
 		loop _________macro_expr_hash_1
-		div dword [len_vars_names]
-		lea eax,[vars_names+edx*4]
-		mov ebx,[esp+40]
-		mov [esp+40],eax
-		mov [esp+36],ebx
+		div _word [len_vars_names]
+		lea _ax,[vars_names+_dx*8 ]
+		mov _bx,[_sp+rsize*10]
+		mov _word[_sp+rsize*10],_ax
+		mov _word[_sp+rsize*9],_bx
 		popad
-		add esp,8
-		jmp [esp-4]	
+		add _sp,rsize*2
+		jmp [_sp-rsize]	
 
 	section .text
 		macro_var_jmp:
 		pushad
-		mov esi,[esp+32]
-		mov edi,[esp+40]
-		mov ebp,edi
-		sub ebp,esi
-		mov ecx,ebp
-		mov ebx,esi
-		macro_set_hash ebx,esi,ebp
-		mov ecx,[esp+36]
-		cmp [ebx],dword 0
+		mov _si,[_sp+rsize*8]
+		mov _di,[_sp+rsize*10]
+		mov _bp,_di
+		sub _bp,_si
+		mov _cx,_bp
+		mov _bx,_si
+		macro_set_hash _bx,_si,_bp
+		mov _cx,[_sp+rsize*9]
+		cmp _word[_bx],_word 0
 		je _________macro_var_stay_calm
 			swrite "warning:"
 			pushad
-			mov eax,4
-			mov ebx,1
-			mov ecx,esi
-			mov edx,ebp
+			mov _ax,4
+			mov _bx,1
+			mov _cx,_si
+			mov _dx,_bp
 			int 0x80
 			popad
 			sprint " redefined"
 		_________macro_var_stay_calm:
-		mov [ebx],ecx
+		mov _word[_bx],_cx
 		popad
-		add esp,12
-		jmp [esp-4]
+		add _sp,3*rsize
+		jmp [_sp-rsize]
 
 
 	section .text
 		macro_expr_jmp:
 		pushad
-		add esp,32
-		pop ebp
-		pop edi
-		sub esp,40
-		push esp
-		mov eax,0
-		mov ebx,0
-		mov ecx,0
-		mov esi,0
+		add _sp,rsize*8
+		pop _bp
+		pop _di
+		sub _sp,rsize*10
+		push _sp
+		mov _ax,0
+		mov _bx,0
+		mov _cx,0
+		mov _si,0
 		mov dh,-1
-		mov ebx,ebp
+		mov _bx,_bp
 		_________macro_expr_main_loop_begin:
-		cmp ebx,edi
+		cmp _bx,_di
 		jae _________macro_expr_main_loop_end
-			mov cl,[ebx]
+			mov cl,[_bx]
 			mov ch,0
 			cmp cl,'0'
 			jb _________macro_expr_l0
@@ -994,318 +1037,317 @@ macro_eg __best_sprint
 			je _________macro_expr_continuing
 				cmp dh,0
 				jne _________macro_expr_dh_n0
-					pop dword eax
-					push dword 2
-					push dword esi
-					push dword 0
-					push dword eax
+					pop _word _ax
+					push _word 2
+					push _word _si
+					push _word 0
+					push _word _ax
 				jmp _________macro_expr_dh_end
 				_________macro_expr_dh_n0:
 				cmp dh,1
 				jne _________macro_expr_dh_n1
-					pop dword eax
-					push dword 1
-					push dword esi
-					push dword 0
-					push dword eax
+					pop _word _ax
+					push _word 1
+					push _word _si
+					push _word 0
+					push _word _ax
 				jmp _________macro_expr_dh_end
 				_________macro_expr_dh_n1:
 				cmp dh,2
 				jne _________macro_expr_dh_n2
-					sub ebx,esi
-					macro_set_hash eax,esi,ebx
-					cmp [eax],dword 0
+					sub _bx,_si
+					macro_set_hash _ax,_si,_bx
+					cmp _word[_ax],_word 0
 					jne _________macro_expr_stay_calm
 						swrite "warning:"
 						pushad
-						mov edx,ebx
-						mov eax,4
-						mov ebx,2
-						mov ecx,esi
+						mov _dx,_bx
+						mov _ax,4
+						mov _bx,2
+						mov _cx,_si
 						int 0x80
 						popad
 						sprint " not found"
 					_________macro_expr_stay_calm:
-					add ebx,esi
-					mov eax,[eax]
-					mov esi,eax
-					pop dword eax
-					push dword 1
-					push dword esi
-					push dword 0
-					push dword eax
+					add _bx,_si
+					mov _ax,[_ax]
+					mov _si,_ax
+					pop _word _ax
+					push _word 1
+					push _word _si
+					push _word 0
+					push _word _ax
 				_________macro_expr_dh_n2:
 				_________macro_expr_dh_end:
 				cmp ch,0
 				jne _________macro_expr_ch_n0
-					movzx esi,cl
+					movzx _si,cl
 				jmp _________macro_expr_ch_end
 				_________macro_expr_ch_n0:
 				cmp ch,1
 				jne _________macro_expr_ch_n1
-					movzx esi,cl
-					sub esi,'0'
+					movzx _si,cl
+					sub _si,'0'
 				jmp _________macro_expr_ch_end
 				_________macro_expr_ch_n1:
 				cmp ch,2
 				jne _________macro_expr_ch_n2
-					mov esi,ebx
+					mov _si,_bx
 				jmp _________macro_expr_ch_end
 				_________macro_expr_ch_n2:
 				cmp ch,4
 				jne _________macro_expr_ch_n4
-					pop dword eax
-					push dword 1
-					push dword 0
-					push dword 0
-					push dword 2
-					push dword '+'
-					push dword 0
-					push dword eax
+					pop _word _ax
+					push _word 1
+					push _word 0
+					push _word 0
+					push _word 2
+					push _word '+'
+					push _word 0
+					push _word _ax
 				jmp _________macro_expr_ch_end
 				_________macro_expr_ch_n4:
 				cmp ch,5
 				jne _________macro_expr_ch_n5
-					pop dword eax
-					push dword 2
-					push dword ')'
-					push dword 0
-					push dword 1
-					push dword 0
-					push dword 0
-					push dword 2
-					push dword '+'
-					push dword 0
-					push dword 2
-					push dword '('
-					push dword 0
-					push dword eax
+					pop _word _ax
+					push _word 2
+					push _word ')'
+					push _word 0
+					push _word 1
+					push _word 0
+					push _word 0
+					push _word 2
+					push _word '+'
+					push _word 0
+					push _word 2
+					push _word '('
+					push _word 0
+					push _word _ax
 				_________macro_expr_ch_end:
 				_________macro_expr_ch_n5:
 			jmp _________macro_expr_contend
 			_________macro_expr_continuing:
 				cmp ch,0
 				jne _________macro_expr_same_n0
-					cmp esi,256
+					cmp _si,256
 					jae _________macro_expr_oper_ge256
-						mov eax,0
+						mov _ax,0
 						mov al,cl
-						push edx
-						mov edx,256
-						mul edx
-						pop edx
-						add esi,eax
-						push edx
-						push ebx
-						push ebp
-						mov edx,0
-						mov ebx,0
+						push _dx
+						mov _dx,256
+						mul _dx
+						pop _dx
+						add _si,_ax
+						push _dx
+						push _bx
+						push _bp
+						mov _dx,0
+						mov _bx,0
 						_________macro_expr_oper_1_for_begin:
-						cmp ebx,[len_operators]
+						cmp _bx,[len_operators]
 						jae _________macro_expr_oper_1_for_end
-							lea ebp,[operators+ebx*4]
-							mov ebp,[ebp]
-							cmp ebp,esi
+							lea _bp,[operators+_bx*rsize]
+							mov _bp,[_bp]
+							cmp _bp,_si
 							jne _________macro_expr_oper_1_nc
-								mov edx,1
+								mov _dx,1
 							_________macro_expr_oper_1_nc:
-						inc ebx
+						inc _bx
 						jmp _________macro_expr_oper_1_for_begin
 						_________macro_expr_oper_1_for_end:
-						cmp edx,0
+						cmp _dx,0
 						jne _________macro_expr_oper_1_f
-							sub esi,eax
-							pop ebp
-							pop ebx
-							pop edx
-							pop dword eax
-							push dword 2
-							push dword esi
-							push dword 0
-							push dword eax
-							push edx
-							push ebx
-							push ebp
-							mov esi,0
-							mov eax,0
+							sub _si,_ax
+							pop _bp
+							pop _bx
+							pop _dx
+							pop _word _ax
+							push _word 2
+							push _word _si
+							push _word 0
+							push _word _ax
+							push _dx
+							push _bx
+							push _bp
+							mov _si,0
+							mov _ax,0
 							mov al,cl
-							mov esi,eax
+							mov _si,_ax
 						_________macro_expr_oper_1_f:
-						pop ebp
-						pop ebx
-						pop edx
+						pop _bp
+						pop _bx
+						pop _dx
 					jmp _________macro_expr_oper_end
 					_________macro_expr_oper_ge256:
-					cmp esi,256*256
+					cmp _si,256*256
 					jae _________macro_expr_oper_ge256_256
-						mov eax,0
+						mov _ax,0
 						mov al,cl
-						push edx
-						mov edx,256*256
-						mul edx
-						pop edx
-						add esi,eax
-						push edx
-						push ebx
-						push ebp
-						mov edx,0
-						mov ebx,0
+						push _dx
+						mov _dx,256*256
+						mul _dx
+						pop _dx
+						add _si,_ax
+						push _dx
+						push _bx
+						push _bp
+						mov _dx,0
+						mov _bx,0
 						_________macro_expr_oper_2_for_begin:
-						cmp ebx,[len_operators]
+						cmp _bx,[len_operators]
 						jae _________macro_expr_oper_2_for_end
-							lea ebp,[operators+ebx*4]
-							mov ebp,[ebp]
-							cmp ebp,esi
+							lea _bp,[operators+_bx*rsize]
+							mov _bp,[_bp]
+							cmp _bp,_si
 							jne _________macro_expr_oper_2_nc
-								mov edx,1
+								mov _dx,1
 							_________macro_expr_oper_2_nc:
-						inc ebx
+						inc _bx
 						jmp _________macro_expr_oper_2_for_begin
 						_________macro_expr_oper_2_for_end:
-						cmp edx,0
+						cmp _dx,0
 						jne _________macro_expr_oper_2_f
-							sub esi,eax
-							pop ebp
-							pop ebx
-							pop edx
-							pop dword eax
-							push dword 2
-							push dword esi
-							push dword 0
-							push dword eax
-							push edx
-							push ebx
-							push ebp
-							mov esi,0
-							mov eax,0
+							sub _si,_ax
+							pop _bp
+							pop _bx
+							pop _dx
+							pop _word _ax
+							push _word 2
+							push _word _si
+							push _word 0
+							push _word _ax
+							push _dx
+							push _bx
+							push _bp
+							mov _si,0
+							mov _ax,0
 							mov al,cl
-							mov esi,eax
+							mov _si,_ax
 						_________macro_expr_oper_2_f:
-						pop ebp
-						pop ebx
-						pop edx
+						pop _bp
+						pop _bx
+						pop _dx
 					jmp _________macro_expr_oper_end
 					_________macro_expr_oper_ge256_256:
-					cmp esi,256*256*256
+					cmp _si,256*256*256
 					jae _________macro_expr_oper_ge256_256_256
-						mov eax,0
+						mov _ax,0
 						mov al,cl
-						push edx
-						mov edx,256*256*256
-						mul edx
-						pop edx
-						add esi,eax
-						push edx
-						push ebx
-						push ebp
-						mov edx,0
-						mov ebx,0
+						push _dx
+						mov _dx,256*256*256
+						mul _dx
+						pop _dx
+						add _si,_ax
+						push _dx
+						push _bx
+						push _bp
+						mov _dx,0
+						mov _bx,0
 						_________macro_expr_oper_3_for_begin:
-						cmp ebx,[len_operators]
+						cmp _bx,[len_operators]
 						jae _________macro_expr_oper_3_for_end
-							lea ebp,[operators+ebx*4]
-							mov ebp,[ebp]
-							cmp ebp,esi
+							lea _bp,[operators+_bx*rsize]
+							mov _bp,[_bp]
+							cmp _bp,_si
 							jne _________macro_expr_oper_3_nc
-								mov edx,1
+								mov _dx,1
 							_________macro_expr_oper_3_nc:
-						inc ebx
+						inc _bx
 						jmp _________macro_expr_oper_3_for_begin
 						_________macro_expr_oper_3_for_end:
-						cmp edx,0
+						cmp _dx,0
 						jne _________macro_expr_oper_3_f
-							sub esi,eax
-							pop ebp
-							pop ebx
-							pop edx
-							pop dword eax
-							push dword 2
-							push dword esi
-							push dword 0
-							push dword eax
-							push edx
-							push ebx
-							push ebp
-							mov esi,0
-							mov eax,0
+							sub _si,_ax
+							pop _bp
+							pop _bx
+							pop _dx
+							pop _word _ax
+							push _word 2
+							push _word _si
+							push _word 0
+							push _word _ax
+							push _dx
+							push _bx
+							push _bp
+							mov _si,0
+							mov _ax,0
 							mov al,cl
-							mov esi,eax
+							mov _si,_ax
 						_________macro_expr_oper_3_f:
-						pop ebp
-						pop ebx
-						pop edx
+						pop _bp
+						pop _bx
+						pop _dx
 					_________macro_expr_oper_end:
 					_________macro_expr_oper_ge256_256_256:
 				jmp _________macro_expr_same_end
 				_________macro_expr_same_n0:
 				cmp ch,1
 				jne _________macro_expr_same_n1
-					mov eax,0
+					mov _ax,0
 					mov al,cl
-					sub eax,'0'
-					push eax
-					push edx
-					mov eax,esi
-					mov edx,10
-					mul edx
-					mov esi,eax
-					pop edx
-					pop eax
-					add esi,eax
+					sub _ax,'0'
+					push _ax
+					push _dx
+					mov _ax,_si
+					mov _dx,10
+					mul _dx
+					mov _si,_ax
+					pop _dx
+					pop _ax
+					add _si,_ax
 				_________macro_expr_same_end:
 				_________macro_expr_same_n1:
 			_________macro_expr_contend:
 			mov dh,ch
-		inc ebx
+		inc _bx
 		jmp _________macro_expr_main_loop_begin
 		_________macro_expr_main_loop_end:
-		pop ebx
-		mov eax,esp
-		mov edx,eax
+		pop _bx
+		mov _ax,_sp
+		mov _dx,_ax
 
-		mov esi,eax
-		mov edi,ebx
+		mov _si,_ax
+		mov _di,_bx
 
 		_________macro_expr_swap_begin:
-		cmp eax,ebx
+		cmp _ax,_bx
 		jae _________macro_expr_swap_end
-			mov ecx,[eax]
-			mov ebp,[ebx-4]
-			mov [eax],ebp
-			mov [ebx-4],ecx
-			add eax,4
-			sub ebx,4
+			mov _cx,[_ax]
+			mov _bp,[_bx-rsize]
+			mov _word[_ax],_bp
+			mov _word[_bx-rsize],_cx
+			add _ax,rsize
+			sub _bx,rsize
 		jmp _________macro_expr_swap_begin
 		_________macro_expr_swap_end:
 
-		mov eax,esi
-		mov ebx,edi
+		mov _ax,_si
+		mov _bx,_di
 
 		macro_set_pr
-		call0 macro_bops,eax,ebx,ebx
+		call0 macro_bops,_ax,_bx,_bx
 
-		mov esp,ebx
+		mov _sp,_bx
 		popad
-		add esp,8
-		jmp dword [esp-4]
+		add _sp,rsize*2
+		jmp _word [_sp-rsize]
 
 	section .text
 		macro_set_jmp:
 		macro_args_read
-		macro_args_offset eax
-		add eax,esp
-		mov ecx,[eax]
-		add eax,4
-		mov ebx,eax
-		add ebx,ecx
-		call0 macro_bops,eax,ebx,ebx
-		dmov [ebx-4],[eax+4]
+		macro_args_offset _ax
+		add _ax,_sp
+		mov _cx,[_ax]
+		add _ax,rsize
+		mov _bx,_ax
+		add _bx,_cx
+		call0 macro_bops,_ax,_bx,_bx
+		_mov _word[_bx-rsize],[_ax+rsize]
 		macro_args_save
-		add esp,[esp]
-		add esp,8
-		jmp [esp-8+4]
+		add _sp,[_sp]
+		add _sp,rsize*2
+		jmp [_sp-rsize]
 
-	%endif
 
 	section .text
 		macro_regout:
@@ -1432,7 +1474,6 @@ macro_eg __best_sprint
 section .text
 
 	__best__uput_one:
-		sub _sp,4
 		pushad
 
 		mov _dx,0
@@ -1472,7 +1513,6 @@ section .text
 		loop __best__uput_one_3
 
 		popad
-		add _sp,4
 		ret
 
 	__best_quput_one:
@@ -1515,16 +1555,16 @@ section .text
 		pushad
 		push ax
 		%if __BITS__==32
-			mov _ax,4
-			mov _bx,1
-			mov _cx,_sp
-			mov _dx,1
+			mov eax,4
+			mov ebx,1
+			mov ecx,esp
+			mov edx,1
 			int 0x80
 		%else
-			mov _ax,1
-			mov _di,1
-			mov _si,_sp
-			mov _dx,1
+			mov rax,1
+			mov rdi,1
+			mov rsi,rsp
+			mov rdx,1
 			syscall
 		%endif
 		add _sp,2
@@ -1539,28 +1579,28 @@ section .text
 
 	__best_quput:   __best_multiple 8,rax,__best_quput_one,nop,nop,32,0
 	__best_qsput:   __best_multiple 8,rax,__best_qsput_one,nop,nop,32,0
-	__best_duput:   __best_multiple 4,eax,__best_duput_one,nop,nop,32,0
-	__best_dsput:   __best_multiple 4,eax,__best_dsput_one,nop,nop,32,0
+	__best_duput:   __best_multiple 4,_ax,__best_duput_one,nop,nop,32,0
+	__best_dsput:   __best_multiple 4,_ax,__best_dsput_one,nop,nop,32,0
 	__best_wuput:   __best_multiple 2,ax,__best_wuput_one,nop,nop,32,0
 	__best_wsput:   __best_multiple 2,ax,__best_wsput_one,nop,nop,32,0
 	__best_buput:   __best_multiple 2,al,__best_buput_one,__best_alr,nop,32,0
 	__best_bsput:   __best_multiple 2,al,__best_bsput_one,__best_alr,nop,32,0
 	__best_cput:    __best_multiple 2,al,__best_cput_one,__best_alr,nop,32,0
 	__best_sput:    __best_multiple 1,al,__best_sput_one,nop,__best_strp,0,0
-	__best_quwrite: __best_multiple 8,eax,__best_quput_one,nop,nop,32,32
-	__best_qswrite: __best_multiple 8,eax,__best_qsput_one,nop,nop,32,32
-	__best_duwrite: __best_multiple 4,eax,__best_duput_one,nop,nop,32,32
-	__best_dswrite: __best_multiple 4,eax,__best_dsput_one,nop,nop,32,32
+	__best_quwrite: __best_multiple 8,_ax,__best_quput_one,nop,nop,32,32
+	__best_qswrite: __best_multiple 8,_ax,__best_qsput_one,nop,nop,32,32
+	__best_duwrite: __best_multiple 4,_ax,__best_duput_one,nop,nop,32,32
+	__best_dswrite: __best_multiple 4,_ax,__best_dsput_one,nop,nop,32,32
 	__best_wuwrite: __best_multiple 2,ax,__best_wuput_one,nop,nop,32,32
 	__best_wswrite: __best_multiple 2,ax,__best_wsput_one,nop,nop,32,32
 	__best_buwrite: __best_multiple 2,al,__best_buput_one,__best_alr,nop,32,32
 	__best_bswrite: __best_multiple 2,al,__best_bsput_one,__best_alr,nop,32,32
 	__best_cwrite:  __best_multiple 2,al,__best_cput_one,__best_alr,nop,32,32
 	__best_swrite:  __best_multiple 1,al,__best_sput_one,nop,__best_strp,0,32
-	__best_quprint: __best_multiple 8,eax,__best_quput_one,nop,nop,32,10
-	__best_qsprint: __best_multiple 8,eax,__best_qsput_one,nop,nop,32,10
-	__best_duprint: __best_multiple 4,eax,__best_duput_one,nop,nop,32,10
-	__best_dsprint: __best_multiple 4,eax,__best_dsput_one,nop,nop,32,10
+	__best_quprint: __best_multiple 8,_ax,__best_quput_one,nop,nop,32,10
+	__best_qsprint: __best_multiple 8,_ax,__best_qsput_one,nop,nop,32,10
+	__best_duprint: __best_multiple 4,_ax,__best_duput_one,nop,nop,32,10
+	__best_dsprint: __best_multiple 4,_ax,__best_dsput_one,nop,nop,32,10
 	__best_wuprint: __best_multiple 2,ax,__best_wuput_one,nop,nop,32,10
 	__best_wsprint: __best_multiple 2,ax,__best_wsput_one,nop,nop,32,10
 	__best_buprint: __best_multiple 2,al,__best_buput_one,__best_alr,nop,32,10
