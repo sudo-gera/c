@@ -1,5 +1,4 @@
 %include "st_io.inc"
-%include "macro.inc"
 section .bss
 aa resd 9999
 h1 resd 1
@@ -10,57 +9,89 @@ min_2 resd 1
 max resd 1
 max_1 resd 1
 max_2 resd 1
-start
+w resd 1
+d resd 1
+h resd 1
+q resd 1
+c resd 1
+section .text
+global _start
+_start:
 GETUN [h1]
 GETUN [h2]
 PUTCHAR 10
-dmov [w],0
+mov dword [w],0
 _11:
-duge [w],[h1],_12
-	dmov [h],0
+mov eax,[w]
+cmp eax,[h1]
+jae _12
+	mov dword [h],0
 	_13:
-	duge [h],[h2],_14
-		dmul [q],[h2],[w]
-		dadd [q],[h]
+	mov eax,[h]
+	cmp eax,[h2]
+	jae _14
+		mov eax,[w]
+		mov ebx,[h2]
+		mul ebx
+		add eax,[h]
 		GETUN [c]
-		daput aa,[q],[c]
-	dinc [h]
+		lea eax,[aa+eax*4]
+		mov ebx,[c]
+		mov [eax],ebx
+	inc dword [h]
 	jmp _13
 	_14:
 	PUTCHAR 10
-dinc [w]
+inc dword [w]
 jmp _11
 _12:
-dmov [min],-1
-dmov [max],0
-dmov [min_1],-1
-dmov [min_2],-1
-dmov [max_1],-1
-dmov [max_2],-1
-dmov [w],0
+mov dword [min],-1
+mov dword [max],0
+mov dword [min_1],-1
+mov dword [min_2],-1
+mov dword [max_1],-1
+mov dword [max_2],-1
+mov dword [w],0
 _15:
-duge [w],[h1],_16
-	dmov [h],0
+mov eax,[w]
+cmp eax,[h1]
+jae _16
+	mov dword [h],0
 	_17:
-	duge [h],[h2],_18
-		dmul [q],[h2],[w]
-		dadd [q],[h]
-		daget [q],aa,[q]
-		duge [q],[min],_19
-			dmov [min_1],[w]
-			dmov [min_2],[h]
-			dmov [min],[q]
+	mov eax,[h]
+	cmp eax,[h2]
+	jae _18
+		mov eax,[w]
+		mov ebx,[h2]
+		mul ebx
+		add eax,[h]
+		lea eax,[aa+eax*4]
+		mov eax,[eax]
+		mov [q],eax
+		cmp eax,[min]
+		jae _19
+			mov eax,[w]
+			mov [min_1],eax
+			mov eax,[h]
+			mov [min_2],eax
+			mov eax,[q]
+			mov [min],eax
 		_19:
-		dule [q],[max],_20
-			dmov [max_1],[w]
-			dmov [max_2],[h]
-			dmov [max],[q]
+		mov eax,[q]
+		cmp eax,[max]
+		jbe _20
+			mov eax,[w]
+			mov [max_1],eax
+			mov eax,[h]
+			mov [max_2],eax
+			mov eax,[q]
+			mov [max],eax
 		_20:
-	dinc [h]
+	inc dword [h]
 	jmp _17
 	_18:
 	PUTCHAR 10
-dinc [w]
+inc dword [w]
 jmp _15
 _16:
 UNSINT [min_1]
@@ -75,4 +106,4 @@ UNSINT [max_2]
 PRINT " "
 UNSINT [max]
 PUTCHAR 10
-stop
+FINISH
