@@ -1649,25 +1649,25 @@ macro_args_save _, %1
 
 %macro qget 1
 macro_args_read
-dget _ax
+_get _ax
 macro_args_save q, %1
 %endmacro
 
 %macro dget 1
 macro_args_read
-dget _ax
+_get _ax
 macro_args_save d, %1
 %endmacro
 
 %macro wget 1
 macro_args_read
-dget _ax
+_get _ax
 macro_args_save w, %1
 %endmacro
 
 %macro bget 1
 macro_args_read
-dget _ax
+_get _ax
 macro_args_save b, %1
 %endmacro
 

@@ -23,105 +23,81 @@ GETUN [h1]
 mov eax,[h1]
 mov [h2],eax
 PUTCHAR 10
-mov dword [w],0
+mov ecx,0
 _11:
-mov eax,[w]
-cmp eax,[h1]
+cmp ecx,[h1]
 jae _12
-	mov dword [h],0
+	mov esi,0
 	_13:
-	mov eax,[h]
-	cmp eax,[h2]
+	cmp esi,[h2]
 	jae _14
-		mov eax,[w]
+		mov eax,ecx
 		mov ebx,[h2]
 		mul ebx
+		add eax,esi
 		mov [q],eax
-		mov eax,[h]
-		add [q],eax
 		GETUN [c]
 		mov eax,[q]
 		lea eax,[aa+eax*4]
 		mov ebx,[c]
 		mov [eax],ebx
-	inc dword [h]
+	inc dword esi
 	jmp _13
 	_14:
 	PUTCHAR 10
-inc dword [w]
+inc dword ecx
 jmp _11
 _12:
-mov dword [w],0
+mov dword ecx,0
 _15:
-mov eax,[w]
-cmp eax,[h1]
+cmp ecx,[h1]
 jae _16
-	mov dword [h],0
+	mov dword esi,0
 	_17:
-	mov eax,[h]
-	cmp eax,[w]
+	cmp esi,ecx
 	jae _18
-		mov eax,[w]
+		mov eax,ecx
 		mov ebx,[h2]
 		mul ebx
-		mov [q],eax
-		mov eax,[h]
-		add [q],eax
-		mov eax,[h]
+		add eax,esi
+		lea eax,[aa+eax*4]
+		mov ebp,eax
+		mov eax,esi
 		mov ebx,[h1]
 		mul ebx
-		mov [e],eax
-		mov eax,[w]
-		add [e],eax
-		mov eax,[q]
+		add eax,ecx
 		lea eax,[aa+eax*4]
-		mov eax,[eax]
-		mov [z],eax
-		mov eax,[e]
-		lea eax,[aa+eax*4]
-		mov eax,[eax]
-		mov [x],eax
-		mov eax,[q]
-		lea eax,[aa+eax*4]
-		mov ebx,[x]
+		mov ebx,[eax]
+		xchg [ebp],ebx
 		mov [eax],ebx
-		mov eax,[e]
-		lea eax,[aa+eax*4]
-		mov ebx,[z]
-		mov [eax],ebx
-	inc dword [h]
+	inc dword esi
 	jmp _17
 	_18:
-inc dword [w]
+inc ecx
 jmp _15
 _16:
-mov dword [w],0
+mov ecx,0
 _19:
-mov eax,[w]
-cmp eax,[h1]
+cmp ecx,[h1]
 jae _20
-	mov dword [h],0
+	mov esi,0
 	_21:
-	mov eax,[h]
-	cmp eax,[h2]
+	cmp esi,[h2]
 	jae _22
-		mov eax,[w]
+		mov eax,ecx
 		mov ebx,[h2]
 		mul ebx
-		mov [q],eax
-		mov eax,[h]
-		add [q],eax
-		mov eax,[q]
+		add eax,esi
 		lea eax,[aa+eax*4]
 		mov eax,[eax]
 		mov [z],eax
 		UNSINT [z]
 		PRINT " "
-	inc dword [h]
+	inc esi
 	jmp _21
 	_22:
 	PUTCHAR 10
-inc dword [w]
+inc ecx
 jmp _19
 _20:
 FINISH

@@ -1,29 +1,43 @@
-%include "macro.inc"
+%include "st_io.inc"
 section .data
 aa times 9 dd 9
-start
-for [w],9
-	daget [q],aa,[w]
-	write [q]
-end
-cput 10
+section .text
+global _start
+_start:
+mov ecx,0
+_1:
+cmp ecx,9
+jae _2
+	lea eax,[aa+ecx*4]
+	UNSINT [eax]
+	PUTCHAR 32
+inc ecx
+jmp _1
+_2:
+PUTCHAR 10
 push dword aa
 mov eax,[esp]
-dmov [eax+ 0],0
-dmov [eax+ 4],0
-dmov [eax+ 8],0
-dmov [eax+12],0
-dmov [eax+16],0
-dmov [eax+20],0
-dmov [eax+24],0
-dmov [eax+28],0
-dmov [eax+32],0
+mov dword [eax+ 0],0
+mov dword [eax+ 4],0
+mov dword [eax+ 8],0
+mov dword [eax+12],0
+mov dword [eax+16],0
+mov dword [eax+20],0
+mov dword [eax+24],0
+mov dword [eax+28],0
+mov dword [eax+32],0
 add esp,4
 
-for [w],9
-	daget [q],aa,[w]
-	write [q]
-end
-cput 10
+mov ecx,0
+_3:
+cmp ecx,9
+jae _4
+	lea eax,[aa+ecx*4]
+	UNSINT [eax]
+	PUTCHAR 32
+inc ecx
+jmp _3
+_4:
+PUTCHAR 10
 
-stop
+FINISH

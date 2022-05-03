@@ -1,40 +1,50 @@
 %include "st_io.inc"
-%include "macro.inc"
-start
-dmov [w],0
+; %include "macro.inc"
+section .text
+global _start
+_start:
+mov ecx,0
 _1:
-duge [w],10,_2
-	GETUN [q]
-	push dword [q]
-dinc [w]
+cmp ecx,10
+jae _2
+	GETUN eax
+	push eax
+inc ecx
 jmp _1
 _2:
 mov ebx,esp
 add ebx,40
-dmov [e],-1
-dmov [w],-1
+mov esi,-1
+mov ecx,-1
 _3:
-dsle [w],-11,_4
-	daget [z],ebx,[w]
-	deq [z],0,_5
-		daput ebx,[e],[z]
-		ddec [e]
+cmp ecx,-11
+jle _4
+	lea eax,[ebx+ecx*4]
+	mov edi,[eax]
+	cmp edi,0
+	je _5
+		mov eax,ebx
+		lea eax,[eax+esi*4]
+		mov [eax],edi
+		dec esi
 	_5:
-ddec [w]
+dec ecx
 jmp _3
 _4:
-dsub [z],[e],[w]
-dmul [z],4
-add esp,dword [z]
-dneg [e]
-ddec [e]
-dmov [w],0
+mov edi,esi
+sub edi,ecx
+lea esp,[esp+edi*4]
+neg esi
+dec esi
+PUTCHAR 10
+mov ecx,0
 _6:
-duge [w],[e],_7
-	pop dword [q]
-	UNSINT [q]
+cmp ecx,esi
+jae _7
+	pop eax
+	UNSINT eax
 	PUTCHAR 10
-dinc [w]
+inc ecx
 jmp _6
 _7:
-stop
+FINISH
