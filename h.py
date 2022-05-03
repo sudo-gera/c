@@ -5,6 +5,10 @@ try:
 	from dataclasses import *
 except:
 	pass
+try:
+	from numpy import *
+except:
+	pass
 from time import *
 from os import *
 from os.path import *
