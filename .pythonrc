@@ -39,9 +39,10 @@ class Module:
 		return m
 modules=Module()
 modules.sys.ps2='    '
+modules.sys.ps1='\x1b[32m#############################################################\x1b[0m\n>>> '
 from pathlib import Path
 modules.sys.path.append(str(Path.home())+'/c')
 try:
-	d=HOME
+	HOME=HOME
 except:
 	from h import *
