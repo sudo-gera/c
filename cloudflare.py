@@ -8,7 +8,7 @@ except KeyboardInterrupt:
 except:
 	a='y'
 if a:
-	if type(a)==dict:
+	if type(a)==list:
 		a=a[0]['isp']
 		print('current provider is:',a)
 		try:
