@@ -1,16 +1,47 @@
-%include "macro.inc"
-start
-dget eax
-dget ebx
-dget ecx
-dget edx
-dget esi
-dget edi
-dget ebp
-regout
+%include "st_io.inc"
+section .text
+global _start
+_start:
+GETUN eax
+GETUN ebx
+GETUN ecx
+GETUN edx
+GETUN esi
+GETUN edi
+GETUN ebp
+
+UNSINT eax
+PUTCHAR 32
+UNSINT ebx
+PUTCHAR 32
+UNSINT ecx
+PUTCHAR 32
+UNSINT edx
+PUTCHAR 32
+UNSINT esi
+PUTCHAR 32
+UNSINT edi
+PUTCHAR 32
+UNSINT ebp
+PUTCHAR 10
+
 pushad
 mov [esp+28],dword 200
-regout
 popad
-regout
-stop
+
+UNSINT eax
+PUTCHAR 32
+UNSINT ebx
+PUTCHAR 32
+UNSINT ecx
+PUTCHAR 32
+UNSINT edx
+PUTCHAR 32
+UNSINT esi
+PUTCHAR 32
+UNSINT edi
+PUTCHAR 32
+UNSINT ebp
+PUTCHAR 10
+
+FINISH

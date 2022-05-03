@@ -170,7 +170,7 @@ jmp [_sp-rsize]
 
 %macro macro_cmp_w 4
 push _word %3
-macro_args_read __args__w,__args__w, %1,%2
+macro_args_read w,w, %1,%2
 cmp ax,bx
 %4 %%_jmp
 macro_args_save
