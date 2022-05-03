@@ -940,7 +940,13 @@ macro_eg __best_sprint
 		macro_var_jmp:
 		pushad
 		mov _si,[_sp+rsize*8]
-		mov _di,[_sp+rsize*10]
+		mov _di,_si
+		buwhile [_di],!=,0
+			inc _di
+		end
+		inc _di
+		mov [_sp+rsize*8],_di
+		dec _di
 		mov _bp,_di
 		sub _bp,_si
 		mov _cx,_bp
@@ -961,8 +967,8 @@ macro_eg __best_sprint
 		_________macro_var_stay_calm:
 		mov _word[_bx],_cx
 		popad
-		add _sp,3*rsize
-		jmp [_sp-rsize]
+		add _sp,2*rsize
+		jmp [_sp-2*rsize]
 
 
 	section .text

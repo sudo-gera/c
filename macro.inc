@@ -29,9 +29,7 @@ z times 1024 d_ 0
 %endmacro
 
 %macro pre_start 0
-; %if __BITS__==32
 global _start
-; %endif
 global main
 section .data
 args_tmp times 4 d_ 0
@@ -40,10 +38,6 @@ mov_tmp d_ 0
 alld
 esp_base d_ 0
 ch_val d_ 0
-section .text
-; push %%_1
-; jmp macro_pre_start
-; %%_1:
 section .data
 vars_names times 100003 d_ 0
 len_vars_names d_ 100003
@@ -87,15 +81,15 @@ var z
 %macro begin 0
 %push main
 start
-jmp %%_1
+jmp %%_start
 %$__jup:
 cmp [esp_base],_sp
 je %%_2
-; sprint "warning: stack not empty"
+sprint "warning: stack not empty"
 %%_2:
 stop
 jmp %$__jdown
-%%_1:
+%%_start:
 %endmacro
 
 %macro stop 0-1 0

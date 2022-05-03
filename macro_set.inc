@@ -181,13 +181,9 @@ pop _word %1
 %define macro_var
 %macro var 1
 %defstr %%varstr %1
-push %%_3
-_push %1
-push %%_1
-jmp macro_var_jmp
-%%_1:
-db %%varstr
-%%_3:
+push %1
+call macro_var_jmp
+db %%varstr,0
 %endmacro
 
 

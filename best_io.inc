@@ -77,24 +77,24 @@ shr _ax,8
 %define cprint  multiput __best_cprint, bpush,
 
 %macro swrite 1
-call __best_swrite+(%%_2-%%_1)*2
-%%_1:
+call __best_swrite+(%%swrite_2-%%swrite_1)*2
+%%swrite_1:
 db %1
-%%_2:
+%%swrite_2:
 %endmacro
 
 %macro sprint 1
-call __best_sprint+(%%_2-%%_1)*2
-%%_1:
+call __best_sprint+(%%sprint_2-%%sprint_1)*2
+%%sprint_1:
 db %1
-%%_2:
+%%sprint_2:
 %endmacro
 
 %macro sput 1
-call __best_sput+(%%_2-%%_1)*2
-%%_1:
+call __best_sput+(%%sput_2-%%sput_1)*2
+%%sput_1:
 db %1
-%%_2:
+%%sput_2:
 %endmacro
 
 %macro count_args 0

@@ -1,7 +1,19 @@
 from h import *
-# n,m=scan(),scan()
-# a=[scan() for w in range(n)]
-# for w in range(m):
-# 	x,y=scan(),scan()
-# 	print(max(a[x:y+1]))
-print(len(bin(scan()))-2)
+def floor_root(q):
+	q=int(q)
+	r=0
+	p=1
+	while p<q:
+		p<<=32
+	while p:
+		u=r+p
+		if q >= u :
+			q-=u
+			r+=p
+			r+=p
+		r>>=1
+		p>>=2
+	return r
+
+while 1:
+	print(floor_root(scan()))
