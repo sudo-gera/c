@@ -306,8 +306,9 @@ def floor_root(q):
 	q=int(q)
 	r=0
 	p=1
-	while p<q:
-		p<<=32
+	p=len(bin(q))
+	p+=p%2
+	p=1<<p
 	while p:
 		u=r+p
 		if q >= u :
