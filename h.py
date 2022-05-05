@@ -309,10 +309,15 @@ def euler(q):
 def perf():
 	global _perf_prev_
 	args=('%.9f'%(perf_counter()-_perf_prev_)).replace('0','\x1b[34m0\x1b[0m')
-	g=getframeinfo(stack()[1][0])
-	line=str(g.lineno)
-	file=g.filename
-	func=g.function
+	try:
+		g=getframeinfo(stack()[1][0])
+		line=str(g.lineno)
+		file=g.filename
+		func=g.function
+	except:
+		line=''
+		file=''
+		func=''
 	print("\x1b[92mline \x1b[94m"+line+"\x1b[92m file \x1b[94m"+file+"\x1b[92m func \x1b[94m"+func+"\x1b[92m \x1b[0m"+args)
 	_perf_prev_=perf_counter()
 _perf_prev_=perf_counter()
