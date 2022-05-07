@@ -8,17 +8,26 @@ def rand(q=2**64,e=None):
 	assert q
 	return randint(e,q-1)
 
-n=rand(20)
+# a='qwertyuioplkjhgfdsazxcvbnm'
+# a=list(a)
+# shuffle(a)
+# a=''.join(a)
+# print(a)
+
+n=1+2*rand(4)
 print(n)
 for w in range(n):
-	a=rand(4)
-	print('ADD DELETE EDITPHONE PRINT'.split()[a])
-	if a==0:
-		print(chr(ord('a')+rand(4)),rand(20))
-	if a==1:
-		print(chr(ord('a')+rand(4)))
-	if a==2:
-		print(chr(ord('a')+rand(4)),rand(20))
-	if a==3:
-		print(chr(ord('a')+rand(4)))
+	# print(''.join([choice(a) for e in range(rand(1,11))]))
+	print(rand(9),end=' ')
+print()
+# for w in range(n):
+# 	# print(''.join([choice(a) for e in range(rand(1,11))]))
+# 	print(rand(9999),end=' ')
+# for w in range(n):
+# 	# print(''.join([choice(a) for e in range(rand(1,11))]))
+# 	print(rand(9999),end=' ')
 
+# for w in range(n):
+# 	print(choice('.X'),end='')
+# print()
+# print(rand(2*10**5))
