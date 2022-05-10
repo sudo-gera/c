@@ -8,17 +8,19 @@ def rand(q=2**64,e=None):
 	assert q
 	return randint(e,q-1)
 
-n=rand(1,999)
-m=rand(1,n+1)
-f=[]
-while len(f)<m:
-	f.append('')
-	for w in range(rand(1,41)):
-		f[-1]+=choice('qwertyuioplkjhgfdsazxcvbnm')
-a=[
-	[choice(f),rand(999)]
-for w in range(n)]
-m=len(set([w[0] for w in a]))
-print(m,n)
-for w in a:
-	print(*w)
+def getstr():
+	return ''.join([choice('snmrdfhg')+choice('aioue') for w in range(10)])
+
+strs=[getstr() for w in range(20)]
+
+n=rand(1,200)
+q=rand(1,200)
+print(n,q)
+for w in range(q):
+	c=choice(['+','-','=','?','??'])
+	if c in '+-':
+		print(c,rand(200),rand(n))
+	if c in '=?':
+		print(c,rand(n))
+	if c == '??':
+		print(c,rand(200))

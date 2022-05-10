@@ -297,6 +297,10 @@ class Prime:
 		return s.n(o)
 	def __ge__(s,o):
 		return s.n(o-1)
+	def __eq__(s,o):
+		return is_prime(o)
+	def __ne__(s,o):
+		return not s==o
 
 prime=Prime(prev_prime,next_prime)
 fast_prime=Prime(fast_prev_prime,fast_next_prime)
