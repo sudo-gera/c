@@ -8,26 +8,17 @@ def rand(q=2**64,e=None):
 	assert q
 	return randint(e,q-1)
 
-# a='qwertyuioplkjhgfdsazxcvbnm'
-# a=list(a)
-# shuffle(a)
-# a=''.join(a)
-# print(a)
-
-n=1+2*rand(4)
-print(n)
-for w in range(n):
-	# print(''.join([choice(a) for e in range(rand(1,11))]))
-	print(rand(9),end=' ')
-print()
-# for w in range(n):
-# 	# print(''.join([choice(a) for e in range(rand(1,11))]))
-# 	print(rand(9999),end=' ')
-# for w in range(n):
-# 	# print(''.join([choice(a) for e in range(rand(1,11))]))
-# 	print(rand(9999),end=' ')
-
-# for w in range(n):
-# 	print(choice('.X'),end='')
-# print()
-# print(rand(2*10**5))
+n=rand(1,999)
+m=rand(1,n+1)
+f=[]
+while len(f)<m:
+	f.append('')
+	for w in range(rand(1,41)):
+		f[-1]+=choice('qwertyuioplkjhgfdsazxcvbnm')
+a=[
+	[choice(f),rand(999)]
+for w in range(n)]
+m=len(set([w[0] for w in a]))
+print(m,n)
+for w in a:
+	print(*w)
