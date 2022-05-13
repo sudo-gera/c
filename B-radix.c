@@ -109,14 +109,14 @@ typedef int (*cmp_f_t)(const void *, const void *);
 ///////////////////////////////////////////////////end of lib
 
 int main(){
-	int64_t p=getint();
-	int64_t q=getint();
-	int64_t n=2;
-	while (p){
-		p*=n;
-		n+=1;
-		write(p/q);
-		p%=q;
-	}
-	putchar(10);
+  int64_t p=getint();
+  int64_t q=getint();
+  int64_t n=2;
+  while (p){
+    p*=n;
+    n+=1;
+    write(p/q);
+    p%=q;
+  }
+  putchar(10);
 }
