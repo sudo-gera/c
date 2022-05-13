@@ -5,6 +5,9 @@ extern scanf
 section .data
 _q dq 0
 _sctmp dq 0
+_prstr db "%u",10,0
+_scstr db "%i",0
+
 
 
 global _start
@@ -33,12 +36,8 @@ scan:
 	push rax
 	push rsi
 	push rdi
-jmp ______8_2
-______8_1:
-db "%i",0
-______8_2:
 mov rsi,_sctmp
-mov rdi,______8_1
+mov rdi,_scstr
 mov rax,0
 call scanf
 	pop rdi
@@ -66,12 +65,8 @@ print_:
 	push rax
 	push rsi
 	push rdi
-jmp ______11_2
-______11_1:
-db "%u",10,0
-______11_2:
 mov rsi,[mas + 4 * eax]
-mov rdi,______11_1
+mov rdi,_prstr
 mov rax,0
 call printf
 	pop rdi
