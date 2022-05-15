@@ -23,8 +23,8 @@ int main(){
 		if (q=='L'){
 			--p;
 			a.insert(p,w+1);
-		}
-		if (q=='R'){
+		}else
+		{
 			a.insert(p,w+1);
 		}
 	}
