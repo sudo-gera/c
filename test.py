@@ -2,10 +2,15 @@ from h import *
 
 o=Fraction(1)
 
-r=0
-for w in range(100):
-	print(w+1,100-w,w,99-w)
-	r+=(w)*(100-w)+(w+1)*(99-w)
-	print(w+1,99-w,w+1,99-w)
-	r+=(w+1)*(99-w)+(w+1)*(99-w)
-print(r)
+
+s=0
+for w in range(21):
+	for e in range(21):
+		r=e*2+w
+		if gcd(w,e)==1:
+			if r*3<=20:
+				if r*4>20:
+					s+=o*r/w
+					# s+=1/(o*e/w*2+1)
+					print(w,e,r)
+print(s)
