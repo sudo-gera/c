@@ -25,9 +25,11 @@ int main(){
 
 		putchar('\n');
 
-	// ic(a,a+1,&a[0][0],&a[0][1],&a[1][0],&a[1][1])
-	sort((sized<80>*)(a),(sized<80>*)(a+20),
-		[&](const sized<80>&q,const sized<80>&e){
+	using tmp=int[20];
+
+	ic(a,a+1,&a[0][0],&a[0][1],&a[1][0],&a[1][1])
+	sort((tmp*)(a),(tmp*)(a+20),
+		[&](const tmp&q,const tmp&e){
 			int*qp=(int*)(&q);
 			int*ep=(int*)(&e);
 			if (memcmp(qp,ep,80)<0){
