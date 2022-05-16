@@ -64,7 +64,7 @@ static inline struct array_s *resize_f(struct array_s **vp, size_t el_size, size
 #define resize(a, ...) (resize_f((struct array_s **)&(a), sizeof((a)[0]), (__VA_ARGS__)))
 #define append(a, ...) (resize((a), len(a) + 1), (a)[len(a) - 1] = (__VA_ARGS__))
 #define pop(a) (resize((a), len(a) - 1), (a)[len(a)])
-#define back(a) ((a)[len(a)-1])
+#define back(a) (a[len(a)-1])
 
 static inline int64_t getint() {
 	int sign = 1;
@@ -120,3 +120,137 @@ typedef int (*cmp_f_t)(const void *, const void *);
 
 ///////////////////////////////////////////////////end of lib
 
+uint64_t hash(uint64_t*s){
+	uint64_t r=0;
+	for (size_t w=0;w<len(s);++w){
+		r*=13441;
+		r+=s[w];
+	}
+	return r;
+}
+
+typedef struct item{
+	uint64_t*key;
+	bool  value;
+}item;
+
+typedef struct dict{
+	item**data;
+}dict;
+
+#define hashlen 59243
+
+dict* dict_create(){
+	dict*a=(dict*)calloc(1,sizeof(dict));
+	resize(a->data,hashlen);
+	return a;
+}
+
+bool eq(uint64_t*q,uint64_t*e){
+	if (len(q)!=len(e)){
+		return 0;
+	}
+	for (size_t w=0;w<len(q);++w){
+		if (q[w]!=e[w]){
+			return 0;
+		}
+	}
+	return 1;
+}
+
+void dict_insert(dict*dp,item*tmp){
+	if (dp){
+		item**a=dp->data+hash(tmp->key)%len(dp->data);
+		for (size_t w=0;w<len(*a);++w){
+			if (eq(a[0][w].key,tmp->key)){
+				a[0][w]=*tmp;
+				return;
+			}
+		}
+		append(a[0],*tmp);
+	}
+}
+
+void dict_erase(dict*dp,item*tmp){
+	if (dp){
+		item**a=dp->data+hash(tmp->key)%len(dp->data);
+		for (size_t w=0;w<len(*a);++w){
+			if (eq(a[0][w].key,tmp->key)){
+				memmove(a[0]+w,a[0]+w+1,(len(a[0])-w-1)*sizeof(item));
+				pop(a[0]);
+				return;
+			}
+		}
+	}
+}
+
+bool dict_find(dict*dp,item*tmp){
+	if (dp){
+		item**a=dp->data+hash(tmp->key)%len(dp->data);
+		for (size_t w=0;w<len(*a);++w){
+			if (eq(a[0][w].key,tmp->key)){
+				*tmp=a[0][w];
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
+
+void dict_del(dict*a){
+	if (a){
+		for (size_t w=0;w<len(a->data);w++){
+			del(a->data[w]);
+		}
+		del(a->data);
+		free(a);
+	}
+}
+
+int cmp1(uint64_t*q,uint64_t*w){
+	if (*q<*w){
+		return -1;
+	}
+	if (*q>*w){
+		return 1;
+	}
+	return 0;
+}
+
+int main(){
+	uint64_t n=getint();
+	uint64_t m=getint();
+	uint64_t k=getint();
+	uint64_t**sets=0;
+	resize(sets,n);
+	dict*a=dict_create();
+	for (uint64_t w=0;w<n;++w){
+		resize(sets[w],m);
+		for (uint64_t e=0;e<m;++e){
+			sets[w][e]=getint();
+		}
+		qsort(sets[w],m,sizeof(sets[w][0]),(cmp_f_t)cmp1);
+		item t;
+		t.key=sets[w];
+		t.value=1;
+		dict_insert(a,&t);
+	}
+	uint64_t*set=0;
+	resize(set,m);
+	for (uint64_t w=0;w<k;++w){
+		for (uint64_t e=0;e<m;++e){
+			set[e]=getint();
+		}
+		qsort(set,m,sizeof(set[0]),(cmp_f_t)cmp1);
+		item t;
+		t.key=set;
+		t.value=1;
+		print(dict_find(a,&t));
+	}
+	for (uint64_t w=0;w<n;++w){
+		del(sets[w]);
+	}
+	del(sets);
+	del(set);
+	dict_del(a);
+}

@@ -229,7 +229,7 @@ int main(){
 				printf("ERROR\n");
 			}
 		}
-		if (com[0]=='E'){
+		if (com[0]=='U'){
 			scanf("%4096s",val);
 			item t;
 			t.key=key;
