@@ -183,8 +183,8 @@ ret
 
 ; %else;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; extern printf
-; extern scanf
+extern printf
+extern scanf
 
 section .data
 __quprint db '%d',10,0
@@ -205,6 +205,7 @@ mov rsi,__quvar8
 mov rdi,%%_1
 mov rax,0
 call scanf
+add rsp,8
 add rsp,4096
 popad
 push qword [__quvar8]
@@ -228,14 +229,11 @@ add rsp,4096
 popad
 %endmacro
 
-; %macro qsget 1
-; macro_args_read
-; push rax
-; mov rax,rsp
-; scan_f "%li",rax
-; pop rax
-; macro_args_save q,%1
-; %endmacro
+%macro _qsget 1
+macro_args_read
+scan_f "%li",rax
+macro_args_save q,%1
+%endmacro
 
 %macro _quprint 1
 macro_args_read q,%1

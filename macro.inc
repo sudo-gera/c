@@ -29,7 +29,9 @@ z times 1024 d_ 0
 %endmacro
 
 %macro pre_start 0
+%if __BITS__==32
 global _start
+%endif
 global main
 section .data
 args_tmp times 4 d_ 0
@@ -1617,24 +1619,24 @@ macro_args_read
 %%_1:
 mov _ax,0
 cget al
-bne al,'-',%%_2
-mov _dx,1
-jmp %%_1
-%%_2:
+buif al,==,'-'
+	mov _dx,1
+	jmp %%_1
+end
 bult al,'0',%%_4
 bugt al,'9',%%_4
 jmp %%_3
 %%_4:
-deq _cx,0,%%_1
+_eq _cx,0,%%_1
 jmp %%_6
 %%_3:
 mov _cx,1
 sub _ax,48
-dmul _bx,10
+_mul _bx,10
 add _bx,_ax
 jmp %%_1
 %%_6:
-dne _dx,1,%%_5
+_ne _dx,1,%%_5
 neg _bx
 %%_5:
 mov _ax,_bx
