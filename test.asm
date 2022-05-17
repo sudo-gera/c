@@ -1,6 +1,7 @@
 %include "macro.inc"
 ; begin
 
+<<<<<<< HEAD
 
 ; _ufor _ax,_1,_2
 ; 	buwrite [_ax]
@@ -114,3 +115,7 @@ sub [eax+edi+32],eax
 _stop:
 mov eax,1
 int 0x80
+=======
+
+end
+>>>>>>> 49ce0d89a0ab6076190c132564bc397e3a6ff68e

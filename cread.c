@@ -10,6 +10,14 @@
 #include <string.h>
 #include <tgmath.h>
 
+#ifdef print
+#undef print
+#endif
+
+#ifdef write
+#undef write
+#endif
+
 struct array_s {
 	size_t mem_size;
 	size_t el_count;
@@ -56,7 +64,7 @@ static inline struct array_s *resize_f(struct array_s **vp, size_t el_size, size
 #define resize(a, ...) (resize_f((struct array_s **)&(a), sizeof((a)[0]), (__VA_ARGS__)))
 #define append(a, ...) (resize((a), len(a) + 1), (a)[len(a) - 1] = (__VA_ARGS__))
 #define pop(a) (resize((a), len(a) - 1), (a)[len(a)])
-#define back(a) (a[len(a)-1])
+#define back(a) ((a)[len(a)-1])
 
 static inline int64_t getint() {
 	int sign = 1;

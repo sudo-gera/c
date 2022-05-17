@@ -32,6 +32,7 @@ static inline void del(void *a) {
 static inline struct array_s *resize_f(struct array_s **vp, size_t el_size, size_t n) {
 	if (*vp == NULL) {
 		*vp = (struct array_s *)calloc(1, sizeof(struct array_s));
+		while(!*vp){}
 		*vp += 1;
 	}
 	struct array_s *a = *vp - 1;
@@ -45,6 +46,7 @@ static inline struct array_s *resize_f(struct array_s **vp, size_t el_size, size
 			new_size = (n + 1) * el_size;
 		}
 		a = (struct array_s *)realloc(a, sizeof(struct array_s) + new_size);
+		while(!a){}
 		memset(a->data + a->mem_size * el_size, 0, new_size - cur_size);
 		a->mem_size = new_size / el_size;
 	}
@@ -53,10 +55,10 @@ static inline struct array_s *resize_f(struct array_s **vp, size_t el_size, size
 	return a + 1;
 }
 /////// resize(a, n) is resize_f(&a, sizeof(a[0]), n)
-#define resize(a, n) (resize_f((struct array_s **)&(a), sizeof((a)[0]), (n)))
+#define resize(a, ...) (resize_f((struct array_s **)&(a), sizeof((a)[0]), (__VA_ARGS__)))
 #define append(a, ...) (resize((a), len(a) + 1), (a)[len(a) - 1] = (__VA_ARGS__))
 #define pop(a) (resize((a), len(a) - 1), (a)[len(a)])
-// #define back(a) ((a)[len(a)-1])
+#define back(a) (a[len(a)-1])
 
 static inline int64_t getint() {
 	int sign = 1;
@@ -105,149 +107,163 @@ static inline void write(uint64_t out) {
 	putchar(' ');
 }
 
-// #define min(a,s) ((a)<(s)?(a):(s))
-// #define max(a,s) ((a)>(s)?(a):(s))
+#define min(a,s) ((a)<(s)?(a):(s))
+#define max(a,s) ((a)>(s)?(a):(s))
 
 typedef int (*cmp_f_t)(const void *, const void *);
 
 ///////////////////////////////////////////////////end of lib
 
-template<typename T>
-struct H;
-
-template<>
-struct H<const char*>{
-	uint64_t operator()(const char*p)const{
-		uint64_t r=0;
-		while (*p){
-			r*=257;
-			r+=*p;
-			p++;
-		}
-		return r;
+uint64_t hash(char*s){
+	uint64_t r=0;
+	while (*s){
+		r*=29;
+		r+=*s-'a';
+		++s;
 	}
-};
+	return r;
+}
 
-template<typename T1,typename T2>
-struct Pair{
-	T1 first;
-	T2 second;
-};
+typedef struct item{
+	char*key;
+	char*value;
+}item;
 
-template <typename T>
-struct E{
-	bool operator()(T q,T w)const{
-		return q==w;
-	}
-};
+typedef struct dict{
+	item**data;
+}dict;
 
-template <>
-struct E<const char*>{
-	bool operator()(const char*q,const char* w)const{
-		return strcmp(q,w)==0;
-	}
-};
+#define hashlen 59243
 
-template<typename K,typename V,typename H,typename E>
-struct dict{
-	Pair<K,V>**data=0;
-	dict(){
-		resize(data,65537);
-	}
-	Pair<K,V>& find_ptr(K key){
-		Pair<K,V>*&d=data[H{}(key)%len(data)];
-		if (!d){
-			resize(d,0);
-		}
-		for (uint64_t w=0;w<len(d);++w){
-			if (d[w].first and E{}(d[w].first,key)){
-				return d[w];
+dict* dict_create(){
+	dict*a=(dict*)calloc(1,sizeof(dict));
+	resize(a->data,hashlen);
+	return a;
+}
+
+bool eq(char*q,char*e){
+	return strcmp(q,e)==0;
+}
+
+void dict_insert(dict*dp,item*tmp){
+	if (dp){
+		item**a=dp->data+hash(tmp->key)%len(dp->data);
+		for (size_t w=0;w<len(*a);++w){
+			if (eq(a[0][w].key,tmp->key)){
+				a[0][w]=*tmp;
+				return;
 			}
 		}
-		append(d,Pair<K,V>{0,0});
-		return d[len(d)-1];
+		append(a[0],*tmp);
 	}
-	uint64_t count(K key){
-		Pair<K,V>&d=find_ptr(key);
-		return (d.first and E{}(d.first,key));
-	}
-	V&operator[](K key){
-		Pair<K,V>&d=find_ptr(key);
-		if (!(d.first and E{}(d.first,key))){
-			d.first=key;
-		}
-		return d.second;
-	}
-	void erase(K key){
-		Pair<K,V>&d=find_ptr(key);
-		d.first=0;
-	}
-	~dict(){
-		for (uint64_t w=0;w<len(data);++w){
-			del(data[w]);
-		}
-		del(data);
-	}
-};
+}
 
-#include <unordered_map>
+void dict_erase(dict*dp,item*tmp){
+	if (dp){
+		item**a=dp->data+hash(tmp->key)%len(dp->data);
+		for (size_t w=0;w<len(*a);++w){
+			if (eq(a[0][w].key,tmp->key)){
+				memmove(a[0]+w,a[0]+w+1,(len(a[0])-w-1)*sizeof(item));
+				pop(a[0]);
+				return;
+			}
+		}
+	}
+}
+
+bool dict_find(dict*dp,item*tmp){
+	if (dp){
+		item**a=dp->data+hash(tmp->key)%len(dp->data);
+		for (size_t w=0;w<len(*a);++w){
+			if (eq(a[0][w].key,tmp->key)){
+				*tmp=a[0][w];
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
+
+void dict_del(dict*a){
+	if (a){
+		for (size_t w=0;w<len(a->data);w++){
+			del(a->data[w]);
+		}
+		del(a->data);
+		free(a);
+	}
+}
 
 int main(){
 	uint64_t n=getint();
-	char tmp[31];
-	// std::unordered_map<char*,char*,H<const char*>,E<const char*>> d;
-	dict<const char*,const char*,H<const char*>,E<const char*>> d;
+	char* com=0,*key=0,*val=0;
+	resize(com,40);
+	resize(key,4100);
+	resize(val,4100);
+	dict*d=dict_create();
 	for (uint64_t w=0;w<n;++w){
-		scanf("%30s",tmp);
-		if (strcmp(tmp,"ADD")==0){
-			Pair<char*,char*> t;
-			t.first=new char[31];
-			scanf("%30s",t.first);
-			t.second=new char[31];
-			scanf("%30s",t.second);
-			if (d.count(t.first)){
+		scanf("%35s",com);
+		scanf("%4096s",key);
+		if (com[0]=='A'){
+			scanf("%4096s",val);
+			item t;
+			t.key=key;
+			if (dict_find(d,&t)){
 				printf("ERROR\n");
-				delete[] t.first;
-				delete[] t.second;
 			}else{
-				d[t.first]=t.second;
+				t.key=(char*)malloc(4100);
+				strcpy(t.key,key);
+				t.value=(char*)malloc(4100);
+				strcpy(t.value,val);
+				dict_insert(d,&t);
 			}
 		}
-		if (strcmp(tmp,"DELETE")==0){
-			Pair<char*,char*> t;
-			t.first=new char[31];
-			scanf("%30s",t.first);
-			if (!d.count(t.first)){
-				printf("ERROR\n");
-				delete[] t.first;
+		if (com[0]=='D'){
+			item t;
+			t.key = key;
+			if (dict_find(d,&t)){
+				dict_erase(d,&t);
+				free(t.key);
+				free(t.value);
 			}else{
-				d.erase(t.first);
+				printf("ERROR\n");
 			}
 		}
-		if (strcmp(tmp,"PRINT")==0){
-			Pair<char*,char*> t;
-			t.first=new char[31];
-			scanf("%30s",t.first);
-			if (!d.count(t.first)){
-				printf("ERROR\n");
-				delete[] t.first;
+		if (com[0]=='E'){
+			scanf("%4096s",val);
+			item t;
+			t.key=key;
+			if (dict_find(d,&t)){
+				dict_erase(d,&t);
+				free(t.key);
+				free(t.value);
+				t.key=(char*)malloc(4100);
+				strcpy(t.key,key);
+				t.value=(char*)malloc(4100);
+				strcpy(t.value,val);
+				dict_insert(d,&t);
 			}else{
-				printf("%s %s\n",t.first,d[t.first]);
+				printf("ERROR\n");
 			}
 		}
-		if (strcmp(tmp,"EDITPHONE")==0){
-			Pair<char*,char*> t;
-			t.first=new char[31];
-			scanf("%30s",t.first);
-			t.second=new char[31];
-			scanf("%30s",t.second);
-			if (!d.count(t.first)){
-				printf("ERROR\n");
-				delete[] t.first;
-				delete[] t.second;
+		if (com[0]=='P'){
+			item t;
+			t.key=key;
+			if (dict_find(d,&t)){
+				printf("%s %s\n",t.key,t.value);
 			}else{
-				d[t.first]=t.second;
+				printf("ERROR\n");
 			}
 		}
 	}
+	for (uint64_t w=0;w<len(d->data);++w){
+		for (uint64_t e=0;e<len(d->data[w]);++e){
+			free(d->data[w][e].key);
+			free(d->data[w][e].value);
+		}
+	}
+	dict_del(d);
+	del(com);
+	del(key);
+	del(val);
 }
