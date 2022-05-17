@@ -129,15 +129,15 @@ struct tree{
 		long l=0;
 		void add(long n){
 			while(n!=0 or !(0<=l and l<p->len or !p->prev)){
-				ic(n,l)
-				treeprint(p);
+				// ic(n,l)
+				// treeprint(p);
 				if (0<=l and l<p->len){
 					if (n>0){
 						if ((p->next[l+1]?p->next[l+1]->size:0)<n){
-				ic(n,l)
+				// ic(n,l)
 							n-=(p->next[l+1]?p->next[l+1]->size:0)+1;
 							l++;
-				ic(n,l)
+				// ic(n,l)
 						}else{
 							ic()
 							p=p->next[l+1];
@@ -170,60 +170,39 @@ struct tree{
 						n=0;
 					}
 				}
-				ic(n,l)
+				// ic(n,l)
 			}
 		}
-
 
 		T&operator*(){
 			return p->data[l];
 		}
-
-		// auto&operator--(){
-		// 	return *this-=1;
-		// }
-		// auto&operator++(){
-		// 	return *this+=1;
-		// }
-		// auto operator--(int){
-		// 	auto q=*this;
-		// 	*this-=1;
-		// 	return q;
-		// }
-		// auto operator++(int){
-		// 	auto q=*this;
-		// 	*this+=1;
-		// 	return q;
-		// }
-		// auto&operator+=(long w){
-		// 	w*=d;
-		// 	w+=o;
-		// 	if (!e){
-		// 		return *this;
-		// 	}
-		// 	while (1){
-		// 		auto s=w*2;
-		// 		auto q=e;
-		// 		q=nullptr;
-		// 		while (!q){
-		// 			s/=2;
-		// 			q=add(e,s);
-		// 		}
-		// 		if (q==e){
-		// 			break;
-		// 		}
-		// 		e=q;
-		// 		w-=s;
-		// 	}
-		// 	o=w;
-		// 	return *this;
-		// }
-		// auto&operator-=(long w){
-		// 	return *this+=(-w);
-		// }
-		// auto&operator[](long q){
-		// 	return *(*this+q);
-		// }
+		auto&operator--(){
+			return *this-=1;
+		}
+		auto&operator++(){
+			return *this+=1;
+		}
+		auto operator--(int){
+			auto q=*this;
+			*this-=1;
+			return q;
+		}
+		auto operator++(int){
+			auto q=*this;
+			*this+=1;
+			return q;
+		}
+		auto&operator+=(long w){
+			add(w);
+			return *this;
+		}
+		auto&operator-=(long w){
+			return *this+=(-w);
+		}
+		auto&operator[](long q){
+			return *(*this+q);
+		}
 		// auto& operator=(const iter&q){
 		// 	e=q.e;
 		// 	o=q.o;
@@ -231,8 +210,99 @@ struct tree{
 		// 	return *this;
 		// }
 	};
+
+	iter begin(){
+		iter t;
+		t.p=this;
+		t.l=0;
+		t.add(-(next[0]?next[0]->size:0));
+		return t;
+	}
+	iter end(){
+		iter t;
+		t.p=this;
+		t.l=len;
+		t.add(next[len+1]?next[len+1]->size:0);
+		return t;
+	}
 };
 
+template<typename TT>
+long operator-(TT q,TT w)->typename TT::template is_iterator<ptrdiff_t>{
+	if (q.l){
+		q.l--;
+		return (q.p->next[q.l+1]?q.p->next[q.l+1]:0)+1+(q-w);
+	}
+	if (q.p->prev){
+		uint64_t w=0;
+		for (;q.p->prev->next[w]!=q.p;++w){
+
+		}
+		if (w){
+			uint64_t s=(q.p->next[0]?q.p->next[0]->size:0);
+			q.p=q.p->prev;
+			q.l=w-1;
+			return (q-w)-s-1;
+		}else{
+			
+		}
+	}
+	if(e.p->prev or e.l){
+		return -(e-q);
+	}
+	return 0;
+}
+
+template<typename TT>
+auto operator+(TT q,long w)->typename TT::template is_iterator<TT>{
+	auto e=q;
+	e+=w;
+	return e;
+}
+
+template<typename TT>
+auto operator-(TT q,long w)->typename TT::template is_iterator<TT>{
+	auto e=q;
+	e-=w;
+	return e;
+}
+
+template<typename TT>
+auto operator+(long w,TT q)->typename TT::template is_iterator<TT>{
+	auto e=q;
+	e+=w;
+	return e;
+}
+
+template<typename TT>
+auto operator>=(TT q,TT w)->typename TT::template is_iterator<bool>{
+	return q-w>=0;
+}
+
+// template<typename TT>
+// auto operator<=(TT q,TT w)->typename TT::template is_iterator<bool>{
+// 	return q-w<=0;
+// }
+
+// template<typename TT>
+// auto operator<(TT q,TT w)->typename TT::template is_iterator<bool>{
+// 	return q-w<0;
+// }
+
+// template<typename TT>
+// auto operator>(TT q,TT w)->typename TT::template is_iterator<bool>{
+// 	return q-w>0;
+// }
+
+template<typename TT>
+auto operator==(TT q,TT w)->typename TT::template is_iterator<bool>{
+	return q.p==w.p and q.l==w.l;
+}
+
+template<typename TT>
+auto operator!=(TT q,TT w)->typename TT::template is_iterator<bool>{
+	return not(q==w);
+}
 
 
 void treeprint(tree<long>*root,size_t* prev_node=0){
@@ -348,6 +418,36 @@ void treep(tree<long>*root,uint64_t l){
 	// }
 }
 
+template<typename T>
+void check(T q,T e){
+	vector<T> a;
+	for (auto w=q;w!=e;++w){
+		a.push_back(w);
+	}
+	a.push_back(e);
+	for (size_t w=0;w<a.size();++w){
+		for (size_t e=0;e<a.size();++e){
+			long d=long(w)-long(e);
+			assert(a[w]-a[e]==d);
+			assert(w>=e or  a[w]<a[e]);
+			assert(w<=e or  a[w]>a[e]);
+			assert(w==e or a[w]!=a[e]);
+			assert(w>e  or a[w]<=a[e]);
+			assert(w<e  or a[w]>=a[e]);
+			assert(w!=e or a[w]==a[e]);
+			assert(a[w]+(-d)==a[e]);
+			assert(a[w]-(d)==a[e]);
+		}
+	}
+	auto s=a;
+	s.clear();
+	for (auto w=e;w!=q;--w){
+		s.push_back(w);
+	}
+	s.push_back(q);
+	reverse(s.begin(),s.end());
+	assert(a==s);
+}
 
 int main(){
 	tree<long> a;
@@ -356,38 +456,9 @@ int main(){
 	// treeprint(&a,0);
 	}
 	treeprint(&a,0);
-	auto p=tree<long>::iter();
-	p.p=&a;
-	p.l=0;
-	ic(*p);
-	p.add(1);
-	ic(*p);
-	p.add(1);
-	ic(*p);
-	p.add(1);
-	ic(*p);
-	p.add(1);
-	ic(*p);
-	p.add(1);
-	ic(*p);
-	p.add(1);
-	ic(*p);
-	p.add(1);
-	ic(*p);
-	p.add(1);
-	ic(*p);
-	p.add(1);
-	ic(*p);
-	p.add(1);
-	ic(*p);
-	p.add(1);
-	// ic(*p);
-	// p.add(1);
-	ic(*p);
-	p.add(-1);
-	ic(*p);
-	p.add(-1);
-	ic(*p);
-	p.add(-1);
-	ic(*p);
+	auto q=a.begin();
+	auto e=a.end();
+	ic(itervect(q,e))
+
 }
+
