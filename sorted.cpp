@@ -856,7 +856,7 @@ int main(){
 			assert(*x==*c);
 		}
 		assert(x==a.end() and c==s.end());
-		if (++c_ > 100){
+		if (++c_ > 111){
 			treeprint(&a);
 		}
 	}
