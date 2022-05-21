@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <tgmath.h>
+#include <stddef.h>
 
 #ifdef print
 #undef print

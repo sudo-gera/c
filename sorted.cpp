@@ -9,37 +9,99 @@
 #include <ctype.h>
 #include <assert.h>
 #include <iso646.h>
-#include <bits/stdc++.h>
-using namespace std;
+#include <assert.h>
 
-template <typename T>
-struct tree;
-
-void treep(tree<long>*,uint64_t);
-
-template <typename T>
+template <typename T,typename CMP=std::less<T>>
 struct tree{
-	tree* next[4];
+	tree* next[4]={0,0,0,0};
 	T data[3];
-	tree*prev;
-	long len;
-	long longlen;
+	tree*prev=0;
+	long len=0;
+	long longlen=0;
+	long height=0;
 	tree(){
-		memset(this,0,sizeof(*this));
+		memset(next,0,sizeof(*next));
 	}
 	tree(const tree&q){
-		memset(this,0,sizeof(*this));
+		memset(next,0,sizeof(*next));
 		for (auto w=q.begin();w!=q.end();++w){
 			insert(*w);
 		}
 	}
+	tree(tree&&q){
+		next[0]=q.next[0];
+		next[1]=q.next[1];
+		next[2]=q.next[2];
+		next[3]=q.next[3];
+		data[0]=std::move(q.data[0]);
+		data[1]=std::move(q.data[1]);
+		data[2]=std::move(q.data[2]);
+		len=q.len;
+		update();
+		q.next[0]=0;
+		q.next[1]=0;
+		q.next[2]=0;
+		q.next[3]=0;
+		q.len=0;
+		q.update();
+	}
+	auto&operator=(const tree&q){
+		if(&q==this){
+			return *this;
+		}
+		for (uint64_t w=0;w<len+1;++w){
+			if (next[w]){
+				delete next[w];
+			}
+		}
+		len=0;
+		memset(next,0,sizeof(*next));
+		for (auto w=q.begin();w!=q.end();++w){
+			insert(*w);
+		}
+		return *this;
+	}
+	auto&operator=(tree&&q){
+		if(&q==this){
+			return *this;
+		}
+		for (uint64_t w=0;w<len+1;++w){
+			if (next[w]){
+				delete next[w];
+			}
+		}
+		next[0]=q.next[0];
+		next[1]=q.next[1];
+		next[2]=q.next[2];
+		next[3]=q.next[3];
+		data[0]=std::move(q.data[0]);
+		data[1]=std::move(q.data[1]);
+		data[2]=std::move(q.data[2]);
+		len=q.len;
+		update();
+		q.next[0]=0;
+		q.next[1]=0;
+		q.next[2]=0;
+		q.next[3]=0;
+		q.len=0;
+		q.update();
+		return *this;
+	}
 	void update(){
 		longlen=len;
-		for (uint64_t w=0;w<len+1;w++){
-			if (next[w]){
+		if (next[0]){
+			height=next[0]->height+1;
+			for (uint64_t w=0;w<len+1;w++){
+				assert(next[w]);
 				longlen+=next[w]->longlen;
 				next[w]->prev=this;
+				assert(height-1==next[w]->height);
 			}
+			for (uint64_t w=len+1;w<4;w++){
+				assert(next[w]==0);
+			}
+		}else{
+			height=0;
 		}
 	}
 	struct iter {
@@ -50,12 +112,18 @@ struct tree{
 		using iterator_category = std::random_access_iterator_tag;
 		template<typename Y>
 		using is_iterator=Y;
-		using original_type=tree<T>;
-		tree*p=0;
+		using original_type=tree;
+		const tree*p=0;
+		tree*mutable_p(){
+			return const_cast<tree*>(p);
+		}
 		long l=0;
 		iter(const nullptr_t& r){}
 		iter(){}
-		operator T*(){
+		operator const T*(){
+			return p?p->data+l:0;
+		}
+		auto operator->(){
 			return p?p->data+l:0;
 		}
 		// operator bool(){
@@ -162,20 +230,20 @@ struct tree{
 	};
 	using iterator=iter;
 	using value_type=T;
-	iter begin(){
+	iter begin()const{
 		iter t;
 		t.p=this;
 		t.l=-1;
 		t+=1;
 		return t;
 	}
-	iter end(){
+	iter end()const{
 		iter t;
 		t.p=this;
 		t.l=len;
 		return t;
 	}
-	long size(){
+	long size()const{
 		return longlen;
 	}
 	~tree(){
@@ -185,9 +253,9 @@ struct tree{
 			}
 		}
 	}
-	iter find(const T&val){
+	iter find(const T&val)const{
 		for (uint64_t w=0;w<len;w++){
-			if (data[w]==val){
+			if (CMP{}(data[w],val)==0 and CMP{}(val,data[w])==0){
 				iter p;
 				p.p=this;
 				p.l=w;
@@ -197,16 +265,19 @@ struct tree{
 		if (next[0]){
 			for (uint64_t q=0;q<len+1;++q){
 				assert(q<3);
-				if (len==q or data[q]>val){
+				if (len==q or CMP{}(val,data[q])){
 					return next[q]->find(val);
 				}
 			}
 		}
 		return nullptr;
 	}
-	iter lower_bound(const T&val){
+	uint64_t count(const T&val)const{
+		return find(val)!=nullptr;
+	}
+	iter lower_bound(const T&val)const{
 		for (uint64_t w=0;w<len;w++){
-			if (data[w]==val){
+			if (CMP{}(data[w],val)==0 and CMP{}(val,data[w])==0){
 				iter p;
 				p.p=this;
 				p.l=w;
@@ -216,37 +287,49 @@ struct tree{
 		if (next[0]){
 			for (uint64_t q=0;q<len+1;++q){
 				assert(q<3);
-				if (len==q or data[q]>val){
+				if (len==q or CMP{}(val,data[q])){
 					return next[q]->lower_bound(val);
 				}
 			}
 		}else{
 			for (uint64_t q=0;q<len+1;++q){
 				assert(q<3);
-				if (len==q or data[q]>val){
+				if (len==q or CMP{}(val,data[q])){
 					iter p;
 					p.p=this;
 					p.l=0;
 					p+=q;
-					return p;					
+					return p;
 				}
 			}
 		}
 		return nullptr;
+		// return std::lower_bound(begin(),end(),val);
 	}
-	iter upper_bound(const T&val){
+	iter upper_bound(const T&val)const{
 		auto p=lower_bound(val);
-		if (p!=end() and *p==val){
+		if (p!=end() and (CMP{}(*p,val)==0 and CMP{}(val,*p)==0)){
 			++p;
 		}
 		return p;
+	}
+	void clear(){
+		for (uint64_t w=0;w<len+1;++w){
+			if (next[w]){
+				delete next[w];
+			}
+			next[w]=nullptr;
+		}
+		len=0;
+		update();
 	}
 	void erase(T val){
 		auto q=find(val);
 		if (q){
 			if (q.p->next[0]){
 				long w=q.is_begin()*2-1;
-				auto tmp=q[w];
+				// T tmp;
+				T tmp=q[w];
 				erase3(tmp);
 				if (len==0 and next[0]){
 					auto tmp=next[0];
@@ -254,20 +337,21 @@ struct tree{
 					next[1]=tmp->next[1];
 					next[2]=tmp->next[2];
 					next[3]=tmp->next[3];
-					data[0]=tmp->data[0];
-					data[1]=tmp->data[1];
-					data[2]=tmp->data[2];
+					data[0]=std::move(tmp->data[0]);
+					data[1]=std::move(tmp->data[1]);
+					data[2]=std::move(tmp->data[2]);
 					len=tmp->len;
 					tmp->next[0]=0;
 					tmp->next[1]=0;
 					tmp->next[2]=0;
 					tmp->next[3]=0;
 					delete tmp;
+					tmp=nullptr;
 					update();
 				}
 				erase3(tmp);
 				q=find(val);
-				q.p->data[q.l]=tmp;
+				q.mutable_p()->data[q.l]=std::move(tmp);
 			}else{
 				erase3(val);
 				if (len==0 and next[0]){
@@ -276,15 +360,16 @@ struct tree{
 					next[1]=tmp->next[1];
 					next[2]=tmp->next[2];
 					next[3]=tmp->next[3];
-					data[0]=tmp->data[0];
-					data[1]=tmp->data[1];
-					data[2]=tmp->data[2];
+					data[0]=std::move(tmp->data[0]);
+					data[1]=std::move(tmp->data[1]);
+					data[2]=std::move(tmp->data[2]);
 					len=tmp->len;
 					tmp->next[0]=0;
 					tmp->next[1]=0;
 					tmp->next[2]=0;
 					tmp->next[3]=0;
 					delete tmp;
+					tmp=nullptr;
 					update();
 				}
 			}
@@ -293,7 +378,7 @@ struct tree{
 	void insert3(const T& val){
 		assert(len<3);
 		for (uint64_t w=0;w<len;w++){
-			if (data[w]==val){
+			if (CMP{}(data[w],val)==0 and CMP{}(val,data[w])==0){
 				return;
 			}
 		}
@@ -306,24 +391,34 @@ struct tree{
 		}
 		assert(tmp==longlen);
 		if (next[0]==0){
-			data[len++]=val;
-			std::sort(data,data+len);
-			longlen++;
+			for (uint64_t q=0;q<len+1;++q){
+				assert(q<3);
+				if (len==q or CMP{}(val,data[q])){
+					for (uint64_t w=2;w>q;--w){
+						data[w]=std::move(data[w-1]);
+					}
+					data[q]=val;
+					len++;
+					update();
+					break;
+				}
+			}
+			update();
 		}else{
 			for (uint64_t q=0;q<len+1;++q){
 				assert(q<3);
-				if (len==q or data[q]>val){
+				if (len==q or CMP{}(val,data[q])){
 					next[q]->insert3(val);
 					if (next[q]->len==3){
 						for (uint64_t w=2;w>q;--w){
-							data[w]=data[w-1];
+							data[w]=std::move(data[w-1]);
 						}
-						data[q]=next[q]->data[1];
+						data[q]=std::move(next[q]->data[1]);
 						for (uint64_t w=3;w>1+q;--w){
 							next[w]=next[w-1];
 						}
 						next[q+1]=new tree();
-						next[q+1]->data[0]=next[q]->data[2];
+						next[q+1]->data[0]=std::move(next[q]->data[2]);
 						next[q+1]->len=1;
 						next[q+1]->next[0]=next[q]->next[2];
 						next[q+1]->next[1]=next[q]->next[3];
@@ -339,6 +434,14 @@ struct tree{
 				}
 			}
 		}
+		tmp=len;
+		for (uint64_t w=0;w<len+1;w++){
+			if (next[w]){
+				tmp+=next[w]->longlen;
+				assert(next[w]->prev==this);
+			}
+		}
+		assert(tmp==longlen);
 	}
 	void erase3(const T&val){
 		uint64_t tmp=len;
@@ -352,15 +455,15 @@ struct tree{
 		if (next[0]){
 			for (uint64_t q=0;q<4;++q){
 				assert(q<3);
-				if (len==q or data[q]>val){
+				if (len==q or CMP{}(val,data[q])){
 					next[q]->erase3(val);
 					if (next[q]->len==0){
 						uint64_t e=q;
 						e+=1-2*bool(e);
 						if (next[e]->len==1){
 							if (e>q){
-								next[e]->data[1]=next[e]->data[0];
-								next[e]->data[0]=data[q];
+								next[e]->data[1]=std::move(next[e]->data[0]);
+								next[e]->data[0]=std::move(data[q]);
 								next[e]->next[2]=next[e]->next[1];
 								next[e]->next[1]=next[e]->next[0];
 								next[e]->next[0]=next[q]->next[0];
@@ -371,12 +474,13 @@ struct tree{
 								for (uint64_t w=q+1;w<len+1;++w){
 									next[w-1]=next[w];
 								}
+								next[len]=0;
 								for (uint64_t w=q+1;w<len;++w){
-									data[w-1]=data[w];
+									data[w-1]=std::move(data[w]);
 								}
 								len--;
 							}else{
-								next[e]->data[1]=data[e];
+								next[e]->data[1]=std::move(data[e]);
 								next[e]->next[2]=next[q]->next[0];
 								next[e]->len=2;
 								next[e]->update();
@@ -385,28 +489,29 @@ struct tree{
 								for (uint64_t w=q+1;w<len+1;++w){
 									next[w-1]=next[w];
 								}
+								next[len]=0;
 								for (uint64_t w=e+1;w<len;++w){
-									data[w-1]=data[w];
+									data[w-1]=std::move(data[w]);
 								}
 								len--;
 							}
 						}else{
 							assert(next[e]->len==2);
 							if (e>q){
-								next[q]->data[0]=data[q];
+								next[q]->data[0]=std::move(data[q]);
 								next[q]->next[1]=next[e]->next[0];
 								next[q]->len=1;
-								data[q]=next[e]->data[0];
-								next[e]->data[0]=next[e]->data[1];
+								data[q]=std::move(next[e]->data[0]);
+								next[e]->data[0]=std::move(next[e]->data[1]);
 								next[e]->next[0]=next[e]->next[1];
 								next[e]->next[1]=next[e]->next[2];
 								next[e]->next[2]=next[e]->next[3];
 								next[e]->len=1;
 							}else{
-								next[q]->data[0]=data[e];
+								next[q]->data[0]=std::move(data[e]);
 								next[q]->next[1]=next[q]->next[0];
 								next[q]->next[0]=next[e]->next[2];
-								data[e]=next[e]->data[1];
+								data[e]=std::move(next[e]->data[1]);
 								next[e]->next[2]=0;
 								next[q]->len=1;
 								next[e]->len=1;
@@ -421,9 +526,9 @@ struct tree{
 			}
 		}else{
 			for (uint64_t q=0;q<len;++q){
-				if (data[q]==val){
+				if (CMP{}(data[q],val)==0 and CMP{}(val,data[q])==0){
 					for (uint64_t w=q+1;w<len;++w){
-						data[w-1]=data[w];
+						data[w-1]=std::move(data[w]);
 					}
 					len--;
 					update();
@@ -440,7 +545,7 @@ struct tree{
 			t->next[0]=next[0];
 			t->next[1]=next[1];
 			t->len=1;
-			t->data[0]=data[0];
+			t->data[0]=std::move(data[0]);
 			t->update();
 			next[0]=t;
 			t=new tree();
@@ -448,10 +553,10 @@ struct tree{
 			t->next[0]=next[2];
 			t->next[1]=next[3];
 			t->len=1;
-			t->data[0]=data[2];
+			t->data[0]=std::move(data[2]);
 			t->update();
 			next[1]=t;
-			data[0]=data[1];
+			data[0]=std::move(data[1]);
 			len=1;
 			next[2]=next[3]=0;
 			update();
@@ -550,8 +655,55 @@ auto operator!=(TT q,TT w)->typename TT::template is_iterator<bool>{
 	return not(q==w);
 }
 
+template <typename KEY,typename VALUE,typename CMP>
+struct dict_item{
+	KEY first;
+	VALUE second;
+};
 
-void treeprint(tree<long>*root,size_t* prev_node=0){
+template <typename KEY,typename VALUE,typename CMP>
+bool operator<(const dict_item<KEY,VALUE,CMP>&q,const dict_item<KEY,VALUE,CMP>&e){
+	return CMP{}(q.first,e.first);
+}
+
+template <typename KEY,typename VALUE,typename CMP=std::less<KEY>>
+struct dict:tree<dict_item<KEY,VALUE,CMP>>{
+	VALUE&operator[](const KEY&k){
+		dict_item<KEY,VALUE,CMP> d;
+		d.first = k;
+		auto p=this->find(d);
+		if (!p){
+			this->insert(d);
+		}
+		p=this->find(d);
+		return p.mutable_p()->data[p.l].second;
+	}
+	using tree<dict_item<KEY,VALUE,CMP>>::find;
+	auto find(const KEY&k){
+		dict_item<KEY,VALUE,CMP> d;
+		d.first = k;
+		return this->find(d);
+	}
+	using tree<dict_item<KEY,VALUE,CMP>>::count;
+	auto count(const KEY&k){
+		dict_item<KEY,VALUE,CMP> d;
+		d.first = k;
+		return this->count(d);
+	}
+	using tree<dict_item<KEY,VALUE,CMP>>::erase;
+	auto erase(const KEY&k){
+		dict_item<KEY,VALUE,CMP> d;
+		d.first = k;
+		return this->erase(d);
+	}
+};
+
+
+
+/////////////////////////
+
+template<typename T,typename CMP>
+void treeprint(tree<T,CMP>*root,size_t* prev_node=0){
 	//━┃┏┓┗┛┣┫┳┻╋► 
 	if (!root){
 		return;
@@ -583,6 +735,7 @@ void treeprint(tree<long>*root,size_t* prev_node=0){
 		}
 
 		for (;d!=node;d=(size_t*)d[2]){
+			// printf("%li",d[1]);
 			if (d[1]==3){
 				if (d==prev_node){
 					if (q==root->len-1){
@@ -631,7 +784,7 @@ void treeprint(tree<long>*root,size_t* prev_node=0){
 		printf("%li\n",root->data[q]);
 
 		save=0;
-		if (prev_node && prev_node[1]==2+(q==root->len-1)){
+		if (prev_node and q==root->len-1 and prev_node[1]==3){
 			save=prev_node[1];
 			prev_node[1]=0;
 		}
@@ -643,7 +796,8 @@ void treeprint(tree<long>*root,size_t* prev_node=0){
 	}
 }
 
-void treep(tree<long>*root,uint64_t l){
+template<typename T,typename CMP>
+void treep(tree<T,CMP>*root,uint64_t l=0){
 	if (!root){
 		return;
 	}
@@ -675,14 +829,6 @@ void treep(tree<long>*root,uint64_t l){
 #include <stdlib.h>
 #include <string.h>
 #include <tgmath.h>
-
-#ifdef print
-#undef print
-#endif
-
-#ifdef write
-#undef write
-#endif
 
 struct array_s {
 	size_t mem_size;
@@ -769,9 +915,11 @@ static inline void putint(uint64_t out) {
 	}
 }
 
+#include <vector>
+
 template<typename T>
 void check(T q,T e){
-	vector<T> a;
+	std::vector<T> a;
 	for (auto w=q;w!=e;++w){
 		a.push_back(w);
 	}
@@ -800,55 +948,86 @@ void check(T q,T e){
 	assert(a==s);
 }
 
+#include <set>
+#include <map>
+// #include <bits/stdc++.h>
+// using namespace std;
+
+struct l{
+	long q=0;
+	l(long e):q(e){}
+	l(){};
+	// l(const l&&e){
+	// 	q=e.q;
+	// }
+	// auto&operator=(const l&&e){
+	// 	q=e.q;
+	// 	return *this;
+	// }
+};
+
+// bool operator==(l q,l e){
+// 	return q.q==e.q;
+// }
+
+// bool operator<(l q,l e){
+// 	return q.q<e.q;
+// }
+
+// bool operator>(l q,l e){
+// 	return q.q>e.q;	
+// }
+
+namespace std{
+	template<>
+	struct less<l>{
+		bool operator()(l q,l e)const{
+			return q.q<e.q;
+		}
+	};
+	template<>
+	struct greater<l>{
+		bool operator()(const l& q,const l& e)const{
+			return q.q>e.q;
+		}
+	};
+}
+
 int main(){
-	tree<long> a;
-	set<long> s;
+	tree<long,std::greater<long>> a;
+	std::set<long,std::greater<long>> s;
 	uint64_t c_=0;
-	for (uint64_t w=0;w<4321;++w){
-		// auto z=rand()%6;
-		auto z=getint();
+	long t=0;
+	t=time(NULL);
+	// t=1653088367;
+	printf("%li\n",t);
+	srand(t);
+	for (uint64_t w=0;w<354321;++w){
+		long z=rand()%5;
+		long q=rand()%49;
+		// long z=getint();
+		// long q=getint();
+		// printf("%li %li\n",z,q);
+		// ic(z,q)
 		if (feof(stdin)){
 			break;
 		}
-		if (z<2){
-			auto q=getint();
-			// auto q=rand()%49;
-			// print(z,q)
+		if (z==1){
 			a.insert(q);
 			s.insert(q);
 		}
 		if (z==3){
-			auto q=getint();
-			// auto q=rand()%49;
-			// print(z,q)
 			assert((a.find(q)==nullptr)==(s.find(q)==s.end()));
 		}
-		if (z==4){
-			auto q=getint();
-			// auto q=rand()%49;
-			// print(z,q)
+		if (z==2){
 			a.erase(q);
 			s.erase(q);
 		}
-		if (z==5){
-			auto q=getint();
-			// auto q=rand()%49;
-			// print(z,q)
-			if (distance(a.begin(),a.lower_bound(q))!=distance(s.begin(),s.lower_bound(q))){
-				ic(itervect(s.begin(),s.end()))
-				ic(itervect(a.begin(),a.end()))
-				ic(q)
-				ic(distance(a.begin(),a.lower_bound(q)))
-				ic(distance(s.begin(),s.lower_bound(q)))
-				treeprint(&a);
-			}
-			assert(distance(a.begin(),a.lower_bound(q))==distance(s.begin(),s.lower_bound(q)));
+		if (z==0){
+			assert(std::distance(a.begin(),a.lower_bound(q))==std::distance(s.begin(),s.lower_bound(q)));
 		}
-		if (z==6){
-			auto q=getint();
-			// auto q=rand()%49;
-			// print(z,q)
-			assert(distance(a.begin(),a.upper_bound(q))==distance(s.begin(),s.upper_bound(q)));
+		if (z==4){
+			assert(std::distance(a.begin(),a.upper_bound(q))==std::distance(s.begin(),s.upper_bound(q)));
 		}
 		auto x=a.begin();
 		auto c=s.begin();
@@ -856,73 +1035,25 @@ int main(){
 			assert(*x==*c);
 		}
 		assert(x==a.end() and c==s.end());
-		if (++c_ > 111){
-			treeprint(&a);
-		}
+		auto f=std::move(a);
+		a=std::move(f);
 	}
 
-	// vector<long> d={8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 22, 23, 25, 26, 27, 28, 29, 31, 33, 34, 35, 36, 38, 39, 42, 44, 46, 47, 48};
-	// for (auto w:d){
-	// 	a.insert(w);
-	// 	s.insert(w);
-	// }
-	// ic(distance(a.begin(),a.lower_bound(16)));
-	// ic(distance(s.begin(),s.lower_bound(16)));
-
+	// dict<uint64_t,tree<uint64_t>> a;
+	// std::map<long,std::set<long>> s;
 	// for (uint64_t w=0;w<9;++w){
-	// 	a.insert(w*2);
-	// 	s.insert(w*2);
+	// 	for (uint64_t e=0;e<9;++e){
+	// 		a[w].insert(e);
+	// 		s[w].insert(e);
+	// 	}
 	// }
-	// for (uint64_t w=0;w<20;++w){
-	// 	ic(distance(a.begin(),a.lower_bound(w))==distance(s.begin(),s.lower_bound(w)))
-	// }
-	// // a.erase(4);
-	// // a.erase(1);
-	// while (a.size()){
-	// 	auto i=rand()%a.size();
-	// 	auto j=*(a.begin()+i);
-	// 	a.erase(*(a.begin()+i));
+	// for (uint64_t w=0;w<9;++w){
+	// 	for (uint64_t e=0;e<9;++e){
+	// 		a[w].erase(e);
+	// 		s[w].erase(e);
+	// 	}
 	// }
 
-
-	// check(a.begin()-200,a.end()+200);
-	// assert(a.end()-a.begin()==a.size());
-
-	// auto g=a.find(20);
-	// ic(g.p,g.l,g==nullptr);
-
-
-	// auto s=a.end()-1;
-	// ic(s.l)
-	// treeprint(s.p);
-	// ++s;
-	// ic(s.l)
-	// treeprint(s.p);
-	// ++s;
-	// ic(s.l)
-	// treeprint(s.p);
-	// --s;
-	// ic(s.l)
-	// treeprint(s.p);
-	// --s;
-	// ic(s.l)
-	// treeprint(s.p);
-
-	// ic(*s)
-	// tree<long>::iter q,e;
-	// q=a.begin();
-	// e=a.end();
-	// q.p=a.next[0];
-	// q.l=0;
-	// e.p=a.next[1];
-	// e.l=0;
-	// cout<<*q<<endl;
-	// cout<<*e<<endl;
-	// cout<<(q-e)<<endl;
-	// treeprint(&a,0);
-	// auto q=a.begin();
-	// auto e=a.end();
-	// ic(itervect(q,e))
 
 }
 
