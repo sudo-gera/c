@@ -13,20 +13,15 @@ def getstr():
 
 strs=[getstr() for w in range(20)]
 
-n=rand(1,20000)
-print(n)
-# q=rand(1,20000000000)
-# print(n,q)
-# for w in range(n):
-	# c=choice(['+','-','=','?','??'])
-	# if c in '+-':
-	# 	print(c,rand(200),rand(n))
-	# if c in '=?':
-	# 	print(c,rand(n))
-	# if c == '??':
-	# 	print(c,rand(200))
-	# print(rand(200),end=' ')
-# print()
-for w in range(n):
-	print(choice('LR'),end='')
-print()
+n=rand(1,20)
+k=rand(20)
+print(n,k)
+a=[rand(-6,6) for w in range(n)]
+print(*a)
+for w in range(k):
+	q=rand(2)+1
+	if q==1:
+		print(q,rand(n),rand(-6,6))
+	if q==2:
+		e=rand(n)
+		print(q,rand(e+1),e)

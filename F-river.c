@@ -1,3 +1,126 @@
+#include <assert.h>
+#include <ctype.h>
+#include <inttypes.h>
+#include <iso646.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <tgmath.h>
+#include <stddef.h>
+
+#ifdef print
+#undef print
+#endif
+
+#ifdef write
+#undef write
+#endif
+
+struct array_s {
+	size_t mem_size;
+	size_t el_count;
+	char data[0];
+};
+
+static inline size_t len(void *a) {
+	if (a == NULL) {
+		return 0;
+	}
+	return ((struct array_s *)(a))[-1].el_count;
+}
+
+static inline void del(void *a) {
+	if (a != NULL) {
+		free(((struct array_s *)(a)) - 1);
+	}
+}
+
+static inline struct array_s *resize_f(struct array_s **vp, size_t el_size, size_t n) {
+	if (*vp == NULL) {
+		*vp = (struct array_s *)calloc(1, sizeof(struct array_s));
+		*vp += 1;
+	}
+	struct array_s *a = *vp - 1;
+	assert(a->data == *(char **)vp);
+	if (a->mem_size < n + 1) {
+		size_t cur_size = a->mem_size * el_size;
+		size_t new_size;
+		if (a->mem_size * 2 > n) {
+			new_size = a->mem_size * 2 * el_size;
+		} else {
+			new_size = (n + 1) * el_size;
+		}
+		a = (struct array_s *)realloc(a, sizeof(struct array_s) + new_size);
+		memset(a->data + a->mem_size * el_size, 0, new_size - cur_size);
+		a->mem_size = new_size / el_size;
+	}
+	a->el_count = n;
+	*vp = a + 1;
+	return a + 1;
+}
+/////// resize(a, n) is resize_f(&a, sizeof(a[0]), n)
+// #define resize(a, ...) (resize_f((struct array_s **)&(a), sizeof((a)[0]), (__VA_ARGS__)))
+// #define append(a, ...) (resize((a), len(a) + 1), (a)[len(a) - 1] = (__VA_ARGS__))
+// #define pop(a) (resize((a), len(a) - 1), (a)[len(a)])
+// #define back(a) ((a)[len(a)-1])
+
+static inline int64_t getint() {
+	int sign = 1;
+	int c;
+	size_t res = 0;
+	while (c = getchar_unlocked(), isspace(c))
+		;
+	if (c == '-') {
+		sign = -1;
+	} else {
+		res = c - '0';
+	}
+	while (c = getchar_unlocked(), isdigit(c)) {
+		res *= 10;
+		res += c - '0';
+	}
+	return (int64_t)(res)*sign;
+}
+
+static inline void putint(uint64_t out) {
+	if (out > (1LLU << 63) - 1) {
+		putchar_unlocked('-');
+		out = 1 + ~out;
+	}
+	char data[44];
+	char *dend = data;
+	while (out) {
+		*++dend = (unsigned)('0') + out % 10;
+		out /= 10;
+	}
+	if (dend == data) {
+		putchar_unlocked('0');
+	}
+	for (; dend != data; --dend) {
+		putchar_unlocked(*dend);
+	}
+}
+
+static inline void print(uint64_t out) {
+	putint(out);
+	putchar('\n');
+}
+
+static inline void write(uint64_t out) {
+	putint(out);
+	putchar(' ');
+}
+
+// #define min(a,s) ((a)<(s)?(a):(s))
+// #define max(a,s) ((a)>(s)?(a):(s))
+
+typedef int (*cmp_f_t)(const void *, const void *);
+
+///////////////////////////////////////////////////end of lib
+
 #include <inttypes.h>
 #include <stdlib.h>
 #include <iostream>
@@ -10,67 +133,78 @@ template <typename T>
 class treap{
 private:
 	struct el{
-		T v;
-		int64_t w;
-		el* z_get=nullptr;
-		el* x_get=nullptr;
-		el* p=nullptr;
-		int64_t s=1;
-		int64_t d=1;
-		int r=0;
+		const T v;
+		const int64_t w;
+		const el* const z_get=nullptr;
+		const el* const x_get=nullptr;
+		const el* const p=nullptr;
+		const int64_t s=1;
+		const int64_t d=1;
+		const uint64_t sum=0;
+		const int r=0;
 		template<typename...Y>
 		el(const Y&..._v):v(_v...),w(rand()){update();}
+		el(const el&t)=delete;
 
 		template<typename y>
-		void z_put(y q){
-			z_get=q;
+		void z_put(y q)const{
+			const_cast<const el*&>(z_get)=q;
+			// z_get=q;
 			update();
 		}
 
 		template<typename y>
-		void x_put(y q){
-			x_get=q;
+		void x_put(y q)const{
+			const_cast<const el*&>(x_get)=q;
+			// x_get=q;
 			update();
 		}
-		void make(){
-			if (r){
-				auto t=z_put();
-				z_put(x_put());
-				x_put(t);
-				if (z_put()){
-					z_put()->r=1;
-				}
-				if (x_put()){
-					x_put()->r=1;
-				}
-				r=0;
-			}
-		}
-		void update(){
+		// void make(){
+		// 	if (r){
+		// 		auto t=z_put();
+		// 		z_put(x_put());
+		// 		x_put(t);
+		// 		if (z_put()){
+		// 			z_put()->r=1;
+		// 		}
+		// 		if (x_put()){
+		// 			x_put()->r=1;
+		// 		}
+		// 		r=0;
+		// 	}
+		// }
+		void update()const{
 			auto t=this;
 			if (t->z_get==nullptr and t->x_get==nullptr){
-				t->s=1;
-				t->d=1;
+				const_cast<int64_t&>(t->s)=1;
+				const_cast<int64_t&>(t->d)=1;
+				const_cast<uint64_t&>(t->sum) = t->v*t->v;
 			}
 			else if (t->z_get==nullptr){
-				t->s=t->x_get->s+1;
-				t->x_get->p=t;
-				t->d=t->x_get->d+1;
+				const_cast<int64_t&>(t->s)=t->x_get->s+1;
+				const_cast<const el*&>(t->x_get->p)=t;
+				const_cast<int64_t&>(t->d)=t->x_get->d+1;
+				const_cast<uint64_t&>(t->sum) = t->v*t->v + t->x_get->sum;
 			}
 			else if (t->x_get==nullptr){
-				t->s=t->z_get->s+1;
-				t->z_get->p=t;
-				t->d=t->z_get->d+1;
+				const_cast<int64_t&>(t->s)=t->z_get->s+1;
+				const_cast<const el*&>(t->z_get->p)=t;
+				const_cast<int64_t&>(t->d)=t->z_get->d+1;
+				const_cast<uint64_t&>(t->sum) = t->v*t->v + t->z_get->sum;
 			}else{
-				t->s=t->z_get->s+t->x_get->s+1;
-				t->x_get->p=t;
-				t->z_get->p=t;
-				t->d=(t->z_get->d>t->x_get->d?t->z_get->d:t->x_get->d)+1;
+				const_cast<int64_t&>(t->s)=t->z_get->s+t->x_get->s+1;
+				const_cast<const el*&>(t->x_get->p)=t;
+				const_cast<const el*&>(t->z_get->p)=t;
+				const_cast<int64_t&>(t->d)=(t->z_get->d>t->x_get->d?t->z_get->d:t->x_get->d)+1;
+				const_cast<uint64_t&>(t->sum) = t->v*t->v + t->x_get->sum + t->z_get->sum;
 			}
 			if (t->d>128){
 				std::cerr<<"bamboo!! "<<t->d<<std::endl;
 				exit(0);
 			}
+		}
+		void set_root()const{
+			const_cast<const el*&>(p)=nullptr;
 		}
 		int64_t nz_find_index(){
 			auto q=this;
@@ -90,7 +224,7 @@ private:
 		}
 	};
 
-	static int64_t el_size(el*s){
+	static int64_t el_size(const el*s){
 		return s?s->s:0;
 	}
 
@@ -98,7 +232,7 @@ private:
 		return s?s->nz_find_index():0;
 	}
 
-	static el* get_by_index(el*s,int64_t n){
+	static const el* get_by_index(const el*s,int64_t n){
 		if (!s){
 			return nullptr;
 		}
@@ -147,12 +281,12 @@ private:
 		pr(q->x_get,n+1);
 	}
 
-	static auto pri(el* root,size_t*prev_node=0){
+	static auto pri(const el* root,size_t*prev_node=0){
 		if (!root){
 			return;
 		}
-		el*left=(root)->z_get;
-		el*right=(root)->x_get;
+		const el*left=(root)->z_get;
+		const el*right=(root)->x_get;
 
 		size_t node[3];
 		node[2]=(size_t)NULL;
@@ -208,7 +342,7 @@ private:
 			std::cout<<("╋");
 		}
 		std::cout<<("► ");
-		std::cout<<root->v<<std::endl;
+		std::cout<<root->v<<" "<<root->sum<<std::endl;
 
 		save=0;
 		if (prev_node and prev_node[1]==1){
@@ -232,7 +366,7 @@ private:
 		return w;
 	}
 
-	static void del(el* q){
+	static void del(const el* q){
 		if (!q){
 			return;
 		}
@@ -241,7 +375,7 @@ private:
 		delete q;
 	}
 
-	static el* merge(el* t1,el* t2){
+	static const el* merge(const el* t1,const el* t2){
 		if (!t1){
 			return t2;
 		}
@@ -257,7 +391,7 @@ private:
 		}
 	}
 
-	static std::pair<el*,el*> split(el* t,int64_t n){
+	static std::pair<const el*,const el*> split(const el* t,int64_t n){
 		if (!t){
 			return {nullptr,nullptr};
 		}else if (t->z_get==nullptr){
@@ -268,7 +402,8 @@ private:
 				t->x_put(tmp.first);
 				auto t2=tmp.second;
 				if(t2){
-					t2->p=nullptr;
+					t2->set_root();
+					// t2->p=nullptr;
 				}
 				return {t,t2};
 			}
@@ -276,14 +411,16 @@ private:
 			auto t1=t->z_get;
 			t->z_put((el*)(nullptr));
 			if (t1){
-				t1->p=nullptr;
+				t1->set_root();
+				// t1->p=nullptr;
 			}
 			return {t1,t};
 		}else if (t->z_get->s+1==n){
 			auto t2=t->x_get;
 			t->x_put((el*)(nullptr));
 			if (t2){
-				t2->p=nullptr;
+				t2->set_root();
+				// t2->p=nullptr;
 			}
 			return {t,t2};
 		}else if (t->z_get->s+1<n){
@@ -291,7 +428,8 @@ private:
 			t->x_put(tmp.first);
 			auto t2=tmp.second;
 			if (t2){
-				t2->p=nullptr;
+				t2->set_root();
+				// t2->p=nullptr;
 			}
 			return {t,t2};
 		}else if (t->z_get->s>n){
@@ -299,10 +437,11 @@ private:
 			auto t1=tmp.first;
 			t->z_put(tmp.second);
 			if (t1){
-				t1->p=nullptr;
+				t1->set_root();
+				// t1->p=nullptr;
 			}
 			return {t1,t};
-			return {nullptr,nullptr};
+			// return {nullptr,nullptr};
 		}
 		assert(0);
 		return {nullptr,nullptr};
@@ -363,7 +502,7 @@ private:
 		return (el*)(0);
 	}
 
-	el* e=nullptr;
+	const el* e=nullptr;
 public:
 	void out(){
 		pri(e);
@@ -416,8 +555,11 @@ public:
 	int64_t size()const{
 		return e?e->s:0;
 	}
+	uint64_t sum()const{
+		return e?e->sum:0;
+	}
 
-	T&operator[](int64_t n){
+	const T&operator[](int64_t n){
 		if (n<0){
 			n+=this->size();
 		}
@@ -560,7 +702,7 @@ public:
 		template<typename Y>
 		using is_iterator=Y;
 		using original_type=treap<T>;
-		el*e=nullptr;
+		const el*e=nullptr;
 		int64_t o=0;
 		int64_t d=1;
 		T&operator*(){
@@ -622,7 +764,7 @@ public:
 		if (!e){
 			return iter{e,0};
 		}
-		auto q=e;
+		const el* q=e;
 		while (q->z_get){
 			q=q->z_get;
 		}
@@ -632,7 +774,7 @@ public:
 		if (!e){
 			return iter{e,0};
 		}
-		auto q=e;
+		const el* q=e;
 		while (q->x_get){
 			q=q->x_get;
 		}
@@ -798,4 +940,80 @@ auto operator!=(TT q,TT w)->typename TT::template is_iterator<bool>{
 	q+=0;
 	w+=0;
 	return q.e!=w.e or q.o!=w.o;
+}
+
+int main(){
+	uint64_t n=getint();
+	getint();
+	treap<uint64_t> a;
+	for (uint64_t w=0;w<n;++w){
+		a.push_back(getint());
+	}
+	uint64_t k=getint();
+	// a.out();
+	print(a.sum());
+	for (uint64_t w=0;w<k;++w){
+		uint64_t q=getint(),p=getint()-1;
+		if (q==1){
+			if (p==0){
+				auto x=a[p];
+				auto c=a[p+1];
+				a.erase(p);
+				a.erase(p);
+				a.insert(p,c+x);
+				// auto c=a.cut_left(1);
+				// auto v=a.cut_left(1);
+				// v[0]+=c[0];
+				// a.add_left(v);
+			}else
+			if (p==a.size()-1){
+				auto z=a[p-1];
+				auto x=a[p];
+				a.erase(p-1);
+				a.erase(p-1);
+				a.insert(p-1,z+x);
+				// auto s=a.cut_left(p);
+				// auto z=s.cut_right(1);
+				// auto c=a.cut_left(1);
+				// z[0]+=c[0];
+				// s.add_right(z);
+				// a.add_left(s);
+			}else{
+				// auto s=a.cut_left(p);
+				// auto z=s.cut_right(1);
+				// auto c=a.cut_left(1);
+				// auto v=a.cut_left(1);
+				// z[0]+=c[0]/2;
+				// v[0]+=(c[0]+1)/2;
+				// s.add_right(z);
+				// a.add_left(v);
+				// a.add_left(s);
+				auto z=a[p-1];
+				auto x=a[p];
+				auto c=a[p+1];
+				a.erase(p-1);
+				a.erase(p-1);
+				a.erase(p-1);
+				a.insert(p-1,z+x/2);
+				a.insert(p,c+(x+1)/2);
+			}
+		}
+		if (q==2){
+			// auto s=a.cut_left(p);
+			// auto d=a.cut_left(1);
+			// auto f=d;
+			// d[0]/=2;
+			// f[0]+=1;
+			// f[0]/=2;
+			// a.add_left(f);
+			// a.add_left(d);
+			// a.add_left(s);
+			auto z=a[p];
+			a.erase(p);
+			a.insert(p,(z+1)/2);
+			a.insert(p,z/2);
+		}
+		// a.out();
+		print(a.sum());
+	}
 }
