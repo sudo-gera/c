@@ -13,15 +13,14 @@ def getstr():
 
 strs=[getstr() for w in range(20)]
 
-n=rand(1,20)
-k=rand(20)
-print(n,k)
-a=[rand(-6,6) for w in range(n)]
-print(*a)
-for w in range(k):
+n=rand(1,128)
+print(n)
+for w in range(rand(60000)):
 	q=rand(2)+1
+	print(q)
 	if q==1:
-		print(q,rand(n),rand(-6,6))
+		print(rand(n),rand(n),rand(n),rand(-60,61))
 	if q==2:
-		e=rand(n)
-		print(q,rand(e+1),e)
+		w,e,r=rand(n),rand(n),rand(n)
+		print(rand(w+1),rand(e+1),rand(r+1),w,e,r)
+print(3)
