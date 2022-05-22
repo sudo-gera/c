@@ -121,9 +121,66 @@ typedef int (*cmp_f_t)(const void *, const void *);
 
 ///////////////////////////////////////////////////end of lib
 
+#include <map>
+#include <algorithm>
+
+int prefix(uint64_t x, uint64_t y, uint64_t z) {
+	int s = 0;
+	for (uint64_t lx = x; lx < 128; lx = f(lx) - 1) {
+		for (uint64_t ly = y; ly < 128; ly = f(ly) - 1) {
+			for (uint64_t lz = z; lz < 128; lz = f(lz) - 1) {
+				s += fen[lx][ly][lz];
+			}
+		}
+	}
+	return s;
+}
+
+void add(uint64_t x,uint64_t y,int v,uint64_t*d,) {
+	for (uint64_t lx = x; lx < 128; lx = g(lx)) {
+		for (uint64_t ly = y; ly < 128; ly = g(ly)) {
+			for (uint64_t lz = z; lz < 128; lz = g(lz)) {
+				fen[lx][ly][lz] += v;
+			}
+		}
+	}
+}
 
 
 int main(){
 	uint64_t n=getint();
-	uint64_t 
+	uint64_t*a=0;
+	resize(a,n*3);
+	for (uint64_t w=0;w<3*n;++w){
+		a[w]=getint();
+	}
+	// uint64_t*unzip_x=0;
+	// uint64_t*unzip_y=0;
+	// resize(unzip_x,n);
+	// resize(unzip_y,n);
+	// for (uint64_t w=0;w<n;++w){
+	// 	unzip_x[w]=a[3*w+0];
+	// 	unzip_y[w]=a[3*w+1];
+	// }
+	// std::sort(unzip_x,unzip_x+len(unzip_x));
+	// std::sort(unzip_y,unzip_y+len(unzip_y));
+	// std::map<uint64_t,uint64_t> zip_x;
+	// std::map<uint64_t,uint64_t> zip_y;
+	// for (uint64_t w=0;w<n;++w){
+	// 	zip_x[unzip_x[w]]=w;
+	// }
+	// for (uint64_t w=0;w<n;++w){
+	// 	zip_y[unzip_y[w]]=w;
+	// }
+	// for (uint64_t w=0;w<n;++w){
+	// 	a[w*3+0]=zip_x[a[w*3+0]];
+	// 	a[w*3+1]=zip_y[a[w*3+1]];
+	// }
+	uint64_t m=getint();
+	char com[30];
+	for (uint64_t w=0;w<m;++w){
+		scanf("%20s",com);
+		uint64_t c=getint(),v=getint();
+
+	}
 }
