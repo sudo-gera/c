@@ -217,7 +217,7 @@ private:
 	};
 
 	static void check(const el*s){
-		return;
+		// return;
 		if (!s){
 			return;
 		}
@@ -284,19 +284,16 @@ private:
 		return s?s->nz_find_index():0;
 	}
 
-	static const el* lower_bound(const el*s,T f){
-		get(s);
-		if (!s or s->v==f){
-			return s;
-		}
-		if (s->v<f and s_x){
-			return lower_bound(s_x,f);
-		}
-		if (s->v>f and s_z){
-			return lower_bound(s_z,f);
-		}
-		return s;
-	}
+	// static const el* lower_bound(const el*s,T f){
+	// 	get(s);
+	// 	if (!s){
+	// 		return s;
+	// 	}
+	// 	if (s->v<f){
+
+	// 	}
+
+	// }
 
 	static const el* get_by_index(const el*s,int64_t n){
 		if (!s){
@@ -993,30 +990,19 @@ public:
 	iter lower_bound(const T&d){
 		if (is_forward()){
 			iter t;
-			auto q=e_get();
-			if (!q){
-				t=begin();
-			}else
-			if (d<=q->first){
-				t=begin();
-			}else
-			if (d>q->last){
-				t=end();
-			}else{
-				assert(q);
-				t={lower_bound(q,d),0};
-				uint64_t c=0;
-				while(*t>=d){
-					--t;
-					c++;
-					assert(c<40);
-				}
-				while(t.o==0 and *t<d){
-					++t;
-					c++;
-					assert(c<40);
-				}
-			}
+			// auto q=e_get();
+			// if (!q){
+			// 	t=begin();
+			// }else
+			// if (d<=q->first){
+			// 	t=begin();
+			// }else
+			// if (d>q->last){
+			// 	t=end();
+			// }else{
+
+			// }
+
 			// 	auto w=q;
 			// 	w=q;
 			// 	while(q){
@@ -1030,7 +1016,7 @@ public:
 			// 	}
 			// 	t={w,0};
 			// }
-			// iter y=std::lower_bound(begin(),end(),d);
+			t=std::lower_bound(begin(),end(),d);
 			// assert(t==y);
 			return t;
 		// }else
@@ -1047,6 +1033,32 @@ public:
 	}
 	iter upper_bound(const T&d){
 		if (is_forward()){
+			iter t;
+			auto q=e_get();
+			if (!q){
+				t=begin();
+			}else
+			if (d<q->first){
+				t=begin();
+			}else
+			if (d>=q->last){
+				t=end();
+			}else{
+				assert(q);
+				auto w=q;
+				w=nullptr;
+				while(q){
+					if (q->v>d){
+						w=q;
+						q=q->z_get();
+					}else{
+						q=q->x_get();
+					}
+				}
+				t=iter{w,0};
+			}
+
+
 			// auto q=e_get();
 			// auto w=q;
 			// w=nullptr;
@@ -1059,7 +1071,8 @@ public:
 			// 	}
 			// }
 			// return {w,0};
-			return std::upper_bound(begin(),end(),d);
+			assert(t==std::upper_bound(begin(),end(),d));
+			return t;
 		// }else
 		// if (is_backward()){
 		// 	auto p=std::lower_bound(rbegin(),rend(),d);

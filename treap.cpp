@@ -7,6 +7,9 @@
 #include <vector>
 using namespace std;
 
+#define prime 509
+
+#define co 4
 
 template<typename T>
 void check(T q,T e){
@@ -133,21 +136,21 @@ int main(){
 	assert(z==x);
 
 
-	for (size_t w=1;w<509;++w){
+	for (size_t w=1;w<prime;++w){
 		size_t r=1;
 		size_t t=w; 
-		for (size_t y=1;y<509;y*=2){
-			if (y&(509-2)){
+		for (size_t y=1;y<prime;y*=2){
+			if (y&(prime-2)){
 				r*=t;
-				r%=509;
+				r%=prime;
 			}
 			t*=t;
-			t%=509;
+			t%=prime;
 		}
 		e.push_back(r);
 	}
 	for (uint64_t w=0;w<e.size();++w){
-		assert(e[w]*(w+1)%509==1);
+		assert(e[w]*(w+1)%prime==1);
 	}
 
 	for (uint64_t w=0;w<e.size();++w){
@@ -167,16 +170,16 @@ int main(){
 	}
 
 	e.clear();
-	for (size_t w=1;w<509;++w){
+	for (size_t w=1;w<prime;++w){
 		size_t r=1;
 		size_t t=w; 
-		for (size_t y=1;y<509;y*=2){
-			if (y&(509-2)){
+		for (size_t y=1;y<prime;y*=2){
+			if (y&(prime-2)){
 				r*=t;
-				r%=509;
+				r%=prime;
 			}
 			t*=t;
-			t%=509;
+			t%=prime;
 		}
 		e.push_back(r);
 	}
@@ -237,11 +240,11 @@ int main(){
 	// ic(e,y)
 
 	auto g=vector<long>(e.begin(), e.end());
-	for (uint64_t w=0;w<50;++w){
+	for (uint64_t w=0;w<co;++w){
 		assert(e.next_permutation()==next_permutation(g.begin(),g.end()));
 		assert(vector<long>(e)==g);
 	}
-	for (uint64_t w=0;w<50;++w){
+	for (uint64_t w=0;w<co;++w){
 		assert(e.prev_permutation()==prev_permutation(g.begin(),g.end()));
 		assert(vector<long>(e)==g);
 	}
@@ -307,7 +310,7 @@ int main(){
 	// z=e.begin();
 	// x=e.end();
 	// for (size_t w=0;w<102400-102001;++w){
-	// 	e.insert(w*2509+1,w);
+	// 	e.insert(w*2prime+1,w);
 	// }
 	// assert(vector<long>(z,x)==vector<long>(e));
 	// y=e;
