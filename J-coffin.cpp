@@ -1,3 +1,5 @@
+#include "treap.hpp"
+
 #include <assert.h>
 #include <ctype.h>
 #include <inttypes.h>
@@ -9,19 +11,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <tgmath.h>
+#include <stddef.h>
 
 #ifdef print
 #undef print
 #endif
+
 #ifdef write
 #undef write
 #endif
-static inline void print(uint64_t);
-void _assert(bool f){
-	while (!f){
-		print(0);
-	}
-}
 
 struct array_s {
 	size_t mem_size;
@@ -45,7 +43,6 @@ static inline void del(void *a) {
 static inline struct array_s *resize_f(struct array_s **vp, size_t el_size, size_t n) {
 	if (*vp == NULL) {
 		*vp = (struct array_s *)calloc(1, sizeof(struct array_s));
-		_assert(*vp);
 		*vp += 1;
 	}
 	struct array_s *a = *vp - 1;
@@ -59,7 +56,6 @@ static inline struct array_s *resize_f(struct array_s **vp, size_t el_size, size
 			new_size = (n + 1) * el_size;
 		}
 		a = (struct array_s *)realloc(a, sizeof(struct array_s) + new_size);
-		_assert(a);
 		memset(a->data + a->mem_size * el_size, 0, new_size - cur_size);
 		a->mem_size = new_size / el_size;
 	}
@@ -68,9 +64,10 @@ static inline struct array_s *resize_f(struct array_s **vp, size_t el_size, size
 	return a + 1;
 }
 /////// resize(a, n) is resize_f(&a, sizeof(a[0]), n)
-#define resize(a, n) (resize_f((struct array_s **)&(a), sizeof((a)[0]), (n)))
-#define append(a, v) (resize((a), len(a) + 1), (a)[len(a) - 1] = (v))
+#define resize(a, ...) (resize_f((struct array_s **)&(a), sizeof((a)[0]), (__VA_ARGS__)))
+#define append(a, ...) (resize((a), len(a) + 1), (a)[len(a) - 1] = (__VA_ARGS__))
 #define pop(a) (resize((a), len(a) - 1), (a)[len(a)])
+#define back(a) ((a)[len(a)-1])
 
 static inline int64_t getint() {
 	int sign = 1;
@@ -78,6 +75,7 @@ static inline int64_t getint() {
 	size_t res = 0;
 	while (c = getchar_unlocked(), isspace(c))
 		;
+	if (c==EOF){return -1;}
 	if (c == '-') {
 		sign = -1;
 	} else {
@@ -108,6 +106,7 @@ static inline void putint(uint64_t out) {
 		putchar_unlocked(*dend);
 	}
 }
+
 static inline void print(uint64_t out) {
 	putint(out);
 	putchar('\n');
@@ -125,57 +124,85 @@ typedef int (*cmp_f_t)(const void *, const void *);
 
 ///////////////////////////////////////////////////end of lib
 
-
-
 int main(){
-	// perf();
 	uint64_t n=getint();
-	uint64_t m=getint();
-	int**a=0;
-	resize(a,1);
-	resize(a[0],n);
+	std::vector<long> a;
 	for (uint64_t w=0;w<n;++w){
-		a[0][w]=getint();
+		a.push_back(getint());
 	}
-	uint64_t la=0;
-	uint64_t j=n;
-	while (j){
-		j/=2;
-		la++;
-	}
-	resize(a,la);
-	for (uint64_t k=1;;k++){
-		uint64_t p=1LLU<<(k-1);
-		if (p*2>n){
+	while (1){
+		uint64_t q=getint();
+		if (q==-1){
 			break;
 		}
-		// p/=2;
-		int*ak_1=a[k-1];
-		uint64_t lak_1p=len(ak_1)-p;
-		// if (lak_1p>n){
-		// 	break;
-		// }
-		resize(a[k],lak_1p);
-		int*ak=a[k];
-		for (uint64_t w=0,t=p;w<lak_1p;++w,++t){
-			ak[w]=max(ak_1[w],ak_1[t]);
+		if (q==1){
+			uint64_t l=getint(),r=getint()+1;
+			// auto s=a.cut_left(r);
+			// auto d=s.cut_left(l);
+			// print(s.sum());
+			// s.add_left(d);
+			// a.add_left(s);
+			long s=0;
+			for (uint64_t w=l;w<r;w++){
+				s+=a[w];
+			}
+			print(s);
+		}
+		if (q==2){
+			long x=getint();
+			uint64_t u=getint();
+			a.insert(u+a.begin(),x);
+		}
+		if (q==3){
+			uint64_t u=getint();
+			a.erase(a.begin()+u);
+		}
+		if (q==4){
+			long x=getint();
+			uint64_t l=getint(),r=getint()+1;
+			// auto s=a.cut_left(r);
+			// auto d=s.cut_left(l);
+			// s.mul(0);
+			// s.add(x);
+			// s.add_left(d);
+			// a.add_left(s);
+			for (uint64_t w=l;w<r;w++){
+				a[w]=x;
+			}
+		}
+		if (q==5){
+			long x=getint();
+			uint64_t l=getint(),r=getint()+1;
+			// auto s=a.cut_left(r);
+			// auto d=s.cut_left(l);
+			// s.add(x);
+			// s.add_left(d);
+			// a.add_left(s);
+			for (uint64_t w=l;w<r;w++){
+				a[w]+=x;
+			}
+		}
+		if (q==6){
+			uint64_t l=getint(),r=getint()+1;
+			// auto s=a.cut_left(r);
+			// auto d=s.cut_left(l);
+			// s.next_permutation();
+			// s.add_left(d);
+			// a.add_left(s);
+			std::next_permutation(a.begin()+l,a.begin()+r);
+		}
+		if (q==7){
+			uint64_t l=getint(),r=getint()+1;
+			// auto s=a.cut_left(r);
+			// auto d=s.cut_left(l);
+			// s.prev_permutation();
+			// s.add_left(d);
+			// a.add_left(s);
+			std::prev_permutation(a.begin()+l,a.begin()+r);
 		}
 	}
-	// perf();
-	for (uint64_t w=0;w<m;++w){
-		uint64_t x=getint(),y=getint()+1;
-		uint64_t k=-1;
-		uint64_t d=y-x;
-		while(d){
-			k++;
-			d/=2;
-		}
-		int*ak=a[k];
-		print(max(ak[x],ak[y-(1<<k)]));
+	for (uint64_t w=0;w<a.size();++w){
+		write(a[w]);
 	}
-	// perf();
-	for (uint64_t w=0;w<len(a);++w){
-		del(a[w]);
-	}
-	del(a);
+	putchar(10);
 }

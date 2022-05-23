@@ -1,5 +1,7 @@
 from random import *
 from fractions import Fraction
+from sys import argv
+run_num=int(argv[1]) if len(argv)>1 else 0
 def rand(q=2**64,e=None):
 	if e!=None:
 		q,e=e,q
@@ -11,16 +13,34 @@ def rand(q=2**64,e=None):
 def getstr():
 	return ''.join([choice('snmrdfhg')+choice('aioue') for w in range(10)])
 
-strs=[getstr() for w in range(20)]
+maxlen=100+int(run_num**0.5)
 
-n=rand(1,128)
+strs=[getstr() for w in range(maxlen)]
+
+n=rand(1,maxlen)
 print(n)
-for w in range(rand(60000)):
-	q=rand(2)+1
-	print(q)
+a=[rand(maxlen) for w in range(n)]
+print(*a)
+for w in range(rand(maxlen)):
+	q=rand(7)+1
+	if n==1 and q==3:
+		q=2
+	print(q,end=' ')
+	r=rand(n)
+	l=rand(r+1)
 	if q==1:
-		print(rand(n),rand(n),rand(n),rand(-60,61))
+		print(l,r)
 	if q==2:
-		w,e,r=rand(n),rand(n),rand(n)
-		print(rand(w+1),rand(e+1),rand(r+1),w,e,r)
-print(3)
+		print(rand(maxlen),rand(n))
+		n+=1
+	if q==3:
+		print(rand(n))
+		n-=1
+	if q==4:
+		print(rand(maxlen),l,r)
+	if q==5:
+		print(rand(maxlen),l,r)
+	if q==6:
+		print(l,r)
+	if q==7:
+		print(l,r)
