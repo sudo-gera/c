@@ -9,7 +9,7 @@ using namespace std;
 
 #define prime 509
 
-#define co 4
+#define co 40
 
 template<typename T>
 void check(T q,T e){

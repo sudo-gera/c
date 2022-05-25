@@ -140,7 +140,7 @@ def logging(log,stop):
 		elif q==None:
 			c+=1
 			y=time()
-			if y-t>0.2:
+			if y-t>0.8:
 				print(f'   {c} sucessfull tests',end='\r')
 				t=y
 		else:

@@ -13,26 +13,6 @@
 #define assert assert_m
 #endif
 
-#define bisect(b, e, ...)														\
-	({																			\
-		int64_t __begin = b;													\
-		int64_t __end = e;														\
-		assert(__begin <= __end);												\
-		while (__begin + 1 < __end) {											\
-			int64_t __center = (__begin + __end) / 2;							\
-			if (__VA_ARGS__) {													\
-				__end = __center;												\
-			} else {															\
-				__begin = __center;												\
-			}																	\
-		}																		\
-		int64_t __center = __begin;												\
-		if (__begin != __end and (__VA_ARGS__)) {								\
-			__end = __center;													\
-		}																		\
-		__end;																	\
-	})
-
 #define get(a) auto a##_z=a?a->z_get():0;auto a##_x=a?a->x_get():0;
 
 template <typename T>
@@ -52,14 +32,18 @@ private:
 		T const sum=0;
 		long const to_add=0;
 		long const to_mul=1;
-		long const is_forward=false;
-		long const is_backward=false;
+		long const is_forward=1;
+		long const is_backward=1;
+		// long const forward_prefix=1;
+		// long const forward_suffix=1;
+		// long const backward_prefix=1;
+		// long const backward_suffix=1;
 		template<typename...Y>
 		el(const Y&..._v):v(_v...),w(rand()){update();}
 
 		template<typename y>
 		void z_put(y q)const{
-			make();
+			// make();
 			// if (z){
 			// 	const_cast<const el*&>(z->p)=nullptr;
 			// }
@@ -69,7 +53,7 @@ private:
 
 		template<typename y>
 		void x_put(y q)const{
-			make();
+			// make();
 			// if (x){
 			// 	const_cast<const el*&>(x->p)=nullptr;
 			// }
@@ -78,12 +62,18 @@ private:
 		}
 
 		auto z_get()const{
-			make();
+			// make();
+			if (z){
+				z->make();
+			}
 			return z;
 		}
 
 		auto x_get()const{
-			make();
+			// make();
+			if (x){
+				x->make();
+			}
 			return x;
 		}
 
@@ -105,13 +95,19 @@ private:
 					const_cast<long&>(x->to_mul)*=to_mul;
 					const_cast<long&>(x->to_add)*=to_mul;
 				}
-				if (to_mul<0){
-					std::swap(const_cast<long&>(is_forward),const_cast<long&>(is_backward));
-					std::swap(const_cast<long&>(first),const_cast<long&>(last));
-				}
+				// if (to_mul<0){
+				// 	std::swap(const_cast<long&>(is_forward),const_cast<long&>(is_backward));
+				// 	std::swap(const_cast<long&>(first),const_cast<long&>(last));
+				// 	std::swap(const_cast<long&>(forward_prefix),const_cast<long&>(backward_prefix));
+				// 	std::swap(const_cast<long&>(forward_suffix),const_cast<long&>(backward_suffix));
+				// }
 				if (to_mul==0){
 					const_cast<long&>(is_forward)=1;
 					const_cast<long&>(is_backward)=1;
+					// const_cast<long&>(forward_prefix)=s;
+					// const_cast<long&>(backward_prefix)=s;
+					// const_cast<long&>(forward_suffix)=s;
+					// const_cast<long&>(backward_suffix)=s;
 				}
 				const_cast<long&>(to_mul)=1;
 			}
@@ -134,6 +130,8 @@ private:
 				std::swap(const_cast<const el*&>(z),const_cast<const el*&>(x));
 				std::swap(const_cast<long&>(is_forward),const_cast<long&>(is_backward));
 				std::swap(const_cast<long&>(first),const_cast<long&>(last));
+				// std::swap(const_cast<long&>(forward_prefix),const_cast<long&>(backward_suffix));
+				// std::swap(const_cast<long&>(forward_suffix),const_cast<long&>(backward_prefix));
 				if (z){
 					const_cast<long&>(z->rev)^=1;
 				}
@@ -142,6 +140,7 @@ private:
 				}
 				const_cast<long&>(rev)=0;
 			}
+			// check(this);
 		}
 		void update()const{
 			auto t=this;
@@ -167,31 +166,196 @@ private:
 				const_cast<long&>(s->last)=s->v;
 			}
 			if (s->z and s->x){
+				long s_z_forward=(s->z->to_mul==0 or (s->z->rev?s->z->is_backward:s->z->is_forward));
+				long s_z_backward=(s->z->to_mul==0 or (s->z->rev?s->z->is_forward:s->z->is_backward));
+				long s_x_forward=(s->x->to_mul==0 or (s->x->rev?s->x->is_backward:s->x->is_forward));
+				long s_x_backward=(s->x->to_mul==0 or (s->x->rev?s->x->is_forward:s->x->is_backward));
+				long s_x_first=(s->x->rev?s->x->last:s->x->first)*s->x->to_mul+s->x->to_add;
+				long s_z_last=(s->z->rev?s->z->first:s->z->last)*s->z->to_mul+s->z->to_add;
+				long s_z_s=s->z->s;
+				long s_x_s=s->x->s;
+				// long s_z_forward_prefix=0;
+				// long s_z_forward_suffix=0;
+				// long s_z_backward_prefix=0;
+				// long s_z_backward_suffix=0;
+				// if (s->z->to_mul==0){
+				// 	s_z_forward_prefix=s_z_s;
+				// 	s_z_forward_suffix=s_z_s;
+				// 	s_z_backward_prefix=s_z_s;
+				// 	s_z_backward_suffix=s_z_s;
+				// }else{
+				// 	s_z_forward_prefix=s->z->rev?s->z->backward_suffix:s->z->forward_prefix;
+				// 	s_z_forward_suffix=s->z->rev?s->z->backward_prefix:s->z->forward_suffix;
+				// 	s_z_backward_prefix=s->z->rev?s->z->forward_suffix:s->z->backward_prefix;
+				// 	s_z_backward_suffix=s->z->rev?s->z->forward_prefix:s->z->backward_suffix;
+				// }
+				// long s_x_forward_prefix=0;
+				// long s_x_forward_suffix=0;
+				// long s_x_backward_prefix=0;
+				// long s_x_backward_suffix=0;
+				// if (s->x->to_mul==0){
+				// 	s_x_forward_prefix=s_x_s;
+				// 	s_x_forward_suffix=s_x_s;
+				// 	s_x_backward_prefix=s_x_s;
+				// 	s_x_backward_suffix=s_x_s;
+				// }else{
+				// 	s_x_forward_prefix=s->x->rev?s->x->backward_suffix:s->x->forward_prefix;
+				// 	s_x_forward_suffix=s->x->rev?s->x->backward_prefix:s->x->forward_suffix;
+				// 	s_x_backward_prefix=s->x->rev?s->x->forward_suffix:s->x->backward_prefix;
+				// 	s_x_backward_suffix=s->x->rev?s->x->forward_prefix:s->x->backward_suffix;
+				// }
 				const_cast<long&>(s->s)=s->z->s+s->x->s+1;
-				const_cast<long&>(s->d)=1+std::max(s->z->d,s->x->d);
+				const_cast<long&>(s->d)=1+(s->z->d>s->x->d?s->z->d:s->x->d);
 				const_cast<long&>(s->sum)=s->v + s->z->sum*s->z->to_mul+s->z->to_add*s->z->s + s->x->sum*s->x->to_mul+s->x->to_add*s->x->s;
-				const_cast<long&>(s->is_forward)=((s->z->to_mul==0 or (s->z->rev?s->z->is_backward:s->z->is_forward)) and (s->x->to_mul==0 or (s->x->rev?s->x->is_backward:s->x->is_forward)) and (s->z->rev?s->z->first:s->z->last)*s->z->to_mul+s->z->to_add<=s->v and (s->x->rev?s->x->last:s->x->first)*s->x->to_mul+s->x->to_add>=s->v);
-				const_cast<long&>(s->is_backward)=((s->z->to_mul==0 or (s->z->rev?s->z->is_forward:s->z->is_backward)) and (s->x->to_mul==0 or (s->x->rev?s->x->is_forward:s->x->is_backward)) and (s->z->rev?s->z->first:s->z->last)*s->z->to_mul+s->z->to_add>=s->v and (s->x->rev?s->x->last:s->x->first)*s->x->to_mul+s->x->to_add<=s->v);
+				const_cast<long&>(s->is_forward)=(s_z_forward and s_x_forward and s_z_last<=s->v and s_x_first>=s->v);
+				const_cast<long&>(s->is_backward)=(s_z_backward and s_x_backward and s_z_last>=s->v and s_x_first<=s->v);
+
+				// const_cast<long&>(s->forward_prefix)=s_z_forward_prefix;
+				// if (s_z_forward){
+				// 	if (s_z_last<=s->v){
+				// 		const_cast<long&>(s->forward_prefix)+=1+s_x_forward_prefix*(s_x_first>=s->v);
+				// 	}
+				// }
+				// const_cast<long&>(s->backward_prefix)=s_z_backward_prefix;
+				// if (s_z_backward){
+				// 	if (s_z_last>=s->v){
+				// 		const_cast<long&>(s->backward_prefix)+=1+s_x_backward_prefix*(s_x_first<=s->v);
+				// 	}
+				// }
+				// const_cast<long&>(s->forward_suffix)=s_x_forward_suffix;
+				// if (s_x_forward){
+				// 	if (s_x_first>=s->v){
+				// 		const_cast<long&>(s->forward_suffix)+=1+s_z_forward_suffix*(s_z_last<=s->v);
+				// 	}
+				// }
+				// const_cast<long&>(s->backward_suffix)=s_x_backward_suffix;
+				// if (s_x_backward){
+				// 	if (s_x_first<=s->v){
+				// 		const_cast<long&>(s->backward_suffix)+=1+s_z_backward_suffix*(s_z_last>=s->v);
+				// 	}
+				// }
 			}else
 			if (s->z){
+				long s_x_forward=1;
+				long s_x_backward=1;
+				long s_z_forward=(s->z->to_mul==0 or (s->z->rev?s->z->is_backward:s->z->is_forward));
+				long s_z_backward=(s->z->to_mul==0 or (s->z->rev?s->z->is_forward:s->z->is_backward));
+				long s_z_last=(s->z->rev?s->z->first:s->z->last)*s->z->to_mul+s->z->to_add;
+				long s_x_first=0;
+				long s_z_s=s->z->s;
+				long s_x_s=0;
+				// long s_z_forward_prefix=0;
+				// long s_z_forward_suffix=0;
+				// long s_z_backward_prefix=0;
+				// long s_z_backward_suffix=0;
+				// if (s->z->to_mul==0){
+				// 	s_z_forward_prefix=s_z_s;
+				// 	s_z_forward_suffix=s_z_s;
+				// 	s_z_backward_prefix=s_z_s;
+				// 	s_z_backward_suffix=s_z_s;
+				// }else{
+				// 	s_z_forward_prefix=s->z->rev?s->z->backward_suffix:s->z->forward_prefix;
+				// 	s_z_forward_suffix=s->z->rev?s->z->backward_prefix:s->z->forward_suffix;
+				// 	s_z_backward_prefix=s->z->rev?s->z->forward_suffix:s->z->backward_prefix;
+				// 	s_z_backward_suffix=s->z->rev?s->z->forward_prefix:s->z->backward_suffix;
+				// }
+				// long s_x_forward_prefix=0;
+				// long s_x_forward_suffix=0;
+				// long s_x_backward_prefix=0;
+				// long s_x_backward_suffix=0;
 				const_cast<long&>(s->s)=s->z->s+1;
 				const_cast<long&>(s->d)=s->z->d+1;
 				const_cast<long&>(s->sum)=s->v + s->z->sum*s->z->to_mul+s->z->to_add*s->z->s;
-				const_cast<long&>(s->is_forward)=((s->z->to_mul==0 or (s->z->rev?s->z->is_backward:s->z->is_forward)) and (s->z->rev?s->z->first:s->z->last)*s->z->to_mul+s->z->to_add<=s->v);
-				const_cast<long&>(s->is_backward)=((s->z->to_mul==0 or (s->z->rev?s->z->is_forward:s->z->is_backward)) and (s->z->rev?s->z->first:s->z->last)*s->z->to_mul+s->z->to_add>=s->v);
+				const_cast<long&>(s->is_forward)=(s_z_forward and s_z_last<=s->v);
+				const_cast<long&>(s->is_backward)=(s_z_backward and s_z_last>=s->v);
+				// const_cast<long&>(s->forward_prefix)=s_z_forward_prefix;
+				// if (s_z_forward){
+				// 	if (s_z_last<=s->v){
+				// 		const_cast<long&>(s->forward_prefix)+=1+s_x_forward_prefix*(s_x_first>=s->v);
+				// 	}
+				// }
+				// const_cast<long&>(s->backward_prefix)=s_z_backward_prefix;
+				// if (s_z_backward){
+				// 	if (s_z_last>=s->v){
+				// 		const_cast<long&>(s->backward_prefix)+=1+s_x_backward_prefix*(s_x_first<=s->v);
+				// 	}
+				// }
+				// const_cast<long&>(s->forward_suffix)=s_x_forward_suffix;
+				// if (s_x_forward){
+				// 		const_cast<long&>(s->forward_suffix)+=1+s_z_forward_suffix*(s_z_last<=s->v);
+				// }
+				// const_cast<long&>(s->backward_suffix)=s_x_backward_suffix;
+				// if (s_x_backward){
+				// 		const_cast<long&>(s->backward_suffix)+=1+s_z_backward_suffix*(s_z_last>=s->v);
+				// }
 			}else
 			if (s->x){
+				long s_z_forward=1;
+				long s_z_backward=1;
+				long s_x_forward=(s->x->to_mul==0 or (s->x->rev?s->x->is_backward:s->x->is_forward));
+				long s_x_backward=(s->x->to_mul==0 or (s->x->rev?s->x->is_forward:s->x->is_backward));
+				long s_x_first=(s->x->rev?s->x->last:s->x->first)*s->x->to_mul+s->x->to_add;
+				long s_z_last=0;
+				long s_z_s=0;
+				long s_x_s=s->x->s;
+				// long s_z_forward_prefix=0;
+				// long s_z_forward_suffix=0;
+				// long s_z_backward_prefix=0;
+				// long s_z_backward_suffix=0;
+				// long s_x_forward_prefix=0;
+				// long s_x_forward_suffix=0;
+				// long s_x_backward_prefix=0;
+				// long s_x_backward_suffix=0;
+				// if (s->x->to_mul==0){
+				// 	s_x_forward_prefix=s_x_s;
+				// 	s_x_forward_suffix=s_x_s;
+				// 	s_x_backward_prefix=s_x_s;
+				// 	s_x_backward_suffix=s_x_s;
+				// }else{
+				// 	s_x_forward_prefix=s->x->rev?s->x->backward_suffix:s->x->forward_prefix;
+				// 	s_x_forward_suffix=s->x->rev?s->x->backward_prefix:s->x->forward_suffix;
+				// 	s_x_backward_prefix=s->x->rev?s->x->forward_suffix:s->x->backward_prefix;
+				// 	s_x_backward_suffix=s->x->rev?s->x->forward_prefix:s->x->backward_suffix;
+				// }
 				const_cast<long&>(s->s)=s->x->s+1;
 				const_cast<long&>(s->d)=s->x->d+1;
 				const_cast<long&>(s->sum)=s->v + s->x->sum*s->x->to_mul+s->x->to_add*s->x->s;
-				const_cast<long&>(s->is_forward)=((s->x->to_mul==0 or (s->x->rev?s->x->is_backward:s->x->is_forward)) and (s->x->rev?s->x->last:s->x->first)*s->x->to_mul+s->x->to_add>=s->v);
-				const_cast<long&>(s->is_backward)=((s->x->to_mul==0 or (s->x->rev?s->x->is_forward:s->x->is_backward)) and (s->x->rev?s->x->last:s->x->first)*s->x->to_mul+s->x->to_add<=s->v);
+				const_cast<long&>(s->is_forward)=(s_x_forward and s_x_first>=s->v);
+				const_cast<long&>(s->is_backward)=(s_x_backward and s_x_first<=s->v);
+				// const_cast<long&>(s->forward_prefix)=s_z_forward_prefix;
+				// if (s_z_forward){
+				// 		// ic(s_x_forward_prefix,s_x_first,s->v)
+				// 		// pri(s);
+				// 		const_cast<long&>(s->forward_prefix)+=1+s_x_forward_prefix*(s_x_first>=s->v);
+				// }
+				// const_cast<long&>(s->backward_prefix)=s_z_backward_prefix;
+				// if (s_z_backward){
+				// 		// ic(s_x_backward_prefix,s_x_first,s->v)
+				// 		// pri(s);
+				// 		const_cast<long&>(s->backward_prefix)+=1+s_x_backward_prefix*(s_x_first<=s->v);
+				// }
+				// const_cast<long&>(s->forward_suffix)=s_x_forward_suffix;
+				// if (s_x_forward){
+				// 	if (s_x_first>=s->v){
+				// 		const_cast<long&>(s->forward_suffix)+=1+s_z_forward_suffix*(s_z_last<=s->v);
+				// 	}
+				// }
+				// const_cast<long&>(s->backward_suffix)=s_x_backward_suffix;
+				// if (s_x_backward){
+				// 	if (s_x_first<=s->v){
+				// 		const_cast<long&>(s->backward_suffix)+=1+s_z_backward_suffix*(s_z_last>=s->v);
+				// 	}
+				// }
 			}else{
 				const_cast<long&>(s->s)=1;
 				const_cast<long&>(s->d)=1;
 				const_cast<long&>(s->sum)=s->v;
 				const_cast<long&>(s->is_forward)=1;
 				const_cast<long&>(s->is_backward)=1;
+				// const_cast<long&>(s->forward_prefix)=1;
+				// const_cast<long&>(s->backward_prefix)=1;
+				// const_cast<long&>(s->forward_suffix)=1;
+				// const_cast<long&>(s->backward_suffix)=1;
 			}
 			if (t->d>128){
 				std::cerr<<"bamboo!! "<<t->d<<std::endl;
@@ -217,7 +381,9 @@ private:
 	};
 
 	static void check(const el*s){
-		// return;
+		if (__FILE__!="treap.hpp"){
+			return;
+		}
 		if (!s){
 			return;
 		}
@@ -273,16 +439,27 @@ private:
 			assert(s->is_forward==1);
 			assert(s->is_backward==1);
 		}
-
+		// ic()
+		// pri(s);
+		// assert(1<=s->forward_prefix and s->forward_prefix<=s->s);
+		// assert(1<=s->forward_suffix and s->forward_suffix<=s->s);
+		// assert(1<=s->backward_prefix and s->backward_prefix<=s->s);
+		// assert(1<=s->backward_suffix and s->backward_suffix<=s->s);
+		// assert((s->forward_prefix==s->s)==s->is_forward);
+		// assert((s->forward_suffix==s->s)==s->is_forward);
+		// assert((s->backward_prefix==s->s)==s->is_backward);
+		// assert((s->backward_suffix==s->s)==s->is_backward);
+		// assert(s->forward_suffix==1 or s->backward_suffix==1 or get_by_index(s,s->s-1)->v==get_by_index(s,s->s-1)->v);
+		// assert(s->forward_prefix==1 or s->backward_prefix==1 or get_by_index(s,0)->v==get_by_index(s,1)->v);
 	}
 
 	static int64_t el_size(const el*s){
 		return s?s->s:0;
 	}
 
-	static int64_t find_index(const el*s){
-		return s?s->nz_find_index():0;
-	}
+	// static int64_t find_index(const el*s){
+	// 	return s?s->nz_find_index():0;
+	// }
 
 	// static const el* lower_bound(const el*s,T f){
 	// 	get(s);
@@ -435,15 +612,14 @@ private:
 		// 	std::endl;
 
 		_put(v)
-		_put(sum)
 		_put(to_mul)
 		_put(to_add)
-		_put(s)
-		_put(d)
-		_put(first)
-		_put(last)
 		_put(is_forward)
 		_put(is_backward)
+		_put(forward_prefix)
+		_put(backward_prefix)
+		_put(forward_suffix)
+		_put(backward_suffix)
 		std::cout<<std::endl;
 
 		save=0;
@@ -457,16 +633,6 @@ private:
 			prev_node[1]=save;
 		}
 	}
-
-	// static const el* copy(const el* q){
-	// 	if (!q){
-	// 		return nullptr;
-	// 	}
-	// 	const el*w=new el(q->v);
-	// 	w=merge(copy(q->z_get()),w);
-	// 	w=merge(w,copy(q->x_get()));
-	// 	return w;
-	// }
 
 	static void del(const el* q){
 		if (!q){
@@ -507,7 +673,6 @@ private:
 				auto t2=tmp.second;
 				if(t2){
 					t2->setroot();
-					// t2->p=nullptr;
 				}
 				return {t,t2};
 			}
@@ -516,7 +681,6 @@ private:
 			t->z_put((el*)(nullptr));
 			if (t1){
 				t1->setroot();
-				// t1->p=nullptr;
 			}
 			return {t1,t};
 		}else if (t_z->s+1==n){
@@ -524,7 +688,6 @@ private:
 			t->x_put((el*)(nullptr));
 			if (t2){
 				t2->setroot();
-				// t2->p=nullptr;
 			}
 			return {t,t2};
 		}else if (t_z->s+1<n){
@@ -533,7 +696,6 @@ private:
 			auto t2=tmp.second;
 			if (t2){
 				t2->setroot();
-				// t2->p=nullptr;
 			}
 			return {t,t2};
 		}else if (t_z->s>n){
@@ -542,7 +704,6 @@ private:
 			t->z_put(tmp.second);
 			if (t1){
 				t1->setroot();
-				// t1->p=nullptr;
 			}
 			return {t1,t};
 		}
@@ -550,47 +711,65 @@ private:
 		return {nullptr,nullptr};
 	}
 
-	static const el* add(const el*q,int64_t n){
-		if (!q){
-			return nullptr;
-		}
-		if (n==0){
-			return q;
-		}
+	static std::pair<const el*,long> add(const el*q,int64_t n){
+		long o=0;
 		get(q);
-		if (n>0){
-			if (el_size(q_x)>=n){
-				return get_by_index(q_x,n-1);
-			}else{
-				auto w=q->p;
-				get(w);
-				if (w==nullptr){
-					return nullptr;
-				}else if (w_z==q){
-					return add(q->p,-el_size(q_x)-1+n);
-				}else if (w_x==q){
-					return add(q->p,el_size(q_z)+1+n);
+		while(n){
+			auto w=q->p;
+			get(w);
+			if (n>0){
+				if (el_size(q_x)>=n){
+					n=n-1;
+					q=get_by_index(q_x,n);
+					break;
+				}else{
+					if (w==nullptr){
+						o+=n-el_size(q_x);
+						n=el_size(q_x);
+						continue;
+					}else if (w_z==q){
+						n=-el_size(q_x)-1+n;
+						q=w;
+						q_x=w_x;
+						q_z=w_z;
+						continue;
+					}else if (w_x==q){
+						n=el_size(q_z)+1+n;
+						q=w;
+						q_x=w_x;
+						q_z=w_z;
+						continue;
+					}
+					assert(0);
 				}
-				assert(0);
-			}
-		}else if (n<0){
-			if (-el_size(q_z)<=n){
-				return get_by_index(q_z,el_size(q_z)+n);
-			}else{
-				auto w=q->p;
-				get(w);
-				if (w==nullptr){
-					return nullptr;
-				}else if (w_z==q){
-					return add(q->p,-el_size(q_x)-1+n);
-				}else if (w_x==q){
-					return add(q->p,el_size(q_z)+1+n);
+			}else if (n<0){
+				if (-el_size(q_z)<=n){
+					n=el_size(q_z)+n;
+					q=get_by_index(q_z,n);
+					break;
+				}else{
+					if (w==nullptr){
+						o+=n+el_size(q_z);
+						n=-el_size(q_z);
+						continue;
+					}else if (w_z==q){
+						n=-el_size(q_x)-1+n;
+						q=w;
+						q_x=w_x;
+						q_z=w_z;
+						continue;
+					}else if (w_x==q){
+						n=el_size(q_z)+1+n;
+						q=w;
+						q_x=w_x;
+						q_z=w_z;
+						continue;
+					}
+					assert(0);
 				}
-				assert(0);
 			}
 		}
-		assert(0);
-		return (el*)(0);
+		return {q,o};
 	}
 
 	const el* _e=nullptr;
@@ -598,14 +777,6 @@ private:
 		check(_e);
 		if(_e){_e->make();};
 		return _e;
-	}
-	template<typename Y>
-	void e_put(const Y&v){
-		if(_e){_e->make();};
-		const_cast<const el*&>(_e)=v;
-		if (_e){
-			_e->update();
-		}
 	}
 public:
 	void out(){
@@ -620,7 +791,7 @@ public:
 			and std::is_same_v<decltype(l.begin()!=l.end()),bool>
 			,int> =0){
 		for (auto&w:l){
-			e_put(merge(e_get(),new auto (el(w))));
+			_e=(merge(e_get(),new auto (el(w))));
 		}
 	}
 	template <typename y=int>
@@ -633,26 +804,23 @@ public:
 			std::is_trivially_constructible_v<T>
 		,y> l){
 		for (int64_t w=0;w<l;++w){
-			e_put(merge(e_get(),new auto (el(T()))));
+			_e=(merge(e_get(),new auto (el(T()))));
 		}
 	}
 	treap(const treap&l){
 		for (auto&w:l){
-			e_put(merge(e_get(),new auto (el(w))));
+			_e=(merge(e_get(),new auto (el(w))));
 		}
 	}
-	// treap(const treap&l){
-	// 	e_put(copy(l.e_get()));
-	// }
 	treap(treap&&l){
 		auto t=e_get();
-		e_put(l.e_get());
-		l.e_put(t);
+		_e=(l.e_get());
+		l._e=(t);
 	}
 	auto&operator=(treap&&l){
 		auto t=e_get();
-		e_put(l.e_get());
-		l.e_put(t);
+		_e=(l.e_get());
+		l._e=(t);
 		return *this;
 	}
 	auto&operator=(const treap&l){
@@ -660,10 +828,8 @@ public:
 			del(_e);
 			_e=nullptr;
 			for (auto&w:l){
-				e_put(merge(e_get(),new auto (el(w))));
+				_e=(merge(e_get(),new auto (el(w))));
 			}
-
-			// _e=copy(l.e_get());
 		}
 		return *this;
 	}
@@ -679,16 +845,10 @@ public:
 	}
 
 	bool is_forward(){
-		if (e_get()){
-			e_get()->make();
-		}
 		return e_get()?e_get()->is_forward:1;
 	}
 
 	bool is_backward(){
-		if (e_get()){
-			e_get()->make();
-		}
 		return e_get()?e_get()->is_backward:1;
 	}
 
@@ -733,14 +893,10 @@ public:
 	void add_left(treap<T>&q){
 		_e=(merge(q.e_get(),e_get()));
 		q._e=(nullptr);
-		if(_e){_e->make();};
-		if(q._e){q._e->make();};
 	}
 	void add_right(treap<T>&q){
 		_e=merge(e_get(),q.e_get());
 		q._e=nullptr;
-		if(_e){_e->make();};
-		if(q._e){q._e->make();};
 	}
 	treap<T> cut_left(int64_t n){
 		assert(0<=n and n<=size());
@@ -750,8 +906,6 @@ public:
 		_e=(tmp.second);
 		auto r=treap<T>();
 		r._e=(tmp.first);
-		if(_e){_e->make();};
-		if(r._e){r._e->make();};
 		return r;
 	}
 	treap<T> cut_right(int64_t n){
@@ -762,8 +916,6 @@ public:
 		_e=tmp.first;
 		auto r=treap<T>();
 		r._e=(tmp.second);
-		if(_e){_e->make();};
-		if(r._e){r._e->make();};
 		return r;
 	}
 	treap<T> cut(int64_t l,int64_t r){
@@ -775,21 +927,21 @@ public:
 	}
 	void push_back(const T&a){
 		_e=(merge(e_get(),new auto(el(a))));
-		if(_e){_e->make();};
+		// if(_e){_e->make();};
 	}
 	void push_front(const T&a){
 		_e=(merge(new auto(el(a)),e_get()));
-		if(_e){_e->make();};
+		// if(_e){_e->make();};
 	}
 	template<typename...Y>
 	void emplace_back(const Y&...a){
 		_e=(merge(e_get(),new auto(el(a...))));
-		if(_e){_e->make();};
+		// if(_e){_e->make();};
 	}
 	template<typename...Y>
 	void emplace_front(const Y&...a){
 		_e=(merge(new auto(el(a...)),e_get()));
-		if(_e){_e->make();};
+		// if(_e){_e->make();};
 	}
 	T pop_back(){
 		auto q=cut_right(1);
@@ -875,21 +1027,9 @@ public:
 			if (!e){
 				return *this;
 			}
-			while (1){
-				auto s=w*2;
-				auto q=e;
-				q=nullptr;
-				while (!q){
-					s/=2;
-					q=add(e,s);
-				}
-				if (q==e){
-					break;
-				}
-				e=q;
-				w-=s;
-			}
-			o=w;
+			auto t=add(e,w);
+			e=t.first;
+			o=t.second;
 			return *this;
 		}
 		auto&operator-=(long w){
@@ -903,6 +1043,9 @@ public:
 			o=q.o;
 			d=q.d;
 			return *this;
+		}
+		long find_index(){
+			return e->nz_find_index()+o;
 		}
 	};
 	auto begin()const{
@@ -949,9 +1092,21 @@ public:
 		add_left(w);
 		return n;
 	}
+	auto update(int64_t n,const T&q){
+		auto w=cut_left(n);
+		auto r=cut_left(1);
+		auto t=r[0];
+		push_front(q);
+		add_left(w);
+		return t;
+	}
 	template<typename TT>
 	auto insert(TT n,const T&q)->typename TT::template is_iterator<iter>{
 		return begin()+insert(find_index(n.e_get()),q);
+	}
+	template<typename TT>
+	auto update(TT n,const T&q)->typename TT::template is_iterator<iter>{
+		return update(find_index(n.e_get()),q);
 	}
 	template<typename TT>
 	auto erase(TT n)->typename TT::template is_iterator<iter>{
@@ -985,51 +1140,38 @@ public:
 	friend bool operator>=(const treap<Y>&q,const treap<Y>&w);
 	template <typename Y>
 	friend bool operator!=(const treap<Y>&q,const treap<Y>&w);
-	// template <typename Y>
-	// friend void swap(treap&q,treap&e);
 	iter lower_bound(const T&d){
 		if (is_forward()){
-			iter t;
-			// auto q=e_get();
-			// if (!q){
-			// 	t=begin();
-			// }else
-			// if (d<=q->first){
-			// 	t=begin();
-			// }else
-			// if (d>q->last){
-			// 	t=end();
-			// }else{
-
-			// }
-
-			// 	auto w=q;
-			// 	w=q;
-			// 	while(q){
-			// 		if (q->v>=d){
-			// 			w=q;
-			// 			q=q->z_get();
-			// 		}else{
-			// 			w=q;
-			// 			q=q->x_get();
-			// 		}
-			// 	}
-			// 	t={w,0};
-			// }
-			t=std::lower_bound(begin(),end(),d);
-			// assert(t==y);
+			iter t,y;
+			auto q=e_get();
+			if (!q){
+				t=begin();
+			}else
+			if (d<=q->first){
+				t=begin();
+			}else
+			if (d>q->last){
+				t=end();
+			}else{
+				assert(q);
+				auto w=q;
+				w=nullptr;
+				while(q){
+					if (q->v>=d){
+						w=q;
+						q=q->z_get();
+					}else{
+						q=q->x_get();
+					}
+				}
+				t={w,0};
+			}
 			return t;
-		// }else
-		// if (is_backward()){
-		// 	auto p=std::upper_bound(rbegin(),rend(),d);
-		// 	--p;
-		// 	p.d=1;
-		// 	return p;
 		}else{
 			assert(0);
 		}
 		assert(0);
-		return std::lower_bound(begin(),end(),d);
+		return iter{};
 	}
 	iter upper_bound(const T&d){
 		if (is_forward()){
@@ -1057,59 +1199,111 @@ public:
 				}
 				t=iter{w,0};
 			}
-
-
-			// auto q=e_get();
-			// auto w=q;
-			// w=nullptr;
-			// while(q){
-			// 	if (q->v>d){
-			// 		w=q;
-			// 		q=q->z_get();
-			// 	}else{
-			// 		q=q->x_get();
-			// 	}
-			// }
-			// return {w,0};
-			assert(t==std::upper_bound(begin(),end(),d));
 			return t;
-		// }else
-		// if (is_backward()){
-		// 	auto p=std::lower_bound(rbegin(),rend(),d);
-		// 	--p;
-		// 	p.d=1;
-		// 	return p;
 		}else{
 			assert(0);
 		}
 		assert(0);
-		return std::upper_bound(begin(),end(),d);
+		return iter{};
+	}
+	auto forward_prefix(){
+		iter t;
+		auto q=e_get();
+		auto w=q;
+		w=nullptr;
+		if (!q or q->is_forward){
+			t=end();
+		}else{
+			while (q){
+				get(q);
+				if (!q_z or q_z->is_forward){
+					if (!q_z or q->v>=q_z->last){
+						if (!w or w->v<=q->first){
+							w=q;
+						}else{
+							t={w,0};
+							++t;
+							break;
+						}
+						q=q_x;
+					}else{
+						if (!w or w->v<=q->first){
+							w=q;
+							t={w,0};
+							break;
+						}else{
+							t={w,0};
+							++t;
+							break;
+						}
+					}
+				}else{
+					q=q_z;
+				}
+			}
+			if (!t.e){
+				t={w,0};
+				++t;
+			}
+		}
+		return t;
+	}
+	auto backward_prefix(){
+		iter t;
+		auto q=e_get();
+		auto w=q;
+		w=nullptr;
+		if (!q or q->is_backward){
+			t=end();
+		}else{
+			while (q){
+				get(q);
+				if (!q_z or q_z->is_backward){
+					if (!q_z or q->v<=q_z->last){
+						if (!w or w->v>=q->first){
+							w=q;
+						}else{
+							t={w,0};
+							++t;
+							break;
+						}
+						q=q_x;
+					}else{
+						if (!w or w->v>=q->first){
+							w=q;
+							t={w,0};
+							break;
+						}else{
+							t={w,0};
+							++t;
+							break;
+						}
+					}
+				}else{
+					q=q_z;
+				}
+			}
+			if (!t.e){
+				t={w,0};
+				++t;
+			}
+		}
+		return t;
 	}
 	bool next_permutation(){
-		// out();
-		auto q=bisect(0,size(),({
-			auto t=cut_left(__center);
-			bool r=is_backward();
-			// t.out();
-			// out();
-			// ic(__center,r)
-			add_left(t);
-			// out();
-			r;
-		}));
+		rev();
+		auto q=forward_prefix().find_index();
+		// assert(q==e_get()->forward_prefix);
+		rev();
+		// assert(q==e_get()->backward_suffix);
+		q=size()-q;
 		auto t=cut_left(q);
-		// ic(t,*this)
 		if (t.size()){
-			auto r=t.end()[-1];
-			t.erase(t.size()-1);
+			auto r=t.pop_back();
 			rev();
-			auto p=upper_bound(r)-begin();
+			auto p=upper_bound(r).find_index();
 			assert(size()>p);
-			insert(p,r);
-			assert(size()+1>p);
-			assert(r<(*this)[p+1]);
-			r=(*this)[p+1];
-			erase(p+1);
+			r=update(p,r);
 			t.push_back(r);
 			add_left(t);
 			return 1;
@@ -1119,22 +1313,19 @@ public:
 		}
 	}
 	bool prev_permutation(){
-		auto q=bisect(0,size(),({
-			auto t=cut_left(__center);
-			bool r=is_forward();
-			add_left(t);
-			r;
-		}));
+		rev();
+		auto q=backward_prefix().find_index();
+		// assert(q==e_get()->backward_prefix);
+		rev();
+		// assert(q==e_get()->forward_suffix);
+		q=size()-q;
 		auto t=cut_left(q);
 		if (t.size()){
-			auto r=t.end()[-1];
-			t.erase(t.size()-1);
+			auto r=t.pop_back();
 			assert(is_forward());
-			auto p=lower_bound(r)-begin();
+			auto p=lower_bound(r).find_index();
 			assert(r>(*this)[p-1]);
-			insert(p,r);
-			r=(*this)[p-1];
-			erase(p-1);
+			r=update(p-1,r);
 			t.push_back(r);
 			rev();
 			add_left(t);
@@ -1147,19 +1338,19 @@ public:
 	}
 	T sum(){
 		if (e_get()){
-			return e_get()->sum;
+			return _e->sum;
 		}else{
 			return 0;
 		}
 	}
 	void add(long v){
 		if (e_get()){
-			const_cast<long&>(e_get()->to_add)+=v;
+			const_cast<long&>(_e->to_add)+=v;
 		}
 	}
 	void mul(long v){
 		if (e_get()){
-			const_cast<long&>(e_get()->to_mul)*=v;
+			const_cast<long&>(_e->to_mul)*=v;
 		}
 	}
 };
@@ -1193,13 +1384,6 @@ template <typename T>
 bool operator!=(const treap<T>&q,const treap<T>&w){
 	return q.__cmp__(w)!=0;
 }
-
-// template <typename T>
-// void swap(treap<T>&q,treap<T>&e){
-// 	auto w=q.cut_left(q.size());
-// 	q.add_left(e);
-// 	e.add_left(w);
-// }
 
 template<typename TT>
 auto operator-(TT q,TT w)->typename TT::template is_iterator<ptrdiff_t>{
