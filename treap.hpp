@@ -34,35 +34,22 @@ private:
 		long const to_mul=1;
 		long const is_forward=1;
 		long const is_backward=1;
-		// long const forward_prefix=1;
-		// long const forward_suffix=1;
-		// long const backward_prefix=1;
-		// long const backward_suffix=1;
 		template<typename...Y>
 		el(const Y&..._v):v(_v...),w(rand()){update();}
 
 		template<typename y>
 		void z_put(y q)const{
-			// make();
-			// if (z){
-			// 	const_cast<const el*&>(z->p)=nullptr;
-			// }
 			const_cast<const el*&>(z)=q;
 			update();
 		}
 
 		template<typename y>
 		void x_put(y q)const{
-			// make();
-			// if (x){
-			// 	const_cast<const el*&>(x->p)=nullptr;
-			// }
 			const_cast<const el*&>(x)=q;
 			update();
 		}
 
 		auto z_get()const{
-			// make();
 			if (z){
 				z->make();
 			}
@@ -70,7 +57,6 @@ private:
 		}
 
 		auto x_get()const{
-			// make();
 			if (x){
 				x->make();
 			}
@@ -95,19 +81,9 @@ private:
 					const_cast<long&>(x->to_mul)*=to_mul;
 					const_cast<long&>(x->to_add)*=to_mul;
 				}
-				// if (to_mul<0){
-				// 	std::swap(const_cast<long&>(is_forward),const_cast<long&>(is_backward));
-				// 	std::swap(const_cast<long&>(first),const_cast<long&>(last));
-				// 	std::swap(const_cast<long&>(forward_prefix),const_cast<long&>(backward_prefix));
-				// 	std::swap(const_cast<long&>(forward_suffix),const_cast<long&>(backward_suffix));
-				// }
 				if (to_mul==0){
 					const_cast<long&>(is_forward)=1;
 					const_cast<long&>(is_backward)=1;
-					// const_cast<long&>(forward_prefix)=s;
-					// const_cast<long&>(backward_prefix)=s;
-					// const_cast<long&>(forward_suffix)=s;
-					// const_cast<long&>(backward_suffix)=s;
 				}
 				const_cast<long&>(to_mul)=1;
 			}
@@ -130,8 +106,6 @@ private:
 				std::swap(const_cast<const el*&>(z),const_cast<const el*&>(x));
 				std::swap(const_cast<long&>(is_forward),const_cast<long&>(is_backward));
 				std::swap(const_cast<long&>(first),const_cast<long&>(last));
-				// std::swap(const_cast<long&>(forward_prefix),const_cast<long&>(backward_suffix));
-				// std::swap(const_cast<long&>(forward_suffix),const_cast<long&>(backward_prefix));
 				if (z){
 					const_cast<long&>(z->rev)^=1;
 				}
@@ -140,222 +114,79 @@ private:
 				}
 				const_cast<long&>(rev)=0;
 			}
-			// check(this);
 		}
 		void update()const{
-			auto t=this;
 			auto s=this;
-			if (s->z){
-				const_cast<const el*&>(s->z->p)=s;
-				if (s->z->rev){
-					const_cast<long&>(s->first)=s->z->last*s->z->to_mul+s->z->to_add;
+			if (z){
+				const_cast<const el*&>(z->p)=s;
+				if (z->rev){
+					const_cast<long&>(first)=z->last*z->to_mul+z->to_add;
 				}else{
-					const_cast<long&>(s->first)=s->z->first*s->z->to_mul+s->z->to_add;
+					const_cast<long&>(first)=z->first*z->to_mul+z->to_add;
 				}
 			}else{
-				const_cast<long&>(s->first)=s->v;
+				const_cast<long&>(first)=v;
 			}
-			if (s->x){
-				const_cast<const el*&>(s->x->p)=s;
-				if (s->x->rev){
-					const_cast<long&>(s->last)=s->x->first*s->x->to_mul+s->x->to_add;
+			if (x){
+				const_cast<const el*&>(x->p)=s;
+				if (x->rev){
+					const_cast<long&>(last)=x->first*x->to_mul+x->to_add;
 				}else{
-					const_cast<long&>(s->last)=s->x->last*s->x->to_mul+s->x->to_add;
+					const_cast<long&>(last)=x->last*x->to_mul+x->to_add;
 				}
 			}else{
-				const_cast<long&>(s->last)=s->v;
+				const_cast<long&>(last)=v;
 			}
-			if (s->z and s->x){
-				long s_z_forward=(s->z->to_mul==0 or (s->z->rev?s->z->is_backward:s->z->is_forward));
-				long s_z_backward=(s->z->to_mul==0 or (s->z->rev?s->z->is_forward:s->z->is_backward));
-				long s_x_forward=(s->x->to_mul==0 or (s->x->rev?s->x->is_backward:s->x->is_forward));
-				long s_x_backward=(s->x->to_mul==0 or (s->x->rev?s->x->is_forward:s->x->is_backward));
-				long s_x_first=(s->x->rev?s->x->last:s->x->first)*s->x->to_mul+s->x->to_add;
-				long s_z_last=(s->z->rev?s->z->first:s->z->last)*s->z->to_mul+s->z->to_add;
-				long s_z_s=s->z->s;
-				long s_x_s=s->x->s;
-				// long s_z_forward_prefix=0;
-				// long s_z_forward_suffix=0;
-				// long s_z_backward_prefix=0;
-				// long s_z_backward_suffix=0;
-				// if (s->z->to_mul==0){
-				// 	s_z_forward_prefix=s_z_s;
-				// 	s_z_forward_suffix=s_z_s;
-				// 	s_z_backward_prefix=s_z_s;
-				// 	s_z_backward_suffix=s_z_s;
-				// }else{
-				// 	s_z_forward_prefix=s->z->rev?s->z->backward_suffix:s->z->forward_prefix;
-				// 	s_z_forward_suffix=s->z->rev?s->z->backward_prefix:s->z->forward_suffix;
-				// 	s_z_backward_prefix=s->z->rev?s->z->forward_suffix:s->z->backward_prefix;
-				// 	s_z_backward_suffix=s->z->rev?s->z->forward_prefix:s->z->backward_suffix;
-				// }
-				// long s_x_forward_prefix=0;
-				// long s_x_forward_suffix=0;
-				// long s_x_backward_prefix=0;
-				// long s_x_backward_suffix=0;
-				// if (s->x->to_mul==0){
-				// 	s_x_forward_prefix=s_x_s;
-				// 	s_x_forward_suffix=s_x_s;
-				// 	s_x_backward_prefix=s_x_s;
-				// 	s_x_backward_suffix=s_x_s;
-				// }else{
-				// 	s_x_forward_prefix=s->x->rev?s->x->backward_suffix:s->x->forward_prefix;
-				// 	s_x_forward_suffix=s->x->rev?s->x->backward_prefix:s->x->forward_suffix;
-				// 	s_x_backward_prefix=s->x->rev?s->x->forward_suffix:s->x->backward_prefix;
-				// 	s_x_backward_suffix=s->x->rev?s->x->forward_prefix:s->x->backward_suffix;
-				// }
-				const_cast<long&>(s->s)=s->z->s+s->x->s+1;
-				const_cast<long&>(s->d)=1+(s->z->d>s->x->d?s->z->d:s->x->d);
-				const_cast<long&>(s->sum)=s->v + s->z->sum*s->z->to_mul+s->z->to_add*s->z->s + s->x->sum*s->x->to_mul+s->x->to_add*s->x->s;
-				const_cast<long&>(s->is_forward)=(s_z_forward and s_x_forward and s_z_last<=s->v and s_x_first>=s->v);
-				const_cast<long&>(s->is_backward)=(s_z_backward and s_x_backward and s_z_last>=s->v and s_x_first<=s->v);
-
-				// const_cast<long&>(s->forward_prefix)=s_z_forward_prefix;
-				// if (s_z_forward){
-				// 	if (s_z_last<=s->v){
-				// 		const_cast<long&>(s->forward_prefix)+=1+s_x_forward_prefix*(s_x_first>=s->v);
-				// 	}
-				// }
-				// const_cast<long&>(s->backward_prefix)=s_z_backward_prefix;
-				// if (s_z_backward){
-				// 	if (s_z_last>=s->v){
-				// 		const_cast<long&>(s->backward_prefix)+=1+s_x_backward_prefix*(s_x_first<=s->v);
-				// 	}
-				// }
-				// const_cast<long&>(s->forward_suffix)=s_x_forward_suffix;
-				// if (s_x_forward){
-				// 	if (s_x_first>=s->v){
-				// 		const_cast<long&>(s->forward_suffix)+=1+s_z_forward_suffix*(s_z_last<=s->v);
-				// 	}
-				// }
-				// const_cast<long&>(s->backward_suffix)=s_x_backward_suffix;
-				// if (s_x_backward){
-				// 	if (s_x_first<=s->v){
-				// 		const_cast<long&>(s->backward_suffix)+=1+s_z_backward_suffix*(s_z_last>=s->v);
-				// 	}
-				// }
+			if (z and x){
+				long s_z_forward=(z->to_mul==0 or (z->rev?z->is_backward:z->is_forward));
+				long s_z_backward=(z->to_mul==0 or (z->rev?z->is_forward:z->is_backward));
+				long s_x_forward=(x->to_mul==0 or (x->rev?x->is_backward:x->is_forward));
+				long s_x_backward=(x->to_mul==0 or (x->rev?x->is_forward:x->is_backward));
+				long s_x_first=(x->rev?x->last:x->first)*x->to_mul+x->to_add;
+				long s_z_last=(z->rev?z->first:z->last)*z->to_mul+z->to_add;
+				long s_z_s=z->s;
+				long s_x_s=x->s;
+				const_cast<long&>(s)=z->s+x->s+1;
+				const_cast<long&>(d)=1+(z->d>x->d?z->d:x->d);
+				const_cast<long&>(sum)=v + z->sum*z->to_mul+z->to_add*z->s + x->sum*x->to_mul+x->to_add*x->s;
+				const_cast<long&>(is_forward)=(s_z_forward and s_x_forward and s_z_last<=v and s_x_first>=v);
+				const_cast<long&>(is_backward)=(s_z_backward and s_x_backward and s_z_last>=v and s_x_first<=v);
 			}else
-			if (s->z){
+			if (z){
 				long s_x_forward=1;
 				long s_x_backward=1;
-				long s_z_forward=(s->z->to_mul==0 or (s->z->rev?s->z->is_backward:s->z->is_forward));
-				long s_z_backward=(s->z->to_mul==0 or (s->z->rev?s->z->is_forward:s->z->is_backward));
-				long s_z_last=(s->z->rev?s->z->first:s->z->last)*s->z->to_mul+s->z->to_add;
+				long s_z_forward=(z->to_mul==0 or (z->rev?z->is_backward:z->is_forward));
+				long s_z_backward=(z->to_mul==0 or (z->rev?z->is_forward:z->is_backward));
+				long s_z_last=(z->rev?z->first:z->last)*z->to_mul+z->to_add;
 				long s_x_first=0;
-				long s_z_s=s->z->s;
+				long s_z_s=z->s;
 				long s_x_s=0;
-				// long s_z_forward_prefix=0;
-				// long s_z_forward_suffix=0;
-				// long s_z_backward_prefix=0;
-				// long s_z_backward_suffix=0;
-				// if (s->z->to_mul==0){
-				// 	s_z_forward_prefix=s_z_s;
-				// 	s_z_forward_suffix=s_z_s;
-				// 	s_z_backward_prefix=s_z_s;
-				// 	s_z_backward_suffix=s_z_s;
-				// }else{
-				// 	s_z_forward_prefix=s->z->rev?s->z->backward_suffix:s->z->forward_prefix;
-				// 	s_z_forward_suffix=s->z->rev?s->z->backward_prefix:s->z->forward_suffix;
-				// 	s_z_backward_prefix=s->z->rev?s->z->forward_suffix:s->z->backward_prefix;
-				// 	s_z_backward_suffix=s->z->rev?s->z->forward_prefix:s->z->backward_suffix;
-				// }
-				// long s_x_forward_prefix=0;
-				// long s_x_forward_suffix=0;
-				// long s_x_backward_prefix=0;
-				// long s_x_backward_suffix=0;
-				const_cast<long&>(s->s)=s->z->s+1;
-				const_cast<long&>(s->d)=s->z->d+1;
-				const_cast<long&>(s->sum)=s->v + s->z->sum*s->z->to_mul+s->z->to_add*s->z->s;
-				const_cast<long&>(s->is_forward)=(s_z_forward and s_z_last<=s->v);
-				const_cast<long&>(s->is_backward)=(s_z_backward and s_z_last>=s->v);
-				// const_cast<long&>(s->forward_prefix)=s_z_forward_prefix;
-				// if (s_z_forward){
-				// 	if (s_z_last<=s->v){
-				// 		const_cast<long&>(s->forward_prefix)+=1+s_x_forward_prefix*(s_x_first>=s->v);
-				// 	}
-				// }
-				// const_cast<long&>(s->backward_prefix)=s_z_backward_prefix;
-				// if (s_z_backward){
-				// 	if (s_z_last>=s->v){
-				// 		const_cast<long&>(s->backward_prefix)+=1+s_x_backward_prefix*(s_x_first<=s->v);
-				// 	}
-				// }
-				// const_cast<long&>(s->forward_suffix)=s_x_forward_suffix;
-				// if (s_x_forward){
-				// 		const_cast<long&>(s->forward_suffix)+=1+s_z_forward_suffix*(s_z_last<=s->v);
-				// }
-				// const_cast<long&>(s->backward_suffix)=s_x_backward_suffix;
-				// if (s_x_backward){
-				// 		const_cast<long&>(s->backward_suffix)+=1+s_z_backward_suffix*(s_z_last>=s->v);
-				// }
+				const_cast<long&>(s)=z->s+1;
+				const_cast<long&>(d)=z->d+1;
+				const_cast<long&>(sum)=v + z->sum*z->to_mul+z->to_add*z->s;
+				const_cast<long&>(is_forward)=(s_z_forward and s_z_last<=v);
+				const_cast<long&>(is_backward)=(s_z_backward and s_z_last>=v);
 			}else
-			if (s->x){
+			if (x){
 				long s_z_forward=1;
 				long s_z_backward=1;
-				long s_x_forward=(s->x->to_mul==0 or (s->x->rev?s->x->is_backward:s->x->is_forward));
-				long s_x_backward=(s->x->to_mul==0 or (s->x->rev?s->x->is_forward:s->x->is_backward));
-				long s_x_first=(s->x->rev?s->x->last:s->x->first)*s->x->to_mul+s->x->to_add;
+				long s_x_forward=(x->to_mul==0 or (x->rev?x->is_backward:x->is_forward));
+				long s_x_backward=(x->to_mul==0 or (x->rev?x->is_forward:x->is_backward));
+				long s_x_first=(x->rev?x->last:x->first)*x->to_mul+x->to_add;
 				long s_z_last=0;
 				long s_z_s=0;
-				long s_x_s=s->x->s;
-				// long s_z_forward_prefix=0;
-				// long s_z_forward_suffix=0;
-				// long s_z_backward_prefix=0;
-				// long s_z_backward_suffix=0;
-				// long s_x_forward_prefix=0;
-				// long s_x_forward_suffix=0;
-				// long s_x_backward_prefix=0;
-				// long s_x_backward_suffix=0;
-				// if (s->x->to_mul==0){
-				// 	s_x_forward_prefix=s_x_s;
-				// 	s_x_forward_suffix=s_x_s;
-				// 	s_x_backward_prefix=s_x_s;
-				// 	s_x_backward_suffix=s_x_s;
-				// }else{
-				// 	s_x_forward_prefix=s->x->rev?s->x->backward_suffix:s->x->forward_prefix;
-				// 	s_x_forward_suffix=s->x->rev?s->x->backward_prefix:s->x->forward_suffix;
-				// 	s_x_backward_prefix=s->x->rev?s->x->forward_suffix:s->x->backward_prefix;
-				// 	s_x_backward_suffix=s->x->rev?s->x->forward_prefix:s->x->backward_suffix;
-				// }
-				const_cast<long&>(s->s)=s->x->s+1;
-				const_cast<long&>(s->d)=s->x->d+1;
-				const_cast<long&>(s->sum)=s->v + s->x->sum*s->x->to_mul+s->x->to_add*s->x->s;
-				const_cast<long&>(s->is_forward)=(s_x_forward and s_x_first>=s->v);
-				const_cast<long&>(s->is_backward)=(s_x_backward and s_x_first<=s->v);
-				// const_cast<long&>(s->forward_prefix)=s_z_forward_prefix;
-				// if (s_z_forward){
-				// 		// ic(s_x_forward_prefix,s_x_first,s->v)
-				// 		// pri(s);
-				// 		const_cast<long&>(s->forward_prefix)+=1+s_x_forward_prefix*(s_x_first>=s->v);
-				// }
-				// const_cast<long&>(s->backward_prefix)=s_z_backward_prefix;
-				// if (s_z_backward){
-				// 		// ic(s_x_backward_prefix,s_x_first,s->v)
-				// 		// pri(s);
-				// 		const_cast<long&>(s->backward_prefix)+=1+s_x_backward_prefix*(s_x_first<=s->v);
-				// }
-				// const_cast<long&>(s->forward_suffix)=s_x_forward_suffix;
-				// if (s_x_forward){
-				// 	if (s_x_first>=s->v){
-				// 		const_cast<long&>(s->forward_suffix)+=1+s_z_forward_suffix*(s_z_last<=s->v);
-				// 	}
-				// }
-				// const_cast<long&>(s->backward_suffix)=s_x_backward_suffix;
-				// if (s_x_backward){
-				// 	if (s_x_first<=s->v){
-				// 		const_cast<long&>(s->backward_suffix)+=1+s_z_backward_suffix*(s_z_last>=s->v);
-				// 	}
-				// }
+				long s_x_s=x->s;
+				const_cast<long&>(s)=x->s+1;
+				const_cast<long&>(d)=x->d+1;
+				const_cast<long&>(sum)=v + x->sum*x->to_mul+x->to_add*x->s;
+				const_cast<long&>(is_forward)=(s_x_forward and s_x_first>=v);
+				const_cast<long&>(is_backward)=(s_x_backward and s_x_first<=v);
 			}else{
-				const_cast<long&>(s->s)=1;
-				const_cast<long&>(s->d)=1;
-				const_cast<long&>(s->sum)=s->v;
-				const_cast<long&>(s->is_forward)=1;
-				const_cast<long&>(s->is_backward)=1;
-				// const_cast<long&>(s->forward_prefix)=1;
-				// const_cast<long&>(s->backward_prefix)=1;
-				// const_cast<long&>(s->forward_suffix)=1;
-				// const_cast<long&>(s->backward_suffix)=1;
+				const_cast<long&>(s)=1;
+				const_cast<long&>(d)=1;
+				const_cast<long&>(sum)=v;
+				const_cast<long&>(is_forward)=1;
+				const_cast<long&>(is_backward)=1;
 			}
 			if (t->d>128){
 				std::cerr<<"bamboo!! "<<t->d<<std::endl;
@@ -439,38 +270,11 @@ private:
 			assert(s->is_forward==1);
 			assert(s->is_backward==1);
 		}
-		// ic()
-		// pri(s);
-		// assert(1<=s->forward_prefix and s->forward_prefix<=s->s);
-		// assert(1<=s->forward_suffix and s->forward_suffix<=s->s);
-		// assert(1<=s->backward_prefix and s->backward_prefix<=s->s);
-		// assert(1<=s->backward_suffix and s->backward_suffix<=s->s);
-		// assert((s->forward_prefix==s->s)==s->is_forward);
-		// assert((s->forward_suffix==s->s)==s->is_forward);
-		// assert((s->backward_prefix==s->s)==s->is_backward);
-		// assert((s->backward_suffix==s->s)==s->is_backward);
-		// assert(s->forward_suffix==1 or s->backward_suffix==1 or get_by_index(s,s->s-1)->v==get_by_index(s,s->s-1)->v);
-		// assert(s->forward_prefix==1 or s->backward_prefix==1 or get_by_index(s,0)->v==get_by_index(s,1)->v);
 	}
 
 	static int64_t el_size(const el*s){
 		return s?s->s:0;
 	}
-
-	// static int64_t find_index(const el*s){
-	// 	return s?s->nz_find_index():0;
-	// }
-
-	// static const el* lower_bound(const el*s,T f){
-	// 	get(s);
-	// 	if (!s){
-	// 		return s;
-	// 	}
-	// 	if (s->v<f){
-
-	// 	}
-
-	// }
 
 	static const el* get_by_index(const el*s,int64_t n){
 		if (!s){
@@ -528,13 +332,8 @@ private:
 		}
 		const el*left;
 		const el*right;
-		// if (root->rev){
-			// left=root->x;
-			// right=root->z;
-		// }else{
-			left=root->z;
-			right=root->x;
-		// }
+		left=root->z;
+		right=root->x;
 
 		size_t node[3];
 		node[2]=(size_t)NULL;
@@ -600,16 +399,6 @@ private:
 		std::cout<<("► ");
 
 #define _put(s) std::cout<<#s<<" = "<<root->s<<' ';
-
-		// std::cout<<
-
-		// 	root->v<<' '<<
-		// 	root->is_forward<<' '<<
-		// 	root->is_backward<<' '<<
-		// 	root->sum<<' '<<
-		// 	root->to_add<<' '<<
-		// 	root->to_mul<<' '<<
-		// 	std::endl;
 
 		_put(v)
 		_put(to_mul)
@@ -869,26 +658,26 @@ public:
 		assert(n>=0);
 		return get_by_index(e_get(),n)->v;
 	}
-private:
-	int64_t __cmp__(const treap&d)const{
-		auto&s=*this;
-		int64_t min_len=d.size()<s.size()?d.size():s.size();
-		for (int64_t w=0;w<min_len;++w){
-			if (s[w]<d[w]){
-				return -1;
-			}
-			if (s[w]>d[w]){
-				return -1;
-			}
-		}
-		if (s.size()>d.size()){
-			return 1;
-		}
-		if (s.size()<d.size()){
-			return -1;
-		}
-		return 0;
-	}
+// private:
+// 	int64_t __cmp__(const treap&d)const{
+// 		auto&s=*this;
+// 		int64_t min_len=d.size()<s.size()?d.size():s.size();
+// 		for (int64_t w=0;w<min_len;++w){
+// 			if (s[w]<d[w]){
+// 				return -1;
+// 			}
+// 			if (s[w]>d[w]){
+// 				return 1;
+// 			}
+// 		}
+// 		if (s.size()>d.size()){
+// 			return 1;
+// 		}
+// 		if (s.size()<d.size()){
+// 			return -1;
+// 		}
+// 		return 0;
+// 	}
 public:
 	void add_left(treap<T>&q){
 		_e=(merge(q.e_get(),e_get()));
@@ -1355,35 +1144,35 @@ public:
 	}
 };
 
-template <typename T>
-bool operator<(const treap<T>&q,const treap<T>&w){
-	return q.__cmp__(w)<0;
-}
+// template <typename T>
+// bool operator<(const treap<T>&q,const treap<T>&w){
+// 	return q.__cmp__(w)<0;
+// }
 
-template <typename T>
-bool operator>(const treap<T>&q,const treap<T>&w){
-	return q.__cmp__(w)>0;
-}
+// template <typename T>
+// bool operator>(const treap<T>&q,const treap<T>&w){
+// 	return q.__cmp__(w)>0;
+// }
 
-template <typename T>
-bool operator==(const treap<T>&q,const treap<T>&w){
-	return q.__cmp__(w)==0;
-}
+// template <typename T>
+// bool operator==(const treap<T>&q,const treap<T>&w){
+// 	return q.__cmp__(w)==0;
+// }
 
-template <typename T>
-bool operator<=(const treap<T>&q,const treap<T>&w){
-	return q.__cmp__(w)<=0;
-}
+// template <typename T>
+// bool operator<=(const treap<T>&q,const treap<T>&w){
+// 	return q.__cmp__(w)<=0;
+// }
 
-template <typename T>
-bool operator>=(const treap<T>&q,const treap<T>&w){
-	return q.__cmp__(w)>=0;
-}
+// template <typename T>
+// bool operator>=(const treap<T>&q,const treap<T>&w){
+// 	return q.__cmp__(w)>=0;
+// }
 
-template <typename T>
-bool operator!=(const treap<T>&q,const treap<T>&w){
-	return q.__cmp__(w)!=0;
-}
+// template <typename T>
+// bool operator!=(const treap<T>&q,const treap<T>&w){
+// 	return q.__cmp__(w)!=0;
+// }
 
 template<typename TT>
 auto operator-(TT q,TT w)->typename TT::template is_iterator<ptrdiff_t>{
