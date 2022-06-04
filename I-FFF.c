@@ -121,27 +121,31 @@ typedef int (*cmp_f_t)(const void *, const void *);
 
 ///////////////////////////////////////////////////end of lib
 
-#include <map>
-#include <algorithm>
+// #include <map>
+// #include <algorithm>
 
-int prefix(uint64_t x, uint64_t y, uint64_t z) {
-	int s = 0;
-	for (uint64_t lx = x; lx < 128; lx = f(lx) - 1) {
-		for (uint64_t ly = y; ly < 128; ly = f(ly) - 1) {
-			for (uint64_t lz = z; lz < 128; lz = f(lz) - 1) {
-				s += fen[lx][ly][lz];
-			}
+uint64_t f(uint64_t x){
+	return x&(x+1);
+}
+
+uint64_t g(uint64_t x){
+	return x|(x+1);
+}
+
+uint64_t prefix(uint64_t x,uint64_t y,long**fen){
+	long s = 0;
+	for (uint64_t lx=x;lx<len(x);lx=f(lx)-1){
+		for (uint64_t ly=y;ly<len(x[0]);ly=f(ly)-1){
+			s += fen[lx][ly];
 		}
 	}
 	return s;
 }
 
-void add(uint64_t x,uint64_t y,int v,uint64_t*d,) {
-	for (uint64_t lx = x; lx < 128; lx = g(lx)) {
-		for (uint64_t ly = y; ly < 128; ly = g(ly)) {
-			for (uint64_t lz = z; lz < 128; lz = g(lz)) {
-				fen[lx][ly][lz] += v;
-			}
+void add(uint64_t x,uint64_t y,long**fen,long v) {
+	for (uint64_t lx = x; lx < len(x); lx = g(lx)) {
+		for (uint64_t ly = y; ly < len(x[0]); ly = g(ly)) {
+			fen[lx][ly] += v;
 		}
 	}
 }
@@ -181,6 +185,6 @@ int main(){
 	for (uint64_t w=0;w<m;++w){
 		scanf("%20s",com);
 		uint64_t c=getint(),v=getint();
-
+		
 	}
 }
