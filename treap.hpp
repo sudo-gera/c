@@ -9,9 +9,9 @@
 #endif
 #include <algorithm>
 
-#ifdef assert_m
-#define assert assert_m
-#endif
+// #ifdef assert_m
+// #define assert assert_m
+// #endif
 
 #define get(a) auto a##_z=a?a->z_get():0;auto a##_x=a?a->x_get():0;auto a##_z_s=a##_z?a##_z->s:0;auto a##_x_s=a##_x?a##_x->s:0;
 
@@ -27,13 +27,15 @@ private:
 		long const s=1;
 		long const d=1;
 		long const rev=0;
-		T const first=0;
-		T const last=0;
-		T const sum=0;
-		long const to_add=0;
-		long const to_mul=1;
-		long const is_forward=1;
-		long const is_backward=1;
+		// T const first=0;
+		// T const last=0;
+		// T const sum=0;
+		// long const to_add=0;
+		// long const to_mul=1;
+		// long const is_forward=1;
+		// long const is_backward=1;
+		long min=0;
+		long max=0;
 		template<typename...Y>
 		el(const Y&..._v):v(_v...),w(rand()){update();}
 
@@ -68,130 +70,130 @@ private:
 		}
 
 		void make()const{
-			if (to_mul!=1){
-				const_cast<long&>(sum)*=to_mul;
-				const_cast<long&>(first)*=to_mul;
-				const_cast<long&>(last)*=to_mul;
-				const_cast<long&>(v)*=to_mul;
-				if (z){
-					const_cast<long&>(z->to_mul)*=to_mul;
-					const_cast<long&>(z->to_add)*=to_mul;
-				}
-				if (x){
-					const_cast<long&>(x->to_mul)*=to_mul;
-					const_cast<long&>(x->to_add)*=to_mul;
-				}
-				if (to_mul==0){
-					const_cast<long&>(is_forward)=1;
-					const_cast<long&>(is_backward)=1;
-				}
-				const_cast<long&>(to_mul)=1;
-			}
+			// if (to_mul!=1){
+			// 	const_cast<long&>(sum)*=to_mul;
+			// 	const_cast<long&>(first)*=to_mul;
+			// 	const_cast<long&>(last)*=to_mul;
+			// 	const_cast<long&>(v)*=to_mul;
+			// 	if (z){
+			// 		const_cast<long&>(z->to_mul)*=to_mul;
+			// 		const_cast<long&>(z->to_add)*=to_mul;
+			// 	}
+			// 	if (x){
+			// 		const_cast<long&>(x->to_mul)*=to_mul;
+			// 		const_cast<long&>(x->to_add)*=to_mul;
+			// 	}
+			// 	if (to_mul==0){
+			// 		const_cast<long&>(is_forward)=1;
+			// 		const_cast<long&>(is_backward)=1;
+			// 	}
+			// 	const_cast<long&>(to_mul)=1;
+			// }
 
-			if (to_add!=0){
-				const_cast<long&>(sum)+=to_add*s;
-				const_cast<long&>(first)+=to_add;
-				const_cast<long&>(last)+=to_add;
-				const_cast<long&>(v)+=to_add;
-				if (z){
-					const_cast<long&>(z->to_add)+=to_add;
-				}
-				if (x){
-					const_cast<long&>(x->to_add)+=to_add;
-				}
-				const_cast<long&>(to_add)=0;
-			}
+			// if (to_add!=0){
+			// 	const_cast<long&>(sum)+=to_add*s;
+			// 	const_cast<long&>(first)+=to_add;
+			// 	const_cast<long&>(last)+=to_add;
+			// 	const_cast<long&>(v)+=to_add;
+			// 	if (z){
+			// 		const_cast<long&>(z->to_add)+=to_add;
+			// 	}
+			// 	if (x){
+			// 		const_cast<long&>(x->to_add)+=to_add;
+			// 	}
+			// 	const_cast<long&>(to_add)=0;
+			// }
 
-			if (rev){
-				const el*te=const_cast<const el*&>(z);
-				const_cast<const el*&>(z)=const_cast<const el*&>(x);
-				const_cast<const el*&>(x)=te;
-				long tl=const_cast<long&>(is_forward);
-				const_cast<long&>(is_forward)=const_cast<long&>(is_backward);
-				const_cast<long&>(is_backward)=tl;
-				tl=const_cast<long&>(first);
-				const_cast<long&>(first)=const_cast<long&>(last);
-				const_cast<long&>(last)=tl;
-				if (z){
-					const_cast<long&>(z->rev)^=1;
-				}
-				if (x){
-					const_cast<long&>(x->rev)^=1;
-				}
-				const_cast<long&>(rev)=0;
-			}
+			// if (rev){
+			// 	const el*te=const_cast<const el*&>(z);
+			// 	const_cast<const el*&>(z)=const_cast<const el*&>(x);
+			// 	const_cast<const el*&>(x)=te;
+			// 	long tl=const_cast<long&>(is_forward);
+			// 	const_cast<long&>(is_forward)=const_cast<long&>(is_backward);
+			// 	const_cast<long&>(is_backward)=tl;
+			// 	tl=const_cast<long&>(first);
+			// 	const_cast<long&>(first)=const_cast<long&>(last);
+			// 	const_cast<long&>(last)=tl;
+			// 	if (z){
+			// 		const_cast<long&>(z->rev)^=1;
+			// 	}
+			// 	if (x){
+			// 		const_cast<long&>(x->rev)^=1;
+			// 	}
+			// 	const_cast<long&>(rev)=0;
+			// }
 		}
 		void update()const{
 			if (z){
 				const_cast<const el*&>(z->p)=this;
-				if (z->rev){
-					const_cast<long&>(first)=z->last*z->to_mul+z->to_add;
-				}else{
-					const_cast<long&>(first)=z->first*z->to_mul+z->to_add;
-				}
+				// if (z->rev){
+				// 	const_cast<long&>(first)=z->last*z->to_mul+z->to_add;
+				// }else{
+				// 	const_cast<long&>(first)=z->first*z->to_mul+z->to_add;
+				// }
 			}else{
-				const_cast<long&>(first)=v;
+				// const_cast<long&>(first)=v;
 			}
 			if (x){
 				const_cast<const el*&>(x->p)=this;
-				if (x->rev){
-					const_cast<long&>(last)=x->first*x->to_mul+x->to_add;
-				}else{
-					const_cast<long&>(last)=x->last*x->to_mul+x->to_add;
-				}
+				// if (x->rev){
+				// 	const_cast<long&>(last)=x->first*x->to_mul+x->to_add;
+				// }else{
+				// 	const_cast<long&>(last)=x->last*x->to_mul+x->to_add;
+				// }
 			}else{
-				const_cast<long&>(last)=v;
+				// const_cast<long&>(last)=v;
 			}
 			if (z and x){
-				long s_z_forward=(z->to_mul==0 or (z->rev?z->is_backward:z->is_forward));
-				long s_z_backward=(z->to_mul==0 or (z->rev?z->is_forward:z->is_backward));
-				long s_x_forward=(x->to_mul==0 or (x->rev?x->is_backward:x->is_forward));
-				long s_x_backward=(x->to_mul==0 or (x->rev?x->is_forward:x->is_backward));
-				long s_x_first=(x->rev?x->last:x->first)*x->to_mul+x->to_add;
-				long s_z_last=(z->rev?z->first:z->last)*z->to_mul+z->to_add;
+				// long s_z_forward=(z->to_mul==0 or (z->rev?z->is_backward:z->is_forward));
+				// long s_z_backward=(z->to_mul==0 or (z->rev?z->is_forward:z->is_backward));
+				// long s_x_forward=(x->to_mul==0 or (x->rev?x->is_backward:x->is_forward));
+				// long s_x_backward=(x->to_mul==0 or (x->rev?x->is_forward:x->is_backward));
+				// long s_x_first=(x->rev?x->last:x->first)*x->to_mul+x->to_add;
+				// long s_z_last=(z->rev?z->first:z->last)*z->to_mul+z->to_add;
 				long s_z_s=z->s;
 				long s_x_s=x->s;
 				const_cast<long&>(s)=z->s+x->s+1;
 				const_cast<long&>(d)=1+(z->d>x->d?z->d:x->d);
-				const_cast<long&>(sum)=v + z->sum*z->to_mul+z->to_add*z->s + x->sum*x->to_mul+x->to_add*x->s;
-				const_cast<long&>(is_forward)=(s_z_forward and s_x_forward and s_z_last<=v and s_x_first>=v);
-				const_cast<long&>(is_backward)=(s_z_backward and s_x_backward and s_z_last>=v and s_x_first<=v);
+				// const_cast<long&>(sum)=v + z->sum*z->to_mul+z->to_add*z->s + x->sum*x->to_mul+x->to_add*x->s;
+				// const_cast<long&>(is_forward)=(s_z_forward and s_x_forward and s_z_last<=v and s_x_first>=v);
+				// const_cast<long&>(is_backward)=(s_z_backward and s_x_backward and s_z_last>=v and s_x_first<=v);
 			}else
 			if (z){
-				long s_x_forward=1;
-				long s_x_backward=1;
-				long s_z_forward=(z->to_mul==0 or (z->rev?z->is_backward:z->is_forward));
-				long s_z_backward=(z->to_mul==0 or (z->rev?z->is_forward:z->is_backward));
-				long s_z_last=(z->rev?z->first:z->last)*z->to_mul+z->to_add;
-				long s_x_first=0;
+				// long s_x_forward=1;
+				// long s_x_backward=1;
+				// long s_z_forward=(z->to_mul==0 or (z->rev?z->is_backward:z->is_forward));
+				// long s_z_backward=(z->to_mul==0 or (z->rev?z->is_forward:z->is_backward));
+				// long s_z_last=(z->rev?z->first:z->last)*z->to_mul+z->to_add;
+				// long s_x_first=0;
 				long s_z_s=z->s;
 				long s_x_s=0;
 				const_cast<long&>(s)=z->s+1;
 				const_cast<long&>(d)=z->d+1;
-				const_cast<long&>(sum)=v + z->sum*z->to_mul+z->to_add*z->s;
-				const_cast<long&>(is_forward)=(s_z_forward and s_z_last<=v);
-				const_cast<long&>(is_backward)=(s_z_backward and s_z_last>=v);
+				// const_cast<long&>(sum)=v + z->sum*z->to_mul+z->to_add*z->s;
+				// const_cast<long&>(is_forward)=(s_z_forward and s_z_last<=v);
+				// const_cast<long&>(is_backward)=(s_z_backward and s_z_last>=v);
 			}else
 			if (x){
-				long s_z_forward=1;
-				long s_z_backward=1;
-				long s_x_forward=(x->to_mul==0 or (x->rev?x->is_backward:x->is_forward));
-				long s_x_backward=(x->to_mul==0 or (x->rev?x->is_forward:x->is_backward));
-				long s_x_first=(x->rev?x->last:x->first)*x->to_mul+x->to_add;
-				long s_z_last=0;
+				// long s_z_forward=1;
+				// long s_z_backward=1;
+				// long s_x_forward=(x->to_mul==0 or (x->rev?x->is_backward:x->is_forward));
+				// long s_x_backward=(x->to_mul==0 or (x->rev?x->is_forward:x->is_backward));
+				// long s_x_first=(x->rev?x->last:x->first)*x->to_mul+x->to_add;
+				// long s_z_last=0;
 				long s_z_s=0;
 				long s_x_s=x->s;
 				const_cast<long&>(s)=x->s+1;
 				const_cast<long&>(d)=x->d+1;
-				const_cast<long&>(sum)=v + x->sum*x->to_mul+x->to_add*x->s;
-				const_cast<long&>(is_forward)=(s_x_forward and s_x_first>=v);
-				const_cast<long&>(is_backward)=(s_x_backward and s_x_first<=v);
+				// const_cast<long&>(sum)=v + x->sum*x->to_mul+x->to_add*x->s;
+				// const_cast<long&>(is_forward)=(s_x_forward and s_x_first>=v);
+				// const_cast<long&>(is_backward)=(s_x_backward and s_x_first<=v);
 			}else{
 				const_cast<long&>(s)=1;
 				const_cast<long&>(d)=1;
-				const_cast<long&>(sum)=v;
-				const_cast<long&>(is_forward)=1;
-				const_cast<long&>(is_backward)=1;
+				// const_cast<long&>(sum)=v;
+				// const_cast<long&>(is_forward)=1;
+				// const_cast<long&>(is_backward)=1;
 			}
 			if (d>128){
 				std::cerr<<"bamboo!! "<<d<<std::endl;

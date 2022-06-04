@@ -1,4 +1,6 @@
+#ifndef assert
 #include <assert.h>
+#endif
 #include <ctype.h>
 #include <inttypes.h>
 #include <iso646.h>
