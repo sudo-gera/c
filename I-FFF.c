@@ -41,6 +41,7 @@ static inline void del(void *a) {
 static inline struct array_s *resize_f(struct array_s **vp, size_t el_size, size_t n) {
 	if (*vp == NULL) {
 		*vp = (struct array_s *)calloc(1, sizeof(struct array_s));
+		assert(*vp);
 		*vp += 1;
 	}
 	struct array_s *a = *vp - 1;
@@ -54,6 +55,7 @@ static inline struct array_s *resize_f(struct array_s **vp, size_t el_size, size
 			new_size = (n + 1) * el_size;
 		}
 		a = (struct array_s *)realloc(a, sizeof(struct array_s) + new_size);
+		assert(a);
 		memset(a->data + a->mem_size * el_size, 0, new_size - cur_size);
 		a->mem_size = new_size / el_size;
 	}
@@ -62,10 +64,29 @@ static inline struct array_s *resize_f(struct array_s **vp, size_t el_size, size
 	return a + 1;
 }
 /////// resize(a, n) is resize_f(&a, sizeof(a[0]), n)
-#define resize(a, ...) (resize_f((struct array_s **)&(a), sizeof((a)[0]), (__VA_ARGS__)))
-#define append(a, ...) (resize((a), len(a) + 1), (a)[len(a) - 1] = (__VA_ARGS__))
-#define pop(a) (resize((a), len(a) - 1), (a)[len(a)])
-#define back(a) ((a)[len(a)-1])
+#ifdef __cplusplus
+	template<typename T>
+	auto resize(const T& a,uint64_t n){
+		return (resize_f((struct array_s **)&(a), sizeof((a)[0]), (n)));
+	}
+	template<typename T,typename Y>
+	auto append(const T& a,const Y& s){
+		return (resize((a), len(a) + 1), (a)[len(a) - 1] = (s));
+	}
+	template<typename T>
+	auto pop(const T& a){
+		return (resize((a), len(a) - 1), (a)[len(a)]);
+	}
+	template<typename T>
+	auto&back(const T& a){
+		return ((a)[len(a)-1]);
+	}
+#else
+	#define resize(a, ...) (resize_f((struct array_s **)&(a), sizeof((a)[0]), (__VA_ARGS__)))
+	#define append(a, ...) (resize((a), len(a) + 1), (a)[len(a) - 1] = (__VA_ARGS__))
+	#define pop(a) (resize((a), len(a) - 1), (a)[len(a)])
+	#define back(a) ((a)[len(a)-1])
+#endif
 
 static inline int64_t getint() {
 	int sign = 1;
@@ -114,15 +135,17 @@ static inline void write(uint64_t out) {
 	putchar(' ');
 }
 
-#define min(a,s) ((a)<(s)?(a):(s))
-#define max(a,s) ((a)>(s)?(a):(s))
+// #define min(a,s) ((a)<(s)?(a):(s))
+// #define max(a,s) ((a)>(s)?(a):(s))
 
 typedef int (*cmp_f_t)(const void *, const void *);
 
 ///////////////////////////////////////////////////end of lib
 
-// #include <map>
-// #include <algorithm>
+#include <unordered_map>
+#include <map>
+#include <vector>
+#include <algorithm>
 
 uint64_t f(uint64_t x){
 	return x&(x+1);
@@ -132,34 +155,34 @@ uint64_t g(uint64_t x){
 	return x|(x+1);
 }
 
-uint64_t prefix(uint64_t x,uint64_t y,long**fen){
+long prefix(uint64_t x,uint64_t y,std::unordered_map<uint64_t,int>&fen){
 	long s = 0;
-	for (uint64_t lx=x;lx<len(x);lx=f(lx)-1){
-		for (uint64_t ly=y;ly<len(x[0]);ly=f(ly)-1){
-			s += fen[lx][ly];
+	for (uint64_t w=x;w<unsigned(-1);w=f(w)-1){
+		for (uint64_t e=y;e<unsigned(-1);e=f(e)-1){
+			s += fen[(w<<32)+e];
 		}
 	}
 	return s;
 }
 
-void add(uint64_t x,uint64_t y,long**fen,long v) {
-	for (uint64_t lx = x; lx < len(x); lx = g(lx)) {
-		for (uint64_t ly = y; ly < len(x[0]); ly = g(ly)) {
-			fen[lx][ly] += v;
+void add(uint64_t x,uint64_t y,std::unordered_map<uint64_t,int>&fen,int v) {
+	for (uint64_t w = x; w < unsigned(-1); w = g(w)) {
+		for (uint64_t e = y; e < unsigned(-1); e = g(e)) {
+			fen[(w<<32)+e] += v;
 		}
 	}
 }
 
-
 int main(){
 	uint64_t n=getint();
-	uint64_t*a=0;
-	resize(a,n*3);
+	std::vector<int> a(n*3);
+	// int*a=0;
+	// resize(a,n*3);
 	for (uint64_t w=0;w<3*n;++w){
 		a[w]=getint();
 	}
-	// uint64_t*unzip_x=0;
-	// uint64_t*unzip_y=0;
+	// int*unzip_x=0;
+	// int*unzip_y=0;
 	// resize(unzip_x,n);
 	// resize(unzip_y,n);
 	// for (uint64_t w=0;w<n;++w){
@@ -168,23 +191,63 @@ int main(){
 	// }
 	// std::sort(unzip_x,unzip_x+len(unzip_x));
 	// std::sort(unzip_y,unzip_y+len(unzip_y));
-	// std::map<uint64_t,uint64_t> zip_x;
-	// std::map<uint64_t,uint64_t> zip_y;
-	// for (uint64_t w=0;w<n;++w){
+	// // ic(itervect(unzip_x,unzip_x+len(unzip_x)));
+	// // ic(itervect(unzip_y,unzip_y+len(unzip_y)));
+	// resize(unzip_x,(std::unique(unzip_x,unzip_x+len(unzip_x))-unzip_x));
+	// resize(unzip_y,(std::unique(unzip_y,unzip_y+len(unzip_y))-unzip_y));
+	// // ic(itervect(unzip_x,unzip_x+len(unzip_x)));
+	// // ic(itervect(unzip_y,unzip_y+len(unzip_y)));
+	// std::map<int,int> zip_x;
+	// std::map<int,int> zip_y;
+	// for (uint64_t w=0;w<len(unzip_x);++w){
 	// 	zip_x[unzip_x[w]]=w;
 	// }
-	// for (uint64_t w=0;w<n;++w){
+	// for (uint64_t w=0;w<len(unzip_y);++w){
 	// 	zip_y[unzip_y[w]]=w;
 	// }
 	// for (uint64_t w=0;w<n;++w){
 	// 	a[w*3+0]=zip_x[a[w*3+0]];
 	// 	a[w*3+1]=zip_y[a[w*3+1]];
 	// }
+	// ic(itervect(a,a+len(a)))
+	// int**fen=0;
+	// resize(fen,len(unzip_x)+1);
+	// for (uint64_t w=0;w<len(fen);++w){
+	// 	resize(fen[w],len(unzip_y)+1);
+	// }
+	std::unordered_map<uint64_t,int> fen;
+	for (uint64_t w=0;w<n;++w){
+		add(a[w*3+0],a[w*3+1],fen,a[w*3+2]);
+	}
 	uint64_t m=getint();
 	char com[30];
 	for (uint64_t w=0;w<m;++w){
 		scanf("%20s",com);
 		uint64_t c=getint(),v=getint();
-		
+		if (com[0]=='g'){
+			// auto cp=zip_x.upper_bound(c);
+			// auto vp=zip_y.upper_bound(v);
+			// if (cp==zip_x.begin()){
+			// 	print(0);
+			// 	goto _e;
+			// }else{
+			// 	--cp;
+			// 	c=cp->second;
+			// }
+			// if (vp==zip_y.begin()){
+			// 	print(0);
+			// 	goto _e;
+			// }else{
+			// 	--vp;
+			// 	v=vp->second;
+			// }
+			print(prefix(c,v,fen));
+			_e:
+			{}
+		}else{
+			c-=1;
+			add(a[3*c+0],a[3*c+1],fen,v-a[3*c+2]);
+			a[3*c+2]=v;
+		}
 	}
 }

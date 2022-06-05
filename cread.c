@@ -43,6 +43,7 @@ static inline void del(void *a) {
 static inline struct array_s *resize_f(struct array_s **vp, size_t el_size, size_t n) {
 	if (*vp == NULL) {
 		*vp = (struct array_s *)calloc(1, sizeof(struct array_s));
+		assert(*vp);
 		*vp += 1;
 	}
 	struct array_s *a = *vp - 1;
@@ -56,6 +57,7 @@ static inline struct array_s *resize_f(struct array_s **vp, size_t el_size, size
 			new_size = (n + 1) * el_size;
 		}
 		a = (struct array_s *)realloc(a, sizeof(struct array_s) + new_size);
+		assert(a);
 		memset(a->data + a->mem_size * el_size, 0, new_size - cur_size);
 		a->mem_size = new_size / el_size;
 	}
@@ -64,10 +66,29 @@ static inline struct array_s *resize_f(struct array_s **vp, size_t el_size, size
 	return a + 1;
 }
 /////// resize(a, n) is resize_f(&a, sizeof(a[0]), n)
-#define resize(a, ...) (resize_f((struct array_s **)&(a), sizeof((a)[0]), (__VA_ARGS__)))
-#define append(a, ...) (resize((a), len(a) + 1), (a)[len(a) - 1] = (__VA_ARGS__))
-#define pop(a) (resize((a), len(a) - 1), (a)[len(a)])
-#define back(a) ((a)[len(a)-1])
+#ifdef __cplusplus
+	template<typename T>
+	auto resize(const T& a,uint64_t n){
+		return (resize_f((struct array_s **)&(a), sizeof((a)[0]), (n)));
+	}
+	template<typename T,typename Y>
+	auto append(const T& a,const Y& s){
+		return (resize((a), len(a) + 1), (a)[len(a) - 1] = (s));
+	}
+	template<typename T>
+	auto pop(const T& a){
+		return (resize((a), len(a) - 1), (a)[len(a)]);
+	}
+	template<typename T>
+	auto&back(const T& a){
+		return ((a)[len(a)-1]);
+	}
+#else
+	#define resize(a, ...) (resize_f((struct array_s **)&(a), sizeof((a)[0]), (__VA_ARGS__)))
+	#define append(a, ...) (resize((a), len(a) + 1), (a)[len(a) - 1] = (__VA_ARGS__))
+	#define pop(a) (resize((a), len(a) - 1), (a)[len(a)])
+	#define back(a) ((a)[len(a)-1])
+#endif
 
 static inline int64_t getint() {
 	int sign = 1;
