@@ -215,8 +215,8 @@ int main(){
 		}else{
 			break;
 		}
-		while((com[0]=getchar())!='\n'){
-		}
+		// while((com[0]=getchar())!='\n'){
+		// }
 	}
 	for(uint64_t w=0;w<len(a);++w){
 		del(a[w]);
