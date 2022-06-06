@@ -158,55 +158,44 @@ int longfun(int g,int h=0){
 }
 
 typedef struct st{
-	char*a;
 	uint64_t l;
+	uint64_t b;
+	int fd;
 }st;
-
-int cmp1(st*q,st*w){
-	uint64_t minlen=min(q->l,w->l);
-	int t=memcmp(q->a,w->a,minlen);
-	if (t){
-		return t;
-	}
-	if (q->l<w->l){
-		return -1;
-	}
-	if (q->l>w->l){
-		return 1;
-	}
-	return 0;
-}
-
-
 
 int main(){
 	int input = open("input.txt",O_RDONLY);
 	struct stat inputst;
 	inputst.st_size=-1;
 	fstat(input,&inputst);
+	FILE* inputf=fdopen(input);
+	st*a=0;
+	append(a,(st){.l=0,.b=0,.fd=input});
 	int c=0;
+	for (uint64_t w=0;w<inputst.st_size;w++){
+		if (fgetc(inputf)=='\n'){
+			append(a,(st){.l=0,.b=w+1,.fd=input});
+		}
+	}
+	a[len(a)]=(st){.l=0,.b=inputst.st_size,.fd=input};
+	for (uint64_t w=0;w<len(a);++w){
+		a[w].l=a[w+1].b-a[w].b;
+	}
 	
 
 
-	// longfun(inputmem==0 or inputmem==(void*)(-1) or inputmem==MAP_FAILED);
-	st*a=0;
-	append(a,(st){.a=inputmem,.l=0});
-	for (uint64_t w=0;w<inputst.st_size;++w){
-		if (inputmem[w]=='\n'){
-			append(a,(st){.a=inputmem+w+1,.l=0});
-		}
-	}
-	a[len(a)]=(st){.a=inputmem+inputst.st_size,.l=0};
-	for (uint64_t w=0;w<len(a);++w){
-		a[w].l=a[w+1].a-a[w].a;
-	}
-	qsort(a,len(a),sizeof(a[0]),(cmp_f_t)cmp1);
-	FILE*output=fopen("output.txt","w");
-	longfun(output==0);
-	for (uint64_t w=0;w<len(a);++w){
-		for (uint64_t e=0;e<a[w].l;++e){
-			fputc(a[w].a[e],output);
-		}
-	}
+
+
+
+
+
+	// qsort(a,len(a),sizeof(a[0]),(cmp_f_t)cmp1);
+	// FILE*output=fopen("output.txt","w");
+	// longfun(output==0);
+	// for (uint64_t w=0;w<len(a);++w){
+	// 	for (uint64_t e=0;e<a[w].l;++e){
+	// 		fputc(a[w].a[e],output);
+	// 	}
+	// }
 	del(a);
 }
