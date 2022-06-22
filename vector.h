@@ -1,3 +1,4 @@
+// #include "/home/olurin/pony/header.hpp"
 #pragma once
 #include <stdexcept>
 #include <iterator>
@@ -5,78 +6,77 @@
 #include <bits/stdc++.h>
 
 template <typename T>
-class Vector{
+class Vector {
 private:
-	size_t size=0;
-	size_t capacity=0;
-	T* data=nullptr;
-	void memresize(size_t len){
-		assert(size<=capacity);
-		if (len and len!=capacity){
-			auto tmp=static_cast<T*>(
-				len
-					?
-				operator new(sizeof(T)*len)
-					:
-				nullptr
-			);
-			for (size_t w=0;w<size;++w){
-				new(tmp+w)T(std::move(data[w]));
+	size_t size = 0;
+	size_t capacity = 0;
+	T* data = nullptr;
+	void memresize(size_t len) {
+		assert(size <= capacity);
+		if (len and len != capacity) {
+			auto tmp = static_cast<T*> (
+				len ? operator new(sizeof(T) * len) : nullptr);
+			for (size_t w = 0; w < size; ++w){
+				new(tmp + w)T(std::move(data[w]));
 			}
 			operator delete(data);
-			data=tmp;
+			data = tmp;
 		}
-		capacity=len;
-		assert(size<=capacity);
+		capacity = len;
+		assert(size <= capacity);
+		ic(capacity,&capacity)
 	}
 public:
-	size_t Size()const{
+	size_t Size() const {
 		return size;
 	}
-	size_t Capacity()const{
-		return size;
+	size_t Capacity() const {
+		return capacity;
 	}
-	const T* Data()const{
+	T* Data() {
 		return data;
 	}
-	bool Empty()const{
+	const T* Data() const {
+		return data;
+	}
+	bool Empty() const {
 		return size==0;
 	}
-	T& operator[](size_t n){
+	T& operator[](size_t n) {
 		return data[n];
 	}
-	const T& operator[](size_t n)const{
+	const T& operator[](size_t n) const {
 		return data[n];
 	}
-	T& At(size_t n){
-		if (n>=size){
+	T& At(size_t n) {
+		if (n >= size) {
 			throw std::out_of_range("IndexError: list index out of range");
 		}
 		return data[n];
 	}
 	const T& At(size_t n)const{
-		if (n>=size){
+		if (n >= size){
 			throw std::out_of_range("IndexError: list index out of range");
 		}
 		return data[n];
 	}
-	T& Front(){
+	T& Front() {
 		return data[0];
 	}
-	const T& Front()const{
+	const T& Front() const {
 		return data[0];
 	}
-	T& Back(){
-		return data[size-1];
+	T& Back() {
+		return data[size - 1];
 	}
-	const T& Back()const{
-		return data[size-1];
+	const T& Back() const {
+		return data[size - 1];
 	}
-	Vector(){
-
+	Vector() {
 	}
+private:
 	template<typename...Y>
-	void Resize(size_t len,const Y&...val){
+	void Resize_f(size_t len,Y&&...val){
 		assert(size<=capacity);
 		if (len<=size){
 			for (size_t w=len;w<size;++w){
@@ -87,13 +87,22 @@ public:
 				memresize(len);
 			}
 			for (size_t w=size;w<len;++w){
-				new(data+w)T(val...);
+				new(data+w)T(std::forward<Y>(val)...);
 			}
 		}
 		size=len;
 		assert(size<=capacity);
 	}
-	Vector(size_t len){
+public:
+	template<typename Y=T>
+	void Resize(size_t len,Y&&val){
+		using R=std::remove_reference_t<Y>;
+		Resize_f(len,std::forward<R>(val));
+	}
+	void Resize(size_t len){
+		Resize_f(len);
+	}
+	explicit Vector(size_t len){
 		Resize(len);
 	}
 	Vector(size_t len,const T&val){
@@ -102,7 +111,7 @@ public:
 	void Swap(Vector&o){
 		std::swap(o.size,size);
 		std::swap(o.data,data);
-		std::swap(o.capacity,capacity);		
+		std::swap(o.capacity,capacity);
 	}
 	template <
 		typename Y,typename=std::enable_if_t<
@@ -125,43 +134,45 @@ public:
 		Swap(o);
 	}
 	auto&operator=(const Vector&o){
-		delete[] data;
+		if (this==&o){
+			return *this;
+		}
+		Resize(0);
+		memresize(0);
 		std::memset(this,0,sizeof(o));
 		Vector t(o.begin(),o.end());
 		*this=std::move(t);
+		return *this;
 	}
 	auto&operator=(Vector&&o)noexcept{
-		delete[] data;
+		if (this==&o){
+			return *this;
+		}
+		Resize(0);
+		memresize(0);
 		std::memset(this,0,sizeof(o));
 		Swap(o);
 		return *this;
 	}
 	~Vector(){
-		delete[] data;
+		Resize(0);
+		memresize(0);
 	}
 	void Reserve(size_t len){
 		memresize(std::max(capacity,len));
 	}
-	void ShrinkToFit(size_t len){
-		if (size>len){
-			Resize(len);
-		}
-		memresize(len);
+	void ShrinkToFit(){
+		memresize(size);
 	}
 	void Clear(){
 		Resize(0);
 	}
-	void PushBack(const T&w){
+	template<typename Y=T>
+	void PushBack(Y&&w){
 		if (capacity==size){
 			memresize(2*capacity+1);
 		}
-		Resize(size+1,w);
-	}
-	void PushBack(T&&w){
-		if (capacity==size){
-			memresize(2*capacity+1);
-		}
-		Resize(size+1,w);
+		Resize(size+1,std::forward<Y>(w));
 	}
 	void PopBack(){
 		Resize(size-1);
@@ -172,23 +183,37 @@ public:
 	T*end(){
 		return data+size;
 	}
-	const T*cbegin(){
+	const T*begin()const{
 		return data;
 	}
-	const T*cend(){
+	const T*end()const{
 		return data+size;
 	}
-	std::reverse_iterator<T*> rbegin(){
-		return end();
+	const T*cbegin()const{
+		return data;
 	}
-	std::reverse_iterator<T*> rend(){
-		return begin();
+	const T*cend()const{
+		return data+size;
 	}
-	std::reverse_iterator<const T*> crbegin(){
-		return cend();
+	using rev=std::reverse_iterator<T*>;
+	using crev=std::reverse_iterator<const T*>;
+	crev rbegin()const{
+		return crev(end());
 	}
-	std::reverse_iterator<const T*> crend(){
-		return cbegin();
+	crev rend()const{
+		return crev(begin());
+	}
+	rev rbegin(){
+		return rev(end());
+	}
+	rev rend(){
+		return rev(begin());
+	}
+	crev crbegin()const{
+		return crev(cend());
+	}
+	crev crend()const{
+		return crev(cbegin());
 	}
 	using ValueType=T;
 	using Pointer=T*;
@@ -198,9 +223,59 @@ public:
 	using SizeType=size_t;
 	using Iterator=T*;
 	using ConstIterator=const T*;
+	using ReverseIterator=rev;
+	using ConstReverseIterator=crev;
 	Vector(std::initializer_list<T> o){
 		Vector t(o.begin(),o.end());
 		*this=std::move(t);
 	}
+	int cmp(const Vector&o)const{
+		size_t minlen=std::min(size,o.size);
+		for (size_t w=0;w<minlen;++w){
+			if (data[w]<o.data[w]){
+				return -1;
+			}
+			if (o.data[w]<data[w]){
+				return 1;
+			}
+		}
+		if (size<o.size){
+			return -1;
+		}
+		if (o.size<size){
+			return 1;
+		}
+		return 0;
+	}
 };
+
+template<typename T>
+bool operator<(const Vector<T>&q,const Vector<T>&e){
+	return q.cmp(e)<0;
+}
+
+template<typename T>
+bool operator>(const Vector<T>&q,const Vector<T>&e){
+	return q.cmp(e)>0;
+}
+
+template<typename T>
+bool operator==(const Vector<T>&q,const Vector<T>&e){
+	return q.cmp(e)==0;
+}
+
+template<typename T>
+bool operator<=(const Vector<T>&q,const Vector<T>&e){
+	return q.cmp(e)<=0;
+}
+
+template<typename T>
+bool operator>=(const Vector<T>&q,const Vector<T>&e){
+	return q.cmp(e)>=0;
+}
+
+template<typename T>
+bool operator!=(const Vector<T>&q,const Vector<T>&e){
+	return q.cmp(e)!=0;
+}
 
