@@ -24,7 +24,7 @@ private:
 		}
 		capacity = len;
 		assert(size <= capacity);
-		ic(capacity,&capacity)
+		// ic(capacity,&capacity)
 	}
 public:
 	size_t Size() const {
