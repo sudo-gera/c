@@ -1,4 +1,4 @@
-// #include "/home/olurin/pony/header.hpp"
+//#include "/home/olurin/pony/header.hpp"
 #pragma once
 #include <stdexcept>
 #include <iterator>
@@ -11,20 +11,65 @@ private:
 	size_t size = 0;
 	size_t capacity = 0;
 	T* data = nullptr;
-	void memresize(size_t len) {
+	T* memresize(size_t len,T*use=nullptr,size_t save=0) {
+		T* r=nullptr;
 		assert(size <= capacity);
-		if (len and len != capacity) {
-			auto tmp = static_cast<T*> (
-				len ? operator new(sizeof(T) * len) : nullptr);
+		if (len != capacity) {
+			T* tmp = use;
+			if (len and use==nullptr){
+				tmp=static_cast<T*> (operator new(sizeof(T) * len));
+			}
 			for (size_t w = 0; w < size; ++w){
 				new(tmp + w)T(std::move(data[w]));
 			}
-			operator delete(data);
+			if(save){
+				r=data;
+			}else{
+				assert(!r);
+				operator delete(data);
+				data=nullptr;
+			}
 			data = tmp;
 		}
 		capacity = len;
 		assert(size <= capacity);
-		// ic(capacity,&capacity)
+		return r;
+	}
+	template<typename...Y>
+	void Resize_f(size_t len,Y&&...val){
+		assert(size<=capacity);
+		if (len<=size){
+			for (size_t w=len;w<size;++w){
+				data[w].~T();
+			}
+			size=len;
+		}else{
+			size_t memlen=len;
+			if (memlen>capacity and memlen<capacity*2){
+				memlen=capacity*2;
+			}
+			T*r=nullptr;
+			size_t c=capacity;
+			if (memlen>capacity){
+				r=memresize(memlen,nullptr,1);
+			}
+			size_t w=size;
+			try{
+				for (;w<len;++w){
+					new(data+w)T(std::forward<Y>(val)...);
+				}
+				size=len;
+			}catch(...){
+				for(++w;w>size;--w){
+					data[w-1].~T();
+				}
+				if(r){
+					memresize(c,r);
+				}
+				throw;
+			}
+		}
+		assert(size<=capacity);
 	}
 public:
 	size_t Size() const {
@@ -74,26 +119,6 @@ public:
 	}
 	Vector() {
 	}
-private:
-	template<typename...Y>
-	void Resize_f(size_t len,Y&&...val){
-		assert(size<=capacity);
-		if (len<=size){
-			for (size_t w=len;w<size;++w){
-				data[w].~T();
-			}
-		}else{
-			if (len>capacity){
-				memresize(len);
-			}
-			for (size_t w=size;w<len;++w){
-				new(data+w)T(std::forward<Y>(val)...);
-			}
-		}
-		size=len;
-		assert(size<=capacity);
-	}
-public:
 	template<typename Y=T>
 	void Resize(size_t len,Y&&val){
 		using R=std::remove_reference_t<Y>;
@@ -169,9 +194,6 @@ public:
 	}
 	template<typename Y=T>
 	void PushBack(Y&&w){
-		if (capacity==size){
-			memresize(2*capacity+1);
-		}
 		Resize(size+1,std::forward<Y>(w));
 	}
 	void PopBack(){

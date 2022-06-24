@@ -1,7 +1,7 @@
 #include "vector.h"
 using namespace std;
 
-#define G 2
+// #define G 2
 
 // struct z{
 // 	z(){
