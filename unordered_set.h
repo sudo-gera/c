@@ -49,14 +49,20 @@ struct UnorderedSet{
 	template<typename Y=T>
 	bool Find(Y&&val){
 		auto [lp,li]=FindF(std::forward<T>(val));
-		return li and li!=lp->end();
+		return lp and li!=lp->end();
 	}
 	template<typename Y=T>
 	void Insert(Y&&val){
+		if (data.empty()){
+			data.resize(1);
+		}
 		auto [lp,li]=FindF(std::forward<T>(val));
-		auto&l=*lp;
-		if (li==l.end()){
-			l.push_back(val);
+		if (li==lp->end()){
+			lp->push_back(val);
+			size+=1;
+			if (size>data.size()){
+				Rehash(data.size()*2);
+			}
 		}
 	}
 	template<typename Y=T>
@@ -65,6 +71,7 @@ struct UnorderedSet{
 		auto&l=*lp;
 		if (li!=l.end()){
 			l.erase(li);
+			size-=1;
 		}
 	}
 	void Rehash(size_t count){
@@ -77,21 +84,24 @@ struct UnorderedSet{
 			}
 			*this=std::move(t);
 		}
-	}	
+	}
 	void Reserve(size_t count){
 		if (count>data.size()){
 			Rehash(count);
 		}
 	}
-	void BucketCount(){
+	size_t BucketCount(){
 		return data.size();
 	}
-	void BucketSize(size_t f){
+	size_t BucketSize(size_t f){
 		return data[f].size();
 	}
 	template <typename Y=T>
-	void Bucket(Y&&val){
+	size_t Bucket(Y&&val){
 		auto [lp,li]=FindF(std::forward<T>(val));
 		return lp-&data[0];
+	}
+	double LoadFactor(){
+		return size*1./data.size();
 	}
 };
