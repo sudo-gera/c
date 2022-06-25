@@ -2,108 +2,18 @@
 #include <stdexcept>
 #include <iterator>
 #include <optional>
+#include <vector>
+#include <list>
 #include <bits/stdc++.h>
 
-template <typename T>
-class Vector{
-private:
+template<typename KeyT>
+struct UnorderedSet{
+	using T=KeyT;
+	using L=std::list<T>;
 	size_t size=0;
-	size_t capacity=0;
-	T* data=nullptr;
-	void memresize(size_t len){
-		assert(size<=capacity);
-		if (len and len!=capacity){
-			auto tmp=static_cast<T*>(
-				len
-					?
-				operator new(sizeof(T)*len)
-					:
-				nullptr
-			);
-			for (size_t w=0;w<size;++w){
-				new(tmp+w)T(std::move(data[w]));
-			}
-			operator delete(data);
-			data=tmp;
-		}
-		capacity=len;
-		assert(size<=capacity);
-	}
-public:
-	size_t Size()const{
-		return size;
-	}
-	size_t Capacity()const{
-		return size;
-	}
-	const T* Data()const{
-		return data;
-	}
-	bool Empty()const{
-		return size==0;
-	}
-	T& operator[](size_t n){
-		return data[n];
-	}
-	const T& operator[](size_t n)const{
-		return data[n];
-	}
-	T& At(size_t n){
-		if (n>=size){
-			throw std::out_of_range("IndexError: list index out of range");
-		}
-		return data[n];
-	}
-	const T& At(size_t n)const{
-		if (n>=size){
-			throw std::out_of_range("IndexError: list index out of range");
-		}
-		return data[n];
-	}
-	T& Front(){
-		return data[0];
-	}
-	const T& Front()const{
-		return data[0];
-	}
-	T& Back(){
-		return data[size-1];
-	}
-	const T& Back()const{
-		return data[size-1];
-	}
-	Vector(){
-
-	}
-	template<typename...Y>
-	void Resize(size_t len,const Y&...val){
-		assert(size<=capacity);
-		if (len<=size){
-			for (size_t w=len;w<size;++w){
-				data[w].~T();
-			}
-		}else{
-			if (len>capacity){
-				memresize(len);
-			}
-			for (size_t w=size;w<len;++w){
-				new(data+w)T(val...);
-			}
-		}
-		size=len;
-		assert(size<=capacity);
-	}
-	Vector(size_t len){
-		Resize(len);
-	}
-	Vector(size_t len,const T&val){
-		Resize(len,val);
-	}
-	void Swap(Vector&o){
-		std::swap(o.size,size);
-		std::swap(o.data,data);
-		std::swap(o.capacity,capacity);		
-	}
+	std::vector<L> data;
+	UnorderedSet() = default;
+	UnorderedSet(size_t len):data(len){}
 	template <
 		typename Y,typename=std::enable_if_t<
 			std::is_base_of_v<
@@ -112,99 +22,76 @@ public:
 			>
 		>
 	>
-	Vector(Y b,Y e){
+	UnorderedSet(Y b,Y e){
 		for(auto w=b;w!=e;++w){
-			PushBack(*w);
+			insert(*w);
 		}
 	}
-	Vector(const Vector&o){
-		Vector t(o.begin(),o.end());
-		*this=std::move(t);
+	size_t Size()const{
+		return size;
 	}
-	Vector(Vector&&o)noexcept{
-		Swap(o);
-	}
-	auto&operator=(const Vector&o){
-		delete[] data;
-		std::memset(this,0,sizeof(o));
-		Vector t(o.begin(),o.end());
-		*this=std::move(t);
-	}
-	auto&operator=(Vector&&o)noexcept{
-		delete[] data;
-		std::memset(this,0,sizeof(o));
-		Swap(o);
-		return *this;
-	}
-	~Vector(){
-		delete[] data;
-	}
-	void Reserve(size_t len){
-		memresize(std::max(capacity,len));
-	}
-	void ShrinkToFit(size_t len){
-		if (size>len){
-			Resize(len);
-		}
-		memresize(len);
+	bool Empty()const{
+		return size==0;
 	}
 	void Clear(){
-		Resize(0);
+		data.clear();
 	}
-	void PushBack(const T&w){
-		if (capacity==size){
-			memresize(2*capacity+1);
+	template<typename Y=T>
+	std::pair<L*,typename L::iterator> FindF(Y&&val){
+		L&l=data[std::hash<T>()(val)%data.size()];
+		for (auto w=l.begin();w!=l.end();++w){
+			if (*w==val){
+				return {&l,w};
+			}
 		}
-		Resize(size+1,w);
+		return {&l,l.end()};
 	}
-	void PushBack(T&&w){
-		if (capacity==size){
-			memresize(2*capacity+1);
+	template<typename Y=T>
+	bool Find(Y&&val){
+		auto [lp,li]=FindF(std::forward<T>(val));
+		return li and li!=lp->end();
+	}
+	template<typename Y=T>
+	void Insert(Y&&val){
+		auto [lp,li]=FindF(std::forward<T>(val));
+		auto&l=*lp;
+		if (li==l.end()){
+			l.push_back(val);
 		}
-		Resize(size+1,w);
 	}
-	void PopBack(){
-		Resize(size-1);
+	template<typename Y=T>
+	void Erase(Y&&val){
+		auto [lp,li]=FindF(std::forward<T>(val));
+		auto&l=*lp;
+		if (li!=l.end()){
+			l.erase(li);
+		}
 	}
-	T*begin(){
-		return data;
+	void Rehash(size_t count){
+		if (count!=data.size() and count>=size){
+			auto t=UnorderedSet(count);
+			for (auto&w:data){
+				for (auto&e:w){
+					t.Insert(e);
+				}
+			}
+			*this=std::move(t);
+		}
+	}	
+	void Reserve(size_t count){
+		if (count>data.size()){
+			Rehash(count);
+		}
 	}
-	T*end(){
-		return data+size;
+	void BucketCount(){
+		return data.size();
 	}
-	const T*cbegin(){
-		return data;
+	void BucketSize(size_t f){
+		return data[f].size();
 	}
-	const T*cend(){
-		return data+size;
+	template <typename Y=T>
+	void Bucket(Y&&val){
+		auto [lp,li]=FindF(std::forward<T>(val));
+		return lp-&data[0];
 	}
-	std::reverse_iterator<T*> rbegin(){
-		return end();
-	}
-	std::reverse_iterator<T*> rend(){
-		return begin();
-	}
-	std::reverse_iterator<const T*> crbegin(){
-		return cend();
-	}
-	std::reverse_iterator<const T*> crend(){
-		return cbegin();
-	}
-	using ValueType=T;
-	using Pointer=T*;
-	using ConstPointer=const T*;
-	using Reference=T&;
-	using ConstReference=const T&;
-	using SizeType=size_t;
-	using Iterator=T*;
-	using ConstIterator=const T*;
-	Vector(std::initializer_list<T> o){
-		Vector t(o.begin(),o.end());
-		*this=std::move(t);
-	}
-};
-
-template<typename T>
-class UnorderedSet{
-	
 };
