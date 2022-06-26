@@ -1,6 +1,12 @@
 #include "unordered_set.h"
 using namespace std;
 
+// struct a{
+// 	using R=int;
+// };
+
+// using s=const a;
+
 int main(){
 	UnorderedSet<long> a(0);
 	for (auto w:range(0,10,2)){
@@ -13,5 +19,7 @@ int main(){
 			ic(a.Bucket(w))
 		}
 	}
+
+	// wstrtype<s::R>();
 
 }
