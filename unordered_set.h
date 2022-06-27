@@ -9,7 +9,7 @@
 template <typename D,typename Y>
 auto FindF(D && t, Y && val){
 	using T=std::remove_cv_t<std::remove_reference_t<decltype(val)>>;
-	auto & l = t.data[std::hash<T>()(val) % t.data.size()];
+	auto & l = t.data_[std::hash<T>()(val) % t.data_.size_()];
 	using R=std::pair<decltype(&l),decltype(l.begin())>;
 	for(auto w = l.begin(); w != l.end(); ++w) {
 		if(*w == val) {
@@ -24,10 +24,10 @@ struct UnorderedSet {
 	using T = KeyT;
 	using L = std::list<T>;
 	using C = const std::list<T>;
-	size_t size = 0;
-	std::vector<L> data;
+	size_t size_ = 0;
+	std::vector<L> data_;
 	UnorderedSet() = default;
-	UnorderedSet(size_t len):data(len) {}
+	UnorderedSet(size_t len):data_(len) {}
 	template <typename Y, typename = std::enable_if_t<
 			std::is_base_of_v <std::forward_iterator_tag,
 				typename std::iterator_traits<Y>::iterator_category
@@ -38,32 +38,59 @@ struct UnorderedSet {
 		for(auto w = b; w != e; ++w) {
 			Insert(*w);
 		}
+		Rehash(size_);
 	}
-	size_t Size() const {
-		return size;
+	UnorderedSet(const UnorderedSet&e){
+		d=e.data_;
+		size_=e.size_;
+	}
+	UnorderedSet(UnorderedSet&&e){
+		data_=std::move(e.data_);
+		e.data_.clear();
+		size_=e.size_;
+		e.size_=0;
+	}
+	auto&operator=(const UnorderedSet&e){
+		data_=e.data_;
+		size_=e.size_;
+		return *this;
+	}
+	auto&operator=(UnorderedSet&&e){
+		data_=std::move(e.data_);
+		e.data_.clear();
+		size_=e.size_;
+		e.size_=0;
+		return *this;
+	}
+	size_t size_() const {
+		return size_;
 	}
 	bool Empty() const {
-		return !size;
+		return !size_;
 	}
 	void Clear() {
-		data.clear();
+		data_.clear();
+		size_=0;
 	}
 	template <typename Y = T>
 	bool Find(Y && val) const {
+		if (data_.empty()) {
+			return 0;
+		}
 		auto [lp,li] = FindF(*this,std::forward<Y>(val));
-		return lp and li != lp->end();
+		return li != lp->end();
 	}
 	template<typename Y = T>
 	void Insert(Y && val) {
-		if (data.empty()) {
-			data.resize(1);
+		if (data_.empty()) {
+			data_.resize(1);
 		}
 		auto [lp,li] = FindF(*this,std::forward<Y>(val));
 		if (li == lp->end()) {
 			lp->push_back(val);
-			size+=1;
-			if (size > data.size()) {
-				Rehash(data.size() * 2);
+			size_+=1;
+			if (size_ > data_.size_()) {
+				Rehash(data_.size_() * 2);
 			}
 		}
 	}
@@ -73,13 +100,13 @@ struct UnorderedSet {
 		auto& l = *lp;
 		if(li != l.end()) {
 			l.erase(li);
-			size -= 1;
+			size_ -= 1;
 		}
 	}
 	void Rehash(size_t count) {
-		if (count != data.size() && count >= size) {
+		if (count != data_.size_() && count >= size_) {
 			auto t = UnorderedSet(count);
-			for (auto& w:data) {
+			for (auto& w:data_) {
 				for (auto& e:w) {
 					t.Insert(e);
 				}
@@ -88,22 +115,28 @@ struct UnorderedSet {
 		}
 	}
 	void Reserve(size_t count) {
-		if (count > data.size()) {
+		if (count > data_.size_()) {
 			Rehash(count);
 		}
 	}
 	size_t BucketCount() const {
-		return data.size();
+		return data_.size_();
 	}
 	size_t BucketSize(size_t f) const {
-		return data[f].size();
+		if (f<data_.size_()){
+			return data_[f].size_();
+		}
+		return 0;
 	}
 	template <typename Y = T>
 	size_t Bucket(Y && val) const {
 		auto [lp, li] = FindF(*this,std::forward<Y>(val));
-		return lp - &data[0];
+		return lp - &data_[0];
 	}
 	double LoadFactor() const {
-		return size * 1.0 / data.size();
+		if (data_.size_()){
+			return size_ * 1.0 / data_.size_();
+		}
+		return 0;
 	}
 };
