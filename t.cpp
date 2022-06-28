@@ -1,25 +1,22 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define get(a)                                                                 \
-  auto a##_left = a ? a->left : 0;                                             \
-  auto a##_right = a ? a->right : 0;                                           \
-  auto a##_left_size = a##_left ? a##_left->size : 0;                          \
-  auto a##_right_size = a##_right ? a##_right->size : 0;
-
 struct el {
-  long x;
-  long y;
+  long x = 0;
+  long y = 0;
   el *left = nullptr;
   el *right = nullptr;
   long size = 1;
-  el(long _v) : x(_v), y(rand()) { update(); }
-
-  void update() {
-    get(this);
-    size = this_left_size + this_right_size + 1;
-  }
+  el(long _v) : x(_v), y(rand()) {}
 };
+
+void update(el *t) {
+  auto t_left = t ? t->left : 0;
+  auto t_right = t ? t->right : 0;
+  auto t_left_size = t_left ? t_left->size : 0;
+  auto t_right_size = t_right ? t_right->size : 0;
+  t->size = t_left_size + t_right_size + 1;
+}
 
 void pr(el *t) {
   if (!t) {
@@ -48,11 +45,11 @@ el *merge(el *t1, el *t2) {
   }
   if (t1->y < t2->y) {
     t2->left = merge(t1, t2->left);
-    t2->update();
+    update(t2);
     return t2;
   } else {
     t1->right = merge(t1->right, t2);
-    t1->update();
+    update(t1);
     return t1;
   }
 }
@@ -67,21 +64,21 @@ pair<el *, el *> split(el *t, int64_t n) {
   if (n == t->size) {
     return {t, nullptr};
   }
-  get(t);
+  auto t_left = t ? t->left : 0;
+  auto t_right = t ? t->right : 0;
+  auto t_left_size = t_left ? t_left->size : 0;
   if (t_left_size < n) {
     auto tmp = split(t_right, n - t_left_size - 1);
     t->right = tmp.first;
-    t->update();
+    update(t);
     return {t, tmp.second};
   } else {
     auto tmp = split(t_left, n);
     t->left = tmp.second;
-    t->update();
+    update(t);
     return {tmp.first, t};
   }
 }
-
-#undef get
 
 int main() {
   long n, m;
