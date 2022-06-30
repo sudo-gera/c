@@ -18,5 +18,11 @@ maxlen=100+int(run_num**0.5)
 strs=[getstr() for w in range(maxlen)]
 
 n=rand(1,maxlen)
+print(n)
 for w in range(n):
-	print(choice('idenpk'),rand(999)-500)
+	q=rand()%2
+	if q:
+		print('?',rand(9),rand(9))
+	else:
+		print('+',rand(9))
+
