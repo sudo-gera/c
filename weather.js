@@ -1,3 +1,120 @@
+		async function setItem(name,value) {
+			return await aurlopen('localstorage/set/'+name+'/'+JSON.stringify(value))
+		}
+
+		async function getItem(name) {
+			return await aurlopen('localstorage/get/'+name)
+		}
+
+		function len(q){
+			return q.length
+		}
+
+		function removeAllChildNodes(parent) {
+			while (parent.firstChild) {
+				parent.removeChild(parent.firstChild);
+			}
+		}
+
+		ic=console.log
+
+		function t_urlopen_json(url,f){
+			fetch(url).then((r)=>{r.json().then(f)})
+		}
+
+		function t_urlopen_text(url,f){
+			fetch(url).then((r)=>{r.text().then(f)})
+		}
+
+		async function urlopen_json(url){
+			return await((await(fetch(url))).json())
+		}
+
+		async function urlopen_text(url){
+			return await((await(fetch(url))).json())
+		}
+
+		function sleep(s) {
+			return new Promise(resolve => setTimeout(resolve, 1000*s));
+		}
+
+		let exd={"data":{"timelines":[{"timestep":"1h","endTime":"2022-07-08T23:00:00Z","startTime":"2022-07-04T11:00:00Z","intervals":[{"startTime":"2022-07-04T11:00:00Z","values":{"temperature":-53.9}},{"startTime":"2022-07-04T12:00:00Z","values":{"temperature":-53.68}},{"startTime":"2022-07-04T13:00:00Z","values":{"temperature":-53.61}},{"startTime":"2022-07-04T14:00:00Z","values":{"temperature":-53.83}},{"startTime":"2022-07-04T15:00:00Z","values":{"temperature":-54.03}},{"startTime":"2022-07-04T16:00:00Z","values":{"temperature":-54.14}},{"startTime":"2022-07-04T17:00:00Z","values":{"temperature":-54.37}},{"startTime":"2022-07-04T18:00:00Z","values":{"temperature":-54.48}},{"startTime":"2022-07-04T19:00:00Z","values":{"temperature":-54.44}},{"startTime":"2022-07-04T20:00:00Z","values":{"temperature":-54.31}},{"startTime":"2022-07-04T21:00:00Z","values":{"temperature":-54.29}},{"startTime":"2022-07-04T22:00:00Z","values":{"temperature":-54.33}},{"startTime":"2022-07-04T23:00:00Z","values":{"temperature":-54.52}},{"startTime":"2022-07-05T00:00:00Z","values":{"temperature":-54.66}},{"startTime":"2022-07-05T01:00:00Z","values":{"temperature":-54.74}},{"startTime":"2022-07-05T02:00:00Z","values":{"temperature":-54.75}},{"startTime":"2022-07-05T03:00:00Z","values":{"temperature":-54.86}},{"startTime":"2022-07-05T04:00:00Z","values":{"temperature":-54.98}},{"startTime":"2022-07-05T05:00:00Z","values":{"temperature":-55.15}},{"startTime":"2022-07-05T06:00:00Z","values":{"temperature":-55.3}},{"startTime":"2022-07-05T07:00:00Z","values":{"temperature":-55.45}},{"startTime":"2022-07-05T08:00:00Z","values":{"temperature":-55.56}},{"startTime":"2022-07-05T09:00:00Z","values":{"temperature":-55.64}},{"startTime":"2022-07-05T10:00:00Z","values":{"temperature":-55.59}},{"startTime":"2022-07-05T11:00:00Z","values":{"temperature":-55.52}},{"startTime":"2022-07-05T12:00:00Z","values":{"temperature":-55.57}},{"startTime":"2022-07-05T13:00:00Z","values":{"temperature":-55.56}},{"startTime":"2022-07-05T14:00:00Z","values":{"temperature":-55.43}},{"startTime":"2022-07-05T15:00:00Z","values":{"temperature":-55.37}},{"startTime":"2022-07-05T16:00:00Z","values":{"temperature":-55.01}},{"startTime":"2022-07-05T17:00:00Z","values":{"temperature":-55.13}},{"startTime":"2022-07-05T18:00:00Z","values":{"temperature":-55.15}},{"startTime":"2022-07-05T19:00:00Z","values":{"temperature":-55.23}},{"startTime":"2022-07-05T20:00:00Z","values":{"temperature":-55.37}},{"startTime":"2022-07-05T21:00:00Z","values":{"temperature":-55.38}},{"startTime":"2022-07-05T22:00:00Z","values":{"temperature":-55.44}},{"startTime":"2022-07-05T23:00:00Z","values":{"temperature":-55.56}},{"startTime":"2022-07-06T00:00:00Z","values":{"temperature":-55.53}},{"startTime":"2022-07-06T01:00:00Z","values":{"temperature":-55.57}},{"startTime":"2022-07-06T02:00:00Z","values":{"temperature":-54.87}},{"startTime":"2022-07-06T03:00:00Z","values":{"temperature":-55}},{"startTime":"2022-07-06T04:00:00Z","values":{"temperature":-54.95}},{"startTime":"2022-07-06T05:00:00Z","values":{"temperature":-54.36}},{"startTime":"2022-07-06T06:00:00Z","values":{"temperature":-53.86}},{"startTime":"2022-07-06T07:00:00Z","values":{"temperature":-53.84}},{"startTime":"2022-07-06T08:00:00Z","values":{"temperature":-54.02}},{"startTime":"2022-07-06T09:00:00Z","values":{"temperature":-54.48}},{"startTime":"2022-07-06T10:00:00Z","values":{"temperature":-54.96}},{"startTime":"2022-07-06T11:00:00Z","values":{"temperature":-55.7}},{"startTime":"2022-07-06T12:00:00Z","values":{"temperature":-55.89}},{"startTime":"2022-07-06T13:00:00Z","values":{"temperature":-55.69}},{"startTime":"2022-07-06T14:00:00Z","values":{"temperature":-54.89}},{"startTime":"2022-07-06T15:00:00Z","values":{"temperature":-53.73}},{"startTime":"2022-07-06T16:00:00Z","values":{"temperature":-53}},{"startTime":"2022-07-06T17:00:00Z","values":{"temperature":-52.98}},{"startTime":"2022-07-06T18:00:00Z","values":{"temperature":-52.55}},{"startTime":"2022-07-06T19:00:00Z","values":{"temperature":-51.89}},{"startTime":"2022-07-06T20:00:00Z","values":{"temperature":-49.91}},{"startTime":"2022-07-06T21:00:00Z","values":{"temperature":-49.15}},{"startTime":"2022-07-06T22:00:00Z","values":{"temperature":-49.03}},{"startTime":"2022-07-06T23:00:00Z","values":{"temperature":-48.48}},{"startTime":"2022-07-07T00:00:00Z","values":{"temperature":-50.19}},{"startTime":"2022-07-07T01:00:00Z","values":{"temperature":-49.53}},{"startTime":"2022-07-07T02:00:00Z","values":{"temperature":-48.86}},{"startTime":"2022-07-07T03:00:00Z","values":{"temperature":-47.92}},{"startTime":"2022-07-07T04:00:00Z","values":{"temperature":-47.21}},{"startTime":"2022-07-07T05:00:00Z","values":{"temperature":-46.62}},{"startTime":"2022-07-07T06:00:00Z","values":{"temperature":-46.03}},{"startTime":"2022-07-07T07:00:00Z","values":{"temperature":-45.45}},{"startTime":"2022-07-07T08:00:00Z","values":{"temperature":-45.04}},{"startTime":"2022-07-07T09:00:00Z","values":{"temperature":-44.51}},{"startTime":"2022-07-07T10:00:00Z","values":{"temperature":-44.1}},{"startTime":"2022-07-07T11:00:00Z","values":{"temperature":-43.84}},{"startTime":"2022-07-07T12:00:00Z","values":{"temperature":-42.81}},{"startTime":"2022-07-07T13:00:00Z","values":{"temperature":-42.19}},{"startTime":"2022-07-07T14:00:00Z","values":{"temperature":-41.96}},{"startTime":"2022-07-07T15:00:00Z","values":{"temperature":-41.24}},{"startTime":"2022-07-07T16:00:00Z","values":{"temperature":-40.58}},{"startTime":"2022-07-07T17:00:00Z","values":{"temperature":-40.16}},{"startTime":"2022-07-07T18:00:00Z","values":{"temperature":-39.73}},{"startTime":"2022-07-07T19:00:00Z","values":{"temperature":-39.43}},{"startTime":"2022-07-07T20:00:00Z","values":{"temperature":-39.7}},{"startTime":"2022-07-07T21:00:00Z","values":{"temperature":-39.43}},{"startTime":"2022-07-07T22:00:00Z","values":{"temperature":-39.12}},{"startTime":"2022-07-07T23:00:00Z","values":{"temperature":-38.53}},{"startTime":"2022-07-08T00:00:00Z","values":{"temperature":-38.05}},{"startTime":"2022-07-08T01:00:00Z","values":{"temperature":-43.32}},{"startTime":"2022-07-08T02:00:00Z","values":{"temperature":-42.25}},{"startTime":"2022-07-08T03:00:00Z","values":{"temperature":-41.3}},{"startTime":"2022-07-08T04:00:00Z","values":{"temperature":-40.6}},{"startTime":"2022-07-08T05:00:00Z","values":{"temperature":-39.82}},{"startTime":"2022-07-08T06:00:00Z","values":{"temperature":-39.22}},{"startTime":"2022-07-08T07:00:00Z","values":{"temperature":-38.42}},{"startTime":"2022-07-08T08:00:00Z","values":{"temperature":-37.7}},{"startTime":"2022-07-08T09:00:00Z","values":{"temperature":-37.02}},{"startTime":"2022-07-08T10:00:00Z","values":{"temperature":-36.98}},{"startTime":"2022-07-08T11:00:00Z","values":{"temperature":-36.7}},{"startTime":"2022-07-08T12:00:00Z","values":{"temperature":-36.58}},{"startTime":"2022-07-08T13:00:00Z","values":{"temperature":-36.57}},{"startTime":"2022-07-08T14:00:00Z","values":{"temperature":-36.84}},{"startTime":"2022-07-08T15:00:00Z","values":{"temperature":-36.94}},{"startTime":"2022-07-08T16:00:00Z","values":{"temperature":-38}},{"startTime":"2022-07-08T17:00:00Z","values":{"temperature":-38.35}},{"startTime":"2022-07-08T18:00:00Z","values":{"temperature":-41.14}},{"startTime":"2022-07-08T19:00:00Z","values":{"temperature":-43.96}},{"startTime":"2022-07-08T20:00:00Z","values":{"temperature":-43.21}},{"startTime":"2022-07-08T21:00:00Z","values":{"temperature":-40.77}},{"startTime":"2022-07-08T22:00:00Z","values":{"temperature":-40.3}},{"startTime":"2022-07-08T23:00:00Z","values":{"temperature":-40.7}}]}]}};
+
+		async function get_data(){
+			localstorage=window.localStorage;
+			var g=localstorage['expd'];
+			if (g){
+				g=JSON.parse(g);
+			}
+			var t=Date.now() / 1000 | 0;
+			if (!g || !g.data || g.time<t){
+				g={}
+				g.data=exd;
+				// g.data=await urlopen_json("https://api.tomorrow.io/v4/timelines?location=58.59766760766661,49.65268871471847&fields=temperature,weatherCode&timesteps=1h&units=metric&apikey=N4w8rEcJIjuLa2N2ZtUQTLVgXtFr5gEn&timezone=Europe%2FMoscow");
+				g.time=3*3600 + t;
+			}
+			localstorage['expd']=JSON.stringify(g);
+			return g.data;
+		}
+
+		function parse_iso_8601(str){
+			return [[
+				str.slice(0,4),
+				str.slice(5,7),
+				str.slice(8,10),
+				],[
+				str.slice(11,13),
+				str.slice(14,16),
+				str.slice(17,19),]
+			]
+		}
+
+		let a=exd.data.timelines[0].intervals;
+		for (var w=0;w<a.length;++w){
+			a[w].values.weatherCode=0;
+		}
+
+		async function main(){
+			a=await get_data();
+			a=a.data.timelines[0].intervals;
+			var dt=document.getElementById('table');
+			removeAllChildNodes(dt);
+			dates={};
+			for (var w=0;w<a.length;++w){
+				dates[parse_iso_8601(a[w].startTime)[0]]=[];
+			}
+			for (var w=0;w<a.length;++w){
+				dates[parse_iso_8601(a[w].startTime)[0]].push(a[w]);
+			}
+			for (var q in dates){
+				a=dates[q];
+				t=document.createElement('table');
+				t.width='100%'
+				t.border=1;
+				t.style='font-size:400%';
+				for (var w=0;w<a.length;++w){
+					let z=document.createElement('td');
+					z.innerText=parse_iso_8601(a[w].startTime)[1][0]+':00';
+					let x=document.createElement('td');
+					x.innerText=Math.round(a[w].values.temperature);
+					let c=document.createElement('td');
+					c.innerText=d[a[w].values.weatherCode];
+					let v=document.createElement('tr');
+					v.appendChild(z);
+					v.appendChild(x);
+					v.appendChild(c);
+					t.appendChild(v);
+				}
+				h=document.createElement('h1');
+				var qa=q.split(',');
+				qa.reverse();
+				h.innerText=qa.join('.');
+				h.style='font-size:400%';
+				dt.appendChild(h);
+				dt.appendChild(t);
+			}
+		}
+d=
 {
 	"0": "неизвестно",
 	"1000": "чисто, солнечно",
@@ -280,3 +397,5 @@
 	"80030": "частично облачно и гроза",
 	"80031": "частично облачно и гроза"
 }
+
+
