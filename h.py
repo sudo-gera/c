@@ -1,38 +1,68 @@
 HOME=1
 from operator import *
+import operator
 from inspect import *
+import inspect
 try:
 	from dataclasses import *
+	import dataclasses
 except:
 	pass
 try:
 	from numpy import *
+	import numpy
 except:
 	pass
+from asyncio import *
+import asyncio
 from time import *
+import time
 from os import *
+import os
 from os.path import *
+import os.path
 from sys import *
+import sys
 from json import *
+import json
 from random import *
+import random
 from urllib.request import *
+import urllib.request
 from urllib.parse import *
+import urllib.parse
 from pprint import *
+import pprint
 from math import *
+import math
 from cmath import *
+import cmath
 from decimal import *
+import decimal
 from traceback import *
+import traceback
 from fractions import *
+import fractions
 from subprocess import *
+import subprocess
 from pathlib import *
+import pathlib
 from functools import *
+import functools
 from difflib import *
+import difflib
 from base64 import *
+import base64
 from itertools import *
+import itertools
 from timeit import *
+import timeit
 from bisect import *
+import bisect
 from builtins import *
+import builtins
 from re import *
+import re
 def outputFunction(*a):
 	a=a[0]
 	s=split(r'\:\d+ in ',a)
@@ -50,10 +80,12 @@ def outputFunction(*a):
 	args=a
 	print("\x1b[92mline \x1b[94m"+line+"\x1b[92m file \x1b[94m"+file+"\x1b[92m func \x1b[94m"+func+"\x1b[92m \x1b[0m"+args,file=stderr)
 from icecream import ic
+import icecream 
 ic.configureOutput(includeContext=1)
 ic.configureOutput(outputFunction=outputFunction)
 ic.configureOutput(prefix='')
 from builtins import *
+import builtins
 home=str(Path.home())+'/'
 def rand(q=2**64,e=None):
 	if e!=None:
@@ -79,7 +111,9 @@ def bisect_in(a,s):
 # from primes import primes
 primes=[2,3,5]
 from is_prime import *
+import is_prime
 from scan import *
+import scan
 def is_prime_root(q):
 	if primes[-1]>=q:
 		return bisect_in(primes,q)
@@ -130,6 +164,7 @@ def primes_until(w):
 
 primes_until(10**3)
 from fib import *
+import fib
 # @cache
 # def fibonacci(q):
 # 	if q<0:
@@ -146,6 +181,7 @@ from fib import *
 	# return a
 
 from root import *
+import root
 
 def factor(q):
 	f=[]
@@ -284,6 +320,7 @@ def fast_prev_prime(q):
 		q-=6
 
 from builtins import *
+import builtins
 
 class Prime:
 	def __init__(s,p,n):
