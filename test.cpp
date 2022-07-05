@@ -1,8 +1,8 @@
-template<typename T>
-auto _run(const T&f){
-	auto [q,w,e,r]=f;
-	return q;
-}
+// template<typename T>
+// auto _run(const T&f){
+// 	auto [q,w,e,r]=f;
+// 	return q;
+// }
 
 
 template<typename T>
