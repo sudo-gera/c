@@ -1,10 +1,10 @@
 from h import *
-import genshin
+# import genshin
 
 
-async def main():
-	client = genshin.Client({'ltuid':'101242997', 'ltoken':'UWX4TzbK8qLXZ3Y8Ist1OwCv4jz7Ne9n1z12UA61'},lang="ru-ru")
-	client.default_game=genshin.Game.GENSHIN
+# async def main():
+# 	client = genshin.Client({'ltuid':'101242997', 'ltoken':'UWX4TzbK8qLXZ3Y8Ist1OwCv4jz7Ne9n1z12UA61'},lang="ru-ru")
+# 	client.default_game=genshin.Game.GENSHIN
 
 	# user = await client.get_full_genshin_user(719466065)
 	# print(user)
@@ -21,4 +21,10 @@ async def main():
 	# 	print(f"Claimed {reward.amount}x {reward.name}")
 
 
-asyncio.run(main())
+# asyncio.run(main())
+
+for w in range(10):
+	a=[]
+	for e in range(10):
+		a.append(str((e+48)*256+w+48))
+	print(f'dw {",".join(a)}')
