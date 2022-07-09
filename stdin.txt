@@ -1,16 +1,12 @@
-5 15 
-3
-1
-4
-1
-5
-9
-2
-6
-5
-3
-5
-8
-7
-9
-3
+insert 2 
+insert 5 
+insert 3 
+exists 2 
+exists 4 
+next 4 
+prev 4 
+delete 5 
+next 4 
+prev 4 
+kth 0 
+kth 2

@@ -174,4 +174,8 @@ int main(){
 		print(max(ak[x],ak[y-(1<<k)]));
 	}
 	// perf();
+	for (uint64_t w=0;w<len(a);++w){
+		del(a[w]);
+	}
+	del(a);
 }
