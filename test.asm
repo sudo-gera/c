@@ -1,121 +1,39 @@
-%include "macro.inc"
-; begin
-
-<<<<<<< HEAD
-
-; _ufor _ax,_1,_2
-; 	buwrite [_ax]
-; end
-; cput 10
-
-; jmp _2
-
-; _1:
-; or bh,bh
-; ; or eax,eax
-; ; pushad
-; ; pushad
-; ; and ebp,ebp
-; ; xor ebp,ebp
-; ; sub ebp,ebp
-; ; ja $
-; ; jmp 0
-; ; jmp $+2
-; ; div eax
-; ; sub eax,ebx
-; ; mov eax,1
-; ; xor eax,eax
-; ; inc eax
-; ; int 0x80
-; _2:
-
-
-%macro view_one 1
-%%_begin:
-db %1
-%%_end:
-%endmacro
-
-%macro view 1-*
-%rep %0
-view_one %1
-%rotate 1
-%endrep
-%endmacro
-
-; end
-global main
-global _start
-section .text
-_start:
-main:
-; jmp _stop
-
-; db 'PQRSTUVW'
-
-; view 0
-
-; db '_^]X[ZYX'
-
-; mov eax,[edi]
-
-sub [eax+edi+32],eax
-
-; xor _ax,_ax
-; inc _ax
-; int 0x80
-
-; push word 0x80*256+0xcd
-; jmp esp
-
-; push word 32973
-; push word 32973
-; push word 32973
-; push word 32973
-; mov eax,esp
-; wsprint [eax]
-
-; mov ax,34
-
-; inc byte [eax]
-
-; sub eax,[ebx]
-
-; push esp
-; pop esp
-
-; _1:
-; dec ax
-; jnz _1
-
-; sub eax,3
-
-
-; shl eax,3
-
-; cmp eax,0
-
-; print eax
-; jmp esp
-
-; dw 32973
-
-
-; mov rax,1
-; int 0x80
-
-; pushad
-
-
-; view 'da','db','dc','dd','de','df','dg','dh','di','dj','dk','dl','dm','dn','do','dp','dq','dr','ds','dt','du','dv','dw','dx','dy','dz'
-; jz $
-; db 't','t'
-
-
-_stop:
-mov eax,1
-int 0x80
-=======
-
-end
->>>>>>> 49ce0d89a0ab6076190c132564bc397e3a6ff68e
+	; you can copy this example into other file and run
+	%include "best_io.inc"
+	section .data
+		somestring db 'hello'
+		emptystr db '                              ' ; 30 spaces
+		someint dd 256+44 ; = 300
+	section .text
+		start
+		; print hello world:
+		putstr    somestring,emptystr ; will put 'hello' (without quotes)
+		; emptystr is located to the right of 'hello'
+		; so emptystr pointer points to end of somestring
+		putcstr   ' world' ; will put ' world' (without quotes)
+		putchar   10 ; will put enter
+		; print hello world (again)
+		putcstr   'hello world',10
+		; print some numbers
+		putubyte  [someint] ; 44
+		putchar   10 ; new line
+		putubyte  [someint+1] ; 1
+		putchar   10 ; new line
+		putuword  [someint] ; 300
+		putchar   10 ; new line
+		putuword  [someint+1] ; 1
+		putchar   10 ; new line
+		printudword [someint] ; 300 with new line
+		putcstr   'what is your name?',10
+		getstr    emptystr,someint ; now emptystr is equal to your name
+		; don't worry, your name is not empty :)
+		putstr    somestring,emptystr ; will print 'hello'
+		putchar   [someint] ; chr(44) is ','
+		putchar   ' '
+		putstr    emptystr,someint
+		putchar   10 ; new line
+		putcstr   'what is your age?',10
+		getdword  [someint] ; now someint is equal to your age
+		putcstr  'your age is '
+		printudword [someint]
+		stop
