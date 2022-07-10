@@ -1,39 +1,23 @@
-	; you can copy this example into other file and run
-	%include "best_io.inc"
-	section .data
-		somestring db 'hello'
-		emptystr db '                              ' ; 30 spaces
-		someint dd 256+44 ; = 300
-	section .text
-		start
-		; print hello world:
-		putstr    somestring,emptystr ; will put 'hello' (without quotes)
-		; emptystr is located to the right of 'hello'
-		; so emptystr pointer points to end of somestring
-		putcstr   ' world' ; will put ' world' (without quotes)
-		putchar   10 ; will put enter
-		; print hello world (again)
-		putcstr   'hello world',10
-		; print some numbers
-		putubyte  [someint] ; 44
-		putchar   10 ; new line
-		putubyte  [someint+1] ; 1
-		putchar   10 ; new line
-		putuword  [someint] ; 300
-		putchar   10 ; new line
-		putuword  [someint+1] ; 1
-		putchar   10 ; new line
-		printudword [someint] ; 300 with new line
-		putcstr   'what is your name?',10
-		getstr    emptystr,someint ; now emptystr is equal to your name
-		; don't worry, your name is not empty :)
-		putstr    somestring,emptystr ; will print 'hello'
-		putchar   [someint] ; chr(44) is ','
-		putchar   ' '
-		putstr    emptystr,someint
-		putchar   10 ; new line
-		putcstr   'what is your age?',10
-		getdword  [someint] ; now someint is equal to your age
-		putcstr  'your age is '
-		printudword [someint]
-		stop
+%include "best_io.inc"
+start
+	getdword eax
+	call root
+	printudword ebx
+stop
+
+
+root:
+	mov ebx,0
+	mov ecx,1<<(__BITS__-2)
+	_2:
+		lea edx,[ebx+ecx]
+		cmp eax,edx
+		jb _1
+			sub eax,edx
+			lea ebx,[ebx+ecx*2]
+		_1:
+		shr ebx,1
+		shr ecx,2
+	jnz _2
+	mov eax,ebx
+ret
