@@ -23,8 +23,11 @@ from h import *
 
 # asyncio.run(main())
 
-for w in range(10):
-	a=[]
-	for e in range(10):
-		a.append(str((e+48)*256+w+48))
-	print(f'dw {",".join(a)}')
+from fractions import Fraction
+o=Fraction(1)
+
+a=1
+for w in range(50):
+	a*=50*o/(100-w)
+print(a)
+print(float(a))
