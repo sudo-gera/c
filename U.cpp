@@ -4,22 +4,24 @@
 #include <string>
 #include <vector>
 #include <type_traits>
-#ifndef assert
-#include <assert.h>
-#endif
 #include <algorithm>
+#include <iostream>
 
 #ifdef assert_m
-#define assert assert_m
+	#ifdef assert
+		#undef assert
+	#endif
+	#define assert assert_m
+#else
+	#include <assert.h>
 #endif
 
 #define get(a) auto a##_z=a?a->z_get():0;auto a##_x=a?a->x_get():0;auto a##_z_s=a##_z?a##_z->s:0;auto a##_x_s=a##_x?a##_x->s:0;
 
-template <typename T>
 class treap{
 private:
 	struct el{
-		T v;
+		int64_t v;
 		int64_t w;
 		el const*const z=nullptr;
 		el const*const x=nullptr;
@@ -27,9 +29,9 @@ private:
 		int64_t const s=1;
 		int64_t const d=1;
 		int64_t const rev=0;
-		T const first=0;
-		T const last=0;
-		T const sum=0;
+		int64_t const first=0;
+		int64_t const last=0;
+		int64_t const sum=0;
 		int64_t const to_add=0;
 		int64_t const to_mul=1;
 		int64_t const is_forward=1;
@@ -217,7 +219,7 @@ private:
 	};
 
 	static void check(const el*s){
-		if (__FILE__[0]!='t'){
+		if (__FILE__[0]!='int64_t'){
 			return;
 		}
 		if (!s){
@@ -309,7 +311,7 @@ private:
 		return (el*)(nullptr);
 	}
 
-	static void to_list(const el* q,std::vector<T>&a){
+	static void to_list(const el* q,std::vector<int64_t>&a){
 		if (!q){
 			return;
 		}
@@ -331,7 +333,7 @@ private:
 		pr(q->x_get(),n+1);
 	}
 
-	static auto pri(const el* root,uint64_t*prev_node=0){
+	static auto pri(const el* root,int64_t*prev_node=0){
 		if (!root){
 			return;
 		}
@@ -340,14 +342,14 @@ private:
 		left=root->z;
 		right=root->x;
 
-		uint64_t node[3];
-		node[2]=(uint64_t)NULL;
-		node[0]=(uint64_t)prev_node;
+		int64_t node[3];
+		node[2]=(int64_t)NULL;
+		node[0]=(int64_t)prev_node;
 		if (prev_node){
-			prev_node[2]=(uint64_t)node;
+			prev_node[2]=(int64_t)node;
 		}
 
-		uint64_t save=0;
+		int64_t save=0;
 		if (prev_node and prev_node[1]==2){
 			save=prev_node[1];
 			prev_node[1]=0;
@@ -358,12 +360,12 @@ private:
 			prev_node[1]=save;
 		}
 
-		uint64_t*d=node;
+		int64_t*d=node;
 		while(d[0]){
-			d=(uint64_t*)d[0];
+			d=(int64_t*)d[0];
 		}
 
-		for (;d!=node;d=(uint64_t*)d[2]){
+		for (;d!=node;d=(int64_t*)d[2]){
 			if (d[1]==1){
 				if (d==prev_node){
 					std::cout<<("┗");
@@ -453,33 +455,33 @@ private:
 		}
 	}
 
-	static std::pair<const el*,const el*> split(const el* t,int64_t n){
-		if (!t){
+	static std::pair<const el*,const el*> split(const el* int64_t,int64_t n){
+		if (!int64_t){
 			return {nullptr,nullptr};
 		}
 		if (n==0){
-			return {nullptr,t};
+			return {nullptr,int64_t};
 		}
-		if (n==t->s){
-			return {t,nullptr};
+		if (n==int64_t->s){
+			return {int64_t,nullptr};
 		}
-		get(t);
+		get(int64_t);
 		if (t_z_s<n){
 			auto tmp=split(t_x,n-t_z_s-1);
-			t->x_put(tmp.first);
+			int64_t->x_put(tmp.first);
 			auto t2=tmp.second;
 			if (t2){
 				const_cast<const el*&>(t2->p)=nullptr;
 			}
-			return {t,t2};
+			return {int64_t,t2};
 		}else{
 			auto tmp=split(t_z,n);
 			auto t1=tmp.first;
-			t->z_put(tmp.second);
+			int64_t->z_put(tmp.second);
 			if (t1){
 				const_cast<const el*&>(t1->p)=nullptr;
 			}
-			return {t1,t};
+			return {t1,int64_t};
 		}
 	}
 
@@ -554,12 +556,12 @@ public:
 	void out(){
 		pri(_e);
 	}
-	template <typename y=std::initializer_list<T>>
-	treap(const y&l=std::initializer_list<T>(),
+	template <typename y=std::initializer_list<int64_t>>
+	treap(const y&l=std::initializer_list<int64_t>(),
 		std::enable_if_t<
 			std::is_same_v<
-				typename y::value_type,T
-			> and std::is_copy_constructible_v<T>
+				typename y::value_type,int64_t
+			> and std::is_copy_constructible_v<int64_t>
 			and std::is_same_v<decltype(l.begin()!=l.end()),bool>
 			,int> =0){
 		for (auto&w:l){
@@ -568,15 +570,15 @@ public:
 	}
 	template <typename y=int>
 	treap(y=0,
-		std::enable_if_t<!std::is_copy_constructible_v<T>
+		std::enable_if_t<!std::is_copy_constructible_v<int64_t>
 			,y> =0){
 	}
 	template<typename y=int64_t>
 	treap(std::enable_if_t<
-			std::is_trivially_constructible_v<T>
+			std::is_trivially_constructible_v<int64_t>
 		,y> l){
 		for (int64_t w=0;w<l;++w){
-			_e=(merge(e_get(),new auto (el(T()))));
+			_e=(merge(e_get(),new auto (el(int64_t()))));
 		}
 	}
 	treap(const treap&l){
@@ -585,14 +587,14 @@ public:
 		}
 	}
 	treap(treap&&l){
-		auto t=e_get();
+		auto int64_t=e_get();
 		_e=(l.e_get());
-		l._e=(t);
+		l._e=(int64_t);
 	}
 	auto&operator=(treap&&l){
-		auto t=e_get();
+		auto int64_t=e_get();
 		_e=(l.e_get());
-		l._e=(t);
+		l._e=(int64_t);
 		return *this;
 	}
 	auto&operator=(const treap&l){
@@ -624,7 +626,7 @@ public:
 		return e_get()?e_get()->is_backward:1;
 	}
 
-	const T&operator[](int64_t n){
+	const int64_t&operator[](int64_t n){
 		if (n<0){
 			n+=this->size();
 		}
@@ -633,7 +635,7 @@ public:
 		return get_by_index(e_get(),n)->v;
 	}
 
-	const T&operator[](int64_t n)const{
+	const int64_t&operator[](int64_t n)const{
 		if (n<0){
 			n+=this->size();
 		}
@@ -662,46 +664,46 @@ public:
 // 		return 0;
 // 	}
 public:
-	void add_left(treap<T>&q){
+	void add_left(treap<int64_t>&q){
 		_e=(merge(q.e_get(),e_get()));
 		q._e=(nullptr);
 	}
-	void add_right(treap<T>&q){
+	void add_right(treap<int64_t>&q){
 		_e=merge(e_get(),q.e_get());
 		q._e=nullptr;
 	}
-	treap<T> cut_left(int64_t n){
+	treap<int64_t> cut_left(int64_t n){
 		// assert(0<=n and n<=size());
 		auto s=size();
 		auto tmp=split(e_get(),n);
 		// assert(el_size(tmp.first)+el_size(tmp.second)==s);
 		_e=(tmp.second);
-		auto r=treap<T>();
+		auto r=treap<int64_t>();
 		r._e=(tmp.first);
 		return r;
 	}
-	treap<T> cut_right(int64_t n){
+	treap<int64_t> cut_right(int64_t n){
 		// assert(0<=n and n<=size());
 		auto s=size();
 		auto tmp=split(e_get(),size()-n);
 		// assert(el_size(tmp.first)+el_size(tmp.second)==s);
 		_e=tmp.first;
-		auto r=treap<T>();
+		auto r=treap<int64_t>();
 		r._e=(tmp.second);
 		return r;
 	}
-	treap<T> cut(int64_t l,int64_t r){
+	treap<int64_t> cut(int64_t l,int64_t r){
 		assert(0<=l and l<=r and  r<=size());
 		auto q=cut_left(l);
 		auto w=cut_left(r-l);
 		add_left(q);
 		return w;
 	}
-	void push_back(const T&a){
+	void push_back(const int64_t&a){
 		_e=(merge(e_get(),new auto(el(a))));
 		// if(_e){_e->make();};
 	}
-	void push_front(const T&a){
+	void push_front(const int64_t&a){
 		_e=(merge(new auto(el(a)),e_get()));
 		// if(_e){_e->make();};
 	}
@@ -715,21 +717,21 @@ public:
 		_e=(merge(new auto(el(a...)),e_get()));
 		// if(_e){_e->make();};
 	}
-	T pop_back(){
+	int64_t pop_back(){
 		auto q=cut_right(1);
 		return q[0];
 	}
-	T pop_front(){
+	int64_t pop_front(){
 		auto q=cut_left(1);
 		return q[0];
 	}
-	operator std::vector<T>()const{
-		auto q=std::vector<T>();
+	operator std::vector<int64_t>()const{
+		auto q=std::vector<int64_t>();
 		to_list(e_get(),q);
 		return q;
 	}
 	friend std::ostream&operator<<(std::ostream&q,const treap&w){
-		auto r=std::vector<T>(w);
+		auto r=std::vector<int64_t>(w);
 		q<<'[';
 		int64_t c=0;
 		for (auto w:r){
@@ -750,31 +752,31 @@ public:
 	bool empty(){
 		return !e_get();
 	}
-	T&front(){
+	int64_t&front(){
 		return (*this)[0];
 	}
-	const T&front()const{
+	const int64_t&front()const{
 		return (*this)[0];
 	}
-	T&back(){
+	int64_t&back(){
 		return (*this)[this->size()-1];
 	}
-	const T&back()const{
+	const int64_t&back()const{
 		return (*this)[this->size()-1];
 	}
 	struct iter {
 		using difference_type = std::ptrdiff_t;
-		using value_type = T;
-		using pointer = T*;
-		using reference = T&;
+		using value_type = int64_t;
+		using pointer = int64_t*;
+		using reference = int64_t&;
 		using iterator_category = std::random_access_iterator_tag;
 		template<typename Y>
 		using is_iterator=Y;
-		using original_type=treap<T>;
+		using original_type=treap<int64_t>;
 		const el*e=nullptr;
 		int64_t o=0;
 		int64_t d=1;
-		const T&operator*(){
+		const int64_t&operator*(){
 			return e->v;
 		}
 		auto&operator--(){
@@ -799,9 +801,9 @@ public:
 			if (!e){
 				return *this;
 			}
-			auto t=add(e,w);
-			e=t.first;
-			o=t.second;
+			auto int64_t=add(e,w);
+			e=int64_t.first;
+			o=int64_t.second;
 			return *this;
 		}
 		auto&operator-=(int64_t w){
@@ -851,8 +853,8 @@ public:
 		return q;
 	}
 	using iterator=iter;
-	using value_type=T;
-	auto insert(int64_t n,const T&q){
+	using value_type=int64_t;
+	auto insert(int64_t n,const int64_t&q){
 		auto w=cut_left(n);
 		w.push_back(q);
 		add_left(w);
@@ -864,39 +866,39 @@ public:
 		add_left(w);
 		return n;
 	}
-	auto update(int64_t n,const T&q){
+	auto update(int64_t n,const int64_t&q){
 		auto w=cut_left(n);
 		auto r=cut_left(1);
-		auto t=r[0];
+		auto int64_t=r[0];
 		push_front(q);
 		add_left(w);
-		return t;
+		return int64_t;
 	}
 	template<typename TT>
-	auto insert(TT n,const T&q)->typename TT::template is_iterator<iter>{
+	auto insert(TT n,const int64_t&q)->typename TT::template is_iterator<iter>{
 		return begin()+insert(find_index(n.e_get()),q);
 	}
 	template<typename TT>
-	auto update(TT n,const T&q)->typename TT::template is_iterator<iter>{
+	auto update(TT n,const int64_t&q)->typename TT::template is_iterator<iter>{
 		return update(find_index(n.e_get()),q);
 	}
 	template<typename TT>
 	auto erase(TT n)->typename TT::template is_iterator<iter>{
 		return begin()+erase(find_index(n.e_get()));
 	}
-	auto insert(int64_t n,treap<T>&q){
+	auto insert(int64_t n,treap<int64_t>&q){
 		auto w=cut_left(n);
 		add_left(q);
 		add_left(w);
 		return n;
 	}
 	template<typename TT>
-	auto insert(TT n,treap<T>&q)->typename TT::template is_iterator<iter>{
+	auto insert(TT n,treap<int64_t>&q)->typename TT::template is_iterator<iter>{
 		return begin()+insert(find_index(n.e_get()),q);
 	}
 	void resize(int64_t n){
-		for (uint64_t w=size();w<n;++w){
-			push_back(T());
+		for (int64_t w=size();w<n;++w){
+			push_back(int64_t());
 		}
 		cut_right(size()-n);
 	}
@@ -912,18 +914,18 @@ public:
 	friend bool operator>=(const treap<Y>&q,const treap<Y>&w);
 	template <typename Y>
 	friend bool operator!=(const treap<Y>&q,const treap<Y>&w);
-	iter lower_bound(const T&d){
+	iter lower_bound(const int64_t&d){
 		if (is_forward()){
-			iter t,y;
+			iter int64_t,y;
 			auto q=e_get();
 			if (!q){
-				t=begin();
+				int64_t=begin();
 			}else
 			if (d<=q->first){
-				t=begin();
+				int64_t=begin();
 			}else
 			if (d>q->last){
-				t=end();
+				int64_t=end();
 			}else{
 				assert(q);
 				auto w=q;
@@ -936,27 +938,27 @@ public:
 						q=q->x_get();
 					}
 				}
-				t={w,0};
+				int64_t={w,0};
 			}
-			return t;
+			return int64_t;
 		}else{
 			assert(0);
 		}
 		assert(0);
 		return iter{};
 	}
-	iter upper_bound(const T&d){
+	iter upper_bound(const int64_t&d){
 		if (is_forward()){
-			iter t;
+			iter int64_t;
 			auto q=e_get();
 			if (!q){
-				t=begin();
+				int64_t=begin();
 			}else
 			if (d<q->first){
-				t=begin();
+				int64_t=begin();
 			}else
 			if (d>=q->last){
-				t=end();
+				int64_t=end();
 			}else{
 				assert(q);
 				auto w=q;
@@ -969,9 +971,9 @@ public:
 						q=q->x_get();
 					}
 				}
-				t=iter{w,0};
+				int64_t=iter{w,0};
 			}
-			return t;
+			return int64_t;
 		}else{
 			assert(0);
 		}
@@ -979,12 +981,12 @@ public:
 		return iter{};
 	}
 	auto forward_prefix(){
-		iter t;
+		iter int64_t;
 		auto q=e_get();
 		auto w=q;
 		w=nullptr;
 		if (!q or q->is_forward){
-			t=end();
+			int64_t=end();
 		}else{
 			while (q){
 				get(q);
@@ -993,19 +995,19 @@ public:
 						if (!w or w->v<=q->first){
 							w=q;
 						}else{
-							t={w,0};
-							++t;
+							int64_t={w,0};
+							++int64_t;
 							break;
 						}
 						q=q_x;
 					}else{
 						if (!w or w->v<=q->first){
 							w=q;
-							t={w,0};
+							int64_t={w,0};
 							break;
 						}else{
-							t={w,0};
-							++t;
+							int64_t={w,0};
+							++int64_t;
 							break;
 						}
 					}
@@ -1013,20 +1015,20 @@ public:
 					q=q_z;
 				}
 			}
-			if (!t.e){
-				t={w,0};
-				++t;
+			if (!int64_t.e){
+				int64_t={w,0};
+				++int64_t;
 			}
 		}
-		return t;
+		return int64_t;
 	}
 	auto backward_prefix(){
-		iter t;
+		iter int64_t;
 		auto q=e_get();
 		auto w=q;
 		w=nullptr;
 		if (!q or q->is_backward){
-			t=end();
+			int64_t=end();
 		}else{
 			while (q){
 				get(q);
@@ -1035,19 +1037,19 @@ public:
 						if (!w or w->v>=q->first){
 							w=q;
 						}else{
-							t={w,0};
-							++t;
+							int64_t={w,0};
+							++int64_t;
 							break;
 						}
 						q=q_x;
 					}else{
 						if (!w or w->v>=q->first){
 							w=q;
-							t={w,0};
+							int64_t={w,0};
 							break;
 						}else{
-							t={w,0};
-							++t;
+							int64_t={w,0};
+							++int64_t;
 							break;
 						}
 					}
@@ -1055,12 +1057,12 @@ public:
 					q=q_z;
 				}
 			}
-			if (!t.e){
-				t={w,0};
-				++t;
+			if (!int64_t.e){
+				int64_t={w,0};
+				++int64_t;
 			}
 		}
-		return t;
+		return int64_t;
 	}
 	bool next_permutation(){
 		rev();
@@ -1069,15 +1071,15 @@ public:
 		rev();
 		// assert(q==e_get()->backward_suffix);
 		q=size()-q;
-		auto t=cut_left(q);
-		if (t.size()){
-			auto r=t.pop_back();
+		auto int64_t=cut_left(q);
+		if (int64_t.size()){
+			auto r=int64_t.pop_back();
 			rev();
 			auto p=upper_bound(r).find_index();
 			// assert(size()>p);
 			r=update(p,r);
-			t.push_back(r);
-			add_left(t);
+			int64_t.push_back(r);
+			add_left(int64_t);
 			return 1;
 		}else{
 			rev();
@@ -1087,20 +1089,18 @@ public:
 	bool prev_permutation(){
 		rev();
 		auto q=backward_prefix().find_index();
-		// assert(q==e_get()->backward_prefix);
 		rev();
-		// assert(q==e_get()->forward_suffix);
 		q=size()-q;
-		auto t=cut_left(q);
-		if (t.size()){
-			auto r=t.pop_back();
+		auto int64_t=cut_left(q);
+		if (int64_t.size()){
+			auto r=int64_t.pop_back();
 			assert(is_forward());
 			auto p=lower_bound(r).find_index();
 			// assert(r>(*this)[p-1]);
 			r=update(p-1,r);
-			t.push_back(r);
+			int64_t.push_back(r);
 			rev();
-			add_left(t);
+			add_left(int64_t);
 			return 1;
 		}else{
 			rev();
@@ -1108,7 +1108,7 @@ public:
 		}
 		return 0;
 	}
-	T sum(){
+	int64_t sum(){
 		if (e_get()){
 			return _e->sum;
 		}else{
@@ -1126,36 +1126,6 @@ public:
 		}
 	}
 };
-
-// template <typename T>
-// bool operator<(const treap<T>&q,const treap<T>&w){
-// 	return q.__cmp__(w)<0;
-// }
-
-// template <typename T>
-// bool operator>(const treap<T>&q,const treap<T>&w){
-// 	return q.__cmp__(w)>0;
-// }
-
-// template <typename T>
-// bool operator==(const treap<T>&q,const treap<T>&w){
-// 	return q.__cmp__(w)==0;
-// }
-
-// template <typename T>
-// bool operator<=(const treap<T>&q,const treap<T>&w){
-// 	return q.__cmp__(w)<=0;
-// }
-
-// template <typename T>
-// bool operator>=(const treap<T>&q,const treap<T>&w){
-// 	return q.__cmp__(w)>=0;
-// }
-
-// template <typename T>
-// bool operator!=(const treap<T>&q,const treap<T>&w){
-// 	return q.__cmp__(w)!=0;
-// }
 
 template<typename TT>
 auto operator-(TT q,TT w)->typename TT::template is_iterator<ptrdiff_t>{
@@ -1221,174 +1191,52 @@ auto operator!=(TT q,TT w)->typename TT::template is_iterator<bool>{
 	return q.e!=w.e or q.o!=w.o;
 }
 #undef get
-// #include "treap.hpp"
-
-#include <assert.h>
-#include <ctype.h>
-#include <inttypes.h>
-#include <iso646.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <tgmath.h>
-#include <stddef.h>
-
-#ifdef print
-#undef print
-#endif
-
-#ifdef write
-#undef write
-#endif
-
-struct array_s {
-	uint64_t mem_size;
-	uint64_t el_count;
-	char data[0];
-};
-
-static inline uint64_t len(void *a) {
-	if (a == NULL) {
-		return 0;
-	}
-	return ((struct array_s *)(a))[-1].el_count;
-}
-
-static inline void del(void *a) {
-	if (a != NULL) {
-		free(((struct array_s *)(a)) - 1);
-	}
-}
-
-static inline struct array_s *resize_f(struct array_s **vp, uint64_t el_size, uint64_t n) {
-	if (*vp == NULL) {
-		*vp = (struct array_s *)calloc(1, sizeof(struct array_s));
-		*vp += 1;
-	}
-	struct array_s *a = *vp - 1;
-	assert(a->data == *(char **)vp);
-	if (a->mem_size < n + 1) {
-		uint64_t cur_size = a->mem_size * el_size;
-		uint64_t new_size;
-		if (a->mem_size * 2 > n) {
-			new_size = a->mem_size * 2 * el_size;
-		} else {
-			new_size = (n + 1) * el_size;
-		}
-		a = (struct array_s *)realloc(a, sizeof(struct array_s) + new_size);
-		memset(a->data + a->mem_size * el_size, 0, new_size - cur_size);
-		a->mem_size = new_size / el_size;
-	}
-	a->el_count = n;
-	*vp = a + 1;
-	return a + 1;
-}
-/////// resize(a, n) is resize_f(&a, sizeof(a[0]), n)
-#define resize(a, ...) (resize_f((struct array_s **)&(a), sizeof((a)[0]), (__VA_ARGS__)))
-#define append(a, ...) (resize((a), len(a) + 1), (a)[len(a) - 1] = (__VA_ARGS__))
-#define pop(a) (resize((a), len(a) - 1), (a)[len(a)])
-#define back(a) ((a)[len(a)-1])
-
-// static inline int64_t getint() {
-// 	int sign = 1;
-// 	int c;
-// 	uint64_t res = 0;
-// 	while (c = getchar_unlocked(), isspace(c))
-// 		;
-// 	if (c==EOF){return -1;}
-// 	if (c == '-') {
-// 		sign = -1;
-// 	} else {
-// 		res = c - '0';
-// 	}
-// 	while (c = getchar_unlocked(), isdigit(c)) {
-// 		res *= 10;
-// 		res += c - '0';
-// 	}
-// 	return (int64_t)(res)*sign;
-// }
-
-// static inline void putint(uint64_t out) {
-// 	if (out > (1LLU << 63) - 1) {
-// 		putchar_unlocked('-');
-// 		out = 1 + ~out;
-// 	}
-// 	char data[44];
-// 	char *dend = data;
-// 	while (out) {
-// 		*++dend = (unsigned)('0') + out % 10;
-// 		out /= 10;
-// 	}
-// 	if (dend == data) {
-// 		putchar_unlocked('0');
-// 	}
-// 	for (; dend != data; --dend) {
-// 		putchar_unlocked(*dend);
-// 	}
-// }
-
-int64_t getint(){
-	int64_t l;
-	std::cin>>l;
-	return l;
-}
-
-void putint(int64_t l){
-	std::cout<<l;
-}
-
-static inline void print(uint64_t out) {
-	putint(out);
-	putchar('\n');
-}
-
-static inline void write(uint64_t out) {
-	putint(out);
-	putchar(' ');
-}
-
-#define min(a,s) ((a)<(s)?(a):(s))
-#define max(a,s) ((a)>(s)?(a):(s))
-
-typedef int (*cmp_f_t)(const void *, const void *);
-
-///////////////////////////////////////////////////end of lib
 
 int main(){
-	uint64_t n=getint();
+	int64_t n;
+	std::cin>>n;
 	treap<int64_t> a;
-	for (uint64_t w=0;w<n;++w){
-		a.push_back(getint());
+	for (int64_t w=0;w<n;++w){
+		int64_t int64_t;
+		std::cin>>int64_t;
+		a.push_back(int64_t);
 	}
-	uint64_t qq=getint();
-	for (uint64_t w=0;w<qq;++w){
-		uint64_t q=getint();
+	int64_t qq;
+	std::cin>>qq;
+	for (int64_t w=0;w<qq;++w){
+		int64_t q;
+		std::cin>>q;
 		if (q==-1){
 			break;
 		}
 		if (q==1){
-			uint64_t l=getint(),r=getint()+1;
+			int64_t l,r;
+			std::cin>>l>>r;
+			++r;
 			auto s=a.cut_left(r);
 			auto d=s.cut_left(l);
-			print(s.sum());
+			std::cout<<s.sum()<<std::endl;
 			s.add_left(d);
 			a.add_left(s);
 		}
 		if (q==2){
-			int64_t x=getint();
-			uint64_t u=getint();
+			int64_t x;
+			int64_t u;
+			std::cin>>x>>u;
 			a.insert(u,x);
 		}
 		if (q==3){
-			uint64_t u=getint();
+			int64_t u;
+			std::cin>>u;
 			a.erase(u);
 		}
 		if (q==4){
-			int64_t x=getint();
-			uint64_t l=getint(),r=getint()+1;
+			int64_t x;
+			std::cin>>x;
+			int64_t l,r;
+			std::cin>>l;
+			std::cin>>r;
+			++r;
 			auto s=a.cut_left(r);
 			auto d=s.cut_left(l);
 			s.mul(0);
@@ -1397,8 +1245,11 @@ int main(){
 			a.add_left(s);
 		}
 		if (q==5){
-			int64_t x=getint();
-			uint64_t l=getint(),r=getint()+1;
+			int64_t x;
+			std::cin>>x;
+			int64_t l,r;
+			std::cin>>l>>r;
+			++r;
 			auto s=a.cut_left(r);
 			auto d=s.cut_left(l);
 			s.add(x);
@@ -1406,7 +1257,9 @@ int main(){
 			a.add_left(s);
 		}
 		if (q==6){
-			uint64_t l=getint(),r=getint()+1;
+			int64_t l,r;
+			std::cin>>l>>r;
+			++r;
 			auto s=a.cut_left(r);
 			auto d=s.cut_left(l);
 			s.next_permutation();
@@ -1414,7 +1267,9 @@ int main(){
 			a.add_left(s);
 		}
 		if (q==7){
-			uint64_t l=getint(),r=getint()+1;
+			int64_t l,r;
+			std::cin>>l>>r;
+			++r;
 			auto s=a.cut_left(r);
 			auto d=s.cut_left(l);
 			s.prev_permutation();
@@ -1422,8 +1277,8 @@ int main(){
 			a.add_left(s);
 		}
 	}
-	for (uint64_t w=0;w<a.size();++w){
-		write(a[w]);
+	for (int64_t w=0;w<a.size();++w){
+		std::cout<<a[w]<<' ';
 	}
 	putchar(10);
 }

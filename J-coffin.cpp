@@ -130,7 +130,8 @@ int main(){
 	for (uint64_t w=0;w<n;++w){
 		a.push_back(getint());
 	}
-	while (1){
+	uint64_t qq=getint();
+	for (uint64_t w=0;w<qq;++w){
 		uint64_t q=getint();
 		if (q==-1){
 			break;
