@@ -1,5 +1,5 @@
-#include <boost/mpl/has_xxx.hpp>
-BOOST_MPL_HAS_XXX_TRAIT_DEF(Juju)
+// #include <boost/mpl/has_xxx.hpp>
+// BOOST_MPL_HAS_XXX_TRAIT_DEF(Juju)
 
 
 
