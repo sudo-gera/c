@@ -9,14 +9,15 @@ unsigned int nextrand(){
 }
 
 int main(){
-	long m,q;
+	unsigned l=(1ULL<<24)+1;
+	unsigned m,q;
 	cin>>m>>q;
 	cin>>a>>b;
-	auto t=new long[(1ULL<<24)+1];
-	for (long w=0;w<m;++w){
-		long a=nextrand();
-		long l=nextrand();
-		long r=nextrand();
+	auto t=new unsigned[l]();
+	for (unsigned w=0;w<m;++w){
+		unsigned a=nextrand();
+		unsigned l=nextrand();
+		unsigned r=nextrand();
 		if (l>r){
 			swap(l,r);
 		}
@@ -24,22 +25,22 @@ int main(){
 		t[l]+=a;
 		t[r]-=a;
 	}
-	long h=t[0];
+	unsigned h=t[0];
 	t[0]=0;
-	for (long w=1;w<(1ULL<<24)+1;++w){
+	for (unsigned w=1;w<l;++w){
 		h+=t[w];
 		t[w]=t[w-1]+h-t[w];
 	}
-	long s=0;
-	for (long w=0;w<m;++w){
-		long l=nextrand();
-		long r=nextrand();
+	unsigned s=0;
+	for (unsigned w=0;w<m;++w){
+		unsigned l=nextrand();
+		unsigned r=nextrand();
 		if (l>r){
 			swap(l,r);
 		}
 		++r;
-		s+=t[l];
-		s-=t[r];
+		s-=t[l];
+		s+=t[r];
 	}
 	cout<<s<<endl;
 }
