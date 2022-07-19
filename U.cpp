@@ -602,20 +602,16 @@ public:
 		q._e=nullptr;
 	}
 	treap cut_left(int64_t n){
-		// assert(0<=n and n<=size());
 		auto s=size();
 		auto tmp=split(e_get(),n);
-		// assert(el_size(tmp.first)+el_size(tmp.second)==s);
 		_e=(tmp.second);
 		auto r=treap();
 		r._e=(tmp.first);
 		return r;
 	}
 	treap cut_right(int64_t n){
-		// assert(0<=n and n<=size());
 		auto s=size();
 		auto tmp=split(e_get(),size()-n);
-		// assert(el_size(tmp.first)+el_size(tmp.second)==s);
 		_e=tmp.first;
 		auto r=treap();
 		r._e=(tmp.second);
@@ -636,14 +632,14 @@ public:
 		return q.v();
 	}
 	struct iter {
-		using difference_type = std::ptrdiff_t;
-		using value_type = int64_t;
-		using pointer = int64_t*;
-		using reference = int64_t&;
-		using iterator_category = std::random_access_iterator_tag;
-		template<typename Y>
-		using is_iterator=Y;
-		using original_type=treap;
+		// using difference_type = std::ptrdiff_t;
+		// using value_type = int64_t;
+		// using pointer = int64_t*;
+		// using reference = int64_t&;
+		// using iterator_category = std::random_access_iterator_tag;
+		// template<typename Y>
+		// using is_iterator=Y;
+		// using original_type=treap;
 		const el*e=nullptr;
 		int64_t o=0;
 		const int64_t&operator*(){
