@@ -80,6 +80,7 @@ class Server:
 				ret,ct=server_self.do(self)
 				self.send_response(200)
 				self.send_header("Content-type", ct)
+				self.send_header('Access-Control-Allow-Origin', '*')
 				self.end_headers()
 				self.wfile.write(ret)
 
@@ -90,6 +91,7 @@ class Server:
 				ret,ct=server_self.do(self,data)
 				self.send_response(200)
 				self.send_header("Content-type", ct)
+				self.send_header("Access-Control-Allow-Origin", '*')
 				self.end_headers()
 				self.wfile.write(ret)
 

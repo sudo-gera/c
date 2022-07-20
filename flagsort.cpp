@@ -1,71 +1,83 @@
-template <size_t n>struct sized_int{};
-template <> struct sized_int <1> {using type=  __uint8_t;};
-template <> struct sized_int <2> {using type= __uint16_t;};
-template <> struct sized_int <4> {using type= __uint32_t;};
-template <> struct sized_int <8> {using type= __uint64_t;};
-template <> struct sized_int<16> {using type=__uint128_t;};
-template<size_t n>
-struct digit_size{
-	const static size_t value=
-		n == 1 ? 1 :
-		n == 2 ? 1 :
-		n == 4 ? 1 :
-		n == 8 ? 1 :
-		n ==16 ? 1 :
-	0;
-};
-
-template<typename T,size_t _digit>
-struct constants{
-	using uns=typename sized_int<sizeof(*declval<T>())>::type;
-	using dig = typename sized_int<digit_size<sizeof(*declval<T>())>::value>::type;
-	const static size_t len=sizeof(uns)/sizeof(dig);
-	const static size_t digit=len-_digit-1;
-	const static size_t next__d=(_digit+1)%len;
-};
-
-template <typename T,size_t _digit=0>
-void flagsort(T a,T e){
-	// ic(__uint64_t(a)-st,__uint64_t(e)-st,_digit)
-	st++;
-	if(a==e){
+#if __has_include("d")
+#include "d"
+#endif
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <tgmath.h>
+#include <stdarg.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <inttypes.h>
+#include <ctype.h>
+#include <assert.h>
+#include <iso646.h>
+void helper(unsigned*begin, unsigned*end,unsigned digit_index){
+	if (begin==end){
 		return;
 	}
-	using c=constants<T,_digit>;
-	size_t n=e-a;
-	using uns = typename c::uns;
-	using dig = typename c::dig;
-	uint32_t offsets[1+(1ULL<<sizeof(dig)*8)];
-	uint32_t next_free[1ULL<<sizeof(dig)*8];
+	unsigned offsets[65536+1];
 	memset(offsets,0,sizeof(offsets));
-	memset(next_free,0,sizeof(next_free));
-	auto _offsets=offsets+1;
-	for (size_t w=0;w<n;++w){
-		++_offsets[(reinterpret_cast<dig*>(&(a[w])))[c::digit]];
+	for (unsigned* i =begin;i!=end;++i){
+		unsigned val = ((uint16_t*)i)[digit_index];
+		offsets[val] += 1;
 	}
-	for (size_t w=1;w<sizeof(offsets)/sizeof(offsets[0])-1;++w){
-		_offsets[w]+=_offsets[w-1];
+	unsigned sum = 0;
+	for (unsigned i=0;i<65536+1;++i){
+		unsigned t=offsets[i];
+		offsets[i] = sum;
+		sum += t;
 	}
+	unsigned* i = begin;
+	unsigned next_free[65536+1];
 	memcpy(next_free,offsets,sizeof(next_free));
-	size_t cblock=0;
-	for (size_t w=0;w<n;++w){
-		while (w==offsets[cblock+1]){
-			++cblock;
+	unsigned cur_block = 0;
+	while (cur_block < 65536 - 1){
+		if (i >= begin + offsets[cur_block + 1]){
+			cur_block += 1;
+			continue;
 		}
-		size_t cdig;
-		uns t;
-		while ((cdig=(reinterpret_cast<dig*>(&(a[w])))[c::digit])!=cblock){
-			t                                         =reinterpret_cast<uns&>(a[w]);
-			reinterpret_cast<uns&>(a[w])              =reinterpret_cast<uns&>(a[next_free[cdig]]);
-			reinterpret_cast<uns&>(a[next_free[cdig]])=t;
-			++next_free[cdig];
+		unsigned radix_val = ((uint16_t*)i)[digit_index];
+		if (radix_val == cur_block){
+			i += 1;
+			continue;
 		}
+		unsigned*swap_to = begin + next_free[radix_val];
+		unsigned t=*swap_to;
+		*swap_to=*i;
+		*i=t;
+		next_free[radix_val] += 1;
 	}
-	if (c::next__d){
-		for (size_t w=0;w<sizeof(next_free)/sizeof(next_free[0]);++w){
-			if (offsets[w]!=offsets[w+1]){
-				flagsort<T,c::next__d>(a+offsets[w],a+offsets[w+1]);
-			}
-		}
+	if (digit_index == 0){
+		return;
+	}
+	for (unsigned i=0;i<65536;++i){
+		helper(begin+offsets[i], begin+offsets[i + 1], digit_index - 1);
 	}
 }
+
+void fast_sort(unsigned*a,unsigned*e){
+	helper(a, e, 1);
+}
+
+#ifdef HOME
+void flag_sort(vector<unsigned>&a_list){
+	fast_sort(&a_list[0], &a_list[0]+len(a_list));
+}
+
+int main(){
+	unsigned n=scan(unsigned);
+	vector<unsigned> a(n);
+	for (auto&w:a){
+		cin>>w;
+	}
+	auto s=a;
+	flag_sort(a);
+	sort(s.begin(),s.end());
+	if (a!=s){
+		print(a)
+		print(s)
+	}
+	assert(a==s);
+}
+#endif

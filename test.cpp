@@ -1,9 +1,14 @@
+<<<<<<< HEAD
 #include <bits/stdc++.h>
+=======
+// #include <boost/mpl/has_xxx.hpp>
+// BOOST_MPL_HAS_XXX_TRAIT_DEF(Juju)
+
+
+
+>>>>>>> c6e601f69e97b524bcee840dc49a0654106a1368
 
 int main(){
-	int*a=new int[9];
-	for (int w=0;w<9;++w){
-		a[w]=-w;
-	}
-	std::sort(a,a+9);
+
+
 }

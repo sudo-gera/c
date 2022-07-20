@@ -1,29 +1,99 @@
 HOME=1
-from icecream import ic
-ic.configureOutput(includeContext=1)
+from operator import *
+import operator
+from inspect import *
+import inspect
+try:
+	from dataclasses import *
+	import dataclasses
+except:
+	pass
+try:
+	from numpy import *
+	import numpy
+except:
+	pass
+from asyncio import *
+import asyncio
 from time import *
+import time
 from os import *
+import os
+from os.path import *
+import os.path
 from sys import *
+import sys
 from json import *
+import json
 from random import *
+import random
 from urllib.request import *
+import urllib.request
+from urllib.parse import *
+import urllib.parse
 from pprint import *
+import pprint
 from math import *
+import math
+from cmath import *
+import cmath
 from decimal import *
+import decimal
 from traceback import *
+import traceback
 from fractions import *
+import fractions
 from subprocess import *
+import subprocess
 from pathlib import *
+import pathlib
 from functools import *
+import functools
 from difflib import *
+import difflib
 from base64 import *
+import base64
 from itertools import *
+import itertools
 from timeit import *
+import timeit
 from bisect import *
+import bisect
 from builtins import *
+import builtins
+from re import *
+import re
+def outputFunction(*a):
+	a=a[0]
+	s=split(r'\:\d+ in ',a)
+	file=s[0]
+	a=a[len(file)+1:]
+	s=split(r' in ',a)
+	line=s[0]
+	a=a[len(s[0])+4:]
+	if '\n' in a:
+		a=a.split('\n',1)
+		a='- \n'.join(a)
+	s=split(r'- ',a)
+	func=s[0]
+	a=a[len(func)+2:]
+	args=a
+	print("\x1b[92mline \x1b[94m"+line+"\x1b[92m file \x1b[94m"+file+"\x1b[92m func \x1b[94m"+func+"\x1b[92m \x1b[0m"+args,file=stderr)
+from icecream import ic
+import icecream 
+ic.configureOutput(includeContext=1)
+ic.configureOutput(outputFunction=outputFunction)
+ic.configureOutput(prefix='')
+from builtins import *
+import builtins
 home=str(Path.home())+'/'
-def rand(q=2**64):
-	return randint(0,q-1)
+def rand(q=2**64,e=None):
+	if e!=None:
+		q,e=e,q
+	else:
+		e=0
+	assert q
+	return randint(e,q-1)
 exec(open(str(Path.home())+'/.pythonrc').read())
 def urlread(*a,**s):
 	return urlopen(*a,**s).read().decode()
@@ -39,9 +109,11 @@ true=True
 def bisect_in(a,s):
 	return bisect_left(a,s)!=bisect_right(a,s)
 # from primes import primes
-primes=[2]
+primes=[2,3,5]
 from is_prime import *
+import is_prime
 from scan import *
+import scan
 def is_prime_root(q):
 	if primes[-1]>=q:
 		return bisect_in(primes,q)
@@ -92,6 +164,7 @@ def primes_until(w):
 
 primes_until(10**3)
 from fib import *
+import fib
 # @cache
 # def fibonacci(q):
 # 	if q<0:
@@ -108,6 +181,7 @@ from fib import *
 	# return a
 
 from root import *
+import root
 
 def factor(q):
 	f=[]
@@ -142,23 +216,153 @@ def divizors(q):
 	for e in f[:l][::-1]:
 		f.append(q//e)
 	return f
-def to_radix(_q,_e):
-	q,e=_q,_e
+
+def from_radix_list(q,e):
+	r=0
+	for w in q:
+		r*=e
+		r+=w
+	return r
+
+def to_radix_list(q,e):
 	z=abs(q)
-	s=''
+	x=z
+	if bin(e).count('1')==1:
+		s=list(bin(z)[2:][::-1])
+		s=[int(w) for w in s]
+		l=len(bin(e))-3
+		while len(s)%l:
+			s.append(0)
+		r=[]
+		s=s[::-1]
+		for w in range(0,len(s),l):
+			a=0
+			for t in range(l):
+				a*=2
+				a+=s[w+t]
+			r.append(a)
+		if not r:
+			r=[0]
+		assert x==from_radix_list(r,e)
+		if q<0:
+			r+=[-1]
+		return r
+	s=[]
 	while z:
-		s+=str("0123456789abcdefghijklmnopqrstuvwxyz".upper()[z%e])
+		s.append(z%e)
 		z//=e
-	if q<0:
-		s+='-'
 	if not s:
-		s='0'
+		s=[0]
 	s=s[::-1]
-	assert int(s,e)==q
+	assert x==from_radix_list(s,e)
+	if q<0:
+		s=[-1]+s
 	return s
+
+def to_radix(q,e):
+	s=to_radix_list(q,e)
+	s=''.join(["0123456789abcdefghijklmnopqrstuvwxyz".upper()[w] for w in s])
+	return s
+
+def from_radix(q,e):
+	if e<37:
+		return int(q,e)
+	q=[int(w,36) for w in q]
+	s=from_radix_list(q,e)
+	return s
+
 def primes_count(start=0):
 	start-=1
 	while 1:
 		start=next_prime(start)
 		yield start
+
+@cache
+def fast_next_prime(q):
+	if q<2:
+		return 2
+	q+=1
+	while q%30!=7:
+		q+=1
+	while 1:
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q+=6
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q+=4
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q+=6
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q+=14
+
+@cache
+def fast_prev_prime(q):
+	if q<1024:
+		return prev_prime(q)
+	q-=1
+	while q%30!=7:
+		q-=1
+	while 1:
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q-=14
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q-=6
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q-=4
+		if pow(2,q-1,q)==1 and fibonacci(q+1,q)==0:
+			return q
+		q-=6
+
 from builtins import *
+import builtins
+
+class Prime:
+	def __init__(s,p,n):
+		s.n=n
+		s.p=p
+	def __lt__(s,o):
+		return s.p(o)
+	def __le__(s,o):
+		return s.p(o+1)
+	def __gt__(s,o):
+		return s.n(o)
+	def __ge__(s,o):
+		return s.n(o-1)
+	def __eq__(s,o):
+		return is_prime(o)
+	def __ne__(s,o):
+		return not s==o
+
+prime=Prime(prev_prime,next_prime)
+fast_prime=Prime(fast_prev_prime,fast_next_prime)
+def euler(q):
+	f=set(factor(q))
+	for w in f:
+		q*=w-1
+		q//=w
+	return q
+def perf():
+	global _perf_prev_
+	args=('%.9f'%(perf_counter()-_perf_prev_)).replace('0','\x1b[34m0\x1b[0m')
+	try:
+		g=getframeinfo(stack()[1][0])
+		line=str(g.lineno)
+		file=g.filename
+		func=g.function
+	except:
+		line=''
+		file=''
+		func=''
+	print("\x1b[92mline \x1b[94m"+line+"\x1b[92m file \x1b[94m"+file+"\x1b[92m func \x1b[94m"+func+"\x1b[92m \x1b[0m"+args)
+	_perf_prev_=perf_counter()
+_perf_prev_=perf_counter()
+def append(a,s):
+	a.append(s)
+def pop(a):
+	return a.pop()

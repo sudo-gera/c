@@ -52,11 +52,3 @@ unsigned put_ds;
 	}\
 }
 
-int main(){
-	size_t q;
-	for (size_t w=0;w<9;++w){
-		get_int(q);
-		put_int(q);
-		putchar_unlocked('\n');
-	}
-}

@@ -131,7 +131,11 @@ mkinput(long double, float, "%Lf", &q);
 mkinput(char, char, "%c", &q);
 #undef mkinput
 str input_str() {
+<<<<<<< HEAD
+  static char t[1073741824];
+=======
   static char t[1024];
+>>>>>>> edd1a72a29bdf481718ea43e7194f3dbec21102a
   scanf("%s", t);
   return to_str(t);
 }

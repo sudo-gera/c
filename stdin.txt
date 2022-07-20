@@ -1,2 +1,12 @@
-5 
-8 9 6 9 8
+insert 2 
+insert 5 
+insert 3 
+exists 2 
+exists 4 
+next 4 
+prev 4 
+delete 5 
+next 4 
+prev 4 
+kth 0 
+kth 2

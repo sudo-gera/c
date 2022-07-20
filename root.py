@@ -63,7 +63,7 @@ class froot(Rational):
 	def b(s):
 		return s._b
 	def __repr__(s):
-		return str(s.a)+'+'+str(s.b)+'*froot('+str(s.r)+')'
+		return '('+str(s.a)+'+'+str(s.b)+'*froot('+str(s.r)+')'+')'
 	def __eq__(s,a):
 		if type(a)!=froot:
 			a=froot(s.r,a)
@@ -224,7 +224,7 @@ class froot(Rational):
 	def __trunc__(s):
 		return int(s)
 	def as_fraction(s):
-		return s.a+s.b*fraction_root(s.r)
+		return s.a+s.b*fractional_root(s.r)
 	@property
 	def numerator(s):
 		return s.as_fraction().numerator
@@ -306,8 +306,9 @@ def floor_root(q):
 	q=int(q)
 	r=0
 	p=1
-	while p<q:
-		p<<=32
+	p=len(bin(q))
+	p+=p%2
+	p=1<<p
 	while p:
 		u=r+p
 		if q >= u :

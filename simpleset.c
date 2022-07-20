@@ -25,22 +25,20 @@ struct set{
 	size_t size;
 };
 
-#define get(index) ((s->data[(index)/8]>>(index)%8)&1)
 
-#define add(index) {s->data[(index)/8]|=1<<(index)%8;}
-
-#define del(index) {s->data[(index)/8]|=1<<(index)%8;s->data[(index)/8]-=1<<(index)%8;}
+#define bit_get(a,s)   (((a)[(s)/8/sizeof((a)[0])]>>(s)%(8*sizeof((a)[0])))&1)
+#define bit_set(a,s,d) {(a)[(s)/8/sizeof((a)[0])]&=~(1<<(s)%(8*sizeof((a)[0])));(a)[(s)/8/sizeof((a)[0])]+=(d)<<(s)%(8*sizeof((a)[0]));}
 
 size_t tmpst=0;
 
-#define check {if (s){tmpst=get(0);tmpst=get(s->dsize-1);}}
+#define check {if (s){tmpst=bit_get(s->data,0);tmpst=bit_get(s->data,s->dsize-1);}}
 
 // Создать новое пустое множество, значения элементов которого могут лежать в границах от 0 до capacity-1 включительно. Вернуть указатель на него.
 struct set *set_new(size_t capacity){
 	struct set*s=(struct set*)malloc(sizeof(struct set));
 	s->dsize=capacity;
 	s->size=0;
-	s->data=(uint8_t*)calloc(1,capacity/8+1);
+	s->data=(uint8_t*)calloc(1,capacity/8+8);
 	check
 	return s;
 }
@@ -50,9 +48,9 @@ int set_insert(struct set *s, size_t elem){
 	if (!s or elem>=s->dsize){
 		return 1;
 	}
-	if (get(elem) == 0){
+	if (bit_get(s->data,elem) == 0){
 		s->size++;
-		add(elem);
+		bit_set(s->data,elem,1);
 	}
 	check
 	return 0;
@@ -109,7 +107,7 @@ ssize_t set_findfirst(struct set const *s, size_t start){
 		return -1;
 	}
 	for (size_t w=start;w<s->dsize;++w){
-		if (get(w)){
+		if (bit_get(s->data,w)){
 			return w;
 		}
 	}
@@ -198,20 +196,5 @@ int main() {
 			break;
 		}
 	}
-	// v=set_delete(v);
-	// struct set*s=set_new(16);
-	// ic(set_insert(s,3))
-	// ic(set_find(s,3))
-	// ic(set_find(s,4))
-	// ic(set_size(s))
-	// ic(set_insert(s,4))
-	// ic(set_find(s,3))
-	// ic(set_find(s,4))
-	// ic(set_size(s))
-	// ic(set_erase(s,3))
-	// ic(set_find(s,3))
-	// ic(set_find(s,4))
-	// ic(set_size(s))
-	// ic(set_delete(s))
 }
 #endif
