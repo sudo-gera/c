@@ -13,7 +13,7 @@ def rand(q=2**64,e=None):
 def getstr():
 	return ''.join([choice('snmrdfhg')+choice('aioue') for w in range(10)])
 
-maxlen=100+int(run_num**0.5)
+maxlen=1000000+int(run_num**0.5)
 
 strs=[getstr() for w in range(maxlen)]
 
@@ -25,15 +25,16 @@ f=rand(maxlen)
 print(f)
 for w in range(f):
 	q=rand(7)+1
-	if n==1 and q==3:
+	if n==0:
 		q=2
+	else:
+		r=rand(n)
+		l=rand(r+1)
 	print(q,end=' ')
-	r=rand(n)
-	l=rand(r+1)
 	if q==1:
 		print(l,r)
 	if q==2:
-		print(rand(maxlen),rand(n))
+		print(rand(maxlen),rand(n+1))
 		n+=1
 	if q==3:
 		print(rand(n))
