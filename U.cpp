@@ -21,7 +21,7 @@ struct node {
   int64_t is_backward_sorted = 1;
 };
 
-void update(node *t) {
+void Update(node *t) {
   if (t->left) {
     (t->left->p) = t;
     if (t->left->rev) {
@@ -127,7 +127,7 @@ void update(node *t) {
   }
 }
 
-void make(node *t) {
+void Make(node *t) {
   if (!t) {
     return;
   }
@@ -185,23 +185,23 @@ void make(node *t) {
   }
 }
 
-void left_put(node *t, node *q) {
+void LeftPut(node *t, node *q) {
   (t->left) = q;
-  update(t);
+  Update(t);
 }
 
-void right_put(node *t, node *q) {
+void RightPut(node *t, node *q) {
   (t->right) = q;
-  update(t);
+  Update(t);
 }
 
-node *left_get(node *t) {
-  make(t->left);
+node *LeftGet(node *t) {
+  Make(t->left);
   return t->left;
 }
 
-node *right_get(node *t) {
-  make(t->right);
+node *RightGet(node *t) {
+  Make(t->right);
   return t->right;
 }
 
@@ -209,21 +209,21 @@ node *create(int64_t v) {
   auto t = new node;
   t->v = v;
   t->w = rand();
-  update(t);
+  Update(t);
   return t;
 }
 
 int64_t find_index(node *q) {
   auto w = q->p;
-  auto q_z = q ? left_get(q) : 0;
-  auto q_x = q ? right_get(q) : 0;
+  auto q_z = q ? LeftGet(q) : 0;
+  auto q_x = q ? RightGet(q) : 0;
   auto q_z_s = q_z ? q_z->s : 0;
   auto q_x_s = q_x ? q_x->s : 0;
   if (w == nullptr) {
     return q_z_s;
-  } else if (left_get(w) == q) {
+  } else if (LeftGet(w) == q) {
     return find_index(w) - q_x_s - 1;
-  } else if (right_get(w) == q) {
+  } else if (RightGet(w) == q) {
     return find_index(w) + q_z_s + 1;
   }
   assert(0);
@@ -235,7 +235,7 @@ node * begin(node *q) {
     return q;
   }
   node *b = q;
-  while (left_get(b)) {
+  while (LeftGet(b)) {
     b = b->left;
   }
   return b;
@@ -246,13 +246,13 @@ node * end(node *q) {
     return q;
   }
   node *e = q;
-  while (right_get(e)) {
+  while (RightGet(e)) {
     e = e->right;
   }
   return e;
 }
 
-node *merge(node *t1, node *t2) {
+node *Merge(node *t1, node *t2) {
   if (!t1) {
     return t2;
   }
@@ -260,15 +260,15 @@ node *merge(node *t1, node *t2) {
     return t1;
   }
   if (t1->w < t2->w) {
-    left_put(t2, merge(t1, left_get(t2)));
+    LeftPut(t2, Merge(t1, LeftGet(t2)));
     return t2;
   } else {
-    right_put(t1, merge(right_get(t1), t2));
+    RightPut(t1, Merge(RightGet(t1), t2));
     return t1;
   }
 }
 
-std::pair<node *, node *> split(node *t, int64_t n) {
+std::pair<node *, node *> Split(node *t, int64_t n) {
   if (!t) {
     return {nullptr, nullptr};
   }
@@ -278,22 +278,22 @@ std::pair<node *, node *> split(node *t, int64_t n) {
   if (n == t->s) {
     return {t, nullptr};
   }
-  auto t_z = t ? left_get(t) : 0;
-  auto t_x = t ? right_get(t) : 0;
+  auto t_z = t ? LeftGet(t) : 0;
+  auto t_x = t ? RightGet(t) : 0;
   auto t_z_s = t_z ? t_z->s : 0;
   auto t_x_s = t_x ? t_x->s : 0;
   if (t_z_s < n) {
-    auto tmp = split(t_x, n - t_z_s - 1);
-    right_put(t, tmp.first);
+    auto tmp = Split(t_x, n - t_z_s - 1);
+    RightPut(t, tmp.first);
     auto t2 = tmp.second;
     if (t2) {
       (t2->p) = nullptr;
     }
     return {t, t2};
   } else {
-    auto tmp = split(t_z, n);
+    auto tmp = Split(t_z, n);
     auto t1 = tmp.first;
-    left_put(t, tmp.second);
+    LeftPut(t, tmp.second);
     if (t1) {
       (t1->p) = nullptr;
     }
@@ -301,7 +301,7 @@ std::pair<node *, node *> split(node *t, int64_t n) {
   }
 }
 
-int64_t lower_bound(node *q, int64_t d) {
+int64_t LowerBound(node *q, int64_t d) {
   int64_t t = -1;
   if (!q) {
     t = find_index(begin(q));
@@ -316,16 +316,16 @@ int64_t lower_bound(node *q, int64_t d) {
     while (q) {
       if (q->v >= d) {
         w = q;
-        q = left_get(q);
+        q = LeftGet(q);
       } else {
-        q = right_get(q);
+        q = RightGet(q);
       }
     }
     t = find_index(w);
   }
   return t;
 }
-int64_t upper_bound(node *q, int64_t d) {
+int64_t UpperBound(node *q, int64_t d) {
   int64_t t = -1;
   if (!q) {
     t = find_index(begin(q));
@@ -340,16 +340,16 @@ int64_t upper_bound(node *q, int64_t d) {
     while (q) {
       if (q->v > d) {
         w = q;
-        q = left_get(q);
+        q = LeftGet(q);
       } else {
-        q = right_get(q);
+        q = RightGet(q);
       }
     }
     t = find_index(w);
   }
   return t;
 }
-int64_t forward_sorted_prefix(node *q) {
+int64_t ForwardSortedPrefix(node *q) {
   int64_t t = -1;
   auto w = q;
   w = nullptr;
@@ -357,8 +357,8 @@ int64_t forward_sorted_prefix(node *q) {
     t = find_index(end(q)) + bool(q);
   } else {
     while (q) {
-      auto q_z = q ? left_get(q) : 0;
-      auto q_x = q ? right_get(q) : 0;
+      auto q_z = q ? LeftGet(q) : 0;
+      auto q_x = q ? RightGet(q) : 0;
       auto q_z_s = q_z ? q_z->s : 0;
       auto q_x_s = q_x ? q_x->s : 0;
       if (!q_z or q_z->is_forward_sorted) {
@@ -391,7 +391,7 @@ int64_t forward_sorted_prefix(node *q) {
   return t;
 }
 
-int64_t backward_sorted_prefix(node *q) {
+int64_t BackwardSortedPrefix(node *q) {
   int64_t t = -1;
   auto w = q;
   w = nullptr;
@@ -399,8 +399,8 @@ int64_t backward_sorted_prefix(node *q) {
     t = find_index(end(q)) + bool(q);
   } else {
     while (q) {
-      auto q_z = q ? left_get(q) : 0;
-      auto q_x = q ? right_get(q) : 0;
+      auto q_z = q ? LeftGet(q) : 0;
+      auto q_x = q ? RightGet(q) : 0;
       auto q_z_s = q_z ? q_z->s : 0;
       auto q_x_s = q_x ? q_x->s : 0;
       if (!q_z or q_z->is_backward_sorted) {
@@ -433,107 +433,107 @@ int64_t backward_sorted_prefix(node *q) {
   return t;
 }
 
-node *next_permutation(node *s) {
+node *NextPermutation(node *s) {
   if (!s) {
     return s;
   }
   (s->rev) ^= 1;
-  make(s);
-  auto q = forward_sorted_prefix(s);
+  Make(s);
+  auto q = ForwardSortedPrefix(s);
   (s->rev) ^= 1;
-  make(s);
+  Make(s);
   q = (s ? s->s : 0) - q;
-  auto tmp = split(s, q);
+  auto tmp = Split(s, q);
   auto t = tmp.first;
   s = tmp.second;
   if (t) {
-    auto tmp = split(t, t->s - 1);
+    auto tmp = Split(t, t->s - 1);
     t = tmp.first;
     auto h = tmp.second;
     auto r = h->v;
     s->rev ^= 1;
-    make(s);
-    auto p = upper_bound(s, r);
-    tmp = split(s, p);
+    Make(s);
+    auto p = UpperBound(s, r);
+    tmp = Split(s, p);
     auto left = tmp.first;
     s = tmp.second;
-    tmp = split(s, 1);
+    tmp = Split(s, 1);
     auto right = tmp.first;
     s = tmp.second;
     auto tr = right->v;
     right->v = r;
-    update(right);
+    Update(right);
     r = tr;
-    s = merge(right, s);
+    s = Merge(right, s);
     right = nullptr;
-    s = merge(left, s);
+    s = Merge(left, s);
     left = nullptr;
     auto c = h;
     c->v = r;
-    update(c);
-    t = merge(t, c);
+    Update(c);
+    t = Merge(t, c);
     c = nullptr;
-    s = merge(t, s);
+    s = Merge(t, s);
     t = nullptr;
     return s;
   } else {
     (s->rev) ^= 1;
-    make(s);
+    Make(s);
     return s;
   }
 }
 
-node *prev_permutation(node *s) {
+node *PrevPermutation(node *s) {
   if (!s) {
     return s;
   }
   (s->rev) ^= 1;
-  make(s);
-  auto q = backward_sorted_prefix(s);
+  Make(s);
+  auto q = BackwardSortedPrefix(s);
   (s->rev) ^= 1;
-  make(s);
+  Make(s);
   q = (s ? s->s : 0) - q;
-  auto tmp = split(s, q);
+  auto tmp = Split(s, q);
   auto t = tmp.first;
   s = tmp.second;
   if (t) {
-    tmp = split(t, t->s - 1);
+    tmp = Split(t, t->s - 1);
     t = tmp.first;
     auto h = tmp.second;
     auto r = h->v;
-    auto p = lower_bound(s, r);
-    tmp = split(s, p - 1);
+    auto p = LowerBound(s, r);
+    tmp = Split(s, p - 1);
     auto left = tmp.first;
     s = tmp.second;
-    tmp = split(s, 1);
+    tmp = Split(s, 1);
     auto right = tmp.first;
     s = tmp.second;
     auto tr = right->v;
     (right->v) = r;
-    update(right);
+    Update(right);
     r = tr;
-    s = merge(right, s);
+    s = Merge(right, s);
     right = nullptr;
-    s = merge(left, s);
+    s = Merge(left, s);
     left = nullptr;
     auto c = h;
     (c->v) = r;
-    update(c);
-    t = merge(t, c);
+    Update(c);
+    t = Merge(t, c);
     c = nullptr;
     (s->rev) ^= 1;
-    make(s);
-    s = merge(t, s);
+    Make(s);
+    s = Merge(t, s);
     t = nullptr;
     return s;
   } else {
     (s->rev) ^= 1;
-    make(s);
+    Make(s);
     return s;
   }
 }
 
-int64_t getint() {
+int64_t GetInt() {
   int64_t l;
   std::cin >> l;
   return l;
@@ -541,123 +541,123 @@ int64_t getint() {
 
 int main() {
   pair<node *, node *> tmp;
-  int64_t n = getint();
+  int64_t n = GetInt();
   node *a = nullptr;
   for (int64_t w = 0; w < n; ++w) {
-    a = merge(a, create(getint()));
+    a = Merge(a, create(GetInt()));
   }
-  int64_t qq = getint();
+  int64_t qq = GetInt();
   for (int64_t w = 0; w < qq; ++w) {
-    int64_t q = getint();
+    int64_t q = GetInt();
     if (q == -1) {
       break;
     }
     if (q == 1) {
-      int64_t l = getint(), r = getint() + 1;
-      tmp = split(a, r);
+      int64_t l = GetInt(), r = GetInt() + 1;
+      tmp = Split(a, r);
       auto s = tmp.first;
       a = tmp.second;
-      tmp = split(s, l);
+      tmp = Split(s, l);
       auto d = tmp.first;
       s = tmp.second;
       cout << (s ? s->sum : 0) << '\n';
-      s = merge(d, s);
+      s = Merge(d, s);
       d = nullptr;
-      a = merge(s, a);
+      a = Merge(s, a);
       s = nullptr;
     }
     if (q == 2) {
-      int64_t right = getint();
-      int64_t u = getint();
+      int64_t right = GetInt();
+      int64_t u = GetInt();
       int64_t l = u, r = u;
-      tmp = split(a, r);
+      tmp = Split(a, r);
       auto s = tmp.first;
       a = tmp.second;
-      tmp = split(s, l);
+      tmp = Split(s, l);
       auto d = tmp.first;
       s = tmp.second;
       assert(!s);
       s = create(right);
-      s = merge(d, s);
+      s = Merge(d, s);
       d = nullptr;
-      a = merge(s, a);
+      a = Merge(s, a);
       s = nullptr;
     }
     if (q == 3) {
-      int64_t u = getint();
-      tmp = split(a, u);
+      int64_t u = GetInt();
+      tmp = Split(a, u);
       auto left = tmp.first;
       a = tmp.second;
-      tmp = split(a, 1);
+      tmp = Split(a, 1);
       a = tmp.second;
       delete tmp.first;
-      a = merge(left, a);
+      a = Merge(left, a);
       left = nullptr;
     }
     if (q == 4) {
-      int64_t right = getint();
-      int64_t l = getint(), r = getint() + 1;
-      tmp = split(a, r);
+      int64_t right = GetInt();
+      int64_t l = GetInt(), r = GetInt() + 1;
+      tmp = Split(a, r);
       auto s = tmp.first;
       a = tmp.second;
-      tmp = split(s, l);
+      tmp = Split(s, l);
       auto d = tmp.first;
       s = tmp.second;
       s ? (s->to_mul) *= 0 : 0;
       s ? (s->to_add) += right : 0;
-      make(s);
-      s = merge(d, s);
+      Make(s);
+      s = Merge(d, s);
       d = nullptr;
-      a = merge(s, a);
+      a = Merge(s, a);
       s = nullptr;
     }
     if (q == 5) {
-      int64_t right = getint();
-      int64_t l = getint(), r = getint() + 1;
-      tmp = split(a, r);
+      int64_t right = GetInt();
+      int64_t l = GetInt(), r = GetInt() + 1;
+      tmp = Split(a, r);
       auto s = tmp.first;
       a = tmp.second;
-      tmp = split(s, l);
+      tmp = Split(s, l);
       auto d = tmp.first;
       s = tmp.second;
       s ? (s->to_add) += right : 0;
-      make(s);
-      s = merge(d, s);
+      Make(s);
+      s = Merge(d, s);
       d = nullptr;
-      a = merge(s, a);
+      a = Merge(s, a);
       s = nullptr;
     }
     if (q == 6) {
-      int64_t l = getint(), r = getint() + 1;
-      tmp = split(a, r);
+      int64_t l = GetInt(), r = GetInt() + 1;
+      tmp = Split(a, r);
       auto s = tmp.first;
       a = tmp.second;
-      tmp = split(s, l);
+      tmp = Split(s, l);
       auto d = tmp.first;
       s = tmp.second;
-      s = next_permutation(s);
-      s = merge(d, s);
+      s = NextPermutation(s);
+      s = Merge(d, s);
       d = nullptr;
-      a = merge(s, a);
+      a = Merge(s, a);
       s = nullptr;
     }
     if (q == 7) {
-      int64_t l = getint(), r = getint() + 1;
-      tmp = split(a, r);
+      int64_t l = GetInt(), r = GetInt() + 1;
+      tmp = Split(a, r);
       auto s = tmp.first;
       a = tmp.second;
-      tmp = split(s, l);
+      tmp = Split(s, l);
       auto d = tmp.first;
       s = tmp.second;
-      s = prev_permutation(s);
-      s = merge(d, s);
+      s = PrevPermutation(s);
+      s = Merge(d, s);
       d = nullptr;
-      a = merge(s, a);
+      a = Merge(s, a);
       s = nullptr;
     }
   }
   while (a) {
-    tmp = split(a, 1);
+    tmp = Split(a, 1);
     auto s = tmp.first;
     a = tmp.second;
     cout << s->v << ' ';
