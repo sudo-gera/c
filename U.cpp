@@ -42,23 +42,24 @@ void Update(Node *root) {
     root->last = root->value;
   }
   if (root->left and root->right) {
-    int64_t leftAscending = (root->left->to_mul == 0 or
-                             (root->left->rev ? root->left->is_descending
-                                              : root->left->is_ascending));
-    int64_t leftDescending = (root->left->to_mul == 0 or
-                              (root->left->rev ? root->left->is_ascending
-                                               : root->left->is_descending));
-    int64_t rightAscending = (root->right->to_mul == 0 or
-                              (root->right->rev ? root->right->is_descending
-                                                : root->right->is_ascending));
-    int64_t rightDescending = (root->right->to_mul == 0 or
-                               (root->right->rev ? root->right->is_ascending
-                                                 : root->right->is_descending));
-    int64_t rightfirst =
+    int64_t left_ascending = (root->left->to_mul == 0 or
+                              (root->left->rev ? root->left->is_descending
+                                               : root->left->is_ascending));
+    int64_t left_descending = (root->left->to_mul == 0 or
+                               (root->left->rev ? root->left->is_ascending
+                                                : root->left->is_descending));
+    int64_t right_ascending = (root->right->to_mul == 0 or
+                               (root->right->rev ? root->right->is_descending
+                                                 : root->right->is_ascending));
+    int64_t right_descending =
+        (root->right->to_mul == 0 or
+         (root->right->rev ? root->right->is_ascending
+                           : root->right->is_descending));
+    int64_t right_first =
         (root->right->rev ? root->right->last : root->right->first) *
             root->right->to_mul +
         root->right->to_add;
-    int64_t leftlast =
+    int64_t left_last =
         (root->left->rev ? root->left->first : root->left->last) *
             root->left->to_mul +
         root->left->to_add;
@@ -70,53 +71,54 @@ void Update(Node *root) {
                 root->right->sum * root->right->to_mul +
                 root->right->to_add * root->right->size;
     root->is_ascending =
-        (leftAscending and rightAscending and leftlast <= root->value and
-         rightfirst >= root->value);
+        (left_ascending and right_ascending and left_last <= root->value and
+         right_first >= root->value);
     root->is_descending =
-        (leftDescending and rightDescending and leftlast >= root->value and
-         rightfirst <= root->value);
+        (left_descending and right_descending and left_last >= root->value and
+         right_first <= root->value);
   } else if (root->left) {
-    int64_t rightAscending = 1;
-    int64_t rightDescending = 1;
-    int64_t leftAscending = (root->left->to_mul == 0 or
-                             (root->left->rev ? root->left->is_descending
-                                              : root->left->is_ascending));
-    int64_t leftDescending = (root->left->to_mul == 0 or
-                              (root->left->rev ? root->left->is_ascending
-                                               : root->left->is_descending));
-    int64_t leftlast =
+    int64_t right_ascending = 1;
+    int64_t right_descending = 1;
+    int64_t left_ascending = (root->left->to_mul == 0 or
+                              (root->left->rev ? root->left->is_descending
+                                               : root->left->is_ascending));
+    int64_t left_descending = (root->left->to_mul == 0 or
+                               (root->left->rev ? root->left->is_ascending
+                                                : root->left->is_descending));
+    int64_t left_last =
         (root->left->rev ? root->left->first : root->left->last) *
             root->left->to_mul +
         root->left->to_add;
-    int64_t rightfirst = 0;
+    int64_t right_first = 0;
     int64_t left_size = root->left->size;
     int64_t right_size = 0;
     root->size = root->left->size + 1;
     root->sum = root->value + root->left->sum * root->left->to_mul +
                 root->left->to_add * root->left->size;
-    root->is_ascending = (leftAscending and leftlast <= root->value);
-    root->is_descending = (leftDescending and leftlast >= root->value);
+    root->is_ascending = (left_ascending and left_last <= root->value);
+    root->is_descending = (left_descending and left_last >= root->value);
   } else if (root->right) {
-    int64_t leftAscending = 1;
-    int64_t leftDescending = 1;
-    int64_t rightAscending = (root->right->to_mul == 0 or
-                              (root->right->rev ? root->right->is_descending
-                                                : root->right->is_ascending));
-    int64_t rightDescending = (root->right->to_mul == 0 or
-                               (root->right->rev ? root->right->is_ascending
-                                                 : root->right->is_descending));
-    int64_t rightfirst =
+    int64_t left_ascending = 1;
+    int64_t left_descending = 1;
+    int64_t right_ascending = (root->right->to_mul == 0 or
+                               (root->right->rev ? root->right->is_descending
+                                                 : root->right->is_ascending));
+    int64_t right_descending =
+        (root->right->to_mul == 0 or
+         (root->right->rev ? root->right->is_ascending
+                           : root->right->is_descending));
+    int64_t right_first =
         (root->right->rev ? root->right->last : root->right->first) *
             root->right->to_mul +
         root->right->to_add;
-    int64_t leftlast = 0;
+    int64_t left_last = 0;
     int64_t left_size = 0;
     int64_t right_size = root->right->size;
     root->size = root->right->size + 1;
     root->sum = root->value + root->right->sum * root->right->to_mul +
                 root->right->to_add * root->right->size;
-    root->is_ascending = (rightAscending and rightfirst >= root->value);
-    root->is_descending = (rightDescending and rightfirst <= root->value);
+    root->is_ascending = (right_ascending and right_first >= root->value);
+    root->is_descending = (right_descending and right_first <= root->value);
   } else {
     root->size = 1;
     root->sum = root->value;
@@ -181,22 +183,22 @@ void Make(Node *root) {
   }
 }
 
-void leftPut(Node *root, Node *q) {
+void LeftPut(Node *root, Node *q) {
   root->left = q;
   Update(root);
 }
 
-void rightPut(Node *root, Node *q) {
+void RightPut(Node *root, Node *q) {
   root->right = q;
   Update(root);
 }
 
-Node *leftGet(Node *root) {
+Node *LeftGet(Node *root) {
   Make(root->left);
   return root->left;
 }
 
-Node *rightGet(Node *root) {
+Node *RightGet(Node *root) {
   Make(root->right);
   return root->right;
 }
@@ -211,15 +213,15 @@ Node *Create(int64_t value) {
 
 int64_t FindIndex(Node *root) {
   auto w = root->parent;
-  auto left = root ? leftGet(root) : 0;
-  auto right = root ? rightGet(root) : 0;
+  auto left = root ? LeftGet(root) : 0;
+  auto right = root ? RightGet(root) : 0;
   auto left_size = left ? left->size : 0;
   auto right_size = right ? right->size : 0;
   if (w == nullptr) {
     return left_size;
-  } else if (leftGet(w) == root) {
+  } else if (LeftGet(w) == root) {
     return FindIndex(w) - right_size - 1;
-  } else if (rightGet(w) == root) {
+  } else if (RightGet(w) == root) {
     return FindIndex(w) + left_size + 1;
   }
   return 0;
@@ -233,10 +235,10 @@ Node *Merge(Node *t1, Node *t2) {
     return t1;
   }
   if (t1->priority < t2->priority) {
-    leftPut(t2, Merge(t1, leftGet(t2)));
+    LeftPut(t2, Merge(t1, LeftGet(t2)));
     return t2;
   } else {
-    rightPut(t1, Merge(rightGet(t1), t2));
+    RightPut(t1, Merge(RightGet(t1), t2));
     return t1;
   }
 }
@@ -251,13 +253,13 @@ std::pair<Node *, Node *> Split(Node *root, int64_t n) {
   if (n == root->size) {
     return {root, nullptr};
   }
-  auto left = root ? leftGet(root) : 0;
-  auto right = root ? rightGet(root) : 0;
+  auto left = root ? LeftGet(root) : 0;
+  auto right = root ? RightGet(root) : 0;
   auto left_size = left ? left->size : 0;
   auto right_size = right ? right->size : 0;
   if (left_size < n) {
     auto tmp = Split(right, n - left_size - 1);
-    rightPut(root, tmp.first);
+    RightPut(root, tmp.first);
     auto t2 = tmp.second;
     if (t2) {
       t2->parent = nullptr;
@@ -266,7 +268,7 @@ std::pair<Node *, Node *> Split(Node *root, int64_t n) {
   } else {
     auto tmp = Split(left, n);
     auto t1 = tmp.first;
-    leftPut(root, tmp.second);
+    LeftPut(root, tmp.second);
     if (t1) {
       t1->parent = nullptr;
     }
@@ -288,9 +290,9 @@ int64_t LowerBound(Node *root, int64_t d) {
     while (root) {
       if (root->value >= d) {
         w = root;
-        root = leftGet(root);
+        root = LeftGet(root);
       } else {
-        root = rightGet(root);
+        root = RightGet(root);
       }
     }
     ret = FindIndex(w);
@@ -312,9 +314,9 @@ int64_t UpperBound(Node *root, int64_t d) {
     while (root) {
       if (root->value > d) {
         w = root;
-        root = leftGet(root);
+        root = LeftGet(root);
       } else {
-        root = rightGet(root);
+        root = RightGet(root);
       }
     }
     ret = FindIndex(w);
@@ -330,8 +332,8 @@ int64_t AscendingPrefix(Node *root) {
     ret = (root ? root->size : 0);
   } else {
     while (root) {
-      auto left = root ? leftGet(root) : 0;
-      auto right = root ? rightGet(root) : 0;
+      auto left = root ? LeftGet(root) : 0;
+      auto right = root ? RightGet(root) : 0;
       auto left_size = left ? left->size : 0;
       auto right_size = right ? right->size : 0;
       if (!left or left->is_ascending) {
@@ -372,8 +374,8 @@ int64_t DescendingPrefix(Node *root) {
     ret = (root ? root->size : 0);
   } else {
     while (root) {
-      auto left = root ? leftGet(root) : 0;
-      auto right = root ? rightGet(root) : 0;
+      auto left = root ? LeftGet(root) : 0;
+      auto right = root ? RightGet(root) : 0;
       auto left_size = left ? left->size : 0;
       auto right_size = right ? right->size : 0;
       if (!left or left->is_descending) {
