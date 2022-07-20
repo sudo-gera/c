@@ -63,8 +63,6 @@ void Update(Node *root) {
         (root->left->rev ? root->left->first : root->left->last) *
             root->left->to_mul +
         root->left->to_add;
-    int64_t left_size = root->left->size;
-    int64_t right_size = root->right->size;
     root->size = root->left->size + root->right->size + 1;
     root->sum = root->value + root->left->sum * root->left->to_mul +
                 root->left->to_add * root->left->size +
@@ -77,8 +75,6 @@ void Update(Node *root) {
         (left_descending and right_descending and left_last >= root->value and
          right_first <= root->value);
   } else if (root->left) {
-    int64_t right_ascending = 1;
-    int64_t right_descending = 1;
     int64_t left_ascending = (root->left->to_mul == 0 or
                               (root->left->rev ? root->left->is_descending
                                                : root->left->is_ascending));
@@ -89,17 +85,12 @@ void Update(Node *root) {
         (root->left->rev ? root->left->first : root->left->last) *
             root->left->to_mul +
         root->left->to_add;
-    int64_t right_first = 0;
-    int64_t left_size = root->left->size;
-    int64_t right_size = 0;
     root->size = root->left->size + 1;
     root->sum = root->value + root->left->sum * root->left->to_mul +
                 root->left->to_add * root->left->size;
     root->is_ascending = (left_ascending and left_last <= root->value);
     root->is_descending = (left_descending and left_last >= root->value);
   } else if (root->right) {
-    int64_t left_ascending = 1;
-    int64_t left_descending = 1;
     int64_t right_ascending = (root->right->to_mul == 0 or
                                (root->right->rev ? root->right->is_descending
                                                  : root->right->is_ascending));
@@ -111,9 +102,6 @@ void Update(Node *root) {
         (root->right->rev ? root->right->last : root->right->first) *
             root->right->to_mul +
         root->right->to_add;
-    int64_t left_last = 0;
-    int64_t left_size = 0;
-    int64_t right_size = root->right->size;
     root->size = root->right->size + 1;
     root->sum = root->value + root->right->sum * root->right->to_mul +
                 root->right->to_add * root->right->size;
@@ -213,8 +201,8 @@ Node *Create(int64_t value) {
 
 int64_t FindIndex(Node *root) {
   auto w = root->parent;
-  auto left = root ? LeftGet(root) : 0;
-  auto right = root ? RightGet(root) : 0;
+  auto left = root ? LeftGet(root) : nullptr;
+  auto right = root ? RightGet(root) : nullptr;
   auto left_size = left ? left->size : 0;
   auto right_size = right ? right->size : 0;
   if (w == nullptr) {
@@ -253,10 +241,9 @@ std::pair<Node *, Node *> Split(Node *root, int64_t n) {
   if (n == root->size) {
     return {root, nullptr};
   }
-  auto left = root ? LeftGet(root) : 0;
-  auto right = root ? RightGet(root) : 0;
+  auto left = root ? LeftGet(root) : nullptr;
+  auto right = root ? RightGet(root) : nullptr;
   auto left_size = left ? left->size : 0;
-  auto right_size = right ? right->size : 0;
   if (left_size < n) {
     auto tmp = Split(right, n - left_size - 1);
     RightPut(root, tmp.first);
@@ -332,10 +319,8 @@ int64_t AscendingPrefix(Node *root) {
     ret = (root ? root->size : 0);
   } else {
     while (root) {
-      auto left = root ? LeftGet(root) : 0;
-      auto right = root ? RightGet(root) : 0;
-      auto left_size = left ? left->size : 0;
-      auto right_size = right ? right->size : 0;
+      auto left = root ? LeftGet(root) : nullptr;
+      auto right = root ? RightGet(root) : nullptr;
       if (!left or left->is_ascending) {
         if (!left or root->value >= left->last) {
           if (!w or w->value <= root->first) {
@@ -350,10 +335,9 @@ int64_t AscendingPrefix(Node *root) {
             w = root;
             ret = FindIndex(w);
             break;
-          } else {
-            ret = FindIndex(w) + 1;
-            break;
           }
+          ret = FindIndex(w) + 1;
+          break;
         }
       } else {
         root = left;
@@ -374,10 +358,8 @@ int64_t DescendingPrefix(Node *root) {
     ret = (root ? root->size : 0);
   } else {
     while (root) {
-      auto left = root ? LeftGet(root) : 0;
-      auto right = root ? RightGet(root) : 0;
-      auto left_size = left ? left->size : 0;
-      auto right_size = right ? right->size : 0;
+      auto left = root ? LeftGet(root) : nullptr;
+      auto right = root ? RightGet(root) : nullptr;
       if (!left or left->is_descending) {
         if (!left or root->value <= left->last) {
           if (!w or w->value >= root->first) {
@@ -422,7 +404,7 @@ Node *NextPermutation(Node *root) {
   auto t = tmp.first;
   root = tmp.second;
   if (t) {
-    auto tmp = Split(t, t->size - 1);
+    tmp = Split(t, t->size - 1);
     t = tmp.first;
     auto h = tmp.second;
     auto r = h->value;
@@ -449,11 +431,10 @@ Node *NextPermutation(Node *root) {
     root = Merge(t, root);
     t = nullptr;
     return root;
-  } else {
-    root->rev ^= 1;
-    Make(root);
-    return root;
   }
+  root->rev ^= 1;
+  Make(root);
+  return root;
 }
 
 Node *PrevPermutation(Node *root) {
@@ -497,11 +478,10 @@ Node *PrevPermutation(Node *root) {
     root = Merge(t, root);
     t = nullptr;
     return root;
-  } else {
-    root->rev ^= 1;
-    Make(root);
-    return root;
   }
+  root->rev ^= 1;
+  Make(root);
+  return root;
 }
 
 int64_t GetInt() {
@@ -519,11 +499,11 @@ int main() {
   }
   int64_t q = GetInt();
   for (int64_t w = 0; w < q; ++w) {
-    int64_t s = GetInt();
-    if (s == -1) {
+    int64_t t = GetInt();
+    if (t == -1) {
       break;
     }
-    if (s == 1) {
+    if (t == 1) {
       int64_t l = GetInt(), r = GetInt() + 1;
       tmp = Split(a, r);
       auto s = tmp.first;
@@ -537,7 +517,7 @@ int main() {
       a = Merge(s, a);
       s = nullptr;
     }
-    if (s == 2) {
+    if (t == 2) {
       int64_t f = GetInt();
       int64_t u = GetInt();
       int64_t l = u, r = u;
@@ -553,7 +533,7 @@ int main() {
       a = Merge(s, a);
       s = nullptr;
     }
-    if (s == 3) {
+    if (t == 3) {
       int64_t u = GetInt();
       tmp = Split(a, u);
       auto s = tmp.first;
@@ -564,7 +544,7 @@ int main() {
       a = Merge(s, a);
       s = nullptr;
     }
-    if (s == 4) {
+    if (t == 4) {
       int64_t f = GetInt();
       int64_t l = GetInt(), r = GetInt() + 1;
       tmp = Split(a, r);
@@ -581,7 +561,7 @@ int main() {
       a = Merge(s, a);
       s = nullptr;
     }
-    if (s == 5) {
+    if (t == 5) {
       int64_t f = GetInt();
       int64_t l = GetInt(), r = GetInt() + 1;
       tmp = Split(a, r);
@@ -597,7 +577,7 @@ int main() {
       a = Merge(s, a);
       s = nullptr;
     }
-    if (s == 6) {
+    if (t == 6) {
       int64_t l = GetInt(), r = GetInt() + 1;
       tmp = Split(a, r);
       auto s = tmp.first;
@@ -611,7 +591,7 @@ int main() {
       a = Merge(s, a);
       s = nullptr;
     }
-    if (s == 7) {
+    if (t == 7) {
       int64_t l = GetInt(), r = GetInt() + 1;
       tmp = Split(a, r);
       auto s = tmp.first;
