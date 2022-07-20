@@ -1,4 +1,4 @@
-#include <algorithm>
+#include <bits/stdc++.h>
 
 int main(){
 	int*a=new int[9];
