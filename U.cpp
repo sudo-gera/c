@@ -1,9 +1,7 @@
-#include <bits/stdc++.h>
+// #include <bits/stdc++.h>
+#include <algorithm>
+#include <iostream>
 using namespace std;
-
-#ifdef assert_m
-#define assert assert_m
-#endif
 
 struct node {
   int64_t v = 0;

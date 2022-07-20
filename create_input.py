@@ -13,7 +13,7 @@ def rand(q=2**64,e=None):
 def getstr():
 	return ''.join([choice('snmrdfhg')+choice('aioue') for w in range(10)])
 
-maxlen=1000000+int(run_num**0.5)
+maxlen=100+int(run_num**0.5)
 
 strs=[getstr() for w in range(maxlen)]
 
