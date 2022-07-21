@@ -21,29 +21,3 @@ n=rand(1,maxlen)
 print(n)
 a=[rand(maxlen) for w in range(n)]
 print(*a)
-f=rand(maxlen)
-print(f)
-for w in range(f):
-	q=rand(7)+1
-	if n==0:
-		q=2
-	else:
-		r=rand(n)
-		l=rand(r+1)
-	print(q,end=' ')
-	if q==1:
-		print(l,r)
-	if q==2:
-		print(rand(maxlen),rand(n+1))
-		n+=1
-	if q==3:
-		print(rand(n))
-		n-=1
-	if q==4:
-		print(rand(maxlen),l,r)
-	if q==5:
-		print(rand(maxlen),l,r)
-	if q==6:
-		print(l,r)
-	if q==7:
-		print(l,r)

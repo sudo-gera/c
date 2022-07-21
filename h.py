@@ -113,7 +113,6 @@ primes=[2,3,5]
 from is_prime import *
 import is_prime
 from scan import *
-import scan
 def is_prime_root(q):
 	if primes[-1]>=q:
 		return bisect_in(primes,q)
