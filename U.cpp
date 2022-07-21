@@ -32,79 +32,53 @@ void Update(Node *root) {
   if (root->right) {
     (root->right->parent) = root;
     if (root->right->rev) {
-      root->last =
-          root->right->first * root->right->to_mul + root->right->to_add;
+      root->last = root->right->first * root->right->to_mul + root->right->to_add;
     } else {
-      root->last =
-          root->right->last * root->right->to_mul + root->right->to_add;
+      root->last = root->right->last * root->right->to_mul + root->right->to_add;
     }
   } else {
     root->last = root->value;
   }
   if (root->left and root->right) {
-    int64_t left_ascending = (root->left->to_mul == 0 or
-                              (root->left->rev ? root->left->is_descending
-                                               : root->left->is_ascending));
-    int64_t left_descending = (root->left->to_mul == 0 or
-                               (root->left->rev ? root->left->is_ascending
-                                                : root->left->is_descending));
-    int64_t right_ascending = (root->right->to_mul == 0 or
-                               (root->right->rev ? root->right->is_descending
-                                                 : root->right->is_ascending));
+    int64_t left_ascending =
+        (root->left->to_mul == 0 or (root->left->rev ? root->left->is_descending : root->left->is_ascending));
+    int64_t left_descending =
+        (root->left->to_mul == 0 or (root->left->rev ? root->left->is_ascending : root->left->is_descending));
+    int64_t right_ascending =
+        (root->right->to_mul == 0 or (root->right->rev ? root->right->is_descending : root->right->is_ascending));
     int64_t right_descending =
-        (root->right->to_mul == 0 or
-         (root->right->rev ? root->right->is_ascending
-                           : root->right->is_descending));
+        (root->right->to_mul == 0 or (root->right->rev ? root->right->is_ascending : root->right->is_descending));
     int64_t right_first =
-        (root->right->rev ? root->right->last : root->right->first) *
-            root->right->to_mul +
-        root->right->to_add;
+        (root->right->rev ? root->right->last : root->right->first) * root->right->to_mul + root->right->to_add;
     int64_t left_last =
-        (root->left->rev ? root->left->first : root->left->last) *
-            root->left->to_mul +
-        root->left->to_add;
+        (root->left->rev ? root->left->first : root->left->last) * root->left->to_mul + root->left->to_add;
     root->size = root->left->size + root->right->size + 1;
-    root->sum = root->value + root->left->sum * root->left->to_mul +
-                root->left->to_add * root->left->size +
-                root->right->sum * root->right->to_mul +
-                root->right->to_add * root->right->size;
+    root->sum = root->value + root->left->sum * root->left->to_mul + root->left->to_add * root->left->size +
+                root->right->sum * root->right->to_mul + root->right->to_add * root->right->size;
     root->is_ascending =
-        (left_ascending and right_ascending and left_last <= root->value and
-         right_first >= root->value);
+        (left_ascending and right_ascending and left_last <= root->value and right_first >= root->value);
     root->is_descending =
-        (left_descending and right_descending and left_last >= root->value and
-         right_first <= root->value);
+        (left_descending and right_descending and left_last >= root->value and right_first <= root->value);
   } else if (root->left) {
-    int64_t left_ascending = (root->left->to_mul == 0 or
-                              (root->left->rev ? root->left->is_descending
-                                               : root->left->is_ascending));
-    int64_t left_descending = (root->left->to_mul == 0 or
-                               (root->left->rev ? root->left->is_ascending
-                                                : root->left->is_descending));
+    int64_t left_ascending =
+        (root->left->to_mul == 0 or (root->left->rev ? root->left->is_descending : root->left->is_ascending));
+    int64_t left_descending =
+        (root->left->to_mul == 0 or (root->left->rev ? root->left->is_ascending : root->left->is_descending));
     int64_t left_last =
-        (root->left->rev ? root->left->first : root->left->last) *
-            root->left->to_mul +
-        root->left->to_add;
+        (root->left->rev ? root->left->first : root->left->last) * root->left->to_mul + root->left->to_add;
     root->size = root->left->size + 1;
-    root->sum = root->value + root->left->sum * root->left->to_mul +
-                root->left->to_add * root->left->size;
+    root->sum = root->value + root->left->sum * root->left->to_mul + root->left->to_add * root->left->size;
     root->is_ascending = (left_ascending and left_last <= root->value);
     root->is_descending = (left_descending and left_last >= root->value);
   } else if (root->right) {
-    int64_t right_ascending = (root->right->to_mul == 0 or
-                               (root->right->rev ? root->right->is_descending
-                                                 : root->right->is_ascending));
+    int64_t right_ascending =
+        (root->right->to_mul == 0 or (root->right->rev ? root->right->is_descending : root->right->is_ascending));
     int64_t right_descending =
-        (root->right->to_mul == 0 or
-         (root->right->rev ? root->right->is_ascending
-                           : root->right->is_descending));
+        (root->right->to_mul == 0 or (root->right->rev ? root->right->is_ascending : root->right->is_descending));
     int64_t right_first =
-        (root->right->rev ? root->right->last : root->right->first) *
-            root->right->to_mul +
-        root->right->to_add;
+        (root->right->rev ? root->right->last : root->right->first) * root->right->to_mul + root->right->to_add;
     root->size = root->right->size + 1;
-    root->sum = root->value + root->right->sum * root->right->to_mul +
-                root->right->to_add * root->right->size;
+    root->sum = root->value + root->right->sum * root->right->to_mul + root->right->to_add * root->right->size;
     root->is_ascending = (right_ascending and right_first >= root->value);
     root->is_descending = (right_descending and right_first <= root->value);
   } else {
@@ -207,9 +181,11 @@ int64_t FindIndex(Node *root) {
   auto right_size = right ? right->size : 0;
   if (w == nullptr) {
     return left_size;
-  } else if (LeftGet(w) == root) {
+  }
+  if (LeftGet(w) == root) {
     return FindIndex(w) - right_size - 1;
-  } else if (RightGet(w) == root) {
+  }
+  if (RightGet(w) == root) {
     return FindIndex(w) + left_size + 1;
   }
   return 0;
@@ -225,10 +201,9 @@ Node *Merge(Node *t1, Node *t2) {
   if (t1->priority < t2->priority) {
     LeftPut(t2, Merge(t1, LeftGet(t2)));
     return t2;
-  } else {
-    RightPut(t1, Merge(RightGet(t1), t2));
-    return t1;
   }
+  RightPut(t1, Merge(RightGet(t1), t2));
+  return t1;
 }
 
 std::pair<Node *, Node *> Split(Node *root, int64_t n) {
@@ -252,15 +227,14 @@ std::pair<Node *, Node *> Split(Node *root, int64_t n) {
       t2->parent = nullptr;
     }
     return {root, t2};
-  } else {
-    auto tmp = Split(left, n);
-    auto t1 = tmp.first;
-    LeftPut(root, tmp.second);
-    if (t1) {
-      t1->parent = nullptr;
-    }
-    return {t1, root};
   }
+  auto tmp = Split(left, n);
+  auto t1 = tmp.first;
+  LeftPut(root, tmp.second);
+  if (t1) {
+    t1->parent = nullptr;
+  }
+  return {t1, root};
 }
 
 int64_t LowerBound(Node *root, int64_t d) {
@@ -374,10 +348,9 @@ int64_t DescendingPrefix(Node *root) {
             w = root;
             ret = FindIndex(w);
             break;
-          } else {
-            ret = FindIndex(w) + 1;
-            break;
           }
+          ret = FindIndex(w) + 1;
+          break;
         }
       } else {
         root = left;
