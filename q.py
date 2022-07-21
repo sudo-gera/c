@@ -1,13 +1,8 @@
 from h import *
-def ch(a,x):
-	p=1
-	while p<=a:
-		p*=x
-	return (a*a-a)%p==0
-
-def find(x):
-	return[
-		a
-	for a in range(10**7)
-		if ch(a,x)
-	][-1]
+n=scan()
+a=[scan() for w in range(n)]
+print(max([
+	sum(a[e:w])*min(a[e:w])
+	for w in range(1,n+1)
+		for e in range(w)
+]))
