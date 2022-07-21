@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iostream>
+#include <assert.h>
 
 struct Node {
   int64_t value = 0;
@@ -55,20 +56,20 @@ void Update(Node *root) {
     int64_t left_last =
         (root->left->rev ? root->left->first : root->left->last) * root->left->to_mul + root->left->to_add;
     root->size = root->left->size + root->right->size + 1;
-    if (root->value < root->left->value and root->value < root->right->value){
+    if (root->value <= root->left->min and root->value <= root->right->min){
         root->min=root->value;
         root->minindex=root->left->size;
     }
-    if (root->left->value < root->value and root->left->value < root->right->value){
-        root->min=root->left->value;
+    if (root->left->min <= root->value and root->left->min <= root->right->min){
+        root->min=root->left->min;
         root->minindex=root->left->minindex;
     }
-    if (root->right->value < root->value and root->right->value < root->left->value){
-        root->min=root->right->value;
+    if (root->right->min <= root->value and root->right->min <= root->left->min){
+        root->min=root->right->min;
         root->minindex=root->right->minindex+root->left->size+1;
     }
-    root->min = std::min({root->value , root->left->min * root->left->to_mul + root->left->to_add,
-                root->right->min * root->right->to_mul + root->right->to_add});
+    root->sum = root->value + root->left->sum * root->left->to_mul + root->left->to_add * root->left->size +
+                root->right->sum * root->right->to_mul + root->right->to_add * root->right->size;
     root->is_ascending =
         (left_ascending and right_ascending and left_last <= root->value and right_first >= root->value);
     root->is_descending =
@@ -81,7 +82,15 @@ void Update(Node *root) {
     int64_t left_last =
         (root->left->rev ? root->left->first : root->left->last) * root->left->to_mul + root->left->to_add;
     root->size = root->left->size + 1;
-    root->min = std::min({root->value , root->left->min * root->left->to_mul + root->left->to_add});
+    if (root->value <= root->left->min){
+        root->min=root->value;
+        root->minindex=root->left->size;
+    }
+    if (root->left->min <= root->value){
+        root->min=root->left->min;
+        root->minindex=root->left->minindex;
+    }
+    root->sum = root->value + root->left->sum * root->left->to_mul + root->left->to_add * root->left->size;
     root->is_ascending = (left_ascending and left_last <= root->value);
     root->is_descending = (left_descending and left_last >= root->value);
   } else if (root->right) {
@@ -92,12 +101,23 @@ void Update(Node *root) {
     int64_t right_first =
         (root->right->rev ? root->right->last : root->right->first) * root->right->to_mul + root->right->to_add;
     root->size = root->right->size + 1;
-    root->min = std::min({root->value , root->right->min * root->right->to_mul + root->right->to_add});
+    if (root->value <= root->right->min){
+        root->min=root->value;
+        root->minindex=0;
+    }
+    if (root->right->min <= root->value){
+        root->min=root->right->min;
+        root->minindex=root->right->minindex+1;
+    }
+    root->sum = root->value +
+                root->right->sum * root->right->to_mul + root->right->to_add * root->right->size;
     root->is_ascending = (right_ascending and right_first >= root->value);
     root->is_descending = (right_descending and right_first <= root->value);
   } else {
     root->size = 1;
-    root->min = root->value;
+    root->min=root->value;
+    root->sum = root->value;
+    root->minindex=0;
     root->is_ascending = 1;
     root->is_descending = 1;
   }
@@ -109,6 +129,7 @@ void Make(Node *root) {
   }
   if (root->to_mul != 1) {
     root->min *= root->to_mul;
+    root->sum *= root->to_mul;
     root->first *= root->to_mul;
     root->last *= root->to_mul;
     root->value *= root->to_mul;
@@ -129,6 +150,7 @@ void Make(Node *root) {
 
   if (root->to_add != 0) {
     root->min += root->to_add;
+    root->sum += root->to_add*root->size;
     root->first += root->to_add;
     root->last += root->to_add;
     root->value += root->to_add;
@@ -142,6 +164,7 @@ void Make(Node *root) {
   }
 
   if (root->rev) {
+    assert(0);
     Node *te = (root->left);
     root->left = (root->right);
     root->right = te;
@@ -492,30 +515,82 @@ int64_t GetChar() {
   return l;
 }
 
+struct item
+{
+    int64_t gg=0,l=0,r=0;
+};
+
+// #include "treeprint.h"
+
+// void* getl(void*a){
+//     return ((Node*)(a))->left;
+// }
+
+// void* getr(void*a){
+//     return ((Node*)(a))->right;
+// }
+
+// void* gets(void*a){
+//     char*s=(char*)malloc(1024);
+//     sprintf(s,"value: %li, sum: %li, min: %li, minindex: %li",((Node*)(a))->value,((Node*)(a))->sum,((Node*)(a))->min,((Node*)(a))->minindex);
+//     return s;
+// }
+
+item get(Node*a){
+//   treeprint(a,getl,getr,gets);
+    auto l=a->size;
+    auto t=a->minindex;
+    auto gg=a->min*a->sum;
+    auto[s,g]=Split(a,t+1);
+    auto[d,f]=Split(s,t);
+    del(f);
+    a=s=f=nullptr;
+    if (d and g){
+        auto ls=d->size;
+        auto z=get(d);
+        auto x=get(g);
+        d=g=nullptr;
+        if (z.gg>gg and z.gg>x.gg){
+            return z;
+        }
+        if (x.gg>gg and x.gg>z.gg){
+            x.l+=ls+1;
+            x.r+=ls+1;
+            return x;
+        }
+        return {gg,0,l};
+    }
+    if (d){
+        auto ls=d->size;
+        auto z=get(d);
+        d=g=nullptr;
+        if (z.gg>gg){
+            return z;
+        }
+        return {gg,0,l};
+    }
+    if (g){
+        auto x=get(g);
+        d=g=nullptr;
+        if (x.gg>gg){
+            x.l+=1;
+            x.r+=1;
+            return x;
+        }
+        return {gg,0,l};
+    }
+    d=g=nullptr;
+    return {gg,0,l};
+}
+
 int main() {
   std::pair<Node *, Node *> tmp;
   int64_t n = GetInt();
   Node *a = nullptr;
   for (int64_t w = 0; w < n; ++w) {
-    int64_t q = GetChar(), l = GetInt() - 1, r = GetInt();
-    if (q == '+') {
-      ++l;
-      tmp = Split(a, l);
-      auto d = tmp.second;
-      a = tmp.first;
-      d = Merge(Create(r), d);
-      a = Merge(a, d);
-    } else {
-      tmp = Split(a, r);
-      auto g = tmp.second;
-      a = tmp.first;
-      tmp = Split(a, l);
-      auto d = tmp.second;
-      a = tmp.first;
-      std::cout << (d ? d->min : 0) << std::endl;
-      a = Merge(a, d);
-      a = Merge(a, g);
-    }
+    a=Merge(a,Create(GetInt()));
   }
-  del(a);
+  auto y=get(a);
+  std::cout<<y.gg<<std::endl;
+  std::cout<<y.l+1<<' '<<y.r<<std::endl;
 }
