@@ -463,6 +463,24 @@ int64_t GetInt() {
   return l;
 }
 
+#include "treeprint.h"
+
+void* getl(void*a){
+  return ((Node*)(a))->left;
+}
+
+void* getr(void*a){
+  return ((Node*)(a))->right;
+}
+#include <inttypes.h>
+
+void* gets(void*a){
+  char*s=(char*)malloc(80);
+  long g=((Node*)(a))->value;
+  sprintf(s,"%li",g);
+  return s;
+}
+
 int main() {
   std::pair<Node *, Node *> tmp;
   while (1){
@@ -478,12 +496,15 @@ int main() {
         a=Merge(a,Create(GetInt()));
       }
     }
+    // treeprint(a,getl,getr,gets);
+    // treeprint(s,getl,getr,gets);
     for (long w=0;w<m;++w){
-      long q=GetInt(),l=GetInt(),r=GetInt()+1;
+      long q=GetInt(),l=GetInt()-1,r=GetInt();
       long l0=(l+1)/2;
       long l1=l/2;
       long r0=(r+1)/2;
       long r1=r/2;
+      // ic(l0,l1,r0,r1)
       tmp=Split(a,r0);
       auto g=tmp.second;
       a=tmp.first;
@@ -496,6 +517,12 @@ int main() {
       tmp=Split(s,l1);
       auto f=tmp.second;
       s=tmp.first;
+      // treeprint(a,getl,getr,gets);
+      // treeprint(d,getl,getr,gets);
+      // treeprint(g,getl,getr,gets);
+      // treeprint(s,getl,getr,gets);
+      // treeprint(f,getl,getr,gets);
+      // treeprint(h,getl,getr,gets);
       if (q==1){
         std::swap(d,f);
       }else{
