@@ -1,4 +1,8 @@
 from h import *
+<<<<<<< HEAD
+while 1:
+ pass
+=======
 # import genshin
 
 
@@ -31,3 +35,4 @@ for w in range(50):
 	a*=50*o/(100-w)
 print(a)
 print(float(a))
+>>>>>>> c6e601f69e97b524bcee840dc49a0654106a1368
