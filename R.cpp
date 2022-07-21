@@ -11,7 +11,7 @@ struct Node {
   int64_t rev = 0;
   int64_t first = 0;
   int64_t last = 0;
-  int64_t sum = 0;
+  int64_t min = 0;
   int64_t to_add = 0;
   int64_t to_mul = 1;
   int64_t is_ascending = 1;
@@ -53,8 +53,8 @@ void Update(Node *root) {
     int64_t left_last =
         (root->left->rev ? root->left->first : root->left->last) * root->left->to_mul + root->left->to_add;
     root->size = root->left->size + root->right->size + 1;
-    root->sum = root->value + root->left->sum * root->left->to_mul + root->left->to_add * root->left->size +
-                root->right->sum * root->right->to_mul + root->right->to_add * root->right->size;
+    root->min = std::min({root->value , root->left->min * root->left->to_mul + root->left->to_add,
+                root->right->min * root->right->to_mul + root->right->to_add});
     root->is_ascending =
         (left_ascending and right_ascending and left_last <= root->value and right_first >= root->value);
     root->is_descending =
@@ -67,7 +67,7 @@ void Update(Node *root) {
     int64_t left_last =
         (root->left->rev ? root->left->first : root->left->last) * root->left->to_mul + root->left->to_add;
     root->size = root->left->size + 1;
-    root->sum = root->value + root->left->sum * root->left->to_mul + root->left->to_add * root->left->size;
+    root->min = std::min({root->value , root->left->min * root->left->to_mul + root->left->to_add});
     root->is_ascending = (left_ascending and left_last <= root->value);
     root->is_descending = (left_descending and left_last >= root->value);
   } else if (root->right) {
@@ -78,12 +78,12 @@ void Update(Node *root) {
     int64_t right_first =
         (root->right->rev ? root->right->last : root->right->first) * root->right->to_mul + root->right->to_add;
     root->size = root->right->size + 1;
-    root->sum = root->value + root->right->sum * root->right->to_mul + root->right->to_add * root->right->size;
+    root->min = std::min({root->value , root->right->min * root->right->to_mul + root->right->to_add});
     root->is_ascending = (right_ascending and right_first >= root->value);
     root->is_descending = (right_descending and right_first <= root->value);
   } else {
     root->size = 1;
-    root->sum = root->value;
+    root->min = root->value;
     root->is_ascending = 1;
     root->is_descending = 1;
   }
@@ -94,7 +94,7 @@ void Make(Node *root) {
     return;
   }
   if (root->to_mul != 1) {
-    root->sum *= root->to_mul;
+    root->min *= root->to_mul;
     root->first *= root->to_mul;
     root->last *= root->to_mul;
     root->value *= root->to_mul;
@@ -114,7 +114,7 @@ void Make(Node *root) {
   }
 
   if (root->to_add != 0) {
-    root->sum += root->to_add * root->size;
+    root->min += root->to_add;
     root->first += root->to_add;
     root->last += root->to_add;
     root->value += root->to_add;
@@ -472,51 +472,36 @@ int64_t GetInt() {
   return l;
 }
 
+int64_t GetChar() {
+  char l;
+  std::cin >> l;
+  return l;
+}
 
 int main() {
   std::pair<Node *, Node *> tmp;
-  while (1) {
-    int64_t n = GetInt(), m = GetInt();
-    if (n == 0 and m == 0) {
-      break;
-    }
-    Node *a = nullptr, *s = nullptr;
-    for (int64_t w = 0; w < n; ++w) {
-      if (w % 2) {
-        s = Merge(s, Create(GetInt()));
-      } else {
-        a = Merge(a, Create(GetInt()));
-      }
-    }
-    for (int64_t w = 0; w < m; ++w) {
-      int64_t q = GetInt(), l = GetInt() - 1, r = GetInt();
-      int64_t l0 = (l + 1) / 2;
-      int64_t l1 = l / 2;
-      int64_t r0 = (r + 1) / 2;
-      int64_t r1 = r / 2;
-      tmp = Split(a, r0);
-      auto g = tmp.second;
-      a = tmp.first;
-      tmp = Split(a, l0);
+  int64_t n = GetInt();
+  Node *a = nullptr;
+  for (int64_t w = 0; w < n; ++w) {
+    int64_t q = GetChar(), l = GetInt() - 1, r = GetInt();
+    if (q == '+') {
+      ++l;
+      tmp = Split(a, l);
       auto d = tmp.second;
       a = tmp.first;
-      tmp = Split(s, r1);
-      auto h = tmp.second;
-      s = tmp.first;
-      tmp = Split(s, l1);
-      auto f = tmp.second;
-      s = tmp.first;
-      if (q == 1) {
-        std::swap(d, f);
-      } else {
-        std::cout << (d ? d->sum : 0) + (f ? f->sum : 0) << std::endl;
-      }
+      d = Merge(Create(r), d);
+      a = Merge(a, d);
+    } else {
+      tmp = Split(a, r);
+      auto g = tmp.second;
+      a = tmp.first;
+      tmp = Split(a, l);
+      auto d = tmp.second;
+      a = tmp.first;
+      std::cout << (d ? d->min : 0) << std::endl;
       a = Merge(a, d);
       a = Merge(a, g);
-      s = Merge(s, f);
-      s = Merge(s, h);
     }
-    del(a);
-    del(s);
   }
+  del(a);
 }
