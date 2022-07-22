@@ -1,6 +1,6 @@
 #include <algorithm>
 #include <iostream>
-#include <assert.h>
+#include <cassert>
 
 struct Node {
   int64_t value = 0;
@@ -56,17 +56,17 @@ void Update(Node *root) {
     int64_t left_last =
         (root->left->rev ? root->left->first : root->left->last) * root->left->to_mul + root->left->to_add;
     root->size = root->left->size + root->right->size + 1;
-    if (root->value <= root->left->min and root->value <= root->right->min){
-        root->min=root->value;
-        root->minindex=root->left->size;
+    if (root->value <= root->left->min and root->value <= root->right->min) {
+      root->min = root->value;
+      root->minindex = root->left->size;
     }
-    if (root->left->min <= root->value and root->left->min <= root->right->min){
-        root->min=root->left->min;
-        root->minindex=root->left->minindex;
+    if (root->left->min <= root->value and root->left->min <= root->right->min) {
+      root->min = root->left->min;
+      root->minindex = root->left->minindex;
     }
-    if (root->right->min <= root->value and root->right->min <= root->left->min){
-        root->min=root->right->min;
-        root->minindex=root->right->minindex+root->left->size+1;
+    if (root->right->min <= root->value and root->right->min <= root->left->min) {
+      root->min = root->right->min;
+      root->minindex = root->right->minindex + root->left->size + 1;
     }
     root->sum = root->value + root->left->sum * root->left->to_mul + root->left->to_add * root->left->size +
                 root->right->sum * root->right->to_mul + root->right->to_add * root->right->size;
@@ -82,13 +82,13 @@ void Update(Node *root) {
     int64_t left_last =
         (root->left->rev ? root->left->first : root->left->last) * root->left->to_mul + root->left->to_add;
     root->size = root->left->size + 1;
-    if (root->value <= root->left->min){
-        root->min=root->value;
-        root->minindex=root->left->size;
+    if (root->value <= root->left->min) {
+      root->min = root->value;
+      root->minindex = root->left->size;
     }
-    if (root->left->min <= root->value){
-        root->min=root->left->min;
-        root->minindex=root->left->minindex;
+    if (root->left->min <= root->value) {
+      root->min = root->left->min;
+      root->minindex = root->left->minindex;
     }
     root->sum = root->value + root->left->sum * root->left->to_mul + root->left->to_add * root->left->size;
     root->is_ascending = (left_ascending and left_last <= root->value);
@@ -101,23 +101,22 @@ void Update(Node *root) {
     int64_t right_first =
         (root->right->rev ? root->right->last : root->right->first) * root->right->to_mul + root->right->to_add;
     root->size = root->right->size + 1;
-    if (root->value <= root->right->min){
-        root->min=root->value;
-        root->minindex=0;
+    if (root->value <= root->right->min) {
+      root->min = root->value;
+      root->minindex = 0;
     }
-    if (root->right->min <= root->value){
-        root->min=root->right->min;
-        root->minindex=root->right->minindex+1;
+    if (root->right->min <= root->value) {
+      root->min = root->right->min;
+      root->minindex = root->right->minindex + 1;
     }
-    root->sum = root->value +
-                root->right->sum * root->right->to_mul + root->right->to_add * root->right->size;
+    root->sum = root->value + root->right->sum * root->right->to_mul + root->right->to_add * root->right->size;
     root->is_ascending = (right_ascending and right_first >= root->value);
     root->is_descending = (right_descending and right_first <= root->value);
   } else {
     root->size = 1;
-    root->min=root->value;
+    root->min = root->value;
     root->sum = root->value;
-    root->minindex=0;
+    root->minindex = 0;
     root->is_ascending = 1;
     root->is_descending = 1;
   }
@@ -150,7 +149,7 @@ void Make(Node *root) {
 
   if (root->to_add != 0) {
     root->min += root->to_add;
-    root->sum += root->to_add*root->size;
+    root->sum += root->to_add * root->size;
     root->first += root->to_add;
     root->last += root->to_add;
     root->value += root->to_add;
@@ -494,12 +493,12 @@ Node *PrevPermutation(Node *root) {
   return root;
 }
 
-void del(Node* root){
-  if (!root){
+void Del(Node *root) {
+  if (!root) {
     return;
   }
-  del(root->left);
-  del(root->right);
+  Del(root->left);
+  Del(root->right);
   delete root;
 }
 
@@ -515,55 +514,53 @@ int64_t GetChar() {
   return l;
 }
 
-struct item
-{
-    int64_t gg=0,l=0,r=0;
+struct Item {
+  int64_t gg = 0, l = 0, r = 0;
 };
 
-item get(Node*a){
-    auto l=a->size;
-    auto t=a->minindex;
-    auto gg=a->min*a->sum;
-    auto[s,g]=Split(a,t+1);
-    auto[d,f]=Split(s,t);
-    del(f);
-    a=s=f=nullptr;
-    if (d and g){
-        auto ls=d->size;
-        auto z=get(d);
-        auto x=get(g);
-        d=g=nullptr;
-        if (x.gg>=gg and x.gg>=z.gg){
-            x.l+=ls+1;
-            x.r+=ls+1;
-            return x;
-        }
-        if (z.gg>=gg and z.gg>=x.gg){
-            return z;
-        }
-        return {gg,0,l};
+Item Get(Node *a) {
+  auto l = a->size;
+  auto t = a->minindex;
+  auto gg = a->min * a->sum;
+  auto[s, g] = Split(a, t + 1);
+  auto[d, f] = Split(s, t);
+  Del(f);
+  a = s = f = nullptr;
+  if (d and g) {
+    auto ls = d->size;
+    auto z = Get(d);
+    auto x = Get(g);
+    d = g = nullptr;
+    if (x.gg >= gg and x.gg >= z.gg) {
+      x.l += ls + 1;
+      x.r += ls + 1;
+      return x;
     }
-    if (d){
-        auto ls=d->size;
-        auto z=get(d);
-        d=g=nullptr;
-        if (z.gg>=gg){
-            return z;
-        }
-        return {gg,0,l};
+    if (z.gg >= gg and z.gg >= x.gg) {
+      return z;
     }
-    if (g){
-        auto x=get(g);
-        d=g=nullptr;
-        if (x.gg>=gg){
-            x.l+=1;
-            x.r+=1;
-            return x;
-        }
-        return {gg,0,l};
+    return {gg, 0, l};
+  }
+  if (d) {
+    auto z = Get(d);
+    d = g = nullptr;
+    if (z.gg >= gg) {
+      return z;
     }
-    d=g=nullptr;
-    return {gg,0,l};
+    return {gg, 0, l};
+  }
+  if (g) {
+    auto x = Get(g);
+    d = g = nullptr;
+    if (x.gg >= gg) {
+      x.l += 1;
+      x.r += 1;
+      return x;
+    }
+    return {gg, 0, l};
+  }
+  d = g = nullptr;
+  return {gg, 0, l};
 }
 
 int main() {
@@ -571,9 +568,9 @@ int main() {
   int64_t n = GetInt();
   Node *a = nullptr;
   for (int64_t w = 0; w < n; ++w) {
-    a=Merge(a,Create(GetInt()));
+    a = Merge(a, Create(GetInt()));
   }
-  auto y=get(a);
-  std::cout<<y.gg<<std::endl;
-  std::cout<<y.l+1<<' '<<y.r<<std::endl;
+  auto y = Get(a);
+  std::cout << y.gg << std::endl;
+  std::cout << y.l + 1 << ' ' << y.r << std::endl;
 }
