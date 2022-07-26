@@ -1,106 +1,105 @@
-import pickle
-import json
-import base64
-import inspect
-from fractions import *
-from functools import cache
-loaders={}
-dumpers={}
-@cache
-def pickledumps(t):
+import json as _json
+import inspect as _inspect
+from fractions import Fraction as _Fraction
+from functools import cache as _cache
+import base64 as _base64
+
+@_cache
+def _pickledumps(t):
     import pickle
-    import base64
-    return base64.b64encode(pickle.dumps(t)).decode()
+    return _base64.b64encode(pickle._dumps(t)).decode()
 
-@cache
-def pickleloads(t):
-    for w in loaders:
-        if pickledumps(w):
+
+@_cache
+def _pickleloads(t):
+    for w in _loaders:
+        if _pickledumps(w)==t:
             return w
+    raise TypeError\
+        (f'no loader for {t}.')
 
-def jdumps(a):
-    t=type(a)
-    if t==list:
-        return [t.__name__,pickledumps(t),[jdumps(w) for w in a]]
-    if t in [int,str,type(None),bool]:
-        return [t.__name__,pickledumps(t),a]
-    if t not in dumpers:
-        raise TypeError\
-            (f'no dumper for {t.__name__}.')
-    d=dumpers[t](a)
-    return [t.__name__,pickledumps(t),jdumps(d)]
+_standart_types=[int,str,type(None),bool]
+_standart_containers=[list,set,frozenset,tuple]
+_loaders={w:None for w in _standart_containers+_standart_types}
+_dumpers={w:None for w in _standart_containers+_standart_types}
 
-def jloads(a):
-    t=a[1]
+def _jloads(a):
+    p=a[1]
     n=a[0]
     a=a[2]
-    if t in [pickledumps(w) for w in [list]]:
-        return [jloads(w) for w in a]
-    if t in [pickledumps(w) for w in [int,str,type(None),bool]]:
+    t=_pickleloads(p)
+    if t in _standart_containers:
+        return t([_jloads(w) for w in a])
+    if t in _standart_types:
         return a
-    if t not in uploaders:
-        for w in loaders:
-            uploaders[pickledumps(w)]=w
-    if t not in uploaders:
+    l=_loaders[t]
+    if sum([[1,1,float('inf'),0,0][int(w.kind)] for w in _inspect.signature(l).parameters.values()])>1:
+        return l(_jloads(a),t)
+    return l(_jloads(a))
+
+def _jdumps(a):
+    t=type(a)
+    p=_pickledumps(t)
+    if t in _standart_containers:
+        # y=list(zip(*[_jdumps(w) for w in a]))
+        # return [[t]+sum(y[0],[]),y[1]]
+        return [t.__name__,p,[_jdumps(w) for w in a]]
+    if t in _standart_types:
+        return [t.__name__,p,a]
+    if t not in _dumpers:
         raise TypeError\
-            (f'no loader for {n}.')
-    l=loaders[uploaders[t]]
-    if sum([[1,1,float('inf'),0,0][int(w.kind)] for w in inspect.signature(l).parameters.values()])>1:
-        return l(jloads(a),uploaders[t])
-    return l(jloads(a))
+            (f'no dumper for {t.__name__}.')
+    d=_dumpers[t](a)
+    return [t.__name__,p,_jdumps(d)]
+
+    
 
 def dumps(a):
-    return json.dumps(jdumps(a))
+    j=_jdumps(a)
+
+    return _json.dumps(_jdumps(a))
 
 def loads(a):
-    return jloads(json.loads(a))
+    return _jloads(_json.loads(a))
 
 def dumper(*t):
-    def dumper_f(f):
+    def _dumper_f(f):
         for w in t:
-            dumpers[w]=f
+            _dumpers[w]=f
         return f
-    return dumper_f
+    return _dumper_f
 
 def loader(*t):
-    def loader_f(f):
+    def _loader_f(f):
         for w in t:
-            loaders[w]=f
+            _loaders[w]=f
         return f
-    return loader_f
+    return _loader_f
 
 @dumper(float)
-def dump_float(a):
-    return Fraction(a)
+def _dump_float(a):
+    return _Fraction(a)
 
-@dumper(Fraction)
-def dump_frac(a):
+@dumper(_Fraction)
+def _dump_frac(a):
     return [a.numerator,a.denominator]
 
-@loader(float)
-def load_float(a):
-    return float(a)
-
-@loader(Fraction)
-def load_frac(a):
-    return Fraction(*a)
+@loader(_Fraction)
+def _load_frac(a):
+    return _Fraction(*a)
 
 @dumper(bytes,bytearray)
-def dump_bytes(a):
-    return base64.b64encode(a).decode()
+def _dump_bytes(a):
+    return _base64.b64encode(a).decode()
 
 @loader(bytes,bytearray)
-def load_bytes(a,t):
-    return t(base64.b64decode(a.encode()))
+def _load_bytes(a,t):
+    return t(_base64.b64decode(a.encode()))
 
-@dumper(set,frozenset,tuple)
-def dump_set(a):
-    return list(a)
-
-@loader(set,frozenset,tuple,dict,float)
-def load_simple(a,t):
+@loader(dict,float)
+def _load_simple(a,t):
     return t(a)
 
 @dumper(dict)
-def dump_dict(a):
+def _dump_dict(a):
     return list(a.items())
