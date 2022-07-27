@@ -5,6 +5,7 @@ from functools import cache as cache
 import base64 as base64
 from queue import Queue
 from functools import reduce
+from random import shuffle
 
 @cache
 def pickledumps(t):
@@ -14,6 +15,7 @@ def pickledumps(t):
 
 @cache
 def pickleloads(a):
+    n,t=a
     for w in loaders:
         if pickledumps(w)==a:
             return w
@@ -25,7 +27,7 @@ standart_containers=[list,set,frozenset,tuple]
 loaders={w:None for w in standart_containers+standart_types}
 dumpers={w:None for w in standart_containers+standart_types}
 
-def _dumps(x):
+def dumps(x):
     ts=[]
     d={}
     q=Queue()
@@ -51,47 +53,48 @@ def _dumps(x):
             _d=dumpers[t](a)
             d[id(a)]+=[t,id(_d)]
             q.put(_d)
-    ts=set(list(ts))
+    ts=list(set(ts))
     td=dict(zip(*list(zip(*enumerate(ts)))[::-1]))
-    # nd=dict(zip(*list(zip(*enumerate(d)))[::-1]))
+    dl=list(d)
+    dl=[r]+[w for w in dl if w!=r]
+    nd=dict(zip(*list(zip(*enumerate(dl)))[::-1]))
     for w in d:
-    #     if d[w][1] in standart_types:
+        if d[w][1] in standart_types:
             d[w]=[td[d[w][1]]]+d[w][2:]
-        # d[w]=td[d[w][1]],[nd[e] for e in d[w][2:]]
-    return [r,ts,d]
+        else:
+            d[w]=[td[d[w][1]]]+[nd[e] for e in d[w][2:]]
+    d={nd[w]:d[w] for w in d}
+    d=sorted(list(d.items()))
+    d=list(list(zip(*d))[1])
+    ts=[pickledumps(w) for w in ts]
+    return json.dumps([ts,d])
 
-def jdumps(a):
-    t=type(a)
-    p=pickledumps(t)
+def __loads(a,d):
+    q,t,a=a[0],a[1],a[2:]
+    if q in d:
+        return a
+    d.add(q)
     if t in standart_containers:
-        y=[jdumps(w) for w in a]
-        return [[t]+sum([w[0] for w in y],[]),t,[w[1:] for w in y]]
+        return t([__loads(w,d) for w in a])
+    a=a[0]
     if t in standart_types:
-        return [[t],t,a]
-    if t not in dumpers:
-        raise TypeError\
-            (f'no dumper for type {t._name__}.')
-    d=dumpers[t](a)
-    d=jdumps(d)
-    return [[t]+d[0],t,d[1:]]
+        return a
+    l=loaders[t]
+    if sum([[1,1,float('inf'),0,0][int(w.kind)] for w in inspect.signature(l).parameters.values()])>1:
+        return l(__loads(a,d),t)
+    return l(__loads(a,d))
 
-def replace_types(a,t):
-    if a[0] in standart_containers:
-        return [t[a[0]],[replace_types(w,t) for w in a[1]]]
-    if a[0] in standart_types:
-        return [t[a[0]],a[1]]
-    return [t[a[0]],replace_types(a[1],t)]
-
-def dumps(a):
-    j=jdumps(a)
-    t=j[0]
-    j=j[1:]
-    t=[t[w] for w in range(len(t)) if all([t[w]!=t[e] for e in range(w)])]
-    # t=list(set(t))
-    d=dict(zip(*list(zip(*enumerate(t)))[::-1]))
-    j=replace_types(j,d)
-    t=[pickledumps(w) for w in t]
-    return json.dumps([t,j])
+def _loads(a):
+    a=json.loads(a)
+    t,a=a
+    t=[pickleloads(tuple(w)) for w in t]
+    a=[[q,t[w[0]]]+w[1:] for q,w in enumerate(a)]
+    for w in a:
+        if w[1] not in standart_types:
+            w[2:]=[a[e] for e in w[2:]]
+    a=a[0]
+    a=__loads(a,set())
+    return a
 
 def jloads(a):
     ts=a[0]
