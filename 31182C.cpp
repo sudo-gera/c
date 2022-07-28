@@ -35,11 +35,11 @@ int main(){
 // #include "stdout.cpp"
 	// print(BigInteger("11111111111111111111",10)/BigInteger("9",10))
 
-// auto q=BigInteger("ffffffffffffffff",16);
-// print(q.toString(16));
-// q+=q;
-// print(q.toString(16));
+auto q=BigInteger("ffffffffffffffff",16);
+print(q.toString(16));
+q+=q;
+print(q.toString(16));
 
-#include "stdout.cpp"
+// #include "stdout.cpp"
 
 }

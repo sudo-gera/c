@@ -2,51 +2,80 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdint.h>
+#include <algorithm>
+#include <inttypes.h>
+#include <string.h>
+#include <ctype.h>
 
 
-#if __has_include("h")
-// #include "d"
-#endif
+int64_t get_int(){
+	int64_t res=0;
+	int8_t sign=1;
+	int c;
+	while (c=getchar_unlocked(),isspace(c)){
+
+	}
+	if (c=='-'){
+		sign*=-1;
+	}else{
+		res=c-'0';
+	}
+	while (c=getchar_unlocked(),c!=EOF and !isspace(c)){
+		res*=10;
+		res+=c-'0';
+	}
+	return sign*res;
+}
+
 
 int main(){
-	uint64_t n,k;
-	scanf("%lli%lli",&n,&k);
-	// uint64_t k_=1LL<<40;
-	uint64_t k_=1LL<<18;
-	// uint64_t k_=1<<4;
-	uint64_t _k=k_>>1;
-	int64_t* a=(int64_t*)malloc(k_*sizeof(int64_t));
-	int64_t* s=(int64_t*)malloc(k_*sizeof(int64_t));
-	while (!a or !s){}
-	for (uint64_t w=0;w<k_;++w){
-		a[w]=-1001001001001001001;
-	}
-	for (uint64_t e=0;e<n;e+=_k){
-		uint64_t r=n-e<_k?n-e:_k;
-		for (uint64_t w=0;w<r;++w){
-			scanf("%lli",a+w);
+	size_t n,k__;
+	scanf("%zu%zu",&n,&k__);
+	const size_t kk=0b1000000000000000;
+	ssize_t a[kk];
+	memset(a,0b10000000,kk*sizeof(ssize_t)); // a[i]<-10**18
+	size_t r=kk-k__;
+	int8_t sign;
+	int c;
+	for (size_t e=0;e<n;e+=r){
+		if (e+r>n){
+			r=n-e;
 		}
-		for (uint64_t bs=1;bs<k_;bs<<=1){
-			for (uint64_t w=0;w<k_;w+=bs+bs){
-				uint64_t f=w,g=w+bs,h=0;
-				while (f<w+bs and g<w+bs+bs){
-					s[h++]=a[f]<a[g]?a[f++]:a[g++];
-				}
-				while (f<w+bs){
-					s[h++]=a[f++];
-				}
-				while (g<w+bs+bs){
-					s[h++]=a[g++];
-				}
-				for (uint64_t j=0;j<h;++j){
-					a[w+j]=s[j];
-				}
+		for (size_t w=0;w<r;++w){
+			a[w]=0;
+			sign=1;
+			while (c=getchar_unlocked(),isspace(c)){
+
 			}
+			if (c=='-'){
+				sign*=-1;
+			}else{
+				a[w]=c-'0';
+			}
+			while (c=getchar_unlocked(),c!=EOF and !isspace(c)){
+				a[w]*=10;
+				a[w]+=c-'0';
+			}
+			a[w]*=sign;
 		}
+		std::sort(a,a+kk);
 	}
-	for (uint64_t w=0;w<k;++w){
-		printf("%lli\n",a[k_-1-w]);
+	char data[20];
+	size_t ds;
+	for (size_t w=0;w<k__;++w){
+		auto t=a[kk-1-w];
+		if (t<0){
+			putchar_unlocked('-');
+			t=-t;
+		}
+		ds=0;
+		while (t){
+			data[ds++]=t%10+'0';
+			t/=10;
+		}
+		for (size_t e=0;e<ds;++e){
+			putchar_unlocked(data[ds-1-e]);
+		}
+		putchar_unlocked('\n');
 	}
-	free(a);
-	free(s);
 }

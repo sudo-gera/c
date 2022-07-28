@@ -1,0 +1,2834 @@
+1653804140.338829 server started (33745): socket /private/tmp/tmate-503/N4s6aP, protocol 8
+1653804140.338903 on Darwin 21.5.0 Darwin Kernel Version 21.5.0: Tue Apr 26 21:08:29 PDT 2022; root:xnu-8020.121.3~4/RELEASE_ARM64_T8101; libevent 2.1.12-stable (kqueue)
+1653804140.339122 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.339146 cmdq 0x15290b680: bind-key C-b send-prefix
+1653804140.339162 preparing state for bind-key C-b send-prefix (client 0x0)
+1653804140.339175 cmd_find_client: no target, return 0x0
+1653804140.339186 preparing -t state: target none
+1653804140.339197 preparing -s state: target none
+1653804140.339222 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.339238 cmdq 0x15290b680: bind-key C-o rotate-window
+1653804140.339251 preparing state for bind-key C-o rotate-window (client 0x0)
+1653804140.339262 cmd_find_client: no target, return 0x0
+1653804140.339273 preparing -t state: target none
+1653804140.339282 preparing -s state: target none
+1653804140.339303 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.339318 cmdq 0x15290b680: bind-key C-z suspend-client
+1653804140.339332 preparing state for bind-key C-z suspend-client (client 0x0)
+1653804140.339342 cmd_find_client: no target, return 0x0
+1653804140.339352 preparing -t state: target none
+1653804140.339362 preparing -s state: target none
+1653804140.339382 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.339396 cmdq 0x15290b680: bind-key Space next-layout
+1653804140.339409 preparing state for bind-key Space next-layout (client 0x0)
+1653804140.339420 cmd_find_client: no target, return 0x0
+1653804140.339429 preparing -t state: target none
+1653804140.339439 preparing -s state: target none
+1653804140.339461 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.339475 cmdq 0x15290b680: bind-key ! break-pane
+1653804140.339488 preparing state for bind-key ! break-pane (client 0x0)
+1653804140.339498 cmd_find_client: no target, return 0x0
+1653804140.339508 preparing -t state: target none
+1653804140.339518 preparing -s state: target none
+1653804140.339537 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.339553 cmdq 0x15290b680: bind-key " split-window
+1653804140.339566 preparing state for bind-key " split-window (client 0x0)
+1653804140.339576 cmd_find_client: no target, return 0x0
+1653804140.339586 preparing -t state: target none
+1653804140.339596 preparing -s state: target none
+1653804140.339623 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.339642 cmdq 0x15290b680: bind-key # list-buffers
+1653804140.339660 preparing state for bind-key # list-buffers (client 0x0)
+1653804140.339674 cmd_find_client: no target, return 0x0
+1653804140.339690 preparing -t state: target none
+1653804140.339708 preparing -s state: target none
+1653804140.339740 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.339762 cmdq 0x15290b680: bind-key $ command-prompt -I#S "rename-session '%%'"
+1653804140.339780 preparing state for bind-key $ command-prompt -I#S "rename-session '%%'" (client 0x0)
+1653804140.339798 cmd_find_client: no target, return 0x0
+1653804140.339813 preparing -t state: target none
+1653804140.339827 preparing -s state: target none
+1653804140.339853 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.339872 cmdq 0x15290b680: bind-key % split-window -h
+1653804140.339889 preparing state for bind-key % split-window -h (client 0x0)
+1653804140.339908 cmd_find_client: no target, return 0x0
+1653804140.339924 preparing -t state: target none
+1653804140.339939 preparing -s state: target none
+1653804140.339972 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.339992 cmdq 0x15290b680: bind-key & confirm-before "-pkill-window #W? (y/n)" kill-window
+1653804140.340014 preparing state for bind-key & confirm-before "-pkill-window #W? (y/n)" kill-window (client 0x0)
+1653804140.340033 cmd_find_client: no target, return 0x0
+1653804140.340051 preparing -t state: target none
+1653804140.340070 preparing -s state: target none
+1653804140.340102 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.340123 cmdq 0x15290b680: bind-key ' command-prompt -pindex "select-window -t ':%%'"
+1653804140.340163 preparing state for bind-key ' command-prompt -pindex "select-window -t ':%%'" (client 0x0)
+1653804140.340169 cmd_find_client: no target, return 0x0
+1653804140.340176 preparing -t state: target none
+1653804140.340182 preparing -s state: target none
+1653804140.340199 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.340215 cmdq 0x15290b680: bind-key ( switch-client -p
+1653804140.340229 preparing state for bind-key ( switch-client -p (client 0x0)
+1653804140.340241 cmd_find_client: no target, return 0x0
+1653804140.340255 preparing -t state: target none
+1653804140.340320 preparing -s state: target none
+1653804140.340388 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.340448 cmdq 0x15290b680: bind-key ) switch-client -n
+1653804140.340466 preparing state for bind-key ) switch-client -n (client 0x0)
+1653804140.340476 cmd_find_client: no target, return 0x0
+1653804140.340486 preparing -t state: target none
+1653804140.340495 preparing -s state: target none
+1653804140.340525 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.340542 cmdq 0x15290b680: bind-key , command-prompt -I#W "rename-window '%%'"
+1653804140.340554 preparing state for bind-key , command-prompt -I#W "rename-window '%%'" (client 0x0)
+1653804140.340562 cmd_find_client: no target, return 0x0
+1653804140.340569 preparing -t state: target none
+1653804140.340578 preparing -s state: target none
+1653804140.340597 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.340610 cmdq 0x15290b680: bind-key - delete-buffer
+1653804140.340621 preparing state for bind-key - delete-buffer (client 0x0)
+1653804140.340629 cmd_find_client: no target, return 0x0
+1653804140.340637 preparing -t state: target none
+1653804140.340645 preparing -s state: target none
+1653804140.340666 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.340681 cmdq 0x15290b680: bind-key . command-prompt "move-window -t '%%'"
+1653804140.340693 preparing state for bind-key . command-prompt "move-window -t '%%'" (client 0x0)
+1653804140.340701 cmd_find_client: no target, return 0x0
+1653804140.340709 preparing -t state: target none
+1653804140.340717 preparing -s state: target none
+1653804140.340736 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.340750 cmdq 0x15290b680: bind-key 0 select-window -t:=0
+1653804140.340761 preparing state for bind-key 0 select-window -t:=0 (client 0x0)
+1653804140.340770 cmd_find_client: no target, return 0x0
+1653804140.340779 preparing -t state: target none
+1653804140.340787 preparing -s state: target none
+1653804140.340806 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.340819 cmdq 0x15290b680: bind-key 1 select-window -t:=1
+1653804140.340830 preparing state for bind-key 1 select-window -t:=1 (client 0x0)
+1653804140.340838 cmd_find_client: no target, return 0x0
+1653804140.340843 preparing -t state: target none
+1653804140.340849 preparing -s state: target none
+1653804140.340866 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.340877 cmdq 0x15290b680: bind-key 2 select-window -t:=2
+1653804140.340886 preparing state for bind-key 2 select-window -t:=2 (client 0x0)
+1653804140.340892 cmd_find_client: no target, return 0x0
+1653804140.340898 preparing -t state: target none
+1653804140.340903 preparing -s state: target none
+1653804140.340920 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.340931 cmdq 0x15290b680: bind-key 3 select-window -t:=3
+1653804140.340940 preparing state for bind-key 3 select-window -t:=3 (client 0x0)
+1653804140.340946 cmd_find_client: no target, return 0x0
+1653804140.340952 preparing -t state: target none
+1653804140.340957 preparing -s state: target none
+1653804140.340973 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.340984 cmdq 0x15290b680: bind-key 4 select-window -t:=4
+1653804140.340993 preparing state for bind-key 4 select-window -t:=4 (client 0x0)
+1653804140.340999 cmd_find_client: no target, return 0x0
+1653804140.341005 preparing -t state: target none
+1653804140.341011 preparing -s state: target none
+1653804140.341045 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.341057 cmdq 0x15290b680: bind-key 5 select-window -t:=5
+1653804140.341065 preparing state for bind-key 5 select-window -t:=5 (client 0x0)
+1653804140.341072 cmd_find_client: no target, return 0x0
+1653804140.341078 preparing -t state: target none
+1653804140.341083 preparing -s state: target none
+1653804140.341098 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.341109 cmdq 0x15290b680: bind-key 6 select-window -t:=6
+1653804140.341118 preparing state for bind-key 6 select-window -t:=6 (client 0x0)
+1653804140.341124 cmd_find_client: no target, return 0x0
+1653804140.341130 preparing -t state: target none
+1653804140.341135 preparing -s state: target none
+1653804140.341150 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.341161 cmdq 0x15290b680: bind-key 7 select-window -t:=7
+1653804140.341170 preparing state for bind-key 7 select-window -t:=7 (client 0x0)
+1653804140.341176 cmd_find_client: no target, return 0x0
+1653804140.341182 preparing -t state: target none
+1653804140.341190 preparing -s state: target none
+1653804140.341207 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.341220 cmdq 0x15290b680: bind-key 8 select-window -t:=8
+1653804140.341231 preparing state for bind-key 8 select-window -t:=8 (client 0x0)
+1653804140.341239 cmd_find_client: no target, return 0x0
+1653804140.341248 preparing -t state: target none
+1653804140.341255 preparing -s state: target none
+1653804140.341272 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.341284 cmdq 0x15290b680: bind-key 9 select-window -t:=9
+1653804140.341295 preparing state for bind-key 9 select-window -t:=9 (client 0x0)
+1653804140.341302 cmd_find_client: no target, return 0x0
+1653804140.341310 preparing -t state: target none
+1653804140.341318 preparing -s state: target none
+1653804140.341336 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.341347 cmdq 0x15290b680: bind-key : command-prompt
+1653804140.341358 preparing state for bind-key : command-prompt (client 0x0)
+1653804140.341366 cmd_find_client: no target, return 0x0
+1653804140.341374 preparing -t state: target none
+1653804140.341382 preparing -s state: target none
+1653804140.341397 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.341409 cmdq 0x15290b680: bind-key ; last-pane
+1653804140.341420 preparing state for bind-key ; last-pane (client 0x0)
+1653804140.341428 cmd_find_client: no target, return 0x0
+1653804140.341436 preparing -t state: target none
+1653804140.341444 preparing -s state: target none
+1653804140.341459 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.341487 cmdq 0x15290b680: bind-key = choose-buffer
+1653804140.341500 preparing state for bind-key = choose-buffer (client 0x0)
+1653804140.341508 cmd_find_client: no target, return 0x0
+1653804140.341513 preparing -t state: target none
+1653804140.341519 preparing -s state: target none
+1653804140.341533 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.341542 cmdq 0x15290b680: bind-key ? list-keys
+1653804140.341551 preparing state for bind-key ? list-keys (client 0x0)
+1653804140.341557 cmd_find_client: no target, return 0x0
+1653804140.341563 preparing -t state: target none
+1653804140.341568 preparing -s state: target none
+1653804140.341582 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.341592 cmdq 0x15290b680: bind-key D choose-client
+1653804140.341600 preparing state for bind-key D choose-client (client 0x0)
+1653804140.341606 cmd_find_client: no target, return 0x0
+1653804140.341612 preparing -t state: target none
+1653804140.341617 preparing -s state: target none
+1653804140.341631 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.341642 cmdq 0x15290b680: bind-key L switch-client -l
+1653804140.341651 preparing state for bind-key L switch-client -l (client 0x0)
+1653804140.341657 cmd_find_client: no target, return 0x0
+1653804140.341663 preparing -t state: target none
+1653804140.341669 preparing -s state: target none
+1653804140.341684 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.341710 cmdq 0x15290b680: bind-key M select-pane -M
+1653804140.341719 preparing state for bind-key M select-pane -M (client 0x0)
+1653804140.341725 cmd_find_client: no target, return 0x0
+1653804140.341731 preparing -t state: target none
+1653804140.341737 preparing -s state: target none
+1653804140.341750 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.341759 cmdq 0x15290b680: bind-key [ copy-mode
+1653804140.341767 preparing state for bind-key [ copy-mode (client 0x0)
+1653804140.341773 cmd_find_client: no target, return 0x0
+1653804140.341779 preparing -t state: target none
+1653804140.341785 preparing -s state: target none
+1653804140.341798 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.341808 cmdq 0x15290b680: bind-key ] paste-buffer
+1653804140.341816 preparing state for bind-key ] paste-buffer (client 0x0)
+1653804140.341822 cmd_find_client: no target, return 0x0
+1653804140.341827 preparing -t state: target none
+1653804140.341833 preparing -s state: target none
+1653804140.341846 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.341856 cmdq 0x15290b680: bind-key c new-window
+1653804140.341866 preparing state for bind-key c new-window (client 0x0)
+1653804140.341875 cmd_find_client: no target, return 0x0
+1653804140.341883 preparing -t state: target none
+1653804140.341891 preparing -s state: target none
+1653804140.341906 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.341917 cmdq 0x15290b680: bind-key d detach-client
+1653804140.341927 preparing state for bind-key d detach-client (client 0x0)
+1653804140.341935 cmd_find_client: no target, return 0x0
+1653804140.341943 preparing -t state: target none
+1653804140.341952 preparing -s state: target none
+1653804140.341969 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.341983 cmdq 0x15290b680: bind-key f command-prompt "find-window '%%'"
+1653804140.341995 preparing state for bind-key f command-prompt "find-window '%%'" (client 0x0)
+1653804140.342003 cmd_find_client: no target, return 0x0
+1653804140.342010 preparing -t state: target none
+1653804140.342018 preparing -s state: target none
+1653804140.342035 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.342047 cmdq 0x15290b680: bind-key i display-message
+1653804140.342058 preparing state for bind-key i display-message (client 0x0)
+1653804140.342066 cmd_find_client: no target, return 0x0
+1653804140.342074 preparing -t state: target none
+1653804140.342081 preparing -s state: target none
+1653804140.342097 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.342108 cmdq 0x15290b680: bind-key l last-window
+1653804140.342119 preparing state for bind-key l last-window (client 0x0)
+1653804140.342128 cmd_find_client: no target, return 0x0
+1653804140.342136 preparing -t state: target none
+1653804140.342143 preparing -s state: target none
+1653804140.342159 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.342172 cmdq 0x15290b680: bind-key m select-pane -m
+1653804140.342181 preparing state for bind-key m select-pane -m (client 0x0)
+1653804140.342187 cmd_find_client: no target, return 0x0
+1653804140.342193 preparing -t state: target none
+1653804140.342198 preparing -s state: target none
+1653804140.342212 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.342222 cmdq 0x15290b680: bind-key n next-window
+1653804140.342230 preparing state for bind-key n next-window (client 0x0)
+1653804140.342236 cmd_find_client: no target, return 0x0
+1653804140.342242 preparing -t state: target none
+1653804140.342248 preparing -s state: target none
+1653804140.342262 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.342273 cmdq 0x15290b680: bind-key o select-pane -t:.+
+1653804140.342282 preparing state for bind-key o select-pane -t:.+ (client 0x0)
+1653804140.342288 cmd_find_client: no target, return 0x0
+1653804140.342294 preparing -t state: target none
+1653804140.342300 preparing -s state: target none
+1653804140.342314 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.342323 cmdq 0x15290b680: bind-key p previous-window
+1653804140.342332 preparing state for bind-key p previous-window (client 0x0)
+1653804140.342355 cmd_find_client: no target, return 0x0
+1653804140.342361 preparing -t state: target none
+1653804140.342367 preparing -s state: target none
+1653804140.342380 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.342390 cmdq 0x15290b680: bind-key q display-panes
+1653804140.342398 preparing state for bind-key q display-panes (client 0x0)
+1653804140.342404 cmd_find_client: no target, return 0x0
+1653804140.342412 preparing -t state: target none
+1653804140.342418 preparing -s state: target none
+1653804140.342432 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.342442 cmdq 0x15290b680: bind-key r refresh-client
+1653804140.342451 preparing state for bind-key r refresh-client (client 0x0)
+1653804140.342457 cmd_find_client: no target, return 0x0
+1653804140.342463 preparing -t state: target none
+1653804140.342468 preparing -s state: target none
+1653804140.342482 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.342491 cmdq 0x15290b680: bind-key s choose-tree
+1653804140.342499 preparing state for bind-key s choose-tree (client 0x0)
+1653804140.342505 cmd_find_client: no target, return 0x0
+1653804140.342511 preparing -t state: target none
+1653804140.342516 preparing -s state: target none
+1653804140.342529 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.342538 cmdq 0x15290b680: bind-key t clock-mode
+1653804140.342546 preparing state for bind-key t clock-mode (client 0x0)
+1653804140.342552 cmd_find_client: no target, return 0x0
+1653804140.342558 preparing -t state: target none
+1653804140.342564 preparing -s state: target none
+1653804140.342577 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.342587 cmdq 0x15290b680: bind-key w choose-window
+1653804140.342595 preparing state for bind-key w choose-window (client 0x0)
+1653804140.342601 cmd_find_client: no target, return 0x0
+1653804140.342606 preparing -t state: target none
+1653804140.342612 preparing -s state: target none
+1653804140.342630 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.342648 cmdq 0x15290b680: bind-key x confirm-before "-pkill-pane #P? (y/n)" kill-pane
+1653804140.342660 preparing state for bind-key x confirm-before "-pkill-pane #P? (y/n)" kill-pane (client 0x0)
+1653804140.342669 cmd_find_client: no target, return 0x0
+1653804140.342677 preparing -t state: target none
+1653804140.342685 preparing -s state: target none
+1653804140.342703 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.342716 cmdq 0x15290b680: bind-key z resize-pane -Z
+1653804140.342726 preparing state for bind-key z resize-pane -Z (client 0x0)
+1653804140.342734 cmd_find_client: no target, return 0x0
+1653804140.342742 preparing -t state: target none
+1653804140.342750 preparing -s state: target none
+1653804140.342767 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.342780 cmdq 0x15290b680: bind-key { swap-pane -U
+1653804140.342790 preparing state for bind-key { swap-pane -U (client 0x0)
+1653804140.342799 cmd_find_client: no target, return 0x0
+1653804140.342807 preparing -t state: target none
+1653804140.342815 preparing -s state: target none
+1653804140.342832 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.342845 cmdq 0x15290b680: bind-key } swap-pane -D
+1653804140.342856 preparing state for bind-key } swap-pane -D (client 0x0)
+1653804140.342864 cmd_find_client: no target, return 0x0
+1653804140.342871 preparing -t state: target none
+1653804140.342879 preparing -s state: target none
+1653804140.342896 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.342908 cmdq 0x15290b680: bind-key ~ show-messages
+1653804140.342918 preparing state for bind-key ~ show-messages (client 0x0)
+1653804140.342926 cmd_find_client: no target, return 0x0
+1653804140.342934 preparing -t state: target none
+1653804140.342942 preparing -s state: target none
+1653804140.342959 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.342972 cmdq 0x15290b680: bind-key PPage copy-mode -u
+1653804140.342984 preparing state for bind-key PPage copy-mode -u (client 0x0)
+1653804140.343004 cmd_find_client: no target, return 0x0
+1653804140.343009 preparing -t state: target none
+1653804140.343015 preparing -s state: target none
+1653804140.343032 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.343046 cmdq 0x15290b680: bind-key -r Up select-pane -U
+1653804140.343056 preparing state for bind-key -r Up select-pane -U (client 0x0)
+1653804140.343063 cmd_find_client: no target, return 0x0
+1653804140.343068 preparing -t state: target none
+1653804140.343074 preparing -s state: target none
+1653804140.343092 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.343105 cmdq 0x15290b680: bind-key -r Down select-pane -D
+1653804140.343115 preparing state for bind-key -r Down select-pane -D (client 0x0)
+1653804140.343121 cmd_find_client: no target, return 0x0
+1653804140.343127 preparing -t state: target none
+1653804140.343133 preparing -s state: target none
+1653804140.343150 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.343162 cmdq 0x15290b680: bind-key -r Left select-pane -L
+1653804140.343172 preparing state for bind-key -r Left select-pane -L (client 0x0)
+1653804140.343178 cmd_find_client: no target, return 0x0
+1653804140.343184 preparing -t state: target none
+1653804140.343190 preparing -s state: target none
+1653804140.343206 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.343219 cmdq 0x15290b680: bind-key -r Right select-pane -R
+1653804140.343228 preparing state for bind-key -r Right select-pane -R (client 0x0)
+1653804140.343235 cmd_find_client: no target, return 0x0
+1653804140.343240 preparing -t state: target none
+1653804140.343246 preparing -s state: target none
+1653804140.343262 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.343275 cmdq 0x15290b680: bind-key M-1 select-layout even-horizontal
+1653804140.343284 preparing state for bind-key M-1 select-layout even-horizontal (client 0x0)
+1653804140.343291 cmd_find_client: no target, return 0x0
+1653804140.343297 preparing -t state: target none
+1653804140.343303 preparing -s state: target none
+1653804140.343319 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.343330 cmdq 0x15290b680: bind-key M-2 select-layout even-vertical
+1653804140.343342 preparing state for bind-key M-2 select-layout even-vertical (client 0x0)
+1653804140.343351 cmd_find_client: no target, return 0x0
+1653804140.343358 preparing -t state: target none
+1653804140.343366 preparing -s state: target none
+1653804140.343385 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.343402 cmdq 0x15290b680: bind-key M-3 select-layout main-horizontal
+1653804140.343414 preparing state for bind-key M-3 select-layout main-horizontal (client 0x0)
+1653804140.343422 cmd_find_client: no target, return 0x0
+1653804140.343430 preparing -t state: target none
+1653804140.343438 preparing -s state: target none
+1653804140.343456 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.343470 cmdq 0x15290b680: bind-key M-4 select-layout main-vertical
+1653804140.343480 preparing state for bind-key M-4 select-layout main-vertical (client 0x0)
+1653804140.343489 cmd_find_client: no target, return 0x0
+1653804140.343497 preparing -t state: target none
+1653804140.343504 preparing -s state: target none
+1653804140.343522 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.343536 cmdq 0x15290b680: bind-key M-5 select-layout tiled
+1653804140.343546 preparing state for bind-key M-5 select-layout tiled (client 0x0)
+1653804140.343554 cmd_find_client: no target, return 0x0
+1653804140.343561 preparing -t state: target none
+1653804140.343568 preparing -s state: target none
+1653804140.343582 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.343593 cmdq 0x15290b680: bind-key M-n next-window -a
+1653804140.343602 preparing state for bind-key M-n next-window -a (client 0x0)
+1653804140.343609 cmd_find_client: no target, return 0x0
+1653804140.343615 preparing -t state: target none
+1653804140.343623 preparing -s state: target none
+1653804140.343636 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.343647 cmdq 0x15290b680: bind-key M-o rotate-window -D
+1653804140.343672 preparing state for bind-key M-o rotate-window -D (client 0x0)
+1653804140.343678 cmd_find_client: no target, return 0x0
+1653804140.343682 preparing -t state: target none
+1653804140.343687 preparing -s state: target none
+1653804140.343700 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.343709 cmdq 0x15290b680: bind-key M-p previous-window -a
+1653804140.343716 preparing state for bind-key M-p previous-window -a (client 0x0)
+1653804140.343721 cmd_find_client: no target, return 0x0
+1653804140.343726 preparing -t state: target none
+1653804140.343730 preparing -s state: target none
+1653804140.343744 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.343756 cmdq 0x15290b680: bind-key -r M-Up resize-pane -U 5
+1653804140.343765 preparing state for bind-key -r M-Up resize-pane -U 5 (client 0x0)
+1653804140.343770 cmd_find_client: no target, return 0x0
+1653804140.343775 preparing -t state: target none
+1653804140.343780 preparing -s state: target none
+1653804140.343795 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.343807 cmdq 0x15290b680: bind-key -r M-Down resize-pane -D 5
+1653804140.343816 preparing state for bind-key -r M-Down resize-pane -D 5 (client 0x0)
+1653804140.343821 cmd_find_client: no target, return 0x0
+1653804140.343826 preparing -t state: target none
+1653804140.343830 preparing -s state: target none
+1653804140.343846 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.343857 cmdq 0x15290b680: bind-key -r M-Left resize-pane -L 5
+1653804140.343865 preparing state for bind-key -r M-Left resize-pane -L 5 (client 0x0)
+1653804140.343870 cmd_find_client: no target, return 0x0
+1653804140.343875 preparing -t state: target none
+1653804140.343880 preparing -s state: target none
+1653804140.343895 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.343906 cmdq 0x15290b680: bind-key -r M-Right resize-pane -R 5
+1653804140.343915 preparing state for bind-key -r M-Right resize-pane -R 5 (client 0x0)
+1653804140.343920 cmd_find_client: no target, return 0x0
+1653804140.343925 preparing -t state: target none
+1653804140.343929 preparing -s state: target none
+1653804140.343943 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.343954 cmdq 0x15290b680: bind-key -r C-Up resize-pane -U
+1653804140.343962 preparing state for bind-key -r C-Up resize-pane -U (client 0x0)
+1653804140.343967 cmd_find_client: no target, return 0x0
+1653804140.343972 preparing -t state: target none
+1653804140.343976 preparing -s state: target none
+1653804140.343990 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.344001 cmdq 0x15290b680: bind-key -r C-Down resize-pane -D
+1653804140.344009 preparing state for bind-key -r C-Down resize-pane -D (client 0x0)
+1653804140.344014 cmd_find_client: no target, return 0x0
+1653804140.344021 preparing -t state: target none
+1653804140.344028 preparing -s state: target none
+1653804140.344044 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.344056 cmdq 0x15290b680: bind-key -r C-Left resize-pane -L
+1653804140.344066 preparing state for bind-key -r C-Left resize-pane -L (client 0x0)
+1653804140.344073 cmd_find_client: no target, return 0x0
+1653804140.344079 preparing -t state: target none
+1653804140.344085 preparing -s state: target none
+1653804140.344101 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.344113 cmdq 0x15290b680: bind-key -r C-Right resize-pane -R
+1653804140.344123 preparing state for bind-key -r C-Right resize-pane -R (client 0x0)
+1653804140.344130 cmd_find_client: no target, return 0x0
+1653804140.344136 preparing -t state: target none
+1653804140.344142 preparing -s state: target none
+1653804140.344161 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.344176 cmdq 0x15290b680: bind-key -n MouseDown1Pane select-pane -t=; send-keys -M
+1653804140.344188 preparing state for bind-key -n MouseDown1Pane select-pane -t=; send-keys -M (client 0x0)
+1653804140.344195 cmd_find_client: no target, return 0x0
+1653804140.344201 preparing -t state: target none
+1653804140.344208 preparing -s state: target none
+1653804140.344241 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.344254 cmdq 0x15290b680: bind-key -n MouseDrag1Border resize-pane -M
+1653804140.344265 preparing state for bind-key -n MouseDrag1Border resize-pane -M (client 0x0)
+1653804140.344271 cmd_find_client: no target, return 0x0
+1653804140.344278 preparing -t state: target none
+1653804140.344284 preparing -s state: target none
+1653804140.344302 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.344314 cmdq 0x15290b680: bind-key -n MouseDown1Status select-window -t=
+1653804140.344325 preparing state for bind-key -n MouseDown1Status select-window -t= (client 0x0)
+1653804140.344331 cmd_find_client: no target, return 0x0
+1653804140.344338 preparing -t state: target none
+1653804140.344345 preparing -s state: target none
+1653804140.344360 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.344372 cmdq 0x15290b680: bind-key -n WheelDownStatus next-window
+1653804140.344381 preparing state for bind-key -n WheelDownStatus next-window (client 0x0)
+1653804140.344388 cmd_find_client: no target, return 0x0
+1653804140.344394 preparing -t state: target none
+1653804140.344401 preparing -s state: target none
+1653804140.344416 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.344427 cmdq 0x15290b680: bind-key -n WheelUpStatus previous-window
+1653804140.344437 preparing state for bind-key -n WheelUpStatus previous-window (client 0x0)
+1653804140.344444 cmd_find_client: no target, return 0x0
+1653804140.344450 preparing -t state: target none
+1653804140.344456 preparing -s state: target none
+1653804140.344481 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.344499 cmdq 0x15290b680: bind-key -n MouseDrag1Pane if -Ft= #{mouse_any_flag} "if -Ft= "#{pane_in_mode}" "copy-mode -M" "send-keys -M"" "copy-mode -M"
+1653804140.344511 preparing state for bind-key -n MouseDrag1Pane if -Ft= #{mouse_any_flag} "if -Ft= "#{pane_in_mode}" "copy-mode -M" "send-keys -M"" "copy-mode -M" (client 0x0)
+1653804140.344516 cmd_find_client: no target, return 0x0
+1653804140.344521 preparing -t state: target none
+1653804140.344526 preparing -s state: target none
+1653804140.344549 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.344565 cmdq 0x15290b680: bind-key -n MouseDown3Pane if-shell -Ft= #{mouse_any_flag} "select-pane -t=; send-keys -M" "select-pane -mt="
+1653804140.344577 preparing state for bind-key -n MouseDown3Pane if-shell -Ft= #{mouse_any_flag} "select-pane -t=; send-keys -M" "select-pane -mt=" (client 0x0)
+1653804140.344582 cmd_find_client: no target, return 0x0
+1653804140.344587 preparing -t state: target none
+1653804140.344592 preparing -s state: target none
+1653804140.344617 continuing cmdq 0x15290b680: flags 0, client 0x0
+1653804140.344634 cmdq 0x15290b680: bind-key -n WheelUpPane if-shell -Ft= #{mouse_any_flag} "send-keys -M" "if -Ft= "#{pane_in_mode}" "send-keys -M" "copy-mode -et=""
+1653804140.344647 preparing state for bind-key -n WheelUpPane if-shell -Ft= #{mouse_any_flag} "send-keys -M" "if -Ft= "#{pane_in_mode}" "send-keys -M" "copy-mode -et="" (client 0x0)
+1653804140.344653 cmd_find_client: no target, return 0x0
+1653804140.344658 preparing -t state: target none
+1653804140.344663 preparing -s state: target none
+1653804140.344866 add peer 0x148008000: 7 (0x154009a00)
+1653804140.344884 new client 0x154009a00
+1653804140.345006 continuing cmdq 0x152b0a8b0: flags 0, client 0x0
+1653804140.345205 Looking up ssh.tmate.io...
+1653804140.345392 unref client 0x154009a00 (2 references)
+1653804140.345403 server loop enter
+1653804140.345448 peer 0x148008000 message 100
+1653804140.345456 client 0x154009a00 IDENTIFY_FLAGS 0x30000
+1653804140.345462 peer 0x148008000 message 101
+1653804140.345468 client 0x154009a00 IDENTIFY_TERM xterm-256color
+1653804140.345474 peer 0x148008000 message 102
+1653804140.345479 client 0x154009a00 IDENTIFY_TTYNAME /dev/ttys001
+1653804140.345485 peer 0x148008000 message 108
+1653804140.345497 client 0x154009a00 IDENTIFY_CWD /Users/gera/c
+1653804140.345505 peer 0x148008000 message 104
+1653804140.345511 client 0x154009a00 IDENTIFY_STDIN 9
+1653804140.345537 peer 0x148008000 message 107
+1653804140.345544 client 0x154009a00 IDENTIFY_CLIENTPID 33743
+1653804140.345552 peer 0x148008000 message 105
+1653804140.345563 client 0x154009a00 IDENTIFY_ENVIRON MANPATH=/opt/local/share/man:/opt/homebrew/share/man:/opt/local/share/man:/opt/homebrew/share/man:/opt/local/share/man:/opt/homebrew/share/man:::
+1653804140.345571 peer 0x148008000 message 105
+1653804140.345580 client 0x154009a00 IDENTIFY_ENVIRON socks_PROXY=http://192.168.49.1:1080
+1653804140.345587 peer 0x148008000 message 105
+1653804140.345595 client 0x154009a00 IDENTIFY_ENVIRON TERM_PROGRAM=iTerm.app
+1653804140.345602 peer 0x148008000 message 105
+1653804140.345611 client 0x154009a00 IDENTIFY_ENVIRON SOCKS5_PROXY=http://192.168.49.1:1080
+1653804140.345618 peer 0x148008000 message 105
+1653804140.345626 client 0x154009a00 IDENTIFY_ENVIRON TERM=xterm-256color
+1653804140.345633 peer 0x148008000 message 105
+1653804140.345642 client 0x154009a00 IDENTIFY_ENVIRON SHELL=/bin/bash
+1653804140.345648 peer 0x148008000 message 105
+1653804140.345656 client 0x154009a00 IDENTIFY_ENVIRON HOMEBREW_REPOSITORY=/opt/homebrew
+1653804140.345663 peer 0x148008000 message 105
+1653804140.345672 client 0x154009a00 IDENTIFY_ENVIRON TMPDIR=/var/folders/36/z12_9mk93_x83j40qzzbn4sw0000gq/T/
+1653804140.345679 peer 0x148008000 message 105
+1653804140.345687 client 0x154009a00 IDENTIFY_ENVIRON TERM_PROGRAM_VERSION=3.4.15
+1653804140.345695 peer 0x148008000 message 105
+1653804140.345703 client 0x154009a00 IDENTIFY_ENVIRON TERM_SESSION_ID=w0t1p0:14C1091A-4688-4FEA-BBE6-37B581C4269B
+1653804140.345710 peer 0x148008000 message 105
+1653804140.345718 client 0x154009a00 IDENTIFY_ENVIRON socks4_PROXY=http://192.168.49.1:1080
+1653804140.345725 peer 0x148008000 message 105
+1653804140.345733 client 0x154009a00 IDENTIFY_ENVIRON http_proxy=http://192.168.49.1:8080
+1653804140.345740 peer 0x148008000 message 105
+1653804140.345748 client 0x154009a00 IDENTIFY_ENVIRON USER=gera
+1653804140.345755 peer 0x148008000 message 105
+1653804140.345768 client 0x154009a00 IDENTIFY_ENVIRON COMMAND_MODE=unix2003
+1653804140.345775 peer 0x148008000 message 105
+1653804140.345783 client 0x154009a00 IDENTIFY_ENVIRON SSH_AUTH_SOCK=/private/tmp/com.apple.launchd.yYcLnkTF4V/Listeners
+1653804140.345791 peer 0x148008000 message 105
+1653804140.345799 client 0x154009a00 IDENTIFY_ENVIRON FTP_PROXY=http://192.168.49.1:8080
+1653804140.345806 peer 0x148008000 message 105
+1653804140.345815 client 0x154009a00 IDENTIFY_ENVIRON ftp_proxy=http://192.168.49.1:8080
+1653804140.345821 peer 0x148008000 message 105
+1653804140.345830 client 0x154009a00 IDENTIFY_ENVIRON __CF_USER_TEXT_ENCODING=0x1F7:0x7:0x31
+1653804140.345837 peer 0x148008000 message 105
+1653804140.345845 client 0x154009a00 IDENTIFY_ENVIRON BASH_SILENCE_DEPRECATION_WARNING=1
+1653804140.345852 peer 0x148008000 message 105
+1653804140.345860 client 0x154009a00 IDENTIFY_ENVIRON ALL_PROXY=http://192.168.49.1:8080
+1653804140.345867 peer 0x148008000 message 105
+1653804140.345890 client 0x154009a00 IDENTIFY_ENVIRON PATH=/opt/homebrew/opt/python@3.10/bin:/opt/homebrew/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/bin:/opt/local/bin:/opt/local/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/opt/python@3.10/bin:/opt/homebrew/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/bin:/opt/local/bin:/opt/local/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/opt/python@3.10/bin:/opt/homebrew/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/bin:/opt/local/bin:/opt/local/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/TeX/texbin:/usr/local/share/dotnet:/opt/X11/bin:~/.dotnet/tools:/Library/Apple/usr/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Users/gera/Library/Python/3.7/bin:/Users/gera/Library/Python/3.9/bin:/Users/gera/:.:/opt/homebrew/bin/:~/.local/bin:~:.:/Users/gera/Library/Python/3.7/bin:/Users/gera/Library/Python/3.7/bin:/Users/gera/Library/Python/3.9/bin:/Users/gera/:.:/opt/homebrew/bin/:~/.local/bin:~:.:/Users/gera/Library/Python/3.7/bin:/Users/gera/Library/Python/3.7/bin:/Users/gera/Library/Python/3.9/bin:/Users/gera/:.:/opt/homebrew/bin/:~/.local/bin:~:.:/Users/gera/Library/Python/3.7/bin
+1653804140.345910 peer 0x148008000 message 105
+1653804140.345919 client 0x154009a00 IDENTIFY_ENVIRON LaunchInstanceID=046FAC4B-7E94-4646-86CB-B36A3C3EE25F
+1653804140.345926 peer 0x148008000 message 105
+1653804140.345935 client 0x154009a00 IDENTIFY_ENVIRON __CFBundleIdentifier=com.googlecode.iterm2
+1653804140.345942 peer 0x148008000 message 105
+1653804140.345950 client 0x154009a00 IDENTIFY_ENVIRON PWD=/Users/gera/c
+1653804140.345957 peer 0x148008000 message 105
+1653804140.345965 client 0x154009a00 IDENTIFY_ENVIRON SOCKS_PROXY=http://192.168.49.1:1080
+1653804140.345971 peer 0x148008000 message 105
+1653804140.345977 client 0x154009a00 IDENTIFY_ENVIRON LANG=ru_RU.UTF-8
+1653804140.345983 peer 0x148008000 message 105
+1653804140.345989 client 0x154009a00 IDENTIFY_ENVIRON socks5_PROXY=http://192.168.49.1:1080
+1653804140.345994 peer 0x148008000 message 105
+1653804140.346001 client 0x154009a00 IDENTIFY_ENVIRON PYTHONSTARTUP=/Users/gera/.pythonrc
+1653804140.346006 peer 0x148008000 message 105
+1653804140.346013 client 0x154009a00 IDENTIFY_ENVIRON ITERM_PROFILE=Default
+1653804140.346018 peer 0x148008000 message 105
+1653804140.346024 client 0x154009a00 IDENTIFY_ENVIRON XPC_FLAGS=0x0
+1653804140.346030 peer 0x148008000 message 105
+1653804140.346036 client 0x154009a00 IDENTIFY_ENVIRON HTTPS_PROXY=http://192.168.49.1:8080
+1653804140.346041 peer 0x148008000 message 105
+1653804140.346047 client 0x154009a00 IDENTIFY_ENVIRON https_proxy=http://192.168.49.1:8080
+1653804140.346052 peer 0x148008000 message 105
+1653804140.346058 client 0x154009a00 IDENTIFY_ENVIRON HISTCONTROL=ignoreboth:erasedups
+1653804140.346063 peer 0x148008000 message 105
+1653804140.346070 client 0x154009a00 IDENTIFY_ENVIRON EVERYTHING=-Weverything -Werror -Wfatal-errors -Wno-poison-system-directories
+1653804140.346076 peer 0x148008000 message 105
+1653804140.346082 client 0x154009a00 IDENTIFY_ENVIRON XPC_SERVICE_NAME=0
+1653804140.346087 peer 0x148008000 message 105
+1653804140.346093 client 0x154009a00 IDENTIFY_ENVIRON SHLVL=1
+1653804140.346098 peer 0x148008000 message 105
+1653804140.346104 client 0x154009a00 IDENTIFY_ENVIRON HOME=/Users/gera
+1653804140.346110 peer 0x148008000 message 105
+1653804140.346116 client 0x154009a00 IDENTIFY_ENVIRON COLORFGBG=7;0
+1653804140.346121 peer 0x148008000 message 105
+1653804140.346127 client 0x154009a00 IDENTIFY_ENVIRON LC_TERMINAL_VERSION=3.4.15
+1653804140.346132 peer 0x148008000 message 105
+1653804140.346139 client 0x154009a00 IDENTIFY_ENVIRON SOCKS4_PROXY=http://192.168.49.1:1080
+1653804140.346144 peer 0x148008000 message 105
+1653804140.346150 client 0x154009a00 IDENTIFY_ENVIRON HOMEBREW_PREFIX=/opt/homebrew
+1653804140.346156 peer 0x148008000 message 105
+1653804140.346162 client 0x154009a00 IDENTIFY_ENVIRON HTTP_PROXY=http://192.168.49.1:8080
+1653804140.346167 peer 0x148008000 message 105
+1653804140.346173 client 0x154009a00 IDENTIFY_ENVIRON ITERM_SESSION_ID=w0t1p0:14C1091A-4688-4FEA-BBE6-37B581C4269B
+1653804140.346178 peer 0x148008000 message 105
+1653804140.346185 client 0x154009a00 IDENTIFY_ENVIRON LOGNAME=gera
+1653804140.346190 peer 0x148008000 message 105
+1653804140.346197 client 0x154009a00 IDENTIFY_ENVIRON INFOPATH=/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:
+1653804140.346202 peer 0x148008000 message 105
+1653804140.346209 client 0x154009a00 IDENTIFY_ENVIRON HOMEBREW_CELLAR=/opt/homebrew/Cellar
+1653804140.346214 peer 0x148008000 message 105
+1653804140.346220 client 0x154009a00 IDENTIFY_ENVIRON LC_TERMINAL=iTerm2
+1653804140.346225 peer 0x148008000 message 105
+1653804140.346231 client 0x154009a00 IDENTIFY_ENVIRON DISPLAY=:0
+1653804140.346236 peer 0x148008000 message 105
+1653804140.346242 client 0x154009a00 IDENTIFY_ENVIRON SECURITYSESSIONID=186b3
+1653804140.346248 peer 0x148008000 message 105
+1653804140.346254 client 0x154009a00 IDENTIFY_ENVIRON COLORTERM=truecolor
+1653804140.346259 peer 0x148008000 message 105
+1653804140.346265 client 0x154009a00 IDENTIFY_ENVIRON _=/opt/homebrew/bin/tmate
+1653804140.346280 peer 0x148008000 message 106
+1653804140.347524 peer 0x148008000 message 200
+1653804140.347537 continuing cmdq 0x152b0a6a0: flags 0, client 0x154009a00
+1653804140.347545 cmdq 0x152b0a6a0: new-session
+1653804140.347553 preparing state for new-session (client 0x154009a00)
+1653804140.347561 cmd_find_current_session: have client 0x154009a00
+1653804140.347572 cmd_find_client: no target, return 0x0
+1653804140.347579 preparing -t state: target none
+1653804140.347588 cmd_prepare_state_flag: flag t 4 0x2
+1653804140.347594 cmd_find_current_session: have client 0x154009a00
+1653804140.347599 cmd_find_target: target none, type 2
+1653804140.347605 cmd_find_target: cmdq 0x152b0a6a0, flags 0x2
+1653804140.347610 cmd_find_target: s=none
+1653804140.347615 cmd_find_target: wl=none
+1653804140.347619 cmd_find_target: wp=none
+1653804140.347625 cmd_find_target: idx=none
+1653804140.347630 preparing -s state: target none
+1653804140.347638 new term: xterm-256color
+1653804140.348407 xterm-256color override: XT 
+1653804140.348428 xterm-256color override: Ms \033]52;%p1%s;%p2%s\a
+1653804140.348439 xterm-256color override: Cs \033]12;%p1%s\a
+1653804140.348450 xterm-256color override: Cr \033]112\a
+1653804140.348460 xterm-256color override: Ss \033[%p1%d q
+1653804140.348469 xterm-256color override: Se \033[2 q
+1653804140.348603 new key \033Oo: 0x100000000045 (KP/)
+1653804140.348609 new key \033Oj: 0x100000000046 (KP*)
+1653804140.348615 new key \033Om: 0x100000000047 (KP-)
+1653804140.348621 new key \033Ow: 0x100000000048 (KP7)
+1653804140.348626 new key \033Ox: 0x100000000049 (KP8)
+1653804140.348631 new key \033Oy: 0x10000000004a (KP9)
+1653804140.348637 new key \033Ok: 0x10000000004b (KP+)
+1653804140.348642 new key \033Ot: 0x10000000004c (KP4)
+1653804140.348648 new key \033Ou: 0x10000000004d (KP5)
+1653804140.348653 new key \033Ov: 0x10000000004e (KP6)
+1653804140.348659 new key \033Oq: 0x10000000004f (KP1)
+1653804140.348664 new key \033Or: 0x100000000050 (KP2)
+1653804140.348669 new key \033Os: 0x100000000051 (KP3)
+1653804140.348675 new key \033OM: 0x100000000052 (KPEnter)
+1653804140.348680 new key \033Op: 0x100000000053 (KP0)
+1653804140.348685 new key \033On: 0x100000000054 (KP.)
+1653804140.348691 new key \033OA: 0x100000000041 (Up)
+1653804140.348696 new key \033OB: 0x100000000042 (Down)
+1653804140.348702 new key \033OC: 0x100000000044 (Right)
+1653804140.348708 new key \033OD: 0x100000000043 (Left)
+1653804140.348713 new key \033[A: 0x100000000041 (Up)
+1653804140.348718 new key \033[B: 0x100000000042 (Down)
+1653804140.348724 new key \033[C: 0x100000000044 (Right)
+1653804140.348729 new key \033[D: 0x100000000043 (Left)
+1653804140.348735 new key \033OH: 0x10000000003c (Home)
+1653804140.348740 new key \033OF: 0x10000000003d (End)
+1653804140.348745 new key \033[H: 0x10000000003c (Home)
+1653804140.348751 new key \033[F: 0x10000000003d (End)
+1653804140.348757 new key \033Oa: 0x500000000041 (C-Up)
+1653804140.348763 new key \033Ob: 0x500000000042 (C-Down)
+1653804140.348768 new key \033Oc: 0x500000000044 (C-Right)
+1653804140.348773 new key \033Od: 0x500000000043 (C-Left)
+1653804140.348779 new key \033[a: 0x900000000041 (S-Up)
+1653804140.348784 new key \033[b: 0x900000000042 (S-Down)
+1653804140.348790 new key \033[c: 0x900000000044 (S-Right)
+1653804140.348796 new key \033[d: 0x900000000043 (S-Left)
+1653804140.348801 new key \033[11^: 0x50000000002e (C-F1)
+1653804140.348807 new key \033[12^: 0x50000000002f (C-F2)
+1653804140.348812 new key \033[13^: 0x500000000030 (C-F3)
+1653804140.348818 new key \033[14^: 0x500000000031 (C-F4)
+1653804140.348823 new key \033[15^: 0x500000000032 (C-F5)
+1653804140.348829 new key \033[17^: 0x500000000033 (C-F6)
+1653804140.348834 new key \033[18^: 0x500000000034 (C-F7)
+1653804140.348840 new key \033[19^: 0x500000000035 (C-F8)
+1653804140.348845 new key \033[20^: 0x500000000036 (C-F9)
+1653804140.348851 new key \033[21^: 0x500000000037 (C-F10)
+1653804140.348856 new key \033[23^: 0x500000000038 (C-F11)
+1653804140.348862 new key \033[24^: 0x500000000039 (C-F12)
+1653804140.348868 new key \033[2^: 0x50000000003a (C-IC)
+1653804140.348887 new key \033[3^: 0x50000000003b (C-DC)
+1653804140.348893 new key \033[7^: 0x50000000003c (C-Home)
+1653804140.348899 new key \033[8^: 0x50000000003d (C-End)
+1653804140.348904 new key \033[6^: 0x50000000003e (C-NPage)
+1653804140.348910 new key \033[5^: 0x50000000003f (C-PPage)
+1653804140.348916 new key \033[11$: 0x90000000002e (S-F1)
+1653804140.348922 new key \033[12$: 0x90000000002f (S-F2)
+1653804140.348927 new key \033[13$: 0x900000000030 (S-F3)
+1653804140.348932 new key \033[14$: 0x900000000031 (S-F4)
+1653804140.348938 new key \033[15$: 0x900000000032 (S-F5)
+1653804140.348943 new key \033[17$: 0x900000000033 (S-F6)
+1653804140.348948 new key \033[18$: 0x900000000034 (S-F7)
+1653804140.348954 new key \033[19$: 0x900000000035 (S-F8)
+1653804140.348959 new key \033[20$: 0x900000000036 (S-F9)
+1653804140.348964 new key \033[21$: 0x900000000037 (S-F10)
+1653804140.348970 new key \033[23$: 0x900000000038 (S-F11)
+1653804140.348975 new key \033[24$: 0x900000000039 (S-F12)
+1653804140.348981 new key \033[2$: 0x90000000003a (S-IC)
+1653804140.348986 new key \033[3$: 0x90000000003b (S-DC)
+1653804140.348991 new key \033[7$: 0x90000000003c (S-Home)
+1653804140.348997 new key \033[8$: 0x90000000003d (S-End)
+1653804140.349002 new key \033[6$: 0x90000000003e (S-NPage)
+1653804140.349008 new key \033[5$: 0x90000000003f (S-PPage)
+1653804140.349013 new key \033[11@: 0xd0000000002e (C-S-F1)
+1653804140.349019 new key \033[12@: 0xd0000000002f (C-S-F2)
+1653804140.349024 new key \033[13@: 0xd00000000030 (C-S-F3)
+1653804140.349029 new key \033[14@: 0xd00000000031 (C-S-F4)
+1653804140.349035 new key \033[15@: 0xd00000000032 (C-S-F5)
+1653804140.349040 new key \033[17@: 0xd00000000033 (C-S-F6)
+1653804140.349045 new key \033[18@: 0xd00000000034 (C-S-F7)
+1653804140.349051 new key \033[19@: 0xd00000000035 (C-S-F8)
+1653804140.349056 new key \033[20@: 0xd00000000036 (C-S-F9)
+1653804140.349061 new key \033[21@: 0xd00000000037 (C-S-F10)
+1653804140.349067 new key \033[23@: 0xd00000000038 (C-S-F11)
+1653804140.349072 new key \033[24@: 0xd00000000039 (C-S-F12)
+1653804140.349078 new key \033[2@: 0xd0000000003a (C-S-IC)
+1653804140.349084 new key \033[3@: 0xd0000000003b (C-S-DC)
+1653804140.349093 new key \033[7@: 0xd0000000003c (C-S-Home)
+1653804140.349100 new key \033[8@: 0xd0000000003d (C-S-End)
+1653804140.349107 new key \033[6@: 0xd0000000003e (C-S-NPage)
+1653804140.349115 new key \033[5@: 0xd0000000003f (C-S-PPage)
+1653804140.349124 new key \033[I: 0x100000000000 (Invalid#100000000000)
+1653804140.349132 new key \033[O: 0x100000000001 (Invalid#100000000001)
+1653804140.349139 new key \033OP: 0x10000000002e (F1)
+1653804140.349146 new key \033OQ: 0x10000000002f (F2)
+1653804140.349153 new key \033OR: 0x100000000030 (F3)
+1653804140.349160 new key \033OS: 0x100000000031 (F4)
+1653804140.349168 new key \033[15~: 0x100000000032 (F5)
+1653804140.349176 new key \033[17~: 0x100000000033 (F6)
+1653804140.349183 new key \033[18~: 0x100000000034 (F7)
+1653804140.349191 new key \033[19~: 0x100000000035 (F8)
+1653804140.349198 new key \033[20~: 0x100000000036 (F9)
+1653804140.349205 new key \033[21~: 0x100000000037 (F10)
+1653804140.349213 new key \033[23~: 0x100000000038 (F11)
+1653804140.349220 new key \033[24~: 0x100000000039 (F12)
+1653804140.349227 new key \033[1;2P: 0x90000000002e (S-F1)
+1653804140.349235 new key \033[1;2Q: 0x90000000002f (S-F2)
+1653804140.349243 new key \033[1;2R: 0x900000000030 (S-F3)
+1653804140.349251 new key \033[1;2S: 0x900000000031 (S-F4)
+1653804140.349258 new key \033[15;2~: 0x900000000032 (S-F5)
+1653804140.349266 new key \033[17;2~: 0x900000000033 (S-F6)
+1653804140.349273 new key \033[18;2~: 0x900000000034 (S-F7)
+1653804140.349281 new key \033[19;2~: 0x900000000035 (S-F8)
+1653804140.349288 new key \033[20;2~: 0x900000000036 (S-F9)
+1653804140.349296 new key \033[21;2~: 0x900000000037 (S-F10)
+1653804140.349303 new key \033[23;2~: 0x900000000038 (S-F11)
+1653804140.349311 new key \033[24;2~: 0x900000000039 (S-F12)
+1653804140.349318 new key \033[1;5P: 0x50000000002e (C-F1)
+1653804140.349326 new key \033[1;5Q: 0x50000000002f (C-F2)
+1653804140.349352 new key \033[1;5R: 0x500000000030 (C-F3)
+1653804140.349360 new key \033[1;5S: 0x500000000031 (C-F4)
+1653804140.349367 new key \033[15;5~: 0x500000000032 (C-F5)
+1653804140.349375 new key \033[17;5~: 0x500000000033 (C-F6)
+1653804140.349382 new key \033[18;5~: 0x500000000034 (C-F7)
+1653804140.349391 new key \033[19;5~: 0x500000000035 (C-F8)
+1653804140.349398 new key \033[20;5~: 0x500000000036 (C-F9)
+1653804140.349406 new key \033[21;5~: 0x500000000037 (C-F10)
+1653804140.349413 new key \033[23;5~: 0x500000000038 (C-F11)
+1653804140.349420 new key \033[24;5~: 0x500000000039 (C-F12)
+1653804140.349428 new key \033[1;6P: 0xd0000000002e (C-S-F1)
+1653804140.349436 new key \033[1;6Q: 0xd0000000002f (C-S-F2)
+1653804140.349443 new key \033[1;6R: 0xd00000000030 (C-S-F3)
+1653804140.349451 new key \033[1;6S: 0xd00000000031 (C-S-F4)
+1653804140.349457 new key \033[15;6~: 0xd00000000032 (C-S-F5)
+1653804140.349463 new key \033[17;6~: 0xd00000000033 (C-S-F6)
+1653804140.349469 new key \033[18;6~: 0xd00000000034 (C-S-F7)
+1653804140.349474 new key \033[19;6~: 0xd00000000035 (C-S-F8)
+1653804140.349480 new key \033[20;6~: 0xd00000000036 (C-S-F9)
+1653804140.349485 new key \033[21;6~: 0xd00000000037 (C-S-F10)
+1653804140.349491 new key \033[23;6~: 0xd00000000038 (C-S-F11)
+1653804140.349496 new key \033[24;6~: 0xd00000000039 (C-S-F12)
+1653804140.349502 new key \033[1;3P: 0x30000000002e (M-F1)
+1653804140.349507 new key \033[1;3Q: 0x30000000002f (M-F2)
+1653804140.349513 new key \033[1;3R: 0x300000000030 (M-F3)
+1653804140.349518 new key \033[1;3S: 0x300000000031 (M-F4)
+1653804140.349523 new key \033[15;3~: 0x300000000032 (M-F5)
+1653804140.349529 new key \033[17;3~: 0x300000000033 (M-F6)
+1653804140.349534 new key \033[18;3~: 0x300000000034 (M-F7)
+1653804140.349540 new key \033[19;3~: 0x300000000035 (M-F8)
+1653804140.349545 new key \033[20;3~: 0x300000000036 (M-F9)
+1653804140.349550 new key \033[21;3~: 0x300000000037 (M-F10)
+1653804140.349556 new key \033[23;3~: 0x300000000038 (M-F11)
+1653804140.349561 new key \033[24;3~: 0x300000000039 (M-F12)
+1653804140.349567 new key \033[1;4P: 0xb0000000002e (M-S-F1)
+1653804140.349572 new key \033[1;4Q: 0xb0000000002f (M-S-F2)
+1653804140.349577 new key \033[1;4R: 0xb00000000030 (M-S-F3)
+1653804140.349583 new key \033[2~: 0x10000000003a (IC)
+1653804140.349588 new key \033[3~: 0x10000000003b (DC)
+1653804140.349594 replacing key \033OH: 0x10000000003c (Home)
+1653804140.349599 replacing key \033OF: 0x10000000003d (End)
+1653804140.349605 new key \033[6~: 0x10000000003e (NPage)
+1653804140.349610 new key \033[5~: 0x10000000003f (PPage)
+1653804140.349616 new key \033[Z: 0x100000000040 (BTab)
+1653804140.349621 replacing key \033OA: 0x100000000041 (Up)
+1653804140.349626 replacing key \033OB: 0x100000000042 (Down)
+1653804140.349632 replacing key \033OD: 0x100000000043 (Left)
+1653804140.349637 replacing key \033OC: 0x100000000044 (Right)
+1653804140.349642 new key \033[3;2~: 0x90000000003b (S-DC)
+1653804140.349648 new key \033[3;3~: 0x30000000003b (M-DC)
+1653804140.349654 new key \033[3;4~: 0xb0000000003b (M-S-DC)
+1653804140.349659 new key \033[3;5~: 0x50000000003b (C-DC)
+1653804140.349665 new key \033[3;6~: 0xd0000000003b (C-S-DC)
+1653804140.349671 new key \033[3;7~: 0x70000000003b (C-M-DC)
+1653804140.349676 new key \033[1;2B: 0x900000000042 (S-Down)
+1653804140.349682 new key \033[1;3B: 0x300000000042 (M-Down)
+1653804140.349690 new key \033[1;4B: 0xb00000000042 (M-S-Down)
+1653804140.349696 new key \033[1;5B: 0x500000000042 (C-Down)
+1653804140.349702 new key \033[1;6B: 0xd00000000042 (C-S-Down)
+1653804140.349707 new key \033[1;7B: 0x700000000042 (C-M-Down)
+1653804140.349713 new key \033[1;2F: 0x90000000003d (S-End)
+1653804140.349719 new key \033[1;3F: 0x30000000003d (M-End)
+1653804140.349724 new key \033[1;4F: 0xb0000000003d (M-S-End)
+1653804140.349730 new key \033[1;5F: 0x50000000003d (C-End)
+1653804140.349735 new key \033[1;6F: 0xd0000000003d (C-S-End)
+1653804140.349741 new key \033[1;7F: 0x70000000003d (C-M-End)
+1653804140.349746 new key \033[1;2H: 0x90000000003c (S-Home)
+1653804140.349752 new key \033[1;3H: 0x30000000003c (M-Home)
+1653804140.349768 new key \033[1;4H: 0xb0000000003c (M-S-Home)
+1653804140.349774 new key \033[1;5H: 0x50000000003c (C-Home)
+1653804140.349780 new key \033[1;6H: 0xd0000000003c (C-S-Home)
+1653804140.349785 new key \033[1;7H: 0x70000000003c (C-M-Home)
+1653804140.349791 new key \033[2;2~: 0x90000000003a (S-IC)
+1653804140.349797 new key \033[2;3~: 0x30000000003a (M-IC)
+1653804140.349802 new key \033[2;4~: 0xb0000000003a (M-S-IC)
+1653804140.349808 new key \033[2;5~: 0x50000000003a (C-IC)
+1653804140.349813 new key \033[2;6~: 0xd0000000003a (C-S-IC)
+1653804140.349819 new key \033[2;7~: 0x70000000003a (C-M-IC)
+1653804140.349825 new key \033[1;2D: 0x900000000043 (S-Left)
+1653804140.349831 new key \033[1;3D: 0x300000000043 (M-Left)
+1653804140.349836 new key \033[1;4D: 0xb00000000043 (M-S-Left)
+1653804140.349842 new key \033[1;5D: 0x500000000043 (C-Left)
+1653804140.349848 new key \033[1;6D: 0xd00000000043 (C-S-Left)
+1653804140.349853 new key \033[1;7D: 0x700000000043 (C-M-Left)
+1653804140.349859 new key \033[6;2~: 0x90000000003e (S-NPage)
+1653804140.349864 new key \033[6;3~: 0x30000000003e (M-NPage)
+1653804140.349870 new key \033[6;4~: 0xb0000000003e (M-S-NPage)
+1653804140.349875 new key \033[6;5~: 0x50000000003e (C-NPage)
+1653804140.349881 new key \033[6;6~: 0xd0000000003e (C-S-NPage)
+1653804140.349886 new key \033[6;7~: 0x70000000003e (C-M-NPage)
+1653804140.349892 new key \033[5;2~: 0x90000000003f (S-PPage)
+1653804140.349898 new key \033[5;3~: 0x30000000003f (M-PPage)
+1653804140.349903 new key \033[5;4~: 0xb0000000003f (M-S-PPage)
+1653804140.349909 new key \033[5;5~: 0x50000000003f (C-PPage)
+1653804140.349914 new key \033[5;6~: 0xd0000000003f (C-S-PPage)
+1653804140.349920 new key \033[5;7~: 0x70000000003f (C-M-PPage)
+1653804140.349926 new key \033[1;2C: 0x900000000044 (S-Right)
+1653804140.349932 new key \033[1;3C: 0x300000000044 (M-Right)
+1653804140.349938 new key \033[1;4C: 0xb00000000044 (M-S-Right)
+1653804140.349943 new key \033[1;5C: 0x500000000044 (C-Right)
+1653804140.349949 new key \033[1;6C: 0xd00000000044 (C-S-Right)
+1653804140.349955 new key \033[1;7C: 0x700000000044 (C-M-Right)
+1653804140.349961 new key \033[1;2A: 0x900000000041 (S-Up)
+1653804140.349966 new key \033[1;3A: 0x300000000041 (M-Up)
+1653804140.349972 new key \033[1;4A: 0xb00000000041 (M-S-Up)
+1653804140.349977 new key \033[1;5A: 0x500000000041 (C-Up)
+1653804140.349983 new key \033[1;6A: 0xd00000000041 (C-S-Up)
+1653804140.349988 new key \033[1;7A: 0x700000000041 (C-M-Up)
+1653804140.350005 new session 0 $0
+1653804140.350013 session 0 activity 1653804140.350010 (last 0.000000)
+1653804140.350060 @0 alerts flags added 0x2
+1653804140.350074 spawn: /bin/bash -- 
+1653804140.350628 @0 alerts timer reset 0
+1653804140.350644 @0 alerts flags added 0x2
+1653804140.350650 session 0 created
+1653804140.350662 sending message 207 to peer 0x148008000 (0 bytes)
+1653804140.350677 client 0x154009a00, status interval 15
+1653804140.350686 session 0 activity 1653804140.350684 (last 1653804140.350010)
+1653804140.350827 session 0 has 3 references
+1653804140.350835 session 0 has 2 references
+1653804140.350841 unref client 0x154009a00 (2 references)
+1653804140.351147 format '[#S] ' -> '[0] '
+1653804140.351393 format ' "#{=21:pane_title}" 09:02 29-\320\274\320\260\320\271-22' -> ' "Air-gera" 09:02 29-\320\274\320\260\320\271-22'
+1653804140.351607 format '#{window_flags}' -> '*'
+1653804140.351618 format '#I:#W#{?window_flags,#{window_flags}, }' -> '0:bash*'
+1653804140.357743 @0 active pane changed
+1653804140.357775 format '[tmux]' -> '[tmux]'
+1653804140.357783 format '' -> ''
+1653804140.357789 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> '[tmux]'
+1653804140.357812 @0 new name [tmux] (was bash)
+1653804140.357853 Nameserver 192.168.49.1:53 has failed: Bad response 5 (refused)
+1653804140.357859 All nameservers have failed
+1653804140.357928 ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)
+1653804140.360006 @0 active pane not changed
+1653804140.360057 peer 0x148008000 message 208
+1653804140.360083 @0 active pane not changed
+1653804142.359495 Looking up ssh.tmate.io...
+1653804142.359836 @0 active pane not changed
+1653804142.373284 Nameserver 192.168.49.1:53 has failed: Bad response 5 (refused)
+1653804142.373355 All nameservers have failed
+1653804142.373467 ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)
+1653804142.389918 @0 active pane not changed
+1653804142.389990 @0 active pane not changed
+1653804142.390054 @0 active pane not changed
+1653804144.374715 Looking up ssh.tmate.io...
+1653804144.375100 @0 active pane not changed
+1653804144.386858 Nameserver 192.168.49.1:53 has failed: Bad response 5 (refused)
+1653804144.386971 All nameservers have failed
+1653804144.387085 ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)
+1653804144.405857 @0 active pane not changed
+1653804144.405934 @0 active pane not changed
+1653804144.406019 @0 active pane not changed
+1653804144.998938 keys are 1 (\r)
+1653804144.999058 complete key \r 0xd
+1653804144.999088 session 0 activity 1653804144.999082 (last 1653804140.350684)
+1653804144.999114 session 0 not pasting
+1653804144.999157 @0 active pane not changed
+1653804145.467374 keys are 1 (q)
+1653804145.467423 complete key q 0x71
+1653804145.467436 session 0 activity 1653804145.467433 (last 1653804144.999082)
+1653804145.467447 session 0 not pasting
+1653804145.469447 @0 active pane changed
+1653804145.469529 format '#{pane_current_command}' -> 'bash'
+1653804145.469540 format '' -> ''
+1653804145.469550 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804145.469578 @0 new name bash (was [tmux])
+1653804145.469603 %0 has 47 bytes
+1653804145.469613 %0 backing off (/dev/ttys001 573 > 512)
+1653804145.470820 @0 active pane not changed
+1653804145.470861 %0 has 47 bytes
+1653804145.470873 @0 alerts timer reset 0
+1653804145.470881 @0 alerts flags added 0x2
+1653804145.470892 input_parse: %0 ground, 47 bytes: \033[31m09:02:20\033[0m:\033[33marm64\033[0m:\033[32m~/c\033[0m$ 
+1653804145.470904 input_csi_dispatch: 'm' "" "31"
+1653804145.470974 input_csi_dispatch: 'm' "" "0"
+1653804145.470993 input_csi_dispatch: 'm' "" "33"
+1653804145.471037 input_csi_dispatch: 'm' "" "0"
+1653804145.471055 input_csi_dispatch: 'm' "" "32"
+1653804145.471085 input_csi_dispatch: 'm' "" "0"
+1653804145.471126 @0 active pane changed
+1653804145.471137 @0 name timer queued (498319 left)
+1653804145.471161 @0 active pane changed
+1653804145.471176 @0 name timer already queued (498280 left)
+1653804145.970486 @0 name timer expired
+1653804145.970568 @0 active pane changed
+1653804145.970674 format '#{pane_current_command}' -> 'bash'
+1653804145.970687 format '' -> ''
+1653804145.970698 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804145.970733 @0 name not changed (still bash)
+1653804146.388282 Looking up ssh.tmate.io...
+1653804146.388594 @0 active pane not changed
+1653804146.393388 Nameserver 192.168.49.1:53 has failed: Bad response 5 (refused)
+1653804146.393423 All nameservers have failed
+1653804146.393528 ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)
+1653804146.398470 @0 active pane not changed
+1653804146.398540 @0 active pane not changed
+1653804148.394746 Looking up ssh.tmate.io...
+1653804148.395060 @0 active pane not changed
+1653804148.396802 keys are 1 (r)
+1653804148.396838 complete key r 0x72
+1653804148.396856 session 0 activity 1653804148.396852 (last 1653804145.467433)
+1653804148.396872 session 0 not pasting
+1653804148.396892 writing key 0x72 (r) to %0
+1653804148.396914 @0 active pane not changed
+1653804148.396954 @0 active pane not changed
+1653804148.397043 %0 has 1 bytes
+1653804148.397063 @0 alerts timer reset 0
+1653804148.397074 @0 alerts flags added 0x2
+1653804148.397101 input_parse: %0 ground, 1 bytes: r
+1653804148.397211 @0 active pane changed
+1653804148.397346 format '#{pane_current_command}' -> 'bash'
+1653804148.397362 format '' -> ''
+1653804148.397376 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804148.397476 @0 name not changed (still bash)
+1653804148.397506 @0 active pane not changed
+1653804148.406255 Nameserver 192.168.49.1:53 has failed: Bad response 5 (refused)
+1653804148.406388 All nameservers have failed
+1653804148.406513 ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)
+1653804148.411439 @0 active pane not changed
+1653804148.411542 @0 active pane not changed
+1653804148.671246 keys are 1 (s)
+1653804148.671369 complete key s 0x73
+1653804148.671399 session 0 activity 1653804148.671393 (last 1653804148.396852)
+1653804148.671427 session 0 not pasting
+1653804148.671461 writing key 0x73 (s) to %0
+1653804148.671505 @0 active pane not changed
+1653804148.671561 @0 active pane not changed
+1653804148.671657 %0 has 1 bytes
+1653804148.671687 @0 alerts timer reset 0
+1653804148.671705 @0 alerts flags added 0x2
+1653804148.671723 input_parse: %0 ground, 1 bytes: s
+1653804148.671912 @0 active pane changed
+1653804148.671932 @0 name timer queued (225295 left)
+1653804148.671970 @0 active pane changed
+1653804148.671989 @0 name timer already queued (225238 left)
+1653804148.898272 @0 name timer expired
+1653804148.898341 @0 active pane changed
+1653804148.898438 format '#{pane_current_command}' -> 'bash'
+1653804148.898452 format '' -> ''
+1653804148.898461 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804148.898491 @0 name not changed (still bash)
+1653804149.086347 keys are 1 (o)
+1653804149.086495 complete key o 0x6f
+1653804149.086529 session 0 activity 1653804149.086523 (last 1653804148.671393)
+1653804149.086555 session 0 not pasting
+1653804149.086581 writing key 0x6f (o) to %0
+1653804149.086621 @0 active pane not changed
+1653804149.086675 @0 active pane not changed
+1653804149.086772 %0 has 1 bytes
+1653804149.086800 @0 alerts timer reset 0
+1653804149.086816 @0 alerts flags added 0x2
+1653804149.086835 input_parse: %0 ground, 1 bytes: o
+1653804149.086971 @0 active pane changed
+1653804149.086987 @0 name timer queued (311365 left)
+1653804149.087032 @0 active pane changed
+1653804149.087050 @0 name timer already queued (311302 left)
+1653804149.399423 @0 name timer expired
+1653804149.399598 @0 active pane changed
+1653804149.399823 format '#{pane_current_command}' -> 'bash'
+1653804149.399848 format '' -> ''
+1653804149.399867 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804149.399941 @0 name not changed (still bash)
+1653804149.511765 keys are 1 (\177)
+1653804149.511894 complete key \177 0x10000000002d
+1653804149.511920 session 0 activity 1653804149.511914 (last 1653804149.086523)
+1653804149.511946 session 0 not pasting
+1653804149.511974 writing key 0x10000000002d (BSpace) to %0
+1653804149.511996 found key 0x10000000002d: "\177"
+1653804149.512036 @0 active pane not changed
+1653804149.512099 @0 active pane not changed
+1653804149.514383 %0 has 4 bytes
+1653804149.514419 @0 alerts timer reset 0
+1653804149.514437 @0 alerts flags added 0x2
+1653804149.514458 input_parse: %0 ground, 4 bytes: \b\033[K
+1653804149.514476 input_c0_dispatch: '\b'
+1653804149.514496 input_csi_dispatch: 'K' "" ""
+1653804149.514578 @0 active pane changed
+1653804149.514595 @0 name timer queued (385023 left)
+1653804149.514635 @0 active pane changed
+1653804149.514654 @0 name timer already queued (384964 left)
+1653804149.674417 keys are 1 (\177)
+1653804149.674553 complete key \177 0x10000000002d
+1653804149.674584 session 0 activity 1653804149.674579 (last 1653804149.511914)
+1653804149.674608 session 0 not pasting
+1653804149.674635 writing key 0x10000000002d (BSpace) to %0
+1653804149.674656 found key 0x10000000002d: "\177"
+1653804149.674694 @0 active pane changed
+1653804149.674711 @0 name timer already queued (224907 left)
+1653804149.674764 @0 active pane changed
+1653804149.674783 @0 name timer already queued (224835 left)
+1653804149.674866 %0 has 4 bytes
+1653804149.674894 @0 alerts timer reset 0
+1653804149.674910 @0 alerts flags added 0x2
+1653804149.674928 input_parse: %0 ground, 4 bytes: \b\033[K
+1653804149.675009 input_c0_dispatch: '\b'
+1653804149.675027 input_csi_dispatch: 'K' "" ""
+1653804149.675088 @0 active pane changed
+1653804149.675104 @0 name timer already queued (224514 left)
+1653804149.675134 @0 active pane changed
+1653804149.675152 @0 name timer already queued (224465 left)
+1653804149.812089 keys are 1 (\177)
+1653804149.812257 complete key \177 0x10000000002d
+1653804149.812284 session 0 activity 1653804149.812279 (last 1653804149.674579)
+1653804149.812312 session 0 not pasting
+1653804149.812340 writing key 0x10000000002d (BSpace) to %0
+1653804149.812375 found key 0x10000000002d: "\177"
+1653804149.812423 @0 active pane changed
+1653804149.812441 @0 name timer already queued (87178 left)
+1653804149.812500 @0 active pane changed
+1653804149.812520 @0 name timer already queued (87098 left)
+1653804149.812603 %0 has 4 bytes
+1653804149.812631 @0 alerts timer reset 0
+1653804149.812647 @0 alerts flags added 0x2
+1653804149.812666 input_parse: %0 ground, 4 bytes: \b\033[K
+1653804149.812686 input_c0_dispatch: '\b'
+1653804149.812705 input_csi_dispatch: 'K' "" ""
+1653804149.812777 @0 active pane changed
+1653804149.812802 @0 name timer already queued (86816 left)
+1653804149.812843 @0 active pane changed
+1653804149.812865 @0 name timer already queued (86752 left)
+1653804149.900670 @0 name timer expired
+1653804149.900793 @0 active pane changed
+1653804149.900948 format '#{pane_current_command}' -> 'bash'
+1653804149.900965 format '' -> ''
+1653804149.900979 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804149.901025 @0 name not changed (still bash)
+1653804150.065912 keys are 1 (\022)
+1653804150.066047 complete key \022 0x12
+1653804150.066078 session 0 activity 1653804150.066071 (last 1653804149.812279)
+1653804150.066101 session 0 not pasting
+1653804150.066128 writing key 0x12 (C-r) to %0
+1653804150.066165 @0 active pane not changed
+1653804150.066219 @0 active pane not changed
+1653804150.066446 %0 has 29 bytes
+1653804150.066477 @0 alerts timer reset 0
+1653804150.066493 @0 alerts flags added 0x2
+1653804150.066512 input_parse: %0 ground, 29 bytes: \r\033[2@(reverse-i-search)`':\033[C
+1653804150.066528 input_c0_dispatch: '\r'
+1653804150.066559 input_csi_dispatch: '@' "" "2"
+1653804150.066903 input_csi_dispatch: 'C' "" ""
+1653804150.066955 @0 active pane changed
+1653804150.066969 @0 name timer queued (333837 left)
+1653804150.067007 @0 active pane changed
+1653804150.067035 @0 name timer already queued (333773 left)
+1653804150.401874 @0 name timer expired
+1653804150.402021 @0 active pane changed
+1653804150.402197 format '#{pane_current_command}' -> 'bash'
+1653804150.402214 format '' -> ''
+1653804150.402227 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804150.402273 @0 name not changed (still bash)
+1653804150.407123 Looking up ssh.tmate.io...
+1653804150.407365 @0 active pane not changed
+1653804150.418171 Nameserver 192.168.49.1:53 has failed: Bad response 5 (refused)
+1653804150.418236 All nameservers have failed
+1653804150.418322 ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)
+1653804150.423835 @0 active pane not changed
+1653804150.423904 @0 active pane not changed
+1653804150.508569 keys are 1 (s)
+1653804150.508614 complete key s 0x73
+1653804150.508625 session 0 activity 1653804150.508623 (last 1653804150.066071)
+1653804150.508636 session 0 not pasting
+1653804150.508648 writing key 0x73 (s) to %0
+1653804150.508664 @0 active pane not changed
+1653804150.508700 @0 active pane not changed
+1653804150.508753 %0 has 10 bytes
+1653804150.508767 @0 alerts timer reset 0
+1653804150.508776 @0 alerts flags added 0x2
+1653804150.508785 input_parse: %0 ground, 10 bytes: \b\b\bs': ls\b
+1653804150.508793 input_c0_dispatch: '\b'
+1653804150.508800 input_c0_dispatch: '\b'
+1653804150.508806 input_c0_dispatch: '\b'
+1653804150.508870 input_c0_dispatch: '\b'
+1653804150.508894 @0 active pane changed
+1653804150.508901 @0 name timer queued (393132 left)
+1653804150.508918 @0 active pane changed
+1653804150.508947 @0 name timer already queued (393087 left)
+1653804150.903085 @0 name timer expired
+1653804150.903188 @0 active pane changed
+1653804150.903321 format '#{pane_current_command}' -> 'bash'
+1653804150.903333 format '' -> ''
+1653804150.903342 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804150.903371 @0 name not changed (still bash)
+1653804151.189439 keys are 1 (\177)
+1653804151.189584 complete key \177 0x10000000002d
+1653804151.189619 session 0 activity 1653804151.189613 (last 1653804150.508623)
+1653804151.189644 session 0 not pasting
+1653804151.189671 writing key 0x10000000002d (BSpace) to %0
+1653804151.189691 found key 0x10000000002d: "\177"
+1653804151.189728 @0 active pane not changed
+1653804151.189788 @0 active pane not changed
+1653804151.189960 %0 has 21 bytes
+1653804151.190006 @0 alerts timer reset 0
+1653804151.190027 @0 alerts flags added 0x2
+1653804151.190049 input_parse: %0 ground, 21 bytes: \b\b\b\b\b\033[1P\033[C\033[C\033[C\033[C
+1653804151.190070 input_c0_dispatch: '\b'
+1653804151.190086 input_c0_dispatch: '\b'
+1653804151.190100 input_c0_dispatch: '\b'
+1653804151.190113 input_c0_dispatch: '\b'
+1653804151.190128 input_c0_dispatch: '\b'
+1653804151.190150 input_csi_dispatch: 'P' "" "1"
+1653804151.190230 input_csi_dispatch: 'C' "" ""
+1653804151.190255 input_csi_dispatch: 'C' "" ""
+1653804151.190270 input_csi_dispatch: 'C' "" ""
+1653804151.190286 input_csi_dispatch: 'C' "" ""
+1653804151.190322 @0 active pane changed
+1653804151.190337 @0 name timer queued (212863 left)
+1653804151.190392 @0 active pane changed
+1653804151.190411 @0 name timer already queued (212789 left)
+1653804151.404296 @0 name timer expired
+1653804151.404428 @0 active pane changed
+1653804151.404618 format '#{pane_current_command}' -> 'bash'
+1653804151.404642 format '' -> ''
+1653804151.404660 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804151.404720 @0 name not changed (still bash)
+1653804151.533715 keys are 1 (d)
+1653804151.533832 complete key d 0x64
+1653804151.533861 session 0 activity 1653804151.533855 (last 1653804151.189613)
+1653804151.533885 session 0 not pasting
+1653804151.533924 writing key 0x64 (d) to %0
+1653804151.533963 @0 active pane not changed
+1653804151.534040 @0 active pane not changed
+1653804151.534211 %0 has 28 bytes
+1653804151.534239 @0 alerts timer reset 0
+1653804151.534257 @0 alerts flags added 0x2
+1653804151.534278 input_parse: %0 ground, 28 bytes: \b\b\b\bd': d test.cpp\b\b\b\b\b\b\b\b\b\b
+1653804151.534305 input_c0_dispatch: '\b'
+1653804151.534321 input_c0_dispatch: '\b'
+1653804151.534335 input_c0_dispatch: '\b'
+1653804151.534348 input_c0_dispatch: '\b'
+1653804151.534594 input_c0_dispatch: '\b'
+1653804151.534608 input_c0_dispatch: '\b'
+1653804151.534622 input_c0_dispatch: '\b'
+1653804151.534635 input_c0_dispatch: '\b'
+1653804151.534648 input_c0_dispatch: '\b'
+1653804151.534662 input_c0_dispatch: '\b'
+1653804151.534675 input_c0_dispatch: '\b'
+1653804151.534688 input_c0_dispatch: '\b'
+1653804151.534702 input_c0_dispatch: '\b'
+1653804151.534715 input_c0_dispatch: '\b'
+1653804151.534764 @0 active pane changed
+1653804151.534779 @0 name timer queued (369667 left)
+1653804151.534813 @0 active pane changed
+1653804151.534832 @0 name timer already queued (369615 left)
+1653804151.834014 keys are 1 (\177)
+1653804151.834159 complete key \177 0x10000000002d
+1653804151.834189 session 0 activity 1653804151.834184 (last 1653804151.533855)
+1653804151.834215 session 0 not pasting
+1653804151.834243 writing key 0x10000000002d (BSpace) to %0
+1653804151.834267 found key 0x10000000002d: "\177"
+1653804151.834308 @0 active pane changed
+1653804151.834325 @0 name timer already queued (70123 left)
+1653804151.834380 @0 active pane changed
+1653804151.834399 @0 name timer already queued (70048 left)
+1653804151.834549 %0 has 17 bytes
+1653804151.834578 @0 alerts timer reset 0
+1653804151.834596 @0 alerts flags added 0x2
+1653804151.834615 input_parse: %0 ground, 17 bytes: \b\b\b\b\033[1P\033[C\033[C\033[C
+1653804151.834632 input_c0_dispatch: '\b'
+1653804151.834647 input_c0_dispatch: '\b'
+1653804151.834661 input_c0_dispatch: '\b'
+1653804151.834674 input_c0_dispatch: '\b'
+1653804151.834703 input_csi_dispatch: 'P' "" "1"
+1653804151.834778 input_csi_dispatch: 'C' "" ""
+1653804151.834796 input_csi_dispatch: 'C' "" ""
+1653804151.834811 input_csi_dispatch: 'C' "" ""
+1653804151.834841 @0 active pane changed
+1653804151.834856 @0 name timer already queued (69590 left)
+1653804151.834888 @0 active pane changed
+1653804151.834906 @0 name timer already queued (69540 left)
+1653804151.905503 @0 name timer expired
+1653804151.905620 @0 active pane changed
+1653804151.905773 format '#{pane_current_command}' -> 'bash'
+1653804151.905791 format '' -> ''
+1653804151.905804 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804151.905850 @0 name not changed (still bash)
+1653804152.379027 keys are 1 (s)
+1653804152.379131 complete key s 0x73
+1653804152.379152 session 0 activity 1653804152.379148 (last 1653804151.834184)
+1653804152.379172 session 0 not pasting
+1653804152.379195 writing key 0x73 (s) to %0
+1653804152.379233 @0 active pane not changed
+1653804152.379286 @0 active pane not changed
+1653804152.379421 %0 has 49 bytes
+1653804152.379443 @0 alerts timer reset 0
+1653804152.379455 @0 alerts flags added 0x2
+1653804152.379471 input_parse: %0 ground, 49 bytes: \b\b\bs': subl ~/pony/func.hpp \b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b
+1653804152.379484 input_c0_dispatch: '\b'
+1653804152.379507 input_c0_dispatch: '\b'
+1653804152.379518 input_c0_dispatch: '\b'
+1653804152.379769 input_c0_dispatch: '\b'
+1653804152.379779 input_c0_dispatch: '\b'
+1653804152.379788 input_c0_dispatch: '\b'
+1653804152.379797 input_c0_dispatch: '\b'
+1653804152.379807 input_c0_dispatch: '\b'
+1653804152.379817 input_c0_dispatch: '\b'
+1653804152.379826 input_c0_dispatch: '\b'
+1653804152.379836 input_c0_dispatch: '\b'
+1653804152.379845 input_c0_dispatch: '\b'
+1653804152.379855 input_c0_dispatch: '\b'
+1653804152.379865 input_c0_dispatch: '\b'
+1653804152.379874 input_c0_dispatch: '\b'
+1653804152.379884 input_c0_dispatch: '\b'
+1653804152.379893 input_c0_dispatch: '\b'
+1653804152.379903 input_c0_dispatch: '\b'
+1653804152.379913 input_c0_dispatch: '\b'
+1653804152.379922 input_c0_dispatch: '\b'
+1653804152.379932 input_c0_dispatch: '\b'
+1653804152.379942 input_c0_dispatch: '\b'
+1653804152.379951 input_c0_dispatch: '\b'
+1653804152.379961 input_c0_dispatch: '\b'
+1653804152.379997 @0 active pane changed
+1653804152.380008 @0 name timer queued (25626 left)
+1653804152.380036 @0 active pane changed
+1653804152.380049 @0 name timer already queued (25585 left)
+1653804152.406701 @0 name timer expired
+1653804152.406822 @0 active pane changed
+1653804152.406981 format '#{pane_current_command}' -> 'bash'
+1653804152.406994 format '' -> ''
+1653804152.407003 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804152.407033 @0 name not changed (still bash)
+1653804152.419565 Looking up ssh.tmate.io...
+1653804152.419792 @0 active pane not changed
+1653804152.430510 Nameserver 192.168.49.1:53 has failed: Bad response 5 (refused)
+1653804152.430589 All nameservers have failed
+1653804152.430672 ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)
+1653804152.436168 @0 active pane not changed
+1653804152.436238 @0 active pane not changed
+1653804152.685065 keys are 1 (h)
+1653804152.685188 complete key h 0x68
+1653804152.685212 session 0 activity 1653804152.685207 (last 1653804152.379148)
+1653804152.685236 session 0 not pasting
+1653804152.685263 writing key 0x68 (h) to %0
+1653804152.685298 @0 active pane not changed
+1653804152.685350 @0 active pane not changed
+1653804152.685543 %0 has 128 bytes
+1653804152.685570 @0 alerts timer reset 0
+1653804152.685587 @0 alerts flags added 0x2
+1653804152.685611 input_parse: %0 ground, 128 bytes: \b\b\bh': wssh --address="0.0.0.0" --font=ubuntu.ttf\r\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C
+1653804152.685629 input_c0_dispatch: '\b'
+1653804152.685643 input_c0_dispatch: '\b'
+1653804152.685656 input_c0_dispatch: '\b'
+1653804152.686374 input_c0_dispatch: '\r'
+1653804152.686396 input_csi_dispatch: 'C' "" ""
+1653804152.686416 input_csi_dispatch: 'C' "" ""
+1653804152.686432 input_csi_dispatch: 'C' "" ""
+1653804152.686446 input_csi_dispatch: 'C' "" ""
+1653804152.686461 input_csi_dispatch: 'C' "" ""
+1653804152.686476 input_csi_dispatch: 'C' "" ""
+1653804152.686490 input_csi_dispatch: 'C' "" ""
+1653804152.686505 input_csi_dispatch: 'C' "" ""
+1653804152.686519 input_csi_dispatch: 'C' "" ""
+1653804152.686534 input_csi_dispatch: 'C' "" ""
+1653804152.686548 input_csi_dispatch: 'C' "" ""
+1653804152.686563 input_csi_dispatch: 'C' "" ""
+1653804152.686577 input_csi_dispatch: 'C' "" ""
+1653804152.686592 input_csi_dispatch: 'C' "" ""
+1653804152.686606 input_csi_dispatch: 'C' "" ""
+1653804152.686620 input_csi_dispatch: 'C' "" ""
+1653804152.686635 input_csi_dispatch: 'C' "" ""
+1653804152.686650 input_csi_dispatch: 'C' "" ""
+1653804152.686664 input_csi_dispatch: 'C' "" ""
+1653804152.686678 input_csi_dispatch: 'C' "" ""
+1653804152.686693 input_csi_dispatch: 'C' "" ""
+1653804152.686707 input_csi_dispatch: 'C' "" ""
+1653804152.686721 input_csi_dispatch: 'C' "" ""
+1653804152.686735 input_csi_dispatch: 'C' "" ""
+1653804152.686750 input_csi_dispatch: 'C' "" ""
+1653804152.686764 input_csi_dispatch: 'C' "" ""
+1653804152.686834 @0 active pane changed
+1653804152.686850 @0 name timer queued (219984 left)
+1653804152.686895 @0 active pane changed
+1653804152.686914 @0 name timer already queued (219920 left)
+1653804152.895232 keys are 1 (o)
+1653804152.895347 complete key o 0x6f
+1653804152.895372 session 0 activity 1653804152.895366 (last 1653804152.685207)
+1653804152.895395 session 0 not pasting
+1653804152.895419 writing key 0x6f (o) to %0
+1653804152.895455 @0 active pane changed
+1653804152.895471 @0 name timer already queued (11363 left)
+1653804152.895527 @0 active pane changed
+1653804152.895546 @0 name timer already queued (11288 left)
+1653804152.895733 %0 has 143 bytes
+1653804152.895767 @0 alerts timer reset 0
+1653804152.895782 @0 alerts flags added 0x2
+1653804152.895806 input_parse: %0 ground, 143 bytes: \b\b\b\b\bo': ssh sshocean-sudogera@fr01.sshws.me -p 2083\r\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C
+1653804152.895827 input_c0_dispatch: '\b'
+1653804152.895841 input_c0_dispatch: '\b'
+1653804152.895854 input_c0_dispatch: '\b'
+1653804152.895867 input_c0_dispatch: '\b'
+1653804152.895879 input_c0_dispatch: '\b'
+1653804152.896435 input_c0_dispatch: '\r'
+1653804152.896459 input_csi_dispatch: 'C' "" ""
+1653804152.896479 input_csi_dispatch: 'C' "" ""
+1653804152.896497 input_csi_dispatch: 'C' "" ""
+1653804152.896512 input_csi_dispatch: 'C' "" ""
+1653804152.896527 input_csi_dispatch: 'C' "" ""
+1653804152.896542 input_csi_dispatch: 'C' "" ""
+1653804152.896557 input_csi_dispatch: 'C' "" ""
+1653804152.896571 input_csi_dispatch: 'C' "" ""
+1653804152.896586 input_csi_dispatch: 'C' "" ""
+1653804152.896600 input_csi_dispatch: 'C' "" ""
+1653804152.896614 input_csi_dispatch: 'C' "" ""
+1653804152.896629 input_csi_dispatch: 'C' "" ""
+1653804152.896644 input_csi_dispatch: 'C' "" ""
+1653804152.896658 input_csi_dispatch: 'C' "" ""
+1653804152.896673 input_csi_dispatch: 'C' "" ""
+1653804152.896687 input_csi_dispatch: 'C' "" ""
+1653804152.896701 input_csi_dispatch: 'C' "" ""
+1653804152.896716 input_csi_dispatch: 'C' "" ""
+1653804152.896730 input_csi_dispatch: 'C' "" ""
+1653804152.896744 input_csi_dispatch: 'C' "" ""
+1653804152.896759 input_csi_dispatch: 'C' "" ""
+1653804152.896773 input_csi_dispatch: 'C' "" ""
+1653804152.896787 input_csi_dispatch: 'C' "" ""
+1653804152.896801 input_csi_dispatch: 'C' "" ""
+1653804152.896815 input_csi_dispatch: 'C' "" ""
+1653804152.896830 input_csi_dispatch: 'C' "" ""
+1653804152.896844 input_csi_dispatch: 'C' "" ""
+1653804152.896858 input_csi_dispatch: 'C' "" ""
+1653804152.896872 input_csi_dispatch: 'C' "" ""
+1653804152.896902 input_csi_dispatch: 'C' "" ""
+1653804152.896966 @0 active pane changed
+1653804152.896981 @0 name timer already queued (9853 left)
+1653804152.897027 @0 active pane changed
+1653804152.897050 @0 name timer already queued (9783 left)
+1653804152.907178 @0 name timer expired
+1653804152.907315 @0 active pane changed
+1653804152.907518 format '#{pane_current_command}' -> 'bash'
+1653804152.907543 format '' -> ''
+1653804152.907574 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804152.907645 @0 name not changed (still bash)
+1653804154.432004 Looking up ssh.tmate.io...
+1653804154.432365 @0 active pane not changed
+1653804154.443739 Nameserver 192.168.49.1:53 has failed: Bad response 5 (refused)
+1653804154.443777 All nameservers have failed
+1653804154.443882 ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)
+1653804154.450800 @0 active pane not changed
+1653804154.450884 @0 active pane not changed
+1653804154.818600 keys are 3 (\033[B)
+1653804154.818726 complete key \033[B 0x100000000042
+1653804154.818753 session 0 activity 1653804154.818748 (last 1653804152.895366)
+1653804154.818778 session 0 not pasting
+1653804154.818803 writing key 0x100000000042 (Down) to %0
+1653804154.818825 found key 0x100000000042: "\033[B"
+1653804154.818861 @0 active pane not changed
+1653804154.818920 @0 active pane not changed
+1653804154.819161 %0 has 2 bytes
+1653804154.819190 @0 alerts timer reset 0
+1653804154.819207 @0 alerts flags added 0x2
+1653804154.819226 input_parse: %0 ground, 2 bytes: \r\033
+1653804154.819243 input_c0_dispatch: '\r'
+1653804154.819303 @0 active pane changed
+1653804154.819517 format '#{pane_current_command}' -> 'bash'
+1653804154.819539 format '' -> ''
+1653804154.819567 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804154.819634 @0 name not changed (still bash)
+1653804154.819666 %0 has 131 bytes
+1653804154.819686 @0 alerts timer reset 0
+1653804154.819701 @0 alerts flags added 0x2
+1653804154.819722 input_parse: %0 esc_enter, 131 bytes: [5P\033[31m09:02:20\033[0m:\033[33marm64\033[0m:\033[32m~/c\033[0m$\r\033[31m09:02:20\033[0m:\033[33marm64\033[0m:\033[32m~/c\033[0m$ \033[C\033[C\033[C\033[C\033[C\b\b\b\bubl root.py \033[K
+1653804154.819746 input_csi_dispatch: 'P' "" "5"
+1653804154.819799 input_csi_dispatch: 'm' "" "31"
+1653804154.819939 input_csi_dispatch: 'm' "" "0"
+1653804154.819996 input_csi_dispatch: 'm' "" "33"
+1653804154.820077 input_csi_dispatch: 'm' "" "0"
+1653804154.820114 input_csi_dispatch: 'm' "" "32"
+1653804154.820173 input_csi_dispatch: 'm' "" "0"
+1653804154.820208 input_c0_dispatch: '\r'
+1653804154.820224 input_csi_dispatch: 'm' "" "31"
+1653804154.820344 input_csi_dispatch: 'm' "" "0"
+1653804154.820382 input_csi_dispatch: 'm' "" "33"
+1653804154.820461 input_csi_dispatch: 'm' "" "0"
+1653804154.820498 input_csi_dispatch: 'm' "" "32"
+1653804154.820557 input_csi_dispatch: 'm' "" "0"
+1653804154.820604 input_csi_dispatch: 'C' "" ""
+1653804154.820619 input_csi_dispatch: 'C' "" ""
+1653804154.820634 input_csi_dispatch: 'C' "" ""
+1653804154.820649 input_csi_dispatch: 'C' "" ""
+1653804154.820663 input_csi_dispatch: 'C' "" ""
+1653804154.820678 input_c0_dispatch: '\b'
+1653804154.820691 input_c0_dispatch: '\b'
+1653804154.820704 input_c0_dispatch: '\b'
+1653804154.820718 input_c0_dispatch: '\b'
+1653804154.820864 input_csi_dispatch: 'K' "" ""
+1653804154.820943 @0 active pane changed
+1653804154.820959 @0 name timer queued (498360 left)
+1653804154.820985 @0 active pane changed
+1653804154.821003 @0 name timer already queued (498316 left)
+1653804155.319795 @0 name timer expired
+1653804155.319935 @0 active pane changed
+1653804155.320133 format '#{pane_current_command}' -> 'bash'
+1653804155.320158 format '' -> ''
+1653804155.320177 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804155.320238 @0 name not changed (still bash)
+1653804155.321110 keys are 1 (\177)
+1653804155.321136 complete key \177 0x10000000002d
+1653804155.321158 session 0 activity 1653804155.321152 (last 1653804154.818748)
+1653804155.321176 session 0 not pasting
+1653804155.321196 writing key 0x10000000002d (BSpace) to %0
+1653804155.321217 found key 0x10000000002d: "\177"
+1653804155.321240 @0 active pane not changed
+1653804155.321287 @0 active pane not changed
+1653804155.321400 %0 has 4 bytes
+1653804155.321441 @0 alerts timer reset 0
+1653804155.321460 @0 alerts flags added 0x2
+1653804155.321479 input_parse: %0 ground, 4 bytes: \b\033[K
+1653804155.321498 input_c0_dispatch: '\b'
+1653804155.321516 input_csi_dispatch: 'K' "" ""
+1653804155.321579 @0 active pane changed
+1653804155.321596 @0 name timer queued (498358 left)
+1653804155.321634 @0 active pane changed
+1653804155.321654 @0 name timer already queued (498300 left)
+1653804155.346068 client 0x154009a00, status interval 15
+1653804155.346207 @0 active pane changed
+1653804155.346219 @0 name timer already queued (473734 left)
+1653804155.570739 keys are 1 (\177)
+1653804155.570861 complete key \177 0x10000000002d
+1653804155.570883 session 0 activity 1653804155.570878 (last 1653804155.321152)
+1653804155.570905 session 0 not pasting
+1653804155.570931 writing key 0x10000000002d (BSpace) to %0
+1653804155.570952 found key 0x10000000002d: "\177"
+1653804155.570981 @0 active pane changed
+1653804155.570994 @0 name timer already queued (248959 left)
+1653804155.571046 @0 active pane changed
+1653804155.571060 @0 name timer already queued (248894 left)
+1653804155.571134 %0 has 4 bytes
+1653804155.571156 @0 alerts timer reset 0
+1653804155.571168 @0 alerts flags added 0x2
+1653804155.571183 input_parse: %0 ground, 4 bytes: \b\033[K
+1653804155.571195 input_c0_dispatch: '\b'
+1653804155.571208 input_csi_dispatch: 'K' "" ""
+1653804155.571258 @0 active pane changed
+1653804155.571269 @0 name timer already queued (248684 left)
+1653804155.571293 @0 active pane changed
+1653804155.571306 @0 name timer already queued (248647 left)
+1653804155.609394 keys are 1 (\177)
+1653804155.609468 complete key \177 0x10000000002d
+1653804155.609491 session 0 activity 1653804155.609486 (last 1653804155.570878)
+1653804155.609510 session 0 not pasting
+1653804155.609535 writing key 0x10000000002d (BSpace) to %0
+1653804155.609553 found key 0x10000000002d: "\177"
+1653804155.609580 @0 active pane changed
+1653804155.609596 @0 name timer already queued (210358 left)
+1653804155.609643 @0 active pane changed
+1653804155.609662 @0 name timer already queued (210292 left)
+1653804155.609732 %0 has 4 bytes
+1653804155.609758 @0 alerts timer reset 0
+1653804155.609773 @0 alerts flags added 0x2
+1653804155.609792 input_parse: %0 ground, 4 bytes: \b\033[K
+1653804155.609806 input_c0_dispatch: '\b'
+1653804155.609822 input_csi_dispatch: 'K' "" ""
+1653804155.609879 @0 active pane changed
+1653804155.609895 @0 name timer already queued (210059 left)
+1653804155.609926 @0 active pane changed
+1653804155.609944 @0 name timer already queued (210010 left)
+1653804155.640985 keys are 1 (\177)
+1653804155.641047 complete key \177 0x10000000002d
+1653804155.641061 session 0 activity 1653804155.641058 (last 1653804155.609486)
+1653804155.641073 session 0 not pasting
+1653804155.641087 writing key 0x10000000002d (BSpace) to %0
+1653804155.641097 found key 0x10000000002d: "\177"
+1653804155.641115 @0 active pane changed
+1653804155.641125 @0 name timer already queued (178828 left)
+1653804155.641154 @0 active pane changed
+1653804155.641164 @0 name timer already queued (178788 left)
+1653804155.641213 %0 has 4 bytes
+1653804155.641228 @0 alerts timer reset 0
+1653804155.641236 @0 alerts flags added 0x2
+1653804155.641246 input_parse: %0 ground, 4 bytes: \b\033[K
+1653804155.641255 input_c0_dispatch: '\b'
+1653804155.641265 input_csi_dispatch: 'K' "" ""
+1653804155.641297 @0 active pane changed
+1653804155.641306 @0 name timer already queued (178646 left)
+1653804155.641345 @0 active pane changed
+1653804155.641355 @0 name timer already queued (178597 left)
+1653804155.673638 keys are 1 (\177)
+1653804155.673705 complete key \177 0x10000000002d
+1653804155.673721 session 0 activity 1653804155.673718 (last 1653804155.641058)
+1653804155.673733 session 0 not pasting
+1653804155.673747 writing key 0x10000000002d (BSpace) to %0
+1653804155.673758 found key 0x10000000002d: "\177"
+1653804155.673776 @0 active pane changed
+1653804155.673786 @0 name timer already queued (146167 left)
+1653804155.673813 @0 active pane changed
+1653804155.673823 @0 name timer already queued (146130 left)
+1653804155.673870 %0 has 4 bytes
+1653804155.673884 @0 alerts timer reset 0
+1653804155.673893 @0 alerts flags added 0x2
+1653804155.673903 input_parse: %0 ground, 4 bytes: \b\033[K
+1653804155.673911 input_c0_dispatch: '\b'
+1653804155.673921 input_csi_dispatch: 'K' "" ""
+1653804155.673955 @0 active pane changed
+1653804155.673964 @0 name timer already queued (145988 left)
+1653804155.673982 @0 active pane changed
+1653804155.673992 @0 name timer already queued (145960 left)
+1653804155.708186 keys are 1 (\177)
+1653804155.708240 complete key \177 0x10000000002d
+1653804155.708253 session 0 activity 1653804155.708250 (last 1653804155.673718)
+1653804155.708265 session 0 not pasting
+1653804155.708277 writing key 0x10000000002d (BSpace) to %0
+1653804155.708286 found key 0x10000000002d: "\177"
+1653804155.708302 @0 active pane changed
+1653804155.708310 @0 name timer already queued (111642 left)
+1653804155.708336 @0 active pane changed
+1653804155.708344 @0 name timer already queued (111608 left)
+1653804155.708385 %0 has 4 bytes
+1653804155.708398 @0 alerts timer reset 0
+1653804155.708409 @0 alerts flags added 0x2
+1653804155.708417 input_parse: %0 ground, 4 bytes: \b\033[K
+1653804155.708427 input_c0_dispatch: '\b'
+1653804155.708436 input_csi_dispatch: 'K' "" ""
+1653804155.708471 @0 active pane changed
+1653804155.708478 @0 name timer already queued (111474 left)
+1653804155.708492 @0 active pane changed
+1653804155.708501 @0 name timer already queued (111451 left)
+1653804155.740377 keys are 1 (\177)
+1653804155.740436 complete key \177 0x10000000002d
+1653804155.740447 session 0 activity 1653804155.740445 (last 1653804155.708250)
+1653804155.740458 session 0 not pasting
+1653804155.740472 writing key 0x10000000002d (BSpace) to %0
+1653804155.740482 found key 0x10000000002d: "\177"
+1653804155.740499 @0 active pane changed
+1653804155.740507 @0 name timer already queued (79446 left)
+1653804155.740536 @0 active pane changed
+1653804155.740545 @0 name timer already queued (79407 left)
+1653804155.740582 %0 has 4 bytes
+1653804155.740595 @0 alerts timer reset 0
+1653804155.740602 @0 alerts flags added 0x2
+1653804155.740610 input_parse: %0 ground, 4 bytes: \b\033[K
+1653804155.740618 input_c0_dispatch: '\b'
+1653804155.740626 input_csi_dispatch: 'K' "" ""
+1653804155.740657 @0 active pane changed
+1653804155.740665 @0 name timer already queued (79287 left)
+1653804155.740679 @0 active pane changed
+1653804155.740687 @0 name timer already queued (79265 left)
+1653804155.772777 keys are 1 (\177)
+1653804155.772825 complete key \177 0x10000000002d
+1653804155.772842 session 0 activity 1653804155.772839 (last 1653804155.740445)
+1653804155.772855 session 0 not pasting
+1653804155.772868 writing key 0x10000000002d (BSpace) to %0
+1653804155.772877 found key 0x10000000002d: "\177"
+1653804155.772891 @0 active pane changed
+1653804155.772899 @0 name timer already queued (47054 left)
+1653804155.772924 @0 active pane changed
+1653804155.772933 @0 name timer already queued (47019 left)
+1653804155.772988 %0 has 4 bytes
+1653804155.773014 @0 alerts timer reset 0
+1653804155.773025 @0 alerts flags added 0x2
+1653804155.773034 input_parse: %0 ground, 4 bytes: \b\033[K
+1653804155.773042 input_c0_dispatch: '\b'
+1653804155.773051 input_csi_dispatch: 'K' "" ""
+1653804155.773082 @0 active pane changed
+1653804155.773090 @0 name timer already queued (46863 left)
+1653804155.773109 @0 active pane changed
+1653804155.773117 @0 name timer already queued (46835 left)
+1653804155.808462 keys are 1 (\177)
+1653804155.808505 complete key \177 0x10000000002d
+1653804155.808518 session 0 activity 1653804155.808515 (last 1653804155.772839)
+1653804155.808528 session 0 not pasting
+1653804155.808539 writing key 0x10000000002d (BSpace) to %0
+1653804155.808548 found key 0x10000000002d: "\177"
+1653804155.808563 @0 active pane changed
+1653804155.808571 @0 name timer already queued (11382 left)
+1653804155.808596 @0 active pane changed
+1653804155.808605 @0 name timer already queued (11347 left)
+1653804155.808653 %0 has 4 bytes
+1653804155.808672 @0 alerts timer reset 0
+1653804155.808681 @0 alerts flags added 0x2
+1653804155.808690 input_parse: %0 ground, 4 bytes: \b\033[K
+1653804155.808698 input_c0_dispatch: '\b'
+1653804155.808706 input_csi_dispatch: 'K' "" ""
+1653804155.808735 @0 active pane changed
+1653804155.808742 @0 name timer already queued (11210 left)
+1653804155.808761 @0 active pane changed
+1653804155.808769 @0 name timer already queued (11183 left)
+1653804155.821024 @0 name timer expired
+1653804155.821081 @0 active pane changed
+1653804155.821175 format '#{pane_current_command}' -> 'bash'
+1653804155.821186 format '' -> ''
+1653804155.821194 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804155.821221 @0 name not changed (still bash)
+1653804155.841710 keys are 1 (\177)
+1653804155.841730 complete key \177 0x10000000002d
+1653804155.841740 session 0 activity 1653804155.841737 (last 1653804155.808515)
+1653804155.841748 session 0 not pasting
+1653804155.841758 writing key 0x10000000002d (BSpace) to %0
+1653804155.841766 found key 0x10000000002d: "\177"
+1653804155.841775 @0 active pane not changed
+1653804155.841794 @0 active pane not changed
+1653804155.841854 %0 has 4 bytes
+1653804155.841873 @0 alerts timer reset 0
+1653804155.841881 @0 alerts flags added 0x2
+1653804155.841890 input_parse: %0 ground, 4 bytes: \b\033[K
+1653804155.841898 input_c0_dispatch: '\b'
+1653804155.841905 input_csi_dispatch: 'K' "" ""
+1653804155.841934 @0 active pane changed
+1653804155.841942 @0 name timer queued (479147 left)
+1653804155.841959 @0 active pane changed
+1653804155.841967 @0 name timer already queued (479122 left)
+1653804155.875032 keys are 1 (\177)
+1653804155.875058 complete key \177 0x10000000002d
+1653804155.875068 session 0 activity 1653804155.875066 (last 1653804155.841737)
+1653804155.875076 session 0 not pasting
+1653804155.875085 writing key 0x10000000002d (BSpace) to %0
+1653804155.875092 found key 0x10000000002d: "\177"
+1653804155.875102 @0 active pane changed
+1653804155.875109 @0 name timer already queued (445980 left)
+1653804155.875125 @0 active pane changed
+1653804155.875133 @0 name timer already queued (445955 left)
+1653804155.875184 %0 has 4 bytes
+1653804155.875202 @0 alerts timer reset 0
+1653804155.875210 @0 alerts flags added 0x2
+1653804155.875218 input_parse: %0 ground, 4 bytes: \b\033[K
+1653804155.875226 input_c0_dispatch: '\b'
+1653804155.875234 input_csi_dispatch: 'K' "" ""
+1653804155.875264 @0 active pane changed
+1653804155.875271 @0 name timer already queued (445818 left)
+1653804155.875286 @0 active pane changed
+1653804155.875293 @0 name timer already queued (445795 left)
+1653804155.907278 keys are 1 (\177)
+1653804155.907304 complete key \177 0x10000000002d
+1653804155.907313 session 0 activity 1653804155.907311 (last 1653804155.875066)
+1653804155.907321 session 0 not pasting
+1653804155.907329 writing key 0x10000000002d (BSpace) to %0
+1653804155.907337 found key 0x10000000002d: "\177"
+1653804155.907346 @0 active pane changed
+1653804155.907353 @0 name timer already queued (413735 left)
+1653804155.907368 @0 active pane changed
+1653804155.907375 @0 name timer already queued (413713 left)
+1653804155.907426 %0 has 4 bytes
+1653804155.907444 @0 alerts timer reset 0
+1653804155.907452 @0 alerts flags added 0x2
+1653804155.907460 input_parse: %0 ground, 4 bytes: \b\033[K
+1653804155.907468 input_c0_dispatch: '\b'
+1653804155.907476 input_csi_dispatch: 'K' "" ""
+1653804155.907504 @0 active pane changed
+1653804155.907512 @0 name timer already queued (413577 left)
+1653804155.907530 @0 active pane changed
+1653804155.907537 @0 name timer already queued (413551 left)
+1653804155.941661 keys are 1 (\177)
+1653804155.941685 complete key \177 0x10000000002d
+1653804155.941694 session 0 activity 1653804155.941692 (last 1653804155.907311)
+1653804155.941702 session 0 not pasting
+1653804155.941711 writing key 0x10000000002d (BSpace) to %0
+1653804155.941725 found key 0x10000000002d: "\177"
+1653804155.941736 @0 active pane changed
+1653804155.941742 @0 name timer already queued (379346 left)
+1653804155.941759 @0 active pane changed
+1653804155.941766 @0 name timer already queued (379323 left)
+1653804155.941820 %0 has 4 bytes
+1653804155.941838 @0 alerts timer reset 0
+1653804155.941846 @0 alerts flags added 0x2
+1653804155.941854 input_parse: %0 ground, 4 bytes: \b\033[K
+1653804155.941861 input_c0_dispatch: '\b'
+1653804155.941869 input_csi_dispatch: 'K' "" ""
+1653804155.941894 @0 active pane changed
+1653804155.941901 @0 name timer already queued (379188 left)
+1653804155.941919 @0 active pane changed
+1653804155.941927 @0 name timer already queued (379162 left)
+1653804155.978954 keys are 1 (\177)
+1653804155.991100 complete key \177 0x10000000002d
+1653804155.991116 session 0 activity 1653804155.991113 (last 1653804155.941692)
+1653804155.991130 session 0 not pasting
+1653804155.991142 writing key 0x10000000002d (BSpace) to %0
+1653804155.991151 found key 0x10000000002d: "\177"
+1653804155.991165 @0 active pane changed
+1653804155.991172 @0 name timer already queued (329917 left)
+1653804155.991194 @0 active pane changed
+1653804155.991203 @0 name timer already queued (329885 left)
+1653804155.991223 %0 has 1 bytes
+1653804155.992762 @0 alerts timer reset 0
+1653804155.992771 @0 alerts flags added 0x2
+1653804155.992780 input_parse: %0 ground, 1 bytes: \a
+1653804155.992788 input_c0_dispatch: '\a'
+1653804155.992795 @0 alerts timer reset 0
+1653804155.992802 @0 alerts flags added 0x1
+1653804155.992810 alerts check queued (by @0)
+1653804155.992834 cmd_find_from_winlink: s=$0
+1653804155.992842 cmd_find_from_winlink: wl=0 1 w=@0 bash
+1653804155.992849 cmd_find_from_winlink: wp=%0
+1653804155.992856 cmd_find_from_winlink: idx=none
+1653804155.992866 0:0 @0 alerts check, alerts 0x1, flags 0x3
+1653804156.032022 @0 active pane changed
+1653804156.032043 @0 name timer already queued (289046 left)
+1653804156.032091 @0 active pane changed
+1653804156.032102 @0 name timer already queued (288987 left)
+1653804156.121703 keys are 1 (\r)
+1653804156.121811 complete key \r 0xd
+1653804156.121834 session 0 activity 1653804156.121828 (last 1653804155.991113)
+1653804156.121857 session 0 not pasting
+1653804156.121887 writing key 0xd (Enter) to %0
+1653804156.121922 @0 active pane changed
+1653804156.121938 @0 name timer already queued (199152 left)
+1653804156.121992 @0 active pane changed
+1653804156.122010 @0 name timer already queued (199080 left)
+1653804156.122044 %0 has 2 bytes
+1653804156.122067 @0 alerts flags added 0x2
+1653804156.122088 input_parse: %0 ground, 2 bytes: \r\n
+1653804156.122105 input_c0_dispatch: '\r'
+1653804156.122119 input_c0_dispatch: '\n'
+1653804156.122169 @0 active pane changed
+1653804156.122184 @0 name timer already queued (198906 left)
+1653804156.122219 @0 active pane changed
+1653804156.122237 @0 name timer already queued (198853 left)
+1653804156.153285 %0 has 47 bytes
+1653804156.153321 @0 alerts timer reset 0
+1653804156.153329 @0 alerts flags added 0x2
+1653804156.153338 input_parse: %0 ground, 47 bytes: \033[31m09:02:36\033[0m:\033[33marm64\033[0m:\033[32m~/c\033[0m$ 
+1653804156.153348 input_csi_dispatch: 'm' "" "31"
+1653804156.153434 input_csi_dispatch: 'm' "" "0"
+1653804156.153450 input_csi_dispatch: 'm' "" "33"
+1653804156.153496 input_csi_dispatch: 'm' "" "0"
+1653804156.153510 input_csi_dispatch: 'm' "" "32"
+1653804156.153534 input_csi_dispatch: 'm' "" "0"
+1653804156.153571 @0 active pane changed
+1653804156.153577 @0 name timer already queued (167511 left)
+1653804156.153598 @0 active pane changed
+1653804156.153604 @0 name timer already queued (167484 left)
+1653804156.271091 keys are 1 (\r)
+1653804156.271162 complete key \r 0xd
+1653804156.271176 session 0 activity 1653804156.271172 (last 1653804156.121828)
+1653804156.271192 session 0 not pasting
+1653804156.271206 writing key 0xd (Enter) to %0
+1653804156.271231 @0 active pane changed
+1653804156.271240 @0 name timer already queued (49848 left)
+1653804156.271267 @0 active pane changed
+1653804156.271278 @0 name timer already queued (49811 left)
+1653804156.271296 %0 has 2 bytes
+1653804156.271308 @0 alerts timer reset 0
+1653804156.271317 @0 alerts flags added 0x2
+1653804156.271327 input_parse: %0 ground, 2 bytes: \r\n
+1653804156.271339 input_c0_dispatch: '\r'
+1653804156.271347 input_c0_dispatch: '\n'
+1653804156.271376 @0 active pane changed
+1653804156.271384 @0 name timer already queued (49704 left)
+1653804156.271402 @0 active pane changed
+1653804156.271446 @0 name timer already queued (49645 left)
+1653804156.302984 %0 has 47 bytes
+1653804156.303015 @0 alerts timer reset 0
+1653804156.303023 @0 alerts flags added 0x2
+1653804156.303033 input_parse: %0 ground, 47 bytes: \033[31m09:02:36\033[0m:\033[33marm64\033[0m:\033[32m~/c\033[0m$ 
+1653804156.303043 input_csi_dispatch: 'm' "" "31"
+1653804156.303144 input_csi_dispatch: 'm' "" "0"
+1653804156.303162 input_csi_dispatch: 'm' "" "33"
+1653804156.303202 input_csi_dispatch: 'm' "" "0"
+1653804156.303220 input_csi_dispatch: 'm' "" "32"
+1653804156.303248 input_csi_dispatch: 'm' "" "0"
+1653804156.303291 @0 active pane changed
+1653804156.303298 @0 name timer already queued (17791 left)
+1653804156.303320 @0 active pane changed
+1653804156.303327 @0 name timer already queued (17761 left)
+1653804156.322120 @0 name timer expired
+1653804156.322161 @0 active pane changed
+1653804156.322245 format '#{pane_current_command}' -> 'bash'
+1653804156.322256 format '' -> ''
+1653804156.322264 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804156.322299 @0 name not changed (still bash)
+1653804156.445103 Looking up ssh.tmate.io...
+1653804156.445397 @0 active pane not changed
+1653804156.455515 Nameserver 192.168.49.1:53 has failed: Bad response 5 (refused)
+1653804156.455637 All nameservers have failed
+1653804156.455780 ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)
+1653804156.461460 @0 active pane not changed
+1653804156.461533 @0 active pane not changed
+1653804156.981950 keys are 1 (t)
+1653804156.982079 complete key t 0x74
+1653804156.982106 session 0 activity 1653804156.982100 (last 1653804156.271172)
+1653804156.982128 session 0 not pasting
+1653804156.982153 writing key 0x74 (t) to %0
+1653804156.982189 @0 active pane not changed
+1653804156.982243 @0 active pane not changed
+1653804156.982329 %0 has 1 bytes
+1653804156.982357 @0 alerts timer reset 0
+1653804156.982374 @0 alerts flags added 0x2
+1653804156.982391 input_parse: %0 ground, 1 bytes: t
+1653804156.982522 @0 active pane changed
+1653804156.982707 format '#{pane_current_command}' -> 'bash'
+1653804156.982730 format '' -> ''
+1653804156.982748 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804156.982807 @0 name not changed (still bash)
+1653804156.982842 @0 active pane not changed
+1653804157.577402 keys are 1 (m)
+1653804157.577522 complete key m 0x6d
+1653804157.577551 session 0 activity 1653804157.577545 (last 1653804156.982100)
+1653804157.577581 session 0 not pasting
+1653804157.577618 writing key 0x6d (m) to %0
+1653804157.577663 @0 active pane not changed
+1653804157.577717 @0 active pane not changed
+1653804157.577813 %0 has 1 bytes
+1653804157.577842 @0 alerts timer reset 0
+1653804157.577859 @0 alerts flags added 0x2
+1653804157.577878 input_parse: %0 ground, 1 bytes: m
+1653804157.578017 @0 active pane changed
+1653804157.578199 format '#{pane_current_command}' -> 'bash'
+1653804157.578222 format '' -> ''
+1653804157.578239 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804157.578299 @0 name not changed (still bash)
+1653804157.578335 @0 active pane not changed
+1653804157.622492 keys are 1 (a)
+1653804157.622599 complete key a 0x61
+1653804157.622619 session 0 activity 1653804157.622615 (last 1653804157.577545)
+1653804157.622637 session 0 not pasting
+1653804157.622654 writing key 0x61 (a) to %0
+1653804157.622680 @0 active pane not changed
+1653804157.622725 @0 active pane not changed
+1653804157.622804 %0 has 1 bytes
+1653804157.622823 @0 alerts timer reset 0
+1653804157.622835 @0 alerts flags added 0x2
+1653804157.622849 input_parse: %0 ground, 1 bytes: a
+1653804157.622944 @0 active pane changed
+1653804157.622953 @0 name timer queued (455078 left)
+1653804157.622975 @0 active pane changed
+1653804157.622985 @0 name timer already queued (455046 left)
+1653804157.877037 keys are 1 (t)
+1653804157.877168 complete key t 0x74
+1653804157.877199 session 0 activity 1653804157.877192 (last 1653804157.622615)
+1653804157.877228 session 0 not pasting
+1653804157.877258 writing key 0x74 (t) to %0
+1653804157.877300 @0 active pane changed
+1653804157.877317 @0 name timer already queued (200716 left)
+1653804157.877381 @0 active pane changed
+1653804157.877400 @0 name timer already queued (200632 left)
+1653804157.877480 %0 has 1 bytes
+1653804157.877508 @0 alerts timer reset 0
+1653804157.877524 @0 alerts flags added 0x2
+1653804157.877542 input_parse: %0 ground, 1 bytes: t
+1653804157.877676 @0 active pane changed
+1653804157.877692 @0 name timer already queued (200340 left)
+1653804157.877725 @0 active pane changed
+1653804157.877744 @0 name timer already queued (200288 left)
+1653804157.998797 keys are 1 (e)
+1653804157.998950 complete key e 0x65
+1653804157.998978 session 0 activity 1653804157.998973 (last 1653804157.877192)
+1653804157.999004 session 0 not pasting
+1653804157.999033 writing key 0x65 (e) to %0
+1653804157.999070 @0 active pane changed
+1653804157.999086 @0 name timer already queued (78946 left)
+1653804157.999144 @0 active pane changed
+1653804157.999162 @0 name timer already queued (78869 left)
+1653804157.999236 %0 has 1 bytes
+1653804157.999264 @0 alerts timer reset 0
+1653804157.999280 @0 alerts flags added 0x2
+1653804157.999297 input_parse: %0 ground, 1 bytes: e
+1653804157.999426 @0 active pane changed
+1653804157.999441 @0 name timer already queued (78591 left)
+1653804157.999473 @0 active pane changed
+1653804157.999491 @0 name timer already queued (78540 left)
+1653804158.078158 @0 name timer expired
+1653804158.078287 @0 active pane changed
+1653804158.078500 format '#{pane_current_command}' -> 'bash'
+1653804158.078524 format '' -> ''
+1653804158.078543 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804158.078613 @0 name not changed (still bash)
+1653804158.115133 keys are 1 ( )
+1653804158.115254 complete key   0x20
+1653804158.115281 session 0 activity 1653804158.115274 (last 1653804157.998973)
+1653804158.115306 session 0 not pasting
+1653804158.115334 writing key 0x20 (Space) to %0
+1653804158.115375 @0 active pane not changed
+1653804158.115425 @0 active pane not changed
+1653804158.115535 %0 has 1 bytes
+1653804158.115579 @0 alerts timer reset 0
+1653804158.115599 @0 alerts flags added 0x2
+1653804158.115618 input_parse: %0 ground, 1 bytes:  
+1653804158.115749 @0 active pane changed
+1653804158.115765 @0 name timer queued (462543 left)
+1653804158.115810 @0 active pane changed
+1653804158.115829 @0 name timer already queued (462479 left)
+1653804158.326824 keys are 1 (s)
+1653804158.326948 complete key s 0x73
+1653804158.326974 session 0 activity 1653804158.326969 (last 1653804158.115274)
+1653804158.327000 session 0 not pasting
+1653804158.327023 writing key 0x73 (s) to %0
+1653804158.327067 @0 active pane changed
+1653804158.327084 @0 name timer already queued (251225 left)
+1653804158.327137 @0 active pane changed
+1653804158.327155 @0 name timer already queued (251152 left)
+1653804158.327235 %0 has 1 bytes
+1653804158.327261 @0 alerts timer reset 0
+1653804158.327276 @0 alerts flags added 0x2
+1653804158.327296 input_parse: %0 ground, 1 bytes: s
+1653804158.327435 @0 active pane changed
+1653804158.327451 @0 name timer already queued (250857 left)
+1653804158.327497 @0 active pane changed
+1653804158.327515 @0 name timer already queued (250793 left)
+1653804158.456968 Looking up ssh.tmate.io...
+1653804158.457336 @0 active pane changed
+1653804158.457363 @0 name timer already queued (120947 left)
+1653804158.468943 Nameserver 192.168.49.1:53 has failed: Bad response 5 (refused)
+1653804158.469032 All nameservers have failed
+1653804158.469130 ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)
+1653804158.474867 @0 active pane changed
+1653804158.474885 @0 name timer already queued (103423 left)
+1653804158.474954 @0 active pane changed
+1653804158.474975 @0 name timer already queued (103333 left)
+1653804158.579395 @0 name timer expired
+1653804158.579508 @0 active pane changed
+1653804158.579714 format '#{pane_current_command}' -> 'bash'
+1653804158.579738 format '' -> ''
+1653804158.579759 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804158.579820 @0 name not changed (still bash)
+1653804159.062709 keys are 1 (h)
+1653804159.062783 complete key h 0x68
+1653804159.062810 session 0 activity 1653804159.062805 (last 1653804158.326969)
+1653804159.062831 session 0 not pasting
+1653804159.062853 writing key 0x68 (h) to %0
+1653804159.062882 @0 active pane not changed
+1653804159.062930 @0 active pane not changed
+1653804159.063012 %0 has 1 bytes
+1653804159.063038 @0 alerts timer reset 0
+1653804159.063056 @0 alerts flags added 0x2
+1653804159.063076 input_parse: %0 ground, 1 bytes: h
+1653804159.063198 @0 active pane changed
+1653804159.063213 @0 name timer queued (16315 left)
+1653804159.063245 @0 active pane changed
+1653804159.063263 @0 name timer already queued (16264 left)
+1653804159.080588 @0 name timer expired
+1653804159.080814 @0 active pane changed
+1653804159.081042 format '#{pane_current_command}' -> 'bash'
+1653804159.081063 format '' -> ''
+1653804159.081077 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804159.081122 @0 name not changed (still bash)
+1653804159.322197 keys are 1 (o)
+1653804159.322314 complete key o 0x6f
+1653804159.322343 session 0 activity 1653804159.322338 (last 1653804159.062805)
+1653804159.322368 session 0 not pasting
+1653804159.322401 writing key 0x6f (o) to %0
+1653804159.322440 @0 active pane not changed
+1653804159.322499 @0 active pane not changed
+1653804159.322599 %0 has 1 bytes
+1653804159.322627 @0 alerts timer reset 0
+1653804159.322643 @0 alerts flags added 0x2
+1653804159.322662 input_parse: %0 ground, 1 bytes: o
+1653804159.322811 @0 active pane changed
+1653804159.322827 @0 name timer queued (258012 left)
+1653804159.322860 @0 active pane changed
+1653804159.322878 @0 name timer already queued (257960 left)
+1653804159.456324 keys are 1 (w)
+1653804159.456472 complete key w 0x77
+1653804159.456503 session 0 activity 1653804159.456497 (last 1653804159.322338)
+1653804159.456528 session 0 not pasting
+1653804159.456557 writing key 0x77 (w) to %0
+1653804159.456598 @0 active pane changed
+1653804159.456614 @0 name timer already queued (124225 left)
+1653804159.456669 @0 active pane changed
+1653804159.456688 @0 name timer already queued (124151 left)
+1653804159.456760 %0 has 1 bytes
+1653804159.456788 @0 alerts timer reset 0
+1653804159.456803 @0 alerts flags added 0x2
+1653804159.456823 input_parse: %0 ground, 1 bytes: w
+1653804159.456963 @0 active pane changed
+1653804159.456979 @0 name timer already queued (123860 left)
+1653804159.457031 @0 active pane changed
+1653804159.457049 @0 name timer already queued (123790 left)
+1653804159.581919 @0 name timer expired
+1653804159.582065 @0 active pane changed
+1653804159.582250 format '#{pane_current_command}' -> 'bash'
+1653804159.582274 format '' -> ''
+1653804159.582293 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804159.582356 @0 name not changed (still bash)
+1653804160.470434 Looking up ssh.tmate.io...
+1653804160.473091 @0 active pane not changed
+1653804160.484202 Nameserver 192.168.49.1:53 has failed: Bad response 5 (refused)
+1653804160.490423 All nameservers have failed
+1653804160.490549 ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)
+1653804160.496736 @0 active pane not changed
+1653804160.496812 @0 active pane not changed
+1653804160.834295 keys are 1 (-)
+1653804160.834434 complete key - 0x2d
+1653804160.834471 session 0 activity 1653804160.834465 (last 1653804159.456497)
+1653804160.834497 session 0 not pasting
+1653804160.834530 writing key 0x2d (-) to %0
+1653804160.834602 @0 active pane not changed
+1653804160.834678 @0 active pane not changed
+1653804160.834777 %0 has 1 bytes
+1653804160.834808 @0 alerts timer reset 0
+1653804160.834825 @0 alerts flags added 0x2
+1653804160.834843 input_parse: %0 ground, 1 bytes: -
+1653804160.834972 @0 active pane changed
+1653804160.835143 format '#{pane_current_command}' -> 'bash'
+1653804160.835166 format '' -> ''
+1653804160.835183 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804160.835248 @0 name not changed (still bash)
+1653804160.835284 @0 active pane not changed
+1653804161.213626 keys are 1 (m)
+1653804161.213787 complete key m 0x6d
+1653804161.213823 session 0 activity 1653804161.213817 (last 1653804160.834465)
+1653804161.213846 session 0 not pasting
+1653804161.213872 writing key 0x6d (m) to %0
+1653804161.213941 @0 active pane not changed
+1653804161.214002 @0 active pane not changed
+1653804161.214100 %0 has 1 bytes
+1653804161.214128 @0 alerts timer reset 0
+1653804161.214143 @0 alerts flags added 0x2
+1653804161.214161 input_parse: %0 ground, 1 bytes: m
+1653804161.214292 @0 active pane changed
+1653804161.214308 @0 name timer queued (120679 left)
+1653804161.214342 @0 active pane changed
+1653804161.214360 @0 name timer already queued (120627 left)
+1653804161.325322 keys are 1 (e)
+1653804161.325453 complete key e 0x65
+1653804161.325478 session 0 activity 1653804161.325473 (last 1653804161.213817)
+1653804161.325506 session 0 not pasting
+1653804161.325539 writing key 0x65 (e) to %0
+1653804161.325583 @0 active pane changed
+1653804161.325600 @0 name timer already queued (9387 left)
+1653804161.325653 @0 active pane changed
+1653804161.325672 @0 name timer already queued (9315 left)
+1653804161.325749 %0 has 1 bytes
+1653804161.325778 @0 alerts timer reset 0
+1653804161.325797 @0 alerts flags added 0x2
+1653804161.325815 input_parse: %0 ground, 1 bytes: e
+1653804161.325972 @0 active pane changed
+1653804161.325988 @0 name timer already queued (8999 left)
+1653804161.326031 @0 active pane changed
+1653804161.326048 @0 name timer already queued (8938 left)
+1653804161.336035 @0 name timer expired
+1653804161.336143 @0 active pane changed
+1653804161.336331 format '#{pane_current_command}' -> 'bash'
+1653804161.336355 format '' -> ''
+1653804161.336373 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804161.336433 @0 name not changed (still bash)
+1653804161.533808 keys are 1 (s)
+1653804161.533866 complete key s 0x73
+1653804161.533880 session 0 activity 1653804161.533877 (last 1653804161.325473)
+1653804161.533892 session 0 not pasting
+1653804161.533907 writing key 0x73 (s) to %0
+1653804161.533929 @0 active pane not changed
+1653804161.533957 @0 active pane not changed
+1653804161.534025 %0 has 1 bytes
+1653804161.534040 @0 alerts timer reset 0
+1653804161.534049 @0 alerts flags added 0x2
+1653804161.534059 input_parse: %0 ground, 1 bytes: s
+1653804161.534131 @0 active pane changed
+1653804161.534140 @0 name timer queued (302018 left)
+1653804161.534159 @0 active pane changed
+1653804161.534170 @0 name timer already queued (301988 left)
+1653804161.723793 keys are 1 (s)
+1653804161.723891 complete key s 0x73
+1653804161.723918 session 0 activity 1653804161.723913 (last 1653804161.533877)
+1653804161.723939 session 0 not pasting
+1653804161.723962 writing key 0x73 (s) to %0
+1653804161.724002 @0 active pane changed
+1653804161.724018 @0 name timer already queued (112140 left)
+1653804161.724075 @0 active pane changed
+1653804161.724089 @0 name timer already queued (112069 left)
+1653804161.724151 %0 has 1 bytes
+1653804161.724172 @0 alerts timer reset 0
+1653804161.724184 @0 alerts flags added 0x2
+1653804161.724197 input_parse: %0 ground, 1 bytes: s
+1653804161.724301 @0 active pane changed
+1653804161.724312 @0 name timer already queued (111846 left)
+1653804161.724336 @0 active pane changed
+1653804161.724349 @0 name timer already queued (111809 left)
+1653804161.837229 @0 name timer expired
+1653804161.837385 @0 active pane changed
+1653804161.837574 format '#{pane_current_command}' -> 'bash'
+1653804161.837598 format '' -> ''
+1653804161.837617 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804161.837687 @0 name not changed (still bash)
+1653804161.909354 keys are 1 (a)
+1653804161.909473 complete key a 0x61
+1653804161.909500 session 0 activity 1653804161.909494 (last 1653804161.723913)
+1653804161.909526 session 0 not pasting
+1653804161.909554 writing key 0x61 (a) to %0
+1653804161.909609 @0 active pane not changed
+1653804161.909668 @0 active pane not changed
+1653804161.909763 %0 has 1 bytes
+1653804161.909791 @0 alerts timer reset 0
+1653804161.909807 @0 alerts flags added 0x2
+1653804161.909837 input_parse: %0 ground, 1 bytes: a
+1653804161.909999 @0 active pane changed
+1653804161.910015 @0 name timer queued (427389 left)
+1653804161.910061 @0 active pane changed
+1653804161.910078 @0 name timer already queued (427326 left)
+1653804162.197549 keys are 1 (g)
+1653804162.197654 complete key g 0x67
+1653804162.197675 session 0 activity 1653804162.197671 (last 1653804161.909494)
+1653804162.197697 session 0 not pasting
+1653804162.197715 writing key 0x67 (g) to %0
+1653804162.197747 @0 active pane changed
+1653804162.197758 @0 name timer already queued (139646 left)
+1653804162.197798 @0 active pane changed
+1653804162.197811 @0 name timer already queued (139593 left)
+1653804162.197881 %0 has 1 bytes
+1653804162.197903 @0 alerts timer reset 0
+1653804162.197914 @0 alerts flags added 0x2
+1653804162.197928 input_parse: %0 ground, 1 bytes: g
+1653804162.198030 @0 active pane changed
+1653804162.198041 @0 name timer already queued (139363 left)
+1653804162.198065 @0 active pane changed
+1653804162.198078 @0 name timer already queued (139326 left)
+1653804162.290094 keys are 1 (e)
+1653804162.290200 complete key e 0x65
+1653804162.290220 session 0 activity 1653804162.290217 (last 1653804162.197671)
+1653804162.290234 session 0 not pasting
+1653804162.290250 writing key 0x65 (e) to %0
+1653804162.290271 @0 active pane changed
+1653804162.290282 @0 name timer already queued (47121 left)
+1653804162.290309 @0 active pane changed
+1653804162.290322 @0 name timer already queued (47082 left)
+1653804162.290360 %0 has 1 bytes
+1653804162.290384 @0 alerts timer reset 0
+1653804162.290397 @0 alerts flags added 0x2
+1653804162.290410 input_parse: %0 ground, 1 bytes: e
+1653804162.290499 @0 active pane changed
+1653804162.290510 @0 name timer already queued (46894 left)
+1653804162.290532 @0 active pane changed
+1653804162.290544 @0 name timer already queued (46860 left)
+1653804162.338487 @0 name timer expired
+1653804162.338606 @0 active pane changed
+1653804162.338803 format '#{pane_current_command}' -> 'bash'
+1653804162.338834 format '' -> ''
+1653804162.338859 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804162.338929 @0 name not changed (still bash)
+1653804162.485602 Looking up ssh.tmate.io...
+1653804162.485942 @0 active pane not changed
+1653804162.493289 Nameserver 192.168.49.1:53 has failed: Bad response 5 (refused)
+1653804162.493405 All nameservers have failed
+1653804162.493528 ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)
+1653804162.503252 @0 active pane not changed
+1653804162.503353 keys are 1 (s)
+1653804162.503387 complete key s 0x73
+1653804162.503416 session 0 activity 1653804162.503410 (last 1653804162.290217)
+1653804162.503442 session 0 not pasting
+1653804162.503474 writing key 0x73 (s) to %0
+1653804162.503528 @0 active pane not changed
+1653804162.503580 @0 active pane not changed
+1653804162.504410 %0 has 1 bytes
+1653804162.504463 @0 alerts timer reset 0
+1653804162.504487 @0 alerts flags added 0x2
+1653804162.504512 input_parse: %0 ground, 1 bytes: s
+1653804162.504676 @0 active pane changed
+1653804162.504699 @0 name timer queued (333931 left)
+1653804162.504747 @0 active pane changed
+1653804162.504772 @0 name timer already queued (333858 left)
+1653804162.677990 keys are 1 (\r)
+1653804162.678172 complete key \r 0xd
+1653804162.678207 session 0 activity 1653804162.678202 (last 1653804162.503410)
+1653804162.678237 session 0 not pasting
+1653804162.678271 writing key 0xd (Enter) to %0
+1653804162.678319 @0 active pane changed
+1653804162.678343 @0 name timer already queued (160287 left)
+1653804162.678402 @0 active pane changed
+1653804162.678427 @0 name timer already queued (160203 left)
+1653804162.678466 %0 has 2 bytes
+1653804162.678495 @0 alerts timer reset 0
+1653804162.678517 @0 alerts flags added 0x2
+1653804162.678542 input_parse: %0 ground, 2 bytes: \r\n
+1653804162.678564 input_c0_dispatch: '\r'
+1653804162.678584 input_c0_dispatch: '\n'
+1653804162.678661 @0 active pane changed
+1653804162.678686 @0 name timer already queued (159944 left)
+1653804162.678727 @0 active pane changed
+1653804162.678752 @0 name timer already queued (159878 left)
+1653804162.704332 add peer 0x138028000: 5 (0x142008e00)
+1653804162.704379 new client 0x142008e00
+1653804162.704399 @0 active pane changed
+1653804162.704411 @0 name timer already queued (134218 left)
+1653804162.707109 peer 0x138028000 message 100
+1653804162.707130 client 0x142008e00 IDENTIFY_FLAGS 0x30000
+1653804162.707142 peer 0x138028000 message 101
+1653804162.707154 client 0x142008e00 IDENTIFY_TERM screen-256color
+1653804162.707164 peer 0x138028000 message 102
+1653804162.707175 client 0x142008e00 IDENTIFY_TTYNAME /dev/ttys009
+1653804162.707186 peer 0x138028000 message 108
+1653804162.707202 client 0x142008e00 IDENTIFY_CWD /Users/gera/c
+1653804162.707213 peer 0x138028000 message 104
+1653804162.707223 client 0x142008e00 IDENTIFY_STDIN 11
+1653804162.707233 peer 0x138028000 message 107
+1653804162.707244 client 0x142008e00 IDENTIFY_CLIENTPID 33812
+1653804162.707254 peer 0x138028000 message 105
+1653804162.707271 client 0x142008e00 IDENTIFY_ENVIRON MANPATH=/opt/local/share/man:/opt/homebrew/share/man:/usr/share/man:/usr/local/share/man:/Library/TeX/Distributions/.DefaultTeX/Contents/Man:/opt/X11/share/man:/opt/local/share/man:/opt/homebrew/share/man:
+1653804162.707282 peer 0x138028000 message 105
+1653804162.707294 client 0x142008e00 IDENTIFY_ENVIRON socks_PROXY=http://192.168.49.1:1080
+1653804162.707305 peer 0x138028000 message 105
+1653804162.707317 client 0x142008e00 IDENTIFY_ENVIRON TERM_PROGRAM=iTerm.app
+1653804162.707328 peer 0x138028000 message 105
+1653804162.707339 client 0x142008e00 IDENTIFY_ENVIRON SOCKS5_PROXY=http://192.168.49.1:1080
+1653804162.707350 peer 0x138028000 message 105
+1653804162.707361 client 0x142008e00 IDENTIFY_ENVIRON TERM=screen-256color
+1653804162.707372 peer 0x138028000 message 105
+1653804162.707383 client 0x142008e00 IDENTIFY_ENVIRON SHELL=/bin/bash
+1653804162.707393 peer 0x138028000 message 105
+1653804162.707405 client 0x142008e00 IDENTIFY_ENVIRON TMPDIR=/var/folders/36/z12_9mk93_x83j40qzzbn4sw0000gq/T/
+1653804162.707416 peer 0x138028000 message 105
+1653804162.707427 client 0x142008e00 IDENTIFY_ENVIRON HOMEBREW_REPOSITORY=/opt/homebrew
+1653804162.707438 peer 0x138028000 message 105
+1653804162.707449 client 0x142008e00 IDENTIFY_ENVIRON TERM_PROGRAM_VERSION=3.4.15
+1653804162.707460 peer 0x138028000 message 105
+1653804162.707472 client 0x142008e00 IDENTIFY_ENVIRON TERM_SESSION_ID=w0t1p0:14C1091A-4688-4FEA-BBE6-37B581C4269B
+1653804162.707483 peer 0x138028000 message 105
+1653804162.707494 client 0x142008e00 IDENTIFY_ENVIRON socks4_PROXY=http://192.168.49.1:1080
+1653804162.707504 peer 0x138028000 message 105
+1653804162.707515 client 0x142008e00 IDENTIFY_ENVIRON http_proxy=http://192.168.49.1:8080
+1653804162.707526 peer 0x138028000 message 105
+1653804162.707537 client 0x142008e00 IDENTIFY_ENVIRON USER=gera
+1653804162.707547 peer 0x138028000 message 105
+1653804162.707558 client 0x142008e00 IDENTIFY_ENVIRON COMMAND_MODE=unix2003
+1653804162.707568 peer 0x138028000 message 105
+1653804162.707580 client 0x142008e00 IDENTIFY_ENVIRON SSH_AUTH_SOCK=/private/tmp/com.apple.launchd.yYcLnkTF4V/Listeners
+1653804162.707590 peer 0x138028000 message 105
+1653804162.707602 client 0x142008e00 IDENTIFY_ENVIRON ftp_proxy=http://192.168.49.1:8080
+1653804162.707612 peer 0x138028000 message 105
+1653804162.707624 client 0x142008e00 IDENTIFY_ENVIRON __CF_USER_TEXT_ENCODING=0x1F7:0x7:0x31
+1653804162.707634 peer 0x138028000 message 105
+1653804162.707645 client 0x142008e00 IDENTIFY_ENVIRON FTP_PROXY=http://192.168.49.1:8080
+1653804162.707655 peer 0x138028000 message 105
+1653804162.707666 client 0x142008e00 IDENTIFY_ENVIRON BASH_SILENCE_DEPRECATION_WARNING=1
+1653804162.707676 peer 0x138028000 message 105
+1653804162.707687 client 0x142008e00 IDENTIFY_ENVIRON TMUX=/private/tmp/tmate-503/N4s6aP,33745,0
+1653804162.707697 peer 0x138028000 message 105
+1653804162.707708 client 0x142008e00 IDENTIFY_ENVIRON ALL_PROXY=http://192.168.49.1:8080
+1653804162.707718 peer 0x138028000 message 105
+1653804162.707742 client 0x142008e00 IDENTIFY_ENVIRON PATH=/opt/homebrew/opt/python@3.10/bin:/opt/homebrew/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/bin:/opt/local/bin:/opt/local/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/TeX/texbin:/usr/local/share/dotnet:/opt/X11/bin:~/.dotnet/tools:/Library/Apple/usr/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/opt/homebrew/opt/python@3.10/bin:/opt/homebrew/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/bin:/opt/local/bin:/opt/local/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/Users/gera/Library/Python/3.7/bin:/Users/gera/Library/Python/3.9/bin:/Users/gera/:.:/opt/homebrew/bin/:~/.local/bin:~:/Users/gera/Library/Python/3.7/bin:/Users/gera/Library/Python/3.9/bin:/Users/gera/:.:/opt/homebrew/bin/:~/.local/bin:~:.:/Users/gera/Library/Python/3.7/bin
+1653804162.707753 peer 0x138028000 message 105
+1653804162.707765 client 0x142008e00 IDENTIFY_ENVIRON LaunchInstanceID=046FAC4B-7E94-4646-86CB-B36A3C3EE25F
+1653804162.707775 peer 0x138028000 message 105
+1653804162.707788 client 0x142008e00 IDENTIFY_ENVIRON __CFBundleIdentifier=com.googlecode.iterm2
+1653804162.707798 peer 0x138028000 message 105
+1653804162.707809 client 0x142008e00 IDENTIFY_ENVIRON PWD=/Users/gera/c
+1653804162.707819 peer 0x138028000 message 105
+1653804162.707831 client 0x142008e00 IDENTIFY_ENVIRON SOCKS_PROXY=http://192.168.49.1:1080
+1653804162.707841 peer 0x138028000 message 105
+1653804162.707852 client 0x142008e00 IDENTIFY_ENVIRON LANG=ru_RU.UTF-8
+1653804162.707862 peer 0x138028000 message 105
+1653804162.707873 client 0x142008e00 IDENTIFY_ENVIRON socks5_PROXY=http://192.168.49.1:1080
+1653804162.707883 peer 0x138028000 message 105
+1653804162.707895 client 0x142008e00 IDENTIFY_ENVIRON PYTHONSTARTUP=/Users/gera/.pythonrc
+1653804162.707905 peer 0x138028000 message 105
+1653804162.707916 client 0x142008e00 IDENTIFY_ENVIRON ITERM_PROFILE=Default
+1653804162.707926 peer 0x138028000 message 105
+1653804162.707937 client 0x142008e00 IDENTIFY_ENVIRON XPC_FLAGS=0x0
+1653804162.707947 peer 0x138028000 message 105
+1653804162.707958 client 0x142008e00 IDENTIFY_ENVIRON TMUX_PANE=%0
+1653804162.707968 peer 0x138028000 message 105
+1653804162.707980 client 0x142008e00 IDENTIFY_ENVIRON https_proxy=http://192.168.49.1:8080
+1653804162.707990 peer 0x138028000 message 105
+1653804162.708001 client 0x142008e00 IDENTIFY_ENVIRON HTTPS_PROXY=http://192.168.49.1:8080
+1653804162.708011 peer 0x138028000 message 105
+1653804162.708022 client 0x142008e00 IDENTIFY_ENVIRON XPC_SERVICE_NAME=0
+1653804162.708032 peer 0x138028000 message 105
+1653804162.708043 client 0x142008e00 IDENTIFY_ENVIRON HISTCONTROL=ignoredups::erasedups
+1653804162.708053 peer 0x138028000 message 105
+1653804162.708066 client 0x142008e00 IDENTIFY_ENVIRON EVERYTHING=-Weverything -Werror -Wfatal-errors -Wno-poison-system-directories
+1653804162.708076 peer 0x138028000 message 105
+1653804162.708087 client 0x142008e00 IDENTIFY_ENVIRON SHLVL=2
+1653804162.708097 peer 0x138028000 message 105
+1653804162.708108 client 0x142008e00 IDENTIFY_ENVIRON HOME=/Users/gera
+1653804162.708118 peer 0x138028000 message 105
+1653804162.708129 client 0x142008e00 IDENTIFY_ENVIRON COLORFGBG=7;0
+1653804162.708139 peer 0x138028000 message 105
+1653804162.708150 client 0x142008e00 IDENTIFY_ENVIRON LC_TERMINAL_VERSION=3.4.15
+1653804162.708160 peer 0x138028000 message 105
+1653804162.708172 client 0x142008e00 IDENTIFY_ENVIRON SOCKS4_PROXY=http://192.168.49.1:1080
+1653804162.708182 peer 0x138028000 message 105
+1653804162.708199 client 0x142008e00 IDENTIFY_ENVIRON HOMEBREW_PREFIX=/opt/homebrew
+1653804162.708210 peer 0x138028000 message 105
+1653804162.708221 client 0x142008e00 IDENTIFY_ENVIRON HTTP_PROXY=http://192.168.49.1:8080
+1653804162.708231 peer 0x138028000 message 105
+1653804162.708243 client 0x142008e00 IDENTIFY_ENVIRON ITERM_SESSION_ID=w0t1p0:14C1091A-4688-4FEA-BBE6-37B581C4269B
+1653804162.708253 peer 0x138028000 message 105
+1653804162.708264 client 0x142008e00 IDENTIFY_ENVIRON LOGNAME=gera
+1653804162.708274 peer 0x138028000 message 105
+1653804162.708288 client 0x142008e00 IDENTIFY_ENVIRON INFOPATH=/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:
+1653804162.708298 peer 0x138028000 message 105
+1653804162.708310 client 0x142008e00 IDENTIFY_ENVIRON HOMEBREW_CELLAR=/opt/homebrew/Cellar
+1653804162.708320 peer 0x138028000 message 105
+1653804162.708331 client 0x142008e00 IDENTIFY_ENVIRON LC_TERMINAL=iTerm2
+1653804162.708341 peer 0x138028000 message 105
+1653804162.708353 client 0x142008e00 IDENTIFY_ENVIRON DISPLAY=:0
+1653804162.708363 peer 0x138028000 message 105
+1653804162.708374 client 0x142008e00 IDENTIFY_ENVIRON SECURITYSESSIONID=186b3
+1653804162.708384 peer 0x138028000 message 105
+1653804162.708396 client 0x142008e00 IDENTIFY_ENVIRON COLORTERM=truecolor
+1653804162.708406 peer 0x138028000 message 105
+1653804162.708417 client 0x142008e00 IDENTIFY_ENVIRON _=/opt/homebrew/bin/tmate
+1653804162.708427 peer 0x138028000 message 106
+1653804162.710201 peer 0x138028000 message 200
+1653804162.710222 continuing cmdq 0x141e08cd0: flags 0, client 0x142008e00
+1653804162.710232 cmdq 0x141e08cd0: show-messages
+1653804162.710241 preparing state for show-messages (client 0x142008e00)
+1653804162.710252 cmd_find_current_session: have client 0x142008e00
+1653804162.710265 client 0x142008e00 TMUX is /private/tmp/tmate-503/N4s6aP,33745,0 (session @0)
+1653804162.710275 cmd_find_current_client: current session $0 0
+1653804162.710283 cmd_find_client: no target, return 0x154009a00
+1653804162.710292 preparing -t state: target none
+1653804162.710300 preparing -s state: target none
+1653804162.710452 sending message 213 to peer 0x138028000 (1032 bytes)
+1653804162.710465 server_client_push_stdout: client 0x142008e00, sent 129, left 0
+1653804162.710597 sending message 213 to peer 0x138028000 (1032 bytes)
+1653804162.710609 server_client_push_stdout: client 0x142008e00, sent 129, left 0
+1653804162.710731 sending message 213 to peer 0x138028000 (1032 bytes)
+1653804162.710742 server_client_push_stdout: client 0x142008e00, sent 129, left 0
+1653804162.710860 sending message 213 to peer 0x138028000 (1032 bytes)
+1653804162.710870 server_client_push_stdout: client 0x142008e00, sent 129, left 0
+1653804162.710990 sending message 213 to peer 0x138028000 (1032 bytes)
+1653804162.711000 server_client_push_stdout: client 0x142008e00, sent 129, left 0
+1653804162.711146 sending message 213 to peer 0x138028000 (1032 bytes)
+1653804162.711156 server_client_push_stdout: client 0x142008e00, sent 129, left 0
+1653804162.711305 sending message 213 to peer 0x138028000 (1032 bytes)
+1653804162.711316 server_client_push_stdout: client 0x142008e00, sent 129, left 0
+1653804162.711432 sending message 213 to peer 0x138028000 (1032 bytes)
+1653804162.711442 server_client_push_stdout: client 0x142008e00, sent 129, left 0
+1653804162.711559 sending message 213 to peer 0x138028000 (1032 bytes)
+1653804162.711569 server_client_push_stdout: client 0x142008e00, sent 129, left 0
+1653804162.711686 sending message 213 to peer 0x138028000 (1032 bytes)
+1653804162.711695 server_client_push_stdout: client 0x142008e00, sent 129, left 0
+1653804162.711812 sending message 213 to peer 0x138028000 (1032 bytes)
+1653804162.711821 server_client_push_stdout: client 0x142008e00, sent 129, left 0
+1653804162.711937 sending message 213 to peer 0x138028000 (1032 bytes)
+1653804162.711947 server_client_push_stdout: client 0x142008e00, sent 129, left 0
+1653804162.711959 sending message 203 to peer 0x138028000 (4 bytes)
+1653804162.711968 @0 active pane changed
+1653804162.712015 @0 name timer already queued (126613 left)
+1653804162.712044 @0 active pane changed
+1653804162.712050 @0 name timer already queued (126578 left)
+1653804162.712141 %0 has 910 bytes
+1653804162.712155 @0 alerts timer reset 0
+1653804162.712161 @0 alerts flags added 0x2
+1653804162.712178 input_parse: %0 ground, 910 bytes: Sun May 29 09:02:20 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\nSun May 29 09:02:22 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\nSun May 29 09:02:24 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\nSun May 29 09:02:26 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\nSun May 29 09:02:28 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\nSun May 29 09:02:30 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\nSun May 29 09:02:32 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\n
+1653804162.713186 input_c0_dispatch: '\r'
+1653804162.713192 input_c0_dispatch: '\n'
+1653804162.714202 input_c0_dispatch: '\r'
+1653804162.714207 input_c0_dispatch: '\n'
+1653804162.715187 input_c0_dispatch: '\r'
+1653804162.715193 input_c0_dispatch: '\n'
+1653804162.716185 input_c0_dispatch: '\r'
+1653804162.716190 input_c0_dispatch: '\n'
+1653804162.717156 input_c0_dispatch: '\r'
+1653804162.717161 input_c0_dispatch: '\n'
+1653804162.718142 input_c0_dispatch: '\r'
+1653804162.718147 input_c0_dispatch: '\n'
+1653804162.719056 input_c0_dispatch: '\r'
+1653804162.719060 input_c0_dispatch: '\n'
+1653804162.719092 @0 active pane changed
+1653804162.719098 @0 name timer already queued (119530 left)
+1653804162.719114 %0 has 650 bytes
+1653804162.719121 %0 backing off (/dev/ttys001 937 > 512)
+1653804162.719154 lost client 0x142008e00
+1653804162.719190 remove peer 0x138028000
+1653804162.719201 unref client 0x142008e00 (1 references)
+1653804162.719219 free client 0x142008e00 (0 references)
+1653804162.719226 @0 active pane changed
+1653804162.719232 @0 name timer already queued (119396 left)
+1653804162.719240 %0 has 650 bytes
+1653804162.719247 @0 alerts timer reset 0
+1653804162.719252 @0 alerts flags added 0x2
+1653804162.719264 input_parse: %0 ground, 650 bytes: Sun May 29 09:02:34 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\nSun May 29 09:02:36 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\nSun May 29 09:02:38 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\nSun May 29 09:02:40 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\nSun May 29 09:02:42 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\n
+1653804162.720184 input_c0_dispatch: '\r'
+1653804162.720188 input_c0_dispatch: '\n'
+1653804162.721009 input_c0_dispatch: '\r'
+1653804162.721014 input_c0_dispatch: '\n'
+1653804162.721846 input_c0_dispatch: '\r'
+1653804162.721851 input_c0_dispatch: '\n'
+1653804162.722684 input_c0_dispatch: '\r'
+1653804162.722688 input_c0_dispatch: '\n'
+1653804162.723629 input_c0_dispatch: '\r'
+1653804162.723634 input_c0_dispatch: '\n'
+1653804162.723662 @0 active pane changed
+1653804162.723667 @0 name timer already queued (114961 left)
+1653804162.723682 @0 active pane changed
+1653804162.723690 @0 name timer already queued (114937 left)
+1653804162.729734 %0 has 47 bytes
+1653804162.729757 @0 alerts timer reset 0
+1653804162.729762 @0 alerts flags added 0x2
+1653804162.729768 input_parse: %0 ground, 47 bytes: \033[31m09:02:42\033[0m:\033[33marm64\033[0m:\033[32m~/c\033[0m$ 
+1653804162.729775 input_csi_dispatch: 'm' "" "31"
+1653804162.729867 input_csi_dispatch: 'm' "" "0"
+1653804162.729883 input_csi_dispatch: 'm' "" "33"
+1653804162.729922 input_csi_dispatch: 'm' "" "0"
+1653804162.729937 input_csi_dispatch: 'm' "" "32"
+1653804162.729964 input_csi_dispatch: 'm' "" "0"
+1653804162.730004 @0 active pane changed
+1653804162.730009 @0 name timer already queued (108619 left)
+1653804162.730024 @0 active pane changed
+1653804162.730028 @0 name timer already queued (108600 left)
+1653804162.839717 @0 name timer expired
+1653804162.839837 @0 active pane changed
+1653804162.839962 format '#{pane_current_command}' -> 'bash'
+1653804162.839975 format '' -> ''
+1653804162.839986 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804162.840021 @0 name not changed (still bash)
+1653804164.494554 Looking up ssh.tmate.io...
+1653804164.494802 @0 active pane not changed
+1653804164.506379 Nameserver 192.168.49.1:53 has failed: Bad response 5 (refused)
+1653804164.506434 All nameservers have failed
+1653804164.506526 ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)
+1653804164.527971 @0 active pane not changed
+1653804164.528050 @0 active pane not changed
+1653804164.528121 @0 active pane not changed
+1653804164.528310 @0 active pane not changed
+1653804164.578130 keys are 3 (\033[A)
+1653804164.578176 complete key \033[A 0x100000000041
+1653804164.578188 session 0 activity 1653804164.578185 (last 1653804162.678202)
+1653804164.578200 session 0 not pasting
+1653804164.578212 writing key 0x100000000041 (Up) to %0
+1653804164.578221 found key 0x100000000041: "\033[A"
+1653804164.578234 @0 active pane not changed
+1653804164.578260 @0 active pane not changed
+1653804164.578334 %0 has 19 bytes
+1653804164.578361 @0 alerts timer reset 0
+1653804164.578371 @0 alerts flags added 0x2
+1653804164.578381 input_parse: %0 ground, 19 bytes: tmate show-messages
+1653804164.578529 @0 active pane changed
+1653804164.578623 format '#{pane_current_command}' -> 'bash'
+1653804164.578634 format '' -> ''
+1653804164.578642 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804164.578675 @0 name not changed (still bash)
+1653804164.578696 @0 active pane not changed
+1653804164.617071 keys are 1 (\r)
+1653804164.617108 complete key \r 0xd
+1653804164.617115 session 0 activity 1653804164.617113 (last 1653804164.578185)
+1653804164.617123 session 0 not pasting
+1653804164.617131 writing key 0xd (Enter) to %0
+1653804164.617148 @0 active pane not changed
+1653804164.617165 @0 active pane not changed
+1653804164.617202 %0 has 2 bytes
+1653804164.617213 @0 alerts timer reset 0
+1653804164.617218 @0 alerts flags added 0x2
+1653804164.617223 input_parse: %0 ground, 2 bytes: \r\n
+1653804164.617227 input_c0_dispatch: '\r'
+1653804164.617232 input_c0_dispatch: '\n'
+1653804164.617247 @0 active pane changed
+1653804164.617251 @0 name timer queued (461285 left)
+1653804164.617261 @0 active pane changed
+1653804164.617266 @0 name timer already queued (461270 left)
+1653804164.630038 add peer 0x128008000: 5 (0x153808e00)
+1653804164.630072 new client 0x153808e00
+1653804164.630083 @0 active pane changed
+1653804164.630088 @0 name timer already queued (448448 left)
+1653804164.631275 peer 0x128008000 message 100
+1653804164.631287 client 0x153808e00 IDENTIFY_FLAGS 0x30000
+1653804164.631292 peer 0x128008000 message 101
+1653804164.631297 client 0x153808e00 IDENTIFY_TERM screen-256color
+1653804164.631301 peer 0x128008000 message 102
+1653804164.631305 client 0x153808e00 IDENTIFY_TTYNAME /dev/ttys009
+1653804164.631309 peer 0x128008000 message 108
+1653804164.631318 client 0x153808e00 IDENTIFY_CWD /Users/gera/c
+1653804164.631321 peer 0x128008000 message 104
+1653804164.631325 client 0x153808e00 IDENTIFY_STDIN 11
+1653804164.631328 peer 0x128008000 message 107
+1653804164.631332 client 0x153808e00 IDENTIFY_CLIENTPID 33819
+1653804164.631335 peer 0x128008000 message 105
+1653804164.631342 client 0x153808e00 IDENTIFY_ENVIRON MANPATH=/opt/local/share/man:/opt/homebrew/share/man:/usr/share/man:/usr/local/share/man:/Library/TeX/Distributions/.DefaultTeX/Contents/Man:/opt/X11/share/man:/opt/local/share/man:/opt/homebrew/share/man:
+1653804164.631347 peer 0x128008000 message 105
+1653804164.631351 client 0x153808e00 IDENTIFY_ENVIRON socks_PROXY=http://192.168.49.1:1080
+1653804164.631355 peer 0x128008000 message 105
+1653804164.631360 client 0x153808e00 IDENTIFY_ENVIRON TERM_PROGRAM=iTerm.app
+1653804164.631364 peer 0x128008000 message 105
+1653804164.631368 client 0x153808e00 IDENTIFY_ENVIRON SOCKS5_PROXY=http://192.168.49.1:1080
+1653804164.631372 peer 0x128008000 message 105
+1653804164.631376 client 0x153808e00 IDENTIFY_ENVIRON TERM=screen-256color
+1653804164.631379 peer 0x128008000 message 105
+1653804164.631384 client 0x153808e00 IDENTIFY_ENVIRON SHELL=/bin/bash
+1653804164.631387 peer 0x128008000 message 105
+1653804164.631392 client 0x153808e00 IDENTIFY_ENVIRON TMPDIR=/var/folders/36/z12_9mk93_x83j40qzzbn4sw0000gq/T/
+1653804164.631395 peer 0x128008000 message 105
+1653804164.631400 client 0x153808e00 IDENTIFY_ENVIRON HOMEBREW_REPOSITORY=/opt/homebrew
+1653804164.631403 peer 0x128008000 message 105
+1653804164.631407 client 0x153808e00 IDENTIFY_ENVIRON TERM_PROGRAM_VERSION=3.4.15
+1653804164.631411 peer 0x128008000 message 105
+1653804164.631415 client 0x153808e00 IDENTIFY_ENVIRON TERM_SESSION_ID=w0t1p0:14C1091A-4688-4FEA-BBE6-37B581C4269B
+1653804164.631419 peer 0x128008000 message 105
+1653804164.631423 client 0x153808e00 IDENTIFY_ENVIRON socks4_PROXY=http://192.168.49.1:1080
+1653804164.631426 peer 0x128008000 message 105
+1653804164.631430 client 0x153808e00 IDENTIFY_ENVIRON http_proxy=http://192.168.49.1:8080
+1653804164.631434 peer 0x128008000 message 105
+1653804164.631438 client 0x153808e00 IDENTIFY_ENVIRON USER=gera
+1653804164.631441 peer 0x128008000 message 105
+1653804164.631445 client 0x153808e00 IDENTIFY_ENVIRON COMMAND_MODE=unix2003
+1653804164.631449 peer 0x128008000 message 105
+1653804164.631453 client 0x153808e00 IDENTIFY_ENVIRON SSH_AUTH_SOCK=/private/tmp/com.apple.launchd.yYcLnkTF4V/Listeners
+1653804164.631456 peer 0x128008000 message 105
+1653804164.631461 client 0x153808e00 IDENTIFY_ENVIRON ftp_proxy=http://192.168.49.1:8080
+1653804164.631464 peer 0x128008000 message 105
+1653804164.631468 client 0x153808e00 IDENTIFY_ENVIRON __CF_USER_TEXT_ENCODING=0x1F7:0x7:0x31
+1653804164.631472 peer 0x128008000 message 105
+1653804164.631476 client 0x153808e00 IDENTIFY_ENVIRON FTP_PROXY=http://192.168.49.1:8080
+1653804164.631479 peer 0x128008000 message 105
+1653804164.631483 client 0x153808e00 IDENTIFY_ENVIRON BASH_SILENCE_DEPRECATION_WARNING=1
+1653804164.631486 peer 0x128008000 message 105
+1653804164.631490 client 0x153808e00 IDENTIFY_ENVIRON TMUX=/private/tmp/tmate-503/N4s6aP,33745,0
+1653804164.631494 peer 0x128008000 message 105
+1653804164.631498 client 0x153808e00 IDENTIFY_ENVIRON ALL_PROXY=http://192.168.49.1:8080
+1653804164.631501 peer 0x128008000 message 105
+1653804164.631513 client 0x153808e00 IDENTIFY_ENVIRON PATH=/opt/homebrew/opt/python@3.10/bin:/opt/homebrew/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/bin:/opt/local/bin:/opt/local/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/TeX/texbin:/usr/local/share/dotnet:/opt/X11/bin:~/.dotnet/tools:/Library/Apple/usr/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/opt/homebrew/opt/python@3.10/bin:/opt/homebrew/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/bin:/opt/local/bin:/opt/local/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/Users/gera/Library/Python/3.7/bin:/Users/gera/Library/Python/3.9/bin:/Users/gera/:.:/opt/homebrew/bin/:~/.local/bin:~:/Users/gera/Library/Python/3.7/bin:/Users/gera/Library/Python/3.9/bin:/Users/gera/:.:/opt/homebrew/bin/:~/.local/bin:~:.:/Users/gera/Library/Python/3.7/bin
+1653804164.631517 peer 0x128008000 message 105
+1653804164.631521 client 0x153808e00 IDENTIFY_ENVIRON LaunchInstanceID=046FAC4B-7E94-4646-86CB-B36A3C3EE25F
+1653804164.631525 peer 0x128008000 message 105
+1653804164.631529 client 0x153808e00 IDENTIFY_ENVIRON __CFBundleIdentifier=com.googlecode.iterm2
+1653804164.631533 peer 0x128008000 message 105
+1653804164.631544 client 0x153808e00 IDENTIFY_ENVIRON PWD=/Users/gera/c
+1653804164.631547 peer 0x128008000 message 105
+1653804164.631551 client 0x153808e00 IDENTIFY_ENVIRON SOCKS_PROXY=http://192.168.49.1:1080
+1653804164.631555 peer 0x128008000 message 105
+1653804164.631559 client 0x153808e00 IDENTIFY_ENVIRON LANG=ru_RU.UTF-8
+1653804164.631562 peer 0x128008000 message 105
+1653804164.631567 client 0x153808e00 IDENTIFY_ENVIRON socks5_PROXY=http://192.168.49.1:1080
+1653804164.631570 peer 0x128008000 message 105
+1653804164.631574 client 0x153808e00 IDENTIFY_ENVIRON PYTHONSTARTUP=/Users/gera/.pythonrc
+1653804164.631577 peer 0x128008000 message 105
+1653804164.631582 client 0x153808e00 IDENTIFY_ENVIRON ITERM_PROFILE=Default
+1653804164.631585 peer 0x128008000 message 105
+1653804164.631589 client 0x153808e00 IDENTIFY_ENVIRON XPC_FLAGS=0x0
+1653804164.631592 peer 0x128008000 message 105
+1653804164.631596 client 0x153808e00 IDENTIFY_ENVIRON TMUX_PANE=%0
+1653804164.631600 peer 0x128008000 message 105
+1653804164.631604 client 0x153808e00 IDENTIFY_ENVIRON https_proxy=http://192.168.49.1:8080
+1653804164.631607 peer 0x128008000 message 105
+1653804164.631611 client 0x153808e00 IDENTIFY_ENVIRON HTTPS_PROXY=http://192.168.49.1:8080
+1653804164.631615 peer 0x128008000 message 105
+1653804164.631619 client 0x153808e00 IDENTIFY_ENVIRON XPC_SERVICE_NAME=0
+1653804164.631622 peer 0x128008000 message 105
+1653804164.631626 client 0x153808e00 IDENTIFY_ENVIRON HISTCONTROL=ignoredups::erasedups
+1653804164.631630 peer 0x128008000 message 105
+1653804164.631635 client 0x153808e00 IDENTIFY_ENVIRON EVERYTHING=-Weverything -Werror -Wfatal-errors -Wno-poison-system-directories
+1653804164.631638 peer 0x128008000 message 105
+1653804164.631642 client 0x153808e00 IDENTIFY_ENVIRON SHLVL=2
+1653804164.631646 peer 0x128008000 message 105
+1653804164.631650 client 0x153808e00 IDENTIFY_ENVIRON HOME=/Users/gera
+1653804164.631653 peer 0x128008000 message 105
+1653804164.631657 client 0x153808e00 IDENTIFY_ENVIRON COLORFGBG=7;0
+1653804164.631660 peer 0x128008000 message 105
+1653804164.631665 client 0x153808e00 IDENTIFY_ENVIRON LC_TERMINAL_VERSION=3.4.15
+1653804164.631668 peer 0x128008000 message 105
+1653804164.631672 client 0x153808e00 IDENTIFY_ENVIRON SOCKS4_PROXY=http://192.168.49.1:1080
+1653804164.631676 peer 0x128008000 message 105
+1653804164.631680 client 0x153808e00 IDENTIFY_ENVIRON HOMEBREW_PREFIX=/opt/homebrew
+1653804164.631684 peer 0x128008000 message 105
+1653804164.631688 client 0x153808e00 IDENTIFY_ENVIRON HTTP_PROXY=http://192.168.49.1:8080
+1653804164.631691 peer 0x128008000 message 105
+1653804164.631696 client 0x153808e00 IDENTIFY_ENVIRON ITERM_SESSION_ID=w0t1p0:14C1091A-4688-4FEA-BBE6-37B581C4269B
+1653804164.631699 peer 0x128008000 message 105
+1653804164.631703 client 0x153808e00 IDENTIFY_ENVIRON LOGNAME=gera
+1653804164.631707 peer 0x128008000 message 105
+1653804164.631712 client 0x153808e00 IDENTIFY_ENVIRON INFOPATH=/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:
+1653804164.631715 peer 0x128008000 message 105
+1653804164.631719 client 0x153808e00 IDENTIFY_ENVIRON HOMEBREW_CELLAR=/opt/homebrew/Cellar
+1653804164.631723 peer 0x128008000 message 105
+1653804164.631727 client 0x153808e00 IDENTIFY_ENVIRON LC_TERMINAL=iTerm2
+1653804164.631730 peer 0x128008000 message 105
+1653804164.631734 client 0x153808e00 IDENTIFY_ENVIRON DISPLAY=:0
+1653804164.631738 peer 0x128008000 message 105
+1653804164.631742 client 0x153808e00 IDENTIFY_ENVIRON SECURITYSESSIONID=186b3
+1653804164.631745 peer 0x128008000 message 105
+1653804164.631749 client 0x153808e00 IDENTIFY_ENVIRON COLORTERM=truecolor
+1653804164.631753 peer 0x128008000 message 105
+1653804164.631757 client 0x153808e00 IDENTIFY_ENVIRON _=/opt/homebrew/bin/tmate
+1653804164.631760 peer 0x128008000 message 106
+1653804164.632745 peer 0x128008000 message 200
+1653804164.632755 continuing cmdq 0x152a04430: flags 0, client 0x153808e00
+1653804164.632760 cmdq 0x152a04430: show-messages
+1653804164.632764 preparing state for show-messages (client 0x153808e00)
+1653804164.632769 cmd_find_current_session: have client 0x153808e00
+1653804164.632776 client 0x153808e00 TMUX is /private/tmp/tmate-503/N4s6aP,33745,0 (session @0)
+1653804164.632781 cmd_find_current_client: current session $0 0
+1653804164.632785 cmd_find_client: no target, return 0x154009a00
+1653804164.632788 preparing -t state: target none
+1653804164.632792 preparing -s state: target none
+1653804164.632912 sending message 213 to peer 0x128008000 (1032 bytes)
+1653804164.632919 server_client_push_stdout: client 0x153808e00, sent 129, left 0
+1653804164.633003 sending message 213 to peer 0x128008000 (1032 bytes)
+1653804164.633008 server_client_push_stdout: client 0x153808e00, sent 129, left 0
+1653804164.633088 sending message 213 to peer 0x128008000 (1032 bytes)
+1653804164.633092 server_client_push_stdout: client 0x153808e00, sent 129, left 0
+1653804164.633171 sending message 213 to peer 0x128008000 (1032 bytes)
+1653804164.633175 server_client_push_stdout: client 0x153808e00, sent 129, left 0
+1653804164.633251 sending message 213 to peer 0x128008000 (1032 bytes)
+1653804164.633255 server_client_push_stdout: client 0x153808e00, sent 129, left 0
+1653804164.633331 sending message 213 to peer 0x128008000 (1032 bytes)
+1653804164.633336 server_client_push_stdout: client 0x153808e00, sent 129, left 0
+1653804164.633422 sending message 213 to peer 0x128008000 (1032 bytes)
+1653804164.633426 server_client_push_stdout: client 0x153808e00, sent 129, left 0
+1653804164.633511 sending message 213 to peer 0x128008000 (1032 bytes)
+1653804164.633515 server_client_push_stdout: client 0x153808e00, sent 129, left 0
+1653804164.633595 sending message 213 to peer 0x128008000 (1032 bytes)
+1653804164.633600 server_client_push_stdout: client 0x153808e00, sent 129, left 0
+1653804164.633675 sending message 213 to peer 0x128008000 (1032 bytes)
+1653804164.633679 server_client_push_stdout: client 0x153808e00, sent 129, left 0
+1653804164.633756 sending message 213 to peer 0x128008000 (1032 bytes)
+1653804164.633761 server_client_push_stdout: client 0x153808e00, sent 129, left 0
+1653804164.633848 sending message 213 to peer 0x128008000 (1032 bytes)
+1653804164.633853 server_client_push_stdout: client 0x153808e00, sent 129, left 0
+1653804164.633927 sending message 213 to peer 0x128008000 (1032 bytes)
+1653804164.633932 server_client_push_stdout: client 0x153808e00, sent 129, left 0
+1653804164.633937 sending message 203 to peer 0x128008000 (4 bytes)
+1653804164.633942 @0 active pane changed
+1653804164.633945 @0 name timer already queued (444591 left)
+1653804164.633960 @0 active pane changed
+1653804164.633965 @0 name timer already queued (444571 left)
+1653804164.634023 %0 has 910 bytes
+1653804164.634031 @0 alerts timer reset 0
+1653804164.634035 @0 alerts flags added 0x2
+1653804164.634046 input_parse: %0 ground, 910 bytes: Sun May 29 09:02:20 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\nSun May 29 09:02:22 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\nSun May 29 09:02:24 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\nSun May 29 09:02:26 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\nSun May 29 09:02:28 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\nSun May 29 09:02:30 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\nSun May 29 09:02:32 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\n
+1653804164.634412 input_c0_dispatch: '\r'
+1653804164.634415 input_c0_dispatch: '\n'
+1653804164.634759 input_c0_dispatch: '\r'
+1653804164.634762 input_c0_dispatch: '\n'
+1653804164.635106 input_c0_dispatch: '\r'
+1653804164.635109 input_c0_dispatch: '\n'
+1653804164.635419 input_c0_dispatch: '\r'
+1653804164.635422 input_c0_dispatch: '\n'
+1653804164.635738 input_c0_dispatch: '\r'
+1653804164.635742 input_c0_dispatch: '\n'
+1653804164.636060 input_c0_dispatch: '\r'
+1653804164.636063 input_c0_dispatch: '\n'
+1653804164.636380 input_c0_dispatch: '\r'
+1653804164.636382 input_c0_dispatch: '\n'
+1653804164.636395 @0 active pane changed
+1653804164.636399 @0 name timer already queued (442137 left)
+1653804164.636409 %0 has 780 bytes
+1653804164.636413 %0 backing off (/dev/ttys001 938 > 512)
+1653804164.636437 lost client 0x153808e00
+1653804164.636462 remove peer 0x128008000
+1653804164.636472 unref client 0x153808e00 (1 references)
+1653804164.636487 free client 0x153808e00 (0 references)
+1653804164.636492 @0 active pane changed
+1653804164.636495 @0 name timer already queued (442041 left)
+1653804164.636585 %0 has 780 bytes
+1653804164.636592 @0 alerts timer reset 0
+1653804164.636595 @0 alerts flags added 0x2
+1653804164.636604 input_parse: %0 ground, 780 bytes: Sun May 29 09:02:34 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\nSun May 29 09:02:36 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\nSun May 29 09:02:38 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\nSun May 29 09:02:40 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\nSun May 29 09:02:42 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\nSun May 29 09:02:44 2022 [tmate] ssh.tmate.io lookup failure. Retrying in 2 seconds (non-recoverable failure in name resolution)\r\n
+1653804164.636949 input_c0_dispatch: '\r'
+1653804164.636953 input_c0_dispatch: '\n'
+1653804164.637281 input_c0_dispatch: '\r'
+1653804164.637284 input_c0_dispatch: '\n'
+1653804164.637603 input_c0_dispatch: '\r'
+1653804164.637606 input_c0_dispatch: '\n'
+1653804164.637916 input_c0_dispatch: '\r'
+1653804164.637919 input_c0_dispatch: '\n'
+1653804164.638251 input_c0_dispatch: '\r'
+1653804164.638254 input_c0_dispatch: '\n'
+1653804164.638573 input_c0_dispatch: '\r'
+1653804164.638576 input_c0_dispatch: '\n'
+1653804164.638588 @0 active pane changed
+1653804164.638591 @0 name timer already queued (439945 left)
+1653804164.638599 @0 active pane changed
+1653804164.638602 @0 name timer already queued (439933 left)
+1653804164.645563 %0 has 47 bytes
+1653804164.645577 @0 alerts timer reset 0
+1653804164.645582 @0 alerts flags added 0x2
+1653804164.645587 input_parse: %0 ground, 47 bytes: \033[31m09:02:44\033[0m:\033[33marm64\033[0m:\033[32m~/c\033[0m$ 
+1653804164.645592 input_csi_dispatch: 'm' "" "31"
+1653804164.645634 input_csi_dispatch: 'm' "" "0"
+1653804164.645642 input_csi_dispatch: 'm' "" "33"
+1653804164.645659 input_csi_dispatch: 'm' "" "0"
+1653804164.645667 input_csi_dispatch: 'm' "" "32"
+1653804164.645679 input_csi_dispatch: 'm' "" "0"
+1653804164.645696 @0 active pane changed
+1653804164.645699 @0 name timer already queued (432837 left)
+1653804164.645711 @0 active pane changed
+1653804164.645715 @0 name timer already queued (432821 left)
+1653804165.079601 @0 name timer expired
+1653804165.079772 @0 active pane changed
+1653804165.080006 format '#{pane_current_command}' -> 'bash'
+1653804165.080031 format '' -> ''
+1653804165.080050 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804165.080111 @0 name not changed (still bash)
+1653804165.916392 keys are 1 (e)
+1653804165.916479 complete key e 0x65
+1653804165.916506 session 0 activity 1653804165.916500 (last 1653804164.617113)
+1653804165.916532 session 0 not pasting
+1653804165.916563 writing key 0x65 (e) to %0
+1653804165.916607 @0 active pane not changed
+1653804165.916675 @0 active pane not changed
+1653804165.916809 %0 has 1 bytes
+1653804165.916838 @0 alerts timer reset 0
+1653804165.916854 @0 alerts flags added 0x2
+1653804165.916875 input_parse: %0 ground, 1 bytes: e
+1653804165.917004 @0 active pane changed
+1653804165.917205 format '#{pane_current_command}' -> 'bash'
+1653804165.917226 format '' -> ''
+1653804165.917254 format '#{?pane_in_mode,[tmux],#{pane_current_command}}#{?pane_dead,[dead],}' -> 'bash'
+1653804165.917319 @0 name not changed (still bash)
+1653804165.917356 @0 active pane not changed
+1653804165.999573 keys are 1 (x)
+1653804165.999685 complete key x 0x78
+1653804165.999707 session 0 activity 1653804165.999702 (last 1653804165.916500)
+1653804165.999727 session 0 not pasting
+1653804165.999748 writing key 0x78 (x) to %0
+1653804165.999779 @0 active pane not changed
+1653804165.999834 @0 active pane not changed
+1653804165.999901 %0 has 1 bytes
+1653804165.999924 @0 alerts timer reset 0
+1653804165.999936 @0 alerts flags added 0x2
+1653804165.999952 input_parse: %0 ground, 1 bytes: x
+1653804166.000054 @0 active pane changed
+1653804166.000066 @0 name timer queued (416952 left)
+1653804166.000096 @0 active pane changed
+1653804166.000110 @0 name timer already queued (416908 left)
+1653804166.108136 keys are 1 (i)
+1653804166.108256 complete key i 0x69
+1653804166.108281 session 0 activity 1653804166.108276 (last 1653804165.999702)
+1653804166.108306 session 0 not pasting
+1653804166.108335 writing key 0x69 (i) to %0
+1653804166.108388 @0 active pane changed
+1653804166.108404 @0 name timer already queued (308615 left)
+1653804166.108453 @0 active pane changed
+1653804166.108471 @0 name timer already queued (308547 left)
+1653804166.108603 %0 has 1 bytes
+1653804166.108631 @0 alerts timer reset 0
+1653804166.108647 @0 alerts flags added 0x2
+1653804166.108665 input_parse: %0 ground, 1 bytes: i
+1653804166.108903 @0 active pane changed
+1653804166.108919 @0 name timer already queued (308100 left)
+1653804166.109021 @0 active pane changed
+1653804166.109055 @0 name timer already queued (307965 left)
+1653804166.224363 keys are 1 (t)
+1653804166.224468 complete key t 0x74
+1653804166.224485 session 0 activity 1653804166.224481 (last 1653804166.108276)
+1653804166.224501 session 0 not pasting
+1653804166.224521 writing key 0x74 (t) to %0
+1653804166.224554 @0 active pane changed
+1653804166.224564 @0 name timer already queued (192454 left)
+1653804166.224608 @0 active pane changed
+1653804166.224618 @0 name timer already queued (192399 left)
+1653804166.224682 %0 has 1 bytes
+1653804166.224700 @0 alerts timer reset 0
+1653804166.224711 @0 alerts flags added 0x2
+1653804166.224723 input_parse: %0 ground, 1 bytes: t
+1653804166.224815 @0 active pane changed
+1653804166.224824 @0 name timer already queued (192193 left)
+1653804166.224846 @0 active pane changed
+1653804166.224856 @0 name timer already queued (192161 left)
+1653804166.365625 keys are 1 (\r)
+1653804166.365764 complete key \r 0xd
+1653804166.365791 session 0 activity 1653804166.365785 (last 1653804166.224481)
+1653804166.365814 session 0 not pasting
+1653804166.365844 writing key 0xd (Enter) to %0
+1653804166.365884 @0 active pane changed
+1653804166.365900 @0 name timer already queued (51119 left)
+1653804166.365956 @0 active pane changed
+1653804166.365975 @0 name timer already queued (51044 left)
+1653804166.366007 %0 has 2 bytes
+1653804166.366030 @0 alerts timer reset 0
+1653804166.366046 @0 alerts flags added 0x2
+1653804166.366064 input_parse: %0 ground, 2 bytes: \r\n
+1653804166.366080 input_c0_dispatch: '\r'
+1653804166.366094 input_c0_dispatch: '\n'
+1653804166.366141 @0 active pane changed
+1653804166.366156 @0 name timer already queued (50863 left)
+1653804166.366186 @0 active pane changed
+1653804166.366203 @0 name timer already queued (50815 left)
+1653804166.379725 %0 has 8 bytes
+1653804166.379783 @0 alerts timer reset 0
+1653804166.379797 @0 alerts flags added 0x2
+1653804166.379811 input_parse: %0 ground, 8 bytes: logout\r\n
+1653804166.379929 input_c0_dispatch: '\r'
+1653804166.379939 input_c0_dispatch: '\n'
+1653804166.379981 @0 active pane changed
+1653804166.379992 @0 name timer already queued (37026 left)
+1653804166.380032 @0 active pane changed
+1653804166.380047 @0 name timer already queued (36971 left)
+1653804166.381692 cmd_find_from_window: s=$0
+1653804166.381756 cmd_find_from_window: wl=0 1 w=@0 bash
+1653804166.381767 cmd_find_from_window: wp=none
+1653804166.381778 cmd_find_from_window: idx=0
+1653804166.381805 session 0 has 2 references
+1653804166.381822 session 0 destroyed
+1653804166.381835 session 0 has 2 references
+1653804166.381846 session 0 has 1 references
+1653804166.381857 Session closed
+1653804166.381874 session 0 freed (0 references)
+1653804166.381898 sending message 203 to peer 0x148008000 (4 bytes)
+1653804166.382374 peer 0x148008000 message 205
+1653804166.382641 sending message 204 to peer 0x148008000 (0 bytes)
+1653804166.385195 lost client 0x154009a00
+1653804166.385311 remove peer 0x148008000
+1653804166.385333 unref client 0x154009a00 (1 references)
+1653804166.385435 free client 0x154009a00 (0 references)
+1653804166.385448 server loop exit

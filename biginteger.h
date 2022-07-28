@@ -274,9 +274,12 @@ public:
 		for (size_t w=0;w<qs;++w){
 			if (vect[w]){
 				for (size_t r=0;r<es;++r){
-					*(uint64_t*)(tmp.vect+w+r)=(uint64_t)(vect[w])*(uint64_t)(e.vect[r]);
+					uint64_t mulres=(uint64_t)(vect[w])*(uint64_t)(e.vect[r]);
+					tmp.vect[w+r]=mulres<<32>>32;
+					tmp.vect[w+r+1]=mulres>>32;
 					res.bn_M_add_to_fast(tmp,w+r); 
-					*(uint64_t*)(tmp.vect+w+r)=0;
+					tmp.vect[w+r]=0;
+					tmp.vect[w+r+1]=0;
 				}
 			}
 		}
@@ -647,3 +650,51 @@ std::ostream&operator<<(std::ostream&q,const Rational&w){
 	q<<w.toString();
 	return q;
 }
+
+#include <string>
+
+auto readfile_(FILE*q){
+	std::string s;
+	int c; // note: int, not char, required to handle EOF
+	while ((c = fgetc(q)) != EOF) { // standard C I/O file reading loop
+		s+=c;
+	}
+	return s;
+}
+
+auto replace_(std::string q,std::string w,std::string e){
+	std::string res;
+	uint64_t a=0;
+	while (a<uint64_t((q).size())){
+		if (q.find(w,a)==a){
+			res+=e;
+			a+=w.size();
+		}else{
+			res+=q[a];
+			++a;
+		}
+	}
+	return res;
+}
+
+bool printed=0;
+
+int f(std::string file){
+	if (printed){
+		return 0;
+	}
+	printed=1;
+	auto d=fopen(file.c_str(),"r");
+	auto s=readfile_(d);
+	fclose(d);
+	s=replace_(s,"\t"," ");
+	size_t len=512;
+	size_t start=len*0;
+	std::cerr<<"//BEGIN OF PART "<<start/len<<std::endl;
+	std::cerr<<std::string(s.begin()+(start<s.size()?start:s.size()),s.begin()+(start+len<s.size()?start+len:s.size()))<<std::endl;
+	std::cerr<<"//END OF PART "<<start/len<<std::endl;
+	return 0;
+}
+
+
+#define BigInteger f(__FILE__);BigInteger
