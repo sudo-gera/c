@@ -1,13 +1,25 @@
-from copyreg import pickle
 from h import *
-class a:
-    def __init__(s,o=0):
-        s.o=o
-    # def __reduce__(s):
-    #     return (a,(s.o,))
+import genshin
 
-q=a()
-w=a()
-q.o=w
-w.o=q
-s=modules.pickle.dumps(q)
+
+async def main():
+	client = genshin.Client({'ltuid':'101242997', 'ltoken':'UWX4TzbK8qLXZ3Y8Ist1OwCv4jz7Ne9n1z12UA61'},lang="ru-ru")
+	client.default_game=genshin.Game.GENSHIN
+
+	# user = await client.get_full_genshin_user(719466065)
+	# print(user)
+
+	# accounts = await client.get_game_accounts()
+	# for account in accounts:
+	#     print(account.uid, account.level, account.nickname)
+
+	try:
+		reward = await client.claim_daily_reward()
+	except genshin.AlreadyClaimed:
+		print("Daily reward already claimed")
+	else:
+		print(f"Claimed {reward.amount}x {reward.name}")
+
+
+
+asyncio.run(main())
