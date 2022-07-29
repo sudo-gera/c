@@ -1,13 +1,10 @@
-#include <type_traits>
-
-template<typename T>
-auto f(T q)->std::enable_if_t<!std::is_void_v<decltype(q)>,int>;
-
-template<typename T>
-auto f(T q)->std::enable_if_t<!std::is_void_v<decltype(q)>,int>{
-	return q;
-}
+py_func(a)({
+    def a():
+        return '-'*99
+})
 
 int main(){
-    f(0);
+    perf();
+    ic(str(a()))
+    perf();
 }
