@@ -52,7 +52,8 @@ int64_t Sum(int64_t ub, int64_t ue, int64_t b = 0, int64_t e = ll) {
 }
 
 int main() {
-  int64_t n = Getint(), m = Getint();
+  int64_t m = Getint();
+  m = Getint();
   a = new Item[ll * 2]();
   for (int64_t w = 0; w < m; ++w) {
     int64_t q = Getint();
