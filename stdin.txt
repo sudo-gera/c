@@ -1,12 +1,6 @@
-insert 2 
-insert 5 
-insert 3 
-exists 2 
-exists 4 
-next 4 
-prev 4 
-delete 5 
-next 4 
-prev 4 
-kth 0 
-kth 2
+10 5
+1 0 9 10
+1 1 5 -3
+2 4 8
+1 0 6 25
+2 0 2
