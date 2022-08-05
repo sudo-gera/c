@@ -6,10 +6,10 @@
 ;   up-to-date version: https://vk.cc/cfB1SZ
 ;   contact me:
 ;       tatarinov.gp@phystech.edu
-;       https://vk.com/sudo_gera
-;       https://t.me/sudo_gera
 ;       https://twitter.com/sudo_gera
 ;       https://github.com/sudo-gera
+;       https://vk.com/sudo_gera
+;       https://t.me/sudo_gera
 
 
 
