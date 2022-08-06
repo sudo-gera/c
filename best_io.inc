@@ -1,7 +1,7 @@
 
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;      best_io.inc      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; best_io.inc ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;   best input/output library for nasm
 ;   up-to-date version: https://vk.cc/cfB1SZ
 ;   contact me:
@@ -14,9 +14,9 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;; this library supports ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;   32-bit mode                 nasm -felf   FILE.asm -o a.o && ld -m elf_i386 a.o && ./a.out
-;   64-bit mode (without gcc)   nasm -felf64 FILE.asm -o a.o && ld             a.o && ./a.out
-;   64-bit mode (with gcc)      nasm -felf64 FILE.asm -o a.o && gcc -no-pie    a.o && ./a.out
+;   32-bit mode                 nasm -felf32 FILE.asm -o a.o && ld -m elf_i386   a.o && ./a.out
+;   64-bit mode (without gcc)   nasm -felf64 FILE.asm -o a.o && ld -m elf_x86_64 a.o && ./a.out
+;   64-bit mode (with gcc)      nasm -felf64 FILE.asm -o a.o && gcc -no-pie      a.o && ./a.out
 
 
 
