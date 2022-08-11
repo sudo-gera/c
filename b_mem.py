@@ -49,7 +49,7 @@ class n:
         if type(t)!=list:
             r=[r]
         # r=[node(**w) if w!=None else w for w in r]
-        r=[get(w) if w!=None else w for w in r]
+        r=[loads(get(w)) if w!=None else w for w in r]
         if type(t)!=list:
             r=r[0]
         return r
@@ -65,6 +65,19 @@ class n:
 
 max_len = 8
 
+def dumps(q):
+    import json
+    return json.dumps({
+        'data':[list(w) if type(w)==item else [w] for w in q.data.l],
+        'next':q.next.n
+    } if q!=None else q)
+
+def loads(q):
+    import json
+    q=json.loads(q)
+    if q!=None:
+        q['data']=[item(*w) if len(w)==2 else w[0] for w in q['data']]
+    return node(**q) if q!=None else q
 
 class node:
 
@@ -74,7 +87,7 @@ class node:
         if next is None:
             next = [None]
         # next=[w if type(w)==dict else {'data':w.data,'next':w.next} if w!=None else w for w in next]
-        next=[w if type(w)==str else put(w) if w!=None else w for w in next]
+        next=[w if type(w)==str else put(dumps(w)) if w!=None else w for w in next]
         s._data = l(data)
         s._next = n(next)
 
@@ -119,7 +132,6 @@ def insert(s, k):
         if len(s.next[w].data) > max_len:
             assert len(s.next[w].data) == 1 + max_len
             q = s.next[w]
-            s = node(data=s.data, next=s.next[:w] + [None] + s.next[w + 1:])
             a = node(data=q.data[:max_len // 2],
                      next=q.next[:max_len // 2 + 1])
             d = q.data[max_len // 2]
@@ -235,23 +247,27 @@ class b:
         s.s = None
 
     def check(s):
+        return
         if s.s is not None:
             check(s.s)
 
     def add(s, v):
         s.check()
-        q = node(next=[s.s])
+        r=loads(get(s.s)) if s.s!=None else s.s
+        q = node(next=[r])
         q = insert(q, v)
-        s.s = q
-        if not s.s.data:
-            s.s = s.s.next[0]
+        r = q
+        if not r.data:
+            r = r.next[0]
+        s.s=put(dumps(r)) if r!=None else r
         s.check()
 
     def find(s, v):
         s.check()
-        if s.s is None:
+        r=loads(get(s.s)) if s.s!=None else s.s
+        if r is None:
             return []
-        f = find(s.s, v)
+        f = find(r, v)
         if f is None:
             return []
         f = f[0][0]
@@ -259,9 +275,10 @@ class b:
 
     def remove(s, v):
         s.check()
-        if s.s is None:
+        r=loads(get(s.s)) if s.s!=None else s.s
+        if r is None:
             return
-        a = find(s.s, v)
+        a = find(r, v)
         if a is None:
             return
         a = a[::-1]
@@ -270,24 +287,27 @@ class b:
             while t.next[0] is not None:
                 t = t.next[0]
             d = t.data[0]
-            s.s = erase(s.s, d)
-            a = find(s.s, v)
+            r = erase(r, d)
+            a = find(r, v)
             t = a[0][0].data.index(v)
-            s.s = chval(s.s, a, t, d, len(a) - 1)
+            r = chval(r, a, t, d, len(a) - 1)
         else:
-            s.s = erase(s.s, v)
-        if len(s.s.data) == 0:
-            s.s = s.s.next[0]
+            r = erase(r, v)
+        if len(r.data) == 0:
+            r = r.next[0]
+        s.s=put(dumps(r)) if r!=None else r
         s.check()
 
     def __repr__(s):
-        treeprint(s.s)
+        r=loads(get(s.s)) if s.s!=None else s.s
+        treeprint(r)
         return ''
 
     def to_list(s):
-        if s.s is None:
+        r=loads(get(s.s)) if s.s!=None else s.s
+        if r is None:
             return []
-        return to_list(s.s, [])
+        return to_list(r, [])
 
 
 @total_ordering
@@ -304,7 +324,7 @@ class item:
         return s.k == o.k
 
     def __repr__(s):
-        return repr([s.k, s.v])
+        return 'item'+repr([s.k, s.v])
 
     def __getitem__(s, n):
         return [s.k, s.v][n]
@@ -339,7 +359,7 @@ sed = randint(-9999, 9999)
 print(sed)
 seed(sed)
 a = set()
-for w in range(999):
+for w in range(99):
     q = choice([0] * 3 + [1] + [2])
     if q == 0:
         r = randint(-9999, 9999)
