@@ -48,7 +48,7 @@ def treeprint(root,l=None):
         else:
             print("╋",end='')
         print("► ",end='')
-        print(root.data[q])
+        print(root.mem,root.data[q])
 
         save=0
         if len(l)>1 and q==len(root.data)-1 and l[-2]==3:
