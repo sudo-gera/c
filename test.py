@@ -1,25 +1,17 @@
-from h import *
-import genshin
+from ipaddress import ip_network
 
+start = '0.0.0.0/0'
+exclude = ['1.2.3.4','5.6.7.8','9.10.11.12']
 
-async def main():
-	client = genshin.Client({'ltuid':'101242997', 'ltoken':'UWX4TzbK8qLXZ3Y8Ist1OwCv4jz7Ne9n1z12UA61'},lang="ru-ru")
-	client.default_game=genshin.Game.GENSHIN
+result = [ip_network(start)]
+for x in exclude:
+    n = ip_network(x)
+    new = []
+    for y in result:
+        if y.overlaps(n):
+            new.extend(y.address_exclude(n))
+        else:
+            new.append(y)
+    result = new
 
-	# user = await client.get_full_genshin_user(719466065)
-	# print(user)
-
-	# accounts = await client.get_game_accounts()
-	# for account in accounts:
-	#     print(account.uid, account.level, account.nickname)
-
-	try:
-		reward = await client.claim_daily_reward()
-	except genshin.AlreadyClaimed:
-		print("Daily reward already claimed")
-	else:
-		print(f"Claimed {reward.amount}x {reward.name}")
-
-
-
-asyncio.run(main())
+print(','.join(str(x) for x in sorted(result)))
