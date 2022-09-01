@@ -84,15 +84,14 @@ class n:
 max_len = 64
 
 class node:
-    def __init__(s, *, data=None, next=None):
-        if data is None:
-            data = []
-        if next is None:
-            next = [None]
-        # next=[w if type(w)==str else put(dumps(w)) if w!=None else w for w in next]
-        s._data = l(data)
-        s._next = n(next)
-        s.mem=1
+
+    def __repr__(s):
+        return 'node'+repr((s._data,s._next))
+
+    def __init__(s, *, data=None, next=None, key=None):
+        s._data = l(s, data) if data is not None else None
+        s._next = n(s, next) if next is not None else None
+        s.key = key
 
     @property
     def next(s):
@@ -107,10 +106,6 @@ class node:
             n=loads(s.key)
             s._next,s._data=n._next,n._data
         return s._data
-
-def memup(s):
-    s._next=n([w if type(w)==str else put(dumps(w)) if w!=None else w for w in s._next.n])
-
 
 
 def upd(s):
@@ -185,7 +180,6 @@ def insert(s, k):
                      next=q.next[max_len // 2 + 1:])
             s = node(next=s.next[:w] + [a, q] + s.next[w + 1:],
                      data=s.data[:w] + [d] + s.data[w:])
-    memup(s)
     return s
 
 
@@ -259,7 +253,6 @@ def erase(s, k):
                 s = node(data=s.data,
                          next=s.next[:w + 1] + [node(data=s.next[w + 1].data[1:],
                                                      next=s.next[w + 1].next[1:])] + s.next[w + 2:])
-    memup(s)
     return s
 
 
@@ -300,9 +293,7 @@ class b:
             check(s.s)
 
     def add(s, v):
-        # s.s=loads(get(s.s)) if s.s!=None else s.s
         s.check()
-<<<<<<< HEAD
         r = loads((s.s)) if s.s is not None else s.s
         q = node(data=[], next=[r])
         q = insert(q, v)
@@ -312,45 +303,25 @@ class b:
         r = upd(r)
         s.s = r
         # s.s=(dumps(r)) if r!=None else r
-=======
-        q = node(next=[s.s])
-        q = insert(q, v)
-        s.s = q
-        if not s.s.data:
-            s.s = s.s.next[0]
->>>>>>> master
         s.check()
-        # s.s=put(dumps(s.s)) if s.s!=None else s.s
 
     def find(s, v):
-        # r=s.s
-        # s.s=loads(get(s.s)) if s.s!=None else s.s
         s.check()
-<<<<<<< HEAD
         r = loads((s.s)) if s.s is not None else s.s
         if r is None:
-=======
-        if s.s is None:
->>>>>>> master
             return []
-        f = find(s.s, v)
+        f = find(r, v)
         if f is None:
             return []
         f = f[0][0]
-        # s.s=r
         return [f.data[f.data.index(v)]]
 
     def remove(s, v):
-        # s.s=loads(get(s.s)) if s.s!=None else s.s
         s.check()
-<<<<<<< HEAD
         r = loads((s.s)) if s.s is not None else s.s
         if r is None:
-=======
-        if s.s is None:
->>>>>>> master
             return
-        a = find(s.s, v)
+        a = find(r, v)
         if a is None:
             return
         a = a[::-1]
@@ -359,28 +330,20 @@ class b:
             while t.next[0] is not None:
                 t = t.next[0]
             d = t.data[0]
-            s.s = erase(s.s, d)
-            a = find(s.s, v)
+            r = erase(r, d)
+            a = find(r, v)
             t = a[0][0].data.index(v)
-            s.s = chval(s.s, a, t, d, len(a) - 1)
+            r = chval(r, a, t, d, len(a) - 1)
         else:
-<<<<<<< HEAD
             r = erase(r, v)
         if len(r.data) == 0:
             r = r.next[0]
         r = upd(r)
         s.s = r
         # s.s=(dumps(r)) if r!=None else r
-=======
-            s.s = erase(s.s, v)
-        if len(s.s.data) == 0:
-            s.s = s.s.next[0]
->>>>>>> master
         s.check()
-        # s.s=put(dumps(s.s)) if s.s!=None else s.s
 
     def __repr__(s):
-<<<<<<< HEAD
         r = loads((s.s)) if s.s is not None else s.s
         treeprint(r)
         return ''
@@ -391,23 +354,6 @@ class b:
             return []
         return to_list(r, [])
 
-=======
-        # r=s.s
-        # s.s=loads(get(s.s)) if s.s!=None else s.s
-        treeprint(s.s)
-        # s.s=r
-        return ''
-
-    def to_list(s):
-        # r=s.s
-        # s.s=loads(get(s.s)) if s.s!=None else s.s
-        if s.s is None:
-            ret=[]
-        else:
-            ret=to_list(s.s, [])
-        # s.s=r
-        return ret
->>>>>>> master
 
 @total_ordering
 class item:

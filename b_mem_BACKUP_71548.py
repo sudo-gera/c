@@ -60,6 +60,7 @@ class n:
         s.n = t.n if isinstance(t, n) else t if t is not None else []
 
     def __getitem__(s, k):
+<<<<<<< HEAD
         t = s.n[k]
         r = t
         if not isinstance(t, list):
@@ -67,6 +68,16 @@ class n:
         r = [w if isinstance(w, node) else node(key=w) if w is not None else w for w in r]
         if not isinstance(t, list):
             r = r[0]
+=======
+        t=s.n[k]
+        r=t
+        if type(t)!=list:
+            r=[r]
+        r=[w if type(w)==node else loads(get(w)) if w!=None else w for w in r]
+        if type(t)!=list:
+            r=r[0]
+        s.n[k]=r
+>>>>>>> master
         return r
 
     def __len__(s):
@@ -84,6 +95,16 @@ class n:
 max_len = 64
 
 class node:
+<<<<<<< HEAD
+
+    def __repr__(s):
+        return 'node'+repr((s._data,s._next))
+
+    def __init__(s, *, data=None, next=None, key=None):
+        s._data = l(s, data) if data is not None else None
+        s._next = n(s, next) if next is not None else None
+        s.key = key
+=======
     def __init__(s, *, data=None, next=None):
         if data is None:
             data = []
@@ -93,6 +114,7 @@ class node:
         s._data = l(data)
         s._next = n(next)
         s.mem=1
+>>>>>>> master
 
     @property
     def next(s):

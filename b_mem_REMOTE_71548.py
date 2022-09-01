@@ -1,41 +1,29 @@
-from functools import *
-from random import *
-def treeprint(*a):
-    pass
-to_sleep = 0
+from h import *
+from treeprint import *
 
-data = {}
-
-
+data={}
 def put(v):
-    from time import sleep
-    sleep(to_sleep)
     from random import randint
-    k = ''
+    k=''
     while not k or k in data:
-        k = ''.join(
+        k=''.join(
             [
                 chr(
-                    randint(32, 126)
+                    randint(32,126)
                 ) for w in range(
-                    randint(128, 1024)
+                    randint(128,1024)
                 )
             ]
         )
-    data[k] = v
+    data[k]=v
     return k
 
-
 def get(k):
-    from time import sleep
-    sleep(to_sleep)
     return data[k]
-
 
 class l:
 
-    def __init__(s, r, t=None):
-        s.r = r
+    def __init__(s, t=None):
         s.l = t.l if isinstance(t, l) else t if t is not None else []
 
     def __getitem__(s, k):
@@ -50,23 +38,20 @@ class l:
     def cl(s):
         return s.l[:]
 
-    def __repr__(s):
-        return 'l'+repr(s.l)
-
 class n:
 
-    def __init__(s, r, t=None):
-        s.r = r
+    def __init__(s, t=None):
         s.n = t.n if isinstance(t, n) else t if t is not None else []
 
     def __getitem__(s, k):
-        t = s.n[k]
-        r = t
-        if not isinstance(t, list):
-            r = [r]
-        r = [w if isinstance(w, node) else node(key=w) if w is not None else w for w in r]
-        if not isinstance(t, list):
-            r = r[0]
+        t=s.n[k]
+        r=t
+        if type(t)!=list:
+            r=[r]
+        r=[w if type(w)==node else loads(get(w)) if w!=None else w for w in r]
+        if type(t)!=list:
+            r=r[0]
+        s.n[k]=r
         return r
 
     def __len__(s):
@@ -78,10 +63,21 @@ class n:
     def cl(s):
         return s.n[:]
 
-    def __repr__(s):
-        return 'n'+repr(s.n)
+max_len = 8
 
-max_len = 64
+def dumps(q):
+    import json
+    return json.dumps({
+        'data':[list(w) if type(w)==item else [w] for w in q.data.l],
+        'next':q.next.n
+    } if q!=None else q)
+
+def loads(q):
+    import json
+    q=json.loads(q)
+    if q!=None:
+        q['data']=[item(*w) if len(w)==2 else w[0] for w in q['data']]
+    return node(**q) if q!=None else q
 
 class node:
     def __init__(s, *, data=None, next=None):
@@ -96,53 +92,14 @@ class node:
 
     @property
     def next(s):
-        if s._next==None:
-            n=loads(s.key)
-            s._next,s._data=n._next,n._data
         return s._next
 
     @property
     def data(s):
-        if s._data==None:
-            n=loads(s.key)
-            s._next,s._data=n._next,n._data
         return s._data
 
 def memup(s):
     s._next=n([w if type(w)==str else put(dumps(w)) if w!=None else w for w in s._next.n])
-
-
-
-def upd(s):
-    if type(s) in [str, type(None)]:
-        return s
-    if s.key!=None:
-        return s.key
-    s._next.n = [upd(w) for w in s._next.n]
-    return dumps(s)
-
-
-def dumps(q):
-    if q.key is not None:
-        return q.key
-    import json
-    r = {
-        'data': [list(w) if isinstance(w, item) else [w] for w in q.data.l],
-        'next': q.next.n
-    } if q is not None else q
-    r = json.dumps(r)
-    return put(r)
-
-
-def loads(q):
-    z = q
-    q = get(q)
-    import json
-    q = json.loads(q)
-    if q is not None:
-        q['data'] = [item(*w) if len(w) == 2 else w[0] for w in q['data']]
-    return node(**q, key=z) if q is not None else q
-
 
 
 
@@ -191,7 +148,7 @@ def insert(s, k):
 
 def find(s, k):
     if k in s.data:
-        return [[s, s.data.index(k)]]
+        return [[s,s.data.index(k)]]
     if s.next[0] is None:
         return None
     w = 0
@@ -199,7 +156,7 @@ def find(s, k):
         w += 1
     r = find(s.next[w], k)
     if r is not None:
-        r.append([s, w])
+        r.append([s,w])
     return r
 
 
@@ -277,7 +234,7 @@ def to_list(s, l):
 
 def chval(s, a, t, d, n):
     if n:
-        v = a[n][1]
+        v=a[n][1]
         s = node(data=s.data,
                  next=s.next[:v] + [chval(s.next[v],
                                           a,
@@ -302,23 +259,11 @@ class b:
     def add(s, v):
         # s.s=loads(get(s.s)) if s.s!=None else s.s
         s.check()
-<<<<<<< HEAD
-        r = loads((s.s)) if s.s is not None else s.s
-        q = node(data=[], next=[r])
-        q = insert(q, v)
-        r = q
-        if not r.data:
-            r = r.next[0]
-        r = upd(r)
-        s.s = r
-        # s.s=(dumps(r)) if r!=None else r
-=======
         q = node(next=[s.s])
         q = insert(q, v)
         s.s = q
         if not s.s.data:
             s.s = s.s.next[0]
->>>>>>> master
         s.check()
         # s.s=put(dumps(s.s)) if s.s!=None else s.s
 
@@ -326,12 +271,7 @@ class b:
         # r=s.s
         # s.s=loads(get(s.s)) if s.s!=None else s.s
         s.check()
-<<<<<<< HEAD
-        r = loads((s.s)) if s.s is not None else s.s
-        if r is None:
-=======
         if s.s is None:
->>>>>>> master
             return []
         f = find(s.s, v)
         if f is None:
@@ -343,12 +283,7 @@ class b:
     def remove(s, v):
         # s.s=loads(get(s.s)) if s.s!=None else s.s
         s.check()
-<<<<<<< HEAD
-        r = loads((s.s)) if s.s is not None else s.s
-        if r is None:
-=======
         if s.s is None:
->>>>>>> master
             return
         a = find(s.s, v)
         if a is None:
@@ -364,34 +299,13 @@ class b:
             t = a[0][0].data.index(v)
             s.s = chval(s.s, a, t, d, len(a) - 1)
         else:
-<<<<<<< HEAD
-            r = erase(r, v)
-        if len(r.data) == 0:
-            r = r.next[0]
-        r = upd(r)
-        s.s = r
-        # s.s=(dumps(r)) if r!=None else r
-=======
             s.s = erase(s.s, v)
         if len(s.s.data) == 0:
             s.s = s.s.next[0]
->>>>>>> master
         s.check()
         # s.s=put(dumps(s.s)) if s.s!=None else s.s
 
     def __repr__(s):
-<<<<<<< HEAD
-        r = loads((s.s)) if s.s is not None else s.s
-        treeprint(r)
-        return ''
-
-    def to_list(s):
-        r = loads((s.s)) if s.s is not None else s.s
-        if r is None:
-            return []
-        return to_list(r, [])
-
-=======
         # r=s.s
         # s.s=loads(get(s.s)) if s.s!=None else s.s
         treeprint(s.s)
@@ -407,7 +321,6 @@ class b:
             ret=to_list(s.s, [])
         # s.s=r
         return ret
->>>>>>> master
 
 @total_ordering
 class item:
@@ -423,7 +336,7 @@ class item:
         return s.k == o.k
 
     def __repr__(s):
-        return 'item' + repr([s.k, s.v])
+        return 'item'+repr([s.k, s.v])
 
     def __getitem__(s, n):
         return [s.k, s.v][n]
@@ -452,72 +365,45 @@ class d:
     def to_dict(s):
         return dict(s.b.to_list())
 
-if __name__ == '__main__':
-    s = b()
-    sed = randint(-9999, 9999)
-    print(sed)
-    seed(sed)
-    a = set()
-    for w in range(99):
-        q = choice([0] * 3 + [1] + [2])
-        if q == 0:
-            r = randint(-9999, 9999)
-            a.add(r)
-            s.add(r)
-        if q == 1:
-            r = choice(list(a)) if a and randint(0, -1 + 2) else randint(0, -1 + 9)
-            assert (r in a) == bool(s.find(r))
-            assert r not in a or s.find(r)[0] == r
-        if q == 2 and a:
-            r = choice(list(a))
-            a.remove(r)
-            s.remove(r)
-        f = set(s.to_list())
-        assert a == f
-    a = dict()
-    s = d()
-    for w in range(99):
-        q = choice([0] * 3 + [1] + [2] + [3])
-        if q == 0:
-            k = choice(list(a)) if a and randint(0, 1) else randint(-9999, 9999)
-            v = randint(-9999, 9999)
-            a[k] = v
-            s[k] = v
-        if q == 1:
-            k = choice(list(a)) if a and randint(0, 1) else randint(-9999, 9999)
-            assert (k in a) == (k in s)
-        if q == 2 and a:
-            k = choice(list(a))
-            a[k] == s[k]
-        if q == 3 and a:
-            k = choice(list(a))
-            del a[k]
-            del s[k]
-        assert s.to_dict() == a
 
-    a = dict()
-    s = d()
-    for w in range(999):
-        k = randint(-9999, 9999)
+s = b()
+sed = randint(-9999, 9999)
+print(sed)
+seed(sed)
+a = set()
+for w in range(99):
+    q = choice([0] * 3 + [1] + [2])
+    if q == 0:
+        r = randint(-9999, 9999)
+        a.add(r)
+        s.add(r)
+    if q == 1:
+        r = choice(list(a)) if a and randint(0, -1 + 2) else randint(0, -1 + 9)
+        assert (r in a) == bool(s.find(r))
+        assert r not in a or s.find(r)[0] == r
+    if q == 2 and a:
+        r = choice(list(a))
+        a.remove(r)
+        s.remove(r)
+    f = set(s.to_list())
+    assert a == f
+a = dict()
+s = d()
+for w in range(999):
+    q = choice([0] * 3 + [1] + [2] + [3])
+    if q == 0:
+        k = choice(list(a)) if a and randint(0, 1) else randint(-9999, 9999)
         v = randint(-9999, 9999)
-        s[k] = v
         a[k] = v
-
-    to_sleep = 0.1
-    for w in range(19):
-        q = choice([0] + [1] + [2] + [3])
-        if q == 0:
-            k = choice(list(a)) if a and randint(0, 1) else randint(-9999, 9999)
-            v = randint(-9999, 9999)
-            a[k] = v
-            s[k] = v
-        if q == 1:
-            k = choice(list(a)) if a and randint(0, 1) else randint(-9999, 9999)
-            assert (k in a) == (k in s)
-        if q == 2 and a:
-            k = choice(list(a))
-            a[k] == s[k]
-        if q == 3 and a:
-            k = choice(list(a))
-            del a[k]
-            del s[k]
+        s[k] = v
+    if q == 1:
+        k = choice(list(a)) if a and randint(0, 1) else randint(-9999, 9999)
+        assert (k in a) == (k in s)
+    if q == 2 and a:
+        k = choice(list(a))
+        a[k] == s[k]
+    if q == 3 and a:
+        k = choice(list(a))
+        del a[k]
+        del s[k]
+    assert s.to_dict() == a
