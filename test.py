@@ -1,17 +1,23 @@
-from ipaddress import ip_network
+from h import *
+# c=0
+# def call(path,data):
+#     return c(path,data)
 
-start = '0.0.0.0/0'
-exclude = ['1.2.3.4','5.6.7.8','9.10.11.12']
+def c(path,data):
+    a=path
+    print(a,data)
+    a='http://www.babichev.org/'+a
+    print(a,data)
+    try:
+        a=urlopen(a,data).read()
+    except Exception:
+        print(format_exc())
+    try:
+        a=a.decode()
+        a=a.replace('www.babichev.org','localhost:1234')
+        a=a.replace('https://','http://')
+    except Exception:
+        pass
+    return a
 
-result = [ip_network(start)]
-for x in exclude:
-    n = ip_network(x)
-    new = []
-    for y in result:
-        if y.overlaps(n):
-            new.extend(y.address_exclude(n))
-        else:
-            new.append(y)
-    result = new
-
-print(','.join(str(x) for x in sorted(result)))
+a[0]=c
