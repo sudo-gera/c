@@ -8,7 +8,7 @@
 #include <vector>
 #include <assert.h>
 using std::cin, std::cout, std::vector, std::string, std::sort, std::pair;
-using std::set, std::unordered_set, std::map, std::unordered_map, std::min,std::max;
+using std::set, std::unordered_set, std::map, std::unordered_map;
 
 #ifdef print
 #undef print
@@ -70,3 +70,57 @@ using llu=long long unsigned;
 ///////////////////////////////////////////////////end of lib
 
 
+struct ropes
+{
+    unordered_map<llu,llu> cache1;
+    unordered_map<llu,llu> cache2;
+    vector<llu> x;
+
+    llu find1(llu n){
+        // ic(n)
+        if (cache1.count(n)){
+            return cache1[n];
+        }
+        assert (n>=2);
+        auto d=find2(n-1)+x[n-1]-x[n-2];
+        cache1[n]=d;
+        // ic(n,d)
+        return d;
+    }
+
+    llu find2(llu n){
+        // ic(n)
+        if (cache2.count(n)){
+            return cache2[n];
+        }
+        assert(n>=1);
+        llu d=0;
+        if (n==1){
+        }else
+        if (n==2){
+            d=x[n-1]-x[n-2];
+        }else{
+            assert(n>=3);
+            d=std::min(
+                find1(n-1),
+                find2(n-1)+x[n-1]-x[n-2]
+            );
+        }
+        cache2[n]=d;
+        // ic(n,d)
+        return d;
+    }
+
+};
+
+
+
+int main(){
+    llu n=getint();
+    ropes r;
+    for (llu w=0;w<n;++w){
+        r.x.push_back(getint());
+    }
+    sort(r.x.begin(),r.x.end());
+    print(r.find1(r.x.size()));
+}

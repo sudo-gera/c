@@ -8,7 +8,7 @@
 #include <vector>
 #include <assert.h>
 using std::cin, std::cout, std::vector, std::string, std::sort, std::pair;
-using std::set, std::unordered_set, std::map, std::unordered_map, std::min,std::max;
+using std::set, std::unordered_set, std::map, std::unordered_map;
 
 #ifdef print
 #undef print
@@ -65,8 +65,40 @@ static inline void write(uint64_t out) {
     putchar(' ');
 }
 
-using llu=long long unsigned;
+using llu=unsigned;
 
 ///////////////////////////////////////////////////end of lib
 
+struct game{
+    // unordered_map<llu,llu> cache;
+    vector<llu> cache;
 
+    llu find(llu n){
+        if (n==0){
+            return 2;
+        }
+        if (cache[n]){
+            return cache[n];
+        }
+        for (llu w=1;w*w<=n;++w){
+            if (find(n-w)==2){
+                cache[n]=1;
+                return 1;
+            }
+        }
+        cache[n]=2;
+        return 2;
+    }
+};
+
+
+int main(){
+    llu n=getint();
+    game g;
+    g.cache.resize(n+1);
+    for (llu w=0;w<n;++w){
+        g.find(w);
+    }
+    printf(g.find(n)==1?"First\n":"Second\n");
+
+}

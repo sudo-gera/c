@@ -8,7 +8,7 @@
 #include <vector>
 #include <assert.h>
 using std::cin, std::cout, std::vector, std::string, std::sort, std::pair;
-using std::set, std::unordered_set, std::map, std::unordered_map, std::min,std::max;
+using std::set, std::unordered_set, std::map, std::unordered_map;
 
 #ifdef print
 #undef print
@@ -69,4 +69,34 @@ using llu=long long unsigned;
 
 ///////////////////////////////////////////////////end of lib
 
+struct cube{
+    map<pair<llu,llu>,long double> cache;
 
+    long double find(llu n,llu m){
+        if (cache.count({n,m})){
+            return cache[{n,m}];
+        }
+        long double s=0;
+        if (n*m==0){
+            s=!(n+m);
+        }else
+        if (m<n or n*6<m){
+            s=0;
+        }else
+        if (n==1){
+            s=1./6;
+        }else{
+            for (llu w=1;w<7;++w){
+                s+=find(n-1,m-w)/6.;
+            }
+        }
+        cache[{n,m}]=s;
+        return s;
+    }
+};
+
+
+int main(){
+    llu n=getint(),m=getint();
+    printf("%.20Lf\n",cube().find(n,m));
+}

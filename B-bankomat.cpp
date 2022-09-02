@@ -6,8 +6,16 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-using std::cin, std::cout, std::vector, std::string, std::sort;
+using std::cin, std::cout, std::vector, std::string, std::sort, std::pair;
 using std::set, std::unordered_set, std::map, std::unordered_map;
+
+#ifdef print
+#undef print
+#endif
+
+#ifdef write
+#undef write
+#endif
 
 static inline int64_t getint() {
   int sign = 1;
@@ -56,19 +64,64 @@ static inline void write(uint64_t out) {
   putchar(' ');
 }
 
+using llu=long long unsigned;
+
 ///////////////////////////////////////////////////end of lib
 
-auto find(vector<long>&a,long s){
-    
-}
+struct find{
+  unordered_map<llu,llu> cache;
+  vector<llu> a;
 
+  long find1(llu s){
+      if (s==0){
+          return 0;
+      }
+      if (cache.count(s)){
+          return cache[s];
+      }
+      llu r=1LL<<50;
+      for (auto w:a){
+          if (s>=w){
+              auto t=find1(s-w);
+              if (t<r){
+                  r=t;
+              }
+          }
+      }
+      r+=1;
+      cache[s]=r;
+      return r;
+  }
+
+  long find2(llu s, llu c){
+      if (s*c==0){
+          return !(s+c);
+      }
+      for (auto w:a){
+          if (s>=w){
+              if (find1(s-w)==c-1 and find2(s-w,c-1)){
+                  write(w);
+                  return 1;
+              }
+          }
+      }
+      return 0;
+  }
+};
 
 int main(){
-    long n=getint();
-    vector<long> a(n);
-    for (long w=0;w<n;++w){
-        a[w]=getint();
+    llu n=getint();
+    find f;
+    for (llu w=0;w<n;++w){
+        f.a.push_back(getint());
     }
-    long s=getint();
-
+    llu s=getint();
+    auto z=f.find1(s);
+    if (z<1LL<<40){
+        print(z);
+        f.find2(s,z);
+        putchar(10);
+    }else{
+        print(-1);
+    }
 }

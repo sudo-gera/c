@@ -8,7 +8,7 @@
 #include <vector>
 #include <assert.h>
 using std::cin, std::cout, std::vector, std::string, std::sort, std::pair;
-using std::set, std::unordered_set, std::map, std::unordered_map, std::min,std::max;
+using std::set, std::unordered_set, std::map, std::unordered_map;
 
 #ifdef print
 #undef print
@@ -69,4 +69,44 @@ using llu=long long unsigned;
 
 ///////////////////////////////////////////////////end of lib
 
+struct game2{
+    map<pair<llu,llu>,llu> cache;
 
+    llu find(llu a,llu s){
+        // 1 если на доске a x s победит первый иначе 2
+        if (a==1){
+            return s%2+1;
+        }
+        if (s==1){
+            return a%2+1;
+        }
+        if (cache.count({a,s})){
+            return cache[{a,s}];
+        }
+        if (find(a-1,s)==2){
+            cache[{a,s}]=1;
+            return 1;
+        }
+        if (find(a-1,s-1)==2){
+            cache[{a,s}]=1;
+            return 1;
+        }
+        if (find(a,s-1)==2){
+            cache[{a,s}]=1;
+            return 1;
+        }
+        cache[{a,s}]=2;
+        return 2;
+    }
+};
+
+
+int main(){
+    auto a=getint(),s=getint();
+    // ++a,++s;
+    auto p=game2().find(a,s);
+    // if (a<=3 or s<=3){
+    //     p=3-p;
+    // }
+    printf(p==1?"F\n":"S\n");
+}

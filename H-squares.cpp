@@ -69,4 +69,75 @@ using llu=long long unsigned;
 
 ///////////////////////////////////////////////////end of lib
 
+llu floor_root(llu q){
+	llu r=0;
+	llu p=1ULL<<62;
+	llu u=0;
+    while (p){
+		u=r+p;
+		if (q >= u) {
+			q-=u;
+			r+=p;
+			r+=p;
+        }
+		r>>=1;
+		p>>=2;
+    }
+	return r;
+}
 
+
+struct squares
+{
+    vector<llu> cache;
+
+    llu find(llu n,llu dep=-1){
+        write(n);print(dep);
+        if (dep==0){
+            return -1;
+        }
+        if (cache[n]){
+            llu c=cache[n];
+            if (c>dep){
+                return -1;
+            }
+        }
+        llu r=floor_root(n);
+        llu ans=n-1;
+        while (r)
+        {
+            ans=min(ans,find(n-r*r,min(dep-1,ans)));
+            r-=1;
+        }
+        cache[n]=ans+1;
+        return ans+1;
+    }
+};
+
+
+int main(){
+    llu n=getint();
+    squares s;
+    s.cache.resize(n+1);
+    print(s.find(n));
+}
+
+
+
+// int main(){
+//     llu n=getint();
+//     vector<llu> a(n+1);
+//     a[1]=1;
+//     for (llu w=2;w<n+1;++w){
+//         if (w%10000==0){
+//             print(w);
+//         }
+//         a[w]=-1;
+//         llu q=1;
+//         while (w>=q*q){
+//             a[w]=std::min(a[w-q*q]+1,a[w]);
+//             q+=1;
+//         }
+//     }
+//     print(a[n]);
+// }
