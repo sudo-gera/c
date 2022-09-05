@@ -86,58 +86,27 @@ llu floor_root(llu q){
 	return r;
 }
 
-
-struct squares
-{
-    vector<llu> cache;
-
-    llu find(llu n,llu dep=-1){
-        write(n);print(dep);
-        if (dep==0){
-            return -1;
-        }
-        if (cache[n]){
-            llu c=cache[n];
-            if (c>dep){
-                return -1;
-            }
-        }
-        llu r=floor_root(n);
-        llu ans=n-1;
-        while (r)
-        {
-            ans=min(ans,find(n-r*r,min(dep-1,ans)));
-            r-=1;
-        }
-        cache[n]=ans+1;
-        return ans+1;
-    }
-};
-
-
 int main(){
     llu n=getint();
-    squares s;
-    s.cache.resize(n+1);
-    print(s.find(n));
+    llu q=n;
+    auto r=floor_root(n);
+    if (r*r==n){
+        print(1);
+        return 0;
+    }
+    for (llu w=1;w<=r;++w){
+        llu e=floor_root(q-w*w);
+        if (e*e+w*w==n){
+            print(2);
+            return 0;
+        }
+    }
+    while (q%4==0){
+        q/=4;
+    }
+    if (q%8==7){
+        print(4);
+    }else{
+        print(3);
+    }
 }
-
-
-
-// int main(){
-//     llu n=getint();
-//     vector<llu> a(n+1);
-//     a[1]=1;
-//     for (llu w=2;w<n+1;++w){
-//         if (w%10000==0){
-//             print(w);
-//         }
-//         a[w]=-1;
-//         llu q=1;
-//         while (w>=q*q){
-//             a[w]=std::min(a[w-q*q]+1,a[w]);
-//             q+=1;
-//         }
-//     }
-//     print(a[n]);
-// }
