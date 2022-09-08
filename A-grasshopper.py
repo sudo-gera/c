@@ -1,6 +1,7 @@
 from queue import Queue
 scan_cache=Queue()
 
+
 def scan(t=int):
 	if type(t) in (list, tuple):
 		t=type(t)([scan(w) for w in t])

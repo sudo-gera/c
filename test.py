@@ -1,8 +1,10 @@
-from h import *
 
-def whois(ip:str):
-    a=subprocess.run(['whois',ip],stdout=PIPE)
-    a=a.stdout.read().splitlines()
+
+# from h import *
+
+# def whois(ip:str):
+#     a=subprocess.run(['whois',ip],stdout=PIPE)
+#     a=a.stdout.read().splitlines()
     
 
 
