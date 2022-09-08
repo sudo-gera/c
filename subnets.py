@@ -1,8 +1,7 @@
-from csv import excel
-from ipaddress import ip_network
+from ipaddress import *
 
 
-exclude4=[
+to_exclude4=[
 # local:
     '0.0.0.0/8',
     '10.0.0.0/8',
@@ -720,8 +719,7 @@ exclude4=[
 
 ]
 
-def exc(exclude):
-    start = '0.0.0.0/0'
+def exclude(start,exclude)->list[IPv4Network|IPv6Network]:
     result = [ip_network(start)]
     for x in exclude:
         n = ip_network(x)
@@ -735,6 +733,7 @@ def exc(exclude):
         result = new
     return result
 
-exclude4=exc(exclude4)
+if __name__ == '__main__':
+    to_exclude4=exclude('0.0.0.0/0',to_exclude4)
 
-print(', '.join(str(x) for x in sorted(exclude4)))
+    print(', '.join(str(x) for x in sorted(to_exclude4)))
