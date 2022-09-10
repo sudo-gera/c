@@ -6,20 +6,40 @@ struct Matrix
     long columns=0;
     double*data=nullptr;
     Matrix(int _rows,int _columns){
+        if (_rows<0 or _columns<0){
+            cout<<"Wrong size of matrix";
+            exit(1);
+        }
         rows=_rows;
         columns=_columns;
-        data=new double[rows*columns];
+        // data=new double[rows*columns];
+        data=(double*)calloc(rows*columns,sizeof(double));
+        if (!data){
+            cout<<"Wrong size of matrix";
+            exit(1);
+        }
     }
     Matrix(const Matrix&o){
         memmove(this,&o,sizeof(o));
-        data=new double[rows*columns];
+        data=(double*)calloc(rows*columns,sizeof(double));
+        if (!data){
+            cout<<"Wrong size of matrix";
+            exit(1);
+        }
         memmove(data,o.data,sizeof(double)*rows*columns);
     }
     Matrix&operator=(const Matrix&o){
+        if (&o==this){
+            return*this;
+        }
+        this->~Matrix();
         memmove(this,&o,sizeof(o));
-        data=new double[rows*columns];
+        data=(double*)calloc(rows*columns,sizeof(double));
+        if (!data){
+            cout<<"Wrong size of matrix";
+            exit(1);
+        }
         memmove(data,o.data,sizeof(double)*rows*columns);
-        return *this;
     }
     void o(ostream&out)const{
         for (long q=0;q<rows;++q){
@@ -29,7 +49,12 @@ struct Matrix
             cout<<'\n';
         }
     }
-
+    ~Matrix(){
+        if (data){
+            free(data);
+            data=nullptr;
+        }
+    }
 };
 
 
