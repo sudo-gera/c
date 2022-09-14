@@ -1,4 +1,120 @@
+# z=[0]*16
+# def f(n):
+#     # print(n)
+#     # for w in range(4):
+#     #     print(z[4*w:4*w+4])
+#     if n==len(z):
+#         return 1
+#     a,s=divmod(n,4)
+#     q={1,2,3,4}
+#     for w in range(a):
+#         q-={z[4*w+s]}
+#     for w in range(s):
+#         q-={z[4*a+w]}
+#     c=0
+#     for w in q:
+#         z[n]=w
+#         c+=f(n+1)
+#         z[n]=0
+#     return c
+# print(f(0))
 
+from copy import copy
+
+class vector:
+    def __init__(s,x=0,y=0):
+        if type(x)==vector:
+            s.x=x.x
+            s.y=x.y
+        else:
+            s.x=x
+            s.y=y
+    def __imul__(s,o):
+        s=vector(s)
+        s.x*=o
+        s.y*=o
+        return s
+    def __iadd__(s,o):
+        s=vector(s)
+        s.x+=o.x
+        s.y+=o.y
+        return s
+    def __isub__(s,o):
+        s=vector(s)
+        s.x-=o.x
+        s.y-=o.y
+        return s
+    def __mul__(s,o):
+        s=vector(s)
+        s.x*=o
+        s.y*=o
+        return s
+    def __add__(s,o):
+        s=vector(s)
+        s.x+=o.x
+        s.y+=o.y
+        return s
+    def __sub__(s,o):
+        s=vector(s)
+        s.x-=o.x
+        s.y-=o.y
+        return s
+
+
+z=0
+q=0
+c=0
+while 1:
+    q=z
+    z+=1
+    g=[[] for w in range(5)]
+    for w in range(5):
+        for e in range(w):
+            if q%2:
+                g[w].append(e)
+                g[e].append(w)
+            q//=2
+    if q:
+        break
+    h=copy(g)
+    if all([len(w)!=1 for w in g]):
+        s=set(g[0])
+        g[0]=[]
+        while 1:
+            for w in list(s):
+                s|=set(g[w])
+                g[w]=[]
+            if len(s)==5:
+                break
+            if all([g[w]==[] for w in s]):
+                break
+        if len(s)==5:
+            print(h)
+            coord=[
+                vector(20,0),
+                vector(0,25),
+                vector(20,50),
+                vector(50,40),
+                vector(50,10),
+            ]
+            term=[[' ']*55 for w in range(55)]
+            for q,w in enumerate(h):
+                for e in [e for e in range(5) if e!=q]:
+                # for e in w:
+                    a=coord[q]
+                    d=coord[e]
+                    for r in range(1000):
+                        s=(d-a)*0.001*r+a
+                        if e in w:
+                            term[round(s.x)][round(s.y)]='\x1b[34m#\x1b[0m'
+                        else:
+                            term[round(s.x)][round(s.y)]='\x1b[31m#\x1b[0m'
+            for w in term[::2]:
+                for e in w[::]:
+                    print(e,end='')
+                print()
+            c+=1
+print(c)
 
 
 
