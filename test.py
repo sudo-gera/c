@@ -1,3 +1,13 @@
+from h import *
+k=7
+_c=0
+for n in range(k+1):
+    ic(n)
+    _c+=ic(c(k,n)*Fraction(4,10)**(7-n)*Fraction(6,10)**(n))
+print(_c,float(_c),_c>=Fraction(9,10))
+
+
+exit()
 # z=[0]*16
 # def f(n):
 #     # print(n)

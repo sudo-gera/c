@@ -1,3 +1,4 @@
+#include <SDL2/SDL.h>
 #include <sys/ioctl.h>
 #include <stdio.h>
 #include <unistd.h>
