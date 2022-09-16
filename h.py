@@ -1,8 +1,4 @@
 HOME=1
-from operator import *
-import operator
-from inspect import *
-import inspect
 try:
 	from dataclasses import *
 	import dataclasses
@@ -63,6 +59,10 @@ from builtins import *
 import builtins
 from re import *
 import re
+from operator import *
+import operator
+from inspect import *
+import inspect
 def outputFunction(*a):
 	a=a[0]
 	s=split(r'\:\d+ in ',a)
@@ -113,7 +113,6 @@ primes=[2,3,5]
 from is_prime import *
 import is_prime
 from scan import *
-import scan
 def is_prime_root(q):
 	if primes[-1]>=q:
 		return bisect_in(primes,q)
@@ -351,11 +350,14 @@ def perf():
 	global _perf_prev_
 	args=('%.9f'%(perf_counter()-_perf_prev_)).replace('0','\x1b[34m0\x1b[0m')
 	try:
-		g=getframeinfo(stack()[1][0])
+		g=stack()
+		g=g[1][0]
+		g=getframeinfo(g)
 		line=str(g.lineno)
 		file=g.filename
 		func=g.function
-	except:
+	except Exception:
+		print(format_exc())
 		line=''
 		file=''
 		func=''

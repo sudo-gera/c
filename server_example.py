@@ -4,6 +4,9 @@ exit
 ':'''
 
 
+from traceback import format_exc
+
+
 try:
 	from icecream import ic
 except:
@@ -38,7 +41,10 @@ class Server:
 			server_self.s2u.put([path,data])
 			ret=server_self.u2s.get()
 		else:
-			ret=server_self.call(path,data)
+			try:
+				ret=server_self.call(path,data)
+			except:
+				ret=format_exc()
 
 		ct='file/file'
 		while type(ret)!=bytes:
