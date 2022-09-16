@@ -1,10 +1,31 @@
-from h import *
-k=7
-_c=0
-for n in range(k+1):
-    ic(n)
-    _c+=ic(c(k,n)*Fraction(4,10)**(7-n)*Fraction(6,10)**(n))
-print(_c,float(_c),_c>=Fraction(9,10))
+# {10, 47, 48, 49, 50, 51,             55,         61, 67, 68, 72, 76, 80, 84, 88, 98, 102, 103, 106, 110, 114, 118,           121, 122}
+# [43, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57,         68, 72, 76, 80, 84, 88, 98, 102,      106, 110, 114, 118, 119, 120, 121, 122]
+# a=open('test.txt','rb')
+# s=set()
+# s=set(a.read())
+# # for c in a.read():
+# #     s.add(c)
+# print(s)
+
+# for w in range(10):
+#     print(f'    | sed "s/{w}/100{w}/g" \\')
+
+from base64 import b64decode, b64encode
+
+
+def binstr(s):
+    if type(s)==str: s=s.encode()
+    return '_'.join([('0'*8+bin(w)[2:])[-8:] for w in s])
+
+
+l=[]
+# for w in range(256):
+for w in [43, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57,         68, 72, 76, 80, 84, 88, 98, 102,      106, 110, 114, 118, 119, 120, 121, 122]:
+    l+=b64encode(bytes([255,w,255]))
+l=sorted(list(set(l)))
+print(l)
+
+
 
 
 exit()

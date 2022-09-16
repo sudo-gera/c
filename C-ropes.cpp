@@ -65,18 +65,19 @@ static inline void write(uint64_t out) {
     putchar(' ');
 }
 
-using llu=long long unsigned;
+// using long=long long unsigned;
+
 
 ///////////////////////////////////////////////////end of lib
 
 
 struct ropes
 {
-    unordered_map<llu,llu> cache1;
-    unordered_map<llu,llu> cache2;
-    vector<llu> x;
+    unordered_map<long,long> cache1;
+    unordered_map<long,long> cache2;
+    vector<long> x;
 
-    llu find1(llu n){
+    long find1(long n){
         // ic(n)
         if (cache1.count(n)){
             return cache1[n];
@@ -88,13 +89,13 @@ struct ropes
         return d;
     }
 
-    llu find2(llu n){
+    long find2(long n){
         // ic(n)
         if (cache2.count(n)){
             return cache2[n];
         }
         assert(n>=1);
-        llu d=0;
+        long d=0;
         if (n==1){
         }else
         if (n==2){
@@ -116,9 +117,9 @@ struct ropes
 
 
 int main(){
-    llu n=getint();
+    long n=getint();
     ropes r;
-    for (llu w=0;w<n;++w){
+    for (long w=0;w<n;++w){
         r.x.push_back(getint());
     }
     sort(r.x.begin(),r.x.end());
