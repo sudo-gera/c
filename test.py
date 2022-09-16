@@ -10,25 +10,25 @@
 # for w in range(10):
 #     print(f'    | sed "s/{w}/100{w}/g" \\')
 
-from base64 import b64decode, b64encode
+# from base64 import b64decode, b64encode
 
 
-def binstr(s):
-    if type(s)==str: s=s.encode()
-    return '_'.join([('0'*8+bin(w)[2:])[-8:] for w in s])
+# def binstr(s):
+#     if type(s)==str: s=s.encode()
+#     return '_'.join([('0'*8+bin(w)[2:])[-8:] for w in s])
 
 
-l=[]
-# for w in range(256):
-for w in [43, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57,         68, 72, 76, 80, 84, 88, 98, 102,      106, 110, 114, 118, 119, 120, 121, 122]:
-    l+=b64encode(bytes([255,w,255]))
-l=sorted(list(set(l)))
-print(l)
+# l=[]
+# # for w in range(256):
+# for w in [43, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57,         68, 72, 76, 80, 84, 88, 98, 102,      106, 110, 114, 118, 119, 120, 121, 122]:
+#     l+=b64encode(bytes([255,w,255]))
+# l=sorted(list(set(l)))
+# print(l)
 
 
 
 
-exit()
+# exit()
 # z=[0]*16
 # def f(n):
 #     # print(n)
@@ -50,7 +50,10 @@ exit()
 #     return c
 # print(f(0))
 
+count=-1
+
 from copy import copy
+from itertools import permutations
 
 class vector:
     def __init__(s,x=0,y=0):
@@ -91,10 +94,48 @@ class vector:
         s.y-=o.y
         return s
 
+class graph:
+    def __init__(s,l):
+        s.l=l
+    def __eq__(s,o):
+        # return False
+        q,a=s.l,o.l
+        if sorted([len(w) for w in q])!=sorted([len(w) for w in a]):
+            return False
+        q=[
+            [
+                int(e in q[w])
+            for e in range(5)]
+        for w in range(5)]
+        a=[
+            [
+                int(e in a[w])
+            for e in range(5)]
+        for w in range(5)]
+
+        s=[w[:] for w in a]
+        for w in permutations(range(5)):
+            a=[
+                [
+                    s[w[e]][w[r]]
+                for r in range(5)]
+            for e in range(5)]
+            if q==a:
+                return True
+
+
+
+    def __ne__(s,o):
+        return not (s==o)
+    def __hash__(self) -> int:
+        return hash(tuple([tuple(w) for w in self.l]))
+
+
 
 z=0
 q=0
 c=0
+gs=[]
 while 1:
     q=z
     z+=1
@@ -108,7 +149,7 @@ while 1:
     if q:
         break
     h=copy(g)
-    if all([len(w)!=1 for w in g]):
+    if all([len(w)!=1 for w in g]) and (count==-1 or sum([len(w) for w in g])==count*2):
         s=set(g[0])
         g[0]=[]
         while 1:
@@ -120,32 +161,59 @@ while 1:
             if all([g[w]==[] for w in s]):
                 break
         if len(s)==5:
-            print(h)
-            coord=[
-                vector(20,0),
-                vector(0,25),
-                vector(20,50),
-                vector(50,40),
-                vector(50,10),
-            ]
-            term=[[' ']*55 for w in range(55)]
-            for q,w in enumerate(h):
-                for e in [e for e in range(5) if e!=q]:
-                # for e in w:
-                    a=coord[q]
-                    d=coord[e]
-                    for r in range(1000):
-                        s=(d-a)*0.001*r+a
-                        if e in w:
-                            term[round(s.x)][round(s.y)]='\x1b[34m#\x1b[0m'
-                        else:
-                            term[round(s.x)][round(s.y)]='\x1b[31m#\x1b[0m'
-            for w in term[::2]:
-                for e in w[::]:
-                    print(e,end='')
-                print()
-            c+=1
-print(c)
+            gs.append(graph(h))
+
+
+def cl(g):
+    c=0
+    for w in range(5):
+        for e in range(5):
+            if w!=e:
+                if e not in g.l[w]:
+                    if abs(w-e) in [1,4]:
+                        c-=1
+                    else:
+                        c+=20
+    return c
+
+gs.sort(key=cl,reverse=0)
+
+hs=[]
+for w in gs:
+    if w not in hs:
+        hs.append(w)
+
+gd={}
+for w in hs:
+    gd[w]=gs.count(w)
+
+gd=[[q.l,w] for q,w in gd.items()]
+
+for h,n in gd:
+    coord=[
+        vector(20,0),
+        vector(0,25),
+        vector(20,50),
+        vector(50,40),
+        vector(50,10),
+    ]
+    term=[[' ']*55 for w in range(55)]
+    for q,w in enumerate(h):
+        for e in [e for e in range(5) if e!=q]:
+            a=coord[q]
+            d=coord[e]
+            for r in range(1000):
+                s=(d-a)*0.001*r+a
+                if e in w:
+                    term[round(s.x)][round(s.y)]='\x1b[31m#\x1b[0m'
+                else:
+                    term[round(s.x)][round(s.y)]='\x1b[34m$\x1b[0m'
+    print(f'{n}x')
+    for w in term[::2]:
+        for e in w[::]:
+            print(e,end='')
+        print()
+print(len(gs))
 
 
 
