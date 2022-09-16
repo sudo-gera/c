@@ -1,11 +1,22 @@
 struct s{
-    int a[0];
-    int s[1];
+    s(){
+        ic()
+    }
+    ~s(){
+        ic()
+    }
+};
+
+struct d:s{
+    d(){
+        ic()
+    }
+    ~d(){
+        ic()
+    }
 };
 
 
-static_assert(sizeof(s)==4);
-
 int main(){
-    
+    d a;    
 }
