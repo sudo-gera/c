@@ -1,7 +1,7 @@
 from fractions import Fraction as f
 from pprint import pprint
 from random import *
-a=open('test.txt').read()
+a=open('bn_test.txt').read()
 a=a.split('====== Test')
 a=[w for w in a if w]
 s=[]
@@ -51,6 +51,7 @@ def to_dec(q,e):
 	s=s[:len(s)-e]+'.'+s[len(s)-e:]
 	return s
 a.append(['1000000000000000000000000000000000','/','-1000000'])
+a.append(['2','%','1'])
 a.append(['10','to_radix','10'])
 a.append(['453234523460009834520987234598234502345987029345436345634563','/','234523452034623049872345234520983475325345234232578'])
 a.append(['-23534576554950000000000000009999990000999900000','/','8888888888884444444444433333333333332222222222222111112222777777777'])
@@ -60,9 +61,9 @@ a.append(['453234523460009834520987234598234502345987029345436345634563','%','23
 a.append(['-23534576554950000000000000009999990000999900000','%','8888888888884444444444433333333333332222222222222111112222777777777'])
 a.append(['-1','/','1'])
 # a=[w for w in a if w[1]!='%']
-# a=[w for w in a if w[1]!='root']
-# a=[w for w in a if w[1]!='pow']
-# a=[w for w in a if w[1]!='to_radix']
+a=[w for w in a if w[1]!='root']
+a=[w for w in a if w[1]!='pow']
+a=[w for w in a if w[1]!='to_radix']
 a=[w for w in a if w[1]!='memstress']
 # a=[]
 aa=382343234334334323331

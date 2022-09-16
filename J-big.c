@@ -10,11 +10,14 @@
 #include <string.h>
 #include <tgmath.h>
 
+<<<<<<< HEAD
 #ifdef print
 #undef print
 #define hash hash_
 #endif
 
+=======
+>>>>>>> a2553e7337c89409150c4a381a8fd7af7974c7c6
 struct array_s {
 	size_t mem_size;
 	size_t el_count;
@@ -63,7 +66,11 @@ static inline struct array_s *resize_f(struct array_s **vp, size_t el_size, size
 #define resize(a, ...) (resize_f((struct array_s **)&(a), sizeof((a)[0]), (__VA_ARGS__)))
 #define append(a, ...) (resize((a), len(a) + 1), (a)[len(a) - 1] = (__VA_ARGS__))
 #define pop(a) (resize((a), len(a) - 1), (a)[len(a)])
+<<<<<<< HEAD
 #define back(a) ((a)[len(a)-1])
+=======
+#define back(a) (a[len(a)-1])
+>>>>>>> a2553e7337c89409150c4a381a8fd7af7974c7c6
 
 static inline int64_t getint() {
 	int sign = 1;
@@ -107,10 +114,17 @@ static inline void print(uint64_t out) {
 	putchar('\n');
 }
 
+<<<<<<< HEAD
 // static inline void write(uint64_t out) {
 // 	putint(out);
 // 	putchar(' ');
 // }
+=======
+static inline void write(uint64_t out) {
+	putint(out);
+	putchar(' ');
+}
+>>>>>>> a2553e7337c89409150c4a381a8fd7af7974c7c6
 
 #define min(a,s) ((a)<(s)?(a):(s))
 #define max(a,s) ((a)>(s)?(a):(s))
@@ -199,6 +213,7 @@ void dict_del(dict*a){
 	}
 }
 
+<<<<<<< HEAD
 typedef struct part{
 	uint64_t l;
 	char*p;
@@ -245,12 +260,15 @@ char*alloc(uint64_t s,long*next){
 	// return r;
 }
 
+=======
+>>>>>>> a2553e7337c89409150c4a381a8fd7af7974c7c6
 int main(){
 	uint64_t n=getint();
 	char* com=0,*key=0,*val=0;
 	resize(com,40);
 	resize(key,4100);
 	resize(val,4100);
+<<<<<<< HEAD
 	long next=0;
 	// part*mem=0;
 	// int fd=open("tmpmem.trash.trash",O_RDWR);
@@ -268,6 +286,9 @@ int main(){
 	dict*d=dict_create();
 	// append(mem,(part){.l=n*4100*2,.p=mmem,.sp=mmem,.sl=n*4100*2});
 	// ic(itervect(mem,mem+len(mem)))
+=======
+	dict*d=dict_create();
+>>>>>>> a2553e7337c89409150c4a381a8fd7af7974c7c6
 	for (uint64_t w=0;w<n;++w){
 		scanf("%35s",com);
 		scanf("%4096s",key);
@@ -278,11 +299,17 @@ int main(){
 			if (dict_find(d,&t)){
 				printf("ERROR\n");
 			}else{
+<<<<<<< HEAD
 				t.key=alloc(4100,&next);
 				t.value=alloc(4100,&next);
 				// t.key=(char*)malloc(4100);
 				// t.value=(char*)malloc(4100);
 				strcpy(t.key,key);
+=======
+				t.key=(char*)malloc(4100);
+				strcpy(t.key,key);
+				t.value=(char*)malloc(4100);
+>>>>>>> a2553e7337c89409150c4a381a8fd7af7974c7c6
 				strcpy(t.value,val);
 				dict_insert(d,&t);
 			}
@@ -292,8 +319,13 @@ int main(){
 			t.key = key;
 			if (dict_find(d,&t)){
 				dict_erase(d,&t);
+<<<<<<< HEAD
 				// free(t.key);
 				// free(t.value);
+=======
+				free(t.key);
+				free(t.value);
+>>>>>>> a2553e7337c89409150c4a381a8fd7af7974c7c6
 			}else{
 				printf("ERROR\n");
 			}
@@ -304,6 +336,7 @@ int main(){
 			t.key=key;
 			if (dict_find(d,&t)){
 				dict_erase(d,&t);
+<<<<<<< HEAD
 				// free(t.key);
 				// free(t.value);
 				t.key=alloc(4100,&next);
@@ -311,6 +344,13 @@ int main(){
 				// t.key=(char*)malloc(4100);
 				// t.value=(char*)malloc(4100);
 				strcpy(t.key,key);
+=======
+				free(t.key);
+				free(t.value);
+				t.key=(char*)malloc(4100);
+				strcpy(t.key,key);
+				t.value=(char*)malloc(4100);
+>>>>>>> a2553e7337c89409150c4a381a8fd7af7974c7c6
 				strcpy(t.value,val);
 				dict_insert(d,&t);
 			}else{
@@ -327,6 +367,7 @@ int main(){
 			}
 		}
 	}
+<<<<<<< HEAD
 	// for (uint64_t w=0;w<len(d->data);++w){
 	// 	for (uint64_t e=0;e<len(d->data[w]);++e){
 	// 		free(d->data[w][e].key);
@@ -338,6 +379,14 @@ int main(){
 		// munmap(mem[w].sp, mem[w].sl);
 	// }
 	// del(mem);
+=======
+	for (uint64_t w=0;w<len(d->data);++w){
+		for (uint64_t e=0;e<len(d->data[w]);++e){
+			free(d->data[w][e].key);
+			free(d->data[w][e].value);
+		}
+	}
+>>>>>>> a2553e7337c89409150c4a381a8fd7af7974c7c6
 	dict_del(d);
 	del(com);
 	del(key);

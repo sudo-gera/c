@@ -1,8 +1,8 @@
-def create_input_string():
+def create_input_string(q):
 	from subprocess import run,PIPE
-	return run(['python3','create_input.py'],stdout=PIPE).stdout.decode()
+	return run(['python3','create_input.py',str(q)],stdout=PIPE).stdout.decode()
 
-TIME_LIMIT=2
+TIME_LIMIT=4
 PROCESS_COUNT=16
 
 from time import time,perf_counter
@@ -34,10 +34,10 @@ def how_to_run(filename,start_time,stop,log):
 		compiled_file+='.out'
 	if not exists(compiled_file):
 		if filename.endswith('.cpp'):
-			if run(['g++','-Ofast','-lgmpxx','-lgmp','-std=c++17','-Wfatal-errors','-fsanitize=address,undefined','-g',filename,'-o',compiled_file]).returncode:
+			if run(['g++','-Ofast','-std=c++17','-Wfatal-errors','-fsanitize=address,undefined,float-divide-by-zero,float-cast-overflow','-g',filename,'-o',compiled_file]).returncode:
 				exit()
 		if filename.endswith('.c'):
-			if run(['g++','-Ofast','-lgmpxx','-lgmp','-std=c++17','-Wfatal-errors','-fsanitize=address,undefined','-g',filename,'-o',compiled_file]).returncode:
+			if run(['g++','-Ofast','-std=c++17','-Wfatal-errors','-fsanitize=address,undefined,float-divide-by-zero,float-cast-overflow','-g',filename,'-o',compiled_file]).returncode:
 				exit()
 		if filename.endswith('.py'):
 			if run(['python3','-m','py_compile',filename]).returncode:
@@ -60,11 +60,13 @@ def how_to_run(filename,start_time,stop,log):
 	if filename.endswith('.out'):
 		return [compiled_file]
 
-def cmp(log,start_time,stop):
+def cmp(log,start_time,stop,pr_num):
 	signal.signal(signal.SIGINT, signal.SIG_IGN)
+	counter=pr_num
 	while 1:
 		try:
-			p=create_input_string()
+			p=create_input_string(counter)
+			counter+=PROCESS_COUNT
 		except Exception:
 			log.put([format_exc()])
 			exit()
@@ -138,7 +140,7 @@ def logging(log,stop):
 		elif q==None:
 			c+=1
 			y=time()
-			if y-t>0.2:
+			if y-t>0.8:
 				print(f'   {c} sucessfull tests',end='\r')
 				t=y
 		else:
@@ -160,10 +162,12 @@ if __name__=='__main__':
 	a.start()
 	s=[]
 	d=4
+	pr_num=0
 	for w in range(PROCESS_COUNT):
 		if not stop.empty():
 			break
-		s.append(Process(target=cmp,args=(log,start_time,stop)))
+		s.append(Process(target=cmp,args=(log,start_time,stop,pr_num)))
+		pr_num+=1
 		s[-1].daemon = True
 		s[-1].start()
 		if d:

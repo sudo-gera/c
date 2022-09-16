@@ -4,8 +4,16 @@
 #include <string>
 #include <vector>
 #include <type_traits>
+#ifndef assert
 #include <assert.h>
-#include <memory>
+#endif
+#include <algorithm>
+
+// #ifdef assert_m
+// #define assert assert_m
+// #endif
+
+#define get(a) auto a##_z=a?a->z_get():0;auto a##_x=a?a->x_get():0;auto a##_z_s=a##_z?a##_z->s:0;auto a##_x_s=a##_x?a##_x->s:0;
 
 template <typename T>
 class treap{
@@ -13,113 +21,303 @@ private:
 	struct el{
 		T v;
 		int64_t w;
-		std::unique_ptr<el> z=nullptr;
-		std::unique_ptr<el> x=nullptr;
-		el* z_get=nullptr;
-		el* x_get=nullptr;
-		el* p=nullptr;
-		int64_t s=1;
-		int64_t d=1;
+		el const*const z=nullptr;
+		el const*const x=nullptr;
+		el const*const p=nullptr;
+		long const s=1;
+		long const d=1;
+		long const rev=0;
+		T const first=0;
+		T const last=0;
+		T const sum=0;
+		long const to_add=0;
+		long const to_mul=1;
+		long const is_forward=1;
+		long const is_backward=1;
+		long min=0;
+		long max=0;
 		template<typename...Y>
-		el(const Y&..._v):
-			v(_v...),
-			w(rand())
-		{}
+		el(const Y&..._v):v(_v...),w(rand()){update();}
+
 		template<typename y>
-		void z_set(y&& q){
-			z=std::move(q);
-			z_get=z.get();
+		void z_put(y q)const{
+			const_cast<const el*&>(z)=q;
 			update();
 		}
+
 		template<typename y>
-		void x_set(y&& q){
-			x=std::move(q);
-			x_get=x.get();
+		void x_put(y q)const{
+			const_cast<const el*&>(x)=q;
 			update();
 		}
-		void update(){
-			auto t=this;
-			if (t->z_get==nullptr and t->x_get==nullptr){
-				t->s=1;
-				t->d=1;
+
+		auto z_get()const{
+			if (z){
+				z->make();
 			}
-			else if (t->z_get==nullptr){
-				t->s=t->x_get->s+1;
-				t->x_get->p=t;
-				t->d=t->x_get->d+1;
+			return z;
+		}
+
+		auto x_get()const{
+			if (x){
+				x->make();
 			}
-			else if (t->x_get==nullptr){
-				t->s=t->z_get->s+1;
-				t->z_get->p=t;
-				t->d=t->z_get->d+1;
+			return x;
+		}
+
+		void setroot()const{
+			const_cast<const el*&>(p)=nullptr;
+		}
+
+		void make()const{
+			if (to_mul!=1){
+				const_cast<long&>(sum)*=to_mul;
+				const_cast<long&>(first)*=to_mul;
+				const_cast<long&>(last)*=to_mul;
+				const_cast<long&>(v)*=to_mul;
+				if (z){
+					const_cast<long&>(z->to_mul)*=to_mul;
+					const_cast<long&>(z->to_add)*=to_mul;
+				}
+				if (x){
+					const_cast<long&>(x->to_mul)*=to_mul;
+					const_cast<long&>(x->to_add)*=to_mul;
+				}
+				if (to_mul==0){
+					const_cast<long&>(is_forward)=1;
+					const_cast<long&>(is_backward)=1;
+				}
+				const_cast<long&>(to_mul)=1;
+			}
+
+			if (to_add!=0){
+				const_cast<long&>(sum)+=to_add*s;
+				const_cast<long&>(first)+=to_add;
+				const_cast<long&>(last)+=to_add;
+				const_cast<long&>(v)+=to_add;
+				if (z){
+					const_cast<long&>(z->to_add)+=to_add;
+				}
+				if (x){
+					const_cast<long&>(x->to_add)+=to_add;
+				}
+				const_cast<long&>(to_add)=0;
+			}
+
+			if (rev){
+				const el*te=const_cast<const el*&>(z);
+				const_cast<const el*&>(z)=const_cast<const el*&>(x);
+				const_cast<const el*&>(x)=te;
+				long tl=const_cast<long&>(is_forward);
+				const_cast<long&>(is_forward)=const_cast<long&>(is_backward);
+				const_cast<long&>(is_backward)=tl;
+				tl=const_cast<long&>(first);
+				const_cast<long&>(first)=const_cast<long&>(last);
+				const_cast<long&>(last)=tl;
+				if (z){
+					const_cast<long&>(z->rev)^=1;
+				}
+				if (x){
+					const_cast<long&>(x->rev)^=1;
+				}
+				const_cast<long&>(rev)=0;
+			}
+		}
+		void update()const{
+			if (z){
+				const_cast<const el*&>(z->p)=this;
+				if (z->rev){
+					const_cast<long&>(first)=z->last*z->to_mul+z->to_add;
+				}else{
+					const_cast<long&>(first)=z->first*z->to_mul+z->to_add;
+				}
 			}else{
-				t->s=t->z_get->s+t->x_get->s+1;
-				t->x_get->p=t;
-				t->z_get->p=t;
-				t->d=(t->z_get->d>t->x_get->d?t->z_get->d:t->x_get->d)+1;
+				const_cast<long&>(first)=v;
 			}
-			if (t->d>256){
-				std::cerr<<"bamboo!! "<<t->d<<std::endl;
+			if (x){
+				const_cast<const el*&>(x->p)=this;
+				if (x->rev){
+					const_cast<long&>(last)=x->first*x->to_mul+x->to_add;
+				}else{
+					const_cast<long&>(last)=x->last*x->to_mul+x->to_add;
+				}
+			}else{
+				const_cast<long&>(last)=v;
+			}
+			if (z and x){
+				long s_z_forward=(z->to_mul==0 or (z->rev?z->is_backward:z->is_forward));
+				long s_z_backward=(z->to_mul==0 or (z->rev?z->is_forward:z->is_backward));
+				long s_x_forward=(x->to_mul==0 or (x->rev?x->is_backward:x->is_forward));
+				long s_x_backward=(x->to_mul==0 or (x->rev?x->is_forward:x->is_backward));
+				long s_x_first=(x->rev?x->last:x->first)*x->to_mul+x->to_add;
+				long s_z_last=(z->rev?z->first:z->last)*z->to_mul+z->to_add;
+				long s_z_s=z->s;
+				long s_x_s=x->s;
+				const_cast<long&>(s)=z->s+x->s+1;
+				const_cast<long&>(d)=1+(z->d>x->d?z->d:x->d);
+				const_cast<long&>(sum)=v + z->sum*z->to_mul+z->to_add*z->s + x->sum*x->to_mul+x->to_add*x->s;
+				const_cast<long&>(is_forward)=(s_z_forward and s_x_forward and s_z_last<=v and s_x_first>=v);
+				const_cast<long&>(is_backward)=(s_z_backward and s_x_backward and s_z_last>=v and s_x_first<=v);
+			}else
+			if (z){
+				long s_x_forward=1;
+				long s_x_backward=1;
+				long s_z_forward=(z->to_mul==0 or (z->rev?z->is_backward:z->is_forward));
+				long s_z_backward=(z->to_mul==0 or (z->rev?z->is_forward:z->is_backward));
+				long s_z_last=(z->rev?z->first:z->last)*z->to_mul+z->to_add;
+				long s_x_first=0;
+				long s_z_s=z->s;
+				long s_x_s=0;
+				const_cast<long&>(s)=z->s+1;
+				const_cast<long&>(d)=z->d+1;
+				const_cast<long&>(sum)=v + z->sum*z->to_mul+z->to_add*z->s;
+				const_cast<long&>(is_forward)=(s_z_forward and s_z_last<=v);
+				const_cast<long&>(is_backward)=(s_z_backward and s_z_last>=v);
+			}else
+			if (x){
+				long s_z_forward=1;
+				long s_z_backward=1;
+				long s_x_forward=(x->to_mul==0 or (x->rev?x->is_backward:x->is_forward));
+				long s_x_backward=(x->to_mul==0 or (x->rev?x->is_forward:x->is_backward));
+				long s_x_first=(x->rev?x->last:x->first)*x->to_mul+x->to_add;
+				long s_z_last=0;
+				long s_z_s=0;
+				long s_x_s=x->s;
+				const_cast<long&>(s)=x->s+1;
+				const_cast<long&>(d)=x->d+1;
+				const_cast<long&>(sum)=v + x->sum*x->to_mul+x->to_add*x->s;
+				const_cast<long&>(is_forward)=(s_x_forward and s_x_first>=v);
+				const_cast<long&>(is_backward)=(s_x_backward and s_x_first<=v);
+			}else{
+				const_cast<long&>(s)=1;
+				const_cast<long&>(d)=1;
+				const_cast<long&>(sum)=v;
+				const_cast<long&>(is_forward)=1;
+				const_cast<long&>(is_backward)=1;
+			}
+			if (d>128){
+				std::cerr<<"bamboo!! "<<d<<std::endl;
 				exit(0);
 			}
 		}
-		int64_t nz_find_index(){
+		int64_t nz_find_index()const{
 			auto q=this;
 			auto w=q->p;
 			if (w==nullptr){
-				return el_size(q->z_get);
-			}else if (w->z_get==q){
-				return w->nz_find_index()-el_size(q->x_get)-1;
-			}else if (w->x_get==q){
-				return w->nz_find_index()+el_size(q->z_get)+1;
+				return el_size(q->z_get());
+			}else if (w->z_get()==q){
+				return w->nz_find_index()-el_size(q->x_get())-1;
+			}else if (w->x_get()==q){
+				return w->nz_find_index()+el_size(q->z_get())+1;
 			}
 			assert(0);
 			return 0;
 		}
+		// int64_t elsize(){
+		// 	return el_size(this);
+		// }
 	};
 
-	static int64_t el_size(el*s){
+	static void check(const el*s){
+		if (__FILE__[0]!='t'){
+			return;
+		}
+		if (!s){
+			return;
+		}
+		check(s->z);
+		check(s->x);
+		assert(s->rev<2);
+		if (s->z){
+			assert(s->z->p==s);
+			assert(s->z->w<=s->w);
+			if (s->z->rev){
+				assert(s->first==s->z->last*s->z->to_mul+s->z->to_add);
+			}else{
+				assert(s->first==s->z->first*s->z->to_mul+s->z->to_add);
+			}
+		}else{
+			assert(s->first==s->v);
+		}
+		if (s->x){
+			assert(s->x->p==s);
+			assert(s->x->w<=s->w);
+			if (s->x->rev){
+				assert(s->last==s->x->first*s->x->to_mul+s->x->to_add);
+			}else{
+				assert(s->last==s->x->last*s->x->to_mul+s->x->to_add);
+			}
+		}else{
+			assert(s->last==s->v);
+		}
+		if (s->z and s->x){
+			assert(s->z->s+s->x->s+1==s->s);
+			assert(s->d==1+std::max(s->z->d,s->x->d));
+			assert(s->sum==s->v + s->z->sum*s->z->to_mul+s->z->to_add*s->z->s + s->x->sum*s->x->to_mul+s->x->to_add*s->x->s);
+			assert((s->is_forward)==((s->z->to_mul==0 or (s->z->rev?s->z->is_backward:s->z->is_forward)) and (s->x->to_mul==0 or (s->x->rev?s->x->is_backward:s->x->is_forward)) and (s->z->rev?s->z->first:s->z->last)*s->z->to_mul+s->z->to_add<=s->v and (s->x->rev?s->x->last:s->x->first)*s->x->to_mul+s->x->to_add>=s->v));
+			assert((s->is_backward)==((s->z->to_mul==0 or (s->z->rev?s->z->is_forward:s->z->is_backward)) and (s->x->to_mul==0 or (s->x->rev?s->x->is_forward:s->x->is_backward)) and (s->z->rev?s->z->first:s->z->last)*s->z->to_mul+s->z->to_add>=s->v and (s->x->rev?s->x->last:s->x->first)*s->x->to_mul+s->x->to_add<=s->v));
+		}else
+		if (s->z){
+			assert(s->z->s+1==s->s);
+			assert(s->z->d+1==s->d);
+			assert(s->sum==s->v + s->z->sum*s->z->to_mul+s->z->to_add*s->z->s);
+			assert((s->is_forward)==((s->z->to_mul==0 or (s->z->rev?s->z->is_backward:s->z->is_forward)) and (s->z->rev?s->z->first:s->z->last)*s->z->to_mul+s->z->to_add<=s->v));
+			assert((s->is_backward)==((s->z->to_mul==0 or (s->z->rev?s->z->is_forward:s->z->is_backward)) and (s->z->rev?s->z->first:s->z->last)*s->z->to_mul+s->z->to_add>=s->v));
+		}else
+		if (s->x){
+			assert(s->x->s+1==s->s);
+			assert(s->x->d+1==s->d);
+			assert(s->sum==s->v + s->x->sum*s->x->to_mul+s->x->to_add*s->x->s);
+			assert((s->is_forward)==((s->x->to_mul==0 or (s->x->rev?s->x->is_backward:s->x->is_forward)) and (s->x->rev?s->x->last:s->x->first)*s->x->to_mul+s->x->to_add>=s->v));
+			assert((s->is_backward)==((s->x->to_mul==0 or (s->x->rev?s->x->is_forward:s->x->is_backward)) and (s->x->rev?s->x->last:s->x->first)*s->x->to_mul+s->x->to_add<=s->v));
+		}else{
+			assert(1==s->s);
+			assert(1==s->d);
+			assert(s->sum==s->v);
+			assert(s->is_forward==1);
+			assert(s->is_backward==1);
+		}
+	}
+
+	static int64_t el_size(const el*s){
 		return s?s->s:0;
 	}
 
-	static int64_t find_index(el* s){
-		return s?s->nz_find_index():0;
-	}
-
-	static el* get_by_index(el*s,int64_t n){
+	static const el* get_by_index(const el*s,int64_t n){
 		if (!s){
 			return nullptr;
 		}
-		if (s->z_get==nullptr){
+		get(s);
+		if (s_z==nullptr){
 			if (n==0){
 				return s;
 			}
 			else{
-				return get_by_index(s->x_get,n-1);
+				return get_by_index(s_x,n-1);
 			}
 		}
 		else{
-			if (n==s->z_get->s){
+			if (n==s_z_s){
 				return s;
 			}
-			if (n<s->z_get->s){
-				return get_by_index(s->z_get,n);
+			if (n<s_z_s){
+				return get_by_index(s_z,n);
 			}
-			if (n>s->z_get->s){
-				return get_by_index(s->x_get,n-s->z_get->s-1);
+			if (n>s_z_s){
+				return get_by_index(s_x,n-s_z_s-1);
 			}
 		}
 		assert(0);
-		return nullptr;
+		return (el*)(nullptr);
 	}
 
-	static void to_list(el*q,std::vector<T>&a){
+	static void to_list(const el* q,std::vector<T>&a){
 		if (!q){
 			return;
 		}
-		to_list(q->z_get,a);
+		to_list(q->z_get(),a);
 		a.push_back(q->v);
-		to_list(q->x_get,a);
+		to_list(q->x_get(),a);
 		return;
 	}
 
@@ -127,20 +325,22 @@ private:
 		if (!q){
 			return;
 		}
-		pr(q->z_get,n+1);
+		pr(q->z_get(),n+1);
 		for (auto w=0;w<n;++w){
 			putchar('|');
 		}
 		std::cout<<q<<' '<<q->v<<' '<<q->w<<std::endl;
-		pr(q->x_get,n+1);
+		pr(q->x_get(),n+1);
 	}
 
-	static auto pri(el*root,size_t*prev_node=0){
+	static auto pri(const el* root,size_t*prev_node=0){
 		if (!root){
 			return;
 		}
-		el* left=(root)->z_get;
-		el* right=(root)->x_get;
+		const el*left;
+		const el*right;
+		left=root->z;
+		right=root->x;
 
 		size_t node[3];
 		node[2]=(size_t)NULL;
@@ -184,7 +384,11 @@ private:
 			}
 		}
 
-		if (left==NULL && right==NULL){
+		if (root->rev){
+			std::cout<<"\x1b[34m";
+		}
+
+		if (left==NULL and right==NULL){
 			std::cout<<("━");
 		}else
 		if (left==NULL){
@@ -195,8 +399,24 @@ private:
 		}else{
 			std::cout<<("╋");
 		}
+		if (root->rev){
+			std::cout<<"\x1b[0m";
+		}
+
 		std::cout<<("► ");
-		std::cout<<root->v<<std::endl;
+
+#define _put(s) std::cout<<#s<<" = "<<root->s<<' ';
+
+		_put(v)
+		_put(to_mul)
+		_put(to_add)
+		_put(is_forward)
+		_put(is_backward)
+		_put(forward_prefix)
+		_put(backward_prefix)
+		_put(forward_suffix)
+		_put(backward_suffix)
+		std::cout<<std::endl;
 
 		save=0;
 		if (prev_node and prev_node[1]==1){
@@ -210,26 +430,16 @@ private:
 		}
 	}
 
-	static std::unique_ptr<el> copy(el*q){
+	static void del(const el* q){
 		if (!q){
-			return nullptr;
+			return;
 		}
-		std::unique_ptr<el> w=std::make_unique<el>(el(q->v));
-		w=merge(copy(q->z_get),std::move(w));
-		w=merge(std::move(w),copy(q->x_get));
-		return w;
+		del(q->z);
+		del(q->x);
+		delete q;
 	}
 
-	// static void del(std::unique_ptr<el> q){
-	// 	if (!q){
-	// 		return;
-	// 	}
-	// 	del(q->z_get);
-	// 	del(q->x_get);
-	// 	delete q;
-	// }
-
-	static std::unique_ptr<el>  merge(std::unique_ptr<el>  t1,std::unique_ptr<el>  t2){
+	static const el* merge(const el* t1,const el* t2){
 		if (!t1){
 			return t2;
 		}
@@ -237,108 +447,114 @@ private:
 			return t1;
 		}
 		if (t1->w<t2->w){
-			t2->z_set(merge(std::move(t1),std::move(t2->z)));
+			t2->z_put(merge(t1,t2->z_get()));
 			return t2;
 		}else{
-			t1->x_set(merge(std::move(t1->x),std::move(t2)));
+			t1->x_put(merge(t1->x_get(),t2));
 			return t1;
 		}
 	}
 
-	static std::pair<std::unique_ptr<el> ,std::unique_ptr<el> > split(std::unique_ptr<el>  t,int64_t n){
+	static std::pair<const el*,const el*> split(const el* t,int64_t n){
 		if (!t){
-			return {(std::unique_ptr<el> )(nullptr),(std::unique_ptr<el> )(nullptr)};
-		}else if (t->z_get==nullptr){
-			if (n<1){
-				return {(std::unique_ptr<el> )(nullptr),std::move(t)};
-			}else{
-				auto tmp=split(std::move(t->x),n-1);
-				t->x_set(tmp.first);
-				auto t2=std::move(tmp.second);
-				if(t2){
-					t2->p=nullptr;
-				}
-				return {std::move(t),std::move(t2)};
-			}
-		}else if (t->z_get->s==n){
-			auto t1=std::move(t->z);
-			t->z_set((std::unique_ptr<el> )(nullptr));
-			if (t1){
-				t1->p=nullptr;
-			}
-			return {std::move(t1),std::move(t)};
-		}else if (t->z_get->s+1==n){
-			auto t2=std::move(t->x);
-			t->x_set((std::unique_ptr<el> )(nullptr));
-			if (t2){
-				t2->p=nullptr;
-			}
-			return {std::move(t),std::move(t2)};
-		}else if (t->z_get->s+1<n){
-			auto tmp=split(std::move(t->x),n-t->z_get->s-1);
-			t->x_set(tmp.first);
-			auto t2=std::move(tmp.second);
-			if (t2){
-				t2->p=nullptr;
-			}
-			return {std::move(t),std::move(t2)};
-		}else if (t->z_get->s>n){
-			auto tmp=split(std::move(t->z),n);
-			auto t1=std::move(tmp.first);
-			t->z_set(tmp.second);
-			if (t1){
-				t1->p=nullptr;
-			}
-			return {std::move(t1),std::move(t)};
-		}
-		assert(0);
-		return {(std::unique_ptr<el> )(nullptr),(std::unique_ptr<el> )(nullptr)};
-	}
-
-	static el*add(el*q,int64_t n){
-		if (!q){
-			return nullptr;
+			return {nullptr,nullptr};
 		}
 		if (n==0){
-			return q;
+			return {nullptr,t};
 		}
-		if (n>0){
-			if (el_size(q->x_get)>=n){
-				return get_by_index(q->x_get,n-1);
-			}else{
-				auto w=q->p;
-				if (w==nullptr){
-					return nullptr;
-				}else if (w->z_get==q){
-					return add(q->p,-el_size(q->x_get)-1+n);
-				}else if (w->x_get==q){
-					return add(q->p,el_size(q->z_get)+1+n);
-				}
-				assert(0);
-			}
-		}else if (n<0){
-			if (-el_size(q->z_get)<=n){
-				return get_by_index(q->z_get,el_size(q->z_get)+n);
-			}else{
-				auto w=q->p;
-				if (w==nullptr){
-					return nullptr;
-				}else if (w->z_get==q){
-					return add(q->p,-el_size(q->x_get)-1+n);
-				}else if (w->x_get==q){
-					return add(q->p,el_size(q->z_get)+1+n);
-				}
-				assert(0);
-			}
+		if (n==t->s){
+			return {t,nullptr};
 		}
-		assert(0);
-		return (el* )(nullptr);
+		get(t);
+		if (t_z_s<n){
+			auto tmp=split(t_x,n-t_z_s-1);
+			t->x_put(tmp.first);
+			auto t2=tmp.second;
+			if (t2){
+				const_cast<const el*&>(t2->p)=nullptr;
+			}
+			return {t,t2};
+		}else{
+			auto tmp=split(t_z,n);
+			auto t1=tmp.first;
+			t->z_put(tmp.second);
+			if (t1){
+				const_cast<const el*&>(t1->p)=nullptr;
+			}
+			return {t1,t};
+		}
 	}
 
-	std::unique_ptr<el>  e=nullptr;
+	static std::pair<const el*,long> add(const el*q,int64_t n){
+		long o=0;
+		get(q);
+		while(n){
+			auto w=q->p;
+			get(w);
+			if (n>0){
+				if (q_x_s>=n){
+					n=n-1;
+					q=get_by_index(q_x,n);
+					break;
+				}else{
+					if (w==nullptr){
+						o+=n-q_x_s;
+						n=q_x_s;
+						continue;
+					}else if (w_z==q){
+						n=-q_x_s-1+n;
+						q=w;
+						q_x=w_x;
+						q_z=w_z;
+						continue;
+					}else if (w_x==q){
+						n=q_z_s+1+n;
+						q=w;
+						q_x=w_x;
+						q_z=w_z;
+						continue;
+					}
+					assert(0);
+				}
+			}else if (n<0){
+				if (-q_z_s<=n){
+					n=q_z_s+n;
+					q=get_by_index(q_z,n);
+					break;
+				}else{
+					if (w==nullptr){
+						o+=n+q_z_s;
+						n=-q_z_s;
+						continue;
+					}else if (w_z==q){
+						n=-q_x_s-1+n;
+						q=w;
+						q_x=w_x;
+						q_z=w_z;
+						continue;
+					}else if (w_x==q){
+						n=q_z_s+1+n;
+						q=w;
+						q_x=w_x;
+						q_z=w_z;
+						continue;
+					}
+					assert(0);
+				}
+			}
+		}
+		return {q,o};
+	}
+
+	const el* _e=nullptr;
+	const el* e_get()const{
+		check(_e);
+		if(_e){_e->make();};
+		return _e;
+	}
 public:
 	void out(){
-		pri(e.get());
+		pri(_e);
 	}
 	template <typename y=std::initializer_list<T>>
 	treap(const y&l=std::initializer_list<T>(),
@@ -349,7 +565,7 @@ public:
 			and std::is_same_v<decltype(l.begin()!=l.end()),bool>
 			,int> =0){
 		for (auto&w:l){
-			e=merge(std::move(e),std::make_unique<el>(el(w)));
+			_e=(merge(e_get(),new auto (el(w))));
 		}
 	}
 	template <typename y=int>
@@ -362,94 +578,118 @@ public:
 			std::is_trivially_constructible_v<T>
 		,y> l){
 		for (int64_t w=0;w<l;++w){
-			e=merge(e,new auto (el(T())));
+			_e=(merge(e_get(),new auto (el(T()))));
 		}
 	}
 	treap(const treap&l){
-		e=copy(l.e.get());
+		for (auto&w:l){
+			_e=(merge(e_get(),new auto (el(w))));
+		}
 	}
 	treap(treap&&l){
-		std::swap(e,l.e);
+		auto t=e_get();
+		_e=(l.e_get());
+		l._e=(t);
 	}
 	auto&operator=(treap&&l){
-		std::swap(e,l.e);
+		auto t=e_get();
+		_e=(l.e_get());
+		l._e=(t);
 		return *this;
 	}
 	auto&operator=(const treap&l){
-		if (e!=l.e){
-			// del(e);
-			e=copy(l.e.get());
+		if (e_get()!=l.e_get()){
+			del(_e);
+			_e=nullptr;
+			for (auto&w:l){
+				_e=(merge(e_get(),new auto (el(w))));
+			}
 		}
 		return *this;
 	}
 	~treap(){
-		// del(e);
+		del(_e);
 	}
 	int64_t size()const{
-		return e?e->s:0;
+		return e_get()?e_get()->s:0;
 	}
 
-	T&operator[](int64_t n){
+	void rev(){
+		e_get()?const_cast<long&>(e_get()->rev)^=1:0;
+	}
+
+	bool is_forward(){
+		return e_get()?e_get()->is_forward:1;
+	}
+
+	bool is_backward(){
+		return e_get()?e_get()->is_backward:1;
+	}
+
+	const T&operator[](int64_t n){
 		if (n<0){
 			n+=this->size();
 		}
 		assert(n<size());
 		assert(n>=0);
-		return get_by_index(e.get(),n)->v;
+		return get_by_index(e_get(),n)->v;
 	}
 
 	const T&operator[](int64_t n)const{
+		if (n<0){
+			n+=this->size();
+		}
 		assert(n<size());
 		assert(n>=0);
-		return get_by_index(e.get(),n)->v;
+		return get_by_index(e_get(),n)->v;
 	}
-private:
-	int64_t __cmp__(const treap&d)const{
-		auto&s=*this;
-		int64_t min_len=d.size()<s.size()?d.size():s.size();
-		for (int64_t w=0;w<min_len;++w){
-			if (s[w]<d[w]){
-				return -1;
-			}
-			if (s[w]>d[w]){
-				return -1;
-			}
-		}
-		if (s.size()>d.size()){
-			return 1;
-		}
-		if (s.size()<d.size()){
-			return -1;
-		}
-		return 0;
-	}
+// private:
+// 	int64_t __cmp__(const treap&d)const{
+// 		auto&s=*this;
+// 		int64_t min_len=d.size()<s.size()?d.size():s.size();
+// 		for (int64_t w=0;w<min_len;++w){
+// 			if (s[w]<d[w]){
+// 				return -1;
+// 			}
+// 			if (s[w]>d[w]){
+// 				return 1;
+// 			}
+// 		}
+// 		if (s.size()>d.size()){
+// 			return 1;
+// 		}
+// 		if (s.size()<d.size()){
+// 			return -1;
+// 		}
+// 		return 0;
+// 	}
 public:
 	void add_left(treap<T>&q){
-		e=merge(std::move(q.e),std::move(e));
-		q.e=nullptr;
+		_e=(merge(q.e_get(),e_get()));
+		q._e=(nullptr);
 	}
 	void add_right(treap<T>&q){
-		e=merge(std::move(e),std::move(q.e));
-		q.e=nullptr;
+		_e=merge(e_get(),q.e_get());
+		q._e=nullptr;
 	}
 	treap<T> cut_left(int64_t n){
-		assert(0<=n and n<=size());
+		// assert(0<=n and n<=size());
 		auto s=size();
-		auto tmp=split(std::move(e),n);
-		assert(el_size(tmp.first.get())+el_size(tmp.second.get())==s);
-		e=std::move(tmp.second);
+		auto tmp=split(e_get(),n);
+		// assert(el_size(tmp.first)+el_size(tmp.second)==s);
+		_e=(tmp.second);
 		auto r=treap<T>();
-		r.e=std::move(tmp.first);
+		r._e=(tmp.first);
 		return r;
 	}
 	treap<T> cut_right(int64_t n){
-		assert(0<=n and n<=size());
+		// assert(0<=n and n<=size());
 		auto s=size();
-		auto tmp=split(std::move(e),s-n);
-		assert(el_size(tmp.first.get())+el_size(tmp.second.get())==s);
-		e=std::move(tmp.first);
+		auto tmp=split(e_get(),size()-n);
+		// assert(el_size(tmp.first)+el_size(tmp.second)==s);
+		_e=tmp.first;
 		auto r=treap<T>();
-		r.e=std::move(tmp.second);
+		r._e=(tmp.second);
 		return r;
 	}
 	treap<T> cut(int64_t l,int64_t r){
@@ -460,18 +700,22 @@ public:
 		return w;
 	}
 	void push_back(const T&a){
-		e=merge(std::move(e),std::make_unique<el>(el(a)));
+		_e=(merge(e_get(),new auto(el(a))));
+		// if(_e){_e->make();};
 	}
 	void push_front(const T&a){
-		e=merge(std::make_unique<el>(el(a)),std::move(e));
+		_e=(merge(new auto(el(a)),e_get()));
+		// if(_e){_e->make();};
 	}
 	template<typename...Y>
 	void emplace_back(const Y&...a){
-		e=merge(std::move(e),std::make_unique<el>(a...));
+		_e=(merge(e_get(),new auto(el(a...))));
+		// if(_e){_e->make();};
 	}
 	template<typename...Y>
 	void emplace_front(const Y&...a){
-		e=merge(std::make_unique<el>(a...),std::move(e));
+		_e=(merge(new auto(el(a...)),e_get()));
+		// if(_e){_e->make();};
 	}
 	T pop_back(){
 		auto q=cut_right(1);
@@ -483,7 +727,7 @@ public:
 	}
 	operator std::vector<T>()const{
 		auto q=std::vector<T>();
-		to_list(e.get(),q);
+		to_list(e_get(),q);
 		return q;
 	}
 	friend std::ostream&operator<<(std::ostream&q,const treap&w){
@@ -502,11 +746,11 @@ public:
 		return q;
 	}
 	void clear(){
-		// del(e);
-		e=nullptr;
+		del(e_get());
+		_e=nullptr;
 	}
 	bool empty(){
-		return !e;
+		return !e_get();
 	}
 	T&front(){
 		return (*this)[0];
@@ -529,10 +773,10 @@ public:
 		template<typename Y>
 		using is_iterator=Y;
 		using original_type=treap<T>;
-		el* e=nullptr;
+		const el*e=nullptr;
 		int64_t o=0;
 		int64_t d=1;
-		T&operator*(){
+		const T&operator*(){
 			return e->v;
 		}
 		auto&operator--(){
@@ -557,21 +801,9 @@ public:
 			if (!e){
 				return *this;
 			}
-			while (1){
-				auto s=w*2;
-				auto q=e;
-				q=nullptr;
-				while (!q){
-					s/=2;
-					q=add(e,s);
-				}
-				if (q==e){
-					break;
-				}
-				e=q;
-				w-=s;
-			}
-			o=w;
+			auto t=add(e,w);
+			e=t.first;
+			o=t.second;
 			return *this;
 		}
 		auto&operator-=(long w){
@@ -586,33 +818,36 @@ public:
 			d=q.d;
 			return *this;
 		}
-	};
-	auto begin(){
-		if (!e){
-			return iter{e.get(),0};
+		long find_index(){
+			return e?e->nz_find_index()+o:0;
 		}
-		auto q=e.get();
-		while (q->z_get){
-			q=q->z_get;
+	};
+	auto begin()const{
+		if (!e_get()){
+			return iter{e_get(),0};
+		}
+		const el* q=e_get();
+		while (q->z_get()){
+			q=q->z;
 		}
 		return iter{q,0};
 	}
-	auto end(){
-		if (!e){
-			return iter{e.get(),0};
+	auto end()const{
+		if (!e_get()){
+			return iter{e_get(),0};
 		}
-		auto q=e.get();
-		while (q->x_get){
-			q=q->x_get;
+		const el* q=e_get();
+		while (q->x_get()){
+			q=q->x;
 		}
 		return iter{q,1};
 	}
-	auto rbegin(){
+	auto rbegin()const{
 		auto q=end()-1;
 		q.d=-1;
 		return q;
 	}
-	auto rend(){
+	auto rend()const{
 		auto q=begin()-1;
 		q.d=-1;
 		return q;
@@ -631,13 +866,25 @@ public:
 		add_left(w);
 		return n;
 	}
-	template<typename TT>
-	auto insert(TT n,const T&q)->typename TT::template is_iterator<iter>{
-		return begin()+insert(find_index(n.e),q);
+	auto update(int64_t n,const T&q){
+		auto w=cut_left(n);
+		auto r=cut_left(1);
+		auto t=r[0];
+		push_front(q);
+		add_left(w);
+		return t;
 	}
 	template<typename TT>
-	auto erase(TT n,const T&q)->typename TT::template is_iterator<iter>{
-		return begin()+erase(find_index(n.e),q);
+	auto insert(TT n,const T&q)->typename TT::template is_iterator<iter>{
+		return begin()+insert(n.find_index(),q);
+	}
+	template<typename TT>
+	auto update(TT n,const T&q)->typename TT::template is_iterator<iter>{
+		return update(n.find_index(),q);
+	}
+	template<typename TT>
+	auto erase(TT n)->typename TT::template is_iterator<iter>{
+		return begin()+erase(find_index(n.e_get()));
 	}
 	auto insert(int64_t n,treap<T>&q){
 		auto w=cut_left(n);
@@ -647,7 +894,7 @@ public:
 	}
 	template<typename TT>
 	auto insert(TT n,treap<T>&q)->typename TT::template is_iterator<iter>{
-		return begin()+insert(find_index(n.e),q);
+		return begin()+insert(find_index(n.e_get()),q);
 	}
 	void resize(int64_t n){
 		for (size_t w=size();w<n;++w){
@@ -667,50 +914,257 @@ public:
 	friend bool operator>=(const treap<Y>&q,const treap<Y>&w);
 	template <typename Y>
 	friend bool operator!=(const treap<Y>&q,const treap<Y>&w);
-	template <typename Y>
-	friend void swap(treap&q,treap&e);
+	iter lower_bound(const T&d){
+		if (is_forward()){
+			iter t,y;
+			auto q=e_get();
+			if (!q){
+				t=begin();
+			}else
+			if (d<=q->first){
+				t=begin();
+			}else
+			if (d>q->last){
+				t=end();
+			}else{
+				assert(q);
+				auto w=q;
+				w=nullptr;
+				while(q){
+					if (q->v>=d){
+						w=q;
+						q=q->z_get();
+					}else{
+						q=q->x_get();
+					}
+				}
+				t={w,0};
+			}
+			return t;
+		}else{
+			assert(0);
+		}
+		assert(0);
+		return iter{};
+	}
+	iter upper_bound(const T&d){
+		if (is_forward()){
+			iter t;
+			auto q=e_get();
+			if (!q){
+				t=begin();
+			}else
+			if (d<q->first){
+				t=begin();
+			}else
+			if (d>=q->last){
+				t=end();
+			}else{
+				assert(q);
+				auto w=q;
+				w=nullptr;
+				while(q){
+					if (q->v>d){
+						w=q;
+						q=q->z_get();
+					}else{
+						q=q->x_get();
+					}
+				}
+				t=iter{w,0};
+			}
+			return t;
+		}else{
+			assert(0);
+		}
+		assert(0);
+		return iter{};
+	}
+	auto forward_prefix(){
+		iter t;
+		auto q=e_get();
+		auto w=q;
+		w=nullptr;
+		if (!q or q->is_forward){
+			t=end();
+		}else{
+			while (q){
+				get(q);
+				if (!q_z or q_z->is_forward){
+					if (!q_z or q->v>=q_z->last){
+						if (!w or w->v<=q->first){
+							w=q;
+						}else{
+							t={w,0};
+							++t;
+							break;
+						}
+						q=q_x;
+					}else{
+						if (!w or w->v<=q->first){
+							w=q;
+							t={w,0};
+							break;
+						}else{
+							t={w,0};
+							++t;
+							break;
+						}
+					}
+				}else{
+					q=q_z;
+				}
+			}
+			if (!t.e){
+				t={w,0};
+				++t;
+			}
+		}
+		return t;
+	}
+	auto backward_prefix(){
+		iter t;
+		auto q=e_get();
+		auto w=q;
+		w=nullptr;
+		if (!q or q->is_backward){
+			t=end();
+		}else{
+			while (q){
+				get(q);
+				if (!q_z or q_z->is_backward){
+					if (!q_z or q->v<=q_z->last){
+						if (!w or w->v>=q->first){
+							w=q;
+						}else{
+							t={w,0};
+							++t;
+							break;
+						}
+						q=q_x;
+					}else{
+						if (!w or w->v>=q->first){
+							w=q;
+							t={w,0};
+							break;
+						}else{
+							t={w,0};
+							++t;
+							break;
+						}
+					}
+				}else{
+					q=q_z;
+				}
+			}
+			if (!t.e){
+				t={w,0};
+				++t;
+			}
+		}
+		return t;
+	}
+	bool next_permutation(){
+		rev();
+		auto q=forward_prefix().find_index();
+		// assert(q==e_get()->forward_prefix);
+		rev();
+		// assert(q==e_get()->backward_suffix);
+		q=size()-q;
+		auto t=cut_left(q);
+		if (t.size()){
+			auto r=t.pop_back();
+			rev();
+			auto p=upper_bound(r).find_index();
+			// assert(size()>p);
+			r=update(p,r);
+			t.push_back(r);
+			add_left(t);
+			return 1;
+		}else{
+			rev();
+			return 0;
+		}
+	}
+	bool prev_permutation(){
+		rev();
+		auto q=backward_prefix().find_index();
+		// assert(q==e_get()->backward_prefix);
+		rev();
+		// assert(q==e_get()->forward_suffix);
+		q=size()-q;
+		auto t=cut_left(q);
+		if (t.size()){
+			auto r=t.pop_back();
+			assert(is_forward());
+			auto p=lower_bound(r).find_index();
+			// assert(r>(*this)[p-1]);
+			r=update(p-1,r);
+			t.push_back(r);
+			rev();
+			add_left(t);
+			return 1;
+		}else{
+			rev();
+			return 0;
+		}
+		return 0;
+	}
+	T sum(){
+		if (e_get()){
+			return _e->sum;
+		}else{
+			return 0;
+		}
+	}
+	void add(long v){
+		if (e_get()){
+			const_cast<long&>(_e->to_add)+=v;
+		}
+	}
+	void mul(long v){
+		if (e_get()){
+			const_cast<long&>(_e->to_mul)*=v;
+		}
+	}
 };
 
-template <typename T>
-bool operator<(const treap<T>&q,const treap<T>&w){
-	return q.__cmp__(w)<0;
-}
+// template <typename T>
+// bool operator<(const treap<T>&q,const treap<T>&w){
+// 	return q.__cmp__(w)<0;
+// }
 
-template <typename T>
-bool operator>(const treap<T>&q,const treap<T>&w){
-	return q.__cmp__(w)>0;
-}
+// template <typename T>
+// bool operator>(const treap<T>&q,const treap<T>&w){
+// 	return q.__cmp__(w)>0;
+// }
 
-template <typename T>
-bool operator==(const treap<T>&q,const treap<T>&w){
-	return q.__cmp__(w)==0;
-}
+// template <typename T>
+// bool operator==(const treap<T>&q,const treap<T>&w){
+// 	return q.__cmp__(w)==0;
+// }
 
-template <typename T>
-bool operator<=(const treap<T>&q,const treap<T>&w){
-	return q.__cmp__(w)<=0;
-}
+// template <typename T>
+// bool operator<=(const treap<T>&q,const treap<T>&w){
+// 	return q.__cmp__(w)<=0;
+// }
 
-template <typename T>
-bool operator>=(const treap<T>&q,const treap<T>&w){
-	return q.__cmp__(w)>=0;
-}
+// template <typename T>
+// bool operator>=(const treap<T>&q,const treap<T>&w){
+// 	return q.__cmp__(w)>=0;
+// }
 
-template <typename T>
-bool operator!=(const treap<T>&q,const treap<T>&w){
-	return q.__cmp__(w)!=0;
-}
-
-template <typename T>
-void swap(treap<T>&q,treap<T>&e){
-	auto w=q.cut_left(q.size());
-	q.add_left(e);
-	e.add_left(w);
-}
+// template <typename T>
+// bool operator!=(const treap<T>&q,const treap<T>&w){
+// 	return q.__cmp__(w)!=0;
+// }
 
 template<typename TT>
 auto operator-(TT q,TT w)->typename TT::template is_iterator<ptrdiff_t>{
 	assert(q.d==w.d);
+	if (q==w){
+		return 0;
+	}
 	return ((q.e)->nz_find_index()-(w.e)->nz_find_index()+q.o-w.o)*q.d;
 }
 
@@ -768,3 +1222,4 @@ auto operator!=(TT q,TT w)->typename TT::template is_iterator<bool>{
 	w+=0;
 	return q.e!=w.e or q.o!=w.o;
 }
+#undef get

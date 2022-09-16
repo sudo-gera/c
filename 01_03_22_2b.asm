@@ -9,6 +9,7 @@ _start:
 mov byte[a],-12
 movsx ax,byte[a]
 mov [b],ax
+
 movsx eax,word[b]
 SIGNINT eax
 PUTCHAR 10

@@ -1,26 +1,46 @@
-%include "macro.inc"
+%include "st_io.inc"
 section .data
-start
+section .text
+global _start
+_start:
 mov ecx,esp
-dget [q]
-for [w],[q]
-	wget [e]
-	wpush [e]
-end
-cput 10
+GETUN ebp
+PUTCHAR 10
+
+mov edi,0
+_1:
+cmp edi,ebp
+jae _2
+	GETUN esi
+	push word si
+inc edi
+jmp _1
+_2:
+
+PUTCHAR 10
 mov edx,esp
 
-for esi,edx,ecx,2
-	for edi,edx,esi,2
-		wuif [esi],==,[edi]
+mov esi,edx
+_3:
+cmp esi,ecx
+jae _4
+	mov edi,edx
+	_5:
+	cmp edi,esi
+	jae _6
+		mov bx,[esi]
+		cmp bx,[edi]
+		jne _7
 			mov al,1
-		end
-	end
-end
+		_7:
+	add edi,2
+	jmp _5
+	_6:
+add esi,2
+jmp _3
+_4:
 
-buprint al
+UNSINT eax
+PUTCHAR 10
 
-dmul [q],2
-add esp,[q]
-
-stop
+FINISH

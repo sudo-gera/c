@@ -147,11 +147,18 @@ typedef int (*qsort_cmp_t)(const void *, const void *);
 uint64_t h(char*a,uint64_t l){
 	uint64_t p=0;
 	for (size_t w=0;w<l;++w){
-		p*=257;
-		p+=*a;
+		p*=29;
+		p+=(uint8_t)(*a)-'a';
 		a++;
 	}
 	return p;
+}
+
+uint64_t nh(char*a,uint64_t c,uint64_t oh,uint64_t p){
+	oh*=29;
+	oh-=p*(uint8_t)(a[-1]-'a');
+	oh+=(uint8_t)(a[c-1]-'a');
+	return oh;
 }
 
 struct ht{
@@ -163,13 +170,30 @@ struct ht{
 typedef struct ht ht;
 
 int icmp(ht*a,ht*s){
-	if (a->h<s->h){
-		return -1;
+	int16_t*q=(int16_t*)&(a->h);
+	int16_t*w=(int16_t*)&(s->h);
+	int t=(int)(q[3])-(int)(w[3]);
+	if (t){
+		return t;
 	}
-	if (a->h>s->h){
-		return 1;
+	t=(int)(q[2])-(int)(w[2]);
+	if (t){
+		return t;
 	}
-	return 0;
+	t=(int)(q[1])-(int)(w[1]);
+	if (t){
+		return t;
+	}
+	t=(int)(q[0])-(int)(w[0]);
+	return t;
+
+	// if (a->h<s->h){
+	// 	return -1;
+	// }
+	// if (a->h>s->h){
+	// 	return 1;
+	// }
+	// return 0;
 }
 
 #ifdef HOME
@@ -181,61 +205,75 @@ enable_print(ht,val.a,val.h,val.l)
 
 int main(){
 	read(char*,a);
-	// ic(uint64_t(a))
-	uint16_t b=1;
+	uint64_t b=1;
 	uint64_t e=len(a);
 	array(ht,hs,len(a));
 	ht g=(ht){.h=0,.l=0,.a=0};
+	array(size_t,ps,32123);
+	ps[0]=1;
+	for (size_t w=1;w<len(ps);++w){
+		ps[w]=ps[w-1]*29;
+	}
 	while (b+1<e){
-		resize(hs,0);
+		uint64_t lhs=0;
 		uint64_t c=(b+e)/2;
-		// ic(b,e,c)
 		uint64_t d=0;
-		for (uint64_t s=0;s+c<=len(a);++s){
-			append(hs,(ht){.h=h(a+s,c),.a=a+s,.l=c});
+		uint64_t p=ps[c];
+		uint64_t s=0;
+		uint64_t oh=0;
+		if (s+c<=len(a)){
+			hs[lhs++]=(ht){.h=oh=h(a+s,c),.a=a+s,.l=c};
 		}
-		// ic(itervect(hs,hs+len(hs)))
-		qsort(hs,len(hs),sizeof(hs[0]),(qsort_cmp_t)icmp);
-		// ic(itervect(hs,hs+len(hs)))
-		for (size_t w=1;w<len(hs);++w){
-			// ic(hs[w-1],hs[w])
-			// ic(hs[w-1].h==hs[w].h)
-			// ic(memcmp(hs[w-1].a,hs[w].a,hs[w].l))
-			if (hs[w-1].h==hs[w].h and memcmp(hs[w-1].a,hs[w].a,hs[w].l)==0){
-				d=1;
-				g=hs[w];
-				break;
+		char* l=a+len(a)-c;
+		for (char*s=a+1;s<=l;++s){
+			oh*=29;
+			oh-=p*(uint8_t)(s[-1]-'a');
+			oh+=(uint8_t)(s[c-1]-'a');
+			hs[lhs++]=(ht){.h=oh,.a=s,.l=c};
+		}
+		qsort(hs,lhs,sizeof(hs[0]),(qsort_cmp_t)icmp);
+		for (size_t w=1;w<lhs;++w){
+			if (hs[w-1].h==hs[w].h){
+				if (memcmp(hs[w-1].a,hs[w].a,hs[w].l)==0){
+					d=1;
+					g=hs[w];
+					break;
+				}
 			}
 		}
-		// ic(d)
 		if (d){
 			b=c;
 		}else{
 			e=c;
 		}
 	}
-	// ic(b)
-
-	resize(hs,0);
-	uint64_t c=(b+e)/2;
-	// ic(b,e,c)
-	for (uint64_t s=0;s+c<=len(a);++s){
-		append(hs,(ht){.h=h(a+s,c),.a=a+s,.l=c});
+	uint64_t lhs=0;
+	uint64_t c=b;
+	uint64_t p=ps[c];
+	uint64_t s=0;
+	uint64_t oh=0;
+	if (s+c<=len(a)){
+		hs[lhs++]=(ht){.h=oh=h(a+s,c),.a=a+s,.l=c};
 	}
-	// ic(itervect(hs,hs+len(hs)))
-	qsort(hs,len(hs),sizeof(hs[0]),(qsort_cmp_t)icmp);
-	for (size_t w=1;w<len(hs);++w){
-		// ic(hs[w-1],hs[w])
-		// ic(hs[w-1].h==hs[w].h)
-		// ic(memcmp(hs[w-1].a,hs[w].a,hs[w].l))
-		if (hs[w-1].h==hs[w].h and memcmp(hs[w-1].a,hs[w].a,hs[w].l)==0){
-			g=hs[w];
-			break;
+	char* l=a+len(a)-c;
+	for (char*s=a+1;s<=l;++s){
+		oh*=29;
+		oh-=p*(uint8_t)(s[-1]-'a');
+		oh+=(uint8_t)(s[c-1]-'a');
+		hs[lhs++]=(ht){.h=oh,.a=s,.l=c};
+	}
+	qsort(hs,lhs,sizeof(hs[0]),(qsort_cmp_t)icmp);
+	for (size_t w=1;w<lhs;++w){
+		if (hs[w-1].h==hs[w].h){
+			if (memcmp(hs[w-1].a,hs[w].a,hs[w].l)==0){
+				g=hs[w];
+				break;
+			}
 		}
 	}
-	// print(g.l);
 	for (uint64_t w=0;w<g.l;++w){
 		putchar(g.a[w]);
 	}
 	putchar('\n');
 }
+

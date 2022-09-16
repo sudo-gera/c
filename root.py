@@ -305,9 +305,9 @@ def continued_root(q):
 def floor_root(q):
 	q=int(q)
 	r=0
-	p=1
-	while p<q:
-		p<<=32
+	p=q.bit_length()+2
+	p+=p%2
+	p=1<<p
 	while p:
 		u=r+p
 		if q >= u :

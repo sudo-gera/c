@@ -10,6 +10,12 @@ function len(q){
 	return q.length
 }
 
+function removeAllChildNodes(parent) {
+	while (parent.firstChild) {
+		parent.removeChild(parent.firstChild);
+	}
+}
+
 ic=console.log
 
 function t_urlopen_json(url,f){
