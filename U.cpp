@@ -1,5 +1,10 @@
 #include <algorithm>
 #include <iostream>
+<<<<<<< HEAD
+#include <assert.h>
+using namespace std;
+=======
+>>>>>>> e49a637e9aef88acfedc180443af5da0456972d3
 
 struct Node {
   int64_t value = 0;

@@ -1,14 +1,20 @@
+%include "st_io.inc"
 %include "best_io.inc"
 start
-	getdword eax
+	printreg
+	GETUN eax
+	; getdword eax
+	printreg
 	call root
+	printreg
 	printudword ebx
+	printreg
 stop
 
 
 root:
 	mov ebx,0
-	mov ecx,1<<(__BITS__-2)
+	mov ecx,1<<30
 	_2:
 		lea edx,[ebx+ecx]
 		cmp eax,edx
