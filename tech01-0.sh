@@ -7,22 +7,30 @@ do
         w="$w/man3"
         if [ -d $w ]
         then
-            for e in $(find $w | grep $cf)
+            for e in $(find $w | grep "$cf")
             {
-                if [ -f $e ]
-                then
-                    if [[ $e == *".gz" ]]
-                    then
-                        rf=$(cat $e | gunzip)
-                    else
-                        rf=$(cat $e)
-                    fi
-                    echo $rf
-                    echo ""
-                    echo ""
-                    echo ""
-                    echo ""
-                fi
+                echo "$e"
+
+
+                # if [ "$e" == "$w/$cf"* ]
+                # then
+                #     if [ -f $e ]
+                #     then
+                #         if [[ $e == *".gz" ]]
+                #         then
+                #             echo "1 $e"
+                #             rf=$(cat $e | gunzip)
+                #         else
+                #             echo "2 $e"
+                #             rf=$(cat $e)
+                #         fi
+                #         echo "$rf"
+                #         echo ""
+                #         echo ""
+                #         echo ""
+                #         echo ""
+                #     fi
+                # fi
             }
         fi
     }
