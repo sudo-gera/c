@@ -5,7 +5,7 @@ while read -r func
 do
     for mpath in $MANPATH
     do
-        fpath=$(find $mpath -name "$func.3*" | head -1)
+        fpath=$(find $mpath -name "*$func.3*" | head -1)
         if [ -n "$fpath" ]
         then
             break
