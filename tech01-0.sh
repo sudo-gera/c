@@ -20,8 +20,9 @@ do
         else
             include_string=$(cat $fpath | grep '\#include' | head -1)
         fi
-        include_file=$(echo $include_string | sed -r 's/.*include <(.*)>. */\1/g')
+        include_file=$(echo $include_string | sed -r 's/.*include <(.*)>.*/\1/g')
         echo $include_file
+    else
         echo "---"
     fi
 done
