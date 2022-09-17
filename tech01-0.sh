@@ -14,7 +14,7 @@ do
 
     if [ -n "$fpath" ]
     then
-        if [ $(echo $fpath | tail -c -3) = "gz" ]
+        if [[ $fpath == *".gz"* ]]
         then
             include_string=$(gunzip -c $fpath | grep '\#include' | head -1)
         else
