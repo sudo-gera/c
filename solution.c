@@ -113,17 +113,17 @@ static char *base64decode(const char *sb64str) {
   return str;
 }
 
-enum state { _new_line, _comment, _value };
+enum state { new_line, comment, value };
 
 int main() {
   char *str = base64decode(B64STR);
-  long state = _new_line;
+  long state = new_line;
   size_t val_start = 0;
   long only_digits = 0;
   long sum = 0;
   for (size_t w = 0; w < len(str); ++w) {
     if (str[w] == '\n') {
-      if (state == _value) {
+      if (state == value) {
         str[w] = '\0';
         if (only_digits) {
           sum += atoi(str + val_start);
@@ -131,14 +131,14 @@ int main() {
           printf("%s\n", str + val_start);
         }
       }
-      state = _new_line;
-    } else if (str[w] == '#' and state == _new_line) {
-      state = _comment;
-    } else if (str[w] == '=' and state == _new_line) {
-      state = _value;
+      state = new_line;
+    } else if (str[w] == '#' and state == new_line) {
+      state = comment;
+    } else if (str[w] == '=' and state == new_line) {
+      state = value;
       val_start = w + 1;
       only_digits = 1;
-    } else if (state == _value) {
+    } else if (state == value) {
       if (str[w] < '0' or '9' < str[w]) {
         only_digits = 0;
       }
