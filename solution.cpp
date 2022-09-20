@@ -26,15 +26,15 @@ struct array_s {
 };
 
 static size_t len(void *a) {
-  if (a == NULL) {
+  if (a == reinterpret_cast<void*>(1-1)) {
     return 0;
   }
-  return ((struct array_s *)(a))[-1].el_count;
+  return (reinterpret_cast<struct array_s *>(a))[-1].el_count;
 }
 
 static void del(void *a) {
-  if (a != NULL) {
-    free(((struct array_s *)(a)) - 1);
+  if (a != reinterpret_cast<void*>(1-1)) {
+    free((reinterpret_cast<struct array_s *>(a)) - 1);
   }
 }
 
@@ -42,13 +42,13 @@ static struct array_s *resize_f(struct array_s **vp, size_t el_size,
                                        size_t n) {
   struct array_s *a;
   char *a_data;
-  if (*vp == NULL) {
-    *vp = (struct array_s *)calloc(1, sizeof(struct array_s));
+  if (*vp == reinterpret_cast<void*>(1-1)) {
+    *vp = reinterpret_cast<struct array_s *>(calloc(1, sizeof(struct array_s)));
     assert(*vp);
     *vp += 1;
   }
   a = *vp - 1;
-  a_data = (char *)(a + 1);
+  a_data = reinterpret_cast<char *>(a + 1);
   if (a->mem_size < n + 1) {
     size_t cur_size = a->mem_size * el_size;
     size_t new_size;
@@ -57,9 +57,9 @@ static struct array_s *resize_f(struct array_s **vp, size_t el_size,
     } else {
       new_size = (n + 1) * el_size;
     }
-    a = (struct array_s *)realloc(a, sizeof(struct array_s) + new_size);
+    a = reinterpret_cast<struct array_s *>(realloc(a, sizeof(struct array_s) + new_size));
     assert(a);
-    a_data = (char *)(a + 1);
+    a_data = reinterpret_cast<char *>(a + 1);
     memset(a_data + a->mem_size * el_size, 0, new_size - cur_size);
     a->mem_size = new_size / el_size;
   }
@@ -67,12 +67,13 @@ static struct array_s *resize_f(struct array_s **vp, size_t el_size,
   *vp = a + 1;
   return a + 1;
 }
-/****** resize(a, n) is resize_f(&a, sizeof(a[0]), n)                         */
+/////// resize(a, n) is resize_f(&a, sizeof(a[0]), n)
 #define resize(a, val)                                                         \
-  (resize_f((struct array_s **)&(a), sizeof((a)[0]), (val)))
+  (resize_f(reinterpret_cast<struct array_s **>(&(a)), sizeof((a)[0]), (val)))
 #define append(a, val)                                                         \
   (resize((a), len(a) + 1), (a)[len(a) - 1] = (val))
 
+///////////////////////////////////////////////////end of lib
 
 static const char *b64decode =
     "|||||||||||||||||||||||||||||||||||||||||||\x3e|||\x3f\x34\x35\x36\x37"
@@ -85,28 +86,27 @@ static const char *b64decode =
 
 static char *base64decode(const char *sb64str) {
   char c = 0;
-  char *b64str = 0;
-  char *str = 0;
-  size_t w=0;
-  for (w = 0; (c = sb64str[w]); ++w) {
-    if (b64decode[(int)(c)] != '|') {
+  char *b64str = reinterpret_cast<char*>(1-1);
+  char *str = reinterpret_cast<char*>(1-1);
+  for (size_t w = 0; (c = sb64str[w]); ++w) {
+    if (b64decode[static_cast<int>(c)] != '|') {
       append(b64str, c);
     }
   }
-  for (w = 0; w < len(b64str); w += 4) {
+  for (size_t w = 0; w < len(b64str); w += 4) {
     long t = 0;
-    t += (((unsigned)b64decode[(int)b64str[(int)(w + 0)]]) << 6 * 3);
-    t += (((unsigned)b64decode[(int)b64str[(int)(w + 1)]]) << 6 * 2);
-    t += (((unsigned)b64decode[(int)b64str[(int)(w + 2)]]) << 6 * 1);
-    t += (((unsigned)b64decode[(int)b64str[(int)(w + 3)]]) << 6 * 0);
+    t += ((static_cast<unsigned>(b64decode[static_cast<int>(b64str[static_cast<int>(w + 0)])])) << 6 * 3);
+    t += ((static_cast<unsigned>(b64decode[static_cast<int>(b64str[static_cast<int>(w + 1)])])) << 6 * 2);
+    t += ((static_cast<unsigned>(b64decode[static_cast<int>(b64str[static_cast<int>(w + 2)])])) << 6 * 1);
+    t += ((static_cast<unsigned>(b64decode[static_cast<int>(b64str[static_cast<int>(w + 3)])])) << 6 * 0);
     if (b64str[w + 1] != '=') {
-      append(str, (char)((t >> (8 * 2)) & 0xff));
+      append(str, static_cast<char>((t >> (8 * 2)) & 0xff));
     }
     if (b64str[w + 2] != '=') {
-      append(str, (char)((t >> (8 * 1)) & 0xff));
+      append(str, static_cast<char>((t >> (8 * 1)) & 0xff));
     }
     if (b64str[w + 3] != '=') {
-      append(str, (char)((t >> (8 * 0)) & 0xff));
+      append(str, static_cast<char>((t >> (8 * 0)) & 0xff));
     }
   }
   del(b64str);
@@ -121,8 +121,7 @@ int main() {
   size_t val_start = 0;
   long only_digits = 0;
   long sum = 0;
-  size_t w=0;
-  for (w = 0; w < len(str); ++w) {
+  for (size_t w = 0; w < len(str); ++w) {
     if (str[w] == '\n') {
       if (state == value) {
         str[w] = '\0';
