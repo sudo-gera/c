@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+#include <iostream>
+=======
+<<<<<<< HEAD
 #define DBOOST_STACKTRACE_USE_ADDR2LINE
 #include <boost/stacktrace.hpp>
 #include <iostream>
@@ -22,6 +25,7 @@ struct s{
         ic()
     }
 };
+>>>>>>> 83eb32d91415a2a8bdeff3ffe0907868062a5ce1
 
 struct d:s{
     d(){
@@ -33,6 +37,10 @@ struct d:s{
 };
 
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> 83eb32d91415a2a8bdeff3ffe0907868062a5ce1
 int main(){
 <<<<<<< HEAD
     d a;    
