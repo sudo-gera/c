@@ -40,13 +40,15 @@ static inline void del(void *a) {
 
 static inline struct array_s *resize_f(struct array_s **vp, size_t el_size,
                                        size_t n) {
+  struct array_s *a;
+  char *a_data;
   if (*vp == NULL) {
     *vp = (struct array_s *)calloc(1, sizeof(struct array_s));
     assert(*vp);
     *vp += 1;
   }
-  struct array_s *a = *vp - 1;
-  char *a_data = (char *)(a + 1);
+  a = *vp - 1;
+  a_data = (char *)(a + 1);
   if (a->mem_size < n + 1) {
     size_t cur_size = a->mem_size * el_size;
     size_t new_size;
