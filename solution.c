@@ -87,12 +87,12 @@ static const char *b64decode =
 static char *base64decode(const char *sb64str) {
   char c = 0;
   char *b64str = 0;
+  char *str = 0;
   for (size_t w = 0; (c = sb64str[w]); ++w) {
     if (b64decode[(int)(c)] != '|') {
       append(b64str, c);
     }
   }
-  char *str = 0;
   for (size_t w = 0; w < len(b64str); w += 4) {
     long t = 0;
     t += (((unsigned)b64decode[(int)b64str[(int)(w + 0)]]) << 6 * 3);
