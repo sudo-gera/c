@@ -1,14 +1,12 @@
-#include <SDL2/SDL.h>
+#include <mpc.h>
+
 #include <sys/ioctl.h>
 #include <stdio.h>
 #include <unistd.h>
 
-int _abs(int x);
-float _abs(float x);
-
-
 int main (int argc, char **argv)
 {
+
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
