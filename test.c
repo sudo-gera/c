@@ -1,16 +1,33 @@
-#include <mpc.h>
 
 #include <sys/ioctl.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <string.h>
 
-int main (int argc, char **argv)
-{
+int main (int argc, char **argv){
+    void* e=0;
+    printf("%i\n",__LINE__);
+    goto _2;
 
-    struct winsize w;
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    _1:
+    printf("%i\n",__LINE__);
+    if (getchar()-'0'){
+        e=&&_3;
+    }else{
+        e=&&_4;
+    }
+    printf("%i\n",__LINE__);
+    goto *e;
 
-    printf ("lines %d\n", w.ws_row);
-    printf ("columns %d\n", w.ws_col);
-    return 0;  // make sure your main returns int
+    _2:
+    printf("%i\n",__LINE__);
+    e=&&_1;
+    goto *e;
+
+    _3:
+    printf("%i\n",__LINE__);
+
+    _4:
+    printf("%i\n",__LINE__);
+
 }
