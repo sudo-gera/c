@@ -4,30 +4,15 @@
 #include <unistd.h>
 #include <string.h>
 
+
+void run(int a[20]){
+    printf("%i\n",a[0]);
+    a[0]=3;
+}
+
 int main (int argc, char **argv){
-    void* e=0;
-    printf("%i\n",__LINE__);
-    goto _2;
-
-    _1:
-    printf("%i\n",__LINE__);
-    if (getchar()-'0'){
-        e=&&_3;
-    }else{
-        e=&&_4;
-    }
-    printf("%i\n",__LINE__);
-    goto *e;
-
-    _2:
-    printf("%i\n",__LINE__);
-    e=&&_1;
-    goto *e;
-
-    _3:
-    printf("%i\n",__LINE__);
-
-    _4:
-    printf("%i\n",__LINE__);
-
+    int a[20];
+    a[0]=20;
+    run(a);
+    printf("%i\n",a[0]);
 }
