@@ -1,18 +1,24 @@
-#include <SDL2/SDL.h>
-#include <sys/ioctl.h>
 #include <stdio.h>
-#include <unistd.h>
-
-int _abs(int x);
-float _abs(float x);
 
 
-int main (int argc, char **argv)
+int main ()
 {
-    struct winsize w;
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    int y=260;
+    asm(
+        "mov x1,%[y]\n\t"
 
-    printf ("lines %d\n", w.ws_row);
-    printf ("columns %d\n", w.ws_col);
-    return 0;  // make sure your main returns int
+        "and w1,w1,255          \n\t"
+        "mov w2,#1          \n\t"
+        "loop:              \n\t"
+        "cbz w1,skip        \n\t"
+        "mul w2,w2,w1       \n\t"
+        "sub w1,w1,#1       \n\t"
+        "b loop             \n\t"
+        "skip:              \n\t"
+
+        "mov %[y],x2\n\t"
+    :
+        [y] "+r" (y)
+    ::);
+    printf("%i\n",y);
 }

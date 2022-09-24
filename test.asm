@@ -1,29 +1,24 @@
-%include "st_io.inc"
-%include "best_io.inc"
-start
-	printreg
-	GETUN eax
-	; getdword eax
-	printreg
-	call root
-	printreg
-	printudword ebx
-	printreg
-stop
+.data
+
+/* Data segment: define our message string and calculate its length. */
+msg:
+    .ascii        "Hello, ARM64!\n"
+len = . - msg
 
 
-root:
-	mov ebx,0
-	mov ecx,1<<30
-	_2:
-		lea edx,[ebx+ecx]
-		cmp eax,edx
-		jb _1
-			sub eax,edx
-			lea ebx,[ebx+ecx*2]
-		_1:
-		shr ebx,1
-		shr ecx,2
-	jnz _2
-	mov eax,ebx
-ret
+.text
+
+/* Our application's entry point. */
+.globl _start
+_start:
+    /* syscall write(int fd, const void *buf, size_t count) */
+    mov     x0, #1      /* fd := STDOUT_FILENO */
+    ldr     x1, =msg    /* buf := msg */
+    ldr     x2, =len    /* count := len */
+    mov     w8, #64     /* write is syscall #64 */
+    svc     #0          /* invoke syscall */
+
+    /* syscall exit(int status) */
+    mov     x0, #0      /* status := 0 */
+    mov     w8, #93     /* exit is syscall #93 */
+    svc     #0          /* invoke syscall */
