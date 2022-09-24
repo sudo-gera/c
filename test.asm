@@ -1,4 +1,12 @@
 .data
+<<<<<<< HEAD
+=======
+
+/* Data segment: define our message string and calculate its length. */
+msg:
+    .ascii        "Hello, ARM64!\n"
+len = . - msg
+>>>>>>> ff9e250131f4f5ca4696783067870df6064e92ed
 
 /* Data segment: define our message string and calculate its length. */
 msg:
