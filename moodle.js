@@ -72,7 +72,7 @@ function put(){
             }
             if (s[w].tagName=='INPUT' && s[w].type=='radio'){
                 var x=z.shift();
-                var d=s[w].parentElement.childNodes[1].childNodes[1].data;
+                var d=s[w].parentElement.childNodes[1].innerText;
                 if (x!=undefined && x.indexOf(d)!=-1){
                     s[w].checked=true;
                 }else{
