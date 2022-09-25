@@ -114,3 +114,5 @@ function put(){
         }
     }
 }
+window.____set=set;
+window.____put=put;
