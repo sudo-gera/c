@@ -95,9 +95,9 @@ function __put(l){
                     var k=undefined;
                 }
                 var x=z.shift();
-                if (typeof x=='string'){
+                if (typeof x=='string' || typeof x=='undefined'){
                     var q=s[w].childNodes;
-                    s[w].value=q.length-1;
+                    s[w].value=Math.floor(Math.random()*q.length);
                     for (var r=0;r<q.length;++r){
                         ic(x,'|',q[r].innerText)
                         if (x==q[r].innerText){
@@ -105,15 +105,17 @@ function __put(l){
                         }
                     }
                 }else{
-                    ic(JSON.parse(JSON.stringify(x)))
+                    // ic(JSON.parse(JSON.stringify(x)))
                     var q=s[w].childNodes;
-                    s[w].value=q.length-1;
-                    for (e=0;e<x.length;++e){
-                        if (x[e][0].trim().indexOf(k.trim())!=-1){
+                    s[w].value=Math.floor(Math.random()*q.length);
+                    for (var e=0;e<x.length;++e){
+                        ic(x[e][0],'|',k)
+                        if (x[e][0].trim().endsWith(k.trim())){
                             for (var r=0;r<q.length;++r){
-                                if (x[e][1].trim().indexOf(q[r].innerText.trim())!=-1){
+                                ic(x[e][1],'|',q[r].innerText)
+                                if (x[e][1].trim().startsWith(q[r].innerText.trim())){
                                     s[w].value=r;
-                                    x.splice(e,1);
+                                    // x.splice(e,1);
                                     break;
                                 }
                             }
