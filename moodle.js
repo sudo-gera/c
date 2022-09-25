@@ -1,6 +1,6 @@
 'use strict'
 var ic=console.log
-function set(){
+function __set(){
     'use strict'
     var q=document.getElementById('q1').parentElement.childNodes;
     var a={}
@@ -9,12 +9,11 @@ function set(){
             a[q[w].id.slice(1)]=q[w].innerHTML;
         }
     }
-    localStorage['__awvcp__q__all__']=JSON.stringify(a);
+    return a;
 }
 
-function get(i){
-    'use strict'
-    var l=JSON.parse(localStorage['__awvcp__q__all__'])
+function __get(l){
+    l=JSON.parse(JSON.stringify(l));
     for (var i in l){
         var d = new DOMParser().parseFromString(l[i], "text/html");
         var f=d.getElementsByTagName("*");
@@ -46,7 +45,7 @@ function get(i){
     return l;
 }
 
-function hex(q){
+function __hex(q){
     'use strict'
     var a=[]
     var w=0;
@@ -56,29 +55,38 @@ function hex(q){
     return a;
 }
 
-function put(){
-    'use strict'
-    var l=get();
-    for (var i in l){
+function __put(l){
+    l=__get(l);
+    for (var i=0;i<256;++i){
         var a=document.getElementById('q'+i);
         if (a==undefined){
             continue;
         }
         var s=a.getElementsByTagName("*");
         var z=l[i];
+        if (z==undefined){
+            z=[];
+        }
         for (var w=0;w<s.length;++w){
             if (s[w].tagName=='INPUT' && s[w].type=='text'){
                 s[w].value=z.shift();
             }
             if (s[w].tagName=='INPUT' && s[w].type=='radio'){
                 var x=z.shift();
-                var d=s[w].parentElement.childNodes[1].innerText;
-                if (x!=undefined && x.indexOf(d)!=-1){
+                var d=s[w].parentElement.childNodes[1];
+                var t=''
+                for (e in d.childNodes){
+                    if (d.childNodes[e].tagName==undefined && d.childNodes[e].data!=undefined){
+                        t+=d.childNodes[e].data;
+                    }
+                }
+                d=t;
+                if (x==undefined || x.trim().indexOf(d.trim())!=-1){
                     s[w].checked=true;
                 }else{
                     s[w].checked=false;
-                    z.unshift(x);
                 }
+                z.unshift(x);
             }
             if (s[w].tagName=='SELECT'){
                 try{
@@ -89,17 +97,21 @@ function put(){
                 var x=z.shift();
                 if (typeof x=='string'){
                     var q=s[w].childNodes;
+                    s[w].value=q.length-1;
                     for (var r=0;r<q.length;++r){
+                        ic(x,'|',q[r].innerText)
                         if (x==q[r].innerText){
                             s[w].value=r;
                         }
                     }
                 }else{
+                    ic(JSON.parse(JSON.stringify(x)))
+                    var q=s[w].childNodes;
+                    s[w].value=q.length-1;
                     for (e=0;e<x.length;++e){
-                        if (x[e][0].endsWith(k)){
-                            var q=s[w].childNodes;
+                        if (x[e][0].trim().indexOf(k.trim())!=-1){
                             for (var r=0;r<q.length;++r){
-                                if (x[e][1].startsWith(q[r].innerText)){
+                                if (x[e][1].trim().indexOf(q[r].innerText.trim())!=-1){
                                     s[w].value=r;
                                     x.splice(e,1);
                                     break;
@@ -114,5 +126,24 @@ function put(){
         }
     }
 }
-window.____set=set;
-window.____put=put;
+function __all(){
+    var all_emp=1;
+    try{
+        var a=__set();
+        var g=__get(a);
+        for (var w in g){
+            if (g[w].length){
+                all_emp=0;
+            }
+        }
+    }catch{}
+    if (all_emp){
+        __put(JSON.parse(localStorage['__awvcp__q__all__']));
+    }else{
+        localStorage['__awvcp__q__all__']=JSON.stringify(a);
+    }
+}
+
+window.______all=__all;
+
+__all();
