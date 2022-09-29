@@ -1,15 +1,21 @@
-#define MERGE_(a,b)  a##b
-#define LABEL_(a) MERGE_(unique_name_,a)
-#define PRINT_LINE struct{int a=printf("%i\n",__LINE__);} LABEL_(__COUNTER__);
+#if SELF_INCLUDE==1
+	#define CAT_(x,y) x##y
+	#define CAT(x,y) CAT_(x,y)
+	struct CAT(str_,T){
+		
+	};
+#endif
+#if SELF_INCLUDE==0
 
-PRINT_LINE
-auto run(){
-	PRINT_LINE
-}
+	#define T int
+	#define SELF_INCLUDE 1
+	#include "test.cpp"
 
-	PRINT_LINE
-int main(){
-	PRINT_LINE
-	PRINT_LINE
-}
+	#define T int
+	#define SELF_INCLUDE 1
+	#include "test.cpp"
 
+
+
+
+#endif
