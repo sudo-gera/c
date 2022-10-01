@@ -1,8 +1,1 @@
-#include <stdio.h>
-
-
-#defi
-
-int main ()
-{
-}
+int main
