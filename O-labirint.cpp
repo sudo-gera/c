@@ -77,4 +77,52 @@ using llu=long long unsigned;
 
 ///////////////////////////////////////////////////end of lib
 
+struct labirint{
+    vector<string> a;
+    map<tuple<pair<llu,llu>,pair<llu,llu>,llu>,llu> countcache;
+    llu count(pair<llu,llu> in,pair<llu,llu> out,llu k){
+        if (countcache.count({in,out,k})){
+            return countcache[{in,out,k}];
+        }
+        if (k==0){
+            return in==out;
+        }
+        llu r=0;
+        if (in.first!=0 and a[in.first-1][in.second]=='.'){
+            r+=count({in.first-1,in.second},out,k-1);
+        }
+        if (in.second!=0 and a[in.first][in.second-1]=='.'){
+            r+=count({in.first,in.second-1},out,k-1);
+        }
+        if (in.first+1!=a.size() and a[in.first+1][in.second]=='.'){
+            r+=count({in.first+1,in.second},out,k-1);
+        }
+        if (in.second+1!=a[0].size() and a[in.first][in.second+1]=='.'){
+            r+=count({in.first,in.second+1},out,k-1);
+        }
+        countcache[{in,out,k}]=r;
+        return r;
+    }
+};
 
+int main(){
+    labirint l;
+    auto&a=l.a;
+    llu n=getint(),m=getint(),k=getint();
+    pair<llu,llu> in={-1,-1},out={-1,-1};
+    for (llu q=0;q<n;++q){
+        a.emplace_back();
+        cin>>a[q];
+        for (llu w=0;w<m;++w){
+            if (a[q][w]=='@'){
+                in={q,w};
+                a[q][w]='.';
+            }
+            if (a[q][w]=='#'){
+                out={q,w};
+                a[q][w]='.';
+            }
+        }
+    }
+    cout<<(l.count(in,out,k))<<endl;
+}

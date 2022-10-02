@@ -1,12 +1,15 @@
 #include <iostream>
 using namespace std;
-char*a="12345";
 
-void run(int t=0){
-	cout<<a[t]<<endl;
-	run(t+1);
-}
+struct strange{
+	int64_t q;
+	char w;
+};
+
+
+
 
 int main(){
-	run();
+	strange d=
+	ic(sizeof(strange));
 }

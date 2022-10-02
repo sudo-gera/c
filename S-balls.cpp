@@ -77,4 +77,40 @@ using llu=long long unsigned;
 
 ///////////////////////////////////////////////////end of lib
 
+struct balls{
+    map<tuple<llu,llu>,llu> hc;
+    llu h(llu m,llu k){
+        if (k>m){
+            k=m;
+        }
+        if (k==0){
+            return 1;
+        }
+        if (k==1){
+            return m+1;
+        }
+        if (hc.count({m,k})){
+            return hc[{m,k}];
+        }
+        llu t=h(m-1,k-1)+h(m-1,k);
+        hc[{m,k}]=t;
+        return t;
+    }
+};
 
+int main(){
+    balls b;
+    llu n=getint(),k=getint();
+    if (n==1){
+        print(0);
+    }else
+    if (k==0){
+        print(-1);
+    }else{
+        llu m=0;
+        while(b.h(m,k)<n){
+            ++m;
+        }
+        print(m);
+    }
+}

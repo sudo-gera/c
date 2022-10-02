@@ -77,4 +77,16 @@ using llu=long long unsigned;
 
 ///////////////////////////////////////////////////end of lib
 
+vector<llu> a;
+llu post(llu n,llu m){
+    if (n==0){
+        return 0LLU-(m!=0);
+    }
+    return min(post(n-1,))
+}
 
+int main(){
+    llu n=getint(),m=getint();
+    generate_n(back_inserter(a),n,getint);
+
+}

@@ -6,17 +6,14 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-#ifndef assert
 #include <assert.h>
-#endif
 #include <tuple>
 #include <numeric>
 #include <list>
 using std::cin, std::cout, std::endl, std::vector, std::string, std::sort, std::pair;
-using std::set, std::unordered_set, std::map, std::unordered_map, std::min, std::max;
+using std::set, std::unordered_set, std::map, std::unordered_map, std::min,std::max;
 using std::tuple, std::tie, std::get, std::make_tuple, std::reduce, std::move, std::swap;
 using std::generate, std::generate_n, std::back_inserter, std::list;
-using std::lower_bound, std::upper_bound, std::flush, std::prev, std::next;
 
 #ifdef print
 #undef print
@@ -78,3 +75,46 @@ using llu=long long unsigned;
 ///////////////////////////////////////////////////end of lib
 
 
+int main(){
+    llu n=getint();
+    vector<long> a;
+    generate_n(back_inserter(a),n,getint);
+    vector<pair<llu,llu>> d;
+    // vector<llu> s;
+    for (auto w:a){
+        llu m=0;
+        llu i=-1;
+        // while (s.size() and a[s.back()]<w){
+        for (llu q=0;q<d.size();++q){
+            if (a[q]<w and d[q].second>m){
+                m=d[q].second;
+                i=q;
+            }
+            // s.pop_back();
+        }
+        // s.push_back(d.size());
+        d.push_back({i,m+1});
+    }
+    // ic(a)
+    // ic(s)
+    // ic(d)
+    llu m=0;
+    llu i=-1;
+    for (llu w=0;w<d.size();++w){
+       if (d[w].second>m){
+            m=d[w].second;
+            i=w;
+        }
+    }
+    print(m);
+    vector<llu> f;
+    while (i!=-1){
+        f.push_back(i);
+        i=d[i].first;
+    }
+    while(f.size()){
+        write(f.back());
+        f.pop_back();
+    }
+    cout<<endl;
+}
