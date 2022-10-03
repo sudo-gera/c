@@ -1,15 +1,8 @@
-#include <iostream>
-using namespace std;
-
-struct strange{
-	int64_t q;
-	char w;
-};
-
-
 
 
 int main(){
-	strange d=
-	ic(sizeof(strange));
+	vector<int> a(999);
+	a.push_back(0);
+	ic(a[1002]);
+
 }
