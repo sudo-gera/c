@@ -368,3 +368,11 @@ def append(a,s):
 	a.append(s)
 def pop(a):
 	return a.pop()
+@cache
+def c(n,k):
+	if k in [0,n]:
+		return 1
+	if 0<k<n:
+		return c(n-1,k-1)+c(n-1,k)
+	return 0
+
