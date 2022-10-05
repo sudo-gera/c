@@ -12,11 +12,13 @@
 #include <tuple>
 #include <numeric>
 #include <list>
-using std::cin, std::cout, std::endl, std::vector, std::string, std::sort, std::pair;
-using std::set, std::unordered_set, std::map, std::unordered_map, std::min, std::max;
-using std::tuple, std::tie, std::get, std::make_tuple, std::reduce, std::move, std::swap;
-using std::generate, std::generate_n, std::back_inserter, std::list, std::hash;
-using std::lower_bound, std::upper_bound, std::flush, std::prev, std::next, std::tuple_size;
+using std::cin, std::cout, std::endl, std::vector, std::string, std::sort;
+using std::pair, std::set, std::unordered_set, std::map, std::unordered_map;
+using std::min, std::max, std::tuple, std::tie, std::get, std::make_tuple;
+using std::reduce, std::move, std::swap, std::generate, std::generate_n;
+using std::back_inserter, std::list, std::hash, std::reverse;
+using std::lower_bound, std::upper_bound, std::flush, std::prev, std::next;
+using std::tuple_size, std::lexicographical_compare;
 
 #ifdef print
 #undef print

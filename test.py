@@ -1,46 +1,16 @@
-n,k=[int(w) for w in input().split()]
-if k==1:
-    if n%2:
-        for w in range(1,n+1,2):
-            print(w,end=' ')
-        for w in range(n-1,0,-2):
-            print(w,end=' ')
-    else:
-        for w in range(1,n+1,2):
-            print(w,end=' ')
-        for w in range(n,0,-2):
-            print(w,end=' ')
-if k==2:
-    if n%2:
-        for w in range(2,n+1,2):
-            print(w,end=' ')
-        for w in range(n,0,-2):
-            print(w,end=' ')
-    else:
-        for w in range(2,n+1,2):
-            print(w,end=' ')
-        for w in range(n-1,0,-2):
-            print(w,end=' ')
-if k==n-1:
-    if n%2:
-        for w in range(n-1,0,-2):
-            print(w,end=' ')
-        for w in range(1,n+1,2):
-            print(w,end=' ')
-    else:
-        for w in range(n-1,0,-2):
-            print(w,end=' ')
-        for w in range(2,n+1,2):
-            print(w,end=' ')
-if k==n:
-    if n%2:
-        for w in range(n,0,-2):
-            print(w,end=' ')
-        for w in range(2,n+1,2):
-            print(w,end=' ')
-    else:
-        for w in range(n,0,-2):
-            print(w,end=' ')
-        for w in range(1,n+1,2):
-            print(w,end=' ')
-print()
+from h import *
+q=scan()
+a=q
+w=32
+q//=w
+w-=1
+while q!=(32-w):
+    q//=w
+    w-=1
+# print(q)
+s=[]
+for w in range(q):
+    d=32-q+w+1
+    s.append(255-a%d)
+    a//=d
+print(s[::-1])
