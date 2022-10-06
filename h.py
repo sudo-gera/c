@@ -368,3 +368,14 @@ def append(a,s):
 	a.append(s)
 def pop(a):
 	return a.pop()
+@cache
+def c(n,k):
+	if k in [0,n]:
+		return 1
+	if 0<k<n:
+		return c(n-1,k-1)+c(n-1,k)
+	return 0
+
+def binstr(s):
+	if type(s)==str: s=s.encode()
+	return '_'.join([('0'*8+bin(w)[2:])[-8:] for w in s])

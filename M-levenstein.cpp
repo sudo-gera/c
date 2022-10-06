@@ -12,13 +12,11 @@
 #include <tuple>
 #include <numeric>
 #include <list>
-using std::cin, std::cout, std::endl, std::vector, std::string, std::sort;
-using std::pair, std::set, std::unordered_set, std::map, std::unordered_map;
-using std::min, std::max, std::tuple, std::tie, std::get, std::make_tuple;
-using std::reduce, std::move, std::swap, std::generate, std::generate_n;
-using std::back_inserter, std::list, std::hash, std::reverse;
+using std::cin, std::cout, std::endl, std::vector, std::string, std::sort, std::pair;
+using std::set, std::unordered_set, std::map, std::unordered_map, std::min, std::max;
+using std::tuple, std::tie, std::get, std::make_tuple, std::reduce, std::move, std::swap;
+using std::generate, std::generate_n, std::back_inserter, std::list;
 using std::lower_bound, std::upper_bound, std::flush, std::prev, std::next;
-using std::tuple_size, std::lexicographical_compare;
 
 #ifdef print
 #undef print
@@ -77,12 +75,35 @@ static inline void write(uint64_t out) {
 
 using llu=long long unsigned;
 
-#define cache(rt,...)\
-    static map<decltype(make_tuple(__VA_ARGS__)),rt> cache;\
-    if ((cache).count({__VA_ARGS__})){\
-        return (cache)[{__VA_ARGS__}];\
-    }
-
 ///////////////////////////////////////////////////end of lib
 
+struct levenstein{
 
+    string a,s;
+
+    map<tuple<llu,llu>,llu> findcache;
+
+    llu find(llu la,llu ls){
+        if (findcache.count({la,ls})){
+            return findcache[{la,ls}];
+        }
+        if (la*ls==0){
+            return la+ls;
+        }
+        llu r=0;
+        if (a[la-1]==s[ls-1]){
+            r=min({find(la-1,ls)+1,find(la,ls-1)+1,find(la-1,ls-1)});
+        }else{
+            r=min({find(la-1,ls)+1,find(la,ls-1)+1,find(la-1,ls-1)+1});
+        }
+        findcache[{la,ls}]=r;
+        // ic(la,ls,r)
+        return r;
+    }
+};
+
+int main(){
+    levenstein l;
+    cin>>l.a>>l.s;
+    print(l.find(l.a.size(),l.s.size()));
+}
