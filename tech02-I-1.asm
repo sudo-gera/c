@@ -1,6 +1,13 @@
 .text
 .global sum
 
+<<<<<<< HEAD
+sum:
+    mov x9,0
+    mov w9,w0
+    mov x0,x9
+    
+=======
 .p2align 4
 
 sum:
@@ -14,3 +21,4 @@ sum:
     b while_begin
     while_end:
 ret
+>>>>>>> 37dd3845e25d15f427ae2869a98a9eb82732cf13
