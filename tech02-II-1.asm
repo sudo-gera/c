@@ -15,7 +15,8 @@ s: .int 0
 
 main:
     sub sp,sp,16
-    str lr,[sp]
+    mov x4,sp
+    str lr,[x4]
     ldr x0,=scanfs
     ldr x1,=a
     ldr x2,=s
@@ -25,7 +26,8 @@ main:
     add x1,x1,x2
     ldr x0,=printfs
     bl printf
-    ldr lr,[sp]
+    mov x4,sp
+    ldr lr,[x4]
     add sp,sp,16
     mov x0,0
 ret
