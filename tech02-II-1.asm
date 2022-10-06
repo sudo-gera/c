@@ -14,9 +14,10 @@ s: .int 0
 .extern printf
 
 main:
+    mov x3,lr
     sub sp,sp,16
-    mov x4,sp
-    str lr,[x4]
+    str x3,[sp]
+    str x3,[sp]
     ldr x0,=scanfs
     ldr x1,=a
     ldr x2,=s
@@ -26,8 +27,8 @@ main:
     add x1,x1,x2
     ldr x0,=printfs
     bl printf
-    mov x4,sp
-    ldr lr,[x4]
+    ldr x3,[sp]
     add sp,sp,16
+    mov lr,x3
     mov x0,0
 ret
