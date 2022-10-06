@@ -1,16 +1,21 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-auto q=[](auto w){
-	cout<<w;
-};
+
+#define sc __COUNTER__
+// #include "repeat.c"
 
 
-template<typename T>
-auto run(T y)->decltype(q(y)){
-
-}
 
 int main(){
-	run("");
+	cout<<sc<<endl;
+	cout<<sc<<endl;
 }
+
+
+
+
+
+
+
+
