@@ -376,3 +376,6 @@ def c(n,k):
 		return c(n-1,k-1)+c(n-1,k)
 	return 0
 
+def binstr(s):
+	if type(s)==str: s=s.encode()
+	return '_'.join([('0'*8+bin(w)[2:])[-8:] for w in s])

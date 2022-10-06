@@ -1,8 +1,16 @@
+#include <bits/stdc++.h>
+using namespace std;
 
+auto q=[](auto w){
+	cout<<w;
+};
+
+
+template<typename T>
+auto run(T y)->decltype(q(y)){
+
+}
 
 int main(){
-	vector<int> a(999);
-	a.push_back(0);
-	ic(a[1002]);
-
+	run("");
 }
