@@ -6,19 +6,14 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-#ifndef assert
 #include <assert.h>
-#endif
 #include <tuple>
 #include <numeric>
 #include <list>
-using std::cin, std::cout, std::endl, std::vector, std::string, std::sort;
-using std::pair, std::set, std::unordered_set, std::map, std::unordered_map;
-using std::min, std::max, std::tuple, std::tie, std::get, std::make_tuple;
-using std::reduce, std::move, std::swap, std::generate, std::generate_n;
-using std::back_inserter, std::list, std::hash, std::reverse;
-using std::lower_bound, std::upper_bound, std::flush, std::prev, std::next;
-using std::tuple_size, std::lexicographical_compare;
+using std::cin, std::cout, std::endl, std::vector, std::string, std::sort, std::pair;
+using std::set, std::unordered_set, std::map, std::unordered_map, std::min,std::max;
+using std::tuple, std::tie, std::get, std::make_tuple, std::reduce, std::move, std::swap;
+using std::generate, std::generate_n, std::back_inserter, std::list;
 
 #ifdef print
 #undef print
@@ -77,12 +72,49 @@ static inline void write(uint64_t out) {
 
 using llu=long long unsigned;
 
-#define cache(rt,...)\
-    static map<decltype(make_tuple(__VA_ARGS__)),rt> cache;\
-    if ((cache).count({__VA_ARGS__})){\
-        return (cache)[{__VA_ARGS__}];\
-    }
-
 ///////////////////////////////////////////////////end of lib
 
 
+int main(){
+    llu n=getint();
+    vector<long> a;
+    generate_n(back_inserter(a),n,getint);
+    vector<pair<llu,llu>> d;
+    // vector<llu> s;
+    for (auto w:a){
+        llu m=0;
+        llu i=-1;
+        // while (s.size() and a[s.back()]<w){
+        for (llu q=0;q<d.size();++q){
+            if (a[q]<w and d[q].second>m){
+                m=d[q].second;
+                i=q;
+            }
+            // s.pop_back();
+        }
+        // s.push_back(d.size());
+        d.push_back({i,m+1});
+    }
+    // ic(a)
+    // ic(s)
+    // ic(d)
+    llu m=0;
+    llu i=-1;
+    for (llu w=0;w<d.size();++w){
+       if (d[w].second>m){
+            m=d[w].second;
+            i=w;
+        }
+    }
+    print(m);
+    vector<llu> f;
+    while (i!=-1){
+        f.push_back(i);
+        i=d[i].first;
+    }
+    while(f.size()){
+        write(f.back());
+        f.pop_back();
+    }
+    cout<<endl;
+}

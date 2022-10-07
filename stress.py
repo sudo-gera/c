@@ -97,13 +97,12 @@ def cmp(log,start_time,stop,pr_num):
 					exit()
 				w=w.stdout.read().decode()
 				r.append(w)
-			c=r
-			if run(['python3','is_equal.py'],input=dumps([p]+c).encode()).returncode:
-			# sc=set(c)
-			# if len(sc)!=1:
-				log.put([p,'different output'])
 			else:
-				log.put(None)
+				c=r
+				if run(['python3','is_equal.py'],input=dumps([p]+c).encode()).returncode:
+					log.put([p,'different output'])
+				else:
+					log.put(None)
 		except Exception:
 			log.put([p,format_exc()])
 			exit()

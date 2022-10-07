@@ -15,8 +15,8 @@ maxlen=200+int(run_num**0.5)
 strs=[getstr() for w in range(maxlen)]
 
 
-n=rand(100)
+n=rand(99999)
 print(n)
 for w in range(n):
-	print(rand(10**6))
-print(rand(10**6))
+	print(rand(999),end=' ')
+print()

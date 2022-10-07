@@ -1,24 +1,5 @@
-#include <algorithm>
-#include <iostream>
-#include <map>
-#include <set>
-#include <string>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
-#ifndef assert
-#include <assert.h>
-#endif
-#include <tuple>
-#include <numeric>
-#include <list>
-using std::cin, std::cout, std::endl, std::vector, std::string, std::sort;
-using std::pair, std::set, std::unordered_set, std::map, std::unordered_map;
-using std::min, std::max, std::tuple, std::tie, std::get, std::make_tuple;
-using std::reduce, std::move, std::swap, std::generate, std::generate_n;
-using std::back_inserter, std::list, std::hash, std::reverse;
-using std::lower_bound, std::upper_bound, std::flush, std::prev, std::next;
-using std::tuple_size, std::lexicographical_compare;
+#include <bits/stdc++.h>
+using namespace std;
 
 #ifdef print
 #undef print
@@ -65,15 +46,14 @@ static inline void putint(uint64_t out) {
     }
 }
 
-static inline void print(uint64_t out) {
+extern "C"
+void print(uint64_t out)
+asm ("print");
+void print(uint64_t out) {
     putint(out);
     putchar('\n');
 }
 
-static inline void write(uint64_t out) {
-    putint(out);
-    putchar(' ');
-}
 
 using llu=long long unsigned;
 
@@ -86,3 +66,33 @@ using llu=long long unsigned;
 ///////////////////////////////////////////////////end of lib
 
 
+
+// extern "C"
+// uint64_t _c(uint64_t A,uint64_t B,uint64_t C,uint64_t D)
+// asm ("_c");
+
+// int main(){
+//     cout<<_c(4,6,3,8)<<endl;
+// }
+
+extern "C"
+void memdump(char*mem,uint64_t len)
+asm ("memdump");
+
+void memdump(char*mem,uint64_t len){
+    for (uint64_t w=0;w<len;++w){
+        // printf("%4" PRIu64,(uint64_t)uint8_t(mem[w]));
+        printf("%c",uint8_t(mem[w]));
+    }
+    cout<<endl;
+}
+
+// void make(){
+//     int c;
+//     char*f=0;
+//     uint64_t fl=0;
+//     uint64_t fs=0;
+//     while ((c=getchar_unlocked())!=EOF){
+//         if (fl)
+//     }
+// }

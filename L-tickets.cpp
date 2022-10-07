@@ -1,3 +1,90 @@
+#include <algorithm>
+#include <iostream>
+#include <map>
+#include <set>
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+#ifndef assert
+#include <assert.h>
+#endif
+#include <tuple>
+#include <numeric>
+#include <list>
+#include <type_traits>
+using std::cin, std::cout, std::endl, std::vector, std::string, std::sort, std::pair;
+using std::set, std::unordered_set, std::map, std::unordered_map, std::min, std::max;
+using std::tuple, std::tie, std::get, std::make_tuple, std::reduce, std::move, std::swap;
+using std::generate, std::generate_n, std::back_inserter, std::list, std::hash;
+using std::lower_bound, std::upper_bound, std::flush, std::prev, std::next, std::tuple_size;
+using std::decay_t, std::is_void_v, std::enable_if_t;
+
+#ifdef print
+#undef print
+#endif
+
+#ifdef write
+#undef write
+#endif
+
+static inline int64_t getint() {
+    int sign = 1;
+    int c;
+    size_t res = 0;
+    while (c = getchar_unlocked(), isspace(c))
+        ;
+    if (c == '-') {
+        sign = -1;
+    } else {
+        res = c - '0';
+    }
+    while (c = getchar_unlocked(), isdigit(c)) {
+        res *= 10;
+        res += c - '0';
+    }
+    return (int64_t)(res)*sign;
+}
+
+static inline void putint(uint64_t out) {
+    if (out > (1LLU << 63) - 1) {
+        putchar_unlocked('-');
+        out = 1 + ~out;
+    }
+    char data[44];
+    char *dend = data;
+    while (out) {
+        *++dend = (unsigned)('0') + out % 10;
+        out /= 10;
+    }
+    if (dend == data) {
+        putchar_unlocked('0');
+    }
+    for (; dend != data; --dend) {
+        putchar_unlocked(*dend);
+    }
+}
+
+static inline void print(uint64_t out) {
+    putint(out);
+    putchar('\n');
+}
+
+static inline void write(uint64_t out) {
+    putint(out);
+    putchar(' ');
+}
+
+using llu=long long unsigned;
+
+#define cache(rt,...)\
+    static map<decltype(make_tuple(__VA_ARGS__)),rt> cache;\
+    if ((cache).count({__VA_ARGS__})){\
+        return (cache)[{__VA_ARGS__}];\
+    }
+
+///////////////////////////////////////////////////end of lib
+
 #include <iostream>
 #include <string>
 
@@ -651,50 +738,37 @@ std::ostream&operator<<(std::ostream&q,const Rational&w){
 	return q;
 }
 
-// #include <string>
+#define llll BigInteger
 
-// auto readfile_(FILE*q){
-// 	std::string s;
-// 	int c; // note: int, not char, required to handle EOF
-// 	while ((c = fgetc(q)) != EOF) { // standard C I/O file reading loop
-// 		s+=c;
-// 	}
-// 	return s;
-// }
+struct tickets{
+    vector<vector<llll>> cache;
 
-// auto replace_(std::string q,std::string w,std::string e){
-// 	std::string res;
-// 	uint64_t a=0;
-// 	while (a<uint64_t((q).size())){
-// 		if (q.find(w,a)==a){
-// 			res+=e;
-// 			a+=w.size();
-// 		}else{
-// 			res+=q[a];
-// 			++a;
-// 		}
-// 	}
-// 	return res;
-// }
+    llll count(llu n,llu m, llu s){
+        if (n==0){
+            return (s==0);
+        }
+        if (cache[n][s]!=-1){
+            return cache[n][s];
+        }
+        llll r=0;
+        for (llu w=0;w<m and w<=s;++w){
+            r+=count(n-1,m,s-w);
+        }
+        cache[n][s]=r;
+        return r;
+    }
+};
 
-// bool printed=0;
-
-// int f(std::string file){
-// 	if (printed){
-// 		return 0;
-// 	}
-// 	printed=1;
-// 	auto d=fopen(file.c_str(),"r");
-// 	auto s=readfile_(d);
-// 	fclose(d);
-// 	s=replace_(s,"\t"," ");
-// 	size_t len=512;
-// 	size_t start=len*0;
-// 	std::cerr<<"//BEGIN OF PART "<<start/len<<std::endl;
-// 	std::cerr<<std::string(s.begin()+(start<s.size()?start:s.size()),s.begin()+(start+len<s.size()?start+len:s.size()))<<std::endl;
-// 	std::cerr<<"//END OF PART "<<start/len<<std::endl;
-// 	return 0;
-// }
-
-
-// #define BigInteger f(__FILE__);BigInteger
+int main(){
+    tickets y;
+    llu n=(int)getint();
+    llu m=(int)getint();
+    n/=2;
+    y.cache.resize(n+1,vector<llll>(n*m+1,-1));
+    llll r=0;
+    for (llu w=0;w<n*m;++w){
+        llll t=y.count(n,m,w);
+        r+=t*t;
+    }
+    cout<<r<<endl;
+}
