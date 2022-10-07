@@ -1,31 +1,35 @@
-.data
-<<<<<<< HEAD
-=======
-
-/* Data segment: define our message string and calculate its length. */
-msg:
-    .ascii        "Hello, ARM64!\n"
-len = . - msg
->>>>>>> ff9e250131f4f5ca4696783067870df6064e92ed
-
-/* Data segment: define our message string and calculate its length. */
-msg:
-    .ascii        "Hello, ARM64!\n"
-len = . - msg
-
 .text
 
-/* Our application's entry point. */
-.globl _start
-_start:
-    /* syscall write(int fd, const void *buf, size_t count) */
-    mov     x0, #1      /* fd := STDOUT_FILENO */
-    ldr     x1, =msg    /* buf := msg */
-    ldr     x2, =len    /* count := len */
-    mov     w8, #64     /* write is syscall #64 */
-    svc     #0          /* invoke syscall */
+.global main
+.global _main
 
-    /* syscall exit(int status) */
-    mov     x0, #0      /* status := 0 */
-    mov     w8, #93     /* exit is syscall #93 */
-    svc     #0          /* invoke syscall */
+.extern fgetc
+.extern fputc
+.extern getchar_unlocked
+.extern putchar_unlocked
+.extern realloc
+
+
+_main:
+main:
+    sub sp,sp,256
+    str x30,[sp,240]
+    mov x4,0
+    mov x5,0
+    mov x6,0
+    mov x7,0
+    mov x8,0
+    mov x9,0
+    mov x10,0
+    mov x11,0
+
+    bl getchar_unlocked
+    add x0,x0,1
+    bl putchar_unlocked
+
+
+    ldr x30,[sp,240]
+    add sp,sp,256
+    mov x0,0
+ret
+
