@@ -1,15 +1,19 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+void run1(int&&y){
+	int r=y;
+}
 
-#define sc __COUNTER__
-// #include "repeat.c"
+void run2(int&&y){
+	run1(y);
+}
 
 
 
 int main(){
-	cout<<sc<<endl;
-	cout<<sc<<endl;
+	int u=0;
+	run2(std::move(u));
 }
 
 
