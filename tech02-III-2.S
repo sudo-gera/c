@@ -44,6 +44,9 @@ _start:
     mov $0, %r9
     mov $0, %r10
     loop_in:
+_ 7     if %r9 ">" %r10,{
+            _7: jmp _7
+_ 7     ,}
 _ 1     if %r9 "_=" %r10,{
             mov %r10,%rax
             mov $2,%rdx
@@ -53,6 +56,10 @@ _ 1     if %r9 "_=" %r10,{
             mov $12,%rax
             lea (%r8,%r10),%rdi
             syscall
+_ 8         if %rax "!=" %r8,{
+                _8: jmp _8
+_ 8         ,}
+
 _ 1     ,}
         mov $0,%rax
         mov $0,%rdi
@@ -63,6 +70,12 @@ _ 1     ,}
         syscall
         mov %rax,%r12
 _ 0     if %r12 "_=" $0,{
+            mov -1(%r8,%r9),%al
+_ 9         if %al "!=" $10,{
+                mov $10,%al
+                mov %al,(%r8,%r9)
+                add $1,%r9
+_ 9         ,}
             jmp loop_in_end
 _ 0     ,}
         add %r12,%r9
