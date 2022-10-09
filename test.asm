@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -798,3 +799,10 @@ Disassembly of section .comment:
 >>>>>>> a85cd69613ac29d6bd95ac51bb8696fe94f94dc1
 =======
 >>>>>>> 9399a689cc5a7292ed032bbf9e1ec38e435a9415
+=======
+%include "best_io.inc"
+_f_printreg:
+    printreg
+ret
+
+>>>>>>> f54582242dace6073a2d9a7c2eca7cf0ccc2c66b
