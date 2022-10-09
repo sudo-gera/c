@@ -8,5 +8,4 @@ int main(){
 void _start(){
     main();
 }
-
 #endif
