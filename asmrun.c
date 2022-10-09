@@ -131,13 +131,13 @@ static inline void putint(uint64_t out) {
 	}
 }
 
-void print(uint64_t out)
-asm ("print");
+// void print(uint64_t out)
+// asm ("print");
 
-void print(uint64_t out) {
-	putint(out);
-	putchar('\n');
-}
+// void print(uint64_t out) {
+// 	putint(out);
+// 	putchar('\n');
+// }
 
 // void write(uint64_t out) {
 // 	putint(out);

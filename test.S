@@ -1,6 +1,12 @@
+.include "best_io1.inc"
+
         .global _start
+#        .global main
+ #       .global _main
 
         .text
+#main:
+#_main:
 _start:
         # write(1, message, 13)
         mov     $1, %rax                # system call 1 is write
