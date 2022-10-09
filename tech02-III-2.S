@@ -7,15 +7,8 @@ lspace:
 .global _start
 .global _main
 .global main
+.extern _f_printreg
 
-
-.macro putint arg
-push %rdi
-push \arg
-pop %rdi
-call print
-pop %rdi
-.endm
 
 .macro _ place, command, left, comp, right, br
     .ifc \command,if
@@ -63,6 +56,7 @@ pop %rdi
 
 
 .data
+/*
 _v:
     .int 0
     .int 0
@@ -75,106 +69,17 @@ _f16_0:
 _f16_1:
     .ascii "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
 .text
-_out:
-    push %rax
-    push %rbx
-    push %rcx
-    push %rdx
-    push %rsi
-    push %rdi
-    push %r8
-    push %r9
-    push %r10
-    push %r11
-    push %r12
-    push %r13
-    push %r14
-    push %r15
+*/
 
-    push %rax
-    push %rax
-    mov $0,%rax
-    mov 8(%rsp),%al
-    mov $_f16,%rbx
-    mov (%rbx,%rax,2),%ax
-    mov %ax,0(%rsp)
-    mov $0,%rax
-    mov 9(%rsp),%al
-    mov $_f16,%rbx
-    mov (%rbx,%rax,2),%ax
-    mov %ax,2(%rsp)
-    mov $0,%rax
-    mov 10(%rsp),%al
-    mov $_f16,%rbx
-    mov (%rbx,%rax,2),%ax
-    mov %ax,4(%rsp)
-    mov $0,%rax
-    mov 11(%rsp),%al
-    mov $_f16,%rbx
-    mov (%rbx,%rax,2),%ax
-    mov %ax,6(%rsp)
-    mov $0,%rax
-    mov 12(%rsp),%al
-    mov $_f16,%rbx
-    mov (%rbx,%rax,2),%ax
-    mov %ax,8(%rsp)
-    mov $0,%rax
-    mov 13(%rsp),%al
-    mov $_f16,%rbx
-    mov (%rbx,%rax,2),%ax
-    mov %ax,10(%rsp)
-    mov $0,%rax
-    mov 14(%rsp),%al
-    mov $_f16,%rbx
-    mov (%rbx,%rax,2),%ax
-    mov %ax,12(%rsp)
-    mov $0,%rax
-    mov 15(%rsp),%al
-    mov $_f16,%rbx
-    mov (%rbx,%rax,2),%ax
-    mov %ax,14(%rsp)
-    mov $757935405,%eax
-    shl $32,%rax
-    mov $1031299442,%eax
-    push %rax
-
-    mov $24,%rdx
-    mov $1, %rax
-    mov $1, %rdi
-    mov %rsp, %rsi
-    syscall
-
-
-    pop %rax
-    pop %rax
-    pop %rax
-    pop %r15
-    pop %r14
-    pop %r13
-    pop %r12
-    pop %r11
-    pop %r10
-    pop %r9
-    pop %r8
-    pop %rdi
-    pop %rsi
-    pop %rdx
-    pop %rcx
-    pop %rbx
-    pop %rax
-ret
-
+.extern _f_printreg
 
 main:
 _main:
 _start:
-    mov $258,%rax
-    call _out
-
-/*
     mov $12,%rax
     mov $0,%rdi
     syscall
+    call _f_printreg
     mov %rax,%r8
     mov $0, %r9
     mov $0, %r10
@@ -203,6 +108,7 @@ _ 0     ,}
         add %r12,%r9
     jmp loop_in
     loop_out:
+/*
 
 
     mov %r9,%rdx
