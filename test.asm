@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 .text
 
 .global main
@@ -28,6 +26,9 @@ main:
     bl getchar_unlocked
     add x0,x0,1
     bl putchar_unlocked
+    mov x0,10
+    bl putchar_unlocked
+
 
 
     ldr x30,[sp,240]
@@ -35,4 +36,3 @@ main:
     mov x0,0
 ret
 
->>>>>>> 3ab017fcce67a8a6b905da282ab16b4d4c808e6b
