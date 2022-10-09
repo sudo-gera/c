@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -46,9 +47,16 @@ ret
 =======
 >>>>>>> 3ab017fcce67a8a6b905da282ab16b4d4c808e6b
 =======
+=======
+%include "best_io.inc"
+global _f_printreg
+>>>>>>> 9399a689cc5a7292ed032bbf9e1ec38e435a9415
 
-a.out:     file format elf64-x86-64
+_f_printreg:
+    printreg
+ret
 
+<<<<<<< HEAD
 
 Disassembly of section .interp:
 
@@ -788,3 +796,5 @@ Disassembly of section .comment:
 	...
 >>>>>>> 44340187293fea93b1a4be38ad337e642f0d45ec
 >>>>>>> a85cd69613ac29d6bd95ac51bb8696fe94f94dc1
+=======
+>>>>>>> 9399a689cc5a7292ed032bbf9e1ec38e435a9415

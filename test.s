@@ -1,3 +1,4 @@
+.extern _f_printreg
         .global _start
 
         .text
@@ -8,6 +9,8 @@ _start:
         mov     $message, %rsi          # address of string to output
         mov     $13, %rdx               # number of bytes
         syscall                         # invoke operating system to do the write
+
+        call _f_printreg
 
         # exit(0)
         mov     $60, %rax               # system call 60 is exit
