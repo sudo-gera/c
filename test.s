@@ -43,9 +43,6 @@
         .ifc \comp,==
             bne _\place
         .endif
-        .ifc \comp,_=
-            bne _\place
-        .endif
         .ifc \comp,>
             ble _\place
         .endif
@@ -74,38 +71,38 @@ main:
         call getchar_unlocked
         mov x7,0
         mov w7,w0
-_ 0     if x7 ">=" 256,{
+_ 0,    if, x7,>=,256,{
             b loop_out
-_ 0     ,}
-_ 3     if x9 "_=" 8,{
-_ 1         if x5 ">=" x6,{
+_ 0,    }
+_ 3,    if x9,==,8,{
+_ 1,        if x5,>=,x6,{
                 mov x0,x4
                 add x6,x6,x6
                 add x6,x6,8
                 mov x1,x6
                 call realloc
                 mov x4,x0
-_ 1         ,}
+_ 1,        }
             str x8,[x4,x5]
             add x5,x5,8
             mov x9,0
             mov x8,0
-_ 3     ,}
+_ 3,    }
         mov x0,256
         mul x8,x8,x0
         add x8,x8,x7
         add x9,x9,1
     b loop_in
     loop_out:
-_ 4     if  x9 "_=" 0,{
-_ 5         if  x5 "_=" 0,{
+_ 4,    if, x9,==,0,{
+_ 5,        if, x5,==,0,{
                 b end
-_ 5         ,}
+_ 5,        }
             sub x5,x5,8
             ldr x7,[x4,x5]
             mov x8,x7
             mov x9,8
-_ 4     ,}
+_ 4,    }
         mov x0,x8
         call putchar_unlocked
         mov x0,256
