@@ -81,8 +81,8 @@ asm ("memdump");
 
 void memdump(char*mem,uint64_t len){
     for (uint64_t w=0;w<len;++w){
-        // printf("%4" PRIu64,(uint64_t)uint8_t(mem[w]));
-        printf("%c",uint8_t(mem[w]));
+        printf("%4" PRIu64,(uint64_t)uint8_t(mem[w]));
+        // printf("%c",uint8_t(mem[w]));
     }
     cout<<endl;
 }

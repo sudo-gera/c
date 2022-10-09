@@ -1,6 +1,9 @@
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
+>>>>>>> a85cd69613ac29d6bd95ac51bb8696fe94f94dc1
 .text
 
 .global main
@@ -29,6 +32,9 @@ main:
     bl getchar_unlocked
     add x0,x0,1
     bl putchar_unlocked
+    mov x0,10
+    bl putchar_unlocked
+
 
 
     ldr x30,[sp,240]
@@ -36,6 +42,8 @@ main:
     mov x0,0
 ret
 
+<<<<<<< HEAD
+=======
 >>>>>>> 3ab017fcce67a8a6b905da282ab16b4d4c808e6b
 =======
 
@@ -779,3 +787,4 @@ Disassembly of section .comment:
   58:	66 69 6e 61 6c 29    	imul   $0x296c,0x61(%rsi),%bp
 	...
 >>>>>>> 44340187293fea93b1a4be38ad337e642f0d45ec
+>>>>>>> a85cd69613ac29d6bd95ac51bb8696fe94f94dc1
