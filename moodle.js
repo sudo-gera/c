@@ -39,6 +39,18 @@ function __get(l){
                     a.push(sel);
                 }
             }
+            if (f[t].tagName=='DIV' && f[t].classList.contains('qtext')){
+                var cn=f[t].getElementsByTagName('*');
+                for (var e in cn){
+                    if (cn[e].tagName=='INPUT' && cn[e].classList.contains('typetext') && cn[e].classList.contains('correct')){
+                        a.push(cn[e].value);
+                    }
+                    if (cn[e].tagName=='INPUT' && cn[e].classList.contains('typetext') && cn[e].classList.contains('incorrect')){
+                        var cnt=cn[e].parentElement.querySelector('span.aftergapfeedback').innerText;
+                        a.push(cnt.slice(1,-1));
+                    }
+                }
+            }
         }
         l[i]=a;
     }
@@ -68,7 +80,14 @@ function __put(l){
             z=[];
         }
         for (var w=0;w<s.length;++w){
+            ic(s[w])
+            ic(JSON.parse(JSON.stringify(l)))
             if (s[w].tagName=='INPUT' && s[w].type=='text'){
+                // ic(s)
+                // ic(s[w])
+                // ic(z)
+                // ic(i)
+                // ic(l)
                 s[w].value=z.shift();
             }
             if (s[w].tagName=='INPUT' && s[w].type=='radio'){
@@ -99,7 +118,6 @@ function __put(l){
                     var q=s[w].childNodes;
                     s[w].value=Math.floor(Math.random()*q.length);
                     for (var r=0;r<q.length;++r){
-                        ic(x,'|',q[r].innerText)
                         if (x==q[r].innerText){
                             s[w].value=r;
                         }
@@ -140,7 +158,11 @@ function __all(){
         }
     }catch{}
     if (all_emp){
-        __put(JSON.parse(localStorage['__awvcp__q__all__']));
+        var j=localStorage['__awvcp__q__all__'];
+        if (j==undefined){
+            j='{}'
+        }
+        __put(JSON.parse(j));
     }else{
         localStorage['__awvcp__q__all__']=JSON.stringify(a);
     }
@@ -148,4 +170,4 @@ function __all(){
 
 window.______all=__all;
 
-__all();
+// __all();

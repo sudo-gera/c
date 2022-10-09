@@ -2,14 +2,10 @@
 using namespace std;
 
 
-#define sc __COUNTER__
-// #include "repeat.c"
-
 
 
 int main(){
-	cout<<sc<<endl;
-	cout<<sc<<endl;
+	decltype(({int r=0;r+=1;r;})) r;
 }
 
 
