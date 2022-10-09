@@ -32,24 +32,7 @@
     .endif
 .endm
 
-.data
-
-.macro prstr str:vararg
-    jmp _2\@
-    _1\@\():
-        .ascii "\str"
-    _2\@\():
-    push $_1\@
-    push $_2\@
-    call _f_printstr
-.endm
-
-.macro log str:vararg
-    prstr \@\()_\str
-.endm
-
-.extern _f_printreg
-.extern _f_printstr
+.text
 
 main:
 _main:
@@ -144,51 +127,13 @@ _ 4             ,}
             sub $1,%r13
 _ 3     ,}
         sub $1,%r12
-
-/*
-        mov %r12,%rax
-        sub %r8,%rax
-        mov %r13,%rbx
-        sub %r8,%rbx
-        call _f_printreg
-        mov %r8,%rax
-        push %rax
-        add %r9,%rax
-        push %rax
-        call _f_printstr
-        pop %rax
-        pop %rax
-*/
-
     jmp loop_all_word_rev
     loop_all_word_rev_end:
-    
-
-
-
-
-/*
-    mov %r8,%rax
-    push %rax
-    add %r9,%rax
-    push %rax
-    call _f_printstr
-
-    mov %r8,%rax
-    push %rax
-    add %r9,%rax
-    push %rax
-    call _f_printstr
-*/    
-
-
     mov %r9,%rdx
     mov $1, %rax
     mov $1, %rdi
     mov %r8, %rsi
     syscall
-
-
-    mov $60, %rax
-    xor %rdi, %rdi
-    syscall
+mov $60, %rax
+xor %rdi, %rdi
+syscall
