@@ -32,6 +32,7 @@
     .endif
 .endm
 
+
 .text
 
 main:
@@ -45,19 +46,19 @@ _start:
     mov $0, %r10
     loop_in:
 _ 7     if %r9 ">" %r10,{
-            _7: jmp _7
+            __7: jmp __7
 _ 7     ,}
 _ 1     if %r9 "_=" %r10,{
             mov %r10,%rax
             mov $2,%rdx
             mul %rdx
             mov %rax,%r10
-            add $256,%r10
+            add $123,%r10
             mov $12,%rax
             lea (%r8,%r10),%rdi
             syscall
-_ 8         if %rax "!=" %r8,{
-                _8: jmp _8
+_ 8         if %rax "!=" %rdi,{
+                __8: jmp __8
 _ 8         ,}
 
 _ 1     ,}
@@ -70,6 +71,8 @@ _ 1     ,}
         syscall
         mov %rax,%r12
 _ 0     if %r12 "_=" $0,{
+            add $0,%r9
+            je end
             mov -1(%r8,%r9),%al
 _ 9         if %al "!=" $10,{
                 mov $10,%al
@@ -147,6 +150,7 @@ _ 3     ,}
     mov $1, %rdi
     mov %r8, %rsi
     syscall
+end:
 mov $60, %rax
 xor %rdi, %rdi
 syscall
