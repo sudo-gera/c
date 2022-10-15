@@ -1,21 +1,16 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-void run(int*y){
-	if (rand()%8<2){
-		run(y);
-	}
-	if (rand()%8<2){
-		run(y);
-	}
-	cout<<y[20];
+template<typename T>
+void run(){
+	wstrtype<remove_reference_t<T>*>();
 }
 
 
 int main(){
-	int*y=new int[20];
-	run(y);
+	run<int>();
 }
+
 
 
 
