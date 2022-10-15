@@ -1,21 +1,23 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-template<typename T>
-void run(){
-	wstrtype<remove_reference_t<T>*>();
-}
+struct iholder{
 
+	virtual void f(){}
+};
+
+template<typename T>
+struct holder:iholder{
+	T value;
+};
+
+struct _any{
+	unique_ptr<iholder> p;
+};
 
 int main(){
-	run<int>();
+	_any t{make_unique<holder<int>>()};
 }
-
-
-
-
-
-
 
 
 
