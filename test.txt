@@ -1,4 +1,0 @@
-Script started on Sun Oct 16 12:58:50 2022
-[?1034h[31m12:58:50[0m:[33marm64[0m:[32m~/c[0m$ script test.txt[4Pgrep tree *script test.txt[Kscript test.txt[4Pgrep tree *script test.txt[Kscript test.txt[4Pgrep tree *script test.txt[Kexit
-
-Script done on Sun Oct 16 12:59:02 2022
