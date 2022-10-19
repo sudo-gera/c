@@ -170,4 +170,4 @@ function __all(){
 
 window.______all=__all;
 
-// __all();
+__all();
