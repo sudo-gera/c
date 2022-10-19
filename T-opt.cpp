@@ -83,83 +83,68 @@ using llu=long long unsigned;
         return (cache)[{__VA_ARGS__}];\
     }
 
+
 #define bit_get(a,s)   (((a)[(s)/8LLU/sizeof((a)[0])]>>(s)%(8LLU*sizeof((a)[0])))&1LLU)
 #define bit_set(a,s,d) {(a)[(s)/8LLU/sizeof((a)[0])]&=~(1LLU<<(s)%(8LLU*sizeof((a)[0])));(a)[(s)/8LLU/sizeof((a)[0])]+=((d)+0LLU)<<(s)%(8LLU*sizeof((a)[0]));}
 
 
-struct bitmask
-{
-    llu n=0;
-    llu m=0;
-    llu find(llu s=0){
-        llu o=s;
-        // auto y=bin_repr(s);
-        // reverse(y.begin(),y.end());
-        // ic(y)
-        // for (auto u=0;u<n*m;u+=m){
-        //     cout<<string(y.begin()+u,y.begin()+u+m)<<endl;;
-        // }
-        cache(llu,o);
-        llu r=0;
-        llu q=0,w=0;
-        for (q=0;q<n;++q){
-            for (w=0;w<m;++w){
-                if (bit_get(&s,q*m+w)==0){
-                    goto _1;
-                }
-            }
-        }
-        // ic()
-        _1:
-        if (q==n or w==m){
-            r=1;
-        }else{
-            bit_set(&s,q*m+w,1);
-            if (w+1 < m and bit_get(&s,q*m+w+1)==0){
-                llu t=s;
-                bit_set(&t,q*m+w+1,1);
-                // ic()
-                r+=find(t);
-                // ic()
-                if (w+2 < m and bit_get(&s,q*m+w+2)==0){
-                    bit_set(&t,q*m+w+2,1);
-                // ic()
-                    r+=find(t);
-                // ic()
-                }
-            }
-            if (q+1 < n and bit_get(&s,q*m+m+w)==0){
-                llu t=s;
-                bit_set(&t,q*m+w+m,1);
-                // ic()
-                r+=find(t);
-                // ic()
-                if (q+2 < n and bit_get(&s,q*m+w+m+m)==0){
-                    bit_set(&t,q*m+w+m+m,1);
-                // ic()
-                    r+=find(t);
-                // ic()
-                }
-            }
-        }
-        // ic()
-        cache[{o}]=r;
-        // ic(o,r)
-        // ic(y,r)
-        // for (auto u=0;u<n*m;u+=m){
-        //     cout<<string(y.begin()+u,y.begin()+u+m)<<endl;;
-        // }
-        // static llu rc=0;
-        // if (rc++==2){assert_m(0);}
-        return r;
-    }
-};
 
+
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////end of lib
+
+llu n=0,m=0;
+vector<vector<llu>> a;
+vector<llu> s; 
+
+llu count(__uint128_t free,llu k){
+    cache(llu,free,k);
+    ic(bin_repr(free),k,' ')
+    llu r=-1;
+    if (k){
+        llu maxp=-1;
+        for (llu w=0;w<n;++w){
+            if (bit_get((uint8_t*)&free,w)==0){
+                maxp=min(maxp,a[w][k-1]);
+            }
+        }
+        for (llu w=0;w<n;++w){
+            if (a[w][k-1]<=maxp){
+                llu d=0;
+                d+=s[w]*bit_get((uint8_t*)&free,w)+a[w][k-1];
+                auto t=free;
+                bit_set((uint8_t*)&t,w,0);
+                d+=count(t,k-1);
+                r=min(d,r);
+            }
+        }
+    }else{
+        r=0;
+    }
+    try{
+        cache[{free,k}]=r;
+    }catch(...){};
+    ic(bin_repr(free), k, r)
+    return r;
+}
 
 
 int main(){
-    llu n=getint();
-    llu m=getint();
-    tie(n,m)=make_tuple(max(n,m),min(n,m));
-    print(bitmask{n,m}.find());
+    n=getint();
+    m=getint();
+    for (llu w=0;w<n;++w){
+        s.push_back(getint());
+        a.emplace_back();
+        for (llu e=0;e<m;++e){
+            a.back().push_back(getint());
+        }
+    }
+    print(count(-1,m));
 }
