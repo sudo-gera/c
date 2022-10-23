@@ -92,7 +92,7 @@ def rand(q=2**64,e=None):
 		q,e=e,q
 	else:
 		e=0
-	assert q
+	assert q-e
 	return randint(e,q-1)
 exec(open(str(Path.home())+'/.pythonrc').read())
 def urlread(*a,**s):

@@ -1,0 +1,52 @@
+[
+{
+  "directory": "/Users/gera/c/CLanguage/example",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc  -I/Users/gera/courcerepo/CLanguage/. -fsanitize=address,undefined -Wall -Wextra -pedantic -Werror -Wno-self-assign-overloaded -Wno-missing-braces -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -std=gnu11 -o CMakeFiles/example.dir/example.c.o -c /Users/gera/courcerepo/CLanguage/example/example.c",
+  "file": "/Users/gera/courcerepo/CLanguage/example/example.c"
+},
+{
+  "directory": "/Users/gera/c/CLanguage/example",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc  -I/Users/gera/courcerepo/CLanguage/. -fsanitize=address,undefined -Wall -Wextra -pedantic -Werror -Wno-self-assign-overloaded -Wno-missing-braces -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -std=gnu11 -o CMakeFiles/example.dir/__/ctest_main.c.o -c /Users/gera/courcerepo/CLanguage/ctest_main.c",
+  "file": "/Users/gera/courcerepo/CLanguage/ctest_main.c"
+},
+{
+  "directory": "/Users/gera/c/CppLanguage/playground",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/gera/courcerepo/CppLanguage/.  -fsanitize=address,undefined -Wall -Wextra -pedantic -Werror -Wno-self-assign-overloaded -Wno-missing-braces -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -std=gnu++20 -o CMakeFiles/playground.dir/main.cpp.o -c /Users/gera/courcerepo/CppLanguage/playground/main.cpp",
+  "file": "/Users/gera/courcerepo/CppLanguage/playground/main.cpp"
+},
+{
+  "directory": "/Users/gera/c/CppLanguage/simple_test",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/gera/courcerepo/CppLanguage/.  -fsanitize=address,undefined -Wall -Wextra -pedantic -Werror -Wno-self-assign-overloaded -Wno-missing-braces -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -std=gnu++20 -o CMakeFiles/simple_test_cpp.dir/simple_test.cpp.o -c /Users/gera/courcerepo/CppLanguage/simple_test/simple_test.cpp",
+  "file": "/Users/gera/courcerepo/CppLanguage/simple_test/simple_test.cpp"
+},
+{
+  "directory": "/Users/gera/c/CppLanguage/array",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/gera/courcerepo/CppLanguage/.  -fsanitize=address,undefined -Wall -Wextra -pedantic -Werror -Wno-self-assign-overloaded -Wno-missing-braces -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -std=gnu++20 -o CMakeFiles/array.dir/test_array.cpp.o -c /Users/gera/courcerepo/CppLanguage/array/test_array.cpp",
+  "file": "/Users/gera/courcerepo/CppLanguage/array/test_array.cpp"
+},
+{
+  "directory": "/Users/gera/c/CppLanguage/complex",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/gera/courcerepo/CppLanguage/.  -fsanitize=address,undefined -Wall -Wextra -pedantic -Werror -Wno-self-assign-overloaded -Wno-missing-braces -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -std=gnu++20 -o CMakeFiles/complex.dir/complex.cpp.o -c /Users/gera/courcerepo/CppLanguage/complex/complex.cpp",
+  "file": "/Users/gera/courcerepo/CppLanguage/complex/complex.cpp"
+},
+{
+  "directory": "/Users/gera/c/CppLanguage/complex",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/gera/courcerepo/CppLanguage/.  -fsanitize=address,undefined -Wall -Wextra -pedantic -Werror -Wno-self-assign-overloaded -Wno-missing-braces -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -std=gnu++20 -o CMakeFiles/complex.dir/test_complex.cpp.o -c /Users/gera/courcerepo/CppLanguage/complex/test_complex.cpp",
+  "file": "/Users/gera/courcerepo/CppLanguage/complex/test_complex.cpp"
+},
+{
+  "directory": "/Users/gera/c/CppLanguage/complex",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/gera/courcerepo/CppLanguage/.  -fsanitize=address,undefined -Wall -Wextra -pedantic -Werror -Wno-self-assign-overloaded -Wno-missing-braces -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -std=gnu++20 -o CMakeFiles/abs.dir/test_abs.cpp.o -c /Users/gera/courcerepo/CppLanguage/complex/test_abs.cpp",
+  "file": "/Users/gera/courcerepo/CppLanguage/complex/test_abs.cpp"
+},
+{
+  "directory": "/Users/gera/c/CppLanguage/str",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/gera/courcerepo/CppLanguage/.  -fsanitize=address,undefined -Wall -Wextra -pedantic -Werror -Wno-self-assign-overloaded -Wno-missing-braces -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -std=gnu++20 -o CMakeFiles/str.dir/test_str.cpp.o -c /Users/gera/courcerepo/CppLanguage/str/test_str.cpp",
+  "file": "/Users/gera/courcerepo/CppLanguage/str/test_str.cpp"
+},
+{
+  "directory": "/Users/gera/c/CppLanguage/str",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/gera/courcerepo/CppLanguage/.  -fsanitize=address,undefined -Wall -Wextra -pedantic -Werror -Wno-self-assign-overloaded -Wno-missing-braces -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -std=gnu++20 -o CMakeFiles/str.dir/str.cpp.o -c /Users/gera/courcerepo/CppLanguage/str/str.cpp",
+  "file": "/Users/gera/courcerepo/CppLanguage/str/str.cpp"
+}
+]

@@ -85,170 +85,29 @@ using llu=long long unsigned;
 
 ///////////////////////////////////////////////////end of lib
 
-string s;
-
-auto h(string s){
-    if (lexicographical_compare(
-        s.begin(),s.end(),
-        s.rbegin(),s.rend()
-    )){
-        reverse(s.begin(),s.end());
-    }
-    llu ss=s.size();
-    llu c[256];
-    memset(c,0,sizeof(c));
-    for (llu w=0;w<ss;++w){
-        c[uint8_t(s[w])]=256+w-s.size();
-    }
-    for (auto&w:s){
-        w=c[uint8_t(w)];
-    }
-    memset(c,0xFF,sizeof(c));
-    llu d=0;
-    for (llu w=0;w<ss;++w){
-        if (c[uint8_t(s.end()[-1-w])]==-1){
-            c[uint8_t(s.end()[-1-w])]=255-d;
-            ++d;
+struct palindromes{
+    string s;
+    llu count(llu b,llu e){
+        cache(llu,b,e);
+        llu r=0;
+        if (e-b<2){
+            r=e-b;
+        }else{
+            r+=count(b+1,e);
+            r+=count(b,e-1);
+            if (s[b]==s[e-1]){
+                r+=1;
+            }else{
+                r-=count(b+1,e-1);
+            }
         }
-        s.end()[-1-w]=c[uint8_t(s.end()[-1-w])];
+        cache[{b,e}]=r;
+        return r;
     }
-    assert(ss<33);
-    __uint128_t h=ss;
-    for (llu w=0;w<ss;++w){
-        llu z=(255LLU-uint8_t(s[w]));
-        llu x=(32LLU-w);
-        assert(z<x);
-        h*=x;
-        h+=z;
-    }
-    return h;
-}
-
-map<tuple<__uint128_t,llu>,llu> countcache;
-
-llu count(llu b){
-    if (!b){
-        return 0;
-    }
-    string a;
-    for (llu w=0;w<s.size();++w){
-        if ((1LLU<<w)&b){
-            a+=s[w];
-        }
-    }
-    auto g=h(a);
-    string f="";
-    for (auto&w:bin_repr(uint8_t(b))){
-        f=str()+"\x1b[3"+char(w+1)+"m"+w+"\x1b[0m"+f;
-    }
-    // ic(a,g,f);
-    if (countcache.count({g,b})){
-        return 0;
-    }
-    if (countcache.count({g,0})){
-        countcache[{g,b}]=0;
-        return countcache[{g,0}];
-    }
-    llu z=1;
-    string d=a;
-    reverse(d.begin(),d.end());
-    llu r=(a==d);
-    while (z<=b){
-        if (z&b){
-            r+=count(b^z);
-        }
-        z*=2;
-    }
-    countcache[{g,0}]=r;
-    countcache[{g,b}]=r;
-    f="";
-    // for (auto&w:bin_repr(uint8_t(b))){
-    //     f=str()+"\x1b[3"+char(w+1)+"m"+w+"\x1b[0m"+f;
-    // }
-    // ic(a,g,f,r);
-    return r;
-
-
-
-
-    // string g="";
-    // for (auto&w:bin_repr(uint8_t(b))){
-    //     g=str()+"\x1b[3"+char(w+1)+"m"+w+"\x1b[0m"+g;
-    // }
-    // ic(s,"\t",g);
-    // static map<tuple<string,llu>,llu> cache;
-    // if (cache.count({s,-1})){
-    //     if (cache.count({s,b})){
-    //         return 0;
-    //     }else{
-    //         return cache[{s,b}];
-    //     }
-    // }
-        
-    // string a;
-    // for (llu w=0;w<s.size();++w){
-    //     if ((1LLU<<w)&b){
-    //         a+=b[w];
-    //     }
-    // }
-    // string d=a;
-    // reverse(d.begin(),d.end());
-    // llu r=(a==d);
-    // for (llu w=0;w<s.size();++w){
-    //     if ((1LLU<<w)&b){
-    //         r+=count
-    //     }
-    // }
-    
-
-
-
-    // string g="";
-    // for (auto&w:bin_repr(uint8_t(b))){
-    //     g=str()+"\x1b[3"+char(w+1)+"m"+w+"\x1b[0m"+g;
-    // }
-    // ic(s,"\t",g);
-    // cache(llu,s,b);
-    // string a=s;
-    // reverse(a.begin(),a.end());
-    // llu r=(a==s);
-    // if (s.size()>1){
-    //     a=string(s.begin()+1,s.end());
-    //     llu z=1;
-    //     while ((z&b)==0){
-    //         z*=2;
-    //     }
-    //     r+=count(a,b^z);
-    //     z*=2;
-    //     for (llu w=0;w<a.size();++w){
-    //         a[w]=s[w+1];
-    //         while ((z&b)==0){
-    //             z*=2;
-    //         }
-    //         r+=count(a,b^z);
-    //         z*=2;
-    //     }
-    // }
-    // g="";
-    // for (auto&w:bin_repr(uint8_t(b))){
-    //     g=str()+"\x1b[3"+char(w+1)+"m"+w+"\x1b[0m"+g;
-    // }
-    // ic(s,"\t",g,r);
-    // cache[{s,b}]=0;
-    // return r;
-}
-
+};
 
 int main(){
-    // int c=0;
-    // while ((c=getchar())!=EOF)
-    // {
-    //     s+=c;
-    // }
-    cin>>s;
-    // s=zip(s);
-    // cout<<print_one(h(s))<<endl;
-    // cout<<s;
-    // ic(vector<llu>(s.begin(),s.end()))
-    print(count((1LLU<<s.size())-1));
+    palindromes y;
+    cin>>y.s;
+    print(y.count(0,y.s.size()));
 }

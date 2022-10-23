@@ -1,20 +1,30 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-struct iholder{
+using llu=long long unsigned;
 
-	virtual void f(){}
+// struct Any;
+
+
+struct visitable_any{
+    template<typename T>
+    llu vis(any a,any f){
+        if (typeid(T)==a.type()){
+            any_cast<function<void(T&&)>&&>(f)(any_cast<T&&>(a));
+            return 1;
+        }
+        return 0;
+    }
+    template<typename T>
+    visitable_any
+
+
 };
 
-template<typename T>
-struct holder:iholder{
-	T value;
-};
 
 
 int main(){
-	unique_ptr q=make_unique<holder<int>>();
+    auto a=[&](auto q){return q;};
+    function<int(int)>f=a;
+    function<char(char)>g=a;
 }
-
-
-
