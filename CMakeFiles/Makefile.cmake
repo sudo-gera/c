@@ -14,11 +14,8 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/Users/gera/courcerepo/CLanguage/example/CMakeLists.txt"
   "/Users/gera/courcerepo/CMakeLists.txt"
   "/Users/gera/courcerepo/CppLanguage/CMakeLists.txt"
-  "/Users/gera/courcerepo/CppLanguage/array/CMakeLists.txt"
-  "/Users/gera/courcerepo/CppLanguage/complex/CMakeLists.txt"
-  "/Users/gera/courcerepo/CppLanguage/playground/CMakeLists.txt"
+  "/Users/gera/courcerepo/CppLanguage/any/CMakeLists.txt"
   "/Users/gera/courcerepo/CppLanguage/simple_test/CMakeLists.txt"
-  "/Users/gera/courcerepo/CppLanguage/str/CMakeLists.txt"
   "/opt/local/share/cmake-3.23/Modules/CMakeCInformation.cmake"
   "/opt/local/share/cmake-3.23/Modules/CMakeCXXInformation.cmake"
   "/opt/local/share/cmake-3.23/Modules/CMakeCommonLanguageInclude.cmake"
@@ -54,20 +51,13 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "CLanguage/CMakeFiles/CMakeDirectoryInformation.cmake"
   "CLanguage/example/CMakeFiles/CMakeDirectoryInformation.cmake"
   "CppLanguage/CMakeFiles/CMakeDirectoryInformation.cmake"
-  "CppLanguage/playground/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "CppLanguage/any/CMakeFiles/CMakeDirectoryInformation.cmake"
   "CppLanguage/simple_test/CMakeFiles/CMakeDirectoryInformation.cmake"
-  "CppLanguage/array/CMakeFiles/CMakeDirectoryInformation.cmake"
-  "CppLanguage/complex/CMakeFiles/CMakeDirectoryInformation.cmake"
-  "CppLanguage/str/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CLanguage/example/CMakeFiles/example.dir/DependInfo.cmake"
-  "CppLanguage/playground/CMakeFiles/playground.dir/DependInfo.cmake"
-  "CppLanguage/simple_test/CMakeFiles/simple_test_cpp.dir/DependInfo.cmake"
-  "CppLanguage/array/CMakeFiles/array.dir/DependInfo.cmake"
-  "CppLanguage/complex/CMakeFiles/complex.dir/DependInfo.cmake"
-  "CppLanguage/complex/CMakeFiles/abs.dir/DependInfo.cmake"
-  "CppLanguage/str/CMakeFiles/str.dir/DependInfo.cmake"
+  "CLanguage/example/CMakeFiles/c_test_example.dir/DependInfo.cmake"
+  "CppLanguage/any/CMakeFiles/test_any.dir/DependInfo.cmake"
+  "CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/DependInfo.cmake"
   )

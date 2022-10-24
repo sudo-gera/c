@@ -65,6 +65,16 @@ CMAKE_BINARY_DIR = /Users/gera/c
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
+	/opt/local/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
+
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
@@ -117,95 +127,43 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named example
+# Target rules for targets named c_test_example
 
 # Build rule for target.
-example: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 example
-.PHONY : example
+c_test_example: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 c_test_example
+.PHONY : c_test_example
 
 # fast build rule for target.
-example/fast:
-	$(MAKE) $(MAKESILENT) -f CLanguage/example/CMakeFiles/example.dir/build.make CLanguage/example/CMakeFiles/example.dir/build
-.PHONY : example/fast
+c_test_example/fast:
+	$(MAKE) $(MAKESILENT) -f CLanguage/example/CMakeFiles/c_test_example.dir/build.make CLanguage/example/CMakeFiles/c_test_example.dir/build
+.PHONY : c_test_example/fast
 
 #=============================================================================
-# Target rules for targets named playground
+# Target rules for targets named test_any
 
 # Build rule for target.
-playground: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 playground
-.PHONY : playground
+test_any: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_any
+.PHONY : test_any
 
 # fast build rule for target.
-playground/fast:
-	$(MAKE) $(MAKESILENT) -f CppLanguage/playground/CMakeFiles/playground.dir/build.make CppLanguage/playground/CMakeFiles/playground.dir/build
-.PHONY : playground/fast
+test_any/fast:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/any/CMakeFiles/test_any.dir/build.make CppLanguage/any/CMakeFiles/test_any.dir/build
+.PHONY : test_any/fast
 
 #=============================================================================
-# Target rules for targets named simple_test_cpp
+# Target rules for targets named test_simple_cpp
 
 # Build rule for target.
-simple_test_cpp: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 simple_test_cpp
-.PHONY : simple_test_cpp
+test_simple_cpp: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_simple_cpp
+.PHONY : test_simple_cpp
 
 # fast build rule for target.
-simple_test_cpp/fast:
-	$(MAKE) $(MAKESILENT) -f CppLanguage/simple_test/CMakeFiles/simple_test_cpp.dir/build.make CppLanguage/simple_test/CMakeFiles/simple_test_cpp.dir/build
-.PHONY : simple_test_cpp/fast
-
-#=============================================================================
-# Target rules for targets named array
-
-# Build rule for target.
-array: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 array
-.PHONY : array
-
-# fast build rule for target.
-array/fast:
-	$(MAKE) $(MAKESILENT) -f CppLanguage/array/CMakeFiles/array.dir/build.make CppLanguage/array/CMakeFiles/array.dir/build
-.PHONY : array/fast
-
-#=============================================================================
-# Target rules for targets named complex
-
-# Build rule for target.
-complex: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 complex
-.PHONY : complex
-
-# fast build rule for target.
-complex/fast:
-	$(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/complex.dir/build.make CppLanguage/complex/CMakeFiles/complex.dir/build
-.PHONY : complex/fast
-
-#=============================================================================
-# Target rules for targets named abs
-
-# Build rule for target.
-abs: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 abs
-.PHONY : abs
-
-# fast build rule for target.
-abs/fast:
-	$(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/abs.dir/build.make CppLanguage/complex/CMakeFiles/abs.dir/build
-.PHONY : abs/fast
-
-#=============================================================================
-# Target rules for targets named str
-
-# Build rule for target.
-str: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 str
-.PHONY : str
-
-# fast build rule for target.
-str/fast:
-	$(MAKE) $(MAKESILENT) -f CppLanguage/str/CMakeFiles/str.dir/build.make CppLanguage/str/CMakeFiles/str.dir/build
-.PHONY : str/fast
+test_simple_cpp/fast:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/build.make CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/build
+.PHONY : test_simple_cpp/fast
 
 # Help Target
 help:
@@ -215,13 +173,10 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... abs"
-	@echo "... array"
-	@echo "... complex"
-	@echo "... example"
-	@echo "... playground"
-	@echo "... simple_test_cpp"
-	@echo "... str"
+	@echo "... test"
+	@echo "... c_test_example"
+	@echo "... test_any"
+	@echo "... test_simple_cpp"
 .PHONY : help
 
 

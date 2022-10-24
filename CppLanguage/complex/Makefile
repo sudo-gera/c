@@ -65,6 +65,16 @@ CMAKE_BINARY_DIR = /Users/gera/c
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
+	/opt/local/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
+
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
@@ -117,39 +127,39 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-CppLanguage/complex/CMakeFiles/complex.dir/rule:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CppLanguage/complex/CMakeFiles/complex.dir/rule
-.PHONY : CppLanguage/complex/CMakeFiles/complex.dir/rule
+CppLanguage/complex/CMakeFiles/test_complex.dir/rule:
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CppLanguage/complex/CMakeFiles/test_complex.dir/rule
+.PHONY : CppLanguage/complex/CMakeFiles/test_complex.dir/rule
 
 # Convenience name for target.
-complex: CppLanguage/complex/CMakeFiles/complex.dir/rule
-.PHONY : complex
+test_complex: CppLanguage/complex/CMakeFiles/test_complex.dir/rule
+.PHONY : test_complex
 
 # fast build rule for target.
-complex/fast:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/complex.dir/build.make CppLanguage/complex/CMakeFiles/complex.dir/build
-.PHONY : complex/fast
+test_complex/fast:
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/test_complex.dir/build.make CppLanguage/complex/CMakeFiles/test_complex.dir/build
+.PHONY : test_complex/fast
 
 # Convenience name for target.
-CppLanguage/complex/CMakeFiles/abs.dir/rule:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CppLanguage/complex/CMakeFiles/abs.dir/rule
-.PHONY : CppLanguage/complex/CMakeFiles/abs.dir/rule
+CppLanguage/complex/CMakeFiles/test_abs.dir/rule:
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CppLanguage/complex/CMakeFiles/test_abs.dir/rule
+.PHONY : CppLanguage/complex/CMakeFiles/test_abs.dir/rule
 
 # Convenience name for target.
-abs: CppLanguage/complex/CMakeFiles/abs.dir/rule
-.PHONY : abs
+test_abs: CppLanguage/complex/CMakeFiles/test_abs.dir/rule
+.PHONY : test_abs
 
 # fast build rule for target.
-abs/fast:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/abs.dir/build.make CppLanguage/complex/CMakeFiles/abs.dir/build
-.PHONY : abs/fast
+test_abs/fast:
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/test_abs.dir/build.make CppLanguage/complex/CMakeFiles/test_abs.dir/build
+.PHONY : test_abs/fast
 
 complex.o: complex.cpp.o
 .PHONY : complex.o
 
 # target to build an object file
 complex.cpp.o:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/complex.dir/build.make CppLanguage/complex/CMakeFiles/complex.dir/complex.cpp.o
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/test_complex.dir/build.make CppLanguage/complex/CMakeFiles/test_complex.dir/complex.cpp.o
 .PHONY : complex.cpp.o
 
 complex.i: complex.cpp.i
@@ -157,7 +167,7 @@ complex.i: complex.cpp.i
 
 # target to preprocess a source file
 complex.cpp.i:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/complex.dir/build.make CppLanguage/complex/CMakeFiles/complex.dir/complex.cpp.i
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/test_complex.dir/build.make CppLanguage/complex/CMakeFiles/test_complex.dir/complex.cpp.i
 .PHONY : complex.cpp.i
 
 complex.s: complex.cpp.s
@@ -165,7 +175,7 @@ complex.s: complex.cpp.s
 
 # target to generate assembly for a file
 complex.cpp.s:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/complex.dir/build.make CppLanguage/complex/CMakeFiles/complex.dir/complex.cpp.s
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/test_complex.dir/build.make CppLanguage/complex/CMakeFiles/test_complex.dir/complex.cpp.s
 .PHONY : complex.cpp.s
 
 test_abs.o: test_abs.cpp.o
@@ -173,7 +183,7 @@ test_abs.o: test_abs.cpp.o
 
 # target to build an object file
 test_abs.cpp.o:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/abs.dir/build.make CppLanguage/complex/CMakeFiles/abs.dir/test_abs.cpp.o
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/test_abs.dir/build.make CppLanguage/complex/CMakeFiles/test_abs.dir/test_abs.cpp.o
 .PHONY : test_abs.cpp.o
 
 test_abs.i: test_abs.cpp.i
@@ -181,7 +191,7 @@ test_abs.i: test_abs.cpp.i
 
 # target to preprocess a source file
 test_abs.cpp.i:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/abs.dir/build.make CppLanguage/complex/CMakeFiles/abs.dir/test_abs.cpp.i
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/test_abs.dir/build.make CppLanguage/complex/CMakeFiles/test_abs.dir/test_abs.cpp.i
 .PHONY : test_abs.cpp.i
 
 test_abs.s: test_abs.cpp.s
@@ -189,7 +199,7 @@ test_abs.s: test_abs.cpp.s
 
 # target to generate assembly for a file
 test_abs.cpp.s:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/abs.dir/build.make CppLanguage/complex/CMakeFiles/abs.dir/test_abs.cpp.s
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/test_abs.dir/build.make CppLanguage/complex/CMakeFiles/test_abs.dir/test_abs.cpp.s
 .PHONY : test_abs.cpp.s
 
 test_complex.o: test_complex.cpp.o
@@ -197,7 +207,7 @@ test_complex.o: test_complex.cpp.o
 
 # target to build an object file
 test_complex.cpp.o:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/complex.dir/build.make CppLanguage/complex/CMakeFiles/complex.dir/test_complex.cpp.o
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/test_complex.dir/build.make CppLanguage/complex/CMakeFiles/test_complex.dir/test_complex.cpp.o
 .PHONY : test_complex.cpp.o
 
 test_complex.i: test_complex.cpp.i
@@ -205,7 +215,7 @@ test_complex.i: test_complex.cpp.i
 
 # target to preprocess a source file
 test_complex.cpp.i:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/complex.dir/build.make CppLanguage/complex/CMakeFiles/complex.dir/test_complex.cpp.i
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/test_complex.dir/build.make CppLanguage/complex/CMakeFiles/test_complex.dir/test_complex.cpp.i
 .PHONY : test_complex.cpp.i
 
 test_complex.s: test_complex.cpp.s
@@ -213,7 +223,7 @@ test_complex.s: test_complex.cpp.s
 
 # target to generate assembly for a file
 test_complex.cpp.s:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/complex.dir/build.make CppLanguage/complex/CMakeFiles/complex.dir/test_complex.cpp.s
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/test_complex.dir/build.make CppLanguage/complex/CMakeFiles/test_complex.dir/test_complex.cpp.s
 .PHONY : test_complex.cpp.s
 
 # Help Target
@@ -224,8 +234,9 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... abs"
-	@echo "... complex"
+	@echo "... test"
+	@echo "... test_abs"
+	@echo "... test_complex"
 	@echo "... complex.o"
 	@echo "... complex.i"
 	@echo "... complex.s"

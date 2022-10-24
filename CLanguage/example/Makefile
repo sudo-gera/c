@@ -65,6 +65,16 @@ CMAKE_BINARY_DIR = /Users/gera/c
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
+	/opt/local/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
+
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
@@ -117,25 +127,25 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-CLanguage/example/CMakeFiles/example.dir/rule:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CLanguage/example/CMakeFiles/example.dir/rule
-.PHONY : CLanguage/example/CMakeFiles/example.dir/rule
+CLanguage/example/CMakeFiles/c_test_example.dir/rule:
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CLanguage/example/CMakeFiles/c_test_example.dir/rule
+.PHONY : CLanguage/example/CMakeFiles/c_test_example.dir/rule
 
 # Convenience name for target.
-example: CLanguage/example/CMakeFiles/example.dir/rule
-.PHONY : example
+c_test_example: CLanguage/example/CMakeFiles/c_test_example.dir/rule
+.PHONY : c_test_example
 
 # fast build rule for target.
-example/fast:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CLanguage/example/CMakeFiles/example.dir/build.make CLanguage/example/CMakeFiles/example.dir/build
-.PHONY : example/fast
+c_test_example/fast:
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CLanguage/example/CMakeFiles/c_test_example.dir/build.make CLanguage/example/CMakeFiles/c_test_example.dir/build
+.PHONY : c_test_example/fast
 
 __/ctest_main.o: __/ctest_main.c.o
 .PHONY : __/ctest_main.o
 
 # target to build an object file
 __/ctest_main.c.o:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CLanguage/example/CMakeFiles/example.dir/build.make CLanguage/example/CMakeFiles/example.dir/__/ctest_main.c.o
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CLanguage/example/CMakeFiles/c_test_example.dir/build.make CLanguage/example/CMakeFiles/c_test_example.dir/__/ctest_main.c.o
 .PHONY : __/ctest_main.c.o
 
 __/ctest_main.i: __/ctest_main.c.i
@@ -143,7 +153,7 @@ __/ctest_main.i: __/ctest_main.c.i
 
 # target to preprocess a source file
 __/ctest_main.c.i:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CLanguage/example/CMakeFiles/example.dir/build.make CLanguage/example/CMakeFiles/example.dir/__/ctest_main.c.i
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CLanguage/example/CMakeFiles/c_test_example.dir/build.make CLanguage/example/CMakeFiles/c_test_example.dir/__/ctest_main.c.i
 .PHONY : __/ctest_main.c.i
 
 __/ctest_main.s: __/ctest_main.c.s
@@ -151,7 +161,7 @@ __/ctest_main.s: __/ctest_main.c.s
 
 # target to generate assembly for a file
 __/ctest_main.c.s:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CLanguage/example/CMakeFiles/example.dir/build.make CLanguage/example/CMakeFiles/example.dir/__/ctest_main.c.s
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CLanguage/example/CMakeFiles/c_test_example.dir/build.make CLanguage/example/CMakeFiles/c_test_example.dir/__/ctest_main.c.s
 .PHONY : __/ctest_main.c.s
 
 example.o: example.c.o
@@ -159,7 +169,7 @@ example.o: example.c.o
 
 # target to build an object file
 example.c.o:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CLanguage/example/CMakeFiles/example.dir/build.make CLanguage/example/CMakeFiles/example.dir/example.c.o
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CLanguage/example/CMakeFiles/c_test_example.dir/build.make CLanguage/example/CMakeFiles/c_test_example.dir/example.c.o
 .PHONY : example.c.o
 
 example.i: example.c.i
@@ -167,7 +177,7 @@ example.i: example.c.i
 
 # target to preprocess a source file
 example.c.i:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CLanguage/example/CMakeFiles/example.dir/build.make CLanguage/example/CMakeFiles/example.dir/example.c.i
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CLanguage/example/CMakeFiles/c_test_example.dir/build.make CLanguage/example/CMakeFiles/c_test_example.dir/example.c.i
 .PHONY : example.c.i
 
 example.s: example.c.s
@@ -175,7 +185,7 @@ example.s: example.c.s
 
 # target to generate assembly for a file
 example.c.s:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CLanguage/example/CMakeFiles/example.dir/build.make CLanguage/example/CMakeFiles/example.dir/example.c.s
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CLanguage/example/CMakeFiles/c_test_example.dir/build.make CLanguage/example/CMakeFiles/c_test_example.dir/example.c.s
 .PHONY : example.c.s
 
 # Help Target
@@ -186,7 +196,8 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... example"
+	@echo "... test"
+	@echo "... c_test_example"
 	@echo "... __/ctest_main.o"
 	@echo "... __/ctest_main.i"
 	@echo "... __/ctest_main.s"

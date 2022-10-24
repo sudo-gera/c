@@ -65,6 +65,16 @@ CMAKE_BINARY_DIR = /Users/gera/c
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
+	/opt/local/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
+
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
@@ -117,25 +127,25 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-CppLanguage/str/CMakeFiles/str.dir/rule:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CppLanguage/str/CMakeFiles/str.dir/rule
-.PHONY : CppLanguage/str/CMakeFiles/str.dir/rule
+CppLanguage/str/CMakeFiles/test_str.dir/rule:
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CppLanguage/str/CMakeFiles/test_str.dir/rule
+.PHONY : CppLanguage/str/CMakeFiles/test_str.dir/rule
 
 # Convenience name for target.
-str: CppLanguage/str/CMakeFiles/str.dir/rule
-.PHONY : str
+test_str: CppLanguage/str/CMakeFiles/test_str.dir/rule
+.PHONY : test_str
 
 # fast build rule for target.
-str/fast:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/str/CMakeFiles/str.dir/build.make CppLanguage/str/CMakeFiles/str.dir/build
-.PHONY : str/fast
+test_str/fast:
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/str/CMakeFiles/test_str.dir/build.make CppLanguage/str/CMakeFiles/test_str.dir/build
+.PHONY : test_str/fast
 
 str.o: str.cpp.o
 .PHONY : str.o
 
 # target to build an object file
 str.cpp.o:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/str/CMakeFiles/str.dir/build.make CppLanguage/str/CMakeFiles/str.dir/str.cpp.o
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/str/CMakeFiles/test_str.dir/build.make CppLanguage/str/CMakeFiles/test_str.dir/str.cpp.o
 .PHONY : str.cpp.o
 
 str.i: str.cpp.i
@@ -143,7 +153,7 @@ str.i: str.cpp.i
 
 # target to preprocess a source file
 str.cpp.i:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/str/CMakeFiles/str.dir/build.make CppLanguage/str/CMakeFiles/str.dir/str.cpp.i
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/str/CMakeFiles/test_str.dir/build.make CppLanguage/str/CMakeFiles/test_str.dir/str.cpp.i
 .PHONY : str.cpp.i
 
 str.s: str.cpp.s
@@ -151,7 +161,7 @@ str.s: str.cpp.s
 
 # target to generate assembly for a file
 str.cpp.s:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/str/CMakeFiles/str.dir/build.make CppLanguage/str/CMakeFiles/str.dir/str.cpp.s
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/str/CMakeFiles/test_str.dir/build.make CppLanguage/str/CMakeFiles/test_str.dir/str.cpp.s
 .PHONY : str.cpp.s
 
 test_str.o: test_str.cpp.o
@@ -159,7 +169,7 @@ test_str.o: test_str.cpp.o
 
 # target to build an object file
 test_str.cpp.o:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/str/CMakeFiles/str.dir/build.make CppLanguage/str/CMakeFiles/str.dir/test_str.cpp.o
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/str/CMakeFiles/test_str.dir/build.make CppLanguage/str/CMakeFiles/test_str.dir/test_str.cpp.o
 .PHONY : test_str.cpp.o
 
 test_str.i: test_str.cpp.i
@@ -167,7 +177,7 @@ test_str.i: test_str.cpp.i
 
 # target to preprocess a source file
 test_str.cpp.i:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/str/CMakeFiles/str.dir/build.make CppLanguage/str/CMakeFiles/str.dir/test_str.cpp.i
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/str/CMakeFiles/test_str.dir/build.make CppLanguage/str/CMakeFiles/test_str.dir/test_str.cpp.i
 .PHONY : test_str.cpp.i
 
 test_str.s: test_str.cpp.s
@@ -175,7 +185,7 @@ test_str.s: test_str.cpp.s
 
 # target to generate assembly for a file
 test_str.cpp.s:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/str/CMakeFiles/str.dir/build.make CppLanguage/str/CMakeFiles/str.dir/test_str.cpp.s
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/str/CMakeFiles/test_str.dir/build.make CppLanguage/str/CMakeFiles/test_str.dir/test_str.cpp.s
 .PHONY : test_str.cpp.s
 
 # Help Target
@@ -186,7 +196,8 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... str"
+	@echo "... test"
+	@echo "... test_str"
 	@echo "... str.o"
 	@echo "... str.i"
 	@echo "... str.s"

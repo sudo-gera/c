@@ -65,6 +65,16 @@ CMAKE_BINARY_DIR = /Users/gera/c
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
+	/opt/local/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
+
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
@@ -117,25 +127,25 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-CppLanguage/array/CMakeFiles/array.dir/rule:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CppLanguage/array/CMakeFiles/array.dir/rule
-.PHONY : CppLanguage/array/CMakeFiles/array.dir/rule
+CppLanguage/array/CMakeFiles/test_array.dir/rule:
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CppLanguage/array/CMakeFiles/test_array.dir/rule
+.PHONY : CppLanguage/array/CMakeFiles/test_array.dir/rule
 
 # Convenience name for target.
-array: CppLanguage/array/CMakeFiles/array.dir/rule
-.PHONY : array
+test_array: CppLanguage/array/CMakeFiles/test_array.dir/rule
+.PHONY : test_array
 
 # fast build rule for target.
-array/fast:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/array/CMakeFiles/array.dir/build.make CppLanguage/array/CMakeFiles/array.dir/build
-.PHONY : array/fast
+test_array/fast:
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/array/CMakeFiles/test_array.dir/build.make CppLanguage/array/CMakeFiles/test_array.dir/build
+.PHONY : test_array/fast
 
 test_array.o: test_array.cpp.o
 .PHONY : test_array.o
 
 # target to build an object file
 test_array.cpp.o:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/array/CMakeFiles/array.dir/build.make CppLanguage/array/CMakeFiles/array.dir/test_array.cpp.o
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/array/CMakeFiles/test_array.dir/build.make CppLanguage/array/CMakeFiles/test_array.dir/test_array.cpp.o
 .PHONY : test_array.cpp.o
 
 test_array.i: test_array.cpp.i
@@ -143,7 +153,7 @@ test_array.i: test_array.cpp.i
 
 # target to preprocess a source file
 test_array.cpp.i:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/array/CMakeFiles/array.dir/build.make CppLanguage/array/CMakeFiles/array.dir/test_array.cpp.i
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/array/CMakeFiles/test_array.dir/build.make CppLanguage/array/CMakeFiles/test_array.dir/test_array.cpp.i
 .PHONY : test_array.cpp.i
 
 test_array.s: test_array.cpp.s
@@ -151,7 +161,7 @@ test_array.s: test_array.cpp.s
 
 # target to generate assembly for a file
 test_array.cpp.s:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/array/CMakeFiles/array.dir/build.make CppLanguage/array/CMakeFiles/array.dir/test_array.cpp.s
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/array/CMakeFiles/test_array.dir/build.make CppLanguage/array/CMakeFiles/test_array.dir/test_array.cpp.s
 .PHONY : test_array.cpp.s
 
 # Help Target
@@ -162,7 +172,8 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... array"
+	@echo "... test"
+	@echo "... test_array"
 	@echo "... test_array.o"
 	@echo "... test_array.i"
 	@echo "... test_array.s"

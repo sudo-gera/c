@@ -65,6 +65,16 @@ CMAKE_BINARY_DIR = /Users/gera/c
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
+	/opt/local/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
+
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
@@ -117,25 +127,25 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-CppLanguage/simple_test/CMakeFiles/simple_test_cpp.dir/rule:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CppLanguage/simple_test/CMakeFiles/simple_test_cpp.dir/rule
-.PHONY : CppLanguage/simple_test/CMakeFiles/simple_test_cpp.dir/rule
+CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/rule:
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/rule
+.PHONY : CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/rule
 
 # Convenience name for target.
-simple_test_cpp: CppLanguage/simple_test/CMakeFiles/simple_test_cpp.dir/rule
-.PHONY : simple_test_cpp
+test_simple_cpp: CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/rule
+.PHONY : test_simple_cpp
 
 # fast build rule for target.
-simple_test_cpp/fast:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/simple_test/CMakeFiles/simple_test_cpp.dir/build.make CppLanguage/simple_test/CMakeFiles/simple_test_cpp.dir/build
-.PHONY : simple_test_cpp/fast
+test_simple_cpp/fast:
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/build.make CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/build
+.PHONY : test_simple_cpp/fast
 
 simple_test.o: simple_test.cpp.o
 .PHONY : simple_test.o
 
 # target to build an object file
 simple_test.cpp.o:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/simple_test/CMakeFiles/simple_test_cpp.dir/build.make CppLanguage/simple_test/CMakeFiles/simple_test_cpp.dir/simple_test.cpp.o
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/build.make CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/simple_test.cpp.o
 .PHONY : simple_test.cpp.o
 
 simple_test.i: simple_test.cpp.i
@@ -143,7 +153,7 @@ simple_test.i: simple_test.cpp.i
 
 # target to preprocess a source file
 simple_test.cpp.i:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/simple_test/CMakeFiles/simple_test_cpp.dir/build.make CppLanguage/simple_test/CMakeFiles/simple_test_cpp.dir/simple_test.cpp.i
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/build.make CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/simple_test.cpp.i
 .PHONY : simple_test.cpp.i
 
 simple_test.s: simple_test.cpp.s
@@ -151,7 +161,7 @@ simple_test.s: simple_test.cpp.s
 
 # target to generate assembly for a file
 simple_test.cpp.s:
-	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/simple_test/CMakeFiles/simple_test_cpp.dir/build.make CppLanguage/simple_test/CMakeFiles/simple_test_cpp.dir/simple_test.cpp.s
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/build.make CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/simple_test.cpp.s
 .PHONY : simple_test.cpp.s
 
 # Help Target
@@ -162,7 +172,8 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... simple_test_cpp"
+	@echo "... test"
+	@echo "... test_simple_cpp"
 	@echo "... simple_test.o"
 	@echo "... simple_test.i"
 	@echo "... simple_test.s"

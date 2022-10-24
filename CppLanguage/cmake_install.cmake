@@ -39,11 +39,8 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/Users/gera/c/CppLanguage/playground/cmake_install.cmake")
+  include("/Users/gera/c/CppLanguage/any/cmake_install.cmake")
   include("/Users/gera/c/CppLanguage/simple_test/cmake_install.cmake")
-  include("/Users/gera/c/CppLanguage/array/cmake_install.cmake")
-  include("/Users/gera/c/CppLanguage/complex/cmake_install.cmake")
-  include("/Users/gera/c/CppLanguage/str/cmake_install.cmake")
 
 endif()
 
