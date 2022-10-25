@@ -1,30 +1,16 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-using llu=long long unsigned;
+using llu = long long unsigned;
+template<auto n>
+constexpr auto compiled=n;
 
-// struct Any;
+constexpr llu q=0;
 
-
-struct visitable_any{
-    template<typename T>
-    llu vis(any a,any f){
-        if (typeid(T)==a.type()){
-            any_cast<function<void(T&&)>&&>(f)(any_cast<T&&>(a));
-            return 1;
-        }
-        return 0;
-    }
-    template<typename T>
-    visitable_any
-
-
-};
-
-
+constexpr llu man(llu n){
+    if (n<2)
+}
 
 int main(){
-    auto a=[&](auto q){return q;};
-    function<int(int)>f=a;
-    function<char(char)>g=a;
+    cout<<compiled<man(100)><<endl;
 }
