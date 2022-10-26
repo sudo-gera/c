@@ -155,7 +155,7 @@ typedef int (*cmp_f_t)(const void *, const void *);
 
 int main()
 {
-    char *str_buffer = malloc(sizeof(char) * PATH_MAX);
+    char *str_buffer = calloc(sizeof(char) , PATH_MAX);
 
     struct stat f_stat;
     while (fgets(str_buffer, PATH_MAX, stdin) != NULL)
@@ -163,8 +163,9 @@ int main()
     	str_buffer[strlen(str_buffer) - 1] = '\0';
 
     	if (lstat(str_buffer, &f_stat) == 0) {
-    		if(S_ISREG(f_stat.st_mode)) {
-    			size_summ += f_stat.st_size;
+    		if(f_stat.st_mode&S_IEXEC) {
+				printf(str_buffer);
+    			// size_summ += f_stat.st_size;
     		}
     	}
     }
