@@ -146,6 +146,10 @@ typedef int (*cmp_f_t)(const void *, const void *);
 size_t malloc_usable_size (void *ptr);
 
 int main(){
+<<<<<<< HEAD
+	printf("sizeof(int) == %i, sizeof(int*) == %i\n",sizeof(int),sizeof(int*));
+=======
     void* p=malloc(20);
     printf("%li\n",malloc_usable_size(p));
+>>>>>>> 3f39589746723ef5461351c449e2e016d41e5114
 }
