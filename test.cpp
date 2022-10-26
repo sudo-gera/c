@@ -1,20 +1,16 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-struct iholder{
+using llu = long long unsigned;
+template<auto n>
+constexpr auto compiled=n;
 
-	virtual void f(){}
-};
+constexpr llu q=0;
 
-template<typename T>
-struct holder:iholder{
-	T value;
-};
-
-
-int main(){
-	unique_ptr q=make_unique<holder<int>>();
+constexpr llu man(llu n){
+    if (n<2)
 }
 
-
-
+int main(){
+    cout<<compiled<man(100)><<endl;
+}
