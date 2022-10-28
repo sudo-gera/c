@@ -1,4 +1,4 @@
-for q in 'qwertyuiopasdfghjklzxcvbnm':
+for q in 'qwertyuiopasdfghjklzxcvbnm'.upper():
     w=r'''                            {
                                 "conditions": [
                                     {
@@ -16,8 +16,11 @@ for q in 'qwertyuiopasdfghjklzxcvbnm':
                                     }
                                 ],
                                 "from": {
-                                    "key_code": "'''+q+r'''",
+                                    "key_code": "'''+q.lower()+r'''",
                                     "modifiers": {
+                                        "mandatory": [
+                                            "right_shift"
+                                        ],
                                         "optional": [
                                             "any"
                                         ]
