@@ -217,6 +217,34 @@ void tree_add(uint64_t u,long v,tree*t){
 	t->e=e;
 }
 
+void tree_add(uint64_t ub,uint64_t ue,long v,tree*t){
+	uint64_t b=t->b;
+	uint64_t e=t->e;
+	assert(b<=ub and ub<=ue and ue<=e and e<=t->p);
+	long*l=tree_access(t);
+	if (b+1==e){
+		l[0]=t->f(l[0],v);
+	}else{
+		uint64_t c=(b+e)/2;
+		l[0]=t->f(l[0],v);
+		if (u<c){
+			t->b=b;
+			t->e=c;
+			tree_add(u,v,t);
+			assert(t->b==b);
+			assert(t->e==c);
+		}else{
+			t->b=c;
+			t->e=e;
+			tree_add(u,v,t);
+			assert(t->b==c);
+			assert(t->e==e);
+		}
+	}
+	t->b=b;
+	t->e=e;
+}
+
 long tree_get(uint64_t ub,uint64_t ue,tree*t){
 	uint64_t b=t->b;
 	uint64_t e=t->e;

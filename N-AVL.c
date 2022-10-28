@@ -996,7 +996,7 @@ struct array_s {
 	char data[0];
 };
 
-static inline size_t len(void *a) {
+// static inline size_t len(void *a) {
 	if (a == NULL) {
 		return 0;
 	}
@@ -1036,7 +1036,7 @@ static inline struct array_s *resize_f(struct array_s **vp, size_t el_size, size
 // #define resize(a, ...) (resize_f((struct array_s **)&(a), sizeof((a)[0]), (__VA_ARGS__)))
 // #define append(a, ...) (resize((a), len(a) + 1), (a)[len(a) - 1] = (__VA_ARGS__))
 // #define pop(a) (resize((a), len(a) - 1), (a)[len(a)])
-// #define back(a) ((a)[len(a)-1])
+#define back(a) ((a)[len(a)-1])
 
 static inline int64_t getint() {
 	int sign = 1;

@@ -1,0 +1,56 @@
+Start testing: Oct 24 15:05 MSK
+----------------------------------------------------------
+1/3 Testing: c_test_example
+1/3 Test: c_test_example
+Command: "/Users/gera/c/CLanguage/example/c_test_example"
+Directory: /Users/gera/c/CLanguage/example
+"c_test_example" start time: Oct 24 15:05 MSK
+Output:
+----------------------------------------------------------
+TEST 1/1 Test:test [OK]
+RESULTS: 1 tests (1 ok, 0 failed, 0 skipped) ran in 0 ms
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"c_test_example" end time: Oct 24 15:05 MSK
+"c_test_example" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/3 Testing: test_any
+2/3 Test: test_any
+Command: "/Users/gera/c/test_any"
+Directory: /Users/gera/c/CppLanguage/any
+"test_any" start time: Oct 24 15:05 MSK
+Output:
+----------------------------------------------------------
+===============================================================================
+All tests passed (28 assertions in 5 test cases)
+
+<end of output>
+Test time =   0.50 sec
+----------------------------------------------------------
+Test Passed.
+"test_any" end time: Oct 24 15:05 MSK
+"test_any" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/3 Testing: test_simple_cpp
+3/3 Test: test_simple_cpp
+Command: "/Users/gera/c/test_simple_cpp"
+Directory: /Users/gera/c/CppLanguage/simple_test
+"test_simple_cpp" start time: Oct 24 15:05 MSK
+Output:
+----------------------------------------------------------
+===============================================================================
+All tests passed (1 assertion in 1 test case)
+
+<end of output>
+Test time =   0.13 sec
+----------------------------------------------------------
+Test Passed.
+"test_simple_cpp" end time: Oct 24 15:05 MSK
+"test_simple_cpp" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Oct 24 15:05 MSK

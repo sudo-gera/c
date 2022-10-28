@@ -1,29 +1,32 @@
-%include "st_io.inc"
 %include "best_io.inc"
-start
-	printreg
-	GETUN eax
-	; getdword eax
-	printreg
-	call root
-	printreg
-	printudword ebx
-	printreg
-stop
+global _f_printreg
+global _f_printstr
 
+section .text
 
-root:
-	mov ebx,0
-	mov ecx,1<<30
-	_2:
-		lea edx,[ebx+ecx]
-		cmp eax,edx
-		jb _1
-			sub eax,edx
-			lea ebx,[ebx+ecx*2]
-		_1:
-		shr ebx,1
-		shr ecx,2
-	jnz _2
-	mov eax,ebx
+_f_printreg:
+    printreg
 ret
+
+_f_printstr:
+    push rax
+    push rbx
+    mov rax,[rsp+32]
+    mov rbx,[rsp+24]
+    printstr rax,rbx
+    pop rbx
+    pop rax
+ret
+
+; start
+; jmp _2
+; _1:
+; db "--+++++++=="
+; _2:
+; push qword _1
+; push qword _2
+; call _f_printstr
+
+
+; stop
+

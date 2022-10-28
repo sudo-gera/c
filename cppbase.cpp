@@ -6,9 +6,22 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+#ifndef assert
 #include <assert.h>
-using std::cin, std::cout, std::vector, std::string, std::sort, std::pair;
-using std::set, std::unordered_set, std::map, std::unordered_map, std::min,std::max;
+#endif
+#include <tuple>
+#include <numeric>
+#include <list>
+#include <string_view>
+#include <string.h>
+using std::cin, std::cout, std::endl, std::vector, std::string, std::sort;
+using std::pair, std::set, std::unordered_set, std::map, std::unordered_map;
+using std::min, std::max, std::tuple, std::tie, std::get, std::make_tuple;
+using std::reduce, std::move, std::swap, std::generate, std::generate_n;
+using std::back_inserter, std::list, std::hash, std::reverse;
+using std::lower_bound, std::upper_bound, std::flush, std::prev, std::next;
+using std::tuple_size, std::lexicographical_compare, std::set_intersection;
+using std::string_view, std::copy_if, std::exclusive_scan;
 
 #ifdef print
 #undef print
@@ -66,6 +79,14 @@ static inline void write(uint64_t out) {
 }
 
 using llu=long long unsigned;
+
+#define cache(rt,...)\
+    static map<decltype(make_tuple(__VA_ARGS__)),rt> cache;\
+    if ((cache).count({__VA_ARGS__})){\
+        return (cache)[{__VA_ARGS__}];\
+    }
+
+#define none 9000000000000000000LLU
 
 ///////////////////////////////////////////////////end of lib
 

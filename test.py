@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # {10, 47, 48, 49, 50, 51,             55,         61, 67, 68, 72, 76, 80, 84, 88, 98, 102, 103, 106, 110, 114, 118,           121, 122}
 # [43, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57,         68, 72, 76, 80, 84, 88, 98, 102,      106, 110, 114, 118, 119, 120, 121, 122]
 # a=open('test.txt','rb')
@@ -256,3 +257,41 @@ print(len(gs))
     # d[_ip1+'/'+str(l)]=v
     # open(home+'/warp.json','w').write(dumps(d,indent=4))
 
+=======
+for q in 'qwertyuiopasdfghjklzxcvbnm'.upper():
+    w=r'''                            {
+                                "conditions": [
+                                    {
+                                        "type": "variable_unless",
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "value": 0
+                                    },
+                                    {
+                                        "input_sources": [
+                                            {
+                                                "language": "ru"
+                                            }
+                                        ],
+                                        "type": "input_source_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "'''+q.lower()+r'''",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift"
+                                        ],
+                                        "optional": [
+                                            "any"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('''+"'"+q+"'"+r''')\""
+                                    }
+                                ],
+                                "type": "basic"
+                            },'''
+    print(w)
+>>>>>>> 898f21198f47cf9f850bc53dc5a1391e009b7a88
