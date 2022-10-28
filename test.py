@@ -50,7 +50,7 @@
 #     return c
 # print(f(0))
 
-count=-1
+count=6
 
 from copy import copy
 from itertools import permutations
