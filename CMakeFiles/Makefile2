@@ -112,17 +112,38 @@ CLanguage/example/clean: CLanguage/example/CMakeFiles/c_test_example.dir/clean
 
 # Recursive "all" directory target.
 CppLanguage/all: CppLanguage/any/all
+CppLanguage/all: CppLanguage/playground/all
 CppLanguage/all: CppLanguage/simple_test/all
+CppLanguage/all: CppLanguage/array/all
+CppLanguage/all: CppLanguage/complex/all
+CppLanguage/all: CppLanguage/str/all
+CppLanguage/all: CppLanguage/unique_pointer/all
+CppLanguage/all: CppLanguage/shared_pointer/all
+CppLanguage/all: CppLanguage/graph/all
 .PHONY : CppLanguage/all
 
 # Recursive "preinstall" directory target.
 CppLanguage/preinstall: CppLanguage/any/preinstall
+CppLanguage/preinstall: CppLanguage/playground/preinstall
 CppLanguage/preinstall: CppLanguage/simple_test/preinstall
+CppLanguage/preinstall: CppLanguage/array/preinstall
+CppLanguage/preinstall: CppLanguage/complex/preinstall
+CppLanguage/preinstall: CppLanguage/str/preinstall
+CppLanguage/preinstall: CppLanguage/unique_pointer/preinstall
+CppLanguage/preinstall: CppLanguage/shared_pointer/preinstall
+CppLanguage/preinstall: CppLanguage/graph/preinstall
 .PHONY : CppLanguage/preinstall
 
 # Recursive "clean" directory target.
 CppLanguage/clean: CppLanguage/any/clean
+CppLanguage/clean: CppLanguage/playground/clean
 CppLanguage/clean: CppLanguage/simple_test/clean
+CppLanguage/clean: CppLanguage/array/clean
+CppLanguage/clean: CppLanguage/complex/clean
+CppLanguage/clean: CppLanguage/str/clean
+CppLanguage/clean: CppLanguage/unique_pointer/clean
+CppLanguage/clean: CppLanguage/shared_pointer/clean
+CppLanguage/clean: CppLanguage/graph/clean
 .PHONY : CppLanguage/clean
 
 #=============================================================================
@@ -141,6 +162,83 @@ CppLanguage/any/clean: CppLanguage/any/CMakeFiles/test_any.dir/clean
 .PHONY : CppLanguage/any/clean
 
 #=============================================================================
+# Directory level rules for directory CppLanguage/array
+
+# Recursive "all" directory target.
+CppLanguage/array/all: CppLanguage/array/CMakeFiles/test_array.dir/all
+.PHONY : CppLanguage/array/all
+
+# Recursive "preinstall" directory target.
+CppLanguage/array/preinstall:
+.PHONY : CppLanguage/array/preinstall
+
+# Recursive "clean" directory target.
+CppLanguage/array/clean: CppLanguage/array/CMakeFiles/test_array.dir/clean
+.PHONY : CppLanguage/array/clean
+
+#=============================================================================
+# Directory level rules for directory CppLanguage/complex
+
+# Recursive "all" directory target.
+CppLanguage/complex/all: CppLanguage/complex/CMakeFiles/test_complex.dir/all
+CppLanguage/complex/all: CppLanguage/complex/CMakeFiles/test_abs.dir/all
+.PHONY : CppLanguage/complex/all
+
+# Recursive "preinstall" directory target.
+CppLanguage/complex/preinstall:
+.PHONY : CppLanguage/complex/preinstall
+
+# Recursive "clean" directory target.
+CppLanguage/complex/clean: CppLanguage/complex/CMakeFiles/test_complex.dir/clean
+CppLanguage/complex/clean: CppLanguage/complex/CMakeFiles/test_abs.dir/clean
+.PHONY : CppLanguage/complex/clean
+
+#=============================================================================
+# Directory level rules for directory CppLanguage/graph
+
+# Recursive "all" directory target.
+CppLanguage/graph/all: CppLanguage/graph/CMakeFiles/test_graph.dir/all
+.PHONY : CppLanguage/graph/all
+
+# Recursive "preinstall" directory target.
+CppLanguage/graph/preinstall:
+.PHONY : CppLanguage/graph/preinstall
+
+# Recursive "clean" directory target.
+CppLanguage/graph/clean: CppLanguage/graph/CMakeFiles/test_graph.dir/clean
+.PHONY : CppLanguage/graph/clean
+
+#=============================================================================
+# Directory level rules for directory CppLanguage/playground
+
+# Recursive "all" directory target.
+CppLanguage/playground/all: CppLanguage/playground/CMakeFiles/playground.dir/all
+.PHONY : CppLanguage/playground/all
+
+# Recursive "preinstall" directory target.
+CppLanguage/playground/preinstall:
+.PHONY : CppLanguage/playground/preinstall
+
+# Recursive "clean" directory target.
+CppLanguage/playground/clean: CppLanguage/playground/CMakeFiles/playground.dir/clean
+.PHONY : CppLanguage/playground/clean
+
+#=============================================================================
+# Directory level rules for directory CppLanguage/shared_pointer
+
+# Recursive "all" directory target.
+CppLanguage/shared_pointer/all: CppLanguage/shared_pointer/CMakeFiles/test_shared_pointer.dir/all
+.PHONY : CppLanguage/shared_pointer/all
+
+# Recursive "preinstall" directory target.
+CppLanguage/shared_pointer/preinstall:
+.PHONY : CppLanguage/shared_pointer/preinstall
+
+# Recursive "clean" directory target.
+CppLanguage/shared_pointer/clean: CppLanguage/shared_pointer/CMakeFiles/test_shared_pointer.dir/clean
+.PHONY : CppLanguage/shared_pointer/clean
+
+#=============================================================================
 # Directory level rules for directory CppLanguage/simple_test
 
 # Recursive "all" directory target.
@@ -154,6 +252,36 @@ CppLanguage/simple_test/preinstall:
 # Recursive "clean" directory target.
 CppLanguage/simple_test/clean: CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/clean
 .PHONY : CppLanguage/simple_test/clean
+
+#=============================================================================
+# Directory level rules for directory CppLanguage/str
+
+# Recursive "all" directory target.
+CppLanguage/str/all: CppLanguage/str/CMakeFiles/test_str.dir/all
+.PHONY : CppLanguage/str/all
+
+# Recursive "preinstall" directory target.
+CppLanguage/str/preinstall:
+.PHONY : CppLanguage/str/preinstall
+
+# Recursive "clean" directory target.
+CppLanguage/str/clean: CppLanguage/str/CMakeFiles/test_str.dir/clean
+.PHONY : CppLanguage/str/clean
+
+#=============================================================================
+# Directory level rules for directory CppLanguage/unique_pointer
+
+# Recursive "all" directory target.
+CppLanguage/unique_pointer/all: CppLanguage/unique_pointer/CMakeFiles/test_unique_pointer.dir/all
+.PHONY : CppLanguage/unique_pointer/all
+
+# Recursive "preinstall" directory target.
+CppLanguage/unique_pointer/preinstall:
+.PHONY : CppLanguage/unique_pointer/preinstall
+
+# Recursive "clean" directory target.
+CppLanguage/unique_pointer/clean: CppLanguage/unique_pointer/CMakeFiles/test_unique_pointer.dir/clean
+.PHONY : CppLanguage/unique_pointer/clean
 
 #=============================================================================
 # Target rules for target CLanguage/example/CMakeFiles/c_test_example.dir
@@ -188,7 +316,7 @@ CLanguage/example/CMakeFiles/c_test_example.dir/clean:
 CppLanguage/any/CMakeFiles/test_any.dir/all:
 	$(MAKE) $(MAKESILENT) -f CppLanguage/any/CMakeFiles/test_any.dir/build.make CppLanguage/any/CMakeFiles/test_any.dir/depend
 	$(MAKE) $(MAKESILENT) -f CppLanguage/any/CMakeFiles/test_any.dir/build.make CppLanguage/any/CMakeFiles/test_any.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/gera/c/CMakeFiles --progress-num=4,5 "Built target test_any"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/gera/c/CMakeFiles --progress-num=8,9 "Built target test_any"
 .PHONY : CppLanguage/any/CMakeFiles/test_any.dir/all
 
 # Build rule for subdir invocation for target.
@@ -208,13 +336,39 @@ CppLanguage/any/CMakeFiles/test_any.dir/clean:
 .PHONY : CppLanguage/any/CMakeFiles/test_any.dir/clean
 
 #=============================================================================
+# Target rules for target CppLanguage/playground/CMakeFiles/playground.dir
+
+# All Build rule for target.
+CppLanguage/playground/CMakeFiles/playground.dir/all:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/playground/CMakeFiles/playground.dir/build.make CppLanguage/playground/CMakeFiles/playground.dir/depend
+	$(MAKE) $(MAKESILENT) -f CppLanguage/playground/CMakeFiles/playground.dir/build.make CppLanguage/playground/CMakeFiles/playground.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/gera/c/CMakeFiles --progress-num=4,5 "Built target playground"
+.PHONY : CppLanguage/playground/CMakeFiles/playground.dir/all
+
+# Build rule for subdir invocation for target.
+CppLanguage/playground/CMakeFiles/playground.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/gera/c/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CppLanguage/playground/CMakeFiles/playground.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/gera/c/CMakeFiles 0
+.PHONY : CppLanguage/playground/CMakeFiles/playground.dir/rule
+
+# Convenience name for target.
+playground: CppLanguage/playground/CMakeFiles/playground.dir/rule
+.PHONY : playground
+
+# clean rule for target.
+CppLanguage/playground/CMakeFiles/playground.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/playground/CMakeFiles/playground.dir/build.make CppLanguage/playground/CMakeFiles/playground.dir/clean
+.PHONY : CppLanguage/playground/CMakeFiles/playground.dir/clean
+
+#=============================================================================
 # Target rules for target CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir
 
 # All Build rule for target.
 CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/all:
 	$(MAKE) $(MAKESILENT) -f CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/build.make CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/depend
 	$(MAKE) $(MAKESILENT) -f CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/build.make CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/gera/c/CMakeFiles --progress-num=6,7 "Built target test_simple_cpp"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/gera/c/CMakeFiles --progress-num=23,24 "Built target test_simple_cpp"
 .PHONY : CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/all
 
 # Build rule for subdir invocation for target.
@@ -232,6 +386,188 @@ test_simple_cpp: CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/rule
 CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/build.make CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/clean
 .PHONY : CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/clean
+
+#=============================================================================
+# Target rules for target CppLanguage/array/CMakeFiles/test_array.dir
+
+# All Build rule for target.
+CppLanguage/array/CMakeFiles/test_array.dir/all:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/array/CMakeFiles/test_array.dir/build.make CppLanguage/array/CMakeFiles/test_array.dir/depend
+	$(MAKE) $(MAKESILENT) -f CppLanguage/array/CMakeFiles/test_array.dir/build.make CppLanguage/array/CMakeFiles/test_array.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/gera/c/CMakeFiles --progress-num=10,11 "Built target test_array"
+.PHONY : CppLanguage/array/CMakeFiles/test_array.dir/all
+
+# Build rule for subdir invocation for target.
+CppLanguage/array/CMakeFiles/test_array.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/gera/c/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CppLanguage/array/CMakeFiles/test_array.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/gera/c/CMakeFiles 0
+.PHONY : CppLanguage/array/CMakeFiles/test_array.dir/rule
+
+# Convenience name for target.
+test_array: CppLanguage/array/CMakeFiles/test_array.dir/rule
+.PHONY : test_array
+
+# clean rule for target.
+CppLanguage/array/CMakeFiles/test_array.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/array/CMakeFiles/test_array.dir/build.make CppLanguage/array/CMakeFiles/test_array.dir/clean
+.PHONY : CppLanguage/array/CMakeFiles/test_array.dir/clean
+
+#=============================================================================
+# Target rules for target CppLanguage/complex/CMakeFiles/test_complex.dir
+
+# All Build rule for target.
+CppLanguage/complex/CMakeFiles/test_complex.dir/all:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/test_complex.dir/build.make CppLanguage/complex/CMakeFiles/test_complex.dir/depend
+	$(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/test_complex.dir/build.make CppLanguage/complex/CMakeFiles/test_complex.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/gera/c/CMakeFiles --progress-num=12,13,14 "Built target test_complex"
+.PHONY : CppLanguage/complex/CMakeFiles/test_complex.dir/all
+
+# Build rule for subdir invocation for target.
+CppLanguage/complex/CMakeFiles/test_complex.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/gera/c/CMakeFiles 3
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CppLanguage/complex/CMakeFiles/test_complex.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/gera/c/CMakeFiles 0
+.PHONY : CppLanguage/complex/CMakeFiles/test_complex.dir/rule
+
+# Convenience name for target.
+test_complex: CppLanguage/complex/CMakeFiles/test_complex.dir/rule
+.PHONY : test_complex
+
+# clean rule for target.
+CppLanguage/complex/CMakeFiles/test_complex.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/test_complex.dir/build.make CppLanguage/complex/CMakeFiles/test_complex.dir/clean
+.PHONY : CppLanguage/complex/CMakeFiles/test_complex.dir/clean
+
+#=============================================================================
+# Target rules for target CppLanguage/complex/CMakeFiles/test_abs.dir
+
+# All Build rule for target.
+CppLanguage/complex/CMakeFiles/test_abs.dir/all:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/test_abs.dir/build.make CppLanguage/complex/CMakeFiles/test_abs.dir/depend
+	$(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/test_abs.dir/build.make CppLanguage/complex/CMakeFiles/test_abs.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/gera/c/CMakeFiles --progress-num=6,7 "Built target test_abs"
+.PHONY : CppLanguage/complex/CMakeFiles/test_abs.dir/all
+
+# Build rule for subdir invocation for target.
+CppLanguage/complex/CMakeFiles/test_abs.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/gera/c/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CppLanguage/complex/CMakeFiles/test_abs.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/gera/c/CMakeFiles 0
+.PHONY : CppLanguage/complex/CMakeFiles/test_abs.dir/rule
+
+# Convenience name for target.
+test_abs: CppLanguage/complex/CMakeFiles/test_abs.dir/rule
+.PHONY : test_abs
+
+# clean rule for target.
+CppLanguage/complex/CMakeFiles/test_abs.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/test_abs.dir/build.make CppLanguage/complex/CMakeFiles/test_abs.dir/clean
+.PHONY : CppLanguage/complex/CMakeFiles/test_abs.dir/clean
+
+#=============================================================================
+# Target rules for target CppLanguage/str/CMakeFiles/test_str.dir
+
+# All Build rule for target.
+CppLanguage/str/CMakeFiles/test_str.dir/all:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/str/CMakeFiles/test_str.dir/build.make CppLanguage/str/CMakeFiles/test_str.dir/depend
+	$(MAKE) $(MAKESILENT) -f CppLanguage/str/CMakeFiles/test_str.dir/build.make CppLanguage/str/CMakeFiles/test_str.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/gera/c/CMakeFiles --progress-num=25,26,27 "Built target test_str"
+.PHONY : CppLanguage/str/CMakeFiles/test_str.dir/all
+
+# Build rule for subdir invocation for target.
+CppLanguage/str/CMakeFiles/test_str.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/gera/c/CMakeFiles 3
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CppLanguage/str/CMakeFiles/test_str.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/gera/c/CMakeFiles 0
+.PHONY : CppLanguage/str/CMakeFiles/test_str.dir/rule
+
+# Convenience name for target.
+test_str: CppLanguage/str/CMakeFiles/test_str.dir/rule
+.PHONY : test_str
+
+# clean rule for target.
+CppLanguage/str/CMakeFiles/test_str.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/str/CMakeFiles/test_str.dir/build.make CppLanguage/str/CMakeFiles/test_str.dir/clean
+.PHONY : CppLanguage/str/CMakeFiles/test_str.dir/clean
+
+#=============================================================================
+# Target rules for target CppLanguage/unique_pointer/CMakeFiles/test_unique_pointer.dir
+
+# All Build rule for target.
+CppLanguage/unique_pointer/CMakeFiles/test_unique_pointer.dir/all:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/unique_pointer/CMakeFiles/test_unique_pointer.dir/build.make CppLanguage/unique_pointer/CMakeFiles/test_unique_pointer.dir/depend
+	$(MAKE) $(MAKESILENT) -f CppLanguage/unique_pointer/CMakeFiles/test_unique_pointer.dir/build.make CppLanguage/unique_pointer/CMakeFiles/test_unique_pointer.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/gera/c/CMakeFiles --progress-num=28,29 "Built target test_unique_pointer"
+.PHONY : CppLanguage/unique_pointer/CMakeFiles/test_unique_pointer.dir/all
+
+# Build rule for subdir invocation for target.
+CppLanguage/unique_pointer/CMakeFiles/test_unique_pointer.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/gera/c/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CppLanguage/unique_pointer/CMakeFiles/test_unique_pointer.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/gera/c/CMakeFiles 0
+.PHONY : CppLanguage/unique_pointer/CMakeFiles/test_unique_pointer.dir/rule
+
+# Convenience name for target.
+test_unique_pointer: CppLanguage/unique_pointer/CMakeFiles/test_unique_pointer.dir/rule
+.PHONY : test_unique_pointer
+
+# clean rule for target.
+CppLanguage/unique_pointer/CMakeFiles/test_unique_pointer.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/unique_pointer/CMakeFiles/test_unique_pointer.dir/build.make CppLanguage/unique_pointer/CMakeFiles/test_unique_pointer.dir/clean
+.PHONY : CppLanguage/unique_pointer/CMakeFiles/test_unique_pointer.dir/clean
+
+#=============================================================================
+# Target rules for target CppLanguage/shared_pointer/CMakeFiles/test_shared_pointer.dir
+
+# All Build rule for target.
+CppLanguage/shared_pointer/CMakeFiles/test_shared_pointer.dir/all:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/shared_pointer/CMakeFiles/test_shared_pointer.dir/build.make CppLanguage/shared_pointer/CMakeFiles/test_shared_pointer.dir/depend
+	$(MAKE) $(MAKESILENT) -f CppLanguage/shared_pointer/CMakeFiles/test_shared_pointer.dir/build.make CppLanguage/shared_pointer/CMakeFiles/test_shared_pointer.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/gera/c/CMakeFiles --progress-num=21,22 "Built target test_shared_pointer"
+.PHONY : CppLanguage/shared_pointer/CMakeFiles/test_shared_pointer.dir/all
+
+# Build rule for subdir invocation for target.
+CppLanguage/shared_pointer/CMakeFiles/test_shared_pointer.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/gera/c/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CppLanguage/shared_pointer/CMakeFiles/test_shared_pointer.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/gera/c/CMakeFiles 0
+.PHONY : CppLanguage/shared_pointer/CMakeFiles/test_shared_pointer.dir/rule
+
+# Convenience name for target.
+test_shared_pointer: CppLanguage/shared_pointer/CMakeFiles/test_shared_pointer.dir/rule
+.PHONY : test_shared_pointer
+
+# clean rule for target.
+CppLanguage/shared_pointer/CMakeFiles/test_shared_pointer.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/shared_pointer/CMakeFiles/test_shared_pointer.dir/build.make CppLanguage/shared_pointer/CMakeFiles/test_shared_pointer.dir/clean
+.PHONY : CppLanguage/shared_pointer/CMakeFiles/test_shared_pointer.dir/clean
+
+#=============================================================================
+# Target rules for target CppLanguage/graph/CMakeFiles/test_graph.dir
+
+# All Build rule for target.
+CppLanguage/graph/CMakeFiles/test_graph.dir/all:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/graph/CMakeFiles/test_graph.dir/build.make CppLanguage/graph/CMakeFiles/test_graph.dir/depend
+	$(MAKE) $(MAKESILENT) -f CppLanguage/graph/CMakeFiles/test_graph.dir/build.make CppLanguage/graph/CMakeFiles/test_graph.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/gera/c/CMakeFiles --progress-num=15,16,17,18,19,20 "Built target test_graph"
+.PHONY : CppLanguage/graph/CMakeFiles/test_graph.dir/all
+
+# Build rule for subdir invocation for target.
+CppLanguage/graph/CMakeFiles/test_graph.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/gera/c/CMakeFiles 6
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CppLanguage/graph/CMakeFiles/test_graph.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/gera/c/CMakeFiles 0
+.PHONY : CppLanguage/graph/CMakeFiles/test_graph.dir/rule
+
+# Convenience name for target.
+test_graph: CppLanguage/graph/CMakeFiles/test_graph.dir/rule
+.PHONY : test_graph
+
+# clean rule for target.
+CppLanguage/graph/CMakeFiles/test_graph.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/graph/CMakeFiles/test_graph.dir/build.make CppLanguage/graph/CMakeFiles/test_graph.dir/clean
+.PHONY : CppLanguage/graph/CMakeFiles/test_graph.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

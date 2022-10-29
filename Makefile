@@ -153,6 +153,19 @@ test_any/fast:
 .PHONY : test_any/fast
 
 #=============================================================================
+# Target rules for targets named playground
+
+# Build rule for target.
+playground: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 playground
+.PHONY : playground
+
+# fast build rule for target.
+playground/fast:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/playground/CMakeFiles/playground.dir/build.make CppLanguage/playground/CMakeFiles/playground.dir/build
+.PHONY : playground/fast
+
+#=============================================================================
 # Target rules for targets named test_simple_cpp
 
 # Build rule for target.
@@ -165,6 +178,97 @@ test_simple_cpp/fast:
 	$(MAKE) $(MAKESILENT) -f CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/build.make CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/build
 .PHONY : test_simple_cpp/fast
 
+#=============================================================================
+# Target rules for targets named test_array
+
+# Build rule for target.
+test_array: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_array
+.PHONY : test_array
+
+# fast build rule for target.
+test_array/fast:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/array/CMakeFiles/test_array.dir/build.make CppLanguage/array/CMakeFiles/test_array.dir/build
+.PHONY : test_array/fast
+
+#=============================================================================
+# Target rules for targets named test_complex
+
+# Build rule for target.
+test_complex: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_complex
+.PHONY : test_complex
+
+# fast build rule for target.
+test_complex/fast:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/test_complex.dir/build.make CppLanguage/complex/CMakeFiles/test_complex.dir/build
+.PHONY : test_complex/fast
+
+#=============================================================================
+# Target rules for targets named test_abs
+
+# Build rule for target.
+test_abs: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_abs
+.PHONY : test_abs
+
+# fast build rule for target.
+test_abs/fast:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/complex/CMakeFiles/test_abs.dir/build.make CppLanguage/complex/CMakeFiles/test_abs.dir/build
+.PHONY : test_abs/fast
+
+#=============================================================================
+# Target rules for targets named test_str
+
+# Build rule for target.
+test_str: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_str
+.PHONY : test_str
+
+# fast build rule for target.
+test_str/fast:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/str/CMakeFiles/test_str.dir/build.make CppLanguage/str/CMakeFiles/test_str.dir/build
+.PHONY : test_str/fast
+
+#=============================================================================
+# Target rules for targets named test_unique_pointer
+
+# Build rule for target.
+test_unique_pointer: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_unique_pointer
+.PHONY : test_unique_pointer
+
+# fast build rule for target.
+test_unique_pointer/fast:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/unique_pointer/CMakeFiles/test_unique_pointer.dir/build.make CppLanguage/unique_pointer/CMakeFiles/test_unique_pointer.dir/build
+.PHONY : test_unique_pointer/fast
+
+#=============================================================================
+# Target rules for targets named test_shared_pointer
+
+# Build rule for target.
+test_shared_pointer: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_shared_pointer
+.PHONY : test_shared_pointer
+
+# fast build rule for target.
+test_shared_pointer/fast:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/shared_pointer/CMakeFiles/test_shared_pointer.dir/build.make CppLanguage/shared_pointer/CMakeFiles/test_shared_pointer.dir/build
+.PHONY : test_shared_pointer/fast
+
+#=============================================================================
+# Target rules for targets named test_graph
+
+# Build rule for target.
+test_graph: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_graph
+.PHONY : test_graph
+
+# fast build rule for target.
+test_graph/fast:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/graph/CMakeFiles/test_graph.dir/build.make CppLanguage/graph/CMakeFiles/test_graph.dir/build
+.PHONY : test_graph/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -175,8 +279,16 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... c_test_example"
+	@echo "... playground"
+	@echo "... test_abs"
 	@echo "... test_any"
+	@echo "... test_array"
+	@echo "... test_complex"
+	@echo "... test_graph"
+	@echo "... test_shared_pointer"
 	@echo "... test_simple_cpp"
+	@echo "... test_str"
+	@echo "... test_unique_pointer"
 .PHONY : help
 
 
