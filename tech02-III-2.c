@@ -61,5 +61,6 @@ void _start(){
         data_end=data_begin;
         syscall(SYS_write,1,data,data_len);
     }
+    syscall(SYS_brk,data);
     syscall(SYS_exit,0);
 }

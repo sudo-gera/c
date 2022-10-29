@@ -1,3 +1,4 @@
+#include <sys/syscall.h>
 .global _start
 .global _main
 .global main
@@ -38,7 +39,7 @@
 main:
 _main:
 _start:
-    mov $12,%rax
+    mov $SYS_brk,%rax
     mov $0,%rdi
     syscall
     mov %rax,%r8
@@ -54,7 +55,7 @@ _ 1     if %r9 "_=" %r10,{
             mul %rdx
             mov %rax,%r10
             add $123,%r10
-            mov $12,%rax
+            mov $SYS_brk,%rax
             lea (%r8,%r10),%rdi
             syscall
 _ 8         if %rax "!=" %rdi,{
@@ -62,7 +63,7 @@ _ 8         if %rax "!=" %rdi,{
 _ 8         ,}
 
 _ 1     ,}
-        mov $0,%rax
+        mov $SYS_read,%rax
         mov $0,%rdi
         mov %r8,%rsi
         add %r9,%rsi
@@ -146,7 +147,7 @@ _ 3     ,}
     jmp loop_all_word_rev
     loop_all_word_rev_end:
     mov %r9,%rdx
-    mov $1, %rax
+    mov $SYS_write,%rax
     mov $1, %rdi
     mov %r8, %rsi
     syscall
