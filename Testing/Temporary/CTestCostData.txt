@@ -1,4 +1,4 @@
-c_test_example 25 0.00181987
-test_simple_cpp 25 0.00505809
-test_any 15 0.0335811
+c_test_example 33 0.00140335
+test_simple_cpp 33 0.0073111
+test_any 23 0.0093375
 ---
