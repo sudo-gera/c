@@ -1,15 +1,16 @@
+#include <sys/syscall.h>
 char* syscall(long number, ...);
 void _start(){
     long tmp_1=0,tmp_2=0,data_len=0,data_size=0,data_read=0;
     char*data_begin=0,*data_end=0,*tmp=0;
-    char*data=syscall(12,0);
+    char*data=syscall(SYS_brk,0);
     do{
         if (data_len == data_size){
             data_size*=2;
             data_size+=123;
-            syscall(12,data+data_size);
+            syscall(SYS_brk,data+data_size);
         }
-        data_read=(long)syscall(0,0,data+data_len,data_size-data_len);
+        data_read=(long)syscall(SYS_read,0,data+data_len,data_size-data_len);
         data_len+=data_read;
     }while(data_read);
     if (data_len){
@@ -58,7 +59,7 @@ void _start(){
         loop_last_word_rev_end:
         data_begin=tmp;
         data_end=data_begin;
-        syscall(1,1,data,data_len);
+        syscall(SYS_write,1,data,data_len);
     }
-    syscall(60,0);
+    syscall(SYS_exit,0);
 }
