@@ -101,6 +101,53 @@ auto to_str(t<T...>r){
 
 #endif
 
+#define get_bit(a,s)   (((a)[(s)/8LLU/sizeof((a)[0])]>>(s)%(8LLU*sizeof((a)[0])))&1LLU)
+#define set_bit(a,s,d) {(a)[(s)/8LLU/sizeof((a)[0])]&=~(1LLU<<(s)%(8LLU*sizeof((a)[0])));(a)[(s)/8LLU/sizeof((a)[0])]+=((d)+0LLU)<<(s)%(8LLU*sizeof((a)[0]));}
+
 ///////////////////////////////////////////////////end of lib
 
-
+int main(){
+    llu n=getint(),m=getint();
+    vector<string> a;
+    for (llu w=0;w<m;++w){
+        a.emplace_back();
+        cin>>a.back();
+    }
+    vector<llu> s(26);
+    vector<llu> d(26);
+    for (llu w=1;w<m;++w){
+        for (llu e=0;e<a[w-1].size() and e<a[w].size();++e){
+            if (a[w-1][e]!=a[w][e]){
+                set_bit(&s[a[w-1][e]-'A'],a[w][e]-'A',1);
+                break;
+            }
+        }
+    }
+    for (llu w=0;w<m;++w){
+        for (llu e=0;e<a[w].size();++e){
+            d[a[w][e]-'A']=1;
+        }
+    }
+    for (llu e=0;e<26;++e){
+        for (llu q=0;q<26;++q){
+            for (llu w=0;w<26;++w){
+                if (get_bit(&s[q],w)){
+                    s[q]|=s[w];
+                }
+            }
+        }
+    }
+    vector<llu> l;
+    for (llu w=0;w<26;++w){
+        if (d[w]){
+            l.push_back(w);
+        }
+    }
+    sort(l.begin(),l.end(),[&](auto q,auto w){
+        return get_bit(&s[q],w);
+    });
+    for (auto w:l){
+        cout<<char(w+'A');
+    }
+    cout<<endl;
+}

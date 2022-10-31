@@ -81,8 +81,12 @@ maxlen=200+int(run_num**0.5)
 # 		print(s)
 # 		break
 
-n,m=rand(300),rand(30)
+n,m=rand(2,64),rand(1,64)
 print(n,m)
-for w in range(n):
-	print(rand(9999),end=' ')
-print()
+for w in range(m):
+	r=t=0
+	while r==t:
+		r=rand(n)+1
+		t=rand(n)+1
+	print(r,t)
+

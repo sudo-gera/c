@@ -21,10 +21,14 @@ using std::move; using std::swap; using std::generate; using std::generate_n;
 using std::back_inserter; using std::list; using std::hash; using std::reverse;
 using std::lower_bound; using std::upper_bound; using std::flush; using std::prev; using std::next;
 using std::tuple_size; using std::lexicographical_compare; using std::set_intersection;
-using std::copy_if; using std::exit; using std::enable_if; using std::enable_if;
-using std::tuple_cat;
-#if __cplusplus>=201703L
-using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
+using std::copy_if;
+
+#ifdef print
+#undef print
+#endif
+
+#ifdef write
+#undef write
 #endif
 
 static inline int64_t getint() {
@@ -45,6 +49,35 @@ static inline int64_t getint() {
     return (int64_t)(res)*sign;
 }
 
+static inline void putint(uint64_t out) {
+    if (out > (1LLU << 63) - 1) {
+        putchar_unlocked('-');
+        out = 1 + ~out;
+    }
+    char data[44];
+    char *dend = data;
+    while (out) {
+        *++dend = (unsigned)('0') + out % 10;
+        out /= 10;
+    }
+    if (dend == data) {
+        putchar_unlocked('0');
+    }
+    for (; dend != data; --dend) {
+        putchar_unlocked(*dend);
+    }
+}
+
+static inline void print(uint64_t out) {
+    putint(out);
+    putchar('\n');
+}
+
+static inline void write(uint64_t out) {
+    putint(out);
+    putchar(' ');
+}
+
 using llu=long long unsigned;
 
 #define cache(rt,...)\
@@ -55,52 +88,34 @@ using llu=long long unsigned;
 
 #define none 9000000000000000000LLU
 
-template<llu n>
-struct sized{
-    char a[n];
-};
-
-template<
-    typename t0=sized<0>,
-    typename t1=sized<0>,
-    typename t2=sized<0>,
-    typename t3=sized<0>,
-    typename t4=sized<0>,
-    typename t5=sized<0>,
-    typename t6=sized<0>,
-    typename t7=sized<0>
->
-
-struct t{
-    t0 v0;
-    t1 v1;
-    t2 v2;
-    t3 v3;
-    t4 v4;
-    t5 v5;
-    t6 v6;
-    t7 v7;
-};
-
-#if __cplusplus>=201703L
-
-template<llu n=0,typename T,typename R>
-auto clear_tuple(T t=tuple<>(),R r=tuple<>(),enable_if_t<tuple_size_v<R><=n or  is_same_v<sized<0>,tuple_element_t<n,R>>,int> =0){
-    return t;
-}
-
-template<llu n=0,typename T,typename R>
-auto clear_tuple(T t=tuple<>(),R r=tuple<>(),enable_if_t<n<tuple_size_v<R> and !is_same_v<sized<0>,tuple_element_t<n,R>>,int> =0){
-    return clear_tuple<n+1>(tuple_cat(t,make_tuple(get<n>(r))),r);
-}
-
-template<typename...T>
-auto to_str(t<T...>r){
-    return clear_tuple(tuple<>(),(tuple<T...>&&)r);
-}
-
-#endif
-
 ///////////////////////////////////////////////////end of lib
 
-
+int main(){
+    llu n=getint(),m=getint();
+    vector<tuple<llu,vector<llu>>> a(n);
+    for (llu w=0;w<m;++w){
+        llu z=getint(),x=getint();
+        (get<1>(a[z])).emplace_back(x);
+        (get<1>(a[x])).emplace_back(z);
+    }
+    if (n){
+        llu qu=0;
+        vector<llu> q(1);
+        get<0>(a[0])=1;
+        while (q.size()!=qu){
+            auto t=q[qu++];
+            auto y=get<0>(a[t]);
+            for (auto w:get<1>(a[t])){
+                if (get<0>(a[w])==y){
+                    printf("NO\n");
+                    return 0;
+                }else
+                if (get<0>(a[w])==0){
+                    get<0>(a[w])=3-y;
+                    q.push_back(w);
+                }
+            }
+        }
+    }
+    printf("YES\n");
+}

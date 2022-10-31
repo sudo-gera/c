@@ -45,6 +45,25 @@ static inline int64_t getint() {
     return (int64_t)(res)*sign;
 }
 
+static inline void putint(uint64_t out) {
+    if (out > (1LLU << 63) - 1) {
+        putchar_unlocked('-');
+        out = 1 + ~out;
+    }
+    char data[44];
+    char *dend = data;
+    while (out) {
+        *++dend = (unsigned)('0') + out % 10;
+        out /= 10;
+    }
+    if (dend == data) {
+        putchar_unlocked('0');
+    }
+    for (; dend != data; --dend) {
+        putchar_unlocked(*dend);
+    }
+}
+
 using llu=long long unsigned;
 
 #define cache(rt,...)\
@@ -103,4 +122,72 @@ auto to_str(t<T...>r){
 
 ///////////////////////////////////////////////////end of lib
 
+struct cycle{
+    vector<t<llu,vector<llu>>> a;
+    vector<llu> loop;
 
+    void dfs(llu start){
+        vector<t<llu,llu,llu,llu>> layers;
+        layers.push_back({start,none,0,0});
+        auto lback=&layers.back();
+        goto _dfs;
+        _s:
+        switch(lback->v2){
+            case 0:
+            break;
+            _dfs:
+            // ic(layers)
+            // ic(a)
+            lback=&layers.back();
+            if (a[lback->v0].v0==none){
+                a[lback->v0].v0=lback->v1;
+                for (lback->v3=0;lback->v3<a[lback->v0].v1.size();++lback->v3){
+                    layers.push_back({a[lback->v0].v1[lback->v3],lback->v0,1});
+                    goto _dfs;
+                    case 1:
+                    layers.pop_back();
+                    lback=&layers.back();
+                }
+                a[lback->v0].v0=none+1;
+            }else
+            if (a[lback->v0].v0==none+1){
+
+            }else{
+                llu t=lback->v1;
+                loop.resize(0);
+                while (t!=lback->v0){
+                    loop.push_back(t);
+                    t=a[t].v0;
+                }
+                loop.push_back(t);
+            }
+            goto _s;
+        }
+    }
+};
+
+int main(){
+    cycle y;
+    llu n=getint(),m=getint();
+    auto&a=y.a;
+    auto&loop=y.loop;
+    a.resize(n,{none,{}});
+    for (llu w=0;w<m;++w){
+        llu z=getint()-1,x=getint()-1;
+        a[z].v1.emplace_back(x);
+    }
+    for (llu w=0;w<n;++w){
+        y.dfs(w);
+        // a.resize(0);
+        // a.resize(n,{none,{}});
+    }
+    if (loop.size()){
+        printf("YES\n");
+        for (auto w=loop.rbegin();w!=loop.rend();++w){
+            cout<<*w+1<<" ";
+        }
+        cout<<"\n";
+    }else{
+        printf("NO\n");
+    }
+}

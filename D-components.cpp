@@ -104,3 +104,39 @@ auto to_str(t<T...>r){
 ///////////////////////////////////////////////////end of lib
 
 
+int main(){
+    llu n=getint(),m=getint();
+    vector<t<llu,vector<llu>>> a(n);
+    for (llu w=0;w<m;++w){
+        llu z=getint()-1,x=getint()-1;
+        a[z].v1.emplace_back(x);
+        a[x].v1.emplace_back(z);
+    }
+    set<llu> seen;
+    for (llu w=0;w<n;++w){
+        seen.insert(w);
+    }
+    llu cc=0;
+    while (seen.size()){
+        llu st=*seen.begin();
+        llu qu=0;
+        vector<llu> q(1);
+        q[0]=st;
+        a[st].v0=++cc;
+        while (q.size()!=qu){
+            auto t=q[qu++];
+            seen.erase(t);
+            for (auto w:a[t].v1){
+                if (a[w].v0==0){
+                    a[w].v0=a[t].v0;
+                    q.push_back(w);
+                }
+            }
+        }
+    }
+    cout<<cc<<endl;
+    for (llu w=0;w<n;++w){
+        cout<<a[w].v0<<" ";
+    }
+    cout<<endl;
+}
