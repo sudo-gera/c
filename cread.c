@@ -11,11 +11,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <tgmath.h>
+#include <memory.h>
 #include <stddef.h>
 #include <sys/mman.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <sys/syscall.h>
+#include <errno.h>
 
 #ifdef print
 #undef print
