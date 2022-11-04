@@ -23,16 +23,29 @@
 
 extern void* my_malloc(size_t size);
 
-
 extern void my_free(void *ptr);
 
-extern void myalloc_initialize(int fd)
+char*mmem=0;
+int fd;
 
-extern void myalloc_finalize();
+extern void myalloc_initialize(int _fd){
+    fd=_fd;
+    ftruncate(fd,1024);
+    mmem=(char*)mmap(NULL,1024,PROT_READ|PROT_WRITE,MAP_PRIVATE,fd,0);
+    memset(mmem,'+',1024);
+}
+
+extern void myalloc_finalize(){
+    
+}
 
 
 #if __has_include("d")
-int main(){
+int main(int argc,char**argv){
+    int fd=open(argv[1],O_RDWR);
+    myalloc_initialize(fd);
+    myalloc_finalize();
+    close(fd);
 }
 #endif
 

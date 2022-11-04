@@ -81,12 +81,16 @@ maxlen=200+int(run_num**0.5)
 # 		print(s)
 # 		break
 
-n,m=rand(2,64),rand(1,64)
+n=rand(2,64)
+m=rand(0,1+min(64,(n-1)**2//4))
 print(n,m)
-for w in range(m):
+e=set()
+while len(e)<m:
 	r=t=0
 	while r==t:
 		r=rand(n)+1
 		t=rand(n)+1
-	print(r,t)
-
+	r,t=sorted([r,t])
+	e.add((r,t))
+for w in e:
+	print(*w)

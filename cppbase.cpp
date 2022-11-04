@@ -14,6 +14,7 @@
 #include <list>
 #include <string_view>
 #include <string.h>
+#include <functional>
 using std::cin; using std::cout; using std::endl; using std::vector; using std::string; using std::sort;
 using std::pair; using std::set; using std::unordered_set; using std::map; using std::unordered_map;
 using std::min; using std::max; using std::tuple; using std::tie; using std::get; using std::make_tuple;
@@ -22,7 +23,8 @@ using std::back_inserter; using std::list; using std::hash; using std::reverse;
 using std::lower_bound; using std::upper_bound; using std::flush; using std::prev; using std::next;
 using std::tuple_size; using std::lexicographical_compare; using std::set_intersection;
 using std::copy_if; using std::exit; using std::enable_if; using std::enable_if;
-using std::tuple_cat;
+using std::tuple_cat; using std::find; using std::find_if; using std::find_if_not;
+using std::ref; using std::cref; using std::reference_wrapper; using std::remove_reference;
 #if __cplusplus>=201703L
 using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
 #endif
@@ -70,7 +72,7 @@ template<
     typename t6=sized<0>,
     typename t7=sized<0>
 >
-
+// better than tuple
 struct t{
     t0 v0;
     t1 v1;
@@ -82,7 +84,7 @@ struct t{
     t7 v7;
 };
 
-#if __cplusplus>=201703L
+#if __cplusplus>=201703L //only for debugging
 
 template<llu n=0,typename T,typename R>
 auto clear_tuple(T t=tuple<>(),R r=tuple<>(),enable_if_t<tuple_size_v<R><=n or  is_same_v<sized<0>,tuple_element_t<n,R>>,int> =0){
@@ -101,6 +103,27 @@ auto to_str(t<T...>r){
 
 #endif
 
+#define set(f) set_s([&](auto&&q,auto&&w){return f(q,w);})
+
+// a|set(min)|b
+// // instead of
+// a = min(a,b)
+
+template<typename T>
+struct set_s{
+    T f;
+    set_s(T f):f(f){}
+};
+
+template<typename T,typename Y>
+t<reference_wrapper<typename remove_reference<T>::type>,set_s<Y>> operator|(T&&q,set_s<Y> e){
+    return {ref(q),e};
+}
+
+template<typename T,typename Y,typename U>
+auto operator|(t<T,set_s<Y>> q,U e){
+    q.v0.get()=q.v1.f(q.v0.get(),e);
+}
+
+
 ///////////////////////////////////////////////////end of lib
-
-

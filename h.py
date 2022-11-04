@@ -63,6 +63,7 @@ from operator import *
 import operator
 from inspect import *
 import inspect
+from copy import *
 def outputFunction(*a):
 	a=a[0]
 	s=split(r'\:\d+ in ',a)

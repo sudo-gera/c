@@ -25,6 +25,7 @@ using std::tuple_size; using std::lexicographical_compare; using std::set_inters
 using std::copy_if; using std::exit; using std::enable_if; using std::enable_if;
 using std::tuple_cat; using std::find; using std::find_if; using std::find_if_not;
 using std::ref; using std::cref; using std::reference_wrapper; using std::remove_reference;
+using std::tuple_element; using std::tuple_size; using std::is_same;
 #if __cplusplus>=201703L
 using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
 #endif
@@ -85,22 +86,46 @@ struct t{
     t7 v7;
 };
 
+template<llu n=0,typename T,typename R>
+auto clear_tuple(T t=tuple<>(),R r=tuple<>(),typename enable_if<tuple_size<R>::value<=n or  is_same<sized<0>,typename tuple_element<n,R>::type>::value,int>::type =0)->
+  decltype(t){
+    return t;
+}
+
+template<llu n=0,typename T,typename R>
+auto clear_tuple(T t=tuple<>(),R r=tuple<>(),typename enable_if<n<tuple_size<R>::value and !is_same<sized<0>,typename tuple_element<n,R>::type>::value,int>::type =0)->
+  decltype(clear_tuple<n+1>(tuple_cat(t,make_tuple(get<n>(r))),r)){
+    return clear_tuple<n+1>(tuple_cat(t,make_tuple(get<n>(r))),r);
+}
+
+template<typename...T>
+auto t2tuple(t<T...>r)->
+  decltype(clear_tuple(tuple<>(),(tuple<T...>&&)(r))){
+    return clear_tuple(tuple<>(),(tuple<T...>&&)(r));
+}
+
+template<typename...T>
+auto to_str(t<T...>r)->
+  decltype(t2tuple(r)){
+    return t2tuple(r);
+}
+
+template<llu n>bool operator< (sized<n>r,sized<n>y){return 0;}
+template<llu n>bool operator> (sized<n>r,sized<n>y){return 0;}
+template<llu n>bool operator<=(sized<n>r,sized<n>y){return 1;}
+template<llu n>bool operator>=(sized<n>r,sized<n>y){return 1;}
+template<llu n>bool operator!=(sized<n>r,sized<n>y){return 0;}
+template<llu n>bool operator==(sized<n>r,sized<n>y){return 1;}
+
+template<typename...R,typename...Y>bool operator< (t<R...>r,t<Y...>y){return t2tuple(r)< t2tuple(y);}
+template<typename...R,typename...Y>bool operator> (t<R...>r,t<Y...>y){return t2tuple(r)> t2tuple(y);}
+template<typename...R,typename...Y>bool operator<=(t<R...>r,t<Y...>y){return t2tuple(r)<=t2tuple(y);}
+template<typename...R,typename...Y>bool operator>=(t<R...>r,t<Y...>y){return t2tuple(r)>=t2tuple(y);}
+template<typename...R,typename...Y>bool operator!=(t<R...>r,t<Y...>y){return t2tuple(r)!=t2tuple(y);}
+template<typename...R,typename...Y>bool operator==(t<R...>r,t<Y...>y){return t2tuple(r)==t2tuple(y);}
+
 #if __cplusplus>=201703L //only for debugging
 
-    template<llu n=0,typename T,typename R>
-    auto clear_tuple(T t=tuple<>(),R r=tuple<>(),enable_if_t<tuple_size_v<R><=n or  is_same_v<sized<0>,tuple_element_t<n,R>>,int> =0){
-        return t;
-    }
-
-    template<llu n=0,typename T,typename R>
-    auto clear_tuple(T t=tuple<>(),R r=tuple<>(),enable_if_t<n<tuple_size_v<R> and !is_same_v<sized<0>,tuple_element_t<n,R>>,int> =0){
-        return clear_tuple<n+1>(tuple_cat(t,make_tuple(get<n>(r))),r);
-    }
-
-    template<typename...T>
-    auto to_str(t<T...>r){
-        return clear_tuple(tuple<>(),(tuple<T...>&&)r);
-    }
 
 
 #endif
@@ -156,7 +181,7 @@ struct max_assigner:base_assigner{
 
 ///////////////////////////////////////////////////end of lib
 
-struct v{
+struct vert{
     llu dfs_state=0;
     vector<llu> next;
     ll index_in_stack=none;
@@ -172,15 +197,15 @@ struct call_layer{
     llu next_counter;
 };
 
-void dfs(vector<v>&a,llu start){
+void dfs(vector<vert>&a,vector<t<llu,llu>>&r,llu start){
     if (a[start].dfs_state>=2){
         return;
     }
-    vector<call_layer> call_stack;
-    call_stack.push_back({start,none,0,0,0});
+    vector<call_layer> l;
+    l.push_back({start,none,0,0,0});
     a[start].index_in_stack=0;
     a[start].higher_possible=0;
-    auto csb=&call_stack.back();
+    auto csb=&l.back();
     goto _dfs;
     _s:
     switch(csb->switch_value){
@@ -190,22 +215,22 @@ void dfs(vector<v>&a,llu start){
         a[start].higher_possible_if_this_deleted=-none;
         break;
         _dfs:
-        csb=&call_stack.back();
+        csb=&l.back();
         if (a[csb->current].dfs_state==0){
             a[csb->current].dfs_state=1;
             for (csb->for_iterator=0;csb->for_iterator<a[csb->current].next.size();++csb->for_iterator){
-                if (a[a[csb->current].next[csb->for_iterator]].dfs_state<2){
+                if (a[a[csb->current].next[csb->for_iterator]].dfs_state<2 and a[csb->current].next[csb->for_iterator]!=csb->previous){
                     if (a[a[csb->current].next[csb->for_iterator]].index_in_stack==none){
-                        a[a[csb->current].next[csb->for_iterator]].index_in_stack=call_stack.size();
-                        a[a[csb->current].next[csb->for_iterator]].higher_possible=call_stack.size();
+                        a[a[csb->current].next[csb->for_iterator]].index_in_stack=l.size();
+                        a[a[csb->current].next[csb->for_iterator]].higher_possible=l.size();
                     }
                     csb->next_counter+=1;
-                    call_stack.push_back({a[csb->current].next[csb->for_iterator],csb->current,1,0,0});
+                    l.push_back({a[csb->current].next[csb->for_iterator],csb->current,1,0,0});
                     goto _dfs;
                     case 1:
-                    call_stack.pop_back();
-                    csb=&call_stack.back();
-                    if (a[a[csb->current].next[csb->for_iterator]].index_in_stack==call_stack.size()){
+                    l.pop_back();
+                    csb=&l.back();
+                    if (a[a[csb->current].next[csb->for_iterator]].index_in_stack==l.size()){
                         a[csb->current].higher_possible_if_this_deleted|max_assigner()|a[a[csb->current].next[csb->for_iterator]].higher_possible;
                         a[csb->current].higher_possible|min_assigner()|a[a[csb->current].next[csb->for_iterator]].higher_possible;
                         a[a[csb->current].next[csb->for_iterator]].index_in_stack=none;
@@ -214,7 +239,10 @@ void dfs(vector<v>&a,llu start){
                     }
                 }
             }
-            if (call_stack.size()>1 and a[csb->current].index_in_stack==a[csb->current].higher_possible_if_this_deleted or call_stack.size()==1 and csb->next_counter>1){
+            if (a[csb->current].higher_possible==a[csb->current].index_in_stack){
+                r.push_back({csb->current,csb->previous});
+            }
+            if (l.size()>1 and a[csb->current].index_in_stack==a[csb->current].higher_possible_if_this_deleted or l.size()==1 and csb->next_counter>1){
                 a[csb->current].dfs_state=3;
             }else{
                 a[csb->current].dfs_state=2;
@@ -232,24 +260,34 @@ void dfs(vector<v>&a,llu start){
 
 int main(){
     llu n=getint(),m=getint();
-    vector<v> a(n);
+    vector<vert> a(n);
+    vector<t<llu,llu>> e;
+    vector<t<llu,llu>> r;
     for (llu w=0;w<m;++w){
         llu z=getint()-1,x=getint()-1;
         a[z].next.push_back(x);
         a[x].next.push_back(z);
+        e.push_back({z,x});
     }
     for (llu w=0;w<n;++w){
-        dfs(a,w);
+        dfs(a,r,w);
     }
+    ic(r)
+    sort(r.begin(),r.end());
+    ic(r)
     llu c=0;
-    for (llu w=0;w<n;++w){
-        if (a[w].dfs_state==3){
+    for (llu w=0;w<m;++w){
+        auto y=e[w];
+        swap(y.v0,y.v1);
+        if (lower_bound(r.begin(),r.end(),e[w])!=upper_bound(r.begin(),r.end(),e[w]) or lower_bound(r.begin(),r.end(),y)!=upper_bound(r.begin(),r.end(),y)){
             c+=1;
         }
     }
     cout<<c<<endl;
-    for (llu w=0;w<n;++w){
-        if (a[w].dfs_state==3){
+    for (llu w=0;w<m;++w){
+        auto y=e[w];
+        swap(y.v0,y.v1);
+        if (lower_bound(r.begin(),r.end(),e[w])!=upper_bound(r.begin(),r.end(),e[w]) or lower_bound(r.begin(),r.end(),y)!=upper_bound(r.begin(),r.end(),y)){
             cout<<w+1<<" ";
         }
     }
