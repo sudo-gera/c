@@ -214,7 +214,7 @@ CourseRepo_BINARY_DIR:STATIC=/Users/gera/c
 CourseRepo_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
-CourseRepo_SOURCE_DIR:STATIC=/Users/gera/courserepo
+CourseRepo_SOURCE_DIR:STATIC=/Users/gera/cpp-2022-sudo-gera
 
 
 ########################
@@ -295,7 +295,7 @@ CMAKE_GENERATOR_PLATFORM:INTERNAL=
 CMAKE_GENERATOR_TOOLSET:INTERNAL=
 //Source directory with the top level CMakeLists.txt file for this
 // project
-CMAKE_HOME_DIRECTORY:INTERNAL=/Users/gera/courserepo
+CMAKE_HOME_DIRECTORY:INTERNAL=/Users/gera/cpp-2022-sudo-gera
 //ADVANCED property for variable: CMAKE_INSTALL_NAME_TOOL
 CMAKE_INSTALL_NAME_TOOL-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_LINKER

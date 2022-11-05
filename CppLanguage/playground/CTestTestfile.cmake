@@ -1,5 +1,5 @@
 # CMake generated Testfile for 
-# Source directory: /Users/gera/courserepo/CppLanguage/playground
+# Source directory: /Users/gera/cpp-2022-sudo-gera/CppLanguage/playground
 # Build directory: /Users/gera/c/CppLanguage/playground
 # 
 # This file includes the relevant testing commands required for 

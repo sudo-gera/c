@@ -1,5 +1,5 @@
 # CMake generated Testfile for 
-# Source directory: /Users/gera/courserepo/CppLanguage
+# Source directory: /Users/gera/cpp-2022-sudo-gera/CppLanguage
 # Build directory: /Users/gera/c/CppLanguage
 # 
 # This file includes the relevant testing commands required for 

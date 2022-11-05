@@ -53,7 +53,7 @@ RM = /opt/local/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/gera/courserepo
+CMAKE_SOURCE_DIR = /Users/gera/cpp-2022-sudo-gera
 
 # The top-level build directory on which CMake was run.
 CMAKE_BINARY_DIR = /Users/gera/c
@@ -70,18 +70,18 @@ include CppLanguage/tasks/simple_test/CMakeFiles/test_simple_cpp.dir/progress.ma
 include CppLanguage/tasks/simple_test/CMakeFiles/test_simple_cpp.dir/flags.make
 
 CppLanguage/tasks/simple_test/CMakeFiles/test_simple_cpp.dir/simple_test.cpp.o: CppLanguage/tasks/simple_test/CMakeFiles/test_simple_cpp.dir/flags.make
-CppLanguage/tasks/simple_test/CMakeFiles/test_simple_cpp.dir/simple_test.cpp.o: /Users/gera/courserepo/CppLanguage/tasks/simple_test/simple_test.cpp
+CppLanguage/tasks/simple_test/CMakeFiles/test_simple_cpp.dir/simple_test.cpp.o: /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/simple_test/simple_test.cpp
 CppLanguage/tasks/simple_test/CMakeFiles/test_simple_cpp.dir/simple_test.cpp.o: CppLanguage/tasks/simple_test/CMakeFiles/test_simple_cpp.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/gera/c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CppLanguage/tasks/simple_test/CMakeFiles/test_simple_cpp.dir/simple_test.cpp.o"
-	cd /Users/gera/c/CppLanguage/tasks/simple_test && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CppLanguage/tasks/simple_test/CMakeFiles/test_simple_cpp.dir/simple_test.cpp.o -MF CMakeFiles/test_simple_cpp.dir/simple_test.cpp.o.d -o CMakeFiles/test_simple_cpp.dir/simple_test.cpp.o -c /Users/gera/courserepo/CppLanguage/tasks/simple_test/simple_test.cpp
+	cd /Users/gera/c/CppLanguage/tasks/simple_test && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CppLanguage/tasks/simple_test/CMakeFiles/test_simple_cpp.dir/simple_test.cpp.o -MF CMakeFiles/test_simple_cpp.dir/simple_test.cpp.o.d -o CMakeFiles/test_simple_cpp.dir/simple_test.cpp.o -c /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/simple_test/simple_test.cpp
 
 CppLanguage/tasks/simple_test/CMakeFiles/test_simple_cpp.dir/simple_test.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_simple_cpp.dir/simple_test.cpp.i"
-	cd /Users/gera/c/CppLanguage/tasks/simple_test && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/gera/courserepo/CppLanguage/tasks/simple_test/simple_test.cpp > CMakeFiles/test_simple_cpp.dir/simple_test.cpp.i
+	cd /Users/gera/c/CppLanguage/tasks/simple_test && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/simple_test/simple_test.cpp > CMakeFiles/test_simple_cpp.dir/simple_test.cpp.i
 
 CppLanguage/tasks/simple_test/CMakeFiles/test_simple_cpp.dir/simple_test.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_simple_cpp.dir/simple_test.cpp.s"
-	cd /Users/gera/c/CppLanguage/tasks/simple_test && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/gera/courserepo/CppLanguage/tasks/simple_test/simple_test.cpp -o CMakeFiles/test_simple_cpp.dir/simple_test.cpp.s
+	cd /Users/gera/c/CppLanguage/tasks/simple_test && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/simple_test/simple_test.cpp -o CMakeFiles/test_simple_cpp.dir/simple_test.cpp.s
 
 # Object files for target test_simple_cpp
 test_simple_cpp_OBJECTS = \
@@ -105,6 +105,6 @@ CppLanguage/tasks/simple_test/CMakeFiles/test_simple_cpp.dir/clean:
 .PHONY : CppLanguage/tasks/simple_test/CMakeFiles/test_simple_cpp.dir/clean
 
 CppLanguage/tasks/simple_test/CMakeFiles/test_simple_cpp.dir/depend:
-	cd /Users/gera/c && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/gera/courserepo /Users/gera/courserepo/CppLanguage/tasks/simple_test /Users/gera/c /Users/gera/c/CppLanguage/tasks/simple_test /Users/gera/c/CppLanguage/tasks/simple_test/CMakeFiles/test_simple_cpp.dir/DependInfo.cmake --color=$(COLOR)
+	cd /Users/gera/c && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/gera/cpp-2022-sudo-gera /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/simple_test /Users/gera/c /Users/gera/c/CppLanguage/tasks/simple_test /Users/gera/c/CppLanguage/tasks/simple_test/CMakeFiles/test_simple_cpp.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CppLanguage/tasks/simple_test/CMakeFiles/test_simple_cpp.dir/depend
 

@@ -15,20 +15,20 @@
 #include <string_view>
 #include <string.h>
 #include <functional>
-using std::cin; using std::cout; using std::endl; using std::vector; using std::string; using std::sort;
-using std::pair; using std::set; using std::unordered_set; using std::map; using std::unordered_map;
-using std::min; using std::max; using std::tuple; using std::tie; using std::get; using std::make_tuple;
-using std::move; using std::swap; using std::generate; using std::generate_n;
-using std::back_inserter; using std::list; using std::hash; using std::reverse;
-using std::lower_bound; using std::upper_bound; using std::flush; using std::prev; using std::next;
-using std::tuple_size; using std::lexicographical_compare; using std::set_intersection;
-using std::copy_if; using std::exit; using std::enable_if; using std::enable_if;
-using std::tuple_cat; using std::find; using std::find_if; using std::find_if_not;
-using std::ref; using std::cref; using std::reference_wrapper; using std::remove_reference;
-using std::tuple_element; using std::tuple_size; using std::is_same;
-#if __cplusplus>=201703L
+#include <type_traits>
+using std::cin, std::cout, std::endl, std::vector, std::string, std::sort;
+using std::pair, std::set, std::unordered_set, std::map, std::unordered_map;
+using std::min, std::max, std::tuple, std::tie, std::get, std::make_tuple;
+using std::move, std::swap, std::generate, std::generate_n;
+using std::back_inserter, std::list, std::hash, std::reverse;
+using std::lower_bound, std::upper_bound, std::flush, std::prev, std::next;
+using std::tuple_size, std::lexicographical_compare, std::set_intersection;
+using std::copy_if, std::exit, std::enable_if, std::enable_if;
+using std::tuple_cat, std::find, std::find_if, std::find_if_not;
+using std::ref, std::cref, std::reference_wrapper, std::remove_reference;
+using std::tuple_element, std::tuple_size, std::is_same;
 using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
-#endif
+using std::generate, std::generate_n, std::remove_reference_t;
 
 static inline int64_t getint() {
     int sign = 1;
@@ -87,35 +87,24 @@ struct t{
 };
 
 template<llu n=0,typename T,typename R>
-auto clear_tuple(T t=tuple<>(),R r=tuple<>(),typename enable_if<tuple_size<R>::value<=n or  is_same<sized<0>,typename tuple_element<n,R>::type>::value,int>::type =0)->
-  decltype(t){
+auto clear_tuple(T t=tuple<>(),R r=tuple<>(),typename enable_if<tuple_size<R>::value<=n or  is_same<sized<0>,typename tuple_element<n,R>::type>::value,int>::type =0){
     return t;
 }
 
 template<llu n=0,typename T,typename R>
-auto clear_tuple(T t=tuple<>(),R r=tuple<>(),typename enable_if<n<tuple_size<R>::value and !is_same<sized<0>,typename tuple_element<n,R>::type>::value,int>::type =0)->
-  decltype(clear_tuple<n+1>(tuple_cat(t,make_tuple(get<n>(r))),r)){
+auto clear_tuple(T t=tuple<>(),R r=tuple<>(),typename enable_if<n<tuple_size<R>::value and !is_same<sized<0>,typename tuple_element<n,R>::type>::value,int>::type =0){
     return clear_tuple<n+1>(tuple_cat(t,make_tuple(get<n>(r))),r);
 }
 
 template<typename...T>
-auto t2tuple(t<T...>r)->
-  decltype(clear_tuple(tuple<>(),(tuple<T...>&&)(r))){
+auto t2tuple(t<T...>r){
     return clear_tuple(tuple<>(),(tuple<T...>&&)(r));
 }
 
 template<typename...T>
-auto to_str(t<T...>r)->
-  decltype(t2tuple(r)){
+auto to_str(t<T...>r){
     return t2tuple(r);
 }
-
-template<llu n>bool operator< (sized<n>r,sized<n>y){return 0;}
-template<llu n>bool operator> (sized<n>r,sized<n>y){return 0;}
-template<llu n>bool operator<=(sized<n>r,sized<n>y){return 1;}
-template<llu n>bool operator>=(sized<n>r,sized<n>y){return 1;}
-template<llu n>bool operator!=(sized<n>r,sized<n>y){return 0;}
-template<llu n>bool operator==(sized<n>r,sized<n>y){return 1;}
 
 template<typename...R,typename...Y>bool operator< (t<R...>r,t<Y...>y){return t2tuple(r)< t2tuple(y);}
 template<typename...R,typename...Y>bool operator> (t<R...>r,t<Y...>y){return t2tuple(r)> t2tuple(y);}
@@ -123,6 +112,7 @@ template<typename...R,typename...Y>bool operator<=(t<R...>r,t<Y...>y){return t2t
 template<typename...R,typename...Y>bool operator>=(t<R...>r,t<Y...>y){return t2tuple(r)>=t2tuple(y);}
 template<typename...R,typename...Y>bool operator!=(t<R...>r,t<Y...>y){return t2tuple(r)!=t2tuple(y);}
 template<typename...R,typename...Y>bool operator==(t<R...>r,t<Y...>y){return t2tuple(r)==t2tuple(y);}
+
 
 #ifndef ic
 #define ic(...)
@@ -134,43 +124,33 @@ template<typename...R,typename...Y>bool operator==(t<R...>r,t<Y...>y){return t2t
 
 /*
 
-a | min_assigner() | b;
+a | assign(min) | b;
 -- instead of
 a = min(a, b);
 
 */
 
-struct base_assigner{
-    template<typename T>
-    using is_assigner=T;
+template<typename T>
+struct assign_s{
+    T f;
 };
+
+template<typename T>
+assign_s(T f)->assign_s<T>;
 
 template<typename T,typename Y>
-auto operator|(T&&q,Y&&w)->typename Y::template is_assigner<t<
-    typename remove_reference<T>::type*,
-    Y
->>{
-    return {&q,w};
+auto operator|(T&&q,assign_s<Y> w){
+    return t<remove_reference_t<T>*,assign_s<Y>>{&q,w};
 }
 
-template<typename T,typename Y>
-auto operator|(T&&q,Y&&w)->typename decltype(q.v1)::template is_assigner<void>{
-    q.v1(q.v0[0],w);
+template<typename R,typename T,typename Y>
+auto operator|(t<R*,assign_s<T>> q,Y&&w){
+    q.v0[0]=q.v1.f(q.v0[0],w);
 }
 
+#define assign(f) assign_s{[&](auto q,auto w){return (f)(q,w);}}
 
-struct min_assigner:base_assigner{
-    template<typename T,typename Y>
-    auto operator()(T&&q,Y&&w)->void{
-        q=min(q,w);
-    }
-};
-
-struct max_assigner:base_assigner{
-    template<typename T,typename Y>
-    auto operator()(T&&q,Y&&w)->void{
-        q=max(q,w);
-    }
-};
 
 ///////////////////////////////////////////////////end of lib
+
+

@@ -176,8 +176,77 @@ struct max_assigner:base_assigner{
 ///////////////////////////////////////////////////end of lib
 
 
+t<llu,llu> get_next(t<llu,llu> q,t<llu,llu> s){
+    if (q.v0>s.v1-q.v1){
+        return {q.v0-s.v1+q.v1,s.v1};
+    }else{
+        return {0,q.v1+q.v0};
+    }
+}
+
+auto _get_next(t<llu,llu,llu> q,t<llu,llu,llu> s){
+    vector<decltype(q)> a;
+    t<llu,llu> e;
+    t<llu,llu,llu> r;
+    e=get_next({q.v0,q.v1},{s.v0,s.v1});
+    r={e.v0,e.v1,q.v2};
+    if (r!=q){
+        a.push_back(r);
+    }
+    e=get_next({q.v1,q.v0},{s.v1,s.v0});
+    r={e.v1,e.v0,q.v2};
+    if (r!=q){
+        a.push_back(r);
+    }
+    e=get_next({q.v0,q.v2},{s.v0,s.v2});
+    r={e.v0,q.v1,e.v1};
+    if (r!=q){
+        a.push_back(r);
+    }
+    e=get_next({q.v2,q.v0},{s.v2,s.v0});
+    r={e.v1,q.v1,e.v0};
+    if (r!=q){
+        a.push_back(r);
+    }
+    e=get_next({q.v1,q.v2},{s.v1,s.v2});
+    r={q.v0,e.v0,e.v1};
+    if (r!=q){
+        a.push_back(r);
+    }
+    e=get_next({q.v2,q.v1},{s.v2,s.v1});
+    r={q.v0,e.v1,e.v0};
+    if (r!=q){
+        a.push_back(r);
+    }
+    return a;
+}
+
 int main(){
     llu n=getint(),m=getint(),k=getint(),l=getint();
-    
+    // s={n,m,k};
+    // q=
+    map<
+        t<llu,llu,llu>,
+        t<llu>
+    > tree;
+    vector<t<llu,llu,llu>> q;
+    q.push_back({n,0,0});
+    tree[{n,0,0}].v0=0;
+    llu qg=0;
+    while(qg!=q.size()){
+        auto z=q[qg++];
+        auto x=_get_next(z,{n,m,k});
+        if (z.v0==l){
+            cout<<tree[z].v0<<endl;
+            return 0;
+        }
+        for (auto c:x){
+            if (not tree.count(c)){
+                tree[c].v0=tree[z].v0+1;
+                q.push_back(c);
+            }
+        }
+    }
+    cout<<"OOPS"<<endl;
 }
 

@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/Users/gera/courserepo/CppLanguage/playground/main.cpp" "CppLanguage/playground/CMakeFiles/playground.dir/main.cpp.o" "gcc" "CppLanguage/playground/CMakeFiles/playground.dir/main.cpp.o.d"
+  "/Users/gera/cpp-2022-sudo-gera/CppLanguage/playground/main.cpp" "CppLanguage/playground/CMakeFiles/playground.dir/main.cpp.o" "gcc" "CppLanguage/playground/CMakeFiles/playground.dir/main.cpp.o.d"
   )
 
 # Targets to which this target links.

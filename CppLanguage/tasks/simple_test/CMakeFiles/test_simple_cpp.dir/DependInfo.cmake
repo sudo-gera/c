@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/Users/gera/courserepo/CppLanguage/tasks/simple_test/simple_test.cpp" "CppLanguage/tasks/simple_test/CMakeFiles/test_simple_cpp.dir/simple_test.cpp.o" "gcc" "CppLanguage/tasks/simple_test/CMakeFiles/test_simple_cpp.dir/simple_test.cpp.o.d"
+  "/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/simple_test/simple_test.cpp" "CppLanguage/tasks/simple_test/CMakeFiles/test_simple_cpp.dir/simple_test.cpp.o" "gcc" "CppLanguage/tasks/simple_test/CMakeFiles/test_simple_cpp.dir/simple_test.cpp.o.d"
   )
 
 # Targets to which this target links.

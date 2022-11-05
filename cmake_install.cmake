@@ -1,4 +1,4 @@
-# Install script for directory: /Users/gera/courserepo
+# Install script for directory: /Users/gera/cpp-2022-sudo-gera
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
