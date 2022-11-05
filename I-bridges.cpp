@@ -124,12 +124,6 @@ template<typename...R,typename...Y>bool operator>=(t<R...>r,t<Y...>y){return t2t
 template<typename...R,typename...Y>bool operator!=(t<R...>r,t<Y...>y){return t2tuple(r)!=t2tuple(y);}
 template<typename...R,typename...Y>bool operator==(t<R...>r,t<Y...>y){return t2tuple(r)==t2tuple(y);}
 
-#if __cplusplus>=201703L //only for debugging
-
-
-
-#endif
-
 #ifndef ic
 #define ic(...)
 #endif

@@ -53,7 +53,7 @@ RM = /opt/local/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/gera/courcerepo
+CMAKE_SOURCE_DIR = /Users/gera/courserepo
 
 # The top-level build directory on which CMake was run.
 CMAKE_BINARY_DIR = /Users/gera/c
@@ -70,18 +70,18 @@ include CppLanguage/playground/CMakeFiles/playground.dir/progress.make
 include CppLanguage/playground/CMakeFiles/playground.dir/flags.make
 
 CppLanguage/playground/CMakeFiles/playground.dir/main.cpp.o: CppLanguage/playground/CMakeFiles/playground.dir/flags.make
-CppLanguage/playground/CMakeFiles/playground.dir/main.cpp.o: /Users/gera/courcerepo/CppLanguage/playground/main.cpp
+CppLanguage/playground/CMakeFiles/playground.dir/main.cpp.o: /Users/gera/courserepo/CppLanguage/playground/main.cpp
 CppLanguage/playground/CMakeFiles/playground.dir/main.cpp.o: CppLanguage/playground/CMakeFiles/playground.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/gera/c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CppLanguage/playground/CMakeFiles/playground.dir/main.cpp.o"
-	cd /Users/gera/c/CppLanguage/playground && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CppLanguage/playground/CMakeFiles/playground.dir/main.cpp.o -MF CMakeFiles/playground.dir/main.cpp.o.d -o CMakeFiles/playground.dir/main.cpp.o -c /Users/gera/courcerepo/CppLanguage/playground/main.cpp
+	cd /Users/gera/c/CppLanguage/playground && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CppLanguage/playground/CMakeFiles/playground.dir/main.cpp.o -MF CMakeFiles/playground.dir/main.cpp.o.d -o CMakeFiles/playground.dir/main.cpp.o -c /Users/gera/courserepo/CppLanguage/playground/main.cpp
 
 CppLanguage/playground/CMakeFiles/playground.dir/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/playground.dir/main.cpp.i"
-	cd /Users/gera/c/CppLanguage/playground && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/gera/courcerepo/CppLanguage/playground/main.cpp > CMakeFiles/playground.dir/main.cpp.i
+	cd /Users/gera/c/CppLanguage/playground && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/gera/courserepo/CppLanguage/playground/main.cpp > CMakeFiles/playground.dir/main.cpp.i
 
 CppLanguage/playground/CMakeFiles/playground.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/playground.dir/main.cpp.s"
-	cd /Users/gera/c/CppLanguage/playground && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/gera/courcerepo/CppLanguage/playground/main.cpp -o CMakeFiles/playground.dir/main.cpp.s
+	cd /Users/gera/c/CppLanguage/playground && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/gera/courserepo/CppLanguage/playground/main.cpp -o CMakeFiles/playground.dir/main.cpp.s
 
 # Object files for target playground
 playground_OBJECTS = \
@@ -105,6 +105,6 @@ CppLanguage/playground/CMakeFiles/playground.dir/clean:
 .PHONY : CppLanguage/playground/CMakeFiles/playground.dir/clean
 
 CppLanguage/playground/CMakeFiles/playground.dir/depend:
-	cd /Users/gera/c && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/gera/courcerepo /Users/gera/courcerepo/CppLanguage/playground /Users/gera/c /Users/gera/c/CppLanguage/playground /Users/gera/c/CppLanguage/playground/CMakeFiles/playground.dir/DependInfo.cmake --color=$(COLOR)
+	cd /Users/gera/c && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/gera/courserepo /Users/gera/courserepo/CppLanguage/playground /Users/gera/c /Users/gera/c/CppLanguage/playground /Users/gera/c/CppLanguage/playground/CMakeFiles/playground.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CppLanguage/playground/CMakeFiles/playground.dir/depend
 

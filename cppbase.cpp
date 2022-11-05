@@ -25,6 +25,7 @@ using std::tuple_size; using std::lexicographical_compare; using std::set_inters
 using std::copy_if; using std::exit; using std::enable_if; using std::enable_if;
 using std::tuple_cat; using std::find; using std::find_if; using std::find_if_not;
 using std::ref; using std::cref; using std::reference_wrapper; using std::remove_reference;
+using std::tuple_element; using std::tuple_size; using std::is_same;
 #if __cplusplus>=201703L
 using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
 #endif
@@ -48,6 +49,7 @@ static inline int64_t getint() {
 }
 
 using llu=long long unsigned;
+using ll=long long;
 
 #define cache(rt,...)\
     static map<decltype(make_tuple(__VA_ARGS__)),rt> cache;\
@@ -55,7 +57,7 @@ using llu=long long unsigned;
         return (cache)[{__VA_ARGS__}];\
     }
 
-#define none 9000000000000000000LLU
+#define none 9000000000000000000
 
 template<llu n>
 struct sized{
@@ -84,46 +86,91 @@ struct t{
     t7 v7;
 };
 
-#if __cplusplus>=201703L //only for debugging
-
 template<llu n=0,typename T,typename R>
-auto clear_tuple(T t=tuple<>(),R r=tuple<>(),enable_if_t<tuple_size_v<R><=n or  is_same_v<sized<0>,tuple_element_t<n,R>>,int> =0){
+auto clear_tuple(T t=tuple<>(),R r=tuple<>(),typename enable_if<tuple_size<R>::value<=n or  is_same<sized<0>,typename tuple_element<n,R>::type>::value,int>::type =0)->
+  decltype(t){
     return t;
 }
 
 template<llu n=0,typename T,typename R>
-auto clear_tuple(T t=tuple<>(),R r=tuple<>(),enable_if_t<n<tuple_size_v<R> and !is_same_v<sized<0>,tuple_element_t<n,R>>,int> =0){
+auto clear_tuple(T t=tuple<>(),R r=tuple<>(),typename enable_if<n<tuple_size<R>::value and !is_same<sized<0>,typename tuple_element<n,R>::type>::value,int>::type =0)->
+  decltype(clear_tuple<n+1>(tuple_cat(t,make_tuple(get<n>(r))),r)){
     return clear_tuple<n+1>(tuple_cat(t,make_tuple(get<n>(r))),r);
 }
 
 template<typename...T>
-auto to_str(t<T...>r){
-    return clear_tuple(tuple<>(),(tuple<T...>&&)r);
+auto t2tuple(t<T...>r)->
+  decltype(clear_tuple(tuple<>(),(tuple<T...>&&)(r))){
+    return clear_tuple(tuple<>(),(tuple<T...>&&)(r));
 }
 
+template<typename...T>
+auto to_str(t<T...>r)->
+  decltype(t2tuple(r)){
+    return t2tuple(r);
+}
+
+template<llu n>bool operator< (sized<n>r,sized<n>y){return 0;}
+template<llu n>bool operator> (sized<n>r,sized<n>y){return 0;}
+template<llu n>bool operator<=(sized<n>r,sized<n>y){return 1;}
+template<llu n>bool operator>=(sized<n>r,sized<n>y){return 1;}
+template<llu n>bool operator!=(sized<n>r,sized<n>y){return 0;}
+template<llu n>bool operator==(sized<n>r,sized<n>y){return 1;}
+
+template<typename...R,typename...Y>bool operator< (t<R...>r,t<Y...>y){return t2tuple(r)< t2tuple(y);}
+template<typename...R,typename...Y>bool operator> (t<R...>r,t<Y...>y){return t2tuple(r)> t2tuple(y);}
+template<typename...R,typename...Y>bool operator<=(t<R...>r,t<Y...>y){return t2tuple(r)<=t2tuple(y);}
+template<typename...R,typename...Y>bool operator>=(t<R...>r,t<Y...>y){return t2tuple(r)>=t2tuple(y);}
+template<typename...R,typename...Y>bool operator!=(t<R...>r,t<Y...>y){return t2tuple(r)!=t2tuple(y);}
+template<typename...R,typename...Y>bool operator==(t<R...>r,t<Y...>y){return t2tuple(r)==t2tuple(y);}
+
+#ifndef ic
+#define ic(...)
 #endif
 
-#define set(f) set_s([&](auto&&q,auto&&w){return f(q,w);})
+#ifndef eic
+#define eic
+#endif
 
-// a|set(min)|b
-// // instead of
-// a = min(a,b)
+/*
 
-template<typename T>
-struct set_s{
-    T f;
-    set_s(T f):f(f){}
+a | min_assigner() | b;
+-- instead of
+a = min(a, b);
+
+*/
+
+struct base_assigner{
+    template<typename T>
+    using is_assigner=T;
 };
 
 template<typename T,typename Y>
-t<reference_wrapper<typename remove_reference<T>::type>,set_s<Y>> operator|(T&&q,set_s<Y> e){
-    return {ref(q),e};
+auto operator|(T&&q,Y&&w)->typename Y::template is_assigner<t<
+    typename remove_reference<T>::type*,
+    Y
+>>{
+    return {&q,w};
 }
 
-template<typename T,typename Y,typename U>
-auto operator|(t<T,set_s<Y>> q,U e){
-    q.v0.get()=q.v1.f(q.v0.get(),e);
+template<typename T,typename Y>
+auto operator|(T&&q,Y&&w)->typename decltype(q.v1)::template is_assigner<void>{
+    q.v1(q.v0[0],w);
 }
 
+
+struct min_assigner:base_assigner{
+    template<typename T,typename Y>
+    auto operator()(T&&q,Y&&w)->void{
+        q=min(q,w);
+    }
+};
+
+struct max_assigner:base_assigner{
+    template<typename T,typename Y>
+    auto operator()(T&&q,Y&&w)->void{
+        q=max(q,w);
+    }
+};
 
 ///////////////////////////////////////////////////end of lib
