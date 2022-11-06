@@ -1,5 +1,4 @@
 // #include <bits/stdc++.h>
-#include <vector>
 #include <string>
 using namespace std;
 
@@ -11,12 +10,12 @@ using namespace std;
         void* return_ptr;\
         layer::return_type rt_str;\
     };\
-    vector<pair<layer,another_layer>> call_stack;\
-    call_stack.emplace_back();\
-    call_stack.push_back({{__VA_ARGS__},{&&end}});\
+    pair<layer,another_layer> call_stack[1024];\
+    llu csl=1;\
+    call_stack[csl++]={{__VA_ARGS__},{&&end}};\
     void* setup_locals_ret=&&start;\
     setup_locals:\
-    auto*locals_pair=&call_stack.back();\
+    auto*locals_pair=&call_stack[csl-1];\
     auto&locals=locals_pair[0].first;\
     auto&another_locals=locals_pair[0].second;\
     auto&last_returned=another_locals.rt_str;\
@@ -30,7 +29,7 @@ using namespace std;
 #define call(...)\
     ({\
         {\
-            call_stack.push_back({{__VA_ARGS__},{&&unique_name(__LINE__)}});\
+            call_stack[csl++]={{__VA_ARGS__},{&&unique_name(__LINE__)}};\
             setup_locals_ret=&&start;\
             goto setup_locals;\
         }\
@@ -42,11 +41,13 @@ using namespace std;
     {\
         to_return=(__VA_ARGS__);\
         setup_locals_ret=another_locals.return_ptr;\
-        call_stack.pop_back();\
+        csl--;\
         goto setup_locals;\
     }
 
 using llu=long long unsigned;
+
+
 
 auto run0(string _n){
     struct layer{
@@ -62,8 +63,8 @@ auto run0(string _n){
     // locals.r=last_returned;
     // call(to_string(stoul(locals.n)-2));
     // locals.r=to_string(stoul(locals.r)+stoul(last_returned));
-    locals.r=to_string(stoul((call(to_string(stoul(locals.n)-1)),last_returned))+
-    stoul((call(to_string(stoul(locals.n)-1)),last_returned)));
+    locals.r=to_string(stoul((call(locals.n),last_returned))+
+    stoul((call(locals.n),last_returned)));
     ret(locals.r);
 }
 
