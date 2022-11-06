@@ -1,1 +1,1 @@
-123
+#!/home/gera/c/test.py

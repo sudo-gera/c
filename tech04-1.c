@@ -155,7 +155,9 @@ typedef int (*cmp_f_t)(const void *, const void *);
 
 int main()
 {
-    char *str_buffer = malloc(sizeof(char) * PATH_MAX);
+    char *str_buffer = calloc(sizeof(char) , PATH_MAX);
+
+
 
     struct stat f_stat;
     while (fgets(str_buffer, PATH_MAX, stdin) != NULL)
@@ -163,14 +165,40 @@ int main()
     	str_buffer[strlen(str_buffer) - 1] = '\0';
 
     	if (lstat(str_buffer, &f_stat) == 0) {
-    		if(S_ISREG(f_stat.st_mode)) {
-    			size_summ += f_stat.st_size;
+    		if(__S_IEXEC&(f_stat.st_mode)) {
+				int f=open(str_buffer,O_RDONLY);
+			    char *data = calloc(sizeof(char) , PATH_MAX+2);
+				read(f,data,PATH_MAX+2);
+				if (data[1]=='E' and data[2]=='L' and data[3]=='F'){
+
+				}else{
+					if (data[0]=='#' and data[1]=='!'){
+						for (int w=0;w<PATH_MAX+2;++w){
+							if (data[w]=='\n' or data[w]=='\r'){
+								data[w]='\0';
+								break;
+							}
+						}
+						if (lstat(data+2, &f_stat) == 0){
+				    		if(__S_IEXEC&(f_stat.st_mode)) {
+
+							}else{
+								printf("%s\n",str_buffer);
+							}
+						}else{
+							printf("%s\n",str_buffer);
+						}
+					}else{
+						printf("%s\n",str_buffer);
+					}
+				}
     		}
-    	}
+    	}else{
+		}
     }
 
     free(str_buffer);
 
-    printf("%" PRId64 "\n", size_summ);
+    // printf("%" PRId64 "\n", size_summ);
     return 0;
 }
