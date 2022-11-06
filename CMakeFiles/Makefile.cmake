@@ -10,12 +10,11 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.23.3/CMakeCCompiler.cmake"
   "CMakeFiles/3.23.3/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.23.3/CMakeSystem.cmake"
-  "/Users/gera/courcerepo/CLanguage/CMakeLists.txt"
-  "/Users/gera/courcerepo/CLanguage/example/CMakeLists.txt"
-  "/Users/gera/courcerepo/CMakeLists.txt"
-  "/Users/gera/courcerepo/CppLanguage/CMakeLists.txt"
-  "/Users/gera/courcerepo/CppLanguage/any/CMakeLists.txt"
-  "/Users/gera/courcerepo/CppLanguage/simple_test/CMakeLists.txt"
+  "/Users/gera/cpp-2022-sudo-gera/CMakeLists.txt"
+  "/Users/gera/cpp-2022-sudo-gera/CppLanguage/CMakeLists.txt"
+  "/Users/gera/cpp-2022-sudo-gera/CppLanguage/playground/CMakeLists.txt"
+  "/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/CMakeLists.txt"
+  "/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/any/CMakeLists.txt"
   "/opt/local/share/cmake-3.23/Modules/CMakeCInformation.cmake"
   "/opt/local/share/cmake-3.23/Modules/CMakeCXXInformation.cmake"
   "/opt/local/share/cmake-3.23/Modules/CMakeCommonLanguageInclude.cmake"
@@ -48,16 +47,14 @@ set(CMAKE_MAKEFILE_OUTPUTS
 # Byproducts of CMake generate step:
 set(CMAKE_MAKEFILE_PRODUCTS
   "CMakeFiles/CMakeDirectoryInformation.cmake"
-  "CLanguage/CMakeFiles/CMakeDirectoryInformation.cmake"
-  "CLanguage/example/CMakeFiles/CMakeDirectoryInformation.cmake"
   "CppLanguage/CMakeFiles/CMakeDirectoryInformation.cmake"
-  "CppLanguage/any/CMakeFiles/CMakeDirectoryInformation.cmake"
-  "CppLanguage/simple_test/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "CppLanguage/tasks/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "CppLanguage/tasks/any/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "CppLanguage/playground/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CLanguage/example/CMakeFiles/c_test_example.dir/DependInfo.cmake"
-  "CppLanguage/any/CMakeFiles/test_any.dir/DependInfo.cmake"
-  "CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/DependInfo.cmake"
+  "CppLanguage/tasks/any/CMakeFiles/test_any.dir/DependInfo.cmake"
+  "CppLanguage/playground/CMakeFiles/playground.dir/DependInfo.cmake"
   )

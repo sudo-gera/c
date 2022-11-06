@@ -214,16 +214,7 @@ CourseRepo_BINARY_DIR:STATIC=/Users/gera/c
 CourseRepo_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
-CourseRepo_SOURCE_DIR:STATIC=/Users/gera/courcerepo
-
-//Value Computed by CMake
-DraftRepo_BINARY_DIR:STATIC=/Users/gera/c/CLanguage
-
-//Value Computed by CMake
-DraftRepo_IS_TOP_LEVEL:STATIC=OFF
-
-//Value Computed by CMake
-DraftRepo_SOURCE_DIR:STATIC=/Users/gera/courcerepo/CLanguage
+CourseRepo_SOURCE_DIR:STATIC=/Users/gera/cpp-2022-sudo-gera
 
 
 ########################
@@ -304,7 +295,7 @@ CMAKE_GENERATOR_PLATFORM:INTERNAL=
 CMAKE_GENERATOR_TOOLSET:INTERNAL=
 //Source directory with the top level CMakeLists.txt file for this
 // project
-CMAKE_HOME_DIRECTORY:INTERNAL=/Users/gera/courcerepo
+CMAKE_HOME_DIRECTORY:INTERNAL=/Users/gera/cpp-2022-sudo-gera
 //ADVANCED property for variable: CMAKE_INSTALL_NAME_TOOL
 CMAKE_INSTALL_NAME_TOOL-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_LINKER
@@ -324,7 +315,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=6
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=5
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

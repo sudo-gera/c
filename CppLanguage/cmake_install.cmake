@@ -1,4 +1,4 @@
-# Install script for directory: /Users/gera/courcerepo/CppLanguage
+# Install script for directory: /Users/gera/cpp-2022-sudo-gera/CppLanguage
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,8 +39,8 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/Users/gera/c/CppLanguage/any/cmake_install.cmake")
-  include("/Users/gera/c/CppLanguage/simple_test/cmake_install.cmake")
+  include("/Users/gera/c/CppLanguage/tasks/cmake_install.cmake")
+  include("/Users/gera/c/CppLanguage/playground/cmake_install.cmake")
 
 endif()
 

@@ -156,8 +156,11 @@ typedef int (*cmp_f_t)(const void *, const void *);
 int main()
 {
     char *str_buffer = calloc(sizeof(char) , PATH_MAX);
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 9d7f88a9c7212a0fc8646759b2c7e99597b501b7
 
     struct stat f_stat;
     while (fgets(str_buffer, PATH_MAX, stdin) != NULL)
@@ -165,6 +168,7 @@ int main()
     	str_buffer[strlen(str_buffer) - 1] = '\0';
 
     	if (lstat(str_buffer, &f_stat) == 0) {
+<<<<<<< HEAD
     		if(__S_IEXEC&(f_stat.st_mode)) {
 				int f=open(str_buffer,O_RDONLY);
 			    char *data = calloc(sizeof(char) , PATH_MAX+2);
@@ -192,6 +196,11 @@ int main()
 						printf("%s\n",str_buffer);
 					}
 				}
+=======
+    		if(f_stat.st_mode&S_IEXEC) {
+				printf(str_buffer);
+    			// size_summ += f_stat.st_size;
+>>>>>>> 9d7f88a9c7212a0fc8646759b2c7e99597b501b7
     		}
     	}else{
 		}

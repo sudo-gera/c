@@ -57,7 +57,7 @@ RM = /opt/local/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/gera/courcerepo
+CMAKE_SOURCE_DIR = /Users/gera/cpp-2022-sudo-gera
 
 # The top-level build directory on which CMake was run.
 CMAKE_BINARY_DIR = /Users/gera/c
@@ -127,19 +127,6 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named c_test_example
-
-# Build rule for target.
-c_test_example: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 c_test_example
-.PHONY : c_test_example
-
-# fast build rule for target.
-c_test_example/fast:
-	$(MAKE) $(MAKESILENT) -f CLanguage/example/CMakeFiles/c_test_example.dir/build.make CLanguage/example/CMakeFiles/c_test_example.dir/build
-.PHONY : c_test_example/fast
-
-#=============================================================================
 # Target rules for targets named test_any
 
 # Build rule for target.
@@ -149,21 +136,21 @@ test_any: cmake_check_build_system
 
 # fast build rule for target.
 test_any/fast:
-	$(MAKE) $(MAKESILENT) -f CppLanguage/any/CMakeFiles/test_any.dir/build.make CppLanguage/any/CMakeFiles/test_any.dir/build
+	$(MAKE) $(MAKESILENT) -f CppLanguage/tasks/any/CMakeFiles/test_any.dir/build.make CppLanguage/tasks/any/CMakeFiles/test_any.dir/build
 .PHONY : test_any/fast
 
 #=============================================================================
-# Target rules for targets named test_simple_cpp
+# Target rules for targets named playground
 
 # Build rule for target.
-test_simple_cpp: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_simple_cpp
-.PHONY : test_simple_cpp
+playground: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 playground
+.PHONY : playground
 
 # fast build rule for target.
-test_simple_cpp/fast:
-	$(MAKE) $(MAKESILENT) -f CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/build.make CppLanguage/simple_test/CMakeFiles/test_simple_cpp.dir/build
-.PHONY : test_simple_cpp/fast
+playground/fast:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/playground/CMakeFiles/playground.dir/build.make CppLanguage/playground/CMakeFiles/playground.dir/build
+.PHONY : playground/fast
 
 # Help Target
 help:
@@ -174,9 +161,8 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... test"
-	@echo "... c_test_example"
+	@echo "... playground"
 	@echo "... test_any"
-	@echo "... test_simple_cpp"
 .PHONY : help
 
 

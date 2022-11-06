@@ -1,3 +1,4 @@
+#include <sys/syscall.h>
 .data
 space:
     .ascii "-------------------------------------------------------------------------------------\n"
@@ -12,20 +13,20 @@ lspace:
 main:
 _main:
 _start:
-        mov $0,%rax
+        mov $SYS_read,%rax
         mov $0,%rdi
         mov $space, %rsi
         mov $lspace, %rdx
         sub $space, %rdx
         syscall
         mov %rax,%rdx
-        mov $1, %rax
+        mov $SYS_write, %rax
         mov $1, %rdi
         mov $space, %rsi
         syscall
         xor %rbx,%rbx
         cmp %rbx,%rdx
         jne _main
-        mov $60, %rax
+        mov $SYS_exit, %rax
         xor %rdi, %rdi
         syscall
