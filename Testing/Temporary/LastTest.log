@@ -1,0 +1,21 @@
+Start testing: Nov 05 15:32 MSK
+----------------------------------------------------------
+1/1 Testing: test_any
+1/1 Test: test_any
+Command: "/Users/gera/c/test_any"
+Directory: /Users/gera/c/CppLanguage/tasks/any
+"test_any" start time: Nov 05 15:32 MSK
+Output:
+----------------------------------------------------------
+===============================================================================
+All tests passed (28 assertions in 5 test cases)
+
+<end of output>
+Test time =   0.76 sec
+----------------------------------------------------------
+Test Passed.
+"test_any" end time: Nov 05 15:32 MSK
+"test_any" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Nov 05 15:32 MSK

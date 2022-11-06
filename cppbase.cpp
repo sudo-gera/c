@@ -12,21 +12,23 @@
 #include <tuple>
 #include <numeric>
 #include <list>
+#include <string_view>
+#include <string.h>
+#include <functional>
+#include <type_traits>
 using std::cin, std::cout, std::endl, std::vector, std::string, std::sort;
 using std::pair, std::set, std::unordered_set, std::map, std::unordered_map;
 using std::min, std::max, std::tuple, std::tie, std::get, std::make_tuple;
-using std::reduce, std::move, std::swap, std::generate, std::generate_n;
+using std::move, std::swap, std::generate, std::generate_n;
 using std::back_inserter, std::list, std::hash, std::reverse;
 using std::lower_bound, std::upper_bound, std::flush, std::prev, std::next;
-using std::tuple_size, std::lexicographical_compare;
-
-#ifdef print
-#undef print
-#endif
-
-#ifdef write
-#undef write
-#endif
+using std::tuple_size, std::lexicographical_compare, std::set_intersection;
+using std::copy_if, std::exit, std::enable_if, std::enable_if;
+using std::tuple_cat, std::find, std::find_if, std::find_if_not;
+using std::ref, std::cref, std::reference_wrapper, std::remove_reference;
+using std::tuple_element, std::tuple_size, std::is_same;
+using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
+using std::generate, std::generate_n, std::remove_reference_t;
 
 static inline int64_t getint() {
     int sign = 1;
@@ -46,42 +48,108 @@ static inline int64_t getint() {
     return (int64_t)(res)*sign;
 }
 
-static inline void putint(uint64_t out) {
-    if (out > (1LLU << 63) - 1) {
-        putchar_unlocked('-');
-        out = 1 + ~out;
-    }
-    char data[44];
-    char *dend = data;
-    while (out) {
-        *++dend = (unsigned)('0') + out % 10;
-        out /= 10;
-    }
-    if (dend == data) {
-        putchar_unlocked('0');
-    }
-    for (; dend != data; --dend) {
-        putchar_unlocked(*dend);
-    }
-}
-
-static inline void print(uint64_t out) {
-    putint(out);
-    putchar('\n');
-}
-
-static inline void write(uint64_t out) {
-    putint(out);
-    putchar(' ');
-}
-
 using llu=long long unsigned;
+using ll=long long;
 
 #define cache(rt,...)\
     static map<decltype(make_tuple(__VA_ARGS__)),rt> cache;\
     if ((cache).count({__VA_ARGS__})){\
         return (cache)[{__VA_ARGS__}];\
     }
+
+#define none 9000000000000000000
+
+template<llu n>
+struct sized{
+    char a[n];
+};
+
+template<
+    typename t0=sized<0>,
+    typename t1=sized<0>,
+    typename t2=sized<0>,
+    typename t3=sized<0>,
+    typename t4=sized<0>,
+    typename t5=sized<0>,
+    typename t6=sized<0>,
+    typename t7=sized<0>
+>
+// better than tuple
+struct t{
+    t0 v0;
+    t1 v1;
+    t2 v2;
+    t3 v3;
+    t4 v4;
+    t5 v5;
+    t6 v6;
+    t7 v7;
+};
+
+template<llu n=0,typename T,typename R>
+auto clear_tuple(T t=tuple<>(),R r=tuple<>(),enable_if_t<tuple_size_v<R><=n or  is_same_v<sized<0>,tuple_element_t<n,R>>,int> =0){
+    return t;
+}
+
+template<llu n=0,typename T,typename R>
+auto clear_tuple(T t=tuple<>(),R r=tuple<>(),enable_if_t<n<tuple_size_v<R> and !is_same_v<sized<0>,tuple_element_t<n,R>>,int> =0){
+    return clear_tuple<n+1>(tuple_cat(t,make_tuple(get<n>(r))),r);
+}
+
+template<typename...T>
+auto t2tuple(t<T...>r){
+    return clear_tuple(tuple<>(),(tuple<T...>&&)(r));
+}
+
+template<typename...T>
+auto to_str(t<T...>r){
+    return t2tuple(r);
+}
+
+template<typename...R,typename...Y>bool operator< (t<R...>r,t<Y...>y){return t2tuple(r)< t2tuple(y);}
+template<typename...R,typename...Y>bool operator> (t<R...>r,t<Y...>y){return t2tuple(r)> t2tuple(y);}
+template<typename...R,typename...Y>bool operator<=(t<R...>r,t<Y...>y){return t2tuple(r)<=t2tuple(y);}
+template<typename...R,typename...Y>bool operator>=(t<R...>r,t<Y...>y){return t2tuple(r)>=t2tuple(y);}
+template<typename...R,typename...Y>bool operator!=(t<R...>r,t<Y...>y){return t2tuple(r)!=t2tuple(y);}
+template<typename...R,typename...Y>bool operator==(t<R...>r,t<Y...>y){return t2tuple(r)==t2tuple(y);}
+
+
+#ifndef ic
+#define ic(...)
+#endif
+
+#ifndef eic
+#define eic
+#endif
+
+/*
+
+a | assign(min) | b;
+-- instead of
+a = min(a, b);
+
+*/
+
+template<typename T>
+struct assign_s{
+    T f;
+};
+
+template<typename T>
+assign_s(T f)->assign_s<T>;
+
+template<typename T,typename Y>
+auto operator|(T&&q,assign_s<Y> w){
+    return t<remove_reference_t<T>*,assign_s<Y>>{&q,w};
+}
+
+template<typename R,typename T,typename Y>
+auto operator|(t<R*,assign_s<T>> q,Y&&w){
+    q.v0[0]=q.v1.f(q.v0[0],w);
+}
+
+#define assign(f) assign_s{[&](auto q,auto w){return (f)(q,w);}}
+
 
 ///////////////////////////////////////////////////end of lib
 

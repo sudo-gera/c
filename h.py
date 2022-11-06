@@ -63,6 +63,7 @@ from operator import *
 import operator
 from inspect import *
 import inspect
+from copy import *
 def outputFunction(*a):
 	a=a[0]
 	s=split(r'\:\d+ in ',a)
@@ -92,7 +93,7 @@ def rand(q=2**64,e=None):
 		q,e=e,q
 	else:
 		e=0
-	assert q
+	assert q-e
 	return randint(e,q-1)
 exec(open(str(Path.home())+'/.pythonrc').read())
 def urlread(*a,**s):

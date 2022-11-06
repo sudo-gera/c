@@ -1,0 +1,17 @@
+/Users/gera/c/CMakeFiles/test.dir
+/Users/gera/c/CMakeFiles/edit_cache.dir
+/Users/gera/c/CMakeFiles/rebuild_cache.dir
+/Users/gera/c/CppLanguage/CMakeFiles/test.dir
+/Users/gera/c/CppLanguage/CMakeFiles/edit_cache.dir
+/Users/gera/c/CppLanguage/CMakeFiles/rebuild_cache.dir
+/Users/gera/c/CppLanguage/tasks/CMakeFiles/test.dir
+/Users/gera/c/CppLanguage/tasks/CMakeFiles/edit_cache.dir
+/Users/gera/c/CppLanguage/tasks/CMakeFiles/rebuild_cache.dir
+/Users/gera/c/CppLanguage/tasks/any/CMakeFiles/test_any.dir
+/Users/gera/c/CppLanguage/tasks/any/CMakeFiles/test.dir
+/Users/gera/c/CppLanguage/tasks/any/CMakeFiles/edit_cache.dir
+/Users/gera/c/CppLanguage/tasks/any/CMakeFiles/rebuild_cache.dir
+/Users/gera/c/CppLanguage/playground/CMakeFiles/playground.dir
+/Users/gera/c/CppLanguage/playground/CMakeFiles/test.dir
+/Users/gera/c/CppLanguage/playground/CMakeFiles/edit_cache.dir
+/Users/gera/c/CppLanguage/playground/CMakeFiles/rebuild_cache.dir

@@ -1,14 +1,24 @@
+#ifndef assert
+#include <assert.h>
+#endif
+#include <ctype.h>
+#include <inttypes.h>
+#include <iso646.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <tgmath.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <inttypes.h>
-#include <ctype.h>
-#include <assert.h>
-#include <iso646.h>
+#include <memory.h>
+#include <stddef.h>
+#include <sys/mman.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/syscall.h>
+#include <errno.h>
 /*
  * array
  *
@@ -109,8 +119,8 @@ cstr input_str(){static char t[1048576];scanf("%1048575s",t);return to_str(t);}
 #define print(q) {cstr __t=to_str(q);printf("%s\n",__t);del(__t);}
 #define put(q)   {cstr __t=to_str(q);printf("%s"  ,__t);del(__t);}
 
-#define bit_get(a,s)   (((a)[(s)/8LLU/sizeof((a)[0])]>>(s)%(8LLU*sizeof((a)[0])))&1LLU)
-#define bit_set(a,s,d) {(a)[(s)/8LLU/sizeof((a)[0])]&=~(1LLU<<(s)%(8LLU*sizeof((a)[0])));(a)[(s)/8LLU/sizeof((a)[0])]+=((d)+0LLU)<<(s)%(8LLU*sizeof((a)[0]));}
+#define get_bit(a,s)   (((a)[(s)/8LLU/sizeof((a)[0])]>>(s)%(8LLU*sizeof((a)[0])))&1LLU)
+#define set_bit(a,s,d) {(a)[(s)/8LLU/sizeof((a)[0])]&=~(1LLU<<(s)%(8LLU*sizeof((a)[0])));(a)[(s)/8LLU/sizeof((a)[0])]+=((d)+0LLU)<<(s)%(8LLU*sizeof((a)[0]));}
 
 /*
  *

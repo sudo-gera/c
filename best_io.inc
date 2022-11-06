@@ -4,6 +4,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; best_io.inc ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;   best input/output library for nasm
 ;   up-to-date version: https://vk.cc/cfB1SZ
+;   created by Georgiy Tatarinov in 2022
 ;   contact me:
 ;       tatarinov.gp@phystech.edu
 ;       https://twitter.com/sudo_gera
