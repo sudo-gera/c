@@ -153,48 +153,42 @@ auto operator|(t<R*,assign_s<T>> q,Y&&w){
 
 ///////////////////////////////////////////////////end of lib
 
-#define cat(q,w) q##w
-#define unique_name(q) cat(_unique_name_,q)
+#define cat(q, w) q##w
+#define unique_name(q) cat(_unique_name_, q)
 
-#define setup_recursion(...) \
-    struct another_layer{\
-        void* return_ptr;\
-        layer::return_type rt_str;\
-    };\
-    vector<pair<layer,another_layer>> call_stack;\
-    call_stack.emplace_back();\
-    call_stack.push_back({{__VA_ARGS__},{&&end}});\
-    void* setup_locals_ret=&&start;\
-    setup_locals:\
-    auto*locals_pair=&call_stack.back();\
-    auto&locals=locals_pair[0].first;\
-    auto&another_locals=locals_pair[0].second;\
-    auto&last_returned=another_locals.rt_str;\
-    auto&to_return=locals_pair[-1].second.rt_str;\
-    goto *setup_locals_ret;\
-    end:\
-    return last_returned;\
-    start:
+#define recursive_loop(...)                                                        \
+    for (                                                                          \
+        struct {                                                                   \
+            decltype(tie(__VA_ARGS__)) _tie;                                       \
+            vector<pair<decltype(make_tuple(__VA_ARGS__)), void *>> call_stack;    \
+            void *to_return_ptr;                                                   \
+        } _rec{                                                                    \
+            tie(__VA_ARGS__),                                                      \
+            {{{}, &&start}},                                                       \
+        };                                                                         \
+        not({                                                                      \
+            start:                                                                 \
+            _rec.call_stack.empty();                                               \
+        });                                                                        \
+        assert(((void)"end without return", 0))                                    \
+    )
 
-
-#define call(...)\
-    ({\
-        {\
-            call_stack.push_back({{__VA_ARGS__},{&&unique_name(__LINE__)}});\
-            setup_locals_ret=&&start;\
-            goto setup_locals;\
-        }\
-        unique_name(__LINE__):\
-        {}\
-    })
-
-#define ret(...)\
-    {\
-        to_return=(__VA_ARGS__);\
-        setup_locals_ret=another_locals.return_ptr;\
-        call_stack.pop_back();\
-        goto setup_locals;\
+#define call(...)                                                                  \
+    {                                                                              \
+        _rec.call_stack.push_back({_rec._tie, &&unique_name(__LINE__)});           \
+        _rec._tie = decltype(_rec.call_stack[0].first){__VA_ARGS__};               \
+        goto start;                                                                \
+        unique_name(__LINE__) : {}                                                 \
     }
+
+#define ret()                                                                      \
+    {                                                                              \
+        _rec._tie = _rec.call_stack.back().first;                                  \
+        _rec.to_return_ptr = _rec.call_stack.back().second;                        \
+        _rec.call_stack.pop_back();                                                \
+        goto *_rec.to_return_ptr;                                                  \
+    }
+
 
 using llu=long long unsigned;
 
@@ -205,50 +199,49 @@ struct vert{
     ll higher_possible=none;
 };
 
-int dfs(vector<vert>&a,vector<t<llu,llu>>&r,llu start){
+void dfs(vector<vert>&a,vector<t<llu,llu>>&r,llu start){
     if (a[start].dfs_state>=2){
-        return 0;
+        return;
     }
     a[start].index_in_stack=0;
     a[start].higher_possible=0;
-    struct layer{
-        llu current;
-        llu previous;
-        llu for_index;
-        llu for_iterator;
-        using return_type=int;
-    };
-    setup_recursion(start,none);
-    if (a[locals.current].dfs_state==0){
-        a[locals.current].dfs_state=1;
-        for (locals.for_index=0;locals.for_index<a[locals.current].next.size();++locals.for_index){
-            locals.for_iterator=a[locals.current].next[locals.for_index];
-            if (a[locals.for_iterator].dfs_state<2 and locals.for_iterator!=locals.previous){
-                if (a[locals.for_iterator].index_in_stack==none){
-                    a[locals.for_iterator].index_in_stack=call_stack.size();
-                    a[locals.for_iterator].higher_possible=call_stack.size();
-                    call(locals.for_iterator,locals.current);
-                    a[locals.current].higher_possible|assign(min)|a[locals.for_iterator].higher_possible;
-                    a[locals.for_iterator].index_in_stack=none;
-                    a[locals.for_iterator].higher_possible=none;
-                }else{
-                    call(locals.for_iterator,locals.current);
+    llu current=start;
+    llu previous=none;
+    llu for_index=0;
+    llu for_iterator=0;
+    llu level=1;
+    recursive_loop (current, previous, level, for_index, for_iterator){
+        if (a[current].dfs_state==0){
+            a[current].dfs_state=1;
+            for (for_index=0; for_index<a[current].next.size(); ++for_index){
+                for_iterator=a[current].next[for_index];
+                if (a[for_iterator].dfs_state<2 and for_iterator!=previous){
+                    if (a[for_iterator].index_in_stack==none){
+                        a[for_iterator].index_in_stack=level;
+                        a[for_iterator].higher_possible=level;
+                        call(for_iterator,current,level+1,0,0);
+                        a[current].higher_possible|assign(min)|a[for_iterator].higher_possible;
+                        a[for_iterator].index_in_stack=none;
+                        a[for_iterator].higher_possible=none;
+                    }else{
+                        call(for_iterator,current,level+1,0,0);
+                    }
                 }
             }
+            if (a[current].higher_possible==a[current].index_in_stack){
+                r.push_back({current,previous});
+            }
+            a[current].dfs_state=2;
+        }else
+        if (a[current].dfs_state==1){
+            a[previous].higher_possible|assign(min)|a[current].index_in_stack;
         }
-        if (a[locals.current].higher_possible==a[locals.current].index_in_stack){
-            r.push_back({locals.current,locals.previous});
+        if (level==2){
+            a[start].index_in_stack=none;
+            a[start].higher_possible=none;
         }
-        a[locals.current].dfs_state=2;
-    }else
-    if (a[locals.current].dfs_state==1){
-        a[locals.previous].higher_possible|assign(min)|a[locals.current].index_in_stack;
+        ret();
     }
-    if (call_stack.size()==2){
-        a[start].index_in_stack=none;
-        a[start].higher_possible=none;
-    }
-    ret(0);
 }
 
 

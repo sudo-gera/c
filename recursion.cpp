@@ -1,105 +1,94 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define cat(q,w) q##w
-#define unique_name(q) cat(_unique_name_,q)
+#define cat(q, w) q##w
+#define unique_name(q) cat(_unique_name_, q)
 
-#define setup_recursion(...) \
-    struct another_layer{\
-        void* return_ptr;\
-        layer::return_type rt_str;\
-    };\
-    vector<pair<layer,another_layer>> call_stack;\
-    call_stack.emplace_back();\
-    call_stack.push_back({{__VA_ARGS__},{&&end}});\
-    void* setup_locals_ret=&&start;\
-    setup_locals:\
-    auto*locals_pair=&call_stack.back();\
-    auto&locals=locals_pair[0].first;\
-    auto&another_locals=locals_pair[0].second;\
-    auto&last_returned=another_locals.rt_str;\
-    auto&to_return=locals_pair[-1].second.rt_str;\
-    goto *setup_locals_ret;\
-    end:\
-    return last_returned;\
-    start:
+#define recursive_loop(...)                                                        \
+    for (                                                                          \
+        struct {                                                                   \
+            decltype(tie(__VA_ARGS__)) _tie;                                       \
+            vector<pair<decltype(make_tuple(__VA_ARGS__)), void *>> call_stack;    \
+            void *to_return_ptr;                                                   \
+        } _rec{                                                                    \
+            tie(__VA_ARGS__),                                                      \
+            {{{}, &&start}},                                                       \
+        };                                                                         \
+        not({                                                                      \
+            start:                                                                 \
+            _rec.call_stack.empty();                                               \
+        });                                                                        \
+        assert(((void)"end without return", 0))                                    \
+    )
 
-
-#define call(...)\
-    ({\
-        {\
-            call_stack.push_back({{__VA_ARGS__},{&&unique_name(__LINE__)}});\
-            setup_locals_ret=&&start;\
-            goto setup_locals;\
-        }\
-        unique_name(__LINE__):\
-        {}\
-    })
-
-#define ret(...)\
-    {\
-        to_return=(__VA_ARGS__);\
-        setup_locals_ret=another_locals.return_ptr;\
-        call_stack.pop_back();\
-        goto setup_locals;\
+#define call(...)                                                                  \
+    {                                                                              \
+        _rec.call_stack.push_back({_rec._tie, &&unique_name(__LINE__)});           \
+        _rec._tie = decltype(_rec.call_stack[0].first){__VA_ARGS__};               \
+        goto start;                                                                \
+        unique_name(__LINE__) : {}                                                 \
     }
 
-using llu=long long unsigned;
+#define ret()                                                                      \
+    {                                                                              \
+        _rec._tie = _rec.call_stack.back().first;                                  \
+        _rec.to_return_ptr = _rec.call_stack.back().second;                        \
+        _rec.call_stack.pop_back();                                                \
+        goto *_rec.to_return_ptr;                                                  \
+    }
 
-// auto run0(string _n){
-//     struct layer{
-//         string n;
-//         string r;
-//         using return_type=string;
-//     };
-//     setup_recursion(_n);
-//     if (stoul(locals.n)<2){
-//         ret(locals.n);
+// using llu = long long unsigned;
+
+// string run0(string n) {
+//     string ret_val;
+//     string r;
+//     recursive_loop(n, r) {
+//         if (stoul(n) < 2) {
+//             ret_val = n;
+//             ret();
+//         }
+//         call(to_string(stoul(n) - 1), "");
+//         r = ret_val;
+//         call(to_string(stoul(n) - 2), "");
+//         ret_val = to_string(stoul(r) + stoul(ret_val));
+//         ret();
 //     }
-//     call(to_string(stoul(locals.n)-1));
-//     locals.r=last_returned;
-//     call(to_string(stoul(locals.n)-2));
-//     locals.r=to_string(stoul(locals.r)+stoul(last_returned));
-//     // locals.r=to_string(stoul((call(to_string(stoul(locals.n)-1)),last_returned))+
-//     // stoul((call(to_string(stoul(locals.n)-1)),last_returned)));
-//     ret(locals.r);
+//     return ret_val;
 // }
 
-// llu run(llu _m,llu _n){
-//     struct layer{
-//         llu m,n;
-//         using return_type=llu;
-//     };
-//     setup_recursion(_m,_n);
-//     if (locals.m==0){
-//         ret(locals.n+1);
+// llu run(llu m, llu n) {
+//     llu ret_val;
+//     recursive_loop(m, n) {
+//         if (m == 0) {
+//             ret_val = n + 1;
+//             ret();
+//         }
+//         if (n == 0) {
+//             call(m - 1, 1);
+//             ret();
+//         }
+//         call(m, n - 1);
+//         call(m - 1, ret_val);
+//         ret();
 //     }
-//     if (locals.n==0){
-//         call(locals.m-1,1);
-//         ret(last_returned);
-//     }
-//     call(locals.m,locals.n-1);
-//     call(locals.m-1,last_returned);
-//     ret(last_returned);
+//     return ret_val;
 // }
 
-// llu run1(llu m,llu n){
-//     if (m==0){
-//         return (n+1);
+// llu run1(llu m, llu n) {
+//     if (m == 0) {
+//         return (n + 1);
 //     }
-//     if (n==0){
-//         return run1(m-1,1);
+//     if (n == 0) {
+//         return run1(m - 1, 1);
 //     }
-//     return (run1(m-1,run1(m,n-1)));
+//     return (run1(m - 1, run1(m, n - 1)));
 // }
 
-
-
-// int main(){
+// int main() {
 //     // for (uint64_t w=0;w<16;++w){
 //     //     cout<<w<<" "<<run0(to_string(w))<<endl;
 //     // }
 
-//     // cout<<run1(3,12)<<endl;
-//     // cout<<run(3,12)<<endl;
+//     // cout << run1(3, 14) << endl;
+//     // cout <<  run(3, 14) << endl;
 // }
