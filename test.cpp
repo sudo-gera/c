@@ -1,6 +1,4 @@
-// #include <bits/stdc++.h>
-#include <vector>
-#include <string>
+#include <bits/stdc++.h>
 using namespace std;
 
 #define cat(q,w) q##w
@@ -48,60 +46,60 @@ using namespace std;
 
 using llu=long long unsigned;
 
-auto run0(string _n){
+// auto run0(string _n){
+//     struct layer{
+//         string n;
+//         string r;
+//         using return_type=string;
+//     };
+//     setup_recursion(_n);
+//     if (stoul(locals.n)<2){
+//         ret(locals.n);
+//     }
+//     call(to_string(stoul(locals.n)-1));
+//     locals.r=last_returned;
+//     call(to_string(stoul(locals.n)-2));
+//     locals.r=to_string(stoul(locals.r)+stoul(last_returned));
+//     // locals.r=to_string(stoul((call(to_string(stoul(locals.n)-1)),last_returned))+
+//     // stoul((call(to_string(stoul(locals.n)-1)),last_returned)));
+//     ret(locals.r);
+// }
+
+llu run(llu _m,llu _n){
     struct layer{
-        string n;
-        string r;
-        using return_type=string;
+        llu m,n;
+        using return_type=llu;
     };
-    setup_recursion(_n);
-    if (stoul(locals.n)<2){
-        ret(locals.n);
+    setup_recursion(_m,_n);
+    if (locals.m==0){
+        ret(locals.n+1);
     }
-    // call(to_string(stoul(locals.n)-1));
-    // locals.r=last_returned;
-    // call(to_string(stoul(locals.n)-2));
-    // locals.r=to_string(stoul(locals.r)+stoul(last_returned));
-    locals.r=to_string(stoul((call(to_string(stoul(locals.n)-1)),last_returned))+
-    stoul((call(to_string(stoul(locals.n)-1)),last_returned)));
-    ret(locals.r);
+    if (locals.n==0){
+        call(locals.m-1,1);
+        ret(last_returned);
+    }
+    call(locals.m,locals.n-1);
+    call(locals.m-1,last_returned);
+    ret(last_returned);
 }
 
-// llu run(llu _m,llu _n){
-//     struct layer{
-//         llu m,n;
-//         using return_type=llu;
-//     };
-//     setup_recursion(_m,_n);
-//     if (locals.m==0){
-//         ret(locals.n+1);
-//     }
-//     if (locals.n==0){
-//         call(locals.m-1,1);
-//         ret(last_returned);
-//     }
-//     call(locals.m,locals.n-1);
-//     call(locals.m-1,last_returned);
-//     ret(last_returned);
-// }
-
-// llu run1(llu m,llu n){
-//     if (m==0){
-//         return (n+1);
-//     }
-//     if (n==0){
-//         return run1(m-1,1);
-//     }
-//     return (run1(m-1,run1(m,n-1)));
-// }
+llu run1(llu m,llu n){
+    if (m==0){
+        return (n+1);
+    }
+    if (n==0){
+        return run1(m-1,1);
+    }
+    return (run1(m-1,run1(m,n-1)));
+}
 
 
 
 int main(){
-    for (uint64_t w=0;w<16;++w){
-        run0(to_string(w));
-    }
+    // for (uint64_t w=0;w<16;++w){
+    //     cout<<w<<" "<<run0(to_string(w))<<endl;
+    // }
 
     // cout<<run1(3,12)<<endl;
-    // cout<<run(3,12)<<endl;
+    cout<<run(3,12)<<endl;
 }
