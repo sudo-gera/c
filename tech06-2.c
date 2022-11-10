@@ -148,6 +148,9 @@ typedef int (*cmp_f_t)(const void *, const void *);
 
 ///////////////////////////////////////////////////end of lib
 
+int main(){
+    char data[4321];
+    ic(scanf("%4220s",data));
 
-
+}
 

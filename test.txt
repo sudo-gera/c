@@ -1,1 +1,1 @@
-#!/home/gera/c/test.py
+/Users/gera/Downloads/6470955.msi

@@ -149,5 +149,21 @@ typedef int (*cmp_f_t)(const void *, const void *);
 ///////////////////////////////////////////////////end of lib
 
 
-
-
+int main(){
+    long c=1;
+    long o=getpid();
+    while (1){
+        long pid=fork();
+        if (pid==0){
+            waitpid(o,NULL,0);
+            return 0;
+        }
+        if (pid<0){
+            print(c);
+            return 0;
+        }
+        if (pid>0){
+            ++c;
+        }
+    }
+}
