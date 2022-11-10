@@ -149,8 +149,29 @@ typedef int (*cmp_f_t)(const void *, const void *);
 ///////////////////////////////////////////////////end of lib
 
 int main(){
+    long o=getpid();
     char data[4321];
-    ic(scanf("%4220s",data));
-
+    while (1){
+        if (scanf("%4320s",data)!=EOF){
+            long pid=fork();
+            if (pid){
+                int st=0;
+                waitpid(pid,&st,0);
+                st=WEXITSTATUS(st);
+                if (o==getpid()){
+                    print(st+1);
+                    return 0;
+                }else{
+                    return st+1;
+                }
+            }
+        }else{
+            if (o==getpid()){
+                print(0);
+                return 0;
+            }else{
+                return 0;
+            }
+        }
+    }
 }
-
