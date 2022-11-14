@@ -37,58 +37,58 @@ using namespace std;
         goto *_rec.to_return_ptr;                                                  \
     }
 
-// using llu = long long unsigned;
+using llu = long long unsigned;
 
-// string run0(string n) {
-//     string ret_val;
-//     string r;
-//     recursive_loop(n, r) {
-//         if (stoul(n) < 2) {
-//             ret_val = n;
-//             ret();
-//         }
-//         call(to_string(stoul(n) - 1), "");
-//         r = ret_val;
-//         call(to_string(stoul(n) - 2), "");
-//         ret_val = to_string(stoul(r) + stoul(ret_val));
-//         ret();
-//     }
-//     return ret_val;
-// }
+string run0(string n) {
+    string ret_val;
+    string r;
+    recursive_loop(n, r) {
+        if (stoul(n) < 2) {
+            ret_val = n;
+            ret();
+        }
+        call(to_string(stoul(n) - 1), "");
+        r = ret_val;
+        call(to_string(stoul(n) - 2), "");
+        ret_val = to_string(stoul(r) + stoul(ret_val));
+        ret();
+    }
+    return ret_val;
+}
 
-// llu run(llu m, llu n) {
-//     llu ret_val;
-//     recursive_loop(m, n) {
-//         if (m == 0) {
-//             ret_val = n + 1;
-//             ret();
-//         }
-//         if (n == 0) {
-//             call(m - 1, 1);
-//             ret();
-//         }
-//         call(m, n - 1);
-//         call(m - 1, ret_val);
-//         ret();
-//     }
-//     return ret_val;
-// }
+llu run(llu m, llu n) {
+    llu ret_val=0;
+    recursive_loop(m,n){
+        if (m==0){
+            ret_val=n+1;
+            ret();
+        }
+        if (n==0){
+            call(m-1,1);
+            ret();
+        }
+        call(m,n-1);
+        call(m-1,ret_val);
+        ret();
+    }
+    return ret_val;
+}
 
-// llu run1(llu m, llu n) {
-//     if (m == 0) {
-//         return (n + 1);
-//     }
-//     if (n == 0) {
-//         return run1(m - 1, 1);
-//     }
-//     return (run1(m - 1, run1(m, n - 1)));
-// }
+llu run1(llu m, llu n) {
+    if (m == 0) {
+        return (n + 1);
+    }
+    if (n == 0) {
+        return run1(m - 1, 1);
+    }
+    return (run1(m - 1, run1(m, n - 1)));
+}
 
-// int main() {
-//     // for (uint64_t w=0;w<16;++w){
-//     //     cout<<w<<" "<<run0(to_string(w))<<endl;
-//     // }
+int main() {
+    // for (uint64_t w=0;w<16;++w){
+    //     cout<<w<<" "<<run0(to_string(w))<<endl;
+    // }
 
-//     // cout << run1(3, 14) << endl;
-//     // cout <<  run(3, 14) << endl;
-// }
+    // cout << run1(3, 12) << endl;
+    cout <<  run(3, 12) << endl;
+}

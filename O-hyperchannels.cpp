@@ -154,4 +154,73 @@ auto operator|(t<R*,assign_s<T>> q,Y&&w){
 
 ///////////////////////////////////////////////////end of lib
 
+#define cat(q, w) q##w
+#define unique_name(q) cat(_unique_name_, q)
 
+#define recursive_loop(...)                                                        \
+    for (                                                                          \
+        struct {                                                                   \
+            decltype(tie(__VA_ARGS__)) _tie;                                       \
+            vector<pair<decltype(make_tuple(__VA_ARGS__)), void *>> call_stack;    \
+            void *to_return_ptr;                                                   \
+        } _rec{                                                                    \
+            tie(__VA_ARGS__),                                                      \
+            {{{}, &&start}},                                                       \
+        };                                                                         \
+        not({                                                                      \
+            start:                                                                 \
+            _rec.call_stack.empty();                                               \
+        });                                                                        \
+        assert(((void)"end without return", 0))                                    \
+    )
+
+#define call(...)                                                                  \
+    {                                                                              \
+        _rec.call_stack.push_back({_rec._tie, &&unique_name(__LINE__)});           \
+        _rec._tie = decltype(_rec.call_stack[0].first){__VA_ARGS__};               \
+        goto start;                                                                \
+        unique_name(__LINE__) : {}                                                 \
+    }
+
+#define ret()                                                                      \
+    {                                                                              \
+        _rec._tie = _rec.call_stack.back().first;                                  \
+        _rec.to_return_ptr = _rec.call_stack.back().second;                        \
+        _rec.call_stack.pop_back();                                                \
+        goto *_rec.to_return_ptr;                                                  \
+    }
+
+int main(){
+    llu n=getint(),a=getint()-1;
+    vector<vector<t<llu,llu>>> s(n,vector<t<llu,llu>>(n));
+    for (llu q=0;q<n;++q){
+        for (llu w=0;w<n;++w){
+            s[q][w]={0LLU+getint(),0};
+        }
+    }
+    llu curr=a;
+    llu prev=none;
+    llu next=none;
+    llu count=none;
+    vector<t<llu,llu>> b;
+    recursive_loop(curr,prev,next,count){
+        ic(curr,prev)
+        count=0;
+        for (next=0;next<n;++next){
+            if (curr!=next and s[curr][next].v0==0 and s[curr][next].v1==0){
+                ++count;
+                s[curr][next].v1=1;
+                call(next,curr,none,none);
+                s[curr][next].v1=2;
+            }
+        }
+        if (prev!=none){
+            b.push_back({curr,prev});
+        }
+        ret();
+    }
+    while (b.size()){
+        cout<<b.back().v1+1<<" "<<b.back().v0+1<<"\n";
+        b.pop_back();
+    }
+}
