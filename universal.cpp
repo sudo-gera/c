@@ -15,7 +15,6 @@ string str_type(const T&q) {
         return "";
     }
     std::string a(__PRETTY_FUNCTION__);
-    // return a;
     return std::string(a.begin()+min(37LLU,a.size()-1LLU),a.end()-1);
 }
 
@@ -73,17 +72,18 @@ std::string str_types(const T&...q) {
         t15&&v15= t15()                                                          \
     ) {                                                                          \
         universal tmp;                                                           \
-        if constexpr (requires {tmp = (__VA_ARGS__);}) {                         \
+        if constexpr (requires{tmp=(__VA_ARGS__);}) {                            \
             tmp = (__VA_ARGS__);                                                 \
+            return tmp;                                                          \
         } else                                                                   \
         if constexpr (requires {(__VA_ARGS__);}) {                               \
             (__VA_ARGS__);                                                       \
         } else {                                                                 \
-            print_errors( "Invalid expression: " , #__VA_ARGS__ , " with "           \
-                , str_types(v0, v1, v2, v3, v4, v5, v6, v7,                     \
-                       v8, v9, v10, v11, v12, v13, v14, v15) );            \
+            print_errors( "Invalid expression: " , #__VA_ARGS__ , " with "       \
+                , str_types(v0, v1, v2, v3, v4, v5, v6, v7,                      \
+                       v8, v9, v10, v11, v12, v13, v14, v15) );                  \
         }                                                                        \
-        return tmp;                                                              \
+        return universal();                                                      \
     }
 
 struct universal;
@@ -184,9 +184,9 @@ size_t hash_f(const universal&q){
     return get<long long>(q.hash()._data);
 }
 
-auto&operator<<(ostream&o,const universal&q){
-    visit(try_expr(o << v0),q._data);
-    return o;
+auto&operator<<(ostream&ostream,const universal&q){
+    visit(try_expr(ostream << v0),q._data);
+    return ostream;
 }
 
 auto to_str(const universal&o){
@@ -235,12 +235,17 @@ int main(){
 
     a.push_back(1);
 
-    // a[0]=4;
+    a[0]=4;
 
-    ic(strtype(a._data));
+    // ic(strtype(a._data));
 
-    ic(a,a[0])
+    // cout<<a[0]<<endl;
+    // ic(a,a[0])
 
+    for (long w=0;w<a.size();++w){
+        cout<<a[w]<<" ";
+    }
+    cout<<endl;
 
 
     // ic(a.size())
