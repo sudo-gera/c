@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/Users/gera/courserepo/CppLanguage/tasks/array/test_array.cpp" "CppLanguage/tasks/array/CMakeFiles/test_array.dir/test_array.cpp.o" "gcc" "CppLanguage/tasks/array/CMakeFiles/test_array.dir/test_array.cpp.o.d"
+  "/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/array/test_array.cpp" "CppLanguage/tasks/array/CMakeFiles/test_array.dir/test_array.cpp.o" "gcc" "CppLanguage/tasks/array/CMakeFiles/test_array.dir/test_array.cpp.o.d"
   )
 
 # Targets to which this target links.

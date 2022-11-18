@@ -1,0 +1,20 @@
+#define simple_operators(this_type)                                             \
+    auto &operator=(this_type&&oth)noexcept{                                    \
+        if (&oth!=this){                                                        \
+            std::destroy_at(this);                                              \
+            std::construct_at(this,std::move(oth));                             \
+        }                                                                       \
+        return *this;                                                           \
+    }                                                                           \
+    void Swap(this_type&oth){                                                   \
+        auto t=std::move(oth);                                                  \
+        oth=std::move(*this);                                                   \
+        *this=std::move(t);                                                     \
+    }                                                                           \
+    auto&operator=(const this_type&oth){                                        \
+        if (&oth!=this){                                                        \
+            auto t=oth;                                                         \
+            Swap(t);                                                            \
+        }                                                                       \
+        return *this;                                                           \
+    }                                                                           \

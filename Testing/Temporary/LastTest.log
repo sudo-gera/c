@@ -1,21 +1,165 @@
-Start testing: Nov 05 15:32 MSK
+Start testing: Nov 18 05:38 MSK
 ----------------------------------------------------------
-1/1 Testing: test_any
-1/1 Test: test_any
-Command: "/Users/gera/c/test_any"
-Directory: /Users/gera/c/CppLanguage/tasks/any
-"test_any" start time: Nov 05 15:32 MSK
+1/1 Testing: test_str
+1/1 Test: test_str
+Command: "/Users/gera/c/test_str"
+Directory: /Users/gera/c/CppLanguage/tasks/str
+"test_str" start time: Nov 18 05:38 MSK
 Output:
 ----------------------------------------------------------
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+test_str is a Catch v2.13.8 host application.
+Run with -? for options
+
+-------------------------------------------------------------------------------
+Default constructor + basic Data_access
+-------------------------------------------------------------------------------
+/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/str/test_str.cpp:18
+...............................................................................
+
+/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/str/test_str.cpp:23: FAILED:
+  REQUIRE( s.Empty() )
+with expansion:
+  0
+
+-------------------------------------------------------------------------------
+Constructors
+  From non-empty string
+-------------------------------------------------------------------------------
+/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/str/test_str.cpp:28
+...............................................................................
+
+/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/str/test_str.cpp:11: FAILED:
+  REQUIRE( actual.Size() == expected.size() )
+with expansion:
+  0 == 11
+
+-------------------------------------------------------------------------------
+Constructors
+  From string prefix
+-------------------------------------------------------------------------------
+/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/str/test_str.cpp:39
+...............................................................................
+
+/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/str/test_str.cpp:11: FAILED:
+  REQUIRE( actual.Size() == expected.size() )
+with expansion:
+  0 == 4
+
+-------------------------------------------------------------------------------
+Copy Constructor
+  Copy empty string
+-------------------------------------------------------------------------------
+/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/str/test_str.cpp:52
+...............................................................................
+
+=================================================================
+==35614==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x602000000431 at pc 0x00010e645a05 bp 0x00030d7e9650 sp 0x00030d7e8e10
+READ of size 2 at 0x602000000431 thread T0
+    #0 0x10e645a04 in wrap_strlen+0x184 (libclang_rt.asan_osx_dynamic.dylib:x86_64+0x18a04)
+    #1 0x1044fda9c in std::__1::char_traits<char>::length(char const*) __string:342
+    #2 0x104609e12 in std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >::basic_string<std::nullptr_t>(char const*) string:842
+    #3 0x1043b7500 in std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >::basic_string<std::nullptr_t>(char const*) string:840
+    #4 0x10445a27d in Catch::StringMaker<char*, void>::convert(char*) catch.hpp:15119
+    #5 0x1045ceadf in std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > Catch::Detail::stringify<char*>(char* const&) catch.hpp:1645
+    #6 0x1045ce5d6 in Catch::BinaryExpr<char* const&, std::nullptr_t const&>::streamReconstructedExpression(std::__1::basic_ostream<char, std::__1::char_traits<char> >&) const catch.hpp:2231
+    #7 0x1043a0d74 in Catch::(anonymous namespace)::operator<<(std::__1::basic_ostream<char, std::__1::char_traits<char> >&, Catch::ITransientExpression const&) catch.hpp:8191
+    #8 0x1043a096d in Catch::operator<<(std::__1::basic_ostream<char, std::__1::char_traits<char> >&, Catch::LazyExpression const&) catch.hpp:8214
+    #9 0x1043a4e84 in Catch::ReusableStringStream& Catch::ReusableStringStream::operator<<<Catch::LazyExpression>(Catch::LazyExpression const&) catch.hpp:1451
+    #10 0x1043a4969 in Catch::AssertionResultData::reconstructExpression() const catch.hpp:8303
+    #11 0x1043a6d96 in Catch::AssertionResult::getExpandedExpression() const catch.hpp:8369
+    #12 0x1043a664c in Catch::AssertionResult::hasExpandedExpression() const catch.hpp:8365
+    #13 0x1045c246c in Catch::(anonymous namespace)::ConsoleAssertionPrinter::printReconstructedExpression() const catch.hpp:16241
+    #14 0x1044732b9 in Catch::(anonymous namespace)::ConsoleAssertionPrinter::print() const catch.hpp:16218
+    #15 0x104472a8e in Catch::ConsoleReporter::assertionEnded(Catch::AssertionStats const&) catch.hpp:16496
+    #16 0x1044063d4 in Catch::RunContext::assertionEnded(Catch::AssertionResult const&) catch.hpp:12808
+    #17 0x104413e80 in Catch::RunContext::reportExpr(Catch::AssertionInfo const&, Catch::ResultWas::OfType, Catch::ITransientExpression const*, bool) catch.hpp:13076
+    #18 0x10441376b in Catch::RunContext::handleExpr(Catch::AssertionInfo const&, Catch::ITransientExpression const&, Catch::AssertionReaction&) catch.hpp:13060
+    #19 0x1043a1fdc in Catch::AssertionHandler::handleExpr(Catch::ITransientExpression const&) catch.hpp:8232
+    #20 0x1044b810c in C_A_T_C_H_T_E_S_T_8() test_str.cpp:60
+    #21 0x10443f462 in Catch::TestInvokerAsFunction::invoke() const catch.hpp:14328
+    #22 0x1044122fd in Catch::TestCase::invoke() const catch.hpp:14167
+    #23 0x104411f5a in Catch::RunContext::invokeActiveTestCase() catch.hpp:13027
+    #24 0x104403b4c in Catch::RunContext::runCurrentTest(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >&) catch.hpp:13000
+    #25 0x1043ff92a in Catch::RunContext::runTest(Catch::TestCase const&) catch.hpp:12761
+    #26 0x104424216 in Catch::(anonymous namespace)::TestGroup::execute() catch.hpp:13354
+    #27 0x1044211f2 in Catch::Session::runInternal() catch.hpp:13560
+    #28 0x104420052 in Catch::Session::run() catch.hpp:13516
+    #29 0x1044aefad in int Catch::Session::run<char>(int, char const* const*) catch.hpp:13238
+    #30 0x1044aeafb in main catch.hpp:17533
+    #31 0x2053a451d in start+0x1cd (dyld:x86_64+0x551d)
+    #32 0x20539efff  (<unknown module>)
+
+0x602000000431 is located 0 bytes to the right of 1-byte region [0x602000000430,0x602000000431)
+allocated by thread T0 here:
+    #0 0x10e68137d in wrap__Znam+0x7d (libclang_rt.asan_osx_dynamic.dylib:x86_64+0x5437d)
+    #1 0x1045cf768 in String::String(String const&) str.hpp:175
+    #2 0x1045cf610 in String::String(String const&) str.hpp:172
+    #3 0x1044b64a9 in C_A_T_C_H_T_E_S_T_8() test_str.cpp:54
+    #4 0x10443f462 in Catch::TestInvokerAsFunction::invoke() const catch.hpp:14328
+    #5 0x1044122fd in Catch::TestCase::invoke() const catch.hpp:14167
+    #6 0x104411f5a in Catch::RunContext::invokeActiveTestCase() catch.hpp:13027
+    #7 0x104403b4c in Catch::RunContext::runCurrentTest(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >&) catch.hpp:13000
+    #8 0x1043ff92a in Catch::RunContext::runTest(Catch::TestCase const&) catch.hpp:12761
+    #9 0x104424216 in Catch::(anonymous namespace)::TestGroup::execute() catch.hpp:13354
+    #10 0x1044211f2 in Catch::Session::runInternal() catch.hpp:13560
+    #11 0x104420052 in Catch::Session::run() catch.hpp:13516
+    #12 0x1044aefad in int Catch::Session::run<char>(int, char const* const*) catch.hpp:13238
+    #13 0x1044aeafb in main catch.hpp:17533
+    #14 0x2053a451d in start+0x1cd (dyld:x86_64+0x551d)
+    #15 0x20539efff  (<unknown module>)
+
+SUMMARY: AddressSanitizer: heap-buffer-overflow (libclang_rt.asan_osx_dynamic.dylib:x86_64+0x18a04) in wrap_strlen+0x184
+Shadow bytes around the buggy address:
+  0x1c0400000030: fa fa 00 00 fa fa 00 00 fa fa 00 00 fa fa 00 00
+  0x1c0400000040: fa fa 00 00 fa fa 00 00 fa fa 00 00 fa fa 00 00
+  0x1c0400000050: fa fa fd fd fa fa 00 00 fa fa fd fa fa fa 00 00
+  0x1c0400000060: fa fa fd fa fa fa 00 fc fa fa 00 00 fa fa fd fd
+  0x1c0400000070: fa fa fd fd fa fa 00 fa fa fa 04 fa fa fa 00 00
+=>0x1c0400000080: fa fa 00 00 fa fa[01]fa fa fa fa fa fa fa fa fa
+  0x1c0400000090: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x1c04000000a0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x1c04000000b0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x1c04000000c0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x1c04000000d0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==35614==ABORTING
+/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/str/test_str.cpp:60: FAILED:
+  REQUIRE( copy.Data() == nullptr )
+/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/str/test_str.cpp:60: FAILED:
+  REQUIRE( copy.Data() == nullptr )
+due to a fatal error condition:
+  SIGABRT - Abort (abnormal termination) signal
+
 ===============================================================================
-All tests passed (28 assertions in 5 test cases)
+test cases:  3 |  0 passed | 3 failed
+assertions: 23 | 18 passed | 5 failed
 
 <end of output>
-Test time =   0.76 sec
+Test time =   0.47 sec
 ----------------------------------------------------------
-Test Passed.
-"test_any" end time: Nov 05 15:32 MSK
-"test_any" time elapsed: 00:00:00
+Test Failed.
+"test_str" end time: Nov 18 05:38 MSK
+"test_str" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Nov 05 15:32 MSK
+End testing: Nov 18 05:38 MSK
