@@ -25,21 +25,6 @@ size_t get_size(const char*fn){
     return f_stat.st_size;
 }
 
-char* _memmem(char* q,size_t qs,char* w,size_t ws){
-    if (qs*ws==0){
-        return NULL;
-    }
-    if (ws>qs){
-        return NULL;
-    }
-    for (size_t e=0;e<=qs-ws;++e){
-        if (memcmp(q+e,w,ws)==0){
-            return q+e;
-        }
-    }
-    return NULL;
-}
-
 int main(int argc,char**argv){
     if (argc<3 or strlen(argv[2])==0){
         return 0;

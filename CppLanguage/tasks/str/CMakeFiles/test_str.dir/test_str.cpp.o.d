@@ -469,4 +469,5 @@ CppLanguage/tasks/str/CMakeFiles/test_str.dir/test_str.cpp.o: \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/signal.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/regex \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/iostream \
-  /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/str/str.hpp
+  /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/str/str.hpp \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/memory.h

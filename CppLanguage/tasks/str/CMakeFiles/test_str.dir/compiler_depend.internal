@@ -418,6 +418,7 @@ CppLanguage/tasks/str/CMakeFiles/test_str.dir/str.cpp.o
  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/sys/_types/_fsfilcnt_t.h
  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/_types/_nl_item.h
  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__bsd_locale_defaults.h
+ /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/memory.h
 
 CppLanguage/tasks/str/CMakeFiles/test_str.dir/test_str.cpp.o
  /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/str/test_str.cpp
@@ -891,4 +892,5 @@ CppLanguage/tasks/str/CMakeFiles/test_str.dir/test_str.cpp.o
  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/regex
  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/iostream
  /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/str/str.hpp
+ /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/memory.h
 
