@@ -4,7 +4,7 @@ using namespace std;
 template<typename...T>
 auto print_errors(T&&...a){
     (cout<<...<<a)<<endl;
-    assert(0);
+    exit(1);
 }
 
 enum class unused_type : int {};
