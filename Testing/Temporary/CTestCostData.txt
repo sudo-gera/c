@@ -4,7 +4,8 @@ test_any 32 0.0236089
 test_array 1 0.483575
 test_complex 1 0.463864
 test_abs 3 0.107651
-test_str 15 0.0467239
+test_str 16 0
 test_unique_pointer 4 0.112683
 test_shared_pointer 19 0.00557607
 ---
+test_str
