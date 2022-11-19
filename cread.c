@@ -19,6 +19,8 @@
 #include <fcntl.h>
 #include <sys/syscall.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 #ifdef print
 #undef print
@@ -139,15 +141,13 @@ static inline void print(uint64_t out) {
 	putchar('\n');
 }
 
-static inline void write(uint64_t out) {
-	putint(out);
-	putchar(' ');
-}
-
 #define min(a,s) ((a)<(s)?(a):(s))
 #define max(a,s) ((a)>(s)?(a):(s))
 
 typedef int (*cmp_f_t)(const void *, const void *);
 
 ///////////////////////////////////////////////////end of lib
+
+
+
 

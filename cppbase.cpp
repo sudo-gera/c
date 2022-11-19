@@ -28,7 +28,8 @@ using std::tuple_cat, std::find, std::find_if, std::find_if_not;
 using std::ref, std::cref, std::reference_wrapper, std::remove_reference;
 using std::tuple_element, std::tuple_size, std::is_same;
 using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
-using std::generate, std::generate_n, std::remove_reference_t;
+using std::generate, std::generate_n, std::remove_reference_t, std::iota;
+using std::unique;
 
 static inline int64_t getint() {
     int sign = 1;

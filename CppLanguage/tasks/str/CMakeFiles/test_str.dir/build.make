@@ -53,7 +53,7 @@ RM = /opt/local/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/gera/courserepo
+CMAKE_SOURCE_DIR = /Users/gera/cpp-2022-sudo-gera
 
 # The top-level build directory on which CMake was run.
 CMAKE_BINARY_DIR = /Users/gera/c
@@ -70,32 +70,32 @@ include CppLanguage/tasks/str/CMakeFiles/test_str.dir/progress.make
 include CppLanguage/tasks/str/CMakeFiles/test_str.dir/flags.make
 
 CppLanguage/tasks/str/CMakeFiles/test_str.dir/test_str.cpp.o: CppLanguage/tasks/str/CMakeFiles/test_str.dir/flags.make
-CppLanguage/tasks/str/CMakeFiles/test_str.dir/test_str.cpp.o: /Users/gera/courserepo/CppLanguage/tasks/str/test_str.cpp
+CppLanguage/tasks/str/CMakeFiles/test_str.dir/test_str.cpp.o: /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/str/test_str.cpp
 CppLanguage/tasks/str/CMakeFiles/test_str.dir/test_str.cpp.o: CppLanguage/tasks/str/CMakeFiles/test_str.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/gera/c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CppLanguage/tasks/str/CMakeFiles/test_str.dir/test_str.cpp.o"
-	cd /Users/gera/c/CppLanguage/tasks/str && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CppLanguage/tasks/str/CMakeFiles/test_str.dir/test_str.cpp.o -MF CMakeFiles/test_str.dir/test_str.cpp.o.d -o CMakeFiles/test_str.dir/test_str.cpp.o -c /Users/gera/courserepo/CppLanguage/tasks/str/test_str.cpp
+	cd /Users/gera/c/CppLanguage/tasks/str && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CppLanguage/tasks/str/CMakeFiles/test_str.dir/test_str.cpp.o -MF CMakeFiles/test_str.dir/test_str.cpp.o.d -o CMakeFiles/test_str.dir/test_str.cpp.o -c /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/str/test_str.cpp
 
 CppLanguage/tasks/str/CMakeFiles/test_str.dir/test_str.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_str.dir/test_str.cpp.i"
-	cd /Users/gera/c/CppLanguage/tasks/str && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/gera/courserepo/CppLanguage/tasks/str/test_str.cpp > CMakeFiles/test_str.dir/test_str.cpp.i
+	cd /Users/gera/c/CppLanguage/tasks/str && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/str/test_str.cpp > CMakeFiles/test_str.dir/test_str.cpp.i
 
 CppLanguage/tasks/str/CMakeFiles/test_str.dir/test_str.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_str.dir/test_str.cpp.s"
-	cd /Users/gera/c/CppLanguage/tasks/str && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/gera/courserepo/CppLanguage/tasks/str/test_str.cpp -o CMakeFiles/test_str.dir/test_str.cpp.s
+	cd /Users/gera/c/CppLanguage/tasks/str && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/str/test_str.cpp -o CMakeFiles/test_str.dir/test_str.cpp.s
 
 CppLanguage/tasks/str/CMakeFiles/test_str.dir/str.cpp.o: CppLanguage/tasks/str/CMakeFiles/test_str.dir/flags.make
-CppLanguage/tasks/str/CMakeFiles/test_str.dir/str.cpp.o: /Users/gera/courserepo/CppLanguage/tasks/str/str.cpp
+CppLanguage/tasks/str/CMakeFiles/test_str.dir/str.cpp.o: /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/str/str.cpp
 CppLanguage/tasks/str/CMakeFiles/test_str.dir/str.cpp.o: CppLanguage/tasks/str/CMakeFiles/test_str.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/gera/c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CppLanguage/tasks/str/CMakeFiles/test_str.dir/str.cpp.o"
-	cd /Users/gera/c/CppLanguage/tasks/str && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CppLanguage/tasks/str/CMakeFiles/test_str.dir/str.cpp.o -MF CMakeFiles/test_str.dir/str.cpp.o.d -o CMakeFiles/test_str.dir/str.cpp.o -c /Users/gera/courserepo/CppLanguage/tasks/str/str.cpp
+	cd /Users/gera/c/CppLanguage/tasks/str && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CppLanguage/tasks/str/CMakeFiles/test_str.dir/str.cpp.o -MF CMakeFiles/test_str.dir/str.cpp.o.d -o CMakeFiles/test_str.dir/str.cpp.o -c /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/str/str.cpp
 
 CppLanguage/tasks/str/CMakeFiles/test_str.dir/str.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_str.dir/str.cpp.i"
-	cd /Users/gera/c/CppLanguage/tasks/str && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/gera/courserepo/CppLanguage/tasks/str/str.cpp > CMakeFiles/test_str.dir/str.cpp.i
+	cd /Users/gera/c/CppLanguage/tasks/str && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/str/str.cpp > CMakeFiles/test_str.dir/str.cpp.i
 
 CppLanguage/tasks/str/CMakeFiles/test_str.dir/str.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_str.dir/str.cpp.s"
-	cd /Users/gera/c/CppLanguage/tasks/str && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/gera/courserepo/CppLanguage/tasks/str/str.cpp -o CMakeFiles/test_str.dir/str.cpp.s
+	cd /Users/gera/c/CppLanguage/tasks/str && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/str/str.cpp -o CMakeFiles/test_str.dir/str.cpp.s
 
 # Object files for target test_str
 test_str_OBJECTS = \
@@ -121,6 +121,6 @@ CppLanguage/tasks/str/CMakeFiles/test_str.dir/clean:
 .PHONY : CppLanguage/tasks/str/CMakeFiles/test_str.dir/clean
 
 CppLanguage/tasks/str/CMakeFiles/test_str.dir/depend:
-	cd /Users/gera/c && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/gera/courserepo /Users/gera/courserepo/CppLanguage/tasks/str /Users/gera/c /Users/gera/c/CppLanguage/tasks/str /Users/gera/c/CppLanguage/tasks/str/CMakeFiles/test_str.dir/DependInfo.cmake --color=$(COLOR)
+	cd /Users/gera/c && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/gera/cpp-2022-sudo-gera /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/str /Users/gera/c /Users/gera/c/CppLanguage/tasks/str /Users/gera/c/CppLanguage/tasks/str/CMakeFiles/test_str.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CppLanguage/tasks/str/CMakeFiles/test_str.dir/depend
 

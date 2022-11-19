@@ -80,8 +80,8 @@ function __put(l){
             z=[];
         }
         for (var w=0;w<s.length;++w){
-            ic(s[w])
-            ic(JSON.parse(JSON.stringify(l)))
+            // ic(s[w])
+            // ic(JSON.parse(JSON.stringify(l)))
             if (s[w].tagName=='INPUT' && s[w].type=='text'){
                 // ic(s)
                 // ic(s[w])
@@ -127,10 +127,10 @@ function __put(l){
                     var q=s[w].childNodes;
                     s[w].value=Math.floor(Math.random()*q.length);
                     for (var e=0;e<x.length;++e){
-                        ic(x[e][0],'|',k)
+                        // ic(x[e][0],'|',k)
                         if (x[e][0].trim().endsWith(k.trim())){
                             for (var r=0;r<q.length;++r){
-                                ic(x[e][1],'|',q[r].innerText)
+                                // ic(x[e][1],'|',q[r].innerText)
                                 if (x[e][1].trim().startsWith(q[r].innerText.trim())){
                                     s[w].value=r;
                                     // x.splice(e,1);

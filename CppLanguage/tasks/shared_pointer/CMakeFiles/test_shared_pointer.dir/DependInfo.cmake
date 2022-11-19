@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/Users/gera/courserepo/CppLanguage/tasks/shared_pointer/test_shared_pointer.cpp" "CppLanguage/tasks/shared_pointer/CMakeFiles/test_shared_pointer.dir/test_shared_pointer.cpp.o" "gcc" "CppLanguage/tasks/shared_pointer/CMakeFiles/test_shared_pointer.dir/test_shared_pointer.cpp.o.d"
+  "/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/shared_pointer/test_shared_pointer.cpp" "CppLanguage/tasks/shared_pointer/CMakeFiles/test_shared_pointer.dir/test_shared_pointer.cpp.o" "gcc" "CppLanguage/tasks/shared_pointer/CMakeFiles/test_shared_pointer.dir/test_shared_pointer.cpp.o.d"
   )
 
 # Targets to which this target links.

@@ -127,17 +127,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named test_any
+# Target rules for targets named test_str
 
 # Build rule for target.
-test_any: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_any
-.PHONY : test_any
+test_str: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_str
+.PHONY : test_str
 
 # fast build rule for target.
-test_any/fast:
-	$(MAKE) $(MAKESILENT) -f CppLanguage/tasks/any/CMakeFiles/test_any.dir/build.make CppLanguage/tasks/any/CMakeFiles/test_any.dir/build
-.PHONY : test_any/fast
+test_str/fast:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/tasks/str/CMakeFiles/test_str.dir/build.make CppLanguage/tasks/str/CMakeFiles/test_str.dir/build
+.PHONY : test_str/fast
 
 #=============================================================================
 # Target rules for targets named playground
@@ -162,7 +162,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... playground"
-	@echo "... test_any"
+	@echo "... test_str"
 .PHONY : help
 
 
