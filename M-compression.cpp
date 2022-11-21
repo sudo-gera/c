@@ -308,7 +308,8 @@ int main(){
     llu n=comps.size();
     vector<vector<llu>> a(n);
     vector<vector<llu>> s(n);
-    vector<t<llu>> d(n);
+    vector<t<llu,llu,llu,llu,llu,llu,llu,llu>> d(n);
+    // auto d=new t<llu,llu,llu,llu,llu,llu,llu,llu>[n]();
     for (auto w:edges){
         a[w.v0].push_back(w.v1);
         s[w.v1].push_back(w.v0);
@@ -316,66 +317,113 @@ int main(){
     ic(a)
     ic(s)
     vector<llu> vin;
-    set<llu> sin;
     vector<llu> vout;
-    set<llu> sout;
     llu count=1;
+    // auto al=new llu[a.size()]();
+    for (auto&w:a){
+        d[&w-&a[0]].v1=w.size();
+    }
+    // vector<llu> q(n*4);
+    auto q=new t<const llu*,const llu*,llu>[n*4]();
+    // vector<llu> anss;
+    // anss.push_back(-1);
+    // llu _t=w;
+    // llu e=0;
+    // auto _tie=tie(_t,e);
+    // struct node{
+    //     decltype(make_tuple(_t,e)) data;
+    //     node*left;
+    //     node*right;
+    // };
+    // using item=pair<decltype(make_tuple(_t,e)),void*>;
     for (llu w=0;w<n;++w){
         if (s[w].size()==0){
-            vector<llu> q;
-            q.push_back(w);
-            llu qq=0;
-            while(qq!=q.size()){
-                auto _t=q[qq++];
-                if (d[_t].v0!=count){
-                    d[_t].v0=count;
-                    if (sout.count(_t)==0 and a[_t].size()==0){
-                        vin.push_back(w);
-                        sin.insert(w);
-                        vout.push_back(_t);
-                        sout.insert(_t);
-                        break;
-                    }
-                    for (auto r:a[_t]){
-                        q.push_back(r);
-                    }
-                }
-            }
-            count+=1;
+            // llu ql=0;
+            // q[ql++]={&w,1+&w};
+            // llu qq=0;
+            // while(1){
+            //     while (qq!=ql and q[qq].v0==q[qq].v1){
+            //         d[q[qq].v2].v2=1;
+            //         ++qq;
+            //     }
+            //     if (qq==ql){
+            //         break;
+            //     }
+            //     auto _t=q[qq].v0++[0];
+            //     if (d[_t].v0!=count and d[_t].v2==0){
+            //         d[_t].v0=count;
+            //         if (d[_t].v1==0){
+            //             vin.push_back(w);
+            //             vout.push_back(_t);
+            //             d[_t].v1+=1;
+            //             // d[_t].v1=1;
+            //             break;
+            //         }
+            //         q[ql++]={a[_t].data(),a[_t].data()+a[_t].size(),_t};
+            //         // for (auto r:a[_t]){
+            //         //     if (d[r].v0!=count){
+            //         //         q[ql++]=(r);
+            //         //     }
+            //         // }
+            //     }
+            // }
+            // count+=1;
 
             // llu _t=w;
             // llu e=0;
+            // llu ab=0;
+            // llu ae=0;
             // recursive_loop(_t,e){
-            //     if (d[_t].v0!=count){
+            //     if (d[_t].v0!=count and d[_t].v3==0 and d[_t].v4==0){
             //         d[_t].v0=count;
-            //         if (sout.count(_t)==0 and a[_t].size()==0){
+            //         if (d[_t].v2==0 and d[_t].v1==0){
             //             vin.push_back(w);
-            //             sin.insert(w);
             //             vout.push_back(_t);
-            //             sout.insert(_t);
+            //             d[_t].v2=1;
             //             break;
             //         }
-            //         for (e=0;e<a[_t].size();++e){
+                    
+
+                    
+            //         for (e=0;e<d[_t].v1;++e){
             //             call(a[_t][e],0);
             //         }
             //     }
+            //     d[_t].v3=1;
             //     ret();
             // }
             // count+=1;
+
+
+            llu _t=w;
+            // llu e=0;
+            recursive_loop(_t){
+                if (d[_t].v2==0 and d[_t].v1==0){
+                    vin.push_back(w);
+                    vout.push_back(_t);
+                    d[_t].v2=1;
+                    break;
+                }
+                for (;d[_t].v3<d[_t].v1;++d[_t].v3){
+                    call(a[_t][d[_t].v3]);
+                }
+                ret();
+            }
+            count+=1;
         }
     }
     ic(vin)
-    ic(sin)
+    // ic(sin)
     ic(vout)
-    ic(sout)
+    // ic(sout)
     llu base=-1;
     vector<t<llu,llu>> res;
-    for (llu w=1;w<sin.size();++w){
+    for (llu w=1;w<vin.size();++w){
         res.push_back({vout[w-1],vin[w]});
     }
-    if (sin.size()){
+    if (vin.size()){
         base=vin[0];
-        res.push_back({vout[sin.size()-1],vin[0]});
+        res.push_back({vout[vin.size()-1],vin[0]});
     }
     for (auto w:res){
         a[w.v0].push_back(w.v1);

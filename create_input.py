@@ -83,8 +83,10 @@ maxlen=200+int(run_num**0.5)
 # 		print(s)
 # 		break
 
-n=rand(2,10**5)
-m=rand(0,1+min(10**5,(n-1)**2//4))
+llen=10**5
+
+n=rand(2,llen)
+m=rand(0,1+min(llen,(n-1)**2//4))
 print(n)
 # print(n,m)
 e=set()
