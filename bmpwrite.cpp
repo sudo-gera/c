@@ -14,13 +14,13 @@ void bmp_write(vector<vector<pixel>> &a,string filename){
     int height=a.size();
     int width=a[0].size();
     vector<int> data={
-        1296171008,
+        0x4d420000,
         height * width * 4 + 54,
         0, 54, 40,
         width, height,
-        2097153, 0,
+        0x200001, 0,
         height * width * 4,
-        1, 1, 0, 0
+        0, 0, 0, 0
     };
     for (auto&q:a){
         for (auto&w:q){
