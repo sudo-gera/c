@@ -1,33 +1,88 @@
-# q='''
-# 12	BITMAPCOREHEADER
-# 12	OS21XBITMAPHEADER
-# 64	OS22XBITMAPHEADER
-# 16	OS22XBITMAPHEADER
-# 40	BITMAPINFOHEADER
-# 52	BITMAPV2INFOHEADER
-# 56	BITMAPV3INFOHEADER
-# 108	BITMAPV4HEADER
-# 124	BITMAPV5HEADER
-# '''
-# q=[w.split() for w in q.splitlines()]
-# q=[w for w in q if w]
-# for w in q:
-#     bl='{'
-#     br='}'
-#     print(f'''    {bl}{w[0]},"{w[1]}",nullptr{br},''')
+from json import *
+from os import *
+from sys import *
+from subprocess import *
+from multiprocessing import Pool,Queue,Process
+from os import system
+from os.path import exists
+from queue import Queue as bq
+from subprocess import run,PIPE,Popen,TimeoutExpired
+from sys import argv,executable
+from time import sleep,time, asctime
+from traceback import format_exc
+import signal
+from sys import stderr
+from ast import parse
+from builtins import *
+from py_compile import compile,PyCompileError
 
-def con(l,n):
-    q=[4, 4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 2, 2, 2, 2, 4, 4, 4, 4]
-    if l==12:
-        q[1]=q[2]=2
-    if sum(q[:n])<l:
-        return q[n]
-    return 0
+compiler='g++'
 
-def run(l,n):
-    return ((l//13)*(l//13)+l//20+36//l+32//l>n)*2*(2-(n+10*(l==12)+1)//4%2+((n+10*(l==12)+11)%16<2))
+flags=['-O2']
 
-for l in [12,64,16,40]:
-    for n in range(32):
-        if con(l,n)!=run(l,n):
-            print(l,n,con(l,n),run(l,n))
+def how_to_run(filename,start_time):
+	compiled_file='./tmp'+start_time+'_'+filename.replace('/','_')+'_.trash.trash'
+	if filename.endswith('.cpp'):
+		compiled_file+='.out'
+	if filename.endswith('.c'):
+		compiled_file+='.out'
+	if filename.endswith('.py'):
+		compiled_file+='.py'
+	if filename.endswith('.out'):
+		compiled_file+='.out'
+	if not exists(compiled_file):
+		if filename.endswith('.cpp'):
+			if run(['g++','-Ofast','-std=c++20','-Wfatal-errors',filename,'-o',compiled_file]).returncode:
+				exit()
+		if filename.endswith('.c'):
+			if run(['g++','-Ofast','-std=c++20','-Wfatal-errors',filename,'-o',compiled_file]).returncode:
+				exit()
+		if filename.endswith('.py'):
+			if run(['python3','-m','py_compile',filename]).returncode:
+				print(file=stderr)
+				exit()
+			try:
+				compile(filename,cfile=compiled_file,optimize=2,doraise=True)
+			except Exception:
+				print(format_exc(),stderr)
+				exit()
+		if filename.endswith('.out'):
+			if run(['cp',filename,compiled_file]).returncode:
+				exit()
+	if filename.endswith('.cpp'):
+		return [compiled_file]
+	if filename.endswith('.c'):
+		return [compiled_file]
+	if filename.endswith('.py'):
+		return [executable,compiled_file]
+	if filename.endswith('.out'):
+		return [compiled_file]
+
+
+
+test_creator='gen_test.py'
+
+to_run='task.cpp'
+
+def run_with_time(a):
+    s=run(['time','-p']+a,stderr=PIPE)
+    t=s.stderr
+    t=t.splitlines()
+    t = [w for w in t if w]
+    t=t[-3]
+    if b'real' in t:
+        t=t.split(b'real',1)[1]
+    t=t.strip()
+    return t.decode(errors='replace')
+
+res=[]
+start_time=str(time()*2**64)
+for w in range(20):
+    run(how_to_run(test_creator,start_time))
+    n=int(open('test.txt','r').read().split()[0])
+    t=run_with_time(how_to_run(to_run,start_time))
+    res.append([n,t])
+
+print('result:')
+for w in res:
+    print(*w)
