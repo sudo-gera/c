@@ -156,4 +156,43 @@ auto operator|(t<R*,assign_s<T>> q,Y&&w){
 
 ///////////////////////////////////////////////////end of lib
 
-
+int main(){
+    llu n=getint(),m=getint();
+    set<t<llu,llu,llu>> s;
+    vector<vector<t<llu,llu,decltype(s.end())>>> a;
+    for (llu q=0;q<n;++q){
+        a.emplace_back();
+        for (llu w=0;w<m;++w){
+            s.insert({-1LLU,q,w});
+            a.back().push_back({getint()+0LLU,-1LLU,next(s.end(),-1)});
+        }
+    }
+    a[0][0].v1=0;
+    auto y=s.extract(a[0][0].v2);
+    y.value().v0=a[0][0].v1;
+    s.insert(move(y));
+    while (1){
+        ic(a)
+        ic(s)
+        auto ptr=s.begin();
+        llu q=ptr->v1;
+        llu w=ptr->v2;
+        for (auto [z,x] : vector({make_tuple(q+1,w),make_tuple(q-1,w),make_tuple(q,w+1),make_tuple(q,w-1)})){
+            if (z<n and x<m and a[z][x].v2!=s.end()){
+                llu l=max(lli(a[z][x].v0-a[q][w].v0),0LL);
+                a[z][x].v1|assign(min)|a[q][w].v1+l;
+                auto y=s.extract(a[z][x].v2);
+                y.value().v0=a[z][x].v1;
+                s.insert(move(y));
+            }
+        }
+        s.erase(ptr);
+        a[q][w].v2=s.end();
+        if (q==n-1 and w==m-1){
+            break;
+        }
+    }
+    ic(a)
+    ic(s)
+    cout<<a[n-1][m-1].v1<<endl;
+}

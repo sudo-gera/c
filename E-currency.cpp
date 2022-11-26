@@ -156,4 +156,65 @@ auto operator|(t<R*,assign_s<T>> q,Y&&w){
 
 ///////////////////////////////////////////////////end of lib
 
+struct decimal{
+    lli val;
+    llu off;
+    auto&operator*=(decimal oth){
+        val*=oth.val;
+        off+=oth.off;
+        return *this;
+    }
+    auto&operator+=(decimal oth){
+        while (off<oth.off){
+            val*=10;
+            off+=1;
+        }
+        while (off>oth.off){
+            oth.val*=10;
+            oth.off+=1;
+        }
+        val+=oth.val;
+        return *this;
+    }
+    auto operator+(){
+        return decimal{+val,off};
+    }
+    auto operator-(){
+        return decimal{-val,off};
+    }
+    auto&operator-=(decimal oth){
+        return *this+=-oth;
+    }
+};
 
+auto operator+(decimal q,decimal e){return q+=e;}
+auto operator-(decimal q,decimal e){return q-=e;}
+auto operator*(decimal q,decimal e){return q*=e;}
+
+auto operator<=>(decimal q,decimal e){return (q-e).val<=>0;}
+
+auto&operator>>(istream&s,decimal&d){
+    long double f;
+    s>>f;
+    d=decimal{lli(f*100),2};
+    return s;
+}
+
+int main(){
+    llu n=getint(),m=getint(),_s=getint();
+    decimal v;
+    cin>>v;
+    vector<vector<t<llu,decimal,decimal>>> a(n);
+    vector<vector<t<llu,decimal,decimal>>> s(n);
+    for (llu w=0;w<m;++w){
+        llu z=getint()-1,x=getint()-1;
+        decimal c,v;
+        cin>>c>>v;
+        a[z].push_back({x,c,v});
+        s[x].push_back({z,c,v});
+        cin>>c>>v;
+        a[x].push_back({z,c,v});
+        s[z].push_back({x,c,v});
+    }
+    
+}

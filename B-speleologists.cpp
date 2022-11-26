@@ -156,4 +156,55 @@ auto operator|(t<R*,assign_s<T>> q,Y&&w){
 
 ///////////////////////////////////////////////////end of lib
 
+auto get_distances_from(auto start,auto get_next){
+    // auto start=*(llu*)(_start);
+    // auto&get_next=*(std::vector<std::vector<t<unsigned long long, unsigned long long>>>*)(_get_next);
+    set<t<llu,llu>> f;
+    map<llu,t<llu,decltype(f.end())>> d;
+    d[start]={0,f.insert({0,start}).first};
+    while (not f.empty()){
+        auto ptr=f.begin();
+        auto w=ptr->v1;
+        for (auto&_q:get_next(w)){
+            auto [n,q]=make_tuple(_q.v0,_q.v1);
+            if (not d.count(n)){
+                d[n]={-1LLU,f.insert({-1LLU,n}).first};
+            }
+            if (d[n].v1==f.end()){
+                continue;
+            }
+            d[n].v0|assign(min)|d[w].v0+q;
+            auto node=f.extract(d[n].v1);
+            node.value().v0=d[n].v0;
+            f.insert(move(node));
+        }
+        f.erase(ptr);
+        d[w].v1=f.end();
+    }
+    return d;
+}
 
+int main(){
+    llu n=getint(),m=getint(),k=getint();
+    vector<llu> _1_f;
+    generate_n(back_inserter(_1_f),k,[&](){return getint()-1;});
+    vector<vector<t<llu,llu>>> a(n);
+    for (llu w=0;w<m;++w){
+        llu z=getint()-1,x=getint()-1,c=getint();
+        a[z].push_back({x,c});
+        a[x].push_back({z,c});
+    }
+    llu _s=getint()-1,_f=getint()-1;
+    auto d=get_distances_from(_f,[&](auto q)->decltype(a[q]){return a[q];});
+    if (d.count(_s)){
+        for (auto w:_1_f){
+            if (d.count(w) and d[w].v0<=d[_s].v0){
+                cout<<"-1"<<endl;
+                return 0;
+            }
+        }
+        cout<<d[_s].v0<<endl;
+    }else{
+        cout<<"-1"<<endl;
+    }
+}

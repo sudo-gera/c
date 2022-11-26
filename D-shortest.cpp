@@ -156,4 +156,41 @@ auto operator|(t<R*,assign_s<T>> q,Y&&w){
 
 ///////////////////////////////////////////////////end of lib
 
-
+int main(){
+    llu n=getint(),m=getint(),_s=getint();
+    vector<vector<t<llu,lli>>> a(n);
+    vector<vector<t<llu,lli>>> s(n);
+    for (llu w=0;w<m;++w){
+        llu z=getint(),x=getint();
+        lli c=getint();
+        a[z].push_back({x,c});
+        s[x].push_back({z,c});
+    }
+    vector<lli> d(n,none);
+    vector<lli> f(n,none);
+    d[_s]=0;
+    f[_s]=0;
+    for (llu q=0;q<n;++q){
+        for (llu w=0;w<n;++w){
+            for (auto&e:s[w]){
+                if (f[e.v0]!=none){
+                    d[w]|assign(min)|f[e.v0]+e.v1;
+                }
+            }
+        }
+        ic(d,f)
+        swap(d,f);
+    }
+    if (d==f){
+        for (auto w:d){
+            if (w==none){
+                cout<<"UNREACHABLE"<<" ";
+            }else{
+                cout<<w<<" ";
+            }
+        }
+        cout<<endl;
+    }else{
+        cout<<"IMPOSSIBLE"<<endl;
+    }
+}

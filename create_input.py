@@ -83,22 +83,22 @@ maxlen=200+int(run_num**0.5)
 # 		print(s)
 # 		break
 
-llen=10**5
+# llen=10**5
 
-n=rand(2,llen)
-m=rand(0,1+min(llen,(n-1)**2//4))
-print(n)
-# print(n,m)
-e=set()
-while len(e)<m:
-	r=t=0
-	while r==t:
-		r=rand(n)+1
-		t=rand(n)+1
-	# r,t=sorted([r,t])
-	e.add((r,t))
-for w in e:
-	print(*w)
+# n=rand(2,llen)
+# m=rand(0,1+min(llen,(n-1)**2//4))
+# print(n)
+# # print(n,m)
+# e=set()
+# while len(e)<m:
+# 	r=t=0
+# 	while r==t:
+# 		r=rand(n)+1
+# 		t=rand(n)+1
+# 	# r,t=sorted([r,t])
+# 	e.add((r,t))
+# for w in e:
+# 	print(*w)
 
 # while 1:
 # 	try:
@@ -144,3 +144,18 @@ for w in e:
 # 	except:
 # 		# print(format_exc(),file=stderr)
 # 		pass
+
+n=rand(2,64)
+m=rand(0,min(64,n*(n-1)//2))
+k=rand(0,n)
+print(n,m,k)
+f=list(range(1,n+1))
+shuffle(f)
+print(*sorted(f[:k]))
+g=[[q+1,w+1,rand(64)] for q in range(n) for w in range(n) if q!=w]
+shuffle(g)
+for w in g[:m]:
+	print(*w)
+f=list(range(1,n+1))
+shuffle(f)
+print(*f[:2])
