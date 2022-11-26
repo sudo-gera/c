@@ -97,14 +97,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/gera/c/CMakeFiles /Users/gera/c//CMakeFiles/progress.marks
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
+	cd /Users/gera/c && $(CMAKE_COMMAND) -E cmake_progress_start /Users/gera/c/CMakeFiles /Users/gera/c/tests//CMakeFiles/progress.marks
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/gera/c/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 clean
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/clean
 .PHONY : clean
 
 # The main clean target
@@ -113,79 +113,18 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 preinstall
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 preinstall
+	cd /Users/gera/c && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /Users/gera/c && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
-
-#=============================================================================
-# Target rules for targets named bmp_cli
-
-# Build rule for target.
-bmp_cli: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 bmp_cli
-.PHONY : bmp_cli
-
-# fast build rule for target.
-bmp_cli/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp_cli.dir/build.make CMakeFiles/bmp_cli.dir/build
-.PHONY : bmp_cli/fast
-
-bmp_cli.o: bmp_cli.cpp.o
-.PHONY : bmp_cli.o
-
-# target to build an object file
-bmp_cli.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp_cli.dir/build.make CMakeFiles/bmp_cli.dir/bmp_cli.cpp.o
-.PHONY : bmp_cli.cpp.o
-
-bmp_cli.i: bmp_cli.cpp.i
-.PHONY : bmp_cli.i
-
-# target to preprocess a source file
-bmp_cli.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp_cli.dir/build.make CMakeFiles/bmp_cli.dir/bmp_cli.cpp.i
-.PHONY : bmp_cli.cpp.i
-
-bmp_cli.s: bmp_cli.cpp.s
-.PHONY : bmp_cli.s
-
-# target to generate assembly for a file
-bmp_cli.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp_cli.dir/build.make CMakeFiles/bmp_cli.dir/bmp_cli.cpp.s
-.PHONY : bmp_cli.cpp.s
-
-bmp_lib.o: bmp_lib.cpp.o
-.PHONY : bmp_lib.o
-
-# target to build an object file
-bmp_lib.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp_cli.dir/build.make CMakeFiles/bmp_cli.dir/bmp_lib.cpp.o
-.PHONY : bmp_lib.cpp.o
-
-bmp_lib.i: bmp_lib.cpp.i
-.PHONY : bmp_lib.i
-
-# target to preprocess a source file
-bmp_lib.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp_cli.dir/build.make CMakeFiles/bmp_cli.dir/bmp_lib.cpp.i
-.PHONY : bmp_lib.cpp.i
-
-bmp_lib.s: bmp_lib.cpp.s
-.PHONY : bmp_lib.s
-
-# target to generate assembly for a file
-bmp_lib.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp_cli.dir/build.make CMakeFiles/bmp_cli.dir/bmp_lib.cpp.s
-.PHONY : bmp_lib.cpp.s
 
 # Help Target
 help:
@@ -196,13 +135,6 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... test"
-	@echo "... bmp_cli"
-	@echo "... bmp_cli.o"
-	@echo "... bmp_cli.i"
-	@echo "... bmp_cli.s"
-	@echo "... bmp_lib.o"
-	@echo "... bmp_lib.i"
-	@echo "... bmp_lib.s"
 .PHONY : help
 
 
@@ -214,6 +146,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /Users/gera/c && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 
