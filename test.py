@@ -1,9 +1,8 @@
 from h import *
-k=80
-for x in range(-k,k+1):
-	for y in range(-k,k+1):
-		for z in range(-k,k+1):
-			if 2*x**2 + y**4 + 4*z**2 + 2*x**2*y**4 - 42*z + 33 == 0:
-				print(x,y,z)
-
-
+c=0
+for q in range(10**4,10**5):
+	for w in range(8):
+		if 5*q%10**w + 3*q%10**w + 4*q%10**w == 13736:
+			c+=1
+			print(q,w)
+print(c)
