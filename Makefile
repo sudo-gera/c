@@ -57,7 +57,7 @@ RM = /opt/local/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/gera/cpp-2022-sudo-gera/Projects
+CMAKE_SOURCE_DIR = /Users/gera/cpp-2022-sudo-gera
 
 # The top-level build directory on which CMake was run.
 CMAKE_BINARY_DIR = /Users/gera/c
@@ -127,65 +127,30 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named bmp_cli
+# Target rules for targets named test_function
 
 # Build rule for target.
-bmp_cli: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 bmp_cli
-.PHONY : bmp_cli
+test_function: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_function
+.PHONY : test_function
 
 # fast build rule for target.
-bmp_cli/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp_cli.dir/build.make CMakeFiles/bmp_cli.dir/build
-.PHONY : bmp_cli/fast
+test_function/fast:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/tasks/function/CMakeFiles/test_function.dir/build.make CppLanguage/tasks/function/CMakeFiles/test_function.dir/build
+.PHONY : test_function/fast
 
-bmp_cli.o: bmp_cli.cpp.o
-.PHONY : bmp_cli.o
+#=============================================================================
+# Target rules for targets named playground
 
-# target to build an object file
-bmp_cli.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp_cli.dir/build.make CMakeFiles/bmp_cli.dir/bmp_cli.cpp.o
-.PHONY : bmp_cli.cpp.o
+# Build rule for target.
+playground: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 playground
+.PHONY : playground
 
-bmp_cli.i: bmp_cli.cpp.i
-.PHONY : bmp_cli.i
-
-# target to preprocess a source file
-bmp_cli.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp_cli.dir/build.make CMakeFiles/bmp_cli.dir/bmp_cli.cpp.i
-.PHONY : bmp_cli.cpp.i
-
-bmp_cli.s: bmp_cli.cpp.s
-.PHONY : bmp_cli.s
-
-# target to generate assembly for a file
-bmp_cli.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp_cli.dir/build.make CMakeFiles/bmp_cli.dir/bmp_cli.cpp.s
-.PHONY : bmp_cli.cpp.s
-
-bmp_lib.o: bmp_lib.cpp.o
-.PHONY : bmp_lib.o
-
-# target to build an object file
-bmp_lib.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp_cli.dir/build.make CMakeFiles/bmp_cli.dir/bmp_lib.cpp.o
-.PHONY : bmp_lib.cpp.o
-
-bmp_lib.i: bmp_lib.cpp.i
-.PHONY : bmp_lib.i
-
-# target to preprocess a source file
-bmp_lib.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp_cli.dir/build.make CMakeFiles/bmp_cli.dir/bmp_lib.cpp.i
-.PHONY : bmp_lib.cpp.i
-
-bmp_lib.s: bmp_lib.cpp.s
-.PHONY : bmp_lib.s
-
-# target to generate assembly for a file
-bmp_lib.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp_cli.dir/build.make CMakeFiles/bmp_cli.dir/bmp_lib.cpp.s
-.PHONY : bmp_lib.cpp.s
+# fast build rule for target.
+playground/fast:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/playground/CMakeFiles/playground.dir/build.make CppLanguage/playground/CMakeFiles/playground.dir/build
+.PHONY : playground/fast
 
 # Help Target
 help:
@@ -196,13 +161,8 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... test"
-	@echo "... bmp_cli"
-	@echo "... bmp_cli.o"
-	@echo "... bmp_cli.i"
-	@echo "... bmp_cli.s"
-	@echo "... bmp_lib.o"
-	@echo "... bmp_lib.i"
-	@echo "... bmp_lib.s"
+	@echo "... playground"
+	@echo "... test_function"
 .PHONY : help
 
 
