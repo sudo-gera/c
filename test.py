@@ -1,8 +1,21 @@
 from h import *
-c=0
-for q in range(10**4,10**5):
-	for w in range(8):
-		if 5*q%10**w + 3*q%10**w + 4*q%10**w == 13736:
-			c+=1
-			print(q,w)
-print(c)
+
+a=bytearray(8)
+
+for a[0] in b'01'                        														:
+	for a[1] in b'01'                    														:[[[[[]
+		for a[6] in b'01'
+			for a[7] in b'01'            
+				if print(int(a,2))   	    		            								]
+			for a[4] in b'01'
+		for a[5] in b'01'                														]]
+	for a[2] in b'01'
+for a[3] in b'01'                        														]
+
+
+
+
+
+
+
+

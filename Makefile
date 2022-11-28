@@ -127,17 +127,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named test_function
+# Target rules for targets named test_tuple
 
 # Build rule for target.
-test_function: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_function
-.PHONY : test_function
+test_tuple: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_tuple
+.PHONY : test_tuple
 
 # fast build rule for target.
-test_function/fast:
-	$(MAKE) $(MAKESILENT) -f CppLanguage/tasks/function/CMakeFiles/test_function.dir/build.make CppLanguage/tasks/function/CMakeFiles/test_function.dir/build
-.PHONY : test_function/fast
+test_tuple/fast:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/tasks/tuple/CMakeFiles/test_tuple.dir/build.make CppLanguage/tasks/tuple/CMakeFiles/test_tuple.dir/build
+.PHONY : test_tuple/fast
 
 #=============================================================================
 # Target rules for targets named playground
@@ -162,7 +162,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... playground"
-	@echo "... test_function"
+	@echo "... test_tuple"
 .PHONY : help
 
 

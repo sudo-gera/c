@@ -1,21 +1,21 @@
-Start testing: Nov 28 18:04 MSK
+Start testing: Nov 28 20:22 MSK
 ----------------------------------------------------------
 1/1 Testing: test_function
 1/1 Test: test_function
 Command: "/Users/gera/c/test_function"
 Directory: /Users/gera/c/CppLanguage/tasks/function
-"test_function" start time: Nov 28 18:04 MSK
+"test_function" start time: Nov 28 20:22 MSK
 Output:
 ----------------------------------------------------------
 ===============================================================================
 All tests passed (4 assertions in 10 test cases)
 
 <end of output>
-Test time =   0.86 sec
+Test time =   0.71 sec
 ----------------------------------------------------------
 Test Passed.
-"test_function" end time: Nov 28 18:04 MSK
+"test_function" end time: Nov 28 20:22 MSK
 "test_function" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Nov 28 18:04 MSK
+End testing: Nov 28 20:22 MSK
