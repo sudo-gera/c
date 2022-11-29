@@ -48,4 +48,6 @@ same_bmp_08_check 1 0.0181724
 same_test4_create 1 0.1352
 same_test4_check 1 0.0175881
 test_function 3 0.23663
+test_tuple 0 0
 ---
+test_tuple

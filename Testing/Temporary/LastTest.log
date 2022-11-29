@@ -1,21 +1,85 @@
-Start testing: Nov 28 20:22 MSK
+Start testing: Nov 29 03:51 MSK
 ----------------------------------------------------------
-1/1 Testing: test_function
-1/1 Test: test_function
-Command: "/Users/gera/c/test_function"
-Directory: /Users/gera/c/CppLanguage/tasks/function
-"test_function" start time: Nov 28 20:22 MSK
+1/1 Testing: test_tuple
+1/1 Test: test_tuple
+Command: "/Users/gera/c/test_tuple"
+Directory: /Users/gera/c/CppLanguage/tasks/tuple
+"test_tuple" start time: Nov 29 03:51 MSK
 Output:
 ----------------------------------------------------------
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+test_tuple is a Catch v2.13.8 host application.
+Run with -? for options
+
+-------------------------------------------------------------------------------
+Tuple simple test(non basic types tuple) + move
+  Move works
+-------------------------------------------------------------------------------
+/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/tuple/test_tuple.cpp:43
+...............................................................................
+
+/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/tuple/test_tuple.cpp:46: FAILED:
+  REQUIRE( get<1>(moved) == v )
+with expansion:
+  { 1, 2, 3, 4 } == {  }
+
+-------------------------------------------------------------------------------
+Tuple cat
+-------------------------------------------------------------------------------
+/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/tuple/test_tuple.cpp:110
+...............................................................................
+
+/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/tuple/test_tuple.cpp:115: FAILED:
+  REQUIRE( get<0>(cat) == "hromosomes" )
+with expansion:
+  "" == "hromosomes"
+
+-------------------------------------------------------------------------------
+One element tuples
+-------------------------------------------------------------------------------
+/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/tuple/test_tuple.cpp:140
+...............................................................................
+
+/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/tuple/test_tuple.cpp:143: FAILED:
+  REQUIRE( get<6>(kek) == 1 )
+with expansion:
+  3 == 1
+
+-------------------------------------------------------------------------------
+Is default constructible + Stream operators
+  Input stream
+-------------------------------------------------------------------------------
+/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/tuple/test_tuple.cpp:174
+...............................................................................
+
+/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/tuple/test_tuple.cpp:176: FAILED:
+  REQUIRE( get<int>(t1) == 1 )
+with expansion:
+  41875193 (0x27ef6f9) == 1
+
+-------------------------------------------------------------------------------
+Is default constructible + Stream operators
+  Output stream(no extra spaces in the end)
+-------------------------------------------------------------------------------
+/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/tuple/test_tuple.cpp:182
+...............................................................................
+
+/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/tuple/test_tuple.cpp:184: FAILED:
+  REQUIRE( out.str() == "1 1.5" )
+with expansion:
+  "" == "1 1.5"
+
 ===============================================================================
-All tests passed (4 assertions in 10 test cases)
+test cases: 13 |  9 passed | 4 failed
+assertions: 44 | 39 passed | 5 failed
 
 <end of output>
-Test time =   0.71 sec
+Test time =   0.76 sec
 ----------------------------------------------------------
-Test Passed.
-"test_function" end time: Nov 28 20:22 MSK
-"test_function" time elapsed: 00:00:00
+Test Failed.
+"test_tuple" end time: Nov 29 03:51 MSK
+"test_tuple" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Nov 28 20:22 MSK
+End testing: Nov 29 03:51 MSK
