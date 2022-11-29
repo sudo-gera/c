@@ -111,57 +111,57 @@ CppLanguage/playground/clean: CppLanguage/playground/CMakeFiles/playground.dir/c
 # Directory level rules for directory CppLanguage/tasks
 
 # Recursive "all" directory target.
-CppLanguage/tasks/all: CppLanguage/tasks/tuple/all
+CppLanguage/tasks/all: CppLanguage/tasks/vector/all
 .PHONY : CppLanguage/tasks/all
 
 # Recursive "preinstall" directory target.
-CppLanguage/tasks/preinstall: CppLanguage/tasks/tuple/preinstall
+CppLanguage/tasks/preinstall: CppLanguage/tasks/vector/preinstall
 .PHONY : CppLanguage/tasks/preinstall
 
 # Recursive "clean" directory target.
-CppLanguage/tasks/clean: CppLanguage/tasks/tuple/clean
+CppLanguage/tasks/clean: CppLanguage/tasks/vector/clean
 .PHONY : CppLanguage/tasks/clean
 
 #=============================================================================
-# Directory level rules for directory CppLanguage/tasks/tuple
+# Directory level rules for directory CppLanguage/tasks/vector
 
 # Recursive "all" directory target.
-CppLanguage/tasks/tuple/all: CppLanguage/tasks/tuple/CMakeFiles/test_tuple.dir/all
-.PHONY : CppLanguage/tasks/tuple/all
+CppLanguage/tasks/vector/all: CppLanguage/tasks/vector/CMakeFiles/test_vector.dir/all
+.PHONY : CppLanguage/tasks/vector/all
 
 # Recursive "preinstall" directory target.
-CppLanguage/tasks/tuple/preinstall:
-.PHONY : CppLanguage/tasks/tuple/preinstall
+CppLanguage/tasks/vector/preinstall:
+.PHONY : CppLanguage/tasks/vector/preinstall
 
 # Recursive "clean" directory target.
-CppLanguage/tasks/tuple/clean: CppLanguage/tasks/tuple/CMakeFiles/test_tuple.dir/clean
-.PHONY : CppLanguage/tasks/tuple/clean
+CppLanguage/tasks/vector/clean: CppLanguage/tasks/vector/CMakeFiles/test_vector.dir/clean
+.PHONY : CppLanguage/tasks/vector/clean
 
 #=============================================================================
-# Target rules for target CppLanguage/tasks/tuple/CMakeFiles/test_tuple.dir
+# Target rules for target CppLanguage/tasks/vector/CMakeFiles/test_vector.dir
 
 # All Build rule for target.
-CppLanguage/tasks/tuple/CMakeFiles/test_tuple.dir/all:
-	$(MAKE) $(MAKESILENT) -f CppLanguage/tasks/tuple/CMakeFiles/test_tuple.dir/build.make CppLanguage/tasks/tuple/CMakeFiles/test_tuple.dir/depend
-	$(MAKE) $(MAKESILENT) -f CppLanguage/tasks/tuple/CMakeFiles/test_tuple.dir/build.make CppLanguage/tasks/tuple/CMakeFiles/test_tuple.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/gera/c/CMakeFiles --progress-num=3,4 "Built target test_tuple"
-.PHONY : CppLanguage/tasks/tuple/CMakeFiles/test_tuple.dir/all
+CppLanguage/tasks/vector/CMakeFiles/test_vector.dir/all:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/tasks/vector/CMakeFiles/test_vector.dir/build.make CppLanguage/tasks/vector/CMakeFiles/test_vector.dir/depend
+	$(MAKE) $(MAKESILENT) -f CppLanguage/tasks/vector/CMakeFiles/test_vector.dir/build.make CppLanguage/tasks/vector/CMakeFiles/test_vector.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/gera/c/CMakeFiles --progress-num=3,4,5,6,7,8,9 "Built target test_vector"
+.PHONY : CppLanguage/tasks/vector/CMakeFiles/test_vector.dir/all
 
 # Build rule for subdir invocation for target.
-CppLanguage/tasks/tuple/CMakeFiles/test_tuple.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/gera/c/CMakeFiles 2
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CppLanguage/tasks/tuple/CMakeFiles/test_tuple.dir/all
+CppLanguage/tasks/vector/CMakeFiles/test_vector.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/gera/c/CMakeFiles 7
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CppLanguage/tasks/vector/CMakeFiles/test_vector.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/gera/c/CMakeFiles 0
-.PHONY : CppLanguage/tasks/tuple/CMakeFiles/test_tuple.dir/rule
+.PHONY : CppLanguage/tasks/vector/CMakeFiles/test_vector.dir/rule
 
 # Convenience name for target.
-test_tuple: CppLanguage/tasks/tuple/CMakeFiles/test_tuple.dir/rule
-.PHONY : test_tuple
+test_vector: CppLanguage/tasks/vector/CMakeFiles/test_vector.dir/rule
+.PHONY : test_vector
 
 # clean rule for target.
-CppLanguage/tasks/tuple/CMakeFiles/test_tuple.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CppLanguage/tasks/tuple/CMakeFiles/test_tuple.dir/build.make CppLanguage/tasks/tuple/CMakeFiles/test_tuple.dir/clean
-.PHONY : CppLanguage/tasks/tuple/CMakeFiles/test_tuple.dir/clean
+CppLanguage/tasks/vector/CMakeFiles/test_vector.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CppLanguage/tasks/vector/CMakeFiles/test_vector.dir/build.make CppLanguage/tasks/vector/CMakeFiles/test_vector.dir/clean
+.PHONY : CppLanguage/tasks/vector/CMakeFiles/test_vector.dir/clean
 
 #=============================================================================
 # Target rules for target CppLanguage/playground/CMakeFiles/playground.dir
