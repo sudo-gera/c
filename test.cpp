@@ -1,8 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#pragma clang diagnostic ignored "-Wall"
-
 
 template<size_t b=0,size_t e=16,typename F,typename N,typename...A>
 constexpr decltype(auto) call(F&&f,N&&n,A&&...a){
@@ -17,11 +15,12 @@ constexpr decltype(auto) call(F&&f,N&&n,A&&...a){
     }
 }
 
+template<typename T>
+int print_value(){
+    int unused=0;
+}
 
 
 int main(){
-    auto f=[](auto n,auto&&cin)->decltype(auto){
-        array<int,n> r;
-    };
-    call(f,9,move(cin));
+    
 }
