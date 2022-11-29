@@ -1,10 +1,10 @@
-Start testing: Nov 29 03:51 MSK
+Start testing: Nov 29 04:10 MSK
 ----------------------------------------------------------
 1/1 Testing: test_tuple
 1/1 Test: test_tuple
 Command: "/Users/gera/c/test_tuple"
 Directory: /Users/gera/c/CppLanguage/tasks/tuple
-"test_tuple" start time: Nov 29 03:51 MSK
+"test_tuple" start time: Nov 29 04:10 MSK
 Output:
 ----------------------------------------------------------
 
@@ -56,7 +56,7 @@ Is default constructible + Stream operators
 /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/tuple/test_tuple.cpp:176: FAILED:
   REQUIRE( get<int>(t1) == 1 )
 with expansion:
-  41875193 (0x27ef6f9) == 1
+  86359609 (0x525be39) == 1
 
 -------------------------------------------------------------------------------
 Is default constructible + Stream operators
@@ -78,8 +78,8 @@ assertions: 44 | 39 passed | 5 failed
 Test time =   0.76 sec
 ----------------------------------------------------------
 Test Failed.
-"test_tuple" end time: Nov 29 03:51 MSK
+"test_tuple" end time: Nov 29 04:10 MSK
 "test_tuple" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Nov 29 03:51 MSK
+End testing: Nov 29 04:10 MSK
