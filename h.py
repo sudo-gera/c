@@ -374,7 +374,16 @@ def c(n,k):
 	if k in [0,n]:
 		return 1
 	if 0<k<n:
-		return c(n-1,k-1)+c(n-1,k)
+		try:
+			return c(n-1,k-1)+c(n-1,k)
+		except:
+			pass
+		r=1
+		for w in range(k):
+			r*=n-w
+		for w in range(k):
+			r//=w+1
+		return r
 	return 0
 
 def binstr(s):
