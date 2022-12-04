@@ -1,27 +1,49 @@
-#include <bits/stdc++.h>
+#include <termios.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
 using namespace std;
 
-#pragma clang diagnostic ignored "-Wall"
 
-
-template<size_t b=0,size_t e=16,typename F,typename N,typename...A>
-constexpr decltype(auto) call(F&&f,N&&n,A&&...a){
-    if (b>n or n>=e){
-        assert(((void)"wrong value",0));
-    }else if constexpr (b+1==e){
-        return f(integral_constant<N,b>(),forward<A>(a)...);
-    }else if (n<(b+e)/2){
-        return call<b,(b+e)/2>(forward<F>(f),forward<N>(n),forward<A>(a)...);
-    }else{
-        return call<(b+e)/2,e>(forward<F>(f),forward<N>(n),forward<A>(a)...);
-    }
+auto receive_key_event_unsafe(){
+    // if you will use it in while(1)
+    // you will never stop
+    // ctrl+C returns as 3
+    int fd=fileno(stdin);
+    struct termios save,mode;
+    tcgetattr(fd,&save);
+    tcgetattr(fd,&mode);
+    mode.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
+    mode.c_oflag &= ~(OPOST);
+    mode.c_cflag &= ~(CSIZE | PARENB);
+    mode.c_cflag |= CS8;
+    mode.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
+    mode.c_cc[VMIN] = 1;
+    mode.c_cc[VTIME] = 0;
+    tcsetattr(fd, TCSAFLUSH, &mode);
+    int c=getchar();
+    tcsetattr(fd, TCSADRAIN, &save);
+    return c;
 }
 
 
+auto receive_key_event(){
+    auto k=receive_key_event_unsafe();
+    // stop if
+    //   ctrl+shift+@ is 0
+    //   ctrl+A is 1
+    //   ctrl+B is 2
+    //   ctrl+C is 3
+    //   ctrl+D is 4
+    if (k<5){
+        exit(0);
+    }
+    return k;
+}
+
 
 int main(){
-    auto f=[](auto n)->decltype(auto){
-        array<int,n> r;
-    };
-    call(f,9);
+    while(1){
+        putchar(receive_key_event());
+    }
 }
