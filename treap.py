@@ -11,7 +11,7 @@ import functools
 class treap:
     @dataclasses.dataclass
     class no_copy:
-        val: treap|None = None
+        val: typing.Union[treap,None] = None
         step: int = 1 # only -1 or 1
 
     def __init__(self, l=[]) -> None:
@@ -32,13 +32,13 @@ class treap:
     def add_right(self, oth) -> None:
         ...
 
-    def __getitem__(self, n: int | slice):
+    def __getitem__(self, n: typing.Union[int , slice]):
         ...
 
-    def __setitem__(self, n: int | slice, v) -> None:
+    def __setitem__(self, n: typing.Union[int , slice], v) -> None:
         ...
 
-    def __delitem__(self, n: int | slice, v) -> None:
+    def __delitem__(self, n: typing.Union[int , slice], v) -> None:
         ...
 
     def __iter__(self) -> iter:
@@ -170,7 +170,7 @@ class treap:
             self._right = value
             treap.update(self)
             treap.check[0](self)
-    Node = node | None
+    Node = typing.Union[node , None]
 
     check = [lambda a:0]
 
@@ -267,7 +267,7 @@ class treap:
 
     def __init__(self, l=[]) -> None:
         self._root: treap.Node
-        if isinstance(l, treap.node | None):
+        if isinstance(l, treap.node ) or l is None:
             self._root = l
             return
         if isinstance(l, treap.no_copy):
@@ -288,7 +288,7 @@ class treap:
 
     @root.setter
     def root(self, v):
-        assert isinstance(v, treap.Node)
+        assert isinstance(v, treap.node) or v is None
         self._root = v
 
     def getnode(self, n: int) -> Node:
@@ -334,7 +334,7 @@ class treap:
                 1 if n.step is None else n.step,
             )
 
-    def __getitem__(self, n: int | slice):
+    def __getitem__(self, n: typing.Union[int , slice]):
         if isinstance(n, slice):
             n = self.prettyslice(n)
             if n.step in [1, -1, treap.no_copy] or isinstance(n.step, treap.no_copy):
@@ -373,7 +373,7 @@ class treap:
             else:
                 raise IndexError
 
-    def __setitem__(self, n: int | slice, v) -> None:
+    def __setitem__(self, n: typing.Union[int , slice], v) -> None:
         if isinstance(n, slice):
             n = self.prettyslice(n)
             if n.step in [1, -1, treap.no_copy] or isinstance(n.step, treap.no_copy):
@@ -415,7 +415,7 @@ class treap:
             else:
                 raise IndexError
 
-    def __delitem__(self, n: int) -> None:
+    def __delitem__(self, n: typing.Union[int , slice]) -> None:
         if isinstance(n, slice):
             n = self.prettyslice(n)
             if n.step == 1:
