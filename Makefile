@@ -57,7 +57,7 @@ RM = /opt/local/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/gera/cpp-2022-sudo-gera
+CMAKE_SOURCE_DIR = /Users/gera/cpp-2022-sudo-gera/Projects
 
 # The top-level build directory on which CMake was run.
 CMAKE_BINARY_DIR = /Users/gera/c
@@ -127,30 +127,113 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named test_vector
+# Target rules for targets named bmp
 
 # Build rule for target.
-test_vector: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_vector
-.PHONY : test_vector
+bmp: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 bmp
+.PHONY : bmp
 
 # fast build rule for target.
-test_vector/fast:
-	$(MAKE) $(MAKESILENT) -f CppLanguage/tasks/vector/CMakeFiles/test_vector.dir/build.make CppLanguage/tasks/vector/CMakeFiles/test_vector.dir/build
-.PHONY : test_vector/fast
+bmp/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp.dir/build.make CMakeFiles/bmp.dir/build
+.PHONY : bmp/fast
 
-#=============================================================================
-# Target rules for targets named playground
+alg.o: alg.cpp.o
+.PHONY : alg.o
 
-# Build rule for target.
-playground: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 playground
-.PHONY : playground
+# target to build an object file
+alg.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp.dir/build.make CMakeFiles/bmp.dir/alg.cpp.o
+.PHONY : alg.cpp.o
 
-# fast build rule for target.
-playground/fast:
-	$(MAKE) $(MAKESILENT) -f CppLanguage/playground/CMakeFiles/playground.dir/build.make CppLanguage/playground/CMakeFiles/playground.dir/build
-.PHONY : playground/fast
+alg.i: alg.cpp.i
+.PHONY : alg.i
+
+# target to preprocess a source file
+alg.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp.dir/build.make CMakeFiles/bmp.dir/alg.cpp.i
+.PHONY : alg.cpp.i
+
+alg.s: alg.cpp.s
+.PHONY : alg.s
+
+# target to generate assembly for a file
+alg.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp.dir/build.make CMakeFiles/bmp.dir/alg.cpp.s
+.PHONY : alg.cpp.s
+
+bmp.o: bmp.cpp.o
+.PHONY : bmp.o
+
+# target to build an object file
+bmp.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp.dir/build.make CMakeFiles/bmp.dir/bmp.cpp.o
+.PHONY : bmp.cpp.o
+
+bmp.i: bmp.cpp.i
+.PHONY : bmp.i
+
+# target to preprocess a source file
+bmp.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp.dir/build.make CMakeFiles/bmp.dir/bmp.cpp.i
+.PHONY : bmp.cpp.i
+
+bmp.s: bmp.cpp.s
+.PHONY : bmp.s
+
+# target to generate assembly for a file
+bmp.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp.dir/build.make CMakeFiles/bmp.dir/bmp.cpp.s
+.PHONY : bmp.cpp.s
+
+esh.o: esh.cpp.o
+.PHONY : esh.o
+
+# target to build an object file
+esh.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp.dir/build.make CMakeFiles/bmp.dir/esh.cpp.o
+.PHONY : esh.cpp.o
+
+esh.i: esh.cpp.i
+.PHONY : esh.i
+
+# target to preprocess a source file
+esh.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp.dir/build.make CMakeFiles/bmp.dir/esh.cpp.i
+.PHONY : esh.cpp.i
+
+esh.s: esh.cpp.s
+.PHONY : esh.s
+
+# target to generate assembly for a file
+esh.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp.dir/build.make CMakeFiles/bmp.dir/esh.cpp.s
+.PHONY : esh.cpp.s
+
+pix.o: pix.cpp.o
+.PHONY : pix.o
+
+# target to build an object file
+pix.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp.dir/build.make CMakeFiles/bmp.dir/pix.cpp.o
+.PHONY : pix.cpp.o
+
+pix.i: pix.cpp.i
+.PHONY : pix.i
+
+# target to preprocess a source file
+pix.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp.dir/build.make CMakeFiles/bmp.dir/pix.cpp.i
+.PHONY : pix.cpp.i
+
+pix.s: pix.cpp.s
+.PHONY : pix.s
+
+# target to generate assembly for a file
+pix.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bmp.dir/build.make CMakeFiles/bmp.dir/pix.cpp.s
+.PHONY : pix.cpp.s
 
 # Help Target
 help:
@@ -161,8 +244,19 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... test"
-	@echo "... playground"
-	@echo "... test_vector"
+	@echo "... bmp"
+	@echo "... alg.o"
+	@echo "... alg.i"
+	@echo "... alg.s"
+	@echo "... bmp.o"
+	@echo "... bmp.i"
+	@echo "... bmp.s"
+	@echo "... esh.o"
+	@echo "... esh.i"
+	@echo "... esh.s"
+	@echo "... pix.o"
+	@echo "... pix.i"
+	@echo "... pix.s"
 .PHONY : help
 
 

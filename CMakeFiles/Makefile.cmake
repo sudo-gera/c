@@ -10,11 +10,8 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.23.3/CMakeCCompiler.cmake"
   "CMakeFiles/3.23.3/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.23.3/CMakeSystem.cmake"
-  "/Users/gera/cpp-2022-sudo-gera/CMakeLists.txt"
-  "/Users/gera/cpp-2022-sudo-gera/CppLanguage/CMakeLists.txt"
-  "/Users/gera/cpp-2022-sudo-gera/CppLanguage/playground/CMakeLists.txt"
-  "/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/CMakeLists.txt"
-  "/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/vector/CMakeLists.txt"
+  "/Users/gera/cpp-2022-sudo-gera/Projects/CMakeLists.txt"
+  "/Users/gera/cpp-2022-sudo-gera/Projects/tests/CMakeLists.txt"
   "/opt/local/share/cmake-3.23/Modules/CMakeCInformation.cmake"
   "/opt/local/share/cmake-3.23/Modules/CMakeCXXInformation.cmake"
   "/opt/local/share/cmake-3.23/Modules/CMakeCommonLanguageInclude.cmake"
@@ -47,14 +44,10 @@ set(CMAKE_MAKEFILE_OUTPUTS
 # Byproducts of CMake generate step:
 set(CMAKE_MAKEFILE_PRODUCTS
   "CMakeFiles/CMakeDirectoryInformation.cmake"
-  "CppLanguage/CMakeFiles/CMakeDirectoryInformation.cmake"
-  "CppLanguage/tasks/CMakeFiles/CMakeDirectoryInformation.cmake"
-  "CppLanguage/tasks/vector/CMakeFiles/CMakeDirectoryInformation.cmake"
-  "CppLanguage/playground/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "tests/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CppLanguage/tasks/vector/CMakeFiles/test_vector.dir/DependInfo.cmake"
-  "CppLanguage/playground/CMakeFiles/playground.dir/DependInfo.cmake"
+  "CMakeFiles/bmp.dir/DependInfo.cmake"
   )

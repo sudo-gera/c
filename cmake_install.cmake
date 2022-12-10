@@ -1,4 +1,4 @@
-# Install script for directory: /Users/gera/cpp-2022-sudo-gera
+# Install script for directory: /Users/gera/cpp-2022-sudo-gera/Projects
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,7 +39,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/Users/gera/c/CppLanguage/cmake_install.cmake")
+  include("/Users/gera/c/tests/cmake_install.cmake")
 
 endif()
 

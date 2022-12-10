@@ -11,12 +11,12 @@ clang: error: linker command failed with exit code 1 (use -v to see invocation)
 
 Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
 Compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ 
-Build flags: 
+Build flags: ;-g;-fsanitize=address,undefined;-Wfatal-errors;-Ofast
 Id flags:  
 
 The output was:
 1
 ld: library not found for -lc++
-clang: error: linker command failed with exit code 1 (use -v to see invocation)
+clang: fatal error: linker command failed with exit code 1 (use -v to see invocation)
 
 
