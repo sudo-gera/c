@@ -146,17 +146,41 @@ static inline void print(uint64_t out) {
 
 typedef int (*cmp_f_t)(const void *, const void *);
 
-char* get_line(){
-    char*str=0;
-    int c=0;
-    while ((c=getchar,c!=EOF)){
-        append(str,c);
-    }
-    return str;
-}
-
 ///////////////////////////////////////////////////end of lib
 
 
+
+int main(){
+    #ifdef EXPR
+        print(EXPR);
+    #else
+        int pid=fork();
+        if (not pid){
+            char**args=NULL;
+            append(args,"gcc");
+            char*str=NULL;
+            char*pr="-DEXPR=";
+            resize(str,strlen(pr));
+            memmove(str,pr,strlen(pr));
+            int c=0;
+            while((c=getchar(),c!=EOF)){
+                if (not isspace(c)){
+                    append(str,c);
+                }
+            }
+            append(args,str);
+            append(args,"-o");
+            append(args,"./b.out");
+            append(args,__FILE__);
+            execvp(args[0],args);
+        }else{
+            waitpid(pid,0,0);
+            char**args=0;
+            append(args,"./b.out");
+            append(args,0);
+            execvp(args[0],args);
+        }
+    #endif
+}
 
 

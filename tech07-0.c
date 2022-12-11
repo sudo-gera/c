@@ -22,30 +22,6 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#ifndef assert
-#include <assert.h>
-#endif
-#include <ctype.h>
-#include <inttypes.h>
-#include <iso646.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <tgmath.h>
-#include <memory.h>
-#include <stddef.h>
-#include <sys/mman.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <sys/syscall.h>
-#include <errno.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-
 #ifdef print
 #undef print
 #endif
@@ -173,26 +149,13 @@ typedef int (*cmp_f_t)(const void *, const void *);
 ///////////////////////////////////////////////////end of lib
 
 int main(){
-    char*str=NULL;
-    int c=0;
-    const char*begin="python3 -c 'print(";
-    resize(str,strlen(begin));
-    memcpy(str,begin,strlen(begin));
-    while ((c = getchar(), c!=EOF and c!='\n' and c!='\r')){
-        append(str,c);
-    }
-    const char*end=")'";
-    resize(str,len(str)+strlen(end)+1);
-    memcpy(str+len(str)-strlen(end)-1,end,strlen(end)+1);
-    FILE*pipe=popen(str,"r");
-    // del(str);
-    str=0;
-    while ((c=getc(pipe),c!=EOF)){
-        append(str,c);
-    }
-    str[len(str)]=0;
-    printf("%s",str);
-    // del(str);
+	char**argv=NULL;
+	resize(argv,4);
+	argv[0]="python3";
+	argv[1]="-c";
+	argv[2]="print(eval(input()))";
+	execvp("python3",argv);
+	del(argv);
 }
 
 
