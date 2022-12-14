@@ -1,32 +1,33 @@
-%include "best_io.inc"
-global _f_printreg
-global _f_printstr
+extern printf
+extern scanf
+global main
 
+section .data
+a dq 0
+scanfstr db '%lli',0
+printfstr db '%lli',10,0
 section .text
 
-_f_printreg:
-    printreg
+
+main:
+
+mov rsi,a
+mov rdi,scanfstr
+mov rax,0
+call scanf
+
+mov rax,[a]
+
+and rax,65535
+
+mov rsi,rax
+mov rdi,printfstr
+mov rax,0
+call printf
+
+
+mov rax,0
 ret
 
-_f_printstr:
-    push rax
-    push rbx
-    mov rax,[rsp+32]
-    mov rbx,[rsp+24]
-    printstr rax,rbx
-    pop rbx
-    pop rax
-ret
 
-; start
-; jmp _2
-; _1:
-; db "--+++++++=="
-; _2:
-; push qword _1
-; push qword _2
-; call _f_printstr
-
-
-; stop
 
