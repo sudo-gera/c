@@ -4,6 +4,7 @@ global main
 
 section .data
 a dq 0
+b dq 0
 scanfstr db '%lli',0
 printfstr db '%lli',10,0
 section .text
@@ -16,9 +17,15 @@ mov rdi,scanfstr
 mov rax,0
 call scanf
 
-mov rax,[a]
+mov rsi,b
+mov rdi,scanfstr
+mov rax,0
+call scanf
 
-and rax,65535
+mov rax,[a]
+mov rbx,[b]
+
+sub rax,rbx
 
 mov rsi,rax
 mov rdi,printfstr
