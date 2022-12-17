@@ -25,7 +25,11 @@ call scanf
 mov rax,[a]
 mov rbx,[b]
 
-sub rax,rbx
+cmp rax,rbx
+jl _
+    xchg rax,rbx
+_:
+
 
 mov rsi,rax
 mov rdi,printfstr
