@@ -26,6 +26,7 @@ data=[
 
 def create_mes(res):
     mes=[]
+    _mes=[]
     if res[10] == 1 and res[11] == 1:
         mes.append('''
             mass market
@@ -254,7 +255,7 @@ def create_mes(res):
             styling: https://goldapple.ru/19000105683-gold-protein-styling-cream-dull
         ''')
     if res[4] == 1:
-        mes.append('''
+        _mes.append('''
             recommendations for normal hair
             «Use a mild shampoo for normal hair, not overloaded with nutrients, 2 times a week. Also, do not forget about balms and conditioners, which should be applied only to the length of the hair;
             after each shampooing, use moisturizers to prevent overdrying of the hair (especially if you wash your hair often);
@@ -263,7 +264,7 @@ def create_mes(res):
             if you do not need to constantly do styling, let your hair dry without a hair dryer.»
         ''')
     if res[4] == 2:
-        mes.append('''
+        _mes.append('''
             recommendations for dry hair
             «Wash your hair 1-2 times a week using shampoo for dry or damaged hair;
             Use oils, moisturizing sprays and serums to prevent breakage and tangles. Once a week, be sure to use nourishing masks;
@@ -272,14 +273,14 @@ def create_mes(res):
             Regularly do a head massage - it improves blood circulation and does not allow the hair to dry out.»
         ''')
     if res[4] == 3:
-        mes.append('''
+        _mes.append('''
             recommendations for oily hair
             «Ideal shampoo labeled "for daily use" or one that helps regulate sebum production;
             Avoid products with silicones and oils in the composition - these ingredients will quickly "steal" the freshness from your hair;
             Lather your head at least twice, gently massaging your hair. It is ideal to leave the shampoo on the hair for a couple of minutes so that the fat is completely dissolved. Rinse with warm water, thoroughly washing the roots and length;»
         ''')
     if res[4] == 4:
-        mes.append('''
+        _mes.append('''
             recommendations for combined hair
             «Wash your hair as needed. Buy shampoo for normal or mixed type hair;
             apply conditioner, masks and other care products only to the ends of the hair (or distribute along the entire length if the product is not too heavy);
@@ -287,13 +288,13 @@ def create_mes(res):
             dry your hair at low temperatures, do not abuse the curling iron and be sure to use heat protectants on the tips.»
         ''')
     if  (res[3] == 1 or res[3] == 3):
-        mes.append('''
+        _mes.append('''
             Recommendations for dyed hair
             «The more often you wash your hair, the faster the dye is washed out and the color fades. Frequent washing also strips hair of its natural oils, making it appear dry, dull, and lifeless. Therefore, experts advise washing your hair no more than two or three times a week, if there is no need or individual need to do this more often.
             Be sure to pause between coloring sessions, at least 4 to 5 weeks.
             Heat protectants are essential for any type of hair, especially colored hair. Use a heat protectant before styling to minimize exposure to hot air or tools.»
         ''')
-    return mes
+    return [mes,_mes]
 
 
 def strip_lines(s):
@@ -338,15 +339,19 @@ def get_id(message):
     return message.from_user.username
 
 
-def test(l,r):
-    ll=len(l)
-    if ll!=len(data):
-        for w in range(1,len(data[ll])):
-            l[ll+1]=w
-            test(l,r)
-        del l[ll+1]
-    else:
-        r.append(bytes(l.values()))
+def get_mes(res):
+    mes,_mes=create_mes(res)
+    return mes[-1:]+_mes
+
+# def test(l,r):
+#     ll=len(l)
+#     if ll!=len(data):
+#         for w in range(1,len(data[ll])):
+#             l[ll+1]=w
+#             test(l,r)
+#         del l[ll+1]
+#     else:
+#         r.append(bytes(l.values()))
 
 # r=[]
 # test({},r)
@@ -435,9 +440,11 @@ def handle_text(message):
                         db_set_if_not_present(get_id(message),'test',{})
                         res=db[get_id(message)]['test']
                         if all([w+1 in res and res[w+1]-1 in range(len(data[w])) for w in range(len(data))]):
-                            mes=create_mes(res)
+                            mes=get_mes(res)
                             mes='\n\n'.join([strip_lines(w) for w in mes])
-                            bot.send_message(message.chat.id, f'''{mes}''',reply_markup=markup)
+                            _markup=telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+                            _markup.add(telebot.types.KeyboardButton(f'/start'))
+                            bot.send_message(message.chat.id, f'''{mes}''',reply_markup=_markup)
                         else:
                             start(message)
                 return
