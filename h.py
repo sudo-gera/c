@@ -28,7 +28,7 @@ import urllib.request
 from urllib.parse import *
 import urllib.parse
 from pprint import *
-import pprint
+# import pprint
 from math import *
 import math
 from cmath import *
@@ -410,3 +410,10 @@ def bmp_write(a,filename):
             data.append(int.from_bytes(bytearray(w),'little'))
     data=b''.join([w.to_bytes(4,'little') for w in data])
     open(filename,'wb').write(data[2:])
+
+def hex_array(a):
+    return ''.join(['\\x'+('00'+hex(w)[2:])[-2:] for w in a])
+
+
+
+
