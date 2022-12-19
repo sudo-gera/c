@@ -81,6 +81,10 @@ def outputFunction(*a):
 	print("\x1b[92mline \x1b[94m"+line+"\x1b[92m file \x1b[94m"+file+"\x1b[92m func \x1b[94m"+func+"\x1b[92m \x1b[0m"+args,file=stderr)
 from icecream import ic
 import icecream 
+try:
+	cache
+except:
+	cache=lru_cache(maxsize=None)
 ic.configureOutput(includeContext=1)
 ic.configureOutput(outputFunction=outputFunction)
 ic.configureOutput(prefix='')

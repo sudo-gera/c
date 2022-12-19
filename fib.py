@@ -1,4 +1,8 @@
-from functools import cache
+from functools import *
+try:
+	cache
+except:
+	cache=lru_cache(maxsize=None)
 @cache
 def fibonacci(n,m=None):
 	t=1
