@@ -1,23 +1,41 @@
-%include "best_io.inc"
-start
-	getdword eax
-	call root
-	printudword ebx
-stop
+extern printf
+extern scanf
+global main
+
+section .data
+a dq 0
+b dq 0
+scanfstr db '%lli',0
+printfstr db '%lli',10,0
+section .text
 
 
-root:
-	mov ebx,0
-	mov ecx,1<<(__BITS__-2)
-	_2:
-		lea edx,[ebx+ecx]
-		cmp eax,edx
-		jb _1
-			sub eax,edx
-			lea ebx,[ebx+ecx*2]
-		_1:
-		shr ebx,1
-		shr ecx,2
-	jnz _2
-	mov eax,ebx
+main:
+
+mov rsi,a
+mov rdi,scanfstr
+mov rax,0
+call scanf
+
+mov rsi,b
+mov rdi,scanfstr
+mov rax,0
+call scanf
+
+mov rax,[a]
+mov rbx,[b]
+
+cqo
+idiv rbx
+
+mov rsi,rbx
+mov rdi,printfstr
+mov rax,0
+call printf
+
+
+mov rax,0
 ret
+
+
+

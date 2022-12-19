@@ -1,34 +1,33 @@
-
-
 #include <iostream>
+#include <cassert>
 
-long Getint() {
-  long ll;
+int64_t Getint() {
+  int64_t ll;
   std::cin >> ll;
   return ll;
 }
 
 struct Item {
-  long Sum = 0;
-  long Add = 0;
+  int64_t Sum = 0;
+  int64_t Add = 0;
 };
 
-Item* a = 0;
+Item* a = nullptr;
 #define ll 16384
 
-Item& get(long b, long e) {
+Item& Get(int64_t b, int64_t e) {
   return a[(ll + b) / (e - b)];
 }
 
-void Add(long ub, long ue, long v, long b = 0, long e = ll) {
-  assert(b <= ub and ub != ue and ue <= e);
-  get(b, e).Sum += v * (ue - ub);
-  long c = (b + e) / 2;
-  if (b == ub and ue == e) {
-    get(b, e).Add += v;
-  } else if (b <= ub and ue <= c) {
+void Add(int64_t ub, int64_t ue, int64_t v, int64_t b = 0, int64_t e = ll) {
+  assert(b <= ub && ub != ue && ue <= e);
+  Get(b, e).Sum += v * (ue - ub);
+  int64_t c = (b + e) / 2;
+  if (b == ub && ue == e) {
+    Get(b, e).Add += v;
+  } else if (b <= ub && ue <= c) {
     Add(ub, ue, v, b, c);
-  } else if (c <= ub and ue <= e) {
+  } else if (c <= ub && ue <= e) {
     Add(ub, ue, v, c, e);
   } else {
     Add(ub, c, v, b, c);
@@ -36,29 +35,30 @@ void Add(long ub, long ue, long v, long b = 0, long e = ll) {
   }
 }
 
-long Sum(long ub, long ue, long b = 0, long e = ll) {
-  long r = -1;
-  assert(b <= ub and ub != ue and ue <= e);
-  long c = (b + e) / 2;
-  if (b == ub and ue == e) {
-    r = get(b, e).Add * (ue - ub) + get(b, e).Sum;
-  } else if (b <= ub and ue <= c) {
-    r = get(b, e).Add * (ue - ub) + Sum(ub, ue, b, c);
-  } else if (c <= ub and ue <= e) {
-    r = get(b, e).Add * (ue - ub) + Sum(ub, ue, c, e);
+int64_t Sum(int64_t ub, int64_t ue, int64_t b = 0, int64_t e = ll) {
+  int64_t r = -1;
+  assert(b <= ub && ub != ue && ue <= e);
+  int64_t c = (b + e) / 2;
+  if (b == ub && ue == e) {
+    r = Get(b, e).Add * (ue - ub) + Get(b, e).Sum;
+  } else if (b <= ub && ue <= c) {
+    r = Get(b, e).Add * (ue - ub) + Sum(ub, ue, b, c);
+  } else if (c <= ub && ue <= e) {
+    r = Get(b, e).Add * (ue - ub) + Sum(ub, ue, c, e);
   } else {
-    r = get(b, e).Add * (ue - ub) + Sum(ub, c, b, c) + Sum(c, ue, c, e);
+    r = Get(b, e).Add * (ue - ub) + Sum(ub, c, b, c) + Sum(c, ue, c, e);
   }
   return r;
 }
 
 int main() {
-  long n = Getint(), m = Getint();
+  int64_t m = Getint();
+  m = Getint();
   a = new Item[ll * 2]();
-  for (long w = 0; w < m; ++w) {
-    long q = Getint();
-    long l = Getint();
-    long r = Getint();
+  for (int64_t w = 0; w < m; ++w) {
+    int64_t q = Getint();
+    int64_t l = Getint();
+    int64_t r = Getint();
     if (q == 1) {
       Add(l, r, Getint());
     } else {

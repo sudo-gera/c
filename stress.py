@@ -34,10 +34,10 @@ def how_to_run(filename,start_time,stop,log):
 		compiled_file+='.out'
 	if not exists(compiled_file):
 		if filename.endswith('.cpp'):
-			if run(['g++','-Ofast','-std=c++17','-Wfatal-errors','-fsanitize=address,undefined,float-divide-by-zero,float-cast-overflow','-g',filename,'-o',compiled_file]).returncode:
+			if run(['g++','-Ofast','-std=c++20','-Wfatal-errors','-fsanitize=address,undefined,float-divide-by-zero,float-cast-overflow','-g',filename,'-o',compiled_file]).returncode:
 				exit()
 		if filename.endswith('.c'):
-			if run(['g++','-Ofast','-std=c++17','-Wfatal-errors','-fsanitize=address,undefined,float-divide-by-zero,float-cast-overflow','-g',filename,'-o',compiled_file]).returncode:
+			if run(['g++','-Ofast','-std=c++20','-Wfatal-errors','-fsanitize=address,undefined,float-divide-by-zero,float-cast-overflow','-g',filename,'-o',compiled_file]).returncode:
 				exit()
 		if filename.endswith('.py'):
 			if run(['python3','-m','py_compile',filename]).returncode:
@@ -97,13 +97,12 @@ def cmp(log,start_time,stop,pr_num):
 					exit()
 				w=w.stdout.read().decode()
 				r.append(w)
-			c=r
-			if run(['python3','is_equal.py'],input=dumps([p]+c).encode()).returncode:
-			# sc=set(c)
-			# if len(sc)!=1:
-				log.put([p,'different output'])
 			else:
-				log.put(None)
+				c=r
+				if run(['python3','is_equal.py'],input=dumps([p]+c).encode()).returncode:
+					log.put([p,'different output'])
+				else:
+					log.put(None)
 		except Exception:
 			log.put([p,format_exc()])
 			exit()

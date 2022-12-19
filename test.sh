@@ -1,8 +1,11 @@
-sudo apt-get install ruby libopenssl-ruby libyaml-ruby libdl-ruby libiconv-ruby libreadline-ruby irb ri rubygems
-sudo apt-get install subversion
-sudo apt-get build-dep ruby
-sudo apt-get install ruby-dev libpcap-dev
-sudo apt-get install rubygems libsqlite3-dev
-sudo gem install sqlite3-ruby
-sudo apt-get install rubygems libmysqlclient-dev
-sudo gem install mysql
+LANG=''
+cat test.txt |\
+    sed "s/\(.\)/M\1M/g" |\
+    base64 |\
+    sed "s/.\(.\)\(.\)./MM\1MM\2MM/g" |\
+    base64 -d |\
+    sed "s/.\(....\)./\1/g" | sed "s/\(.\)/\1MM/g" |\
+    base64 |\
+    sed "s/.\(.\)..\(.\).../M\1MMM\2MM/g" |\
+    base64 -d |\
+    sed "s/\(.\)../\1/g"

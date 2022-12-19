@@ -651,50 +651,50 @@ std::ostream&operator<<(std::ostream&q,const Rational&w){
 	return q;
 }
 
-#include <string>
+// #include <string>
 
-auto readfile_(FILE*q){
-	std::string s;
-	int c; // note: int, not char, required to handle EOF
-	while ((c = fgetc(q)) != EOF) { // standard C I/O file reading loop
-		s+=c;
-	}
-	return s;
-}
+// auto readfile_(FILE*q){
+// 	std::string s;
+// 	int c; // note: int, not char, required to handle EOF
+// 	while ((c = fgetc(q)) != EOF) { // standard C I/O file reading loop
+// 		s+=c;
+// 	}
+// 	return s;
+// }
 
-auto replace_(std::string q,std::string w,std::string e){
-	std::string res;
-	uint64_t a=0;
-	while (a<uint64_t((q).size())){
-		if (q.find(w,a)==a){
-			res+=e;
-			a+=w.size();
-		}else{
-			res+=q[a];
-			++a;
-		}
-	}
-	return res;
-}
+// auto replace_(std::string q,std::string w,std::string e){
+// 	std::string res;
+// 	uint64_t a=0;
+// 	while (a<uint64_t((q).size())){
+// 		if (q.find(w,a)==a){
+// 			res+=e;
+// 			a+=w.size();
+// 		}else{
+// 			res+=q[a];
+// 			++a;
+// 		}
+// 	}
+// 	return res;
+// }
 
-bool printed=0;
+// bool printed=0;
 
-int f(std::string file){
-	if (printed){
-		return 0;
-	}
-	printed=1;
-	auto d=fopen(file.c_str(),"r");
-	auto s=readfile_(d);
-	fclose(d);
-	s=replace_(s,"\t"," ");
-	size_t len=512;
-	size_t start=len*0;
-	std::cerr<<"//BEGIN OF PART "<<start/len<<std::endl;
-	std::cerr<<std::string(s.begin()+(start<s.size()?start:s.size()),s.begin()+(start+len<s.size()?start+len:s.size()))<<std::endl;
-	std::cerr<<"//END OF PART "<<start/len<<std::endl;
-	return 0;
-}
+// int f(std::string file){
+// 	if (printed){
+// 		return 0;
+// 	}
+// 	printed=1;
+// 	auto d=fopen(file.c_str(),"r");
+// 	auto s=readfile_(d);
+// 	fclose(d);
+// 	s=replace_(s,"\t"," ");
+// 	size_t len=512;
+// 	size_t start=len*0;
+// 	std::cerr<<"//BEGIN OF PART "<<start/len<<std::endl;
+// 	std::cerr<<std::string(s.begin()+(start<s.size()?start:s.size()),s.begin()+(start+len<s.size()?start+len:s.size()))<<std::endl;
+// 	std::cerr<<"//END OF PART "<<start/len<<std::endl;
+// 	return 0;
+// }
 
 
-#define BigInteger f(__FILE__);BigInteger
+// #define BigInteger f(__FILE__);BigInteger

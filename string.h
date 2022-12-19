@@ -155,3 +155,11 @@ public:
 };
 
 
+#include <type_traits>
+
+namespace std{
+	template<typename q,typename w>
+	constexpr bool is_assignable_v=std::is_assignable<q,w>::value;
+	template<typename q,typename w>
+	constexpr bool is_same_v=std::is_same<q,w>::value;
+};

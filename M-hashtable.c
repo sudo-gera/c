@@ -141,15 +141,22 @@ dict* dict_create(){
 	return a;
 }
 
+<<<<<<< HEAD
+=======
 bool eq(char*q,char*e){
 	return strcmp(q,e)==0;
 }
 
+>>>>>>> a2553e7337c89409150c4a381a8fd7af7974c7c6
 void dict_insert(dict*dp,item*tmp){
 	if (dp){
 		item**a=dp->data+hash(tmp->key)%len(dp->data);
 		for (size_t w=0;w<len(*a);++w){
+<<<<<<< HEAD
+			if (strcmp(a[0][w].key,tmp->key)==0){
+=======
 			if (eq(a[0][w].key,tmp->key)){
+>>>>>>> a2553e7337c89409150c4a381a8fd7af7974c7c6
 				a[0][w]=*tmp;
 				return;
 			}
@@ -162,7 +169,11 @@ void dict_erase(dict*dp,item*tmp){
 	if (dp){
 		item**a=dp->data+hash(tmp->key)%len(dp->data);
 		for (size_t w=0;w<len(*a);++w){
+<<<<<<< HEAD
+			if (strcmp(a[0][w].key,tmp->key)==0){
+=======
 			if (eq(a[0][w].key,tmp->key)){
+>>>>>>> a2553e7337c89409150c4a381a8fd7af7974c7c6
 				memmove(a[0]+w,a[0]+w+1,(len(a[0])-w-1)*sizeof(item));
 				pop(a[0]);
 				return;
@@ -175,7 +186,11 @@ bool dict_find(dict*dp,item*tmp){
 	if (dp){
 		item**a=dp->data+hash(tmp->key)%len(dp->data);
 		for (size_t w=0;w<len(*a);++w){
+<<<<<<< HEAD
+			if (strcmp(a[0][w].key,tmp->key)==0){
+=======
 			if (eq(a[0][w].key,tmp->key)){
+>>>>>>> a2553e7337c89409150c4a381a8fd7af7974c7c6
 				*tmp=a[0][w];
 				return 1;
 			}

@@ -1,0 +1,7 @@
+/Users/gera/c/CMakeFiles/bmp.dir
+/Users/gera/c/CMakeFiles/test.dir
+/Users/gera/c/CMakeFiles/edit_cache.dir
+/Users/gera/c/CMakeFiles/rebuild_cache.dir
+/Users/gera/c/tests/CMakeFiles/test.dir
+/Users/gera/c/tests/CMakeFiles/edit_cache.dir
+/Users/gera/c/tests/CMakeFiles/rebuild_cache.dir
