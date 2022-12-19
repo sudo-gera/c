@@ -148094,8 +148094,6 @@ using namespace std;
 using llu = long long unsigned;
 
 
-// #define ____O
 int main(){
-    // ____O
     cout<<(1+2)<<endl;
 }

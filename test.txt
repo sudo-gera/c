@@ -1,141 +1,21 @@
+# 0 "test.cpp"
+# 0 "<built-in>"
+# 0 "<command-line>"
+# 1 "test.cpp"
 
-template<__int128_t res>
-requires cond<10,1,res> and cond<11,1,res> auto f(){
-    return "cond<10,1,res> and cond<11,1,res>";
+
+using llu = long long unsigned;
+# 1 "test1.cpp" 1
+123123123123123123123123123123123123
+
+gegnirlnlist
+
+egitniurnv
+
+
+egnietni
+# 5 "test.cpp" 2
+# 15 "test.cpp"
+int main(){
+    cout<<(1*(1+2)*2*(1+2)*3)<<endl;
 }
-
-template<__int128_t res>
-requires cond<10,1,res> and cond<11,2,res> auto f(){
-    return "cond<10,1,res> and cond<11,2,res>";
-}
-
-template<__int128_t res>
-requires cond<10,1,res> and (cond<3,1,res> or cond<3,3,res>) and cond<11,1,res> auto f(){
-    return "cond<10,1,res> and (cond<3,1,res> or cond<3,3,res>) and cond<11,1,res>";
-}
-
-template<__int128_t res>
-requires cond<10,1,res> and (cond<3,1,res> or cond<3,3,res>) and cond<11,2,res> auto f(){
-    return "cond<10,1,res> and (cond<3,1,res> or cond<3,3,res>) and cond<11,2,res>";
-}
-
-template<__int128_t res>
-requires cond<10,1,res> and cond<4,3,res> and cond<11,1,res> auto f(){
-    return "cond<10,1,res> and cond<4,3,res> and cond<11,1,res>";
-}
-
-template<__int128_t res>
-requires cond<10,1,res> and cond<4,3,res> and cond<11,2,res> auto f(){
-    return "cond<10,1,res> and cond<4,3,res> and cond<11,2,res>";
-}
-
-template<__int128_t res>
-requires cond<10,1,res> and cond<1,4,res> and cond<11,1,res> auto f(){
-    return "cond<10,1,res> and cond<1,4,res> and cond<11,1,res>";
-}
-
-template<__int128_t res>
-requires cond<10,1,res> and cond<1,4,res> and cond<11,2,res> auto f(){
-    return "cond<10,1,res> and cond<1,4,res> and cond<11,2,res>";
-}
-
-template<__int128_t res>
-requires cond<10,2,res> and cond<11,1,res> auto f(){
-    return "cond<10,2,res> and cond<11,1,res>";
-}
-
-template<__int128_t res>
-requires cond<10,2,res> and cond<11,2,res> auto f(){
-    return "cond<10,2,res> and cond<11,2,res>";
-}
-
-template<__int128_t res>
-requires cond<10,2,res> and (cond<3,1,res> or cond<3,3,res>) and cond<11,1,res> auto f(){
-    return "cond<10,2,res> and (cond<3,1,res> or cond<3,3,res>) and cond<11,1,res>";
-}
-
-template<__int128_t res>
-requires cond<10,2,res> and (cond<3,1,res> or cond<3,3,res>) and cond<11,2,res> auto f(){
-    return "cond<10,2,res> and (cond<3,1,res> or cond<3,3,res>) and cond<11,2,res>";
-}
-
-template<__int128_t res>
-requires cond<10,2,res> and cond<4,3,res> and cond<11,1,res> auto f(){
-    return "cond<10,2,res> and cond<4,3,res> and cond<11,1,res>";
-}
-
-template<__int128_t res>
-requires cond<10,2,res> and cond<4,3,res> and cond<11,2,res> auto f(){
-    return "cond<10,2,res> and cond<4,3,res> and cond<11,2,res>";
-}
-
-template<__int128_t res>
-requires cond<10,2,res> and cond<1,4,res> and cond<11,1,res> auto f(){
-    return "cond<10,2,res> and cond<1,4,res> and cond<11,1,res>";
-}
-
-template<__int128_t res>
-requires cond<10,2,res> and cond<1,4,res> and cond<11,2,res> auto f(){
-    return "cond<10,2,res> and cond<1,4,res> and cond<11,2,res>";
-}
-
-template<__int128_t res>
-requires cond<10,3,res> and cond<11,1,res> auto f(){
-    return "cond<10,3,res> and cond<11,1,res>";
-}
-
-template<__int128_t res>
-requires cond<10,3,res> and cond<11,2,res> auto f(){
-    return "cond<10,3,res> and cond<11,2,res>";
-}
-
-template<__int128_t res>
-requires cond<10,3,res> and (cond<3,1,res> or cond<3,3,res>) and cond<11,1,res> auto f(){
-    return "cond<10,3,res> and (cond<3,1,res> or cond<3,3,res>) and cond<11,1,res>";
-}
-
-template<__int128_t res>
-requires cond<10,3,res> and (cond<3,1,res> or cond<3,3,res>) and cond<11,2,res> auto f(){
-    return "cond<10,3,res> and (cond<3,1,res> or cond<3,3,res>) and cond<11,2,res>";
-}
-
-template<__int128_t res>
-requires cond<10,3,res> and cond<4,3,res> and cond<11,1,res> auto f(){
-    return "cond<10,3,res> and cond<4,3,res> and cond<11,1,res>";
-}
-
-template<__int128_t res>
-requires cond<10,3,res> and cond<4,3,res> and cond<11,2,res> auto f(){
-    return "cond<10,3,res> and cond<4,3,res> and cond<11,2,res>";
-}
-
-template<__int128_t res>
-requires cond<10,3,res> and cond<1,4,res> and cond<11,1,res> auto f(){
-    return "cond<10,3,res> and cond<1,4,res> and cond<11,1,res>";
-}
-
-template<__int128_t res>
-requires cond<10,3,res> and cond<1,4,res> and cond<11,2,res> auto f(){
-    return "cond<10,3,res> and cond<1,4,res> and cond<11,2,res>";
-}
-
-template<__int128_t res>
-requires cond<10,4,res> and cond<11,1,res> auto f(){
-    return "cond<10,4,res> and cond<11,1,res>";
-}
-
-template<__int128_t res>
-requires cond<10,4,res> and cond<11,2,res> auto f(){
-    return "cond<10,4,res> and cond<11,2,res>";
-}
-
-template<__int128_t res>
-requires cond<10,4,res> and cond<4,2,res> and cond<11,1,res> auto f(){
-    return "cond<10,4,res> and cond<4,2,res> and cond<11,1,res>";
-}
-
-template<__int128_t res>
-requires cond<10,4,res> and cond<4,2,res> and cond<11,2,res> auto f(){
-    return "cond<10,4,res> and cond<4,2,res> and cond<11,2,res>";
-}
-
