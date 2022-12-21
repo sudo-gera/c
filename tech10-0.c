@@ -1,26 +1,30 @@
 #ifndef assert
 #include <assert.h>
 #endif
+#include <arpa/inet.h>
 #include <ctype.h>
+#include <errno.h>
+#include <fcntl.h>
 #include <inttypes.h>
 #include <iso646.h>
+#include <memory.h>
+#include <netinet/in.h>
+#include <signal.h>
 #include <stdarg.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <tgmath.h>
-#include <memory.h>
-#include <stddef.h>
 #include <sys/mman.h>
-#include <unistd.h>
+#include <sys/socket.h>
 #include <sys/stat.h>
-#include <fcntl.h>
 #include <sys/syscall.h>
-#include <errno.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <tgmath.h>
+#include <unistd.h>
 
 #ifdef print
 #undef print
@@ -155,39 +159,43 @@ char* get_line(){
     return str;
 }
 
+#define elif else if
+
 ///////////////////////////////////////////////////end of lib
 
 
 
-int main(int argc,char**argv){
-    int pipefd[2];
-    int c_in=open(argv[2],O_RDONLY);
-    pipe(pipefd);
-    int pid=fork();
-    if (not pid){
-        close(pipefd[0]);
-        dup2(pipefd[1],fileno(stdout));
-        dup2(c_in,fileno(stdin));
-        execlp(argv[1],argv[1],NULL);
-        // system(argv[1]);
-    }else{
-        waitpid(pid,0,0);
-        close(pipefd[1]);
-        dup2(pipefd[0],fileno(stdin));        
-        int str=0;
-        int c=0;
-        while ((c=getchar(),c!=EOF)){
-            str++;
-        }
-        print(str);
-        close(c_in);
-        close(pipefd[0]);
+int main(int argc,char**argv) {
+    int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (socket_fd < 1) {
+        perror("socket");
     }
+
+    // sockaddr
+    // sockaddr_in
+
+    struct sockaddr_in addr = {
+        .sin_family = AF_INET,
+        .sin_port = htons(8889),
+        .sin_addr.s_addr = inet_addr("127.0.0.1"),
+    };
+
+    if (connect(socket_fd, (struct sockaddr*)(&addr), sizeof(addr)) < 0) {
+        perror("connect");
+    }
+
+
+    int value=0;
+    int res=0;
+    char data[1024]="GET /Users/gera/c/test.txt HTTP/1.1\r\n";
+    res=send(socket_fd, data, strlen(data),0);
+    if (errno){perror(__FILE__);}
+    res=recv(socket_fd, data, sizeof(data),0);
+    if (errno){perror(__FILE__);}
+    printf("%s\n",data);
+
+
+    shutdown(socket_fd, SHUT_RDWR);
+    close(socket_fd);
+    return 0;
 }
-
-
-
-
-
-
-

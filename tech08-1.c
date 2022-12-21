@@ -155,33 +155,34 @@ char* get_line(){
     return str;
 }
 
+#define elif else if
+
 ///////////////////////////////////////////////////end of lib
 
 
 
 int main(int argc,char**argv){
     int pipefd[2];
-    int c_in=open(argv[2],O_RDONLY);
     pipe(pipefd);
-    int pid=fork();
-    if (not pid){
+    int pid1=fork();
+    if (not pid1){
         close(pipefd[0]);
         dup2(pipefd[1],fileno(stdout));
-        dup2(c_in,fileno(stdin));
         execlp(argv[1],argv[1],NULL);
         // system(argv[1]);
     }else{
-        waitpid(pid,0,0);
-        close(pipefd[1]);
-        dup2(pipefd[0],fileno(stdin));        
-        int str=0;
-        int c=0;
-        while ((c=getchar(),c!=EOF)){
-            str++;
+        int pid2=fork();
+        if (not pid2){
+            close(pipefd[1]);
+            dup2(pipefd[0],fileno(stdin));
+            execlp(argv[2],argv[2],NULL);
+            // system(argv[2]);
+        }else{
+            close(pipefd[0]);
+            close(pipefd[1]);
+            waitpid(pid1,0,0);
+            waitpid(pid2,0,0);
         }
-        print(str);
-        close(c_in);
-        close(pipefd[0]);
     }
 }
 

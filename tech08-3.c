@@ -155,33 +155,48 @@ char* get_line(){
     return str;
 }
 
+#define elif else if
+
 ///////////////////////////////////////////////////end of lib
 
 
-
-int main(int argc,char**argv){
+void run(int in,int out,int argc,char**argv){
     int pipefd[2];
-    int c_in=open(argv[2],O_RDONLY);
-    pipe(pipefd);
+    if (argc>1){
+        pipe(pipefd);
+    }else{
+        pipefd[1]=out;
+        pipefd[0]=-1;
+    }
     int pid=fork();
     if (not pid){
-        close(pipefd[0]);
-        dup2(pipefd[1],fileno(stdout));
-        dup2(c_in,fileno(stdin));
-        execlp(argv[1],argv[1],NULL);
-        // system(argv[1]);
-    }else{
-        waitpid(pid,0,0);
-        close(pipefd[1]);
-        dup2(pipefd[0],fileno(stdin));        
-        int str=0;
-        int c=0;
-        while ((c=getchar(),c!=EOF)){
-            str++;
+        if (pipefd[0]!=-1){
+            close(pipefd[0]);
         }
-        print(str);
-        close(c_in);
-        close(pipefd[0]);
+        if (in!=fileno(stdin)){
+            dup2(in,fileno(stdin));
+        }
+        if (pipefd[1]!=fileno(stdout)){
+            dup2(pipefd[1],fileno(stdout));
+        }
+        execlp(argv[0],argv[0],NULL);
+        // system(argv[0]);
+    }else{
+        if (argc>1){
+            close(pipefd[1]);
+            run(pipefd[0],out,argc-1,argv+1);
+            close(pipefd[0]);
+        }
+        waitpid(pid,0,0);
+    }
+}
+
+
+int main(int argc,char**argv){
+    argv+=1;
+    argc-=1;
+    if (argc){
+        run(fileno(stdin),fileno(stdout),argc,argv);
     }
 }
 

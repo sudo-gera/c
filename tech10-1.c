@@ -1,26 +1,30 @@
 #ifndef assert
 #include <assert.h>
 #endif
+#include <arpa/inet.h>
 #include <ctype.h>
+#include <errno.h>
+#include <fcntl.h>
 #include <inttypes.h>
 #include <iso646.h>
+#include <memory.h>
+#include <netinet/in.h>
+#include <signal.h>
 #include <stdarg.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <tgmath.h>
-#include <memory.h>
-#include <stddef.h>
 #include <sys/mman.h>
-#include <unistd.h>
+#include <sys/socket.h>
 #include <sys/stat.h>
-#include <fcntl.h>
 #include <sys/syscall.h>
-#include <errno.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <tgmath.h>
+#include <unistd.h>
 
 #ifdef print
 #undef print
@@ -155,39 +159,121 @@ char* get_line(){
     return str;
 }
 
+#define elif else if
+
 ///////////////////////////////////////////////////end of lib
 
+volatile int client_fd = -1;
+volatile int socket_fd = -1;
 
-
-int main(int argc,char**argv){
-    int pipefd[2];
-    int c_in=open(argv[2],O_RDONLY);
-    pipe(pipefd);
-    int pid=fork();
-    if (not pid){
-        close(pipefd[0]);
-        dup2(pipefd[1],fileno(stdout));
-        dup2(c_in,fileno(stdin));
-        execlp(argv[1],argv[1],NULL);
-        // system(argv[1]);
-    }else{
-        waitpid(pid,0,0);
-        close(pipefd[1]);
-        dup2(pipefd[0],fileno(stdin));        
-        int str=0;
-        int c=0;
-        while ((c=getchar(),c!=EOF)){
-            str++;
-        }
-        print(str);
-        close(c_in);
-        close(pipefd[0]);
+void handler(int sig_num) {
+    if (client_fd!=-1){
+        shutdown(client_fd, SHUT_RDWR);
+        close(client_fd);
     }
+    if (socket_fd!=-1){
+        shutdown(socket_fd, SHUT_RDWR);
+        close(socket_fd);
+    }
+    exit(0);
 }
 
+#define m_str(x) #x
+
+int main(int argc,char**argv) {
+
+    struct sigaction sa = {
+        .sa_handler = handler,
+        .sa_flags = SA_RESTART,
+    };
+    
+    sigaction(SIGINT, &sa, NULL);
+    sigaction(SIGTERM, &sa, NULL);
+    
+    socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (socket_fd < 1) {
+        perror("socket");
+    }
+
+    struct sockaddr_in addr = {
+        .sin_family = AF_INET,
+        // .sin_port = htons(atoi(argv[1])),
+        .sin_port = htons(8889),
+        .sin_addr.s_addr = INADDR_ANY,
+    };
+
+    bind(socket_fd, (struct sockaddr*)(&addr), sizeof(addr));
+
+    listen(socket_fd, SOMAXCONN);
+if (errno){perror(__FILE__ m_str(__LINE__));}
 
 
+    while(1){
+        client_fd = accept(socket_fd, NULL, NULL);
+if (errno){perror(__FILE__ m_str(__LINE__));}
+        printf("got client\n");
+
+        char*str=0;
+        char data[1024];
+        int l=0;
+        while ((l=recv(client_fd,data,sizeof(data),0))){
+            resize(str,len(str)+l);
+            memmove(str+len(str)-l,data,l);
+        }
+
+        printf("got data\n%s\n",str);
+
+        char* end=0;
+        for (int w=1;w<len(str);++w){
+            if (str[w-1]=='\r' and str[w]=='\n'){
+                end=str+w+1;
+                break;
+            }
+        }
+        char*filestart=str+strlen("GET ");
+        char*filestop=end-strlen(" HTTP/1.1");
+        filestop[0]=0;
 
 
+        if (access(filestart,F_OK)){
+            const char*to_send="HTTP/1.1 404 Not Found\r\n";
+            send(client_fd, to_send, strlen(to_send), 0);
+if (errno){perror(__FILE__ m_str(__LINE__));}
+        }elif (access(filestart,R_OK)){
+            const char*to_send="HTTP/1.1 403 Forbidden\r\n";
+            send(client_fd, to_send, strlen(to_send), 0);
+if (errno){perror(__FILE__ m_str(__LINE__));}
+        }else{
+            const char*to_send="HTTP/1.1 200 OK\r\n";
+            send(client_fd, to_send, strlen(to_send), 0);
+if (errno){perror(__FILE__ m_str(__LINE__));}
+            char data[1024];
+            struct stat stat_s;
+            stat(filestart,&stat_s);
+if (errno){perror(__FILE__ m_str(__LINE__));}
+            sprintf(data,"Content-Length: %d\r\n\r\n",(int)stat_s.st_size);
+            send(client_fd, data, strlen(data), 0);
+if (errno){perror(__FILE__ m_str(__LINE__));}
+            int fd=open(filestart,O_RDONLY);
+            while ((l=read(fd,data,sizeof(data)))){
+                send(client_fd,data,sizeof(data),0);
+if (errno){perror(__FILE__ m_str(__LINE__));}
+            }
+            close(fd);
+if (errno){perror(__FILE__ m_str(__LINE__));}
+        }
 
+        shutdown(client_fd, SHUT_RDWR);
+if (errno){perror(__FILE__ m_str(__LINE__));}
+        close(client_fd);
+if (errno){perror(__FILE__ m_str(__LINE__));}
+        client_fd=-1;
+        del(str);
+        str=0;
+    }
 
+    shutdown(socket_fd, SHUT_RDWR);
+    close(socket_fd);
+
+    return 0;
+}

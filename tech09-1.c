@@ -21,6 +21,7 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <signal.h>
 
 #ifdef print
 #undef print
@@ -136,6 +137,25 @@ static inline void putint(uint64_t out) {
     }
 }
 
+static inline void _putint(uint64_t out,char*_data) {
+    if (out > (1LLU << 63) - 1) {
+        _data++[0]='-';
+        out = 1 + ~out;
+    }
+    char data[44];
+    char *dend = data;
+    while (out) {
+        *++dend = (unsigned)('0') + out % 10;
+        out /= 10;
+    }
+    if (dend == data) {
+        _data++[0]='0';
+    }
+    for (; dend != data; --dend) {
+        _data++[0]=*dend;
+    }
+}
+
 static inline void print(uint64_t out) {
     putint(out);
     putchar('\n');
@@ -155,39 +175,60 @@ char* get_line(){
     return str;
 }
 
+#define elif else if
+
 ///////////////////////////////////////////////////end of lib
 
 
 
-int main(int argc,char**argv){
-    int pipefd[2];
-    int c_in=open(argv[2],O_RDONLY);
-    pipe(pipefd);
-    int pid=fork();
-    if (not pid){
-        close(pipefd[0]);
-        dup2(pipefd[1],fileno(stdout));
-        dup2(c_in,fileno(stdin));
-        execlp(argv[1],argv[1],NULL);
-        // system(argv[1]);
-    }else{
-        waitpid(pid,0,0);
-        close(pipefd[1]);
-        dup2(pipefd[0],fileno(stdin));        
-        int str=0;
-        int c=0;
-        while ((c=getchar(),c!=EOF)){
-            str++;
-        }
-        print(str);
-        close(c_in);
-        close(pipefd[0]);
+volatile int int_cnt = 0;
+
+volatile int is_running = 1;
+
+volatile int value=0;
+
+void handler(int sig_num) {
+    if (sig_num == SIGUSR1) {
+        ++value;
+    }else if (sig_num == SIGUSR2) {
+        value*=-1;
+    } else if (sig_num == SIGTERM || sig_num == SIGINT) {
+        is_running = 0;
+        // return;
     }
+    // is_running -= 1;
 }
 
+int main() {
+    struct sigaction sa = {
+        .sa_handler = handler,
+        .sa_flags = SA_RESTART,
+    };
+    
+    sigaction(SIGUSR1, &sa, NULL);
+    sigaction(SIGUSR2, &sa, NULL);
+    sigaction(SIGINT,  &sa, NULL);
+    sigaction(SIGTERM, &sa, NULL);
+    
+
+    print(getpid());
+    fflush(stdout);
+
+    assert(scanf("%i",&value)==1);
+
+    while (is_running) {
+        pause();
+        if (is_running){
+            char data[44];
+            memset(data,0,sizeof(data));
+            _putint(value,data);
+            data[strlen(data)]='\n';
+            write(1,data,strlen(data));
+            // print(value);
+        }
+    }
 
 
-
-
-
+    return 0;
+}
 

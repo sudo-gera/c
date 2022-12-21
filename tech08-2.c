@@ -155,33 +155,34 @@ char* get_line(){
     return str;
 }
 
+#define elif else if
+
 ///////////////////////////////////////////////////end of lib
 
-
+#if __has_include("d")
+    #define GCC_PATH "/opt/homebrew/Cellar/gcc/12.2.0/bin/gcc-12"
+#else
+    #define GCC_PATH "gcc"
+#endif
 
 int main(int argc,char**argv){
     int pipefd[2];
-    int c_in=open(argv[2],O_RDONLY);
     pipe(pipefd);
     int pid=fork();
     if (not pid){
         close(pipefd[0]);
-        dup2(pipefd[1],fileno(stdout));
-        dup2(c_in,fileno(stdin));
-        execlp(argv[1],argv[1],NULL);
-        // system(argv[1]);
+        dup2(pipefd[1],fileno(stderr));
+        execlp(GCC_PATH, GCC_PATH, argv[1],NULL);
     }else{
-        waitpid(pid,0,0);
         close(pipefd[1]);
-        dup2(pipefd[0],fileno(stdin));        
-        int str=0;
-        int c=0;
-        while ((c=getchar(),c!=EOF)){
-            str++;
+        waitpid(pid,0,0);
+        dup2(pipefd[0],fileno(stdin));
+        char* err=get_line();
+        for (int w=0;w<len(err);++w){
+            putchar(err[w]);
         }
-        print(str);
-        close(c_in);
-        close(pipefd[0]);
+        del(err);
+        close(pipefd[1]);
     }
 }
 

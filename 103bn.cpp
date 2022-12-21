@@ -405,6 +405,9 @@ std::string output_time(T q){
 	return "\x1b[92m"+to_string(q)+"\x1b[0m";
 }
 
+// #include "biginteger.h"
+#include "/Users/gera/Downloads/605531085bfa5b94c46723072dc65ac73e8ddbd0/a4bd9cd4b22b2f5bbbfa1b97a4f64ffb-605531085bfa5b94c46723072dc65ac73e8ddbd0/biginteger.cpp"
+#define bn_class BigInteger
 
 signed main(){
 	// test(bn_class("1"),"\x1b[92m+\x1b[0m00000001");
