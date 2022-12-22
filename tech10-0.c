@@ -161,6 +161,11 @@ char* get_line(){
 
 #define elif else if
 
+#define _str(x) #x
+#define m_str(x) _str(x)
+
+#define perr if (errno){perror(__FILE__ " " m_str(__LINE__));errno=0;}
+
 ///////////////////////////////////////////////////end of lib
 
 
@@ -187,15 +192,23 @@ int main(int argc,char**argv) {
 
     int value=0;
     int res=0;
-    char data[1024]="GET /Users/gera/c/test.txt HTTP/1.1\r\n";
+    char data[1024]="GET /Users/gera/c__/test.txt HTTP/1.1\r\n";
     res=send(socket_fd, data, strlen(data),0);
-    if (errno){perror(__FILE__);}
-    res=recv(socket_fd, data, sizeof(data),0);
-    if (errno){perror(__FILE__);}
-    printf("%s\n",data);
+perr
+    shutdown(socket_fd, SHUT_WR);
+perr
+    res=1;
+    while(res){
+        res=recv(socket_fd, data, sizeof(data),0);
+perr
+        printf("%i\n[%s]\n",res,data);
+        fflush(stdout);
+    }
 
 
     shutdown(socket_fd, SHUT_RDWR);
+perr
     close(socket_fd);
+perr
     return 0;
 }

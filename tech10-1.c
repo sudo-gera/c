@@ -161,6 +161,12 @@ char* get_line(){
 
 #define elif else if
 
+#define _str(x) #x
+#define m_str(x) _str(x)
+
+// #define perr if (errno){perror(__FILE__ " " m_str(__LINE__));errno=0;}
+#define perr 
+
 ///////////////////////////////////////////////////end of lib
 
 volatile int client_fd = -1;
@@ -177,8 +183,6 @@ void handler(int sig_num) {
     }
     exit(0);
 }
-
-#define m_str(x) #x
 
 int main(int argc,char**argv) {
 
@@ -197,79 +201,77 @@ int main(int argc,char**argv) {
 
     struct sockaddr_in addr = {
         .sin_family = AF_INET,
-        // .sin_port = htons(atoi(argv[1])),
+#if __has_include("d")
         .sin_port = htons(8889),
+#else
+        .sin_port = htons(atoi(argv[1])),
+#endif
         .sin_addr.s_addr = INADDR_ANY,
     };
 
     bind(socket_fd, (struct sockaddr*)(&addr), sizeof(addr));
 
     listen(socket_fd, SOMAXCONN);
-if (errno){perror(__FILE__ m_str(__LINE__));}
+perr
 
 
     while(1){
         client_fd = accept(socket_fd, NULL, NULL);
-if (errno){perror(__FILE__ m_str(__LINE__));}
-        printf("got client\n");
-
+perr
         char*str=0;
         char data[1024];
         int l=0;
-        while ((l=recv(client_fd,data,sizeof(data),0))){
-            resize(str,len(str)+l);
-            memmove(str+len(str)-l,data,l);
-        }
-
-        printf("got data\n%s\n",str);
-
         char* end=0;
-        for (int w=1;w<len(str);++w){
-            if (str[w-1]=='\r' and str[w]=='\n'){
-                end=str+w+1;
+        while ((l=recv(client_fd,data,1,0))){
+            append(str,data[0]);
+            if (len(str)>1 and str[len(str)-1]=='\n' and str[len(str)-2]=='\r'){
+                end=str+len(str)-2;
                 break;
             }
         }
+
         char*filestart=str+strlen("GET ");
         char*filestop=end-strlen(" HTTP/1.1");
         filestop[0]=0;
 
-
         if (access(filestart,F_OK)){
             const char*to_send="HTTP/1.1 404 Not Found\r\n";
             send(client_fd, to_send, strlen(to_send), 0);
-if (errno){perror(__FILE__ m_str(__LINE__));}
+perr
         }elif (access(filestart,R_OK)){
             const char*to_send="HTTP/1.1 403 Forbidden\r\n";
             send(client_fd, to_send, strlen(to_send), 0);
-if (errno){perror(__FILE__ m_str(__LINE__));}
+perr
         }else{
             const char*to_send="HTTP/1.1 200 OK\r\n";
             send(client_fd, to_send, strlen(to_send), 0);
-if (errno){perror(__FILE__ m_str(__LINE__));}
+perr
             char data[1024];
             struct stat stat_s;
             stat(filestart,&stat_s);
-if (errno){perror(__FILE__ m_str(__LINE__));}
+perr
             sprintf(data,"Content-Length: %d\r\n\r\n",(int)stat_s.st_size);
             send(client_fd, data, strlen(data), 0);
-if (errno){perror(__FILE__ m_str(__LINE__));}
+perr
             int fd=open(filestart,O_RDONLY);
+perr
             while ((l=read(fd,data,sizeof(data)))){
-                send(client_fd,data,sizeof(data),0);
-if (errno){perror(__FILE__ m_str(__LINE__));}
+                // print(l);
+perr
+                send(client_fd,data,l,0);
+perr
             }
             close(fd);
-if (errno){perror(__FILE__ m_str(__LINE__));}
+perr
         }
-
-        shutdown(client_fd, SHUT_RDWR);
-if (errno){perror(__FILE__ m_str(__LINE__));}
-        close(client_fd);
-if (errno){perror(__FILE__ m_str(__LINE__));}
-        client_fd=-1;
         del(str);
         str=0;
+
+        shutdown(client_fd, SHUT_RDWR);
+perr
+        close(client_fd);
+perr
+        client_fd=-1;
     }
 
     shutdown(socket_fd, SHUT_RDWR);

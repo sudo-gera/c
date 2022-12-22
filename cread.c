@@ -161,6 +161,8 @@ char* get_line(){
 
 #define elif else if
 
+#define perr if (errno){perror(__FILE__ " " m_str(__LINE__));errno=0;}
+
 ///////////////////////////////////////////////////end of lib
 
 
