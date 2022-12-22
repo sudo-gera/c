@@ -2,5 +2,6 @@
 #include <assert.h>
 
 int main(){
-    assert(void);
+    ________;
+    printf("","");
 }

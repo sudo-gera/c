@@ -7,6 +7,7 @@ set(CMAKE_DEPENDS_GENERATOR "Unix Makefiles")
 # The top level Makefile was generated from the following files:
 set(CMAKE_MAKEFILE_DEPENDS
   "CMakeCache.txt"
+<<<<<<< HEAD
   "CMakeFiles/3.22.1/CMakeCCompiler.cmake"
   "CMakeFiles/3.22.1/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.22.1/CMakeSystem.cmake"
@@ -29,6 +30,34 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/share/cmake-3.22/Modules/Platform/Linux-GNU.cmake"
   "/usr/share/cmake-3.22/Modules/Platform/Linux.cmake"
   "/usr/share/cmake-3.22/Modules/Platform/UnixPaths.cmake"
+=======
+  "CMakeFiles/3.23.3/CMakeCCompiler.cmake"
+  "CMakeFiles/3.23.3/CMakeCXXCompiler.cmake"
+  "CMakeFiles/3.23.3/CMakeSystem.cmake"
+  "/Users/gera/cpp-2022-sudo-gera/Projects/CMakeLists.txt"
+  "/Users/gera/cpp-2022-sudo-gera/Projects/tests/CMakeLists.txt"
+  "/opt/local/share/cmake-3.23/Modules/CMakeCInformation.cmake"
+  "/opt/local/share/cmake-3.23/Modules/CMakeCXXInformation.cmake"
+  "/opt/local/share/cmake-3.23/Modules/CMakeCommonLanguageInclude.cmake"
+  "/opt/local/share/cmake-3.23/Modules/CMakeGenericSystem.cmake"
+  "/opt/local/share/cmake-3.23/Modules/CMakeInitializeConfigs.cmake"
+  "/opt/local/share/cmake-3.23/Modules/CMakeLanguageInformation.cmake"
+  "/opt/local/share/cmake-3.23/Modules/CMakeSystemSpecificInformation.cmake"
+  "/opt/local/share/cmake-3.23/Modules/CMakeSystemSpecificInitialize.cmake"
+  "/opt/local/share/cmake-3.23/Modules/Compiler/AppleClang-C.cmake"
+  "/opt/local/share/cmake-3.23/Modules/Compiler/AppleClang-CXX.cmake"
+  "/opt/local/share/cmake-3.23/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
+  "/opt/local/share/cmake-3.23/Modules/Compiler/Clang.cmake"
+  "/opt/local/share/cmake-3.23/Modules/Compiler/GNU.cmake"
+  "/opt/local/share/cmake-3.23/Modules/Platform/Apple-AppleClang-C.cmake"
+  "/opt/local/share/cmake-3.23/Modules/Platform/Apple-AppleClang-CXX.cmake"
+  "/opt/local/share/cmake-3.23/Modules/Platform/Apple-Clang-C.cmake"
+  "/opt/local/share/cmake-3.23/Modules/Platform/Apple-Clang-CXX.cmake"
+  "/opt/local/share/cmake-3.23/Modules/Platform/Apple-Clang.cmake"
+  "/opt/local/share/cmake-3.23/Modules/Platform/Darwin-Initialize.cmake"
+  "/opt/local/share/cmake-3.23/Modules/Platform/Darwin.cmake"
+  "/opt/local/share/cmake-3.23/Modules/Platform/UnixPaths.cmake"
+>>>>>>> 13bc93bc3633e4c71d443c4647ebed0ce0ca3ecf
   )
 
 # The corresponding makefile is:

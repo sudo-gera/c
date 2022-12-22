@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Install script for directory: /home/gera/cpp-2022-sudo-gera/Projects
+=======
+# Install script for directory: /Users/gera/cpp-2022-sudo-gera/Projects
+>>>>>>> 13bc93bc3633e4c71d443c4647ebed0ce0ca3ecf
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -44,7 +48,11 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
+<<<<<<< HEAD
   include("/home/gera/c/tests/cmake_install.cmake")
+=======
+  include("/Users/gera/c/tests/cmake_install.cmake")
+>>>>>>> 13bc93bc3633e4c71d443c4647ebed0ce0ca3ecf
 
 endif()
 

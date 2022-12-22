@@ -35,14 +35,14 @@ static inline int64_t getint() {
     int sign = 1;
     int c;
     size_t res = 0;
-    while (c = getchar_unlocked(), isspace(c))
+    while (c = getchar_unlocked(), isspace(c) and c!=EOF)
         ;
     if (c == '-') {
         sign = -1;
     } else {
         res = c - '0';
     }
-    while (c = getchar_unlocked(), isdigit(c)) {
+    while (c = getchar_unlocked(), isdigit(c) and c!=EOF) {
         res *= 10;
         res += c - '0';
     }
@@ -191,7 +191,7 @@ auto operator|(t<R*,assign_s<T>> q,Y&&w){
 ///////////////////////////////////////////////////end of lib
 
 int main(){
-    llu n=getint(),m=getint();
+    llu n=getint();
     vector<
         vector<
             llu
@@ -209,8 +209,11 @@ int main(){
         >
     > d(n);
     vector<t<llu,llu>> h;
-    for (llu w=0;w<m;++w){
+    for (llu w=0;;++w){
         llu z=getint()-1,x=getint()-1;
+        if (z==-50 or x==-50){
+            break;
+        }
         a[z].push_back(x);
         s[x].push_back(z);
         h.push_back({z,x});
@@ -288,5 +291,22 @@ int main(){
     copy_if(h.begin(),h.end(),back_inserter(j),[&](auto q){
         return q.v0!=q.v1;
     });
-    cout<<j.size()<<endl;
+    vector<llu> k(n,-1);
+    llu l=0;
+    for (llu w=0;w<f.size();++w){
+        if (f[w].size()){
+            k[w]=l++;
+        }
+    }
+    for (auto&w:j){
+        w.v0=k[w.v0];
+        w.v1=k[w.v1];
+    }
+    vector<vector<llu>> c;
+    copy_if(f.begin(),f.end(),back_inserter(c),[&](auto&q){
+        return q.size();
+    });
+    pair v(c,j);
+    print(v);
+    // cout<<j.size()<<endl;
 }

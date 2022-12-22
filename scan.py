@@ -17,8 +17,13 @@ def scan(t=int):
 	if type(t) in (list, tuple):
 		t=type(t)([scan(w) for w in t])
 		return t
-	global scan_cache
-	while scan_cache.empty():
-		for w in input().split():
-			scan_cache.put(w)
-	return t(scan_cache.get_nowait())
+	try:
+		t.__call__
+	except:
+		return t
+	else:
+		global scan_cache
+		while scan_cache.empty():
+			for w in input().split():
+				scan_cache.put(w)
+		return t(scan_cache.get_nowait())
