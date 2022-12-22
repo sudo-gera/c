@@ -9,6 +9,7 @@
 #include <iso646.h>
 #include <memory.h>
 #include <netinet/in.h>
+#include <sched.h>
 #include <signal.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -17,6 +18,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#if __has_include(<sys/epoll.h>)
+    #include <sys/epoll.h>
+#endif
 #include <sys/mman.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
@@ -161,84 +165,131 @@ char* get_line(){
 
 #define elif else if
 
-#define perr if (errno){perror(__FILE__ " " m_str(__LINE__));errno=0;}
+#define _str(x) #x
+#define m_str(x) _str(x)
+// #define perr if (errno){perror(__FILE__ " " m_str(__LINE__));errno=0;}
+#define perr
 
 ///////////////////////////////////////////////////end of lib
 
 int exit_pipe[2];
 
-
 void handler(int sig) {
-    char msg[] = "123";
+    char msg[] = "exit_pipe";
     write(exit_pipe[1], msg, sizeof(msg));
+    // exit(0);
 }
 
-
-int main() {
+extern size_t read_data_and_count(size_t N, int in[N]){
     pipe(exit_pipe);
 
-    dprintf(2, "signal\n");
     struct sigaction sa = {
         .sa_handler = handler,
         .sa_flags = SA_RESTART
     };
     
     sigaction(SIGINT, &sa, NULL);
-    
+perr
+    sigaction(SIGTERM, &sa, NULL);
+perr
+
+
+
+
     int epoll_fd = epoll_create1(0);  // no flags
-    
-    fcntl(exit_pipe[0], F_SETFL, O_NONBLOCK);
-    fcntl(0, F_SETFL, O_NONBLOCK);
-    
-    int fifo_fd = open("test_fifo", O_RDONLY);
-    fcntl(fifo_fd, F_SETFL, O_NONBLOCK);
-    
-    dprintf(2, "epoll_ctl...\n");
-    int all_fds[] = {exit_pipe[0], 0, fifo_fd};
-    for (int i = 0; i < 3; ++i) {
-        struct epoll_event event = {
-            .events = EPOLLIN,
-            .data.fd = all_fds[i]
-        };
-        
-        // Будем ожидать готовности на чтение
-        epoll_ctl(epoll_fd, EPOLL_CTL_ADD, all_fds[i], &event);
+perr
+
+    for (int w=0;w<N;++w){
+        fcntl(in[w], F_SETFL, O_NONBLOCK);
+perr
     }
-    
-    dprintf(2, "Main loop\n");
-    while (1) {
-        struct epoll_event event;
-        int N = epoll_wait(epoll_fd, &event, /*maxevents=*/ 1, /*timeout=*/ 1000);
-        
+
+    fcntl(exit_pipe[0], F_SETFL, O_NONBLOCK);
+perr
+
+    for (int i = 0; i < N; ++i) {
+        struct epoll_event event = {
+            .events = EPOLLIN | EPOLLPRI | EPOLLERR | EPOLLHUP | EPOLLET,
+            .data.fd = in[i]
+        };
+
+        epoll_ctl(epoll_fd, EPOLL_CTL_ADD, in[i], &event);
+perr
+    }
+
+    struct epoll_event event = {
+        .events = EPOLLIN | EPOLLPRI | EPOLLERR | EPOLLHUP | EPOLLET,
+        .data.fd = exit_pipe[0],
+    };
+
+    epoll_ctl(epoll_fd, EPOLL_CTL_ADD, exit_pipe[0], &event);
+perr
+
+
+    int c=0;
+
+    int wl=4000;
+
+    while (wl--) {
+        struct epoll_event events[1024];
+        int N = epoll_wait(epoll_fd, events, /*maxevents=*/ 1024, /*timeout=*/ 2000);
+perr
         if (N <= 0) {
-            sched_yield();
+            // sched_yield();
+perr
             continue;
         }
-        
-        int fd = event.data.fd;
-        
-        if (fd == exit_pipe[0]) {
-            break;
+
+        for (int _event=0;_event<N;++_event){
+            struct epoll_event event=events[_event];
+            int fd = event.data.fd;
+
+            if (fd==exit_pipe[0]){
+                break;
+            }
+
+            int ll =0;
+            int l =0;
+            char data[1024];
+            while((l=read(fd,data,sizeof(data)))>=0){
+perr
+                c+=l;
+                ll=1;
+                // for (int w=0;w<l;++w){
+                //     printf("byte: ");
+                //     print(data[w]);
+                // }
+                // fflush(stdout);
+            }
+            // if (ll==0){
+            //     exit(0);
+            // }
         }
-        
-        char buffer[1024];
-        size_t len = read(fd, buffer, sizeof(buffer));
-        write(1, buffer, len);
     }
-    
-    dprintf(2, "Closing all\n");
-    
-    for (int i = 0; i < 3; ++i) {
-        close(all_fds[i]);
+
+    for (int w=0;w<N;++w){
+        close(in[w]);
     }
-    
+
+    close(exit_pipe[0]);
+
     close(epoll_fd);
-    
-    dprintf(2, "Exiting...\n");
-    
-    return 0;
-<<<<<<< HEAD
+
+    print(c);
+
 }
-=======
+
+#if __has_include("d")
+int main(){
+    int fds[]={0};
+    read_data_and_count(sizeof(fds)/sizeof(fds[0]),fds);
 }
->>>>>>> 13bc93bc3633e4c71d443c4647ebed0ce0ca3ecf
+#endif
+
+
+
+
+
+
+
+
