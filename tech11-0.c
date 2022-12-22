@@ -237,8 +237,4 @@ int main() {
     dprintf(2, "Exiting...\n");
     
     return 0;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 13bc93bc3633e4c71d443c4647ebed0ce0ca3ecf

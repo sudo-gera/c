@@ -159,9 +159,7 @@ char* get_line(){
     char*str=0;
     int c=0;
     while ((c=getchar(),c!=EOF)){
-        if (not isspace(c) and c!=0){
-            append(str,c);
-        }
+        append(str,c);
     }
     return str;
 }
@@ -172,26 +170,58 @@ char* get_line(){
 
 ///////////////////////////////////////////////////end of lib
 
-int main(){
-    #ifdef EXPR
-        print(EXPR);
-    #else
-        int pid=fork();
-        if (not pid){
-            char*str=get_line();
-            char*pr="-DEXPR=(";
-            int prl=strlen(pr);
-            resize(str,len(str)+prl);
-            memmove(str+prl,str,len(str)-prl);
-            memmove(str,pr,prl);
-            append(str,')');
-            execlp("gcc","gcc","-o","./b.out",str,__FILE__,NULL);
-        }else{
-            waitpid(pid,0,0);
-            execlp("./b.out","./b.out",NULL);
-        }
-    #endif
+struct {
+    double value;
+    pthread_t t;
+    pthread_mutex_t m;
+}* data=0;
+
+int n=0;
+int k=0;
+
+void run(void* _cur){
+    int cur=(long)_cur;
+    int prev=(cur-1+k)%k;
+    int next=(cur+1)%k;
+    int ind=0;
+    for (int w=0;w<n;++w){
+        ind=prev;
+        pthread_mutex_lock(&(data[ind].m));
+        data[ind].value+=0.99;
+        pthread_mutex_unlock(&(data[ind].m));
+    }
+    for (int w=0;w<n;++w){
+        ind=cur;
+        pthread_mutex_lock(&(data[ind].m));
+        data[ind].value+=1;
+        pthread_mutex_unlock(&(data[ind].m));
+    }
+    for (int w=0;w<n;++w){
+        ind=next;
+        pthread_mutex_lock(&(data[ind].m));
+        data[ind].value+=1.01;
+        pthread_mutex_unlock(&(data[ind].m));
+    }
 }
 
+int main(int argc,char**argv){
+    n=atoi(argv[1]);
+    k=atoi(argv[2]);
+    resize(data,k);
+    for (int w=0;w<k;++w){
+        pthread_mutex_init(&(data[w].m), NULL);
+    }
+    for (long w=0;w<k;++w){
+        pthread_create(&(data[w].t), NULL, (void * (*)(void *)) run, (void*)w);
+    }
+    for (int w=0;w<k;++w){
+        pthread_join(data[w].t, NULL);
+    }
+    for (int w=0;w<k;++w){
+        printf("%.10g ",data[w].value);
+    }
+    putchar(10);
+    del(data);
+}
 
 
