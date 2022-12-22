@@ -102,7 +102,7 @@ a=[  w[:-1]+[str(w[-1])]    for w in a]
 d={"pow":"**","+":"+","-":"-","*":"*","/":"/","%":"%","root":"/ *","to_radix":"<< *","memstress":"^*","dec":"%"}
 n='bn_class'
 # n='Rational'
-a=[f'/* { d[w[1]] } */check_output(str({n}("{w[0]}",10){ d[w[1]] }{n}("{w[2]}",10)),"{w[3]}")' for w in a]
+a=[f'/* { d[w[1]] } */check_output(({n}("{w[0]}"){ d[w[1]] }{n}("{w[2]}").toString()),"{w[3]}")' for w in a]
 a=[f'#ifndef HIDE_{q}\n\tt=monotonic();\n\t{w}\n\tprint("test {q}",output_time(monotonic()-t));\n#endif\n' for q,w in enumerate(a)]
 a=[w if len(w) else f'//print("skipping {q}");\n' for q,w in enumerate(a)]
 a=[w if len(w) else f'' for q,w in enumerate(a)]
