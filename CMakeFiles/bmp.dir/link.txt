@@ -1,0 +1,1 @@
+/usr/bin/c++  -Wall -Wextra -Werror -g -fsanitize=address,undefined -Wfatal-errors -Ofast -rdynamic CMakeFiles/bmp.dir/alg.cpp.o CMakeFiles/bmp.dir/bmp.cpp.o CMakeFiles/bmp.dir/esh.cpp.o CMakeFiles/bmp.dir/pix.cpp.o -o bmp 
