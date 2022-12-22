@@ -18,7 +18,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/epoll.h>
+#if __has_include(<sys/epoll.h>)
+    #include <sys/epoll.h>
+#endif
 #include <sys/mman.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
