@@ -166,12 +166,62 @@ char* get_line(){
 
 #define elif else if
 
-#define _str(x) #x
-#define m_str(x) _str(x)
 #define perr if (errno){perror(__FILE__ " " m_str(__LINE__));errno=0;}
 
 ///////////////////////////////////////////////////end of lib
 
+struct {
+    double value;
+    pthread_t t;
+    pthread_mutex_t m;
+}* data=0;
 
+int n=0;
+int k=0;
+
+void run(void* _cur){
+    int cur=(long)_cur;
+    int prev=(cur-1+k)%k;
+    int next=(cur+1)%k;
+    int ind=0;
+    for (int w=0;w<n;++w){
+        ind=prev;
+        pthread_mutex_lock(&(data[ind].m));
+        data[ind].value+=0.99;
+        pthread_mutex_unlock(&(data[ind].m));
+    }
+    for (int w=0;w<n;++w){
+        ind=cur;
+        pthread_mutex_lock(&(data[ind].m));
+        data[ind].value+=1;
+        pthread_mutex_unlock(&(data[ind].m));
+    }
+    for (int w=0;w<n;++w){
+        ind=next;
+        pthread_mutex_lock(&(data[ind].m));
+        data[ind].value+=1.01;
+        pthread_mutex_unlock(&(data[ind].m));
+    }
+}
+
+int main(int argc,char**argv){
+    n=atoi(argv[1]);
+    k=atoi(argv[2]);
+    resize(data,k);
+    for (int w=0;w<k;++w){
+        pthread_mutex_init(&(data[w].m), NULL);
+    }
+    for (long w=0;w<k;++w){
+        pthread_create(&(data[w].t), NULL, (void * (*)(void *)) run, (void*)w);
+    }
+    for (int w=0;w<k;++w){
+        pthread_join(data[w].t, NULL);
+    }
+    for (int w=0;w<k;++w){
+        printf("%.10g ",data[w].value);
+    }
+    putchar(10);
+    del(data);
+}
 
 

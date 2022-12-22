@@ -1,26 +1,35 @@
 #ifndef assert
 #include <assert.h>
 #endif
+#include <arpa/inet.h>
 #include <ctype.h>
+#include <errno.h>
+#include <fcntl.h>
 #include <inttypes.h>
 #include <iso646.h>
+#include <memory.h>
+#include <netinet/in.h>
+#include <pthread.h>
+#include <sched.h>
+#include <signal.h>
 #include <stdarg.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <tgmath.h>
-#include <memory.h>
-#include <stddef.h>
+#if __has_include(<sys/epoll.h>)
+    #include <sys/epoll.h>
+#endif
 #include <sys/mman.h>
-#include <unistd.h>
+#include <sys/socket.h>
 #include <sys/stat.h>
-#include <fcntl.h>
 #include <sys/syscall.h>
-#include <errno.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <tgmath.h>
+#include <unistd.h>
 
 #ifdef print
 #undef print
@@ -146,9 +155,22 @@ static inline void print(uint64_t out) {
 
 typedef int (*cmp_f_t)(const void *, const void *);
 
+char* get_line(){
+    char*str=0;
+    int c=0;
+    while ((c=getchar(),c!=EOF)){
+        if (not isspace(c) and c!=0){
+            append(str,c);
+        }
+    }
+    return str;
+}
+
+#define elif else if
+
+#define perr if (errno){perror(__FILE__ " " m_str(__LINE__));errno=0;}
+
 ///////////////////////////////////////////////////end of lib
-
-
 
 int main(){
     #ifdef EXPR
@@ -158,31 +180,20 @@ int main(){
     #else
         int pid=fork();
         if (not pid){
-            char**args=NULL;
-            append(args,"gcc");
-            char*str=NULL;
-            char*pr="-DEXPR=";
-            resize(str,strlen(pr));
-            memmove(str,pr,strlen(pr));
-            int c=0;
-            while((c=getchar(),c!=EOF)){
-                if (not isspace(c)){
-                    append(str,c);
-                }
-            }
-            append(args,str);
-            append(args,"-o");
-            append(args,"./b.out");
-            append(args,__FILE__);
-            execvp(args[0],args);
+            char*str=get_line();
+            char*pr="-DEXPR=(";
+            int prl=strlen(pr);
+            resize(str,len(str)+prl);
+            memmove(str+prl,str,len(str)-prl);
+            memmove(str,pr,prl);
+            append(str,')');
+            execlp("gcc","gcc","-o","./b.out",str,__FILE__,NULL);
         }else{
             waitpid(pid,0,0);
-            char**args=0;
-            append(args,"./b.out");
-            append(args,0);
-            execvp(args[0],args);
+            execlp("./b.out","./b.out",NULL);
         }
     #endif
 }
+
 
 

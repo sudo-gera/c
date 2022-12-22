@@ -227,6 +227,7 @@ perr
     }
 
     close(epoll_fd);
+<<<<<<< HEAD
 
     return (c);
 
@@ -248,3 +249,10 @@ int main(){
 
 
 
+=======
+    
+    dprintf(2, "Exiting...\n");
+    
+    return 0;
+}
+>>>>>>> 6c41edb8cb72140f06046a7db5ec66178a965571

@@ -166,12 +166,51 @@ char* get_line(){
 
 #define elif else if
 
-#define _str(x) #x
-#define m_str(x) _str(x)
 #define perr if (errno){perror(__FILE__ " " m_str(__LINE__));errno=0;}
 
 ///////////////////////////////////////////////////end of lib
 
+struct item{
+    long value;
+    pthread_t t;
+    pthread_mutex_t*m;
+}* data=0;
 
+
+void run(struct item*place){
+    char data[1024];
+    long res=0;
+    pthread_mutex_lock(place->m);
+    while(scanf("%s",data)==1){
+        pthread_mutex_unlock(place->m);
+        res+=atol(data);
+        pthread_mutex_lock(place->m);
+    }
+    pthread_mutex_unlock(place->m);
+    place->value=res;
+}
+
+int main(int argc,char**argv){
+    int n=atoi(argv[1]);
+    resize(data,n);
+    pthread_mutex_t m;
+    pthread_mutex_init(&m, NULL);
+    for (long w=0;w<n;++w){
+        data[w].m=&m;
+        data[w].value=0;
+    }
+    for (long w=0;w<n;++w){
+        pthread_create(&(data[w].t), NULL, (void * (*)(void *)) run, data+w);
+    }
+    for (int w=0;w<n;++w){
+        pthread_join(data[w].t, NULL);
+    }
+    long res=0;
+    for (int w=0;w<n;++w){
+        res+=data[w].value;
+    }
+    print(res);
+    del(data);
+}
 
 
