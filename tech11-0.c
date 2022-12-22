@@ -274,30 +274,8 @@ perr
     close(exit_pipe[0]);
 
     close(epoll_fd);
-<<<<<<< HEAD
     
     dprintf(2, "Exiting...\n");
     
     return 0;
 }
-=======
-
-    print(c);
-
-}
-
-#if __has_include("d")
-int main(){
-    int fds[]={0};
-    read_data_and_count(sizeof(fds)/sizeof(fds[0]),fds);
-}
-#endif
-
-
-
-
-
-
-
-
->>>>>>> 621cfde11ed9e5a80371aee16530114f5e071ee9
