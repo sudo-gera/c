@@ -159,38 +159,41 @@ char* get_line(){
     char*str=0;
     int c=0;
     while ((c=getchar(),c!=EOF)){
-        if (not isspace(c) and c!=0){
-            append(str,c);
-        }
+        append(str,c);
     }
     return str;
 }
 
 #define elif else if
 
+#define _str(x) #x
+#define m_str(x) _str(x)
 #define perr if (errno){perror(__FILE__ " " m_str(__LINE__));errno=0;}
 
 ///////////////////////////////////////////////////end of lib
 
+
+
+
 int main(){
-    #ifdef EXPR
-        print(EXPR);
-    #else
-        int pid=fork();
-        if (not pid){
-            char*str=get_line();
-            char*pr="-DEXPR=(";
-            int prl=strlen(pr);
-            resize(str,len(str)+prl);
-            memmove(str+prl,str,len(str)-prl);
-            memmove(str,pr,prl);
-            append(str,')');
-            execlp("gcc","gcc","-o","./b.out",str,__FILE__,NULL);
-        }else{
-            waitpid(pid,0,0);
-            execlp("./b.out","./b.out",NULL);
-        }
-    #endif
+    int pid=fork();
+    if (not pid){
+        char*str=0;
+        str=get_line();
+        char*fc=0;
+        resize(fc,len(str)+4096);
+        sprintf(fc,"#include <stdio.h>\nint main(){printf(\"%%i\\n\",(%s));}\n",str);
+        int fd=open("tmp.cpp",O_RDWR|O_CREAT|O_TRUNC,0777);
+        write(fd,fc,strlen(fc));
+        close(fd);
+        del(fc);
+        del(str);
+        execlp("gcc","gcc","-o","./b.out","tmp.cpp",NULL);
+    }else{
+        waitpid(pid,0,0);
+perr
+        execlp("./b.out","./b.out",NULL);
+    }
 }
 
 

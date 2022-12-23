@@ -167,34 +167,13 @@ char* get_line(){
 
 #define _str(x) #x
 #define m_str(x) _str(x)
-// #define perr if (errno){perror(__FILE__ " " m_str(__LINE__));errno=0;}
-#define perr
+#define perr if (errno){perror(__FILE__ " " m_str(__LINE__));errno=0;}
+// #define perr
 
 ///////////////////////////////////////////////////end of lib
 
-int exit_pipe[2];
-
-void handler(int sig) {
-    char msg[] = "exit_pipe";
-    write(exit_pipe[1], msg, sizeof(msg));
-    // exit(0);
-}
 
 extern size_t read_data_and_count(size_t N, int in[N]){
-    pipe(exit_pipe);
-
-    struct sigaction sa = {
-        .sa_handler = handler,
-        .sa_flags = SA_RESTART
-    };
-    
-    sigaction(SIGINT, &sa, NULL);
-perr
-    sigaction(SIGTERM, &sa, NULL);
-perr
-
-
-
 
     int epoll_fd = epoll_create1(0);  // no flags
 perr
@@ -204,12 +183,9 @@ perr
 perr
     }
 
-    fcntl(exit_pipe[0], F_SETFL, O_NONBLOCK);
-perr
-
     for (int i = 0; i < N; ++i) {
         struct epoll_event event = {
-            .events = EPOLLIN | EPOLLPRI | EPOLLERR | EPOLLHUP | EPOLLET,
+            .events = EPOLLIN | EPOLLPRI | EPOLLERR | EPOLLHUP | EPOLLET | EPOLLOUT | EPOLLRDHUP,
             .data.fd = in[i]
         };
 
@@ -217,65 +193,66 @@ perr
 perr
     }
 
-    struct epoll_event event = {
-        .events = EPOLLIN | EPOLLPRI | EPOLLERR | EPOLLHUP | EPOLLET,
-        .data.fd = exit_pipe[0],
-    };
-
-    epoll_ctl(epoll_fd, EPOLL_CTL_ADD, exit_pipe[0], &event);
-perr
-
 
     int c=0;
 
-    int wl=4000;
+    int pc=N;
 
-    while (wl--) {
+    while (pc) {
         struct epoll_event events[1024];
-        int N = epoll_wait(epoll_fd, events, /*maxevents=*/ 1024, /*timeout=*/ 2000);
+        int n=epoll_wait(epoll_fd, events, sizeof(events)/sizeof(events[0]), -1);
 perr
-        if (N <= 0) {
-            // sched_yield();
+
+        for (int q=0;q<n;++q){
+            struct epoll_event event=events[q];
+            if (event.events & EPOLLIN){
+                    char data[1024];
+                    int l=0;
+                    while((l=read(event.data.fd,data,sizeof(data)))>0){
 perr
-            continue;
-        }
-
-        for (int _event=0;_event<N;++_event){
-            struct epoll_event event=events[_event];
-            int fd = event.data.fd;
-
-            if (fd==exit_pipe[0]){
-                break;
+                        c+=l;
+                    }
+perr
             }
-
-            int ll =0;
-            int l =0;
-            char data[1024];
-            while((l=read(fd,data,sizeof(data)))>=0){
+            if (event.events & (EPOLLRDHUP | EPOLLHUP)) {
 perr
-                c+=l;
-                ll=1;
-                // for (int w=0;w<l;++w){
-                //     printf("byte: ");
-                //     print(data[w]);
-                // }
-                // fflush(stdout);
-            }
-            // if (ll==0){
-            //     exit(0);
-            // }
+                _1:
+				epoll_ctl(epoll_fd, EPOLL_CTL_DEL, event.data.fd, NULL);
+perr
+				close(event.data.fd);
+perr
+                pc-=1;
+			}
         }
     }
-
-    for (int w=0;w<N;++w){
-        close(in[w]);
-    }
-
-    close(exit_pipe[0]);
 
     close(epoll_fd);
+<<<<<<< HEAD
+
+    return (c);
+
+}
+
+#if __has_include("d")
+int main(){
+    int fds[]={
+        0,
+    };
+    print(read_data_and_count(sizeof(fds)/sizeof(fds[0]),fds));
+}
+#endif
+
+
+
+
+
+
+
+
+=======
     
     dprintf(2, "Exiting...\n");
     
     return 0;
 }
+>>>>>>> 6c41edb8cb72140f06046a7db5ec66178a965571

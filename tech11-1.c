@@ -9,6 +9,7 @@
 #include <iso646.h>
 #include <memory.h>
 #include <netinet/in.h>
+#include <sched.h>
 #include <signal.h>
 #include <stdarg.h>
 #include <stdbool.h>

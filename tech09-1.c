@@ -187,11 +187,21 @@ volatile int is_running = 1;
 
 volatile int value=0;
 
+void _put(long value){
+    char data[44];
+    memset(data,0,sizeof(data));
+    _putint(value,data);
+    data[strlen(data)]='\n';
+    write(1,data,strlen(data));
+}
+
 void handler(int sig_num) {
     if (sig_num == SIGUSR1) {
         ++value;
+        _put(value);
     }else if (sig_num == SIGUSR2) {
         value*=-1;
+        _put(value);
     } else if (sig_num == SIGTERM || sig_num == SIGINT) {
         is_running = 0;
         // return;
@@ -218,14 +228,6 @@ int main() {
 
     while (is_running) {
         pause();
-        if (is_running){
-            char data[44];
-            memset(data,0,sizeof(data));
-            _putint(value,data);
-            data[strlen(data)]='\n';
-            write(1,data,strlen(data));
-            // print(value);
-        }
     }
 
 
