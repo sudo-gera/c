@@ -2,7 +2,8 @@
     "global": {
         "check_for_updates_on_startup": true,
         "show_in_menu_bar": false,
-        "show_profile_name_in_menu_bar": false
+        "show_profile_name_in_menu_bar": false,
+        "unsafe_ui": false
     },
     "profiles": [
         {
@@ -21,8 +22,206 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    },
+                                    {
+                                        "input_sources": [
+                                            {
+                                                "language": "ru"
+                                            }
+                                        ],
+                                        "type": "input_source_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "close_bracket",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "left_shift"
+                                        ],
+                                        "optional": [
+                                            "any"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('}')\""
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    },
+                                    {
+                                        "input_sources": [
+                                            {
+                                                "language": "ru"
+                                            }
+                                        ],
+                                        "type": "input_source_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "close_bracket",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift"
+                                        ],
+                                        "optional": [
+                                            "any"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('}')\""
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    },
+                                    {
+                                        "input_sources": [
+                                            {
+                                                "language": "ru"
+                                            }
+                                        ],
+                                        "type": "input_source_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "close_bracket",
+                                    "modifiers": {
+                                        "optional": [
+                                            "any"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press(']')\""
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    },
+                                    {
+                                        "input_sources": [
+                                            {
+                                                "language": "ru"
+                                            }
+                                        ],
+                                        "type": "input_source_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "open_bracket",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "left_shift"
+                                        ],
+                                        "optional": [
+                                            "any"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('{')\""
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    },
+                                    {
+                                        "input_sources": [
+                                            {
+                                                "language": "ru"
+                                            }
+                                        ],
+                                        "type": "input_source_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "open_bracket",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift"
+                                        ],
+                                        "optional": [
+                                            "any"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('{')\""
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    },
+                                    {
+                                        "input_sources": [
+                                            {
+                                                "language": "ru"
+                                            }
+                                        ],
+                                        "type": "input_source_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "open_bracket",
+                                    "modifiers": {
+                                        "optional": [
+                                            "any"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('[')\""
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -47,7 +246,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Q')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Q')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -55,8 +254,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -81,7 +280,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('W')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('W')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -89,8 +288,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -115,7 +314,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('E')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('E')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -123,8 +322,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -149,7 +348,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('R')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('R')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -157,8 +356,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -183,7 +382,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('T')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('T')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -191,8 +390,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -217,7 +416,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Y')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Y')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -225,8 +424,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -251,7 +450,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('U')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('U')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -259,8 +458,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -285,7 +484,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('I')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('I')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -293,8 +492,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -319,7 +518,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('O')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('O')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -327,8 +526,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -353,7 +552,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('P')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('P')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -361,8 +560,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -387,7 +586,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('A')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('A')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -395,8 +594,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -421,7 +620,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('S')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('S')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -429,8 +628,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -455,7 +654,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('D')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('D')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -463,8 +662,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -489,7 +688,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('F')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('F')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -497,8 +696,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -523,7 +722,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('G')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('G')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -531,8 +730,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -557,7 +756,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('H')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('H')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -565,8 +764,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -591,7 +790,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('J')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('J')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -599,8 +798,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -625,7 +824,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('K')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('K')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -633,8 +832,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -659,7 +858,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('L')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('L')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -667,8 +866,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -693,7 +892,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Z')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Z')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -701,8 +900,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -727,7 +926,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('X')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('X')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -735,8 +934,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -761,7 +960,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('C')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('C')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -769,8 +968,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -795,7 +994,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('V')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('V')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -803,8 +1002,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -829,7 +1028,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('B')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('B')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -837,8 +1036,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -863,7 +1062,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('N')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('N')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -871,8 +1070,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -897,7 +1096,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('M')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('M')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -905,8 +1104,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -931,7 +1130,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Q')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Q')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -939,8 +1138,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -965,7 +1164,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('W')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('W')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -973,8 +1172,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -999,7 +1198,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('E')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('E')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1007,8 +1206,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1033,7 +1232,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('R')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('R')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1041,8 +1240,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1067,7 +1266,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('T')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('T')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1075,8 +1274,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1101,7 +1300,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Y')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Y')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1109,8 +1308,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1135,7 +1334,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('U')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('U')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1143,8 +1342,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1169,7 +1368,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('I')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('I')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1177,8 +1376,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1203,7 +1402,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('O')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('O')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1211,8 +1410,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1237,7 +1436,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('P')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('P')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1245,8 +1444,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1271,7 +1470,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('A')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('A')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1279,8 +1478,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1305,7 +1504,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('S')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('S')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1313,8 +1512,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1339,7 +1538,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('D')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('D')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1347,8 +1546,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1373,7 +1572,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('F')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('F')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1381,8 +1580,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1407,7 +1606,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('G')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('G')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1415,8 +1614,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1441,7 +1640,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('H')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('H')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1449,8 +1648,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1475,7 +1674,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('J')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('J')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1483,8 +1682,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1509,7 +1708,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('K')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('K')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1517,8 +1716,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1543,7 +1742,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('L')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('L')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1551,8 +1750,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1577,7 +1776,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Z')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Z')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1585,8 +1784,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1611,7 +1810,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('X')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('X')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1619,8 +1818,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1645,7 +1844,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('C')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('C')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1653,8 +1852,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1679,7 +1878,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('V')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('V')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1687,8 +1886,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1713,7 +1912,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('B')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('B')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1721,8 +1920,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1747,7 +1946,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('N')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('N')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1755,8 +1954,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1781,7 +1980,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('M')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('M')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1789,8 +1988,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1812,7 +2011,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('q')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('q')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1820,8 +2019,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1843,7 +2042,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('w')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('w')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1851,8 +2050,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1874,7 +2073,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('e')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('e')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1882,8 +2081,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1905,7 +2104,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('r')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('r')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1913,8 +2112,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1936,7 +2135,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('t')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('t')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1944,8 +2143,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1967,7 +2166,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('y')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('y')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1975,8 +2174,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -1998,7 +2197,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('u')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('u')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2006,8 +2205,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -2029,7 +2228,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('i')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('i')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2037,8 +2236,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -2060,7 +2259,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('o')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('o')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2068,8 +2267,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -2091,7 +2290,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('p')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('p')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2099,8 +2298,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -2122,7 +2321,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('a')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('a')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2130,8 +2329,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -2153,7 +2352,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('s')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('s')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2161,8 +2360,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -2184,7 +2383,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('d')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('d')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2192,8 +2391,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -2215,7 +2414,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('f')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('f')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2223,8 +2422,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -2246,7 +2445,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('g')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('g')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2254,8 +2453,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -2277,7 +2476,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('h')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('h')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2285,8 +2484,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -2308,7 +2507,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('j')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('j')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2316,8 +2515,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -2339,7 +2538,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('k')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('k')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2347,8 +2546,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -2370,7 +2569,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('l')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('l')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2378,8 +2577,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -2401,7 +2600,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('z')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('z')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2409,8 +2608,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -2432,7 +2631,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('x')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('x')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2440,8 +2639,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -2463,7 +2662,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('c')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('c')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2471,8 +2670,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -2494,7 +2693,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('v')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('v')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2502,8 +2701,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -2525,7 +2724,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('b')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('b')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2533,8 +2732,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -2556,7 +2755,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('n')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('n')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2564,8 +2763,8 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "variable_unless",
                                         "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
                                         "value": 0
                                     },
                                     {
@@ -2587,7 +2786,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command":"/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('m')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('m')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2809,11 +3008,19 @@
                                 "type": "basic"
                             },
                             {
-                                "type": "basic",
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    }
+                                ],
                                 "from": {
                                     "key_code": "k",
                                     "modifiers": {
-                                        "optional": ["any"]
+                                        "optional": [
+                                            "any"
+                                        ]
                                     }
                                 },
                                 "to": [
@@ -2821,20 +3028,22 @@
                                         "key_code": "up_arrow"
                                     }
                                 ],
-                                "conditions": [
-                                    {
-                                        "type": "variable_unless",
-                                        "name": "multitouch_extension_finger_count_total",
-                                        "value": 0
-                                    }
-                                ]
+                                "type": "basic"
                             },
                             {
-                                "type": "basic",
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    }
+                                ],
                                 "from": {
                                     "key_code": "l",
                                     "modifiers": {
-                                        "optional": ["any"]
+                                        "optional": [
+                                            "any"
+                                        ]
                                     }
                                 },
                                 "to": [
@@ -2842,20 +3051,22 @@
                                         "key_code": "right_arrow"
                                     }
                                 ],
-                                "conditions": [
-                                    {
-                                        "type": "variable_unless",
-                                        "name": "multitouch_extension_finger_count_total",
-                                        "value": 0
-                                    }
-                                ]
+                                "type": "basic"
                             },
                             {
-                                "type": "basic",
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    }
+                                ],
                                 "from": {
                                     "key_code": "j",
                                     "modifiers": {
-                                        "optional": ["any"]
+                                        "optional": [
+                                            "any"
+                                        ]
                                     }
                                 },
                                 "to": [
@@ -2863,20 +3074,22 @@
                                         "key_code": "down_arrow"
                                     }
                                 ],
-                                "conditions": [
-                                    {
-                                        "type": "variable_unless",
-                                        "name": "multitouch_extension_finger_count_total",
-                                        "value": 0
-                                    }
-                                ]
+                                "type": "basic"
                             },
                             {
-                                "type": "basic",
+                                "conditions": [
+                                    {
+                                        "name": "multitouch_extension_finger_count_total",
+                                        "type": "variable_unless",
+                                        "value": 0
+                                    }
+                                ],
                                 "from": {
                                     "key_code": "h",
                                     "modifiers": {
-                                        "optional": ["any"]
+                                        "optional": [
+                                            "any"
+                                        ]
                                     }
                                 },
                                 "to": [
@@ -2884,125 +3097,119 @@
                                         "key_code": "left_arrow"
                                     }
                                 ],
-                                "conditions": [
-                                    {
-                                        "type": "variable_unless",
-                                        "name": "multitouch_extension_finger_count_total",
-                                        "value": 0
-                                    }
-                                ]
+                                "type": "basic"
                             },
                             {
-                                "type": "basic",
                                 "from": {
                                     "key_code": "left_option",
                                     "modifiers": {
-                                        "optional": [
-                                            "any"
-                                        ],
                                         "mandatory": [
                                             "left_shift"
+                                        ],
+                                        "optional": [
+                                            "any"
                                         ]
                                     }
                                 },
                                 "to": [
                                     {
                                         "key_code": "left_option",
+                                        "lazy": true,
                                         "modifiers": [
                                             "left_shift"
-                                        ],
-                                        "lazy": true
+                                        ]
                                     }
                                 ],
                                 "to_if_alone": [
                                     {
                                         "key_code": "fn"
                                     }
-                                ]
+                                ],
+                                "type": "basic"
                             },
                             {
-                                "type": "basic",
                                 "from": {
                                     "key_code": "left_shift",
                                     "modifiers": {
-                                        "optional": [
-                                            "any"
-                                        ],
                                         "mandatory": [
                                             "left_option"
+                                        ],
+                                        "optional": [
+                                            "any"
                                         ]
                                     }
                                 },
                                 "to": [
                                     {
                                         "key_code": "left_shift",
+                                        "lazy": true,
                                         "modifiers": [
                                             "left_option"
-                                        ],
-                                        "lazy": true
+                                        ]
                                     }
                                 ],
                                 "to_if_alone": [
                                     {
                                         "key_code": "fn"
                                     }
-                                ]
+                                ],
+                                "type": "basic"
                             },
                             {
-                                "type": "basic",
                                 "from": {
                                     "key_code": "right_option",
                                     "modifiers": {
-                                        "optional": [
-                                            "any"
-                                        ],
                                         "mandatory": [
                                             "right_shift"
+                                        ],
+                                        "optional": [
+                                            "any"
                                         ]
                                     }
                                 },
                                 "to": [
                                     {
                                         "key_code": "right_option",
+                                        "lazy": true,
                                         "modifiers": [
                                             "right_shift"
-                                        ],
-                                        "lazy": true
+                                        ]
                                     }
                                 ],
                                 "to_if_alone": [
                                     {
                                         "key_code": "fn"
                                     }
-                                ]
+                                ],
+                                "type": "basic"
                             },
                             {
-                                "type": "basic",
                                 "from": {
                                     "key_code": "right_shift",
                                     "modifiers": {
-                                        "optional": [
-                                            "any"
-                                        ],
                                         "mandatory": [
                                             "right_option"
+                                        ],
+                                        "optional": [
+                                            "any"
                                         ]
                                     }
                                 },
                                 "to": [
                                     {
                                         "key_code": "right_shift",
+                                        "lazy": true,
                                         "modifiers": [
                                             "right_option"
-                                        ],
-                                        "lazy": true
+                                        ]
                                     }
                                 ],
                                 "to_if_alone": [
                                     {
                                         "key_code": "fn"
                                     }
-                                ]
+                                ],
+                                "type": "basic"
                             },
                             {
                                 "from": {
@@ -3665,8 +3872,7 @@
                                 "to": [
                                     {
                                         "key_code": "slash",
-                                        "modifiers": [
-                                        ]
+                                        "modifiers": []
                                     }
                                 ],
                                 "type": "basic"
@@ -3696,8 +3902,7 @@
                                 "to": [
                                     {
                                         "key_code": "slash",
-                                        "modifiers": [
-                                        ]
+                                        "modifiers": []
                                     }
                                 ],
                                 "type": "basic"
@@ -3819,8 +4024,7 @@
                                 "to": [
                                     {
                                         "key_code": "backslash",
-                                        "modifiers": [
-                                        ]
+                                        "modifiers": []
                                     }
                                 ],
                                 "type": "basic"
@@ -3848,8 +4052,7 @@
                                 "to": [
                                     {
                                         "key_code": "grave_accent_and_tilde",
-                                        "modifiers": [
-                                        ]
+                                        "modifiers": []
                                     }
                                 ],
                                 "type": "basic"
@@ -4524,7 +4727,8 @@
                                 }
                             ]
                         }
-                    ]
+                    ],
+                    "treat_as_built_in_keyboard": false
                 },
                 {
                     "disable_built_in_keyboard_if_exists": false,
@@ -4537,7 +4741,8 @@
                     },
                     "ignore": true,
                     "manipulate_caps_lock_led": false,
-                    "simple_modifications": []
+                    "simple_modifications": [],
+                    "treat_as_built_in_keyboard": false
                 }
             ],
             "fn_function_keys": [
