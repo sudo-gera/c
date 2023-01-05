@@ -1,17 +1,12 @@
 #include <algorithm>
 #include <any>
-// #include <bits/stdc++.h>
 #include <cstddef>
+#include <assert.h>
 #include <exception>
 #include <iostream>
 #include <tuple>
 #include <type_traits>
 #include <variant>
-// using namespace std;
-
-#ifndef ic
-#define ic(...)
-#endif
 
 template <size_t n> struct visit_any_types {
   using type = std::tuple<>;
@@ -29,8 +24,8 @@ using visit_any_one = std::enable_if_t<visit_any_all<T>(), int>;
 #define add_visit_any(...)                                                     \
   template <> struct visit_any_types<__COUNTER__> {                            \
     using type = std::tuple<__VA_ARGS__>;                                      \
-  }; \
-  static_assert(visit_any_end_check(int32_t(0)));
+  };                                                                           \
+  static_assert(dont_use_add_visit_any_after_end_visit_any(INT32_C(0)));
 
 #define end_visit_any()                                                        \
   template <size_t n, size_t k>                                                \
@@ -60,9 +55,16 @@ using visit_any_one = std::enable_if_t<visit_any_all<T>(), int>;
     return visit_any<__COUNTER__, 0>(a, f);                                    \
   }                                                                            \
                                                                                \
-  constexpr bool visit_any_end_check(int8_t t) { return 1; }
+  constexpr bool dont_use_add_visit_any_after_end_visit_any(int8_t t) {        \
+    return 1;                                                                  \
+  }                                                                            \
+  bool use_end_visit_any_after_main_function(auto f) { return 1; }
 
-constexpr bool visit_any_end_check(int16_t t) { return 1; }
+constexpr bool dont_use_add_visit_any_after_end_visit_any(int16_t t) {
+  return 1;
+}
+
+bool use_end_visit_any_after_main_function(auto f);
 
 void visit_any_f(auto &a, const auto &f, visit_any_one<decltype(a)> = 0);
 
@@ -84,22 +86,23 @@ namespace std {
 template <typename... T>
   requires(visit_any_all<T...>())
 void visit(const auto &f, T &&...a) {
-  static_assert(visit_any_end_check(0));
+  assert(use_end_visit_any_after_main_function([]() {}));
   auto ff = visit_any_ft(f);
   return (ff + ... + a).f();
 }
 }; // namespace std
 
 
-int main() {
-  std::any a = -1, s = '0', d = "123";
-
-  auto f = [&](auto q, auto w, auto e) { ic(q, w, e); };
-
-  visit(f, a, s, d);
-}
-
-add_visit_any(char, void);
+// add_visit_any(char, void);
 // add_visit_any(int, const char *);
-end_visit_any();
-add_visit_any(int, const char *);
+// // end_visit_any();
+
+// int main() {
+//   std::any a = -1, s = '0', d = "123";
+
+//   auto f = [&](auto q, auto w, auto e) { ic(q, w, e); };
+
+//   visit(f, a, s, d);
+// }
+
+// // add_visit_any(int, const char *);
