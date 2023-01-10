@@ -63,6 +63,8 @@ for n in range(1,840+1):
         (n+1)//4,
         (n+1)//7,
     ]
-    c+=a!=s
+    if (a!=s) ^ (set(a)!=set(s)):
+        print(a,s)
+    # c+=set(a)!=set(s)
 print(c)
 
