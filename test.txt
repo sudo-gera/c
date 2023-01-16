@@ -1,1 +1,1 @@
-wine-7.7 (CrossOverFOSS 22.0.1)
+wine: could not exec the wine loader
