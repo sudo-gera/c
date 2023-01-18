@@ -21,6 +21,7 @@ if a:
 	if a.lower() in ['y','']:
 		print('switching...')
 		system('adb connect 192.168.49.1:53142')
-		system('adb shell cmd statusbar click-tile com.cloudflare.onedotonedotonedotone/com.cloudflare.app.domain.quicksettingstile.QuickSettingsTileService')
+		# system('adb shell cmd statusbar click-tile com.cloudflare.onedotonedotonedotone/com.cloudflare.app.domain.quicksettingstile.QuickSettingsTileService')
+		system('adb shell cmd statusbar click-tile com.wireguard.android/.QuickTileService')
 	else:
 		print('aborted.')
