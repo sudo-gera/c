@@ -1,1 +1,16 @@
-a = pref(next={b: pref(next={b: pref(next={a: pref(next={b: pref(next={}, is_end=True, c=b, prev=0x104601638, suff=0x104601738)}, is_end=False, c=a, prev=0x1046016b8, suff=0x1046017b8)}, is_end=False, c=b, prev=0x104601838, suff=0x104601838), a: pref(next={b: pref(next={}, is_end=True, c=b, prev=0x1046017b8, suff=0x104601938)}, is_end=False, c=a, prev=0x104601838, suff=0x104601c38)}, is_end=False, c=b, prev=0x16d8c68e0, suff=0x16d8c68e0), a: pref(next={b: pref(next={a: pref(next={}, is_end=True, c=a, prev=0x104601938, suff=0x1046017b8)}, is_end=False, c=b, prev=0x104601c38, suff=0x104601838), a: pref(next={b: pref(next={a: pref(next={a: pref(next={}, is_end=True, c=a, prev=0x104601a38, suff=0x104601bb8)}, is_end=False, c=a, prev=0x104601ab8, suff=0x1046018b8)}, is_end=False, c=b, prev=0x104601bb8, suff=0x104601938), a: pref(next={}, is_end=True, c=a, prev=0x104601bb8, suff=0x104601bb8)}, is_end=False, c=a, prev=0x104601c38, suff=0x104601c38)}, is_end=False, c=a, prev=0x16d8c68e0, suff=0x16d8c68e0)}, is_end=False, c=, prev=0x0, suff=0x0)
+from h import *
+a=scan(str)
+n=scan(int)
+s=scan([str]*n)
+for q in s:
+    d=[w for w in range(len(a)) if a[w:].startswith(q)]
+    if d:
+        print(len(d),d[0])
+    else:
+        print(0,0)
+
+
+
+
+
+

@@ -12,9 +12,34 @@ def rand(q=2**64,e=None):
 	assert q
 	return randint(e,q-1)
 def getstr(l=200):
-	return ''.join([choice('snmrdfhg')+choice('aioue') for w in range(l)])[:l]
-maxlen=200+int(run_num**0.5)
-# strs=[getstr() for w in range(maxlen)]
+	return ''.join([choice('snmrdfhg')+choice('aioue') for w in range(rand(1,l))])[:l]
+maxlen=2+int(run_num**0.5)
+strs=[getstr(maxlen) for w in range(maxlen)]
+
+a=''.join([choice(choice(strs)) if rand(8) else choice(strs) for w in range(maxlen)])
+
+
+print(a)
+print(len(strs))
+for w in strs:
+	print(w)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # def is_correst(a):
 #     c=0
@@ -145,17 +170,17 @@ maxlen=200+int(run_num**0.5)
 # 		# print(format_exc(),file=stderr)
 # 		pass
 
-n=rand(2,64)
-m=rand(0,min(64,n*(n-1)//2))
-k=rand(0,n)
-print(n,m,k)
-f=list(range(1,n+1))
-shuffle(f)
-print(*sorted(f[:k]))
-g=[[q+1,w+1,rand(64)] for q in range(n) for w in range(n) if q!=w]
-shuffle(g)
-for w in g[:m]:
-	print(*w)
-f=list(range(1,n+1))
-shuffle(f)
-print(*f[:2])
+# n=rand(2,64)
+# m=rand(0,min(64,n*(n-1)//2))
+# k=rand(0,n)
+# print(n,m,k)
+# f=list(range(1,n+1))
+# shuffle(f)
+# print(*sorted(f[:k]))
+# g=[[q+1,w+1,rand(64)] for q in range(n) for w in range(n) if q!=w]
+# shuffle(g)
+# for w in g[:m]:
+# 	print(*w)
+# f=list(range(1,n+1))
+# shuffle(f)
+# print(*f[:2])
