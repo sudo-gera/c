@@ -1,36 +1,72 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int main() {
-  string a, s;
-  cin >> a >> s;
-  if (a.size() < s.size()) {
-    cout << 0 << endl;
-    return 0;
-  }
-  size_t base = 127;
-  size_t sh = 0;
-  size_t ah = 0;
-  size_t mb = 1;
-  for (size_t i = 0; i < s.size(); ++i) {
-    sh *= base;
-    sh += s[i];
-    ah *= base;
-    ah += a[i];
-    mb *= base;
-  }
-  vector<size_t> ans;
-  for (size_t i = 0; i < a.size() - s.size() + 1; ++i) {
-    if (ah == sh and memcmp(a.data() + i, s.data(), s.size()) == 0) {
-      ans.push_back(i + 1);
+using llu=decltype(0LLU);
+
+struct pref{
+    unordered_map<char,pref> next;
+    bool is_end=0;
+    char c=0;
+    pref* prev=nullptr;
+    pref* suff=nullptr;
+};
+
+
+int main(){
+    string a;
+    cin>>a;
+    llu n;
+    cin>>n;
+    vector<string> s(n);
+    for (llu w=0;w<n;++w){
+        cin>>s[w];
     }
-    ah *= base;
-    ah += a[i + s.size()];
-    ah -= mb * a[i];
-  }
-  cout << ans.size() << endl;
-  for (auto i : ans) {
-    cout << i << " ";
-  }
-  cout << endl;
+    pref root;
+    for (llu q=0;q<n;++q){
+        pref* c=&root;
+        for (auto w:s[q]){
+            c->next[w].c=w;
+            c->next[w].prev=c;
+            c=&(c->next[w]);
+        }
+        c->is_end=1;
+    }
+    vector<pref*> q({&root});
+    llu ql=0;
+    while (ql<q.size()){
+        pref* c=q[ql++];
+        if (c->suff){
+            continue;
+        }
+        if (c!=&root){
+            pref* t=c->prev;
+            if (t==&root){
+                c->suff=&root;
+            }else{
+                t=t->suff;
+                while(t and not t->next.count(c->c)){
+                    t=t->suff;
+                }
+                if (t and t->next.count(c->c)){
+                    c->suff=&t->next[c->c];
+                }else{
+                    c->suff=&root;
+                }
+            }
+        }
+        for (auto&w:c->next){
+            q.push_back(&w.second);
+        }
+    }
+    ic(root)
 }
+
+
+
+
+
+
+
+
+
+
