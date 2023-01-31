@@ -7,7 +7,7 @@ hostPort = 9000
 class MyServer(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
-        self.send_header("Content-type", "text/html")
+        self.send_header("Content-type", "text/html; charset=utf-8")
         self.end_headers()
         self.wfile.write(bytes("<html><head><title>Title goes here.</title></head>".encode()))
         self.wfile.write(bytes("<body><p>This is a test.</p>".encode()))
@@ -15,7 +15,7 @@ class MyServer(BaseHTTPRequestHandler):
         self.wfile.write(bytes("</body></html>".encode()))
     def do_POST(self):
         self.send_response(200)
-        self.send_header("Content-type", "text/html")
+        self.send_header("Content-type", "text/html; charset=utf-8")
         self.end_headers()
         lenn=int(self.headers['Content-Length'])
         data=self.rfile.read(lenn)

@@ -1,26 +1,35 @@
 #ifndef assert
 #include <assert.h>
 #endif
+#include <arpa/inet.h>
 #include <ctype.h>
+#include <errno.h>
+#include <fcntl.h>
 #include <inttypes.h>
 #include <iso646.h>
+#include <memory.h>
+#include <netinet/in.h>
+#include <pthread.h>
+#include <sched.h>
+#include <signal.h>
 #include <stdarg.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <tgmath.h>
-#include <memory.h>
-#include <stddef.h>
+#if __has_include(<sys/epoll.h>)
+    #include <sys/epoll.h>
+#endif
 #include <sys/mman.h>
-#include <unistd.h>
+#include <sys/socket.h>
 #include <sys/stat.h>
-#include <fcntl.h>
 #include <sys/syscall.h>
-#include <errno.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <tgmath.h>
+#include <unistd.h>
 
 #ifdef print
 #undef print
@@ -146,41 +155,46 @@ static inline void print(uint64_t out) {
 
 typedef int (*cmp_f_t)(const void *, const void *);
 
+char* get_line(){
+    char*str=0;
+    int c=0;
+    while ((c=getchar(),c!=EOF)){
+        append(str,c);
+    }
+    return str;
+}
+
+#define elif else if
+
+#define _str(x) #x
+#define m_str(x) _str(x)
+#define perr if (errno){perror(__FILE__ " " m_str(__LINE__));errno=0;}
+
 ///////////////////////////////////////////////////end of lib
 
 
 
+
 int main(){
-    #ifdef EXPR
-        print(EXPR);
-    #else
-        int pid=fork();
-        if (not pid){
-            char**args=NULL;
-            append(args,"gcc");
-            char*str=NULL;
-            char*pr="-DEXPR=";
-            resize(str,strlen(pr));
-            memmove(str,pr,strlen(pr));
-            int c=0;
-            while((c=getchar(),c!=EOF)){
-                if (not isspace(c)){
-                    append(str,c);
-                }
-            }
-            append(args,str);
-            append(args,"-o");
-            append(args,"./b.out");
-            append(args,__FILE__);
-            execvp(args[0],args);
-        }else{
-            waitpid(pid,0,0);
-            char**args=0;
-            append(args,"./b.out");
-            append(args,0);
-            execvp(args[0],args);
-        }
-    #endif
+    int pid=fork();
+    if (not pid){
+        char*str=0;
+        str=get_line();
+        char*fc=0;
+        resize(fc,len(str)+4096);
+        sprintf(fc,"#include <stdio.h>\nint main(){printf(\"%%i\\n\",(%s));}\n",str);
+        int fd=open("tmp.cpp",O_RDWR|O_CREAT|O_TRUNC,0777);
+        write(fd,fc,strlen(fc));
+        close(fd);
+        del(fc);
+        del(str);
+        execlp("gcc","gcc","-o","./b.out","tmp.cpp",NULL);
+    }else{
+        waitpid(pid,0,0);
+perr
+        execlp("./b.out","./b.out",NULL);
+    }
 }
+
 
 

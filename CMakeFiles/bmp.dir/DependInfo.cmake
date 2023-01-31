@@ -8,10 +8,17 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+<<<<<<< HEAD
+  "/home/gera/cpp-2022-sudo-gera/Projects/alg.cpp" "CMakeFiles/bmp.dir/alg.cpp.o" "gcc" "CMakeFiles/bmp.dir/alg.cpp.o.d"
+  "/home/gera/cpp-2022-sudo-gera/Projects/bmp.cpp" "CMakeFiles/bmp.dir/bmp.cpp.o" "gcc" "CMakeFiles/bmp.dir/bmp.cpp.o.d"
+  "/home/gera/cpp-2022-sudo-gera/Projects/esh.cpp" "CMakeFiles/bmp.dir/esh.cpp.o" "gcc" "CMakeFiles/bmp.dir/esh.cpp.o.d"
+  "/home/gera/cpp-2022-sudo-gera/Projects/pix.cpp" "CMakeFiles/bmp.dir/pix.cpp.o" "gcc" "CMakeFiles/bmp.dir/pix.cpp.o.d"
+=======
   "/Users/gera/cpp-2022-sudo-gera/Projects/alg.cpp" "CMakeFiles/bmp.dir/alg.cpp.o" "gcc" "CMakeFiles/bmp.dir/alg.cpp.o.d"
   "/Users/gera/cpp-2022-sudo-gera/Projects/bmp.cpp" "CMakeFiles/bmp.dir/bmp.cpp.o" "gcc" "CMakeFiles/bmp.dir/bmp.cpp.o.d"
   "/Users/gera/cpp-2022-sudo-gera/Projects/esh.cpp" "CMakeFiles/bmp.dir/esh.cpp.o" "gcc" "CMakeFiles/bmp.dir/esh.cpp.o.d"
   "/Users/gera/cpp-2022-sudo-gera/Projects/pix.cpp" "CMakeFiles/bmp.dir/pix.cpp.o" "gcc" "CMakeFiles/bmp.dir/pix.cpp.o.d"
+>>>>>>> 13bc93bc3633e4c71d443c4647ebed0ce0ca3ecf
   )
 
 # Targets to which this target links.

@@ -400,7 +400,7 @@ def bmp_write(a,filename):
     height=len(a);
     width=len(a[0]) if a else 0;
     data=[
-        0x4d420000,
+        int.from_bytes(b'\x00\x00BM','little'),
         height * width * 4 + 54,
         0, 54, 40,
         width, height,
