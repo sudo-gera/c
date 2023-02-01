@@ -1,15 +1,14 @@
-// #include <bits/stdc++.h>
-// using namespace std;
+#include <bits/stdc++.h>
+using namespace std;
 
-// using llu=decltype(0LLU);
+using llu=decltype(0LLU);
 
-extern "C"
-long write(int,const char*,unsigned long);
+
 
 
 int main(){
-    write(1,"hello\n",6);
-
+    vector<int> f({1,2,3,4});
+    auto y=hash<vector<int>>()(f);
 }
 
 
