@@ -1,9 +1,6 @@
-#include <bits/stdc++.h>
+#include <vector>
+
 using namespace std;
-
-using llu=decltype(0LLU);
-
-
 
 
 int main(){
