@@ -1,11 +1,17 @@
-#include <vector>
+#include <stdio.h>
 
-using namespace std;
-
+long long unsigned gcd(long long unsigned q,long long unsigned w){
+    return q?gcd(w%q,q):w;
+}
 
 int main(){
-    vector<int> f({1,2,3,4});
-    auto y=hash<vector<int>>()(f);
+    long long unsigned a=0,s=0;
+    scanf("%llu%llu",&a,&s);
+    if (gcd(a,s)==1){
+        printf("nice\n");
+    }else{
+        printf("not nice\n");
+    }
 }
 
 
