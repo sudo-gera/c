@@ -7,13 +7,13 @@
 #include <unordered_set>
 #include <vector>
 #ifndef assert
-#include <assert.h>
+#include <cassert>
 #endif
 #include <tuple>
 #include <numeric>
 #include <list>
 #include <string_view>
-#include <string.h>
+#include <cstring>
 #include <functional>
 #include <type_traits>
 using std::cin, std::cout, std::endl, std::vector, std::string, std::sort;

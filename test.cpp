@@ -1,5 +1,7 @@
-using Llu=decltype(0LLU);
 
 int main(){
-
+    ic(( 10)%( 7))
+    ic(( 10)%(-7))
+    ic((-10)%( 7))
+    ic((-10)%(-7))
 }
