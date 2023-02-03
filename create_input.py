@@ -13,14 +13,14 @@ def rand(q=2**64,e=None):
 	return randint(e,q-1)
 def getstr(l=200):
 	return ''.join([choice('snmrdfhg')+choice('aioue') for w in range(rand(1,l))])[:l]
-maxlen=2+int(run_num**0.5)
-strs=[getstr(maxlen) for w in range(maxlen)]
+maxlen=20+int(run_num**0.5)
+strs=[getstr(maxlen) for w in range(1)]
 
 a=''.join([choice(choice(strs)) if rand(8) else choice(strs) for w in range(maxlen)])
 
 
 print(a)
-print(len(strs))
+# print(len(strs))
 for w in strs:
 	print(w)
 
