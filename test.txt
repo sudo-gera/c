@@ -1,79 +1,23 @@
-Script started on Fri Feb  3 16:16:35 2023
-command: clang-tidy -extra-arg=-std=c++11 A=^_^=.cpp
-4406 warnings and 18 errors generated.
-Error while processing /Users/gera/c/A=^_^=.cpp.
-[1m/Users/gera/c/A=^_^=.cpp:20:74: [0m[0;1;31merror: [0m[1muse of multiple declarators in a single using declaration is a C++17 extension [clang-diagnostic-c++17-extensions][0m
-using std::cin, std::cout, std::endl, std::vector, std::string, std::sort;
-[0;1;32m                                                                         ^
-[0m[1m/Users/gera/c/A=^_^=.cpp:21:76: [0m[0;1;31merror: [0m[1muse of multiple declarators in a single using declaration is a C++17 extension [clang-diagnostic-c++17-extensions][0m
-using std::pair, std::set, std::unordered_set, std::map, std::unordered_map;
-[0;1;32m                                                                           ^
-[0m[1m/Users/gera/c/A=^_^=.cpp:22:74: [0m[0;1;31merror: [0m[1muse of multiple declarators in a single using declaration is a C++17 extension [clang-diagnostic-c++17-extensions][0m
-using std::min, std::max, std::tuple, std::tie, std::get, std::make_tuple;
-[0;1;32m                                                                         ^
-[0m[1m/Users/gera/c/A=^_^=.cpp:23:59: [0m[0;1;31merror: [0m[1muse of multiple declarators in a single using declaration is a C++17 extension [clang-diagnostic-c++17-extensions][0m
-using std::move, std::swap, std::generate, std::generate_n;
-[0;1;32m                                                          ^
-[0m[1m/Users/gera/c/A=^_^=.cpp:24:61: [0m[0;1;31merror: [0m[1muse of multiple declarators in a single using declaration is a C++17 extension [clang-diagnostic-c++17-extensions][0m
-using std::back_inserter, std::list, std::hash, std::reverse;
-[0;1;32m                                                            ^
-[0m[1m/Users/gera/c/A=^_^=.cpp:25:75: [0m[0;1;31merror: [0m[1muse of multiple declarators in a single using declaration is a C++17 extension [clang-diagnostic-c++17-extensions][0m
-using std::lower_bound, std::upper_bound, std::flush, std::prev, std::next;
-[0;1;32m                                                                          ^
-[0m[1m/Users/gera/c/A=^_^=.cpp:26:75: [0m[0;1;31merror: [0m[1muse of multiple declarators in a single using declaration is a C++17 extension [clang-diagnostic-c++17-extensions][0m
-using std::tuple_size, std::lexicographical_compare, std::set_intersection;
-[0;1;32m                                                                          ^
-[0m[1m/Users/gera/c/A=^_^=.cpp:27:62: [0m[0;1;31merror: [0m[1muse of multiple declarators in a single using declaration is a C++17 extension [clang-diagnostic-c++17-extensions][0m
-using std::copy_if, std::exit, std::enable_if, std::enable_if;
-[0;1;32m                                                             ^
-[0m[1m/Users/gera/c/A=^_^=.cpp:28:64: [0m[0;1;31merror: [0m[1muse of multiple declarators in a single using declaration is a C++17 extension [clang-diagnostic-c++17-extensions][0m
-using std::tuple_cat, std::find, std::find_if, std::find_if_not;
-[0;1;32m                                                               ^
-[0m[1m/Users/gera/c/A=^_^=.cpp:29:73: [0m[0;1;31merror: [0m[1muse of multiple declarators in a single using declaration is a C++17 extension [clang-diagnostic-c++17-extensions][0m
-using std::ref, std::cref, std::reference_wrapper, std::remove_reference;
-[0;1;32m                                                                        ^
-[0m[1m/Users/gera/c/A=^_^=.cpp:30:56: [0m[0;1;31merror: [0m[1muse of multiple declarators in a single using declaration is a C++17 extension [clang-diagnostic-c++17-extensions][0m
-using std::tuple_element, std::tuple_size, std::is_same;
-[0;1;32m                                                       ^
-[0m[1m/Users/gera/c/A=^_^=.cpp:31:12: [0m[0;1;31merror: [0m[1mno member named 'tuple_size_v' in namespace 'std'; did you mean 'tuple_size'? [clang-diagnostic-error][0m
-using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
-[0;1;32m      ~~~~~^~~~~~~~~~~~
-[0m[0;32m           tuple_size
-[0m[1m/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__tuple:24:50: [0m[0;1;30mnote: [0m'tuple_size' declared here[0m
-template <class _Tp> struct _LIBCPP_TEMPLATE_VIS tuple_size;
-[0;1;32m                                                 ^
-[0m[1m/Users/gera/c/A=^_^=.cpp:31:31: [0m[0;1;31merror: [0m[1mno member named 'is_same_v' in namespace 'std'; did you mean 'is_same'? [clang-diagnostic-error][0m
-using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
-[0;1;32m                         ~~~~~^~~~~~~~~
-[0m[0;32m                              is_same
-[0m[1m/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/type_traits:556:29: [0m[0;1;30mnote: [0m'is_same' declared here[0m
-struct _LIBCPP_TEMPLATE_VIS is_same : _BoolConstant<__is_same(_Tp, _Up)> { };
-[0;1;32m                            ^
-[0m[1m/Users/gera/c/A=^_^=.cpp:31:47: [0m[0;1;31merror: [0m[1mno member named 'enable_if_t' in namespace 'std' [clang-diagnostic-error][0m
-using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
-[0;1;32m                                         ~~~~~^
-[0m[1m/Users/gera/c/A=^_^=.cpp:31:65: [0m[0;1;31merror: [0m[1mno member named 'tuple_element_t' in namespace 'std'; did you mean 'tuple_element'? [clang-diagnostic-error][0m
-using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
-[0;1;32m                                                           ~~~~~^~~~~~~~~~~~~~~
-[0m[0;32m                                                                tuple_element
-[0m[1m/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__tuple:56:62: [0m[0;1;30mnote: [0m'tuple_element' declared here[0m
-template <size_t _Ip, class _Tp> struct _LIBCPP_TEMPLATE_VIS tuple_element;
-[0;1;32m                                                             ^
-[0m[1m/Users/gera/c/A=^_^=.cpp:31:80: [0m[0;1;31merror: [0m[1muse of multiple declarators in a single using declaration is a C++17 extension [clang-diagnostic-c++17-extensions][0m
-using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
-[0;1;32m                                                                               ^
-[0m[1m/Users/gera/c/A=^_^=.cpp:32:44: [0m[0;1;31merror: [0m[1mno member named 'remove_reference_t' in namespace 'std'; did you mean 'remove_reference'? [clang-diagnostic-error][0m
-using std::generate, std::generate_n, std::remove_reference_t, std::iota;
-[0;1;32m                                      ~~~~~^~~~~~~~~~~~~~~~~~
-[0m[0;32m                                           remove_reference
-[0m[1m/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/type_traits:1303:50: [0m[0;1;30mnote: [0m'remove_reference' declared here[0m
-template <class _Tp> struct _LIBCPP_TEMPLATE_VIS remove_reference        {typedef _LIBCPP_NODEBUG _Tp type;};
-[0;1;32m                                                 ^
-[0m[1m/Users/gera/c/A=^_^=.cpp:32:73: [0m[0;1;31merror: [0m[1muse of multiple declarators in a single using declaration is a C++17 extension [clang-diagnostic-c++17-extensions][0m
-using std::generate, std::generate_n, std::remove_reference_t, std::iota;
-[0;1;32m                                                                        ^
-[0mSuppressed 4406 warnings (4406 in non-user code).
-Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
-Found compiler error(s).
+Script started on Sat Feb  4 04:24:54 2023
+[?1034h[31m04:24:54[0m:[33marm64[0m:[32m~/c[0m$ 
+[31m04:24:55[0m:[33marm64[0m:[32m~/c[0m$ 
+[31m04:24:55[0m:[33marm64[0m:[32m~/c[0m$ 
+[31m04:24:55[0m:[33marm64[0m:[32m~/c[0m$ 
+[31m04:24:55[0m:[33marm64[0m:[32m~/c[0m$ 
+[31m04:24:55[0m:[33marm64[0m:[32m~/c[0m$ 
+[31m04:24:55[0m:[33marm64[0m:[32m~/c[0m$ 
+[31m04:24:55[0m:[33marm64[0m:[32m~/c[0m$ 
+[31m04:24:55[0m:[33marm64[0m:[32m~/c[0m$ 
+[31m04:24:55[0m:[33marm64[0m:[32m~/c[0m$ 
+[31m04:24:55[0m:[33marm64[0m:[32m~/c[0m$ 
+[31m04:24:55[0m:[33marm64[0m:[32m~/c[0m$ 
+[31m04:24:55[0m:[33marm64[0m:[32m~/c[0m$ 
+[31m04:24:55[0m:[33marm64[0m:[32m~/c[0m$ 
+[31m04:24:55[0m:[33marm64[0m:[32m~/c[0m$ 
+[31m04:24:55[0m:[33marm64[0m:[32m~/c[0m$ 
+[31m04:24:55[0m:[33marm64[0m:[32m~/c[0m$ 
+[31m04:24:55[0m:[33marm64[0m:[32m~/c[0m$ 
+[31m04:24:55[0m:[33marm64[0m:[32m~/c[0m$ 
+[31m04:24:55[0m:[33marm64[0m:[32m~/c[0m$ psython -i c/h.py[1Pscript test.txt[6Pkill `ps`fg[Kpsython socket_pipe.py s[Kfgkill `ps`script test.txtpython -i c/h.pys[K[Kexit
 
-Script done on Fri Feb  3 16:16:36 2023
+Script done on Sat Feb  4 04:25:02 2023

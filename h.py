@@ -79,7 +79,7 @@ def outputFunction(*a):
     func=s[0]
     a=a[len(func)+2:]
     args=a
-    print("\x1b[92mline \x1b[94m"+line+"\x1b[92m file \x1b[94m"+file+"\x1b[92m func \x1b[94m"+func+"\x1b[92m \x1b[0m"+args,file=stderr)
+    print("\x1b[92mpid \x1b[94m"+str(getpid())+"\x1b[92m line \x1b[94m"+line+"\x1b[92m file \x1b[94m"+file+"\x1b[92m func \x1b[94m"+func+"\x1b[92m \x1b[0m"+args,file=stderr)
 from icecream import ic
 import icecream 
 try:
@@ -366,7 +366,7 @@ def perf():
         line=''
         file=''
         func=''
-    print("\x1b[92mline \x1b[94m"+line+"\x1b[92m file \x1b[94m"+file+"\x1b[92m func \x1b[94m"+func+"\x1b[92m \x1b[0m"+args)
+    print("\x1b[92mpid \x1b[94m"+getpid()+"\x1b[92m line \x1b[94m"+line+"\x1b[92m file \x1b[94m"+file+"\x1b[92m func \x1b[94m"+func+"\x1b[92m \x1b[0m"+args)
     _perf_prev_=perf_counter()
 _perf_prev_=perf_counter()
 def append(a,s):
