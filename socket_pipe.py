@@ -34,7 +34,7 @@ def create_server():
 
 
 def on_event(pipe,to_watch,client_by_id,client):
-    data=client.recv(1024**2)
+    data=client.recv(1024)
     client_id=to_watch[client]['id']
 
     ic(client_id,data)
@@ -49,12 +49,21 @@ def on_event(pipe,to_watch,client_by_id,client):
         client.close()
     else:
         data=base64.b64encode(data).decode()
-        os.write(pipe[1],json.dumps({
-            'pid':os.getpid(),
-            'event':'got',
-            'id':client_id,
-            'data':data,
-        }).encode()+b'\0')
+        c=128
+        while 1:
+            try:
+                os.write(pipe[1],json.dumps({
+                    'pid':os.getpid(),
+                    'event':'got',
+                    'id':client_id,
+                    'data':data,
+                }).encode()+b'\0')
+                break
+            except BrokenPipeError:
+                time.sleep(delay*8)
+                c-=1
+                if c==0:
+                    break
 
 def on_pipe(pipe_buffer,to_watch,client_by_id,pipe,_pipe):
     assert pipe[0]==_pipe
@@ -152,37 +161,3 @@ else:
 
 
 
-
-# server=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-# server.bind(('', 8080))
-# server.listen(200)
-
-# def on_read(client,data):
-#     ...
-
-# def on_close(client):
-#     ...
-
-# def on_event(client):
-#     data=client.recv(1024**2)
-
-
-# def on_accept(server):
-#     client=server.accept()
-#     to_watch[client]={}
-#     to_watch[client]['on_event']=on_event
-
-
-# to_watch[server]={}
-# to_watch[server]['on_event']=on_accept
-
-# try:
-#     while 1:
-#         time.sleep(delay)
-#         ss = select.select
-#         input_ready, output_ready, except_ready = ss(to_watch.keys(), [], [])
-#         for s in input_ready:
-#             to_watch[s]['on_event'](s)
-# except KeyboardInterrupt:
-#     print()
