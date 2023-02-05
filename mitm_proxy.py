@@ -1,4 +1,3 @@
-from h import *
 #!/usr/bin/python
 # This is a simple port-forward / proxy, written using only the default python
 # library. If you want to make a suggestion or fix something you can contact-me
@@ -13,7 +12,7 @@ import sys
 # But when buffer get to high or delay go too down, you can broke things
 buffer_size = 4096
 delay = 0.0001
-forward_to = ('localhost', 9090)
+forward_to = ('localhost',9090)
 
 class Forward:
     def __init__(self):
@@ -24,14 +23,14 @@ class Forward:
             self.forward.connect((host, port))
             return self.forward
         except Exception as e:
-            print(e)
+            print (e)
             return False
 
 class TheServer:
+    input_list = []
+    channel = {}
 
     def __init__(self, host, port):
-        self.input_list = []
-        self.channel = {}
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.server.bind((host, port))
@@ -46,12 +45,16 @@ class TheServer:
             for self.s in inputready:
                 if self.s == self.server:
                     self.on_accept()
-                    break
+                    # break
+                    continue
 
-                self.data = self.s.recv(buffer_size)
+                try:
+                    self.data = self.s.recv(buffer_size)
+                except ConnectionResetError:
+                    self.data = ''
                 if len(self.data) == 0:
                     self.on_close()
-                    break
+                    # break
                 else:
                     self.on_recv()
 
@@ -59,18 +62,22 @@ class TheServer:
         forward = Forward().start(forward_to[0], forward_to[1])
         clientsock, clientaddr = self.server.accept()
         if forward:
-            print( clientaddr, "has connected")
+            print (clientaddr, "has connected")
             self.input_list.append(clientsock)
             self.input_list.append(forward)
             self.channel[clientsock] = forward
             self.channel[forward] = clientsock
         else:
-            print( "Can't establish connection with remote server.",)
-            print( "Closing connection with client side", clientaddr)
+            print ("Can't establish connection with remote server.",)
+            print ("Closing connection with client side", clientaddr)
             clientsock.close()
 
     def on_close(self):
-        print( self.s.getpeername(), "has disconnected")
+        try:
+            n=self.s.getpeername()
+        except OSError:
+            n='(undefined)'
+        print (n, "has disconnected")
         #remove objects from input_list
         self.input_list.remove(self.s)
         self.input_list.remove(self.channel[self.s])
@@ -86,7 +93,7 @@ class TheServer:
     def on_recv(self):
         data = self.data
         # here we can parse and/or modify the data before send forward
-        ic(data,self,self.s)
+        # print (data)
         self.channel[self.s].send(data)
 
 if __name__ == '__main__':
@@ -94,5 +101,5 @@ if __name__ == '__main__':
         try:
             server.main_loop()
         except KeyboardInterrupt:
-            print(("Ctrl C - Stopping server"))
+            print ("Ctrl C - Stopping server")
             sys.exit(1)
