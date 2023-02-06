@@ -57,7 +57,9 @@ class Server:
 
     def pipe_send(self,message):
         message = json.dumps(message)
-        message=message.encode()+b'\0'
+        message = message.encode()
+        assert b'^' not in message
+        message+=b'^'
         os.write(self.pipe[1],message)
 
     def on_accept(self,server):
@@ -105,7 +107,7 @@ class Server:
 
     def on_pipe(self,pipe):
         self.pipe_buffer+=os.read(pipe,buffer_size)
-        [*data, self.pipe_buffer]=self.pipe_buffer.split(b'\0')
+        [*data, self.pipe_buffer]=self.pipe_buffer.split(b'^')
         for w in data:
             w=json.loads(w.decode())
             if w['event']=='new':

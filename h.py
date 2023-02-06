@@ -63,7 +63,17 @@ from operator import *
 import operator
 from inspect import *
 import inspect
+from threading import *
+import threading
+from threading import *
+import threading
 from copy import *
+from icecream import ic
+import icecream 
+try:
+	cache
+except:
+	cache=lru_cache(maxsize=None)
 def outputFunction(*a):
     a=a[0]
     s=split(r'\:\d+ in ',a)
@@ -80,12 +90,6 @@ def outputFunction(*a):
     a=a[len(func)+2:]
     args=a
     print("\x1b[92mpid \x1b[94m"+str(getpid())+"\x1b[92m line \x1b[94m"+line+"\x1b[92m file \x1b[94m"+file+"\x1b[92m func \x1b[94m"+func+"\x1b[92m \x1b[0m"+args,file=stderr)
-from icecream import ic
-import icecream 
-try:
-	cache
-except:
-	cache=lru_cache(maxsize=None)
 ic.configureOutput(includeContext=1)
 ic.configureOutput(outputFunction=outputFunction)
 ic.configureOutput(prefix='')
