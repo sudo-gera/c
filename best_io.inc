@@ -400,7 +400,7 @@ ret
 
 __best__call_putchar:
     push __best__max_ax
-    call __best__putsint
+    call __best__putchar
 ret
 
 %macro __best__begin_end_ 4 ; end char, what to call, begin, end
