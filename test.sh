@@ -1,11 +1,11 @@
-LANG=''
-cat test.txt |\
-    sed "s/\(.\)/M\1M/g" |\
-    base64 |\
-    sed "s/.\(.\)\(.\)./MM\1MM\2MM/g" |\
-    base64 -d |\
-    sed "s/.\(....\)./\1/g" | sed "s/\(.\)/\1MM/g" |\
-    base64 |\
-    sed "s/.\(.\)..\(.\).../M\1MMM\2MM/g" |\
-    base64 -d |\
-    sed "s/\(.\)../\1/g"
+if [ "$TERM_PROGRAM" == "vscode" ]
+then
+    cd "/mnt/c/Users/..."
+fi
+
+
+function g(){
+    clang++ -std=c++20 -O2 -g -fsanitize=address,undefined -Wfatal-errors "$@" && ./a.out
+}
+
+

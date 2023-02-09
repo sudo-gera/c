@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/Users/gera/courserepo/CppLanguage/tasks/unique_pointer/test_unique_pointer.cpp" "CppLanguage/tasks/unique_pointer/CMakeFiles/test_unique_pointer.dir/test_unique_pointer.cpp.o" "gcc" "CppLanguage/tasks/unique_pointer/CMakeFiles/test_unique_pointer.dir/test_unique_pointer.cpp.o.d"
+  "/Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/unique_pointer/test_unique_pointer.cpp" "CppLanguage/tasks/unique_pointer/CMakeFiles/test_unique_pointer.dir/test_unique_pointer.cpp.o" "gcc" "CppLanguage/tasks/unique_pointer/CMakeFiles/test_unique_pointer.dir/test_unique_pointer.cpp.o.d"
   )
 
 # Targets to which this target links.

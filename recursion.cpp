@@ -1,104 +1,94 @@
-#include <iostream>
-#include <vector>
+#include <bits/stdc++.h>
+using namespace std;
 
-using ull=unsigned long long;
+#define cat(q, w) q##w
+#define unique_name(q) cat(_unique_name_, q)
 
-struct layer{
-    ull n,m,ret,jmp;
-};
+#define recursive_loop(...)                                                        \
+    for (                                                                          \
+        struct {                                                                   \
+            decltype(tie(__VA_ARGS__)) _tie;                                       \
+            vector<pair<decltype(make_tuple(__VA_ARGS__)), void *>> call_stack;    \
+            void *to_return_ptr;                                                   \
+        } _rec{                                                                    \
+            tie(__VA_ARGS__),                                                      \
+            {{{}, &&start}},                                                       \
+        };                                                                         \
+        not({                                                                      \
+            start:                                                                 \
+            _rec.call_stack.empty();                                               \
+        });                                                                        \
+        assert(((void)"end without return", 0))                                    \
+    )
 
-ull ackermann(ull m,ull n){
-    std::vector<layer> a;
-    a.push_back({.n=n,.m=m,.jmp=0});
-    auto s=&a[0];
-    auto d=&a[0];
-    long es=-1;
-    while (1){
-        if (es==-1){
-            es=-2;
-        }
-        if (es==-2){
-            s=&a.back();
-            d=&a.back();
-            if (s->m==0){
-                s->ret=s->n+1;
-                es=-3;
-            }
-        }
-        if (es!=-2 or s->n==0){
-            if (es==-2){
-                a.push_back({.m=s->m-1,.n=1,.jmp=1});
-                es=-1;
-            }
-            if (es==1){
-                es=-2;
-            }
-            if (es==-2){
-                s=-1+&a.back();
-                d=&a.back();
-                s->ret=d->ret;
-                a.pop_back();
-                es=-3;
-            }
-        }
-        if (es==-2){
-            a.push_back({.m=s->m,.n=s->n-1,.jmp=2});
-            es=-1;
-        }
-        if (es==2){
-            es=-2;
-        }
-        if (es==-2){
-            s=-1+&a.back();
-            d=&a.back();
-            s->n=d->ret;
-            d->m=s->m-1;
-            d->n=s->n;
-            d->jmp=3;
-            es=-1;
-        }
-        if (es==3){
-            es=-2;
-        }
-        if (es==-2){
-            s=-1+&a.back();
-            d=&a.back();
-            s->ret=d->ret;
-            a.pop_back();
-            es=-3;
-        }
-        if (es==-3){
-            es=-2;
-        }
-        if (es==-2){
-            es=s->jmp;
-        }
-        if (es==0){
-            es=-2;
-        }
-        if (es==-2){
-            return a[0].ret;
-        }
+#define call(...)                                                                  \
+    {                                                                              \
+        _rec.call_stack.push_back({_rec._tie, &&unique_name(__LINE__)});           \
+        _rec._tie = decltype(_rec.call_stack[0].first){__VA_ARGS__};               \
+        goto start;                                                                \
+        unique_name(__LINE__) : {}                                                 \
     }
+
+#define ret()                                                                      \
+    {                                                                              \
+        _rec._tie = _rec.call_stack.back().first;                                  \
+        _rec.to_return_ptr = _rec.call_stack.back().second;                        \
+        _rec.call_stack.pop_back();                                                \
+        goto *_rec.to_return_ptr;                                                  \
+    }
+
+using llu = long long unsigned;
+
+string run0(string n) {
+    string ret_val;
+    string r;
+    recursive_loop(n, r) {
+        if (stoul(n) < 2) {
+            ret_val = n;
+            ret();
+        }
+        call(to_string(stoul(n) - 1), "");
+        r = ret_val;
+        call(to_string(stoul(n) - 2), "");
+        ret_val = to_string(stoul(r) + stoul(ret_val));
+        ret();
+    }
+    return ret_val;
 }
 
-
-
-
-int main(){
-    printf("\x1b[92m%i\x1b[0m\t",0);
-    for (ull m=0;m<5;++m){
-        printf("\x1b[92m%llu\x1b[0m\t",m);
-    }
-    printf("\n\n\n");
-    for (ull n=0;n<16;++n){
-        printf("\x1b[92m%llu\x1b[0m\t",n);
-        for (ull m=0;m*m+n<17;++m){
-            printf("%llu\t",ackermann(m,n));
-            fflush(stdout);
+llu run(llu m, llu n) {
+    llu ret_val=0;
+    recursive_loop(m,n){
+        if (m==0){
+            ret_val=n+1;
+            ret();
         }
-        printf("\n\n\n");
+        if (n==0){
+            call(m-1,1);
+            ret();
+        }
+        call(m,n-1);
+        call(m-1,ret_val);
+        ret();
     }
+    return ret_val;
 }
 
+llu run1(llu m, llu n) {
+    if (m == 0) {
+        return (n + 1);
+    }
+    if (n == 0) {
+        return run1(m - 1, 1);
+    }
+    return (run1(m - 1, run1(m, n - 1)));
+}
 
+int main() {
+    // for (uint64_t w=0;w<16;++w){
+    //     cout<<w<<" "<<run0(to_string(w))<<endl;
+    // }
+
+    // cout << run1(3, 12) << endl;
+    cout <<  run(3, 12) << endl;
+}

@@ -15,20 +15,20 @@
 #include <string_view>
 #include <string.h>
 #include <functional>
-using std::cin; using std::cout; using std::endl; using std::vector; using std::string; using std::sort;
-using std::pair; using std::set; using std::unordered_set; using std::map; using std::unordered_map;
-using std::min; using std::max; using std::tuple; using std::tie; using std::get; using std::make_tuple;
-using std::move; using std::swap; using std::generate; using std::generate_n;
-using std::back_inserter; using std::list; using std::hash; using std::reverse;
-using std::lower_bound; using std::upper_bound; using std::flush; using std::prev; using std::next;
-using std::tuple_size; using std::lexicographical_compare; using std::set_intersection;
-using std::copy_if; using std::exit; using std::enable_if; using std::enable_if;
-using std::tuple_cat; using std::find; using std::find_if; using std::find_if_not;
-using std::ref; using std::cref; using std::reference_wrapper; using std::remove_reference;
-using std::tuple_element; using std::tuple_size; using std::is_same;
-#if __cplusplus>=201703L
+#include <type_traits>
+using std::cin, std::cout, std::endl, std::vector, std::string, std::sort;
+using std::pair, std::set, std::unordered_set, std::map, std::unordered_map;
+using std::min, std::max, std::tuple, std::tie, std::get, std::make_tuple;
+using std::move, std::swap, std::generate, std::generate_n;
+using std::back_inserter, std::list, std::hash, std::reverse;
+using std::lower_bound, std::upper_bound, std::flush, std::prev, std::next;
+using std::tuple_size, std::lexicographical_compare, std::set_intersection;
+using std::copy_if, std::exit, std::enable_if, std::enable_if;
+using std::tuple_cat, std::find, std::find_if, std::find_if_not;
+using std::ref, std::cref, std::reference_wrapper, std::remove_reference;
+using std::tuple_element, std::tuple_size, std::is_same;
 using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
-#endif
+using std::generate, std::generate_n, std::remove_reference_t;
 
 static inline int64_t getint() {
     int sign = 1;
@@ -87,35 +87,24 @@ struct t{
 };
 
 template<llu n=0,typename T,typename R>
-auto clear_tuple(T t=tuple<>(),R r=tuple<>(),typename enable_if<tuple_size<R>::value<=n or  is_same<sized<0>,typename tuple_element<n,R>::type>::value,int>::type =0)->
-  decltype(t){
+auto clear_tuple(T t=tuple<>(),R r=tuple<>(),enable_if_t<tuple_size_v<R><=n or  is_same_v<sized<0>,tuple_element_t<n,R>>,int> =0){
     return t;
 }
 
 template<llu n=0,typename T,typename R>
-auto clear_tuple(T t=tuple<>(),R r=tuple<>(),typename enable_if<n<tuple_size<R>::value and !is_same<sized<0>,typename tuple_element<n,R>::type>::value,int>::type =0)->
-  decltype(clear_tuple<n+1>(tuple_cat(t,make_tuple(get<n>(r))),r)){
+auto clear_tuple(T t=tuple<>(),R r=tuple<>(),enable_if_t<n<tuple_size_v<R> and !is_same_v<sized<0>,tuple_element_t<n,R>>,int> =0){
     return clear_tuple<n+1>(tuple_cat(t,make_tuple(get<n>(r))),r);
 }
 
 template<typename...T>
-auto t2tuple(t<T...>r)->
-  decltype(clear_tuple(tuple<>(),(tuple<T...>&&)(r))){
+auto t2tuple(t<T...>r){
     return clear_tuple(tuple<>(),(tuple<T...>&&)(r));
 }
 
 template<typename...T>
-auto to_str(t<T...>r)->
-  decltype(t2tuple(r)){
+auto to_str(t<T...>r){
     return t2tuple(r);
 }
-
-template<llu n>bool operator< (sized<n>r,sized<n>y){return 0;}
-template<llu n>bool operator> (sized<n>r,sized<n>y){return 0;}
-template<llu n>bool operator<=(sized<n>r,sized<n>y){return 1;}
-template<llu n>bool operator>=(sized<n>r,sized<n>y){return 1;}
-template<llu n>bool operator!=(sized<n>r,sized<n>y){return 0;}
-template<llu n>bool operator==(sized<n>r,sized<n>y){return 1;}
 
 template<typename...R,typename...Y>bool operator< (t<R...>r,t<Y...>y){return t2tuple(r)< t2tuple(y);}
 template<typename...R,typename...Y>bool operator> (t<R...>r,t<Y...>y){return t2tuple(r)> t2tuple(y);}
@@ -123,6 +112,7 @@ template<typename...R,typename...Y>bool operator<=(t<R...>r,t<Y...>y){return t2t
 template<typename...R,typename...Y>bool operator>=(t<R...>r,t<Y...>y){return t2tuple(r)>=t2tuple(y);}
 template<typename...R,typename...Y>bool operator!=(t<R...>r,t<Y...>y){return t2tuple(r)!=t2tuple(y);}
 template<typename...R,typename...Y>bool operator==(t<R...>r,t<Y...>y){return t2tuple(r)==t2tuple(y);}
+
 
 #ifndef ic
 #define ic(...)
@@ -134,120 +124,123 @@ template<typename...R,typename...Y>bool operator==(t<R...>r,t<Y...>y){return t2t
 
 /*
 
-a | min_assigner() | b;
+a | assign(min) | b;
 -- instead of
 a = min(a, b);
 
 */
 
-struct base_assigner{
-    template<typename T>
-    using is_assigner=T;
+template<typename T>
+struct assign_s{
+    T f;
 };
+
+template<typename T>
+assign_s(T f)->assign_s<T>;
 
 template<typename T,typename Y>
-auto operator|(T&&q,Y&&w)->typename Y::template is_assigner<t<
-    typename remove_reference<T>::type*,
-    Y
->>{
-    return {&q,w};
+auto operator|(T&&q,assign_s<Y> w){
+    return t<remove_reference_t<T>*,assign_s<Y>>{&q,w};
 }
 
-template<typename T,typename Y>
-auto operator|(T&&q,Y&&w)->typename decltype(q.v1)::template is_assigner<void>{
-    q.v1(q.v0[0],w);
+template<typename R,typename T,typename Y>
+auto operator|(t<R*,assign_s<T>> q,Y&&w){
+    q.v0[0]=q.v1.f(q.v0[0],w);
 }
 
+#define assign(f) assign_s{[&](auto q,auto w){return (f)(q,w);}}
 
-struct min_assigner:base_assigner{
-    template<typename T,typename Y>
-    auto operator()(T&&q,Y&&w)->void{
-        q=min(q,w);
-    }
-};
-
-struct max_assigner:base_assigner{
-    template<typename T,typename Y>
-    auto operator()(T&&q,Y&&w)->void{
-        q=max(q,w);
-    }
-};
 
 ///////////////////////////////////////////////////end of lib
+
+#define cat(q, w) q##w
+#define unique_name(q) cat(_unique_name_, q)
+
+#define recursive_loop(...)                                                        \
+    for (                                                                          \
+        struct {                                                                   \
+            decltype(tie(__VA_ARGS__)) _tie;                                       \
+            vector<pair<decltype(make_tuple(__VA_ARGS__)), void *>> call_stack;    \
+            void *to_return_ptr;                                                   \
+        } _rec{                                                                    \
+            tie(__VA_ARGS__),                                                      \
+            {{{}, &&start}},                                                       \
+        };                                                                         \
+        not({                                                                      \
+            start:                                                                 \
+            _rec.call_stack.empty();                                               \
+        });                                                                        \
+        assert(((void)"end without return", 0))                                    \
+    )
+
+#define call(...)                                                                  \
+    {                                                                              \
+        _rec.call_stack.push_back({_rec._tie, &&unique_name(__LINE__)});           \
+        _rec._tie = decltype(_rec.call_stack[0].first){__VA_ARGS__};               \
+        goto start;                                                                \
+        unique_name(__LINE__) : {}                                                 \
+    }
+
+#define ret()                                                                      \
+    {                                                                              \
+        _rec._tie = _rec.call_stack.back().first;                                  \
+        _rec.to_return_ptr = _rec.call_stack.back().second;                        \
+        _rec.call_stack.pop_back();                                                \
+        goto *_rec.to_return_ptr;                                                  \
+    }
+
+
+using llu=long long unsigned;
 
 struct vert{
     llu dfs_state=0;
     vector<llu> next;
     ll index_in_stack=none;
     ll higher_possible=none;
-    ll higher_possible_if_this_deleted=-none;
-};
-
-struct call_layer{
-    llu current;
-    llu previous;
-    llu switch_value;
-    llu for_iterator;
-    llu next_counter;
 };
 
 void dfs(vector<vert>&a,vector<t<llu,llu>>&r,llu start){
     if (a[start].dfs_state>=2){
         return;
     }
-    vector<call_layer> l;
-    l.push_back({start,none,0,0,0});
     a[start].index_in_stack=0;
     a[start].higher_possible=0;
-    auto csb=&l.back();
-    goto _dfs;
-    _s:
-    switch(csb->switch_value){
-        case 0:
-        a[start].index_in_stack=none;
-        a[start].higher_possible=none;
-        a[start].higher_possible_if_this_deleted=-none;
-        break;
-        _dfs:
-        csb=&l.back();
-        if (a[csb->current].dfs_state==0){
-            a[csb->current].dfs_state=1;
-            for (csb->for_iterator=0;csb->for_iterator<a[csb->current].next.size();++csb->for_iterator){
-                if (a[a[csb->current].next[csb->for_iterator]].dfs_state<2 and a[csb->current].next[csb->for_iterator]!=csb->previous){
-                    if (a[a[csb->current].next[csb->for_iterator]].index_in_stack==none){
-                        a[a[csb->current].next[csb->for_iterator]].index_in_stack=l.size();
-                        a[a[csb->current].next[csb->for_iterator]].higher_possible=l.size();
-                    }
-                    csb->next_counter+=1;
-                    l.push_back({a[csb->current].next[csb->for_iterator],csb->current,1,0,0});
-                    goto _dfs;
-                    case 1:
-                    l.pop_back();
-                    csb=&l.back();
-                    if (a[a[csb->current].next[csb->for_iterator]].index_in_stack==l.size()){
-                        a[csb->current].higher_possible_if_this_deleted|max_assigner()|a[a[csb->current].next[csb->for_iterator]].higher_possible;
-                        a[csb->current].higher_possible|min_assigner()|a[a[csb->current].next[csb->for_iterator]].higher_possible;
-                        a[a[csb->current].next[csb->for_iterator]].index_in_stack=none;
-                        a[a[csb->current].next[csb->for_iterator]].higher_possible=none;
-                        a[a[csb->current].next[csb->for_iterator]].higher_possible_if_this_deleted=-none;
+    llu current=start;
+    llu previous=none;
+    llu for_index=0;
+    llu for_iterator=0;
+    llu level=1;
+    recursive_loop (current, previous, level, for_index, for_iterator){
+        if (a[current].dfs_state==0){
+            a[current].dfs_state=1;
+            for (for_index=0; for_index<a[current].next.size(); ++for_index){
+                for_iterator=a[current].next[for_index];
+                if (a[for_iterator].dfs_state<2 and for_iterator!=previous){
+                    if (a[for_iterator].index_in_stack==none){
+                        a[for_iterator].index_in_stack=level;
+                        a[for_iterator].higher_possible=level;
+                        call(for_iterator,current,level+1,0,0);
+                        a[current].higher_possible|assign(min)|a[for_iterator].higher_possible;
+                        a[for_iterator].index_in_stack=none;
+                        a[for_iterator].higher_possible=none;
+                    }else{
+                        call(for_iterator,current,level+1,0,0);
                     }
                 }
             }
-            if (a[csb->current].higher_possible==a[csb->current].index_in_stack){
-                r.push_back({csb->current,csb->previous});
+            if (a[current].higher_possible==a[current].index_in_stack){
+                r.push_back({current,previous});
             }
-            if (l.size()>1 and a[csb->current].index_in_stack==a[csb->current].higher_possible_if_this_deleted or l.size()==1 and csb->next_counter>1){
-                a[csb->current].dfs_state=3;
-            }else{
-                a[csb->current].dfs_state=2;
-            }
+            a[current].dfs_state=2;
         }else
-        if (a[csb->current].dfs_state==1){
-            a[csb->previous].higher_possible|min_assigner()|a[csb->current].index_in_stack;
-        }else{
-
+        if (a[current].dfs_state==1){
+            a[previous].higher_possible|assign(min)|a[current].index_in_stack;
         }
-        goto _s;
+        if (level==2){
+            a[start].index_in_stack=none;
+            a[start].higher_possible=none;
+        }
+        ret();
     }
 }
 

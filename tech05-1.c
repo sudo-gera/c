@@ -34,13 +34,16 @@ int main(int argc,char**argv){
     int fd=open(argv[1],O_RDONLY);
     size_t fs=get_size(argv[1]);
     if (fs>=sizeof(struct Item)){
-        struct Item*mmem=(struct Item*)mmap(NULL,fs,PROT_READ,MAP_PRIVATE,fd,0);
+        struct Item data;
+        char*mmem=(char*)mmap(NULL,fs,PROT_READ,MAP_PRIVATE,fd,0);
         size_t p=0;
-        printf("%i\n",mmem[p].value);
-        p=mmem[p].next_pointer/sizeof(struct Item);
+        memmove(&data,mmem+p,sizeof(data));
+        printf("%i\n",data.value);
+        p=data.next_pointer;
         while (p){
-            printf("%i\n",mmem[p].value);
-            p=mmem[p].next_pointer/sizeof(struct Item);
+            memmove(&data,mmem+p,sizeof(data));
+            printf("%i\n",data.value);
+            p=data.next_pointer;
         }
         munmap(mmem,fs);
     }

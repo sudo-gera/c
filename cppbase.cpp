@@ -7,13 +7,13 @@
 #include <unordered_set>
 #include <vector>
 #ifndef assert
-#include <assert.h>
+#include <cassert>
 #endif
 #include <tuple>
 #include <numeric>
 #include <list>
 #include <string_view>
-#include <string.h>
+#include <cstring>
 #include <functional>
 #include <type_traits>
 using std::cin, std::cout, std::endl, std::vector, std::string, std::sort;
@@ -28,7 +28,8 @@ using std::tuple_cat, std::find, std::find_if, std::find_if_not;
 using std::ref, std::cref, std::reference_wrapper, std::remove_reference;
 using std::tuple_element, std::tuple_size, std::is_same;
 using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
-using std::generate, std::generate_n, std::remove_reference_t;
+using std::generate, std::generate_n, std::remove_reference_t, std::iota;
+using std::unique;
 
 static inline int64_t getint() {
     int sign = 1;
@@ -49,7 +50,7 @@ static inline int64_t getint() {
 }
 
 using llu=long long unsigned;
-using ll=long long;
+using lli=long long;
 
 #define cache(rt,...)\
     static map<decltype(make_tuple(__VA_ARGS__)),rt> cache;\
@@ -87,18 +88,20 @@ struct t{
 };
 
 template<llu n=0,typename T,typename R>
-auto clear_tuple(T t=tuple<>(),R r=tuple<>(),enable_if_t<tuple_size_v<R><=n or  is_same_v<sized<0>,tuple_element_t<n,R>>,int> =0){
+requires(tuple_size_v<R><=n or  is_same_v<sized<0>*,tuple_element_t<n,R>>)
+auto clear_tuple(T t=tuple<>(),R r=tuple<>()){
     return t;
 }
 
 template<llu n=0,typename T,typename R>
-auto clear_tuple(T t=tuple<>(),R r=tuple<>(),enable_if_t<n<tuple_size_v<R> and !is_same_v<sized<0>,tuple_element_t<n,R>>,int> =0){
+requires(n<tuple_size_v<R> and !is_same_v<sized<0>*,tuple_element_t<n,R>>)
+auto clear_tuple(T t=tuple<>(),R r=tuple<>()){
     return clear_tuple<n+1>(tuple_cat(t,make_tuple(get<n>(r))),r);
 }
 
 template<typename...T>
 auto t2tuple(t<T...>r){
-    return clear_tuple(tuple<>(),(tuple<T...>&&)(r));
+    return apply([&](auto...a){return tuple(*(a)...);},clear_tuple(tuple<>(),tuple{&r.v0,&r.v1,&r.v2,&r.v3,&r.v4,&r.v5,&r.v6,&r.v7}));
 }
 
 template<typename...T>

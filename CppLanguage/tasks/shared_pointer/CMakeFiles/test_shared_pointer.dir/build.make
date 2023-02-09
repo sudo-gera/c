@@ -53,7 +53,7 @@ RM = /opt/local/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/gera/courserepo
+CMAKE_SOURCE_DIR = /Users/gera/cpp-2022-sudo-gera
 
 # The top-level build directory on which CMake was run.
 CMAKE_BINARY_DIR = /Users/gera/c
@@ -70,18 +70,18 @@ include CppLanguage/tasks/shared_pointer/CMakeFiles/test_shared_pointer.dir/prog
 include CppLanguage/tasks/shared_pointer/CMakeFiles/test_shared_pointer.dir/flags.make
 
 CppLanguage/tasks/shared_pointer/CMakeFiles/test_shared_pointer.dir/test_shared_pointer.cpp.o: CppLanguage/tasks/shared_pointer/CMakeFiles/test_shared_pointer.dir/flags.make
-CppLanguage/tasks/shared_pointer/CMakeFiles/test_shared_pointer.dir/test_shared_pointer.cpp.o: /Users/gera/courserepo/CppLanguage/tasks/shared_pointer/test_shared_pointer.cpp
+CppLanguage/tasks/shared_pointer/CMakeFiles/test_shared_pointer.dir/test_shared_pointer.cpp.o: /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/shared_pointer/test_shared_pointer.cpp
 CppLanguage/tasks/shared_pointer/CMakeFiles/test_shared_pointer.dir/test_shared_pointer.cpp.o: CppLanguage/tasks/shared_pointer/CMakeFiles/test_shared_pointer.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/gera/c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CppLanguage/tasks/shared_pointer/CMakeFiles/test_shared_pointer.dir/test_shared_pointer.cpp.o"
-	cd /Users/gera/c/CppLanguage/tasks/shared_pointer && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CppLanguage/tasks/shared_pointer/CMakeFiles/test_shared_pointer.dir/test_shared_pointer.cpp.o -MF CMakeFiles/test_shared_pointer.dir/test_shared_pointer.cpp.o.d -o CMakeFiles/test_shared_pointer.dir/test_shared_pointer.cpp.o -c /Users/gera/courserepo/CppLanguage/tasks/shared_pointer/test_shared_pointer.cpp
+	cd /Users/gera/c/CppLanguage/tasks/shared_pointer && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CppLanguage/tasks/shared_pointer/CMakeFiles/test_shared_pointer.dir/test_shared_pointer.cpp.o -MF CMakeFiles/test_shared_pointer.dir/test_shared_pointer.cpp.o.d -o CMakeFiles/test_shared_pointer.dir/test_shared_pointer.cpp.o -c /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/shared_pointer/test_shared_pointer.cpp
 
 CppLanguage/tasks/shared_pointer/CMakeFiles/test_shared_pointer.dir/test_shared_pointer.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_shared_pointer.dir/test_shared_pointer.cpp.i"
-	cd /Users/gera/c/CppLanguage/tasks/shared_pointer && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/gera/courserepo/CppLanguage/tasks/shared_pointer/test_shared_pointer.cpp > CMakeFiles/test_shared_pointer.dir/test_shared_pointer.cpp.i
+	cd /Users/gera/c/CppLanguage/tasks/shared_pointer && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/shared_pointer/test_shared_pointer.cpp > CMakeFiles/test_shared_pointer.dir/test_shared_pointer.cpp.i
 
 CppLanguage/tasks/shared_pointer/CMakeFiles/test_shared_pointer.dir/test_shared_pointer.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_shared_pointer.dir/test_shared_pointer.cpp.s"
-	cd /Users/gera/c/CppLanguage/tasks/shared_pointer && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/gera/courserepo/CppLanguage/tasks/shared_pointer/test_shared_pointer.cpp -o CMakeFiles/test_shared_pointer.dir/test_shared_pointer.cpp.s
+	cd /Users/gera/c/CppLanguage/tasks/shared_pointer && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/shared_pointer/test_shared_pointer.cpp -o CMakeFiles/test_shared_pointer.dir/test_shared_pointer.cpp.s
 
 # Object files for target test_shared_pointer
 test_shared_pointer_OBJECTS = \
@@ -105,6 +105,6 @@ CppLanguage/tasks/shared_pointer/CMakeFiles/test_shared_pointer.dir/clean:
 .PHONY : CppLanguage/tasks/shared_pointer/CMakeFiles/test_shared_pointer.dir/clean
 
 CppLanguage/tasks/shared_pointer/CMakeFiles/test_shared_pointer.dir/depend:
-	cd /Users/gera/c && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/gera/courserepo /Users/gera/courserepo/CppLanguage/tasks/shared_pointer /Users/gera/c /Users/gera/c/CppLanguage/tasks/shared_pointer /Users/gera/c/CppLanguage/tasks/shared_pointer/CMakeFiles/test_shared_pointer.dir/DependInfo.cmake --color=$(COLOR)
+	cd /Users/gera/c && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/gera/cpp-2022-sudo-gera /Users/gera/cpp-2022-sudo-gera/CppLanguage/tasks/shared_pointer /Users/gera/c /Users/gera/c/CppLanguage/tasks/shared_pointer /Users/gera/c/CppLanguage/tasks/shared_pointer/CMakeFiles/test_shared_pointer.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CppLanguage/tasks/shared_pointer/CMakeFiles/test_shared_pointer.dir/depend
 

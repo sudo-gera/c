@@ -1,556 +1,618 @@
-try:
-	from icecream import *
-	ic.configureOutput(includeContext=True)
-	# ic.disable()
-except:
-	pass
-class treap_el:
-	def __init__(s,v,f=[],w=None):
-		s.f=dict([[w,None] for w in f])
-		# s.r=[v for w in range(len(f))]
-		s.v=v
-		from random import random
-		if w!=None:
-			s.w=w
-		else:
-			s.w=random()
-		s._z=None
-		s._x=None
-		s.s=1
-		s.d=1
+from __future__ import annotations
+import copy
+import dataclasses
+import time
+import random
+import typing
+import traceback
+import json
+import functools
 
-	@property
-	def z(self):
-		return self._z
-	
-	@z.setter
-	def z(self,v):
-		self._z=v
-		update(self)
-
-	@property
-	def x(self):
-		return self._x
-
-	@x.setter
-	def x(self,v):
-		self._x=v
-		update(self)
-
-	def __repr__(s):
-		# return '\x1b[32m<\x1b[0m'+str(to_list(s))[1:-1]+'\x1b[32m>\x1b[0m'
-		# return '\x1b[32m|\x1b[0m'+str(to_list(s))[1:-1]+'\x1b[32m\x1b[0m'
-		return supertree(s,prin=0)
-
-def repr_el(q):
-	# return repr([q.v,[w.__name__ for w in q.f],[q.f[w] for w in q.f]])
-	# return repr([q.v,int(q.w*1000)])
-	return repr(q.v)
-
-
-def tree(s,q=0):
-	if s==None:
-		ret=''
-	else:
-		ret=tree(s.z,q+1)+' '*q+repr(s.v)+'\n'+tree(s.x,q+1)
-	return ret
-
-def supertree(s,p=0,prin=1,sl=0,repr_el=repr_el):
-	if isinstance(s,treap):
-		return supertree(s.e,p,repr_el=repr_el)
-	if s==None:
-		r=[[]]
-	elif s.z!=None and s.x!=None:
-		z=supertree(s.z,1,repr_el=repr_el)
-		x=supertree(s.x,1,repr_el=repr_el)
-		if len(z[0])>len(x[0]):
-			for w in range(len(x)):
-				x[w]+=[' ']*(len(z[0])-len(x[w]))
-		if len(x[0])>len(z[0]):
-			for w in range(len(z)):
-				z[w]+=[' ']*(len(x[0])-len(z[w]))
-		r=z+[[' ']*len(z[0])]+x
-		u=0
-		for q in range(len(r)):
-			if r[q] and r[q][0]==' ':
-				if u%2:
-					if q==len(z):
-						r[q]=[str(repr_el(s)),'┫']+r[q]						
-					else:
-						r[q]=[' ','┃']+r[q]
-				else:
-					r[q]=[' ',' ']+r[q]
-			elif u==0:
-				u+=1
-				r[q]=[' ','┏']+r[q]
-			else:
-				u+=1
-				r[q]=[' ','┗']+r[q]
-	elif s.z!=None:
-		z=supertree(s.z,1,repr_el=repr_el)
-		x=[]
-		r=z+[[' ']*len(z[0])]+x
-		u=0
-		for q in range(len(r)):
-			if r[q] and r[q][0]==' ':
-				if u%2:
-					if q==len(z):
-						r[q]=[str(repr_el(s)),'┛']+r[q]
-					else:
-						r[q]=[' ','┃']+r[q]
-				else:
-					r[q]=[' ',' ']+r[q]
-			elif u==0:
-				u+=1
-				r[q]=[' ','┏']+r[q]
-			else:
-				u+=1
-				r[q]=[' ','┗']+r[q]
-	elif s.x!=None:
-		z=[]
-		x=supertree(s.x,1,repr_el=repr_el)
-		r=z+[[' ']*len(x[0])]+x
-		u=1
-		for q in range(len(r)):
-			if r[q] and r[q][0]==' ':
-				if u%2:
-					if q==len(z):
-						r[q]=[str(repr_el(s)),'┓']+r[q]
-					else:
-						r[q]=[' ','┃']+r[q]
-				else:
-					r[q]=[' ',' ']+r[q]
-			elif u==0:
-				u+=1
-				r[q]=[' ','┏']+r[q]
-			else:
-				u+=1
-				r[q]=[' ','┗']+r[q]
-	else:
-		r=[[str(repr_el(s))]]
-	if p:
-		return r
-	for w in range(len(r[0])):
-		ml=len(max([e[w] for e in r],key=len))
-		for e in range(len(r)):
-			r[e][w]=(('━'if r[e][w].strip() else ' ')*ml+r[e][w])[-ml:]
-	r=[''.join(w) for w in r]
-	if sl==0:
-		r=[w.rstrip() for w in r]
-	r='\n'.join(r)
-	if prin:
-		print(r)
-	return r
-
-def get_by_index(s,n):
-	if s==None:
-		raise IndexError
-	if s.z==None:
-		if n==0:
-			return s
-		else:
-			return get_by_index(s.x,n-1)			
-	else:
-		if n==s.z.s:
-			return s
-		if n<s.z.s:
-			return get_by_index(s.z,n)
-		if n>s.z.s:
-			return get_by_index(s.x,n-s.z.s-1)
-
-def contains(s,v):
-	return s!=None and (s.v==v or contains(s.z,v) or contains(s.x,v))
-
-def index(s,v,t=0):
-	if s==None:
-		ret=None
-	else:
-		ret=index(s.z,v,1)
-		if ret==None:
-			if s.v==v:
-				if s.z==None:
-					ret=0
-				else:
-					ret=s.z.s
-			else:
-				ret=index(s.x,v,1)
-				if ret!=None:
-					if s.z==None:
-						ret+=1
-					else:
-						ret+=s.z.s+1
-	if t==0:
-		if ret==None:
-			raise ValueError
-	return ret
-
-
-def count(s,v):
-	if s==None:
-		return 0
-	return count(s.z,v)+(s.v==v)+count(s.x,v)
-
-def part_f(s,f,b=0,e=None):
-	if e==None:
-		e=s.s
-	if b==0 and e==s.s:
-		if f not in s.f:
-			add_f(s,f)
-		return s.f[f]
-	if s.z==None:
-		if b<1:
-			if s.x!=None:
-				return f([s.v,part_f(s.x,f,b,e-1)])
-			else:
-				return s.v
-		else:
-			return part_f(s.x,f,b-1,e-1)
-	if e<=s.z.s:
-		return part_f(s.z,f,b,e)
-	if s.z.s==e-1:
-		if b<s.z.s:
-			return f([part_f(s.z,f,b,s.z.s),s.v])
-		else:
-			return s.v
-	if b<s.z.s<e-1:
-		return f([part_f(s.z,f,b,s.z.s),s.v,part_f(s.x,f,0,e-s.z.s-1)])
-	if s.z.s==b:
-		if s.z.s+1<e:
-			return f([s.v,part_f(s.x,f,0,e-s.z.s-1)])
-		else:
-			return s.v
-	if s.z.s<b:
-		return part_f(s.x,f,b-s.z.s-1,e-s.z.s-1)
-
-def add_f(t,f):
-	if t==None:
-		return
-	if f not in t.f:
-		t.f[f]=None
-		add_f(t.z,f)
-		add_f(t.x,f)
-		update(t)
-
-# def find_f(t,a={},o=0):
-# 	if t==None:
-# 		return a
-# 	from bisect import bisect_left , bisect_right
-# 	for w in t.f:
-# 		if w not in a:
-# 			a[w]=[]
-# 		b=bisect_left(a[w],[o,o+t.s])
-# 		if -1<b<len(a[w]) and a[w][b][1]>=o+t.s:
-# 			pass
-# 		elif -1<b-1<len(a[w]) and a[w][b-1][1]>=o+t.s:
-# 			pass
-# 		else:
-# 			a[w].append([o,o+t.s])
-# 	find_f(t.z,a,o)
-# 	find_f(t.x,a,o+(0 if t.z==None else t.z.s)+1)
-# 	return a
-
-def balance(t):
-	# f=find_f(t)
-	t=init(to_list(t),0,t.s,[])
-	# for w in f:
-	# 	for e in f[w]:
-	# 		part_f(t,w,e[0],e[1])
-	return t
-
-def init(l,b,e,f,w=1):
-	if b==e:
-		return None
-	else:
-		c=(b+e)//2
-		from random import random
-		r=treap_el(l[c],w=(1000-w)/(1000)+random()/1000,f=f[:])
-		r.z=init(l,b,c,f,w+1)
-		r.x=init(l,c+1,e,f,w+1)
-		return r
-
-def to_list(s):
-	if s==None:
-		return []
-	a=to_list(s.z)
-	a.append(s.v)
-	a+=to_list(s.x)
-	return a
-
-def update(t):
-	# supertree(t)
-	if t==None:
-		pass
-	elif t.z==t.x==None:
-		t.s=1
-		t.d=1
-		for w in t.f:
-			t.f[w]=w([t.v])
-	elif t.z==None:
-		t.s=t.x.s+1
-		t.d=t.x.d+1
-		for w in t.f:
-			t.f[w]=w([t.v,part_f(t.x,w)])
-	elif t.x==None:
-		t.s=t.z.s+1
-		t.d=t.z.d+1
-		for w in t.f:
-			t.f[w]=w([part_f(t.z,w),t.v])
-	else:
-		t.d=max(t.z.d,t.x.d)+1
-		t.s=t.z.s+t.x.s+1
-		for w in t.f:
-			t.f[w]=w([part_f(t.z,w),t.v,part_f(t.x,w)])
-
-def merge(t1,t2):
-	if t1==None:
-		return t2
-	if t2==None:
-		return t1
-	if t1.w<t2.w:
-		t2.z=merge(t1,t2.z)
-		return t2
-	else:
-		t1.x=merge(t1.x,t2)
-		return t1
-
-def split(t,n):
-	if t==None:
-		return [None,None]
-	elif t.z==None:
-		if n<1:
-			return [None,t]
-		else:
-			t.x,t2=split(t.x,n-1)
-			return [t,t2]
-	elif t.z.s==n:
-		t1=t.z
-		t.z=None
-		return [t1,t]
-	elif t.z.s+1==n:
-		t2=t.x
-		t.x=None
-		return [t,t2]
-	elif t.z.s+1<n:
-		t.x,t2=split(t.x,n-t.z.s-1)
-		return [t,t2]
-	elif t.z.s>n:
-		t1,t.z=split(t.z,n)
-		return [t1,t]
-
-from functools import total_ordering
-@total_ordering
 class treap:
-	def __init__(s,l=[],f=[]):
-		if isinstance(l,treap_el):
-			s.e=l
-		elif l==None:
-			s.e=l
-		else:
-			s.f=dict([[w,None] for w in f])
-			l=list(l)
-			s.e=init(l,0,len(l),f[:])
-			# s.e=balance(l,ff=f[:])
+    @dataclasses.dataclass
+    class no_copy:
+        val: typing.Union[treap,None] = None
+        step: int = 1 # only -1 or 1
 
-	@property
-	def e(s):
-		return s._e
+    def __init__(self, l=[]) -> None:
+        ...
 
-	@e.setter
-	def e(s,v):
-		s._e=v
-		if (len(bin(len(s)))-2)*5<s.depth()*2:
-			s.balance()
+    def __len__(self) -> int:
+        ...
 
-	def __contains__(s,v):
-		return contains(s.e,v)
+    def cut_left(self, n) -> treap:
+        ...
 
-	def __len__(s):
-		return s.e.s if s.e!=None else 0
+    def cut_right(self, n) -> treap:
+        ...
 
-	def __str__(s):
-		return '<'+repr(s.to_list())[1:-1]+'>'
+    def add_left(self, oth) -> None:
+        ...
 
-	def __getitem__(s,n):
-		if type(n)==slice:
-			if n.start==None:
-				n=slice(0,n.stop,n.step)
-			if n.stop==None:
-				n=slice(n.start,len(s),n.step)
-			if n.start<0:
-				n=slice(n.start+len(s),n.stop,n.step)
-			if n.stop<0:
-				n=slice(n.start,n.stop+len(s),n.step)
-			try:
-				[][::n.step]
-			except:
-				return part_f(s.e,n.step,n.start,n.stop)
-			else:
-				q,e=split(s.e,max(n.start,n.stop))
-				q,w=split(q,min(n.start,n.stop))
-				if n.step==0:
-					r=treap(w)
-					w=None
-				else:
-					r=treap(treap(w).to_list()[::n.step])
-				w=merge(w,e)
-				s.e=merge(q,w)
-				return r
-		else:
-			if n<0:
-				n+=len(s)
-			return get_by_index(s.e,n).v
+    def add_right(self, oth) -> None:
+        ...
 
-	def __setitem__(s,n,v):
-		if type(n)==slice:
-			if n.start==None:
-				n=slice(0,n.stop,n.step)
-			if n.stop==None:
-				n=slice(n.start,len(s),n.step)
-			q,e=split(s.e,max(n.start,n.stop))
-			q,w=split(q,min(n.start,n.stop))
-			w=treap(v).e
-			w=merge(w,e)
-			s.e=merge(q,w)
-		else:
-			if n<0:
-				n+=len(s)
-			get_by_index(s.e,n).v=v
+    def __getitem__(self, n: typing.Union[int , slice]):
+        ...
 
-	def __delitem__(s,n):
-		if type(n)==slice:
-			if n.start==None:
-				n=slice(0,n.stop,n.step)
-			if n.stop==None:
-				n=slice(n.start,len(s),n.step)
-			q,e=split(s.e,max(n.start,n.stop))
-			q,w=split(q,min(n.start,n.stop))
-			s.e=merge(q,e)
-		else:
-			q,w=split(s.e,n%len(s))
-			w,e=split(w,1)
-			s.e=merge(q,e)
+    def __setitem__(self, n: typing.Union[int , slice], v) -> None:
+        ...
 
-	def __cmp__(s,d):
-		try:
-			q=iter(s)
-			w=iter(d)
-		except:
-			return float('nan')
-		while 1:
-			e,r=0,0
-			try:
-				z=next(q)
-				e=1
-			except:
-				pass
-			try:
-				x=next(w)
-				r=1
-			except:
-				pass
-			if e>r:
-				return 1
-			if e<r:
-				return -1
-			if e:
-				if z>x:
-					return 1
-				if z<x:
-					return -1
-			else:
-				return 0
+    def __delitem__(self, n: typing.Union[int , slice], v) -> None:
+        ...
 
-	def __lt__(s,d):
-		return s.__cmp__(d)<0
+    def __iter__(self) -> iter:
+        ...
 
-	def __eq__(s,d):
-		return s.__cmp__(d)==0
+    def __repr__(self) -> str:
+        ...
 
-	def __iadd__(s,a):
-		if isinstance(a,treap):
-			s.e=merge(s.e,a.e)
-			a.e=None
-			return s
-		else:
-			s+=treap(a)
-		return s
+    def __cmp__(self, oth):
+        ...
 
-	def __add__(s,d):
-		a=treap(s)
-		a+=d
-		return a
+    def __lt__(self, oth):
+        ...
 
-	def __mul__(s,a):
-		return treap(s.to_list()*a)
+    def __gt__(self, oth):
+        ...
 
-	def __imul__(s,a):
-		return treap(s.to_list()*a)
+    def __le__(self, oth):
+        ...
 
-	def clear(s):
-		s.e=None
+    def __ge__(self, oth):
+        ...
 
-	def append(s,a):
-		s+=treap_el(a)
+    def __eq__(self, oth):
+        ...
 
-	def copy(s):
-		return treap(s.to_list())
+    def __ne__(self, oth):
+        ...
 
-	def count(s,v):
-		return count(s.e,v)
+    def __copy__(self):
+        ...
 
-	def extend(s,*v):
-		for w in v:
-			s+=w
-		return s
+    def __deepcopy__(self, d):
+        ...
 
-	merge=extend
+    def sort(self, *args, **kwargs):
+        ...
 
-	def split(s,*n):
-		q=s.e
-		s.e=None
-		r=[]
-		for w in n[::-1]:
-			r.append(0)
-			q,r[-1]=split(q,w)
-		r.append(q)
-		r=[treap(w) for w in r[::-1]]
-		return r
+    def reverse(self):
+        ...
 
-	def index(s,v):
-		return index(s.e,v)
+    def index(self, v, start=0, stop=None):
+        ...
 
-	def insert(s,n,v):
-		if n<0:
-			n+=len(s)
-		q,w=split(s.e,n)
-		q=merge(q,treap_el(v))
-		s.e=merge(q,w)
+    def remove(self, v):
+        ...
 
-	def pop(s):
-		s.e,q=split(s.e,len(s)-1)
-		return q.v
+    def pop(self, v):
+        ...
 
-	def remove(s,v):
-		del(s[s.index(v)])
+    def insert(self, n, v):
+        ...
 
-	def sort(s,key=None,reverse=False):
-		s.e=treap(sorted(s.to_list())).e
+    def extend(self, v):
+        ...
 
-	def to_list(s):
-		return to_list(s.e)
+    def count(self, value):
+        ...
 
-	def reverse(s):
-		a=s.to_list()
-		a.reverse()
-		return treap(a)
+    def copy(self):
+        ...
 
-	def balance(s):
-		s.e=balance(s.e)
+    def clear(self):
+        ...
 
-	def tree(*s,**d):
-		return supertree(*s,**d)
+    def append(self, val):
+        ...
 
-	def depth(s):
-		if s.e==None:
-			return 0
-		return s.e.d
+    def __iadd__(self, oth):
+        ...
+
+    def __add__(self, oth):
+        ...
+
+    def __radd__(self, oth):
+        ...
+
+    def __imul__(self,n:int):
+        ...
+
+    def __mul__(self,n:int):
+        ...
+
+    def __rmul__(self,n:int):
+        ...
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @dataclasses.dataclass
+    class node:
+        x: typing.Any
+        _left: treap.Node = None
+        y: float = dataclasses.field(default_factory=random.random)
+        _right: treap.Node = None
+        parent: treap.Node = None
+        size: int = 1
+        rev: int = 0
+
+        @property
+        def left(self):
+            treap.check[0](self)
+            treap.make(self._left)
+            return self._left
+
+        @left.setter
+        def left(self, value):
+            self._left = value
+            treap.update(self)
+            treap.check[0](self)
+
+        @property
+        def right(self):
+            treap.make(self._right)
+            treap.check[0](self)
+            return self._right
+
+        @right.setter
+        def right(self, value):
+            self._right = value
+            treap.update(self)
+            treap.check[0](self)
+    Node = typing.Union[node , None]
+
+    check = [lambda a:0]
+
+    @staticmethod
+    def update(q: Node) -> None:
+        if q is None:
+            return
+        if q._left is not None and q._right is not None:
+            q.size = q._left.size + 1 + q._right.size
+            q._left.parent = q
+            q._right.parent = q
+        elif q._right is not None:
+            q.size = 1 + q._right.size
+            q._right.parent = q
+        elif q._left is not None:
+            q.size = 1 + q._left.size
+            q._left.parent = q
+        else:
+            q.size = 1
+
+    @staticmethod
+    def make(q: Node) -> None:
+        if q is None:
+            return
+        if q.rev:
+            q._left, q._right = q._right, q._left
+            if q._left is not None:
+                q._left.rev ^= 1
+            if q._right is not None:
+                q._right.rev ^= 1
+            q.rev = 0
+
+    @staticmethod
+    def merge(q: Node, e: Node) -> Node:
+        if q is None:
+            return e
+        elif e is None:
+            return q
+        elif q.y > e.y:
+            q.right = treap.merge(q.right, e)
+            return q
+        else:
+            e.left = treap.merge(q, e.left)
+            return e
+
+    @staticmethod
+    def split(q: Node, n: int) -> tuple[Node, Node]:
+        if q is None:
+            return (None, None)
+        if n <= 0:
+            return (None, q)
+        if q.size <= n:
+            return (q, None)
+        ls = q.left.size if q.left is not None else 0
+        if n <= ls:
+            e, q.left = treap.split(q.left, n)
+            if e is not None:
+                e.parent = None
+            return (e, q)
+        else:
+            q.right, e = treap.split(q.right, n-ls-1)
+            if e is not None:
+                e.parent = None
+            return (q, e)
+
+    @staticmethod
+    def l(q: Node) -> int:
+        if q is None:
+            return 0
+        return q.size
+
+    @staticmethod
+    def next(q: Node, n: int) -> Node:
+        l = treap.l
+        if q is None:
+            return None
+        while q.parent is not None and not -l(q.left) <= n <= l(q.right):
+            if q is q.parent.left:
+                n -= l(q.right)+1
+            else:
+                n += l(q.left)+1
+            q = q.parent
+        if not -l(q.left) <= n <= l(q.right):
+            return None
+        if 0 < n:
+            if q is None:
+                return None
+            return treap.next(q.right, n-1-l(q.right.left))
+        if n < 0:
+            if q is None:
+                return None
+            return treap.next(q.left, n+1+l(q.left.right))
+        return q
+
+    def __init__(self, l=[]) -> None:
+        self._root: treap.Node
+        if isinstance(l, treap.node ) or l is None:
+            self._root = l
+            return
+        if isinstance(l, treap.no_copy):
+            if l.val is not None:
+                self._root = l.val.root
+                l.val.root = None
+            if l.step == -1:
+                self.reverse()
+            return
+        self._root = None
+        for w in l:
+            self._root = treap.merge(self._root, treap.node(x=w))
+
+    @property
+    def root(self):
+        treap.make(self._root)
+        return self._root
+
+    @root.setter
+    def root(self, v):
+        assert isinstance(v, treap.node) or v is None
+        self._root = v
+
+    def getnode(self, n: int) -> Node:
+        t = None
+        if self.root is not None:
+            t = treap.next(self.root, -treap.l(self.root.left)+n)
+        return t
+
+    def __len__(self) -> int:
+        return self.root.size if self.root is not None else 0
+
+    def cut_left(self, n) -> treap:
+        r, self.root = treap.split(self.root, n)
+        return treap(r)
+
+    def cut_right(self, n) -> treap:
+        self.root, r = treap.split(self.root, len(self)-n)
+        return treap(r)
+
+    def add_left(self, oth) -> None:
+        self.root = treap.merge(oth.root, self.root)
+        oth.root = None
+
+    def add_right(self, oth) -> None:
+        self.root = treap.merge(self.root, oth.root)
+        oth.root = None
+
+    def prettyslice(self, n: slice) -> slice:
+        if isinstance(n.step, int) and n.step < 0 or isinstance(n.step, treap.no_copy) and n.step.step < 0:
+            return slice(
+                len(self)-1 if n.start is None else n.start +
+                len(self) if n.start < 0 else n.start,
+                -1 if n.stop is None else n.stop +
+                len(self) if n.stop < 0 else n.stop,
+                1 if n.step is None else n.step,
+            )
+        else:
+            return slice(
+                0 if n.start is None else n.start +
+                len(self) if n.start < 0 else n.start,
+                len(self) if n.stop is None else n.stop +
+                len(self) if n.stop < 0 else n.stop,
+                1 if n.step is None else n.step,
+            )
+
+    def __getitem__(self, n: typing.Union[int , slice]):
+        if isinstance(n, slice):
+            n = self.prettyslice(n)
+            if n.step in [1, -1, treap.no_copy] or isinstance(n.step, treap.no_copy):
+                nn = slice(n.stop+1, n.start+1, n.step) if n.step == - \
+                    1 or isinstance(n.step, treap.no_copy) and n.step.step == -1 else n
+                r2 = self.cut_left(nn.stop)
+                r1 = r2.cut_left(nn.start)
+                t = r2
+                if n.step == treap.no_copy or isinstance(n.step, treap.no_copy):
+                    r2 = treap()
+                    if isinstance(n.step, treap.no_copy) and n.step.step == -1:
+                        t.reverse()
+                else:
+                    r2 = treap(t)
+                    if n.step == -1:
+                        t.reverse()
+                self.add_left(r2)
+                self.add_left(r1)
+                return t
+            else:
+                t = treap()
+                p = self.getnode(n.start)
+                w = n.start
+                while w in range(n.start, n.stop, n.step):
+                    if p is not None:
+                        t.append(p.x)
+                        p = treap.next(p, n.step)
+                        w += n.step
+                    else:
+                        p = self.getnode(w)
+                return t
+        else:
+            cn = self.getnode(n)
+            if cn is not None:
+                return cn.x
+            else:
+                raise IndexError
+
+    def __setitem__(self, n: typing.Union[int , slice], v) -> None:
+        if isinstance(n, slice):
+            n = self.prettyslice(n)
+            if n.step in [1, -1, treap.no_copy] or isinstance(n.step, treap.no_copy):
+                nn = slice(n.stop+1, n.start+1, n.step) if n.step == - \
+                    1 or isinstance(n.step, treap.no_copy) and n.step.step == -1 else n
+                r2 = self.cut_left(nn.stop)
+                r1 = r2.cut_left(nn.start)
+                r2 = v
+                if n.step == treap.no_copy or isinstance(n.step, treap.no_copy):
+                    assert isinstance(r2, treap)
+                    if isinstance(n.step, treap.no_copy) and n.step.step == -1:
+                        r2.reverse()
+                else:
+                    r2 = treap(r2)
+                    if n.step == -1:
+                        r2.reverse()
+                self.add_left(r2)
+                self.add_left(r1)
+            else:
+                t = treap()
+                p = self.getnode(n.start)
+                w = n.start
+                vi = iter(v)
+                while w in range(n.start, n.stop, n.step):
+                    if p is not None:
+                        try:
+                            p.x = next(vi)
+                        except StopIteration:
+                            break
+                        p = treap.next(p, n.step)
+                        w += n.step
+                    else:
+                        w += n.step
+                        p = self.getnode(w)
+        else:
+            cn = self.getnode(n)
+            if cn is not None:
+                cn.x = v
+            else:
+                raise IndexError
+
+    def __delitem__(self, n: typing.Union[int , slice]) -> None:
+        if isinstance(n, slice):
+            n = self.prettyslice(n)
+            if n.step == 1:
+                r2 = self.cut_left(n.stop)
+                r1 = r2.cut_left(n.start)
+                r2 = treap()
+                self.add_left(r2)
+                self.add_left(r1)
+            else:
+                for w in zip(range(n.start, n.stop, n.step)):
+                    if w in range(len(self)):
+                        del self[w]
+        else:
+            if n not in range(len(self)):
+                raise IndexError
+            del self[n:n+1]
+
+    @dataclasses.dataclass
+    class iter:
+        pos: treap.Node
+        root: treap
+
+        def __next__(self):
+            if self.pos is None:
+                raise StopIteration
+            var = self.pos.x
+            self.pos = treap.next(self.pos, 1)
+            return var
+
+    def __iter__(self) -> iter:
+        return treap.iter(
+            pos=self.getnode(0),
+            root=self
+        )
+
+    def __repr__(self) -> str:
+        return 'treap('+repr(list(self))+')'
+
+    def __cmp__(self, oth):
+        if type(self) != type(oth):
+            return float('nan')
+        for a, s in zip(self, oth):
+            if a != s:
+                return (a > s)-(a < s)
+        return (len(self) > len(oth))-(len(self) < len(oth))
+
+    def __lt__(self, oth): return self.__cmp__(oth) < 0
+    def __gt__(self, oth): return self.__cmp__(oth) > 0
+    def __le__(self, oth): return self.__cmp__(oth) <= 0
+    def __ge__(self, oth): return self.__cmp__(oth) >= 0
+    def __eq__(self, oth): return self.__cmp__(oth) == 0
+    def __ne__(self, oth): return self.__cmp__(oth) != 0
+
+    def __copy__(self):
+        return treap(self)
+
+    def __deepcopy__(self, d):
+        t = treap()
+        d[id(self)] = t
+        for w in self:
+            t.append(copy.deepcopy(w, d))
+        return t
+
+    def sort(self, *args, **kwargs):
+        g = self.getnode(0)
+        t = []
+        r = []
+        while g is not None:
+            r.append(g)
+            t.append(g.x)
+            g = treap.next(g, 1)
+        t.sort(*args, **kwargs)
+        for w in range(len(t)):
+            r[w].x = t[w]
+
+    def reverse(self):
+        if self.root is not None:
+            self.root.rev ^= 1
+
+    def index(self, v, start=0, stop=None):
+        if stop == None:
+            stop = len(self)
+        if start < 0:
+            start = 0
+        g = self.getnode(start)
+        w = 0
+        while w in range(start, stop) and g is not None:
+            if g.x == v:
+                return w
+            g = treap.next(g, 1)
+            w += 1
+        raise ValueError
+
+    def remove(self, v):
+        del self[self.index(v)]
+
+    def pop(self, v):
+        t, self[-1:] = self[-1], []
+        return t
+
+    def insert(self, n, v):
+        self[n:n] = [v]
+
+    def extend(self, v):
+        self[len(self):len(self)] = v
+        return self
+
+    def count(self, value):
+        g = self.getnode(0)
+        c = 0
+        while g is not None:
+            if g.x == value:
+                c += 1
+            g = treap.next(g, 1)
+        return c
+
+    def copy(self):
+        return treap(self)
+
+    def clear(self):
+        self.root = None
+
+    def append(self, val):
+        self.extend([val])
+
+    def __iadd__(self, oth):
+        return self.extend(oth)
+
+    def __add__(self, oth):
+        return treap(self).extend(treap(oth))
+
+    def __radd__(self, oth):
+        return treap(oth).extend(treap(self))
+
+    def __imul__(self,n:int):
+        r=treap()
+        for w in range(n):
+            r+=self
+        self.root=r.root
+        return self
+
+    def __mul__(self,n:int):
+        return treap(self).__imul__(n)
+
+    def __rmul__(self,n:int):
+        return treap(self).__imul__(n)
+
+
+if __name__ == '__main__': # tests
+    big_prime=4099
+    sml_prime=257
+    t=treap(range(big_prime))
+    assert list(t)==list(range(big_prime))
+    for w in range(len(t)):
+        t[w]*=sml_prime
+        t[w]%=big_prime
+    t.sort()
+    assert list(t)==list(range(big_prime))
+    for w in range(big_prime):
+        t+=treap.no_copy(t[:sml_prime:treap.no_copy])
+    assert list(t)==list(range(big_prime))
+    t.reverse()
+    assert list(t)==list(range(big_prime))[::-1]
+    t.reverse()
+    assert list(t)==list(range(big_prime))
+    for w in range(len(t)):
+        z=t[sml_prime-1::treap.no_copy(step=-1)]
+        x=t[::treap.no_copy(step=-1)]
+        z+=treap.no_copy(x)
+        t[::treap.no_copy(step=-1)]=z
+    assert list(t)==list(range(big_prime))
+    assert list(t[::2]) == list(range(0,big_prime,2))
+    for w in range(sml_prime):
+        z=random.randint(sml_prime,big_prime-sml_prime-1)
+        x=z+random.randint(-sml_prime,sml_prime)
+        assert list(t[z:x:2])  == list(range(z,x,2))
+        assert list(t[z:x:-2]) == list(range(z,x,-2))
+        assert list(t[z:x:1])  == list(range(z,x,1))
+        assert list(t[z:x:-1]) == list(range(z,x,-1))
+    t[0]=t
+    y=copy.deepcopy(t)
+    assert y[0] is y
+    y[0]=0
+    assert t[0] is t
+    t[0] = 0
+    assert list(t)==list(range(big_prime))
+    for w in range(len(t)):
+        t[w]=treap([t[w]])
+    y=copy.deepcopy(t)
+    for w in t:
+        w[0]*=-1
+    for q,w in zip(y,t):
+        assert q[0]+w[0]==0
+    t=treap(range(64))
+    assert list(t*16) == list(range(64))*16
+    for q,w in enumerate(t):
+        assert q==w
+    y=copy.deepcopy(t)
+    y+=treap.no_copy(t)
+    assert len(t)==0
