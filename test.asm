@@ -40,5 +40,3 @@ section .text
     putcstr     'your age is '
     printudword [someint]
     stop
-
-    sum resb 1
