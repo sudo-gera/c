@@ -6,11 +6,14 @@
 # # for w in a:
 # #     run(['youtube-dl','-f','bestaudio',w])
 
-# from h import *
-# s,p=scan([str,str])
-# for q in range(len(s)):
-#     if s[q:].startswith(p):
-#         print(q)
+from h import *
+s,n=scan([str,int])
+p=scan([str]*n)
+
+for q in range(len(s)):
+    for w in p:
+        if s[q:].startswith(w):
+            print(q,w)
     
 
 

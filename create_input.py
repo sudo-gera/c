@@ -18,36 +18,36 @@ strs=[getstr(maxlen) for w in range(1)]
 
 a=''.join([choice(choice(strs)) if rand(8) else choice(strs) for w in range(maxlen)])
 
-def prefix_fun(s):
-	p=[0]*len(s)
-	for i in range(1,len(s)):
-		k = p[i - 1]
-		while k > 0 and s[i] != s[k]:
-			k = p[k - 1]
-		if s[i] == s[k]:
-			k+=1
-		p[i]=k
-	return p
+# def prefix_fun(s):
+# 	p=[0]*len(s)
+# 	for i in range(1,len(s)):
+# 		k = p[i - 1]
+# 		while k > 0 and s[i] != s[k]:
+# 			k = p[k - 1]
+# 		if s[i] == s[k]:
+# 			k+=1
+# 		p[i]=k
+# 	return p
 
-d=[]
-a=list(a)
-for q,w in enumerate(a):
-	if w not in d:
-		d.append(w)
-for q,w in enumerate(a):
-	a[q]=chr(ord('a')+d.index(w))
-a=''.join(a)
+# d=[]
+# a=list(a)
+# for q,w in enumerate(a):
+# 	if w not in d:
+# 		d.append(w)
+# for q,w in enumerate(a):
+# 	a[q]=chr(ord('a')+d.index(w))
+# a=''.join(a)
 
 
 
-p=prefix_fun(a)
-print(len(p))
-print(*p)
-print('|')
+# p=prefix_fun(a)
+# print(len(p))
+# print(*p)
+# print('|')
 print(a)
-# print(len(strs))
-# for w in strs:
-# 	print(w)
+print(len(strs))
+for w in strs:
+	print(w)
 
 
 

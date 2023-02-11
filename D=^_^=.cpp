@@ -100,7 +100,7 @@ auto clear_tuple(T t=tuple<>(),R r=tuple<>()){
 template<llu n=0,typename T,typename R>
 requires(n<tuple_size_v<R> and !is_same_v<sized<0>*,tuple_element_t<n,R>>)
 auto clear_tuple(T t=tuple<>(),R r=tuple<>()){
-    return clear_tuple<n+1>(tuple_cat(t,make_tuple(get<n>(r))),r);
+    return clear_tuple<n+1>(tuple_cat(t,make_tuple(scan<n>(r))),r);
 }
 
 template<typename...T>
@@ -161,7 +161,6 @@ auto operator|(t<R*,assign_s<T>> q,Y&&w){
 ///////////////////////////////////////////////////end of lib
 
 struct item{
-    // size_t count=0;
     vector<const string*> values;
     unordered_map<int,item*> next;
     item* prev=0;
@@ -174,6 +173,7 @@ struct item{
     auto operator->(){
         return this;
     }
+    // size_t count=0;
     // unordered_map<int,item> next;
 };
 
@@ -231,7 +231,7 @@ struct bohr{
             }
         }
     }
-    auto next(item*&ptr,auto c,vector<const string*>&res){
+    auto next(item*&ptr,auto c,auto callback){
         while (ptr!=root and ptr->next.count(c)==0){
             ptr=ptr->suff;
         }
@@ -241,49 +241,50 @@ struct bohr{
         auto t=ptr;
         while (t!=root){
             for (auto&w:t->values){
-                res.push_back(w);
+                callback(w);
             }
             t=t->term;
         }
-        return res;
     }
 };
 
-
+template<typename Y=void>
+struct scan_{
+    template<typename T=Y>
+    auto operator()(){
+        T v;
+        cin>>v;
+        return v;
+    }
+    template<typename T=Y>
+    operator T(){
+        T v;
+        cin>>v;
+        return v;
+    }
+};
 
 int main(){
     bohr<item> b;
-    vector<string> s({
-        "1",
-        "121",
-        "212",
-        "21",
-        "12"        
-    });
+    string a=scan_();
+    llu n=scan_();
+    vector<string> s;
+    generate_n(back_inserter(s),n,scan_<string>());
     for (auto&w:s){
         b.add(w);
     }
     b.make_links();
     item* tmp=b.root;
-    vector<const string*>res;
-    for (auto w:"12121"s){
-        b.next(tmp,w,res);
-        res.push_back(0);
+    vector<pair<llu,string>>res;
+    llu c=0;
+    for (auto w:a){
+        b.next(tmp,w,[&](auto sp){
+            res.push_back({c-sp->size()+1,*sp});
+        });
+        ++c;
     }
-    for (auto w:res){
-        if (w){
-            cout<<*w<<" ";
-        }else{
-            cout<<"\n";
-        }
+    sort(res.begin(),res.end());
+    for (auto&w:res){
+        cout<<w.first<<" "<<w.second<<"\n";
     }
-    // ic(b.a)
-    // for (auto&w:b.a){
-    //     cout<<"    "<<(long)(w.t)<<" -> "<<(long)(w.prev)<<"[label=\"prev\"]"<<endl;
-    //     cout<<"    "<<(long)(w.t)<<" -> "<<(long)(w.suff)<<"[label=\"suff\"]"<<endl;
-    //     cout<<"    "<<(long)(w.t)<<" -> "<<(long)(w.term)<<"[label=\"term\"]"<<endl;
-    //     for (auto&e:w.next){
-    //         cout<<"    "<<(long)(w.t)<<" -> "<<(long)(e.second)<<"[label=\"next_"<<e.first<<"\"]"<<endl;
-    //     }
-    // }
 }
