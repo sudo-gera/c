@@ -161,8 +161,8 @@ auto operator|(t<R*,assign_s<T>> q,Y&&w){
 ///////////////////////////////////////////////////end of lib
 
 struct item{
-    size_t count=0;
-    vector<string> values;
+    // size_t count=0;
+    vector<const string*> values;
     unordered_map<int,item*> next;
     item* prev=0;
     item* suff=0;
@@ -191,8 +191,8 @@ struct bohr{
             ptr->next[w]->prev=ptr;
             ptr=ptr->next[w];
         }
-        ptr->count+=1;
-        ptr->values.push_back(s);
+        // ptr->count+=1;
+        ptr->values.push_back(&s);
     }
     auto make_links(){
         root->suff=root;
@@ -222,7 +222,7 @@ struct bohr{
             q.pop();
             for (auto&w:t->next){
                 item*e=w.second;
-                if (e->suff->count){
+                if (e->suff->values.size()){
                     e->term=e->suff;
                 }else{
                     e->term=e->suff->term;
@@ -231,7 +231,7 @@ struct bohr{
             }
         }
     }
-    auto next(item*ptr,auto c){
+    auto next(item*&ptr,auto c,vector<const string*>&res){
         while (ptr!=root and ptr->next.count(c)==0){
             ptr=ptr->suff;
         }
@@ -241,11 +241,11 @@ struct bohr{
         auto t=ptr;
         while (t!=root){
             for (auto&w:t->values){
-                cout<<w<<" ";
+                res.push_back(w);
             }
             t=t->term;
         }
-        return ptr;
+        return res;
     }
 };
 
@@ -253,16 +253,29 @@ struct bohr{
 
 int main(){
     bohr<item> b;
-    b.add("1"s);
-    b.add("121"s);
-    b.add("212"s);
-    b.add("21"s);
-    b.add("12"s);
+    vector<string> s({
+        "1",
+        "121",
+        "212",
+        "21",
+        "12"        
+    });
+    for (auto&w:s){
+        b.add(w);
+    }
     b.make_links();
     item* tmp=b.root;
+    vector<const string*>res;
     for (auto w:"12121"s){
-        tmp=b.next(tmp,w);
-        cout<<endl;
+        b.next(tmp,w,res);
+        res.push_back(0);
+    }
+    for (auto w:res){
+        if (w){
+            cout<<*w<<" ";
+        }else{
+            cout<<"\n";
+        }
     }
     // ic(b.a)
     // for (auto&w:b.a){
