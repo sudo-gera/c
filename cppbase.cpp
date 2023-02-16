@@ -1,3 +1,4 @@
+#include <cstdio>
 #include <algorithm>
 #include <iostream>
 #include <map>
@@ -16,27 +17,50 @@
 #include <cstring>
 #include <functional>
 #include <type_traits>
-using std::cin, std::cout, std::endl, std::vector, std::string, std::sort;
-using std::pair, std::set, std::unordered_set, std::map, std::unordered_map;
-using std::min, std::max, std::tuple, std::tie, std::get, std::make_tuple;
-using std::move, std::swap, std::generate, std::generate_n;
+#include <deque>
+#include <array>
 using std::back_inserter, std::list, std::hash, std::reverse;
-using std::lower_bound, std::upper_bound, std::flush, std::prev, std::next;
-using std::tuple_size, std::lexicographical_compare, std::set_intersection;
+using std::cin, std::cout, std::endl, std::vector, std::string, std::sort;
 using std::copy_if, std::exit, std::enable_if, std::enable_if;
-using std::tuple_cat, std::find, std::find_if, std::find_if_not;
-using std::ref, std::cref, std::reference_wrapper, std::remove_reference;
-using std::tuple_element, std::tuple_size, std::is_same;
-using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
 using std::generate, std::generate_n, std::remove_reference_t, std::iota;
-using std::unique;
+using std::lower_bound, std::upper_bound, std::flush, std::prev, std::next;
+using std::min, std::max, std::tuple, std::tie, std::get, std::make_tuple;
+using std::move, std::swap, std::generate, std::generate_n, std::deque;
+using std::pair, std::set, std::unordered_set, std::map, std::unordered_map;
+using std::ref, std::cref, std::reference_wrapper, std::remove_reference;
+using std::tuple_cat, std::find, std::find_if, std::find_if_not;
+using std::tuple_element, std::tuple_size, std::is_same, std::forward;
+using std::tuple_size, std::lexicographical_compare, std::set_intersection;
+using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
+using std::unique, std::decay_t, std::is_convertible_v, std::array;
 
-static inline int64_t getint() {
+template <typename T = void>
+struct Scan {
+    template <typename Y = T>
+    auto operator()() {
+        Y val;
+        cin >> val;
+        return val;
+    }
+};
+
+template <typename T>
+struct StaticCast {};
+
+template <typename T, typename Y>
+auto operator->*(T v, StaticCast<Y>) {
+    return static_cast<Y>(v);
+}
+
+StaticCast<ssize_t> si;
+StaticCast<size_t> ui;
+
+static inline int64_t GetInt() {
     int sign = 1;
-    int c;
+    int c = 0;
     size_t res = 0;
-    while (c = getchar_unlocked(), isspace(c))
-        ;
+    while (c = getchar_unlocked(), isspace(c)) {
+    }
     if (c == '-') {
         sign = -1;
     } else {
@@ -46,7 +70,12 @@ static inline int64_t getint() {
         res *= 10;
         res += c - '0';
     }
-    return (int64_t)(res)*sign;
+    return static_cast<int64_t>(res) * sign;
+}
+
+template <typename T>
+ssize_t Len(T&& q) {
+    return static_cast<ssize_t>(q.size());
 }
 
 using llu=long long unsigned;
@@ -153,6 +182,21 @@ auto operator|(t<R*,assign_s<T>> q,Y&&w){
 
 #define assign(f) assign_s{[&](auto q,auto w){return (f)(q,w);}}
 
+template<typename T=void>
+struct Scan{
+    template <typename Y = T>
+    auto operator()() {
+        Y val;
+        cin >> val;
+        return val;
+    }
+    template<typename Y=T>
+    operator Y(){
+        Y val;
+        cin>>val;
+        return val;
+    }
+};
 
 ///////////////////////////////////////////////////end of lib
 
