@@ -1,3 +1,8 @@
+#define _GNU_SOURCE
+#include <boost/stacktrace.hpp>
+#include <iostream>
+
 int main(){
-    cout<<"hello world"<<endl;
+    std::cout<<boost::stacktrace::stacktrace();
 }
+
