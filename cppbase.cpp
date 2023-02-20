@@ -19,9 +19,11 @@
 #include <type_traits>
 #include <deque>
 #include <array>
-using std::back_inserter, std::list, std::hash, std::reverse;
+#include <queue>
+#include <stack>
+using std::back_inserter, std::list, std::hash, std::reverse, std::queue;
 using std::cin, std::cout, std::endl, std::vector, std::string, std::sort;
-using std::copy_if, std::exit, std::enable_if, std::enable_if;
+using std::copy_if, std::exit, std::enable_if, std::enable_if, std::stack;
 using std::generate, std::generate_n, std::remove_reference_t, std::iota;
 using std::lower_bound, std::upper_bound, std::flush, std::prev, std::next;
 using std::min, std::max, std::tuple, std::tie, std::get, std::make_tuple;
@@ -34,16 +36,6 @@ using std::tuple_size, std::lexicographical_compare, std::set_intersection;
 using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
 using std::unique, std::decay_t, std::is_convertible_v, std::array;
 
-template <typename T = void>
-struct Scan {
-    template <typename Y = T>
-    auto operator()() {
-        Y val;
-        cin >> val;
-        return val;
-    }
-};
-
 template <typename T>
 struct StaticCast {};
 
@@ -55,7 +47,7 @@ auto operator->*(T v, StaticCast<Y>) {
 StaticCast<ssize_t> si;
 StaticCast<size_t> ui;
 
-static inline int64_t GetInt() {
+int64_t GetInt() {
     int sign = 1;
     int c = 0;
     size_t res = 0;

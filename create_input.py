@@ -15,13 +15,25 @@ def getstr(l=200):
 	# return ''.join([choice('tw') for w in range(rand(2,l))])[:l]
 	return ''.join([choice('snmrdfhg')+choice('aioue') for w in range(rand(1,l))])[:l]
 maxlen=20+int(run_num**0.5)
-strs=[getstr(maxlen) for w in range(maxlen)]
+# strs=[getstr(maxlen) for w in range(maxlen)]
 
-strs=[w+w[::-1] for w in strs]
-strs=sum([[w[:q],w[q:]] for w in strs for q in [rand(1,len(w))]],[])
-strs=[w[:10] for w in strs]
+# strs=[w+w[::-1] for w in strs]
+# strs=sum([[w[:q],w[q:]] for w in strs for q in [rand(1,len(w))]],[])
+# strs=[w[:10] for w in strs]
 
-# a=''.join([choice(choice(strs)) if rand(8) else choice(strs) for w in range(maxlen)])
+
+
+strs=getstr(maxlen)
+strs=[strs[w:]+strs[:w] for w in range(len(strs))]
+
+a=''.join([choice(choice(strs)) if rand(8) else choice(strs) for w in range(maxlen)])
+
+strs=choice(strs)
+
+print(strs)
+print(a)
+
+
 
 # def prefix_fun(s):
 # 	p=[0]*len(s)
@@ -63,19 +75,19 @@ strs=[w[:10] for w in strs]
 
 
 # n=randint(10**5*6,1234567)
-n=randint(10**2*6,10**3)
-k=randint(2,26)
-a='qwertyuiopasdfghjklzxcvbnm'[:k]
-strs=[''.join([choice(a) for e in range(randint(1,10))]) for w in range(n)]
-strs=list(set(strs))
-strs=strs[:10**6]
+# n=randint(10**2*6,10**3)
+# k=randint(2,26)
+# a='qwertyuiopasdfghjklzxcvbnm'[:k]
+# strs=[''.join([choice(a) for e in range(randint(1,10))]) for w in range(n)]
+# strs=list(set(strs))
+# strs=strs[:10**6]
 
 
 
 
-print(len(strs))
-for w in strs:
-	print(w)
+# print(len(strs))
+# for w in strs:
+# 	print(w)
 
 
 

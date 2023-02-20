@@ -1,14 +1,10 @@
 from h import *
-n=scan(int)
-a=scan([str]*n)
+p,f=scan([str]*2)
+p=[p[w:]+p[:w] for w in range(len(p))]
 ans=[]
-for q,w in enumerate(a):
-    for e,r in enumerate(a):
-        if q!=e and w+r==(w+r)[::-1]:
-            ans.append((q+1,e+1))
-ans=list(set(ans))
-ans.sort()
-print(len(ans))
-for w in ans:
-    print(*w)
+for q in range(len(f)):
+    if f[q:q+len(p[0])] in p:
+        ans.append(q)
+print(*ans)
+
 
