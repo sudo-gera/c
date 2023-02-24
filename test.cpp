@@ -1,8 +1,10 @@
-#define _GNU_SOURCE
-#include <boost/stacktrace.hpp>
-#include <iostream>
+struct a{
+    char q;
+    char&t;
+    char w;
+};
 
 int main(){
-    std::cout<<boost::stacktrace::stacktrace();
+    ic(sizeof(a));
 }
 
