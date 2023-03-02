@@ -1,10 +1,12 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+struct a{virtual void f(){}};
+
+struct s:a{virtual void f(){}};
+
 int main(){
-    vector<long> a;
-    while (a.capacity()==a.size()){
-        a.push_back(0);
-    }
-    cout<<a.end()[0]<<endl;
+    s d;
+    ic(sizeof(d))
+    ic((void*&)(d))
 }
