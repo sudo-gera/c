@@ -18,19 +18,16 @@ struct Scan{
 };
 
 int main(){
-    vector<long> a;
-    long c=0;
-    while ((c=Scan<long>())){
-        if (c>0){
-            a.push_back(c);
-        }else if (a.size()){
-            if (-c<a.back()){
-                a.back()+=c;
-            }else{
-                a.pop_back();
-            }
-        }
+    size_t n=Scan<size_t>();
+    map<size_t,pair<size_t,size_t>> a;
+    for (size_t q=0;q<n;++q){
+        size_t w=Scan<size_t>(), e=Scan<size_t>(), r=Scan<size_t>();
+        a[w].first++;
+        a[w].second+=r;
     }
-    cout<<a.size()<<" "<<(a.empty()?-1:a.back())<<endl;
+    for (auto&q:a){
+        cout<<q.first<<" "<<q.second.first<<" "<<q.second.second<<endl;
+    }
 }
+
 
