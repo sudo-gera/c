@@ -1,13 +1,29 @@
-qemu-system-aarch64 \                                                       \
-  -cpu cortex-a57 \                                                         \
-  -device rtl8139,netdev=net0 \                                             \
-  -device virtio-scsi-device \                                              \
-  -device scsi-cd,drive=cdrom \                                             \
-  -device virtio-blk-device,drive=hd0 \                                     \
-  -drive "file=/Users/gera/Downloads/ubuntu-22.04.2-live-server-arm64.iso,id=cdrom,if=none,media=cdrom" \                       \
-  -m 2G \                                                                   \
-  -machine virt \                                                           \
-  -netdev user,id=net0 \                                                    \
-  -nographic \                                                              \
-  -smp 2 \                                                                  \
-;                                                                           \
+qemu-system-aarch64 -L /Applications/UTM.app/Contents/Resources/qemu             \
+-S -qmp tcp:127.0.0.1:4444,server,nowait                                         \
+-nodefaults -vga none                                                            \
+-cpu cortex-a72                                                                  \
+-smp cpus=4,sockets=1,cores=4,threads=1                                          \
+-machine virt,virtualization=on                                                  \
+-accel tcg,tb-size=2048                                                          \
+-drive if=pflash,format=raw,unit=0,file=/Applications/UTM.app/Contents/Resources/qemu/edk2-aarch64-code.fd,readonly=on \
+-drive if=pflash,unit=1,file=/Users/gera/Library/Containers/com.utmapp.UTM/Data/Documents/ubuntu_arm64_emulated.utm/Images/efi_vars.fd \
+-boot menu=on                                                                    \
+-m 8192                                                                          \
+-device intel-hda                                                                \
+-device hda-duplex                                                               \
+-name ubuntu_arm64_emulated                                                      \
+-device nec-usb-xhci,id=usb-bus                                                  \
+-device usb-tablet,bus=usb-bus.0                                                 \
+-device usb-mouse,bus=usb-bus.0                                                  \
+-device usb-kbd,bus=usb-bus.0                                                    \
+-device qemu-xhci,id=usb-controller-0                                            \
+-device usb-storage,drive=cdrom0,removable=true,bootindex=0,bus=usb-bus.0        \
+-drive if=none,media=cdrom,id=cdrom0                                             \
+-device virtio-blk-pci,drive=drive0,bootindex=1                                  \
+-drive if=none,media=disk,id=drive0,file=/Users/gera/Library/Containers/com.utmapp.UTM/Data/Documents/ubuntu_arm64_emulated.utm/Images/data.qcow2,discard=unmap,detect-zeroes=unmap \
+-device virtio-net-pci,mac=7A:DE:36:14:AD:32,netdev=net0                         \
+-netdev vmnet-shared,id=net0                                                     \
+-device virtio-serial                                                            \
+-uuid 5155CC4C-602E-48C7-95E2-65DCDB4604B4                                       \
+-device virtio-rng-pci                                                           \
+-cdrom /Users/gera/Downloads/ubuntu-22.04.2-live-server-arm64.iso                \
