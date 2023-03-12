@@ -24,7 +24,7 @@ maxlen=20+int(run_num**0.5)
 
 n=randint(1,maxlen)
 print(n)
-a=[randint(-8,8) for w in range(n)]
+a=[randint(-64,64) for w in range(n)]
 print(*a)
 
 

@@ -57,7 +57,7 @@ int main(){
     // ic(f)
     vector<size_t> g(n,none);
     if (a[0]==0){
-        g[0]=0;
+        g[0]=1;
     }
     for (size_t q=1;q<n;++q){
         if (g[q-1]!=none){
