@@ -5,6 +5,7 @@
 ;   best input/output library for nasm
 ;   up-to-date version: https://vk.cc/cfB1SZ
 ;   created by Georgiy Tatarinov in 2022
+;   if you found a bug, tell me
 ;   contact me:
 ;       tatarinov.gp@phystech.edu
 ;       https://twitter.com/sudo_gera
@@ -400,7 +401,7 @@ ret
 
 __best__call_putchar:
     push __best__max_ax
-    call __best__putsint
+    call __best__putchar
 ret
 
 %macro __best__begin_end_ 4 ; end char, what to call, begin, end

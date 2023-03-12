@@ -72,12 +72,12 @@ def cmp(log,start_time,stop,pr_num):
 			exit()
 		try:
 			if not stop.empty():
-				break
+				return
 			c=[how_to_run(w,start_time,stop,log) for w in argv[1:]]
 			r=[]
 			for w in c:
 				if not stop.empty():
-					break
+					return
 				rr=time()
 				try:
 					w=Popen(w,stdout=PIPE,stdin=PIPE)

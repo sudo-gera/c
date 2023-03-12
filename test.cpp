@@ -1,22 +1,11 @@
-// #include <bits/stdc++.h>
-// using namespace std;
-
-// using llu=decltype(0LLU);
-
-extern "C"
-long write(int,const char*,unsigned long);
-
+#include <bits/stdc++.h>
+using namespace std;
 
 int main(){
-    write(1,"hello\n",6);
-
+    vector<size_t> a(20);
+    while (a.capacity()==a.size()){
+        a.push_back(1);
+    }
+    cout<<a.data()[a.size()]<<endl;
 }
-
-
-
-
-
-
-
-
 

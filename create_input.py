@@ -12,24 +12,82 @@ def rand(q=2**64,e=None):
 	assert q
 	return randint(e,q-1)
 def getstr(l=200):
+	# return ''.join([choice('tw') for w in range(rand(2,l))])[:l]
 	return ''.join([choice('snmrdfhg')+choice('aioue') for w in range(rand(1,l))])[:l]
-maxlen=2+int(run_num**0.5)
-strs=[getstr(maxlen) for w in range(maxlen)]
+maxlen=20+int(run_num**0.5)
+# strs=[getstr(maxlen) for w in range(maxlen)]
+
+# strs=[w+w[::-1] for w in strs]
+# strs=sum([[w[:q],w[q:]] for w in strs for q in [rand(1,len(w))]],[])
+# strs=[w[:10] for w in strs]
+
+
+
+strs=getstr(maxlen)
+strs=[strs[w:]+strs[:w] for w in range(len(strs))]
 
 a=''.join([choice(choice(strs)) if rand(8) else choice(strs) for w in range(maxlen)])
 
+strs=choice(strs)
 
+print(strs)
 print(a)
-print(len(strs))
-for w in strs:
-	print(w)
+
+
+
+# def prefix_fun(s):
+# 	p=[0]*len(s)
+# 	for i in range(1,len(s)):
+# 		k = p[i - 1]
+# 		while k > 0 and s[i] != s[k]:
+# 			k = p[k - 1]
+# 		if s[i] == s[k]:
+# 			k+=1
+# 		p[i]=k
+# 	return p
+
+# d=[]
+# a=list(a)
+# for q,w in enumerate(a):
+# 	if w not in d:
+# 		d.append(w)
+# for q,w in enumerate(a):
+# 	a[q]=chr(ord('a')+d.index(w))
+# a=''.join(a)
+
+# def zf(s):
+#     return [
+#         max([
+#             w
+#             for w in range(len(s)+1)
+#                 if s[:w]==s[q:q+w]
+#         ])
+#         for q in range(len(s))
+#     ]
+
+
+# p=zf(a)
+# p=prefix_fun(a)
+# print(len(p))
+# print(*p)
+# print('|')
+# print(a)
+
+
+# n=randint(10**5*6,1234567)
+# n=randint(10**2*6,10**3)
+# k=randint(2,26)
+# a='qwertyuiopasdfghjklzxcvbnm'[:k]
+# strs=[''.join([choice(a) for e in range(randint(1,10))]) for w in range(n)]
+# strs=list(set(strs))
+# strs=strs[:10**6]
 
 
 
 
-
-
-
+# print(len(strs))
+# for w in strs:
+# 	print(w)
 
 
 

@@ -1,5 +1,0 @@
-<<<<<<< HEAD
-/usr/bin/c++  -Wall -Wextra -Werror -g -fsanitize=address,undefined -Wfatal-errors -Ofast -rdynamic CMakeFiles/bmp.dir/alg.cpp.o CMakeFiles/bmp.dir/bmp.cpp.o CMakeFiles/bmp.dir/esh.cpp.o CMakeFiles/bmp.dir/pix.cpp.o -o bmp 
-=======
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -g -fsanitize=address,undefined -Wfatal-errors -Ofast -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/bmp.dir/alg.cpp.o CMakeFiles/bmp.dir/bmp.cpp.o CMakeFiles/bmp.dir/esh.cpp.o CMakeFiles/bmp.dir/pix.cpp.o -o bmp 
->>>>>>> 13bc93bc3633e4c71d443c4647ebed0ce0ca3ecf
