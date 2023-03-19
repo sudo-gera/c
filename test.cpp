@@ -1,4 +1,8 @@
+#include <bits/stdc++.h>
+using namespace std;
 int main(){
-    int a=0;
+    std::deque<size_t> a(1);
+    cout<<a.size()<<endl;
+    a=std::move(a);
+    cout<<a.size()<<endl;
 }
-
