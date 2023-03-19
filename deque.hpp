@@ -8,12 +8,40 @@
 #include <type_traits>
 
 template<typename type>
+struct optional{
+    // alignas(type) char data_[sizeof(type)];
+    // bool has_=0;
+    std::vector<type> vect_;
+    auto data(){
+        if (vect_.size()){
+            return vect_.data();
+        }else{
+            return (type*)nullptr;
+        }
+        // if (has_){
+
+        // }
+    }
+    template<typename...Y>
+    auto emplace_back(Y&&...val){
+        clear();
+        vect_.emplace_back(std::forward<Y>(val)...);
+    }
+    void clear(){
+        vect_.clear();
+    }
+    ~optional(){
+        clear();
+    }
+};
+
+template<typename type>
 struct Deque{
     using front_space=std::integral_constant<size_t,2>;
     using back_space=std::integral_constant<size_t,2>;
     struct item{
         size_t pos;
-        std::vector<type> value;
+        optional<type> value;
     };
     std::vector<std::vector<item>> items;
     struct data{
@@ -71,7 +99,7 @@ struct Deque{
         item* elem=nullptr;
         data* d=nullptr;
         ctype&operator*()const{
-            return elem->value[0];
+            return elem->value.data()[0];
         }
         auto operator->()const{
             return elem->value.data();
@@ -222,10 +250,10 @@ struct Deque{
     void check(){
         assert(size()+4<=items.size());
         for (size_t q=slice[0].begin_;q-slice[0].end_ & items.size()-1;++q){
-            assert(items[q&items.size()-1][0].value.size());
+            assert(items[q&items.size()-1][0].value.data());
         }
         for (size_t q=slice[0].end_;q-slice[0].begin_ & items.size()-1;++q){
-            assert(not items[q&items.size()-1][0].value.size());
+            assert(not items[q&items.size()-1][0].value.data());
         }
         for (size_t q=0;q<items.size();++q){
             assert(items[q][0].pos==q);

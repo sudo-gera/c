@@ -1,10 +1,10 @@
-#include "/home/user/pony/header.hpp"
 #if 1
     // #include "/home/user/pony/header.hpp"
-    // #define ic(...)
+    #define ic(...)
 
     #include "deque.hpp"
 
+    #include <string>
     #include <deque>
 
 size_t locs=0;
