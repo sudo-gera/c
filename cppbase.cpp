@@ -21,6 +21,7 @@
 #include <array>
 #include <queue>
 #include <stack>
+#include <string_view>
 using std::back_inserter, std::list, std::hash, std::reverse, std::queue;
 using std::cin, std::cout, std::endl, std::vector, std::string, std::sort;
 using std::copy_if, std::exit, std::enable_if, std::enable_if, std::stack;
@@ -35,6 +36,7 @@ using std::tuple_element, std::tuple_size, std::is_same, std::forward;
 using std::tuple_size, std::lexicographical_compare, std::set_intersection;
 using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
 using std::unique, std::decay_t, std::is_convertible_v, std::array;
+using std::string_view;
 
 template <typename T>
 struct StaticCast {};
