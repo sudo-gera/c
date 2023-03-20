@@ -23,50 +23,6 @@
 #include <stack>
 #include <string_view>
 
-#if 0
-
-#define cat(q, w) q##w
-#define unique_name(q) cat(_unique_name_, q)
-
-#define recursive_loop(...)                                                      \
-    for (struct {                                                                \
-             decltype(tie(__VA_ARGS__)) _tie;                                    \
-             vector<pair<decltype(make_tuple(__VA_ARGS__)), void *>> call_stack; \
-             void *to_return_ptr;                                                \
-         } _rec{                                                                 \
-             tie(__VA_ARGS__),                                                   \
-             {{{}, &&start}},                                                    \
-         };                                                                      \
-         not({                                                                   \
-             start:                                                              \
-                 _rec.call_stack.empty();                                        \
-         });                                                                     \
-         assert(((void)"end without return", 0)))
-
-#define call(...)                                                        \
-    {                                                                    \
-        _rec.call_stack.push_back({_rec._tie, &&unique_name(__LINE__)}); \
-        _rec._tie = decltype(_rec.call_stack[0].first){__VA_ARGS__};     \
-        goto start;                                                      \
-        unique_name(__LINE__) : {}                                       \
-    }
-
-#define ret()                                               \
-    {                                                       \
-        _rec._tie = _rec.call_stack.back().first;           \
-        _rec.to_return_ptr = _rec.call_stack.back().second; \
-        _rec.call_stack.pop_back();                         \
-        goto *_rec.to_return_ptr;                           \
-    }
-
-#else
-
-#define recursive_loop(...)
-#define call(...)
-#define ret()
-
-#endif
-
 using std::back_inserter, std::list, std::hash, std::reverse, std::queue;
 using std::cin, std::cout, std::endl, std::vector, std::string, std::sort;
 using std::copy_if, std::exit, std::enable_if, std::enable_if, std::stack;
@@ -155,19 +111,51 @@ struct Sa {
         size_t cur = 0;
         decltype(nodes[0].next.begin()) q;
 
-        recursive_loop(cur, q) {
-            if (cur) {
-                for (q = nodes[cur].next.begin(); q != nodes[cur].next.end(); ++q) {
-                    if (nodes[q->second].len == nodes[cur].len + 1) {
-                        nodes[q->second].frag = nodes[cur].frag;
-                        nodes[q->second].frag.second++;
+        size_t sval = 0;
+
+        struct {
+            decltype(tie(cur, q)) x_tie;
+            vector<pair<decltype(make_tuple(cur, q)), size_t>> call_stack;
+            size_t to_return_ptr = 0;
+        } x_rec{
+            tie(cur, q),
+            {{{}, 0}},
+        };
+
+    x_sw:
+        switch (sval) {
+            case 0:
+
+                // start:
+                if (not(x_rec.call_stack.empty())) {
+                    if (cur) {
+                        for (q = nodes[cur].next.begin(); q != nodes[cur].next.end(); ++q) {
+                            if (nodes[q->second].len == nodes[cur].len + 1) {
+                                nodes[q->second].frag = nodes[cur].frag;
+                                nodes[q->second].frag.second++;
+                            }
+                        }
                     }
+                    for (q = nodes[cur].next.begin(); q != nodes[cur].next.end(); ++q) {
+                        {
+                            x_rec.call_stack.emplace_back();
+                            x_rec.call_stack.back() = {x_rec.x_tie, 144};
+                            x_rec.x_tie = decltype(x_rec.call_stack[0].first){q->second, q};
+                            sval = 0;
+                            goto x_sw;  // NOLINT
+                            case 144: {
+                            }
+                        };
+                    }
+                    {
+                        x_rec.x_tie = x_rec.call_stack.back().first;
+                        x_rec.to_return_ptr = x_rec.call_stack.back().second;
+                        x_rec.call_stack.pop_back();
+                        sval = x_rec.to_return_ptr;
+                        goto x_sw;  // NOLINT
+                        // goto *x_rec.to_return_ptr; //NOLINT
+                    };
                 }
-            }
-            for (q = nodes[cur].next.begin(); q != nodes[cur].next.end(); ++q) {
-                call(q->second, q);
-            }
-            ret();
         }
     }
 
@@ -208,16 +196,43 @@ struct Sa {
         size_t cur = 0;
         size_t q = 0;
 
-        recursive_loop(cur, q) {
-            for (q = 0; q < nodes[cur].elink.size(); ++q) {
-                if (nodes[nodes[cur].elink[q].second].elink.empty()) {
-                    a.push_back(nodes[cur].elink[q].first.first + 1);
-                }
+        struct {
+            decltype(tie(cur, q)) x_tie;
+            vector<pair<decltype(make_tuple(cur, q)), size_t>> call_stack;
+            size_t to_return_ptr = 0;
+        } x_rec{
+            tie(cur, q),
+            {{{}, 0}},
+        };
 
-                call(nodes[cur].elink[q].second, 0);
+        size_t sval = 0;
+    x_sw:
+        switch (sval)
+        case 0:
+            if (not(x_rec.call_stack.empty())) {
+                for (q = 0; q < nodes[cur].elink.size(); ++q) {
+                    if (nodes[nodes[cur].elink[q].second].elink.empty()) {
+                        a.push_back(nodes[cur].elink[q].first.first + 1);
+                    }
+
+                    {
+                        x_rec.call_stack.emplace_back();
+                        x_rec.call_stack.back() = {x_rec.x_tie, 193};
+                        x_rec.x_tie = decltype(x_rec.call_stack[0].first){nodes[cur].elink[q].second, 0};
+                        sval = 0;
+                        goto x_sw;  // NOLINT
+                        case 193: {
+                        }
+                    };
+                }
+                {
+                    x_rec.x_tie = x_rec.call_stack.back().first;
+                    x_rec.to_return_ptr = x_rec.call_stack.back().second;
+                    x_rec.call_stack.pop_back();
+                    sval = x_rec.to_return_ptr;
+                    goto x_sw;  // NOLINT
+                };
             }
-            ret();
-        }
         a.erase(a.begin());
         return a;
     }
