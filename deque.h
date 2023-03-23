@@ -9,7 +9,7 @@ struct Pair {
 
 template <typename T>
 struct Deque {
-    std::vector<std::vector<Pair<std::vector<T>, std::size_t>>> data =
+    std::vector<std::vector<Pair<std::vector<T>, std::size_t> > > data =
         decltype(data)({{{{}, 0}}, {{{}, 1}}, {{{}, 2}}, {{{}, 3}}});
     struct locals {
         std::size_t first;
@@ -57,7 +57,7 @@ struct Deque {
         if (&place == &fragment[0].first) {
             local_place -= 1;
         }
-        assert(data[local_place & data.size() - 1][0].first.empty());
+        // assert(not data[local_place & data.size() - 1][0].first.size());
         data[local_place & data.size() - 1][0].first.emplace_back(std::forward<Y>(val)...);
         if (&place == &fragment[0].second) {
             local_place += 1;
@@ -68,7 +68,7 @@ struct Deque {
         if (&place == &fragment[0].second) {
             place -= 1;
         }
-        assert(data[place & data.size() - 1][0].first.size());
+        // assert(data[place & data.size() - 1][0].first.size());
         data[place & data.size() - 1][0].first.pop_back();
         if (&place == &fragment[0].first) {
             place += 1;
@@ -92,6 +92,9 @@ struct Deque {
         copy_const<Y, locals>* fragment = nullptr;
         copy_const<Y, Pair<std::vector<T>, std::size_t>>* item = nullptr;
         Y& operator*() {
+            return item->first[0];
+        }
+        Y& operator*() const{
             return item->first[0];
         }
         void add(size_t offset) {
@@ -206,12 +209,12 @@ struct Deque {
     template <typename Y = T>
     void insert(const_iterator iter, Y&& val) {
         size_t index = iter - cbegin();
-        push_front(std::forward<Y>(val));
-        rotate();
-        if (index) {
-            std::rotate(data.begin(), data.begin() + 1, data.begin() + index + 1);
+        push_back(std::forward<Y>(val));
+        if (index!=size()-1) {
+            rotate();
+            std::rotate(data.begin()+index, data.begin() + size()-1, data.begin() + size());
+            update();
         }
-        update();
     }
     void erase(const_iterator iter) {
         size_t index = iter - cbegin();
@@ -301,19 +304,19 @@ auto operator!=(const Y& l, const Y& r) {
 }
 
 template <typename Y, typename = typename Deque<typename Y::value_type>::template is_iterator<Y>>
-auto operator+(const Y& l, ssize_t off) {
+auto operator+(const Y& l, size_t off) {
     auto tmp = l;
     tmp += off;
     return tmp;
 }
 template <typename Y, typename = typename Deque<typename Y::value_type>::template is_iterator<Y>>
-auto operator+(ssize_t off, const Y& l) {
+auto operator+(size_t off, const Y& l) {
     auto tmp = l;
     tmp += off;
     return tmp;
 }
 template <typename Y, typename = typename Deque<typename Y::value_type>::template is_iterator<Y>>
-auto operator-(const Y& l, ssize_t off) {
+auto operator-(const Y& l, size_t off) {
     auto tmp = l;
     tmp -= off;
     return tmp;

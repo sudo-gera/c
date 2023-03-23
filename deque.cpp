@@ -1,11 +1,12 @@
 #if 1
-    // #include "/home/user/pony/header.hpp"
+    #include "/home/gera/pony/header.hpp"
     // #define ic(...)
 
     #include "deque.h"
 
     #include <string>
     #include <deque>
+    #include <cassert>
 
 size_t locs=0;
 size_t vals=0;
@@ -294,7 +295,7 @@ size_t until_throw=-1;
                     }
                     // ic(a.end().elem->pos)
                     // ic(a.begin().elem->pos)
-                    assert(a.end()-a.begin()==a.size());
+                    assert(a.end()-a.begin()==(ssize_t)a.size());
                     check(a.begin()-2,a.end()+1);
                 }
             }
@@ -848,8 +849,8 @@ auto tmp=_main();
         }
 
         void testIteratorsAlgorithms() {
-            Deque<int> d(1000, 3);
 
+            Deque<int> d(1000, 3);
             std::iota(d.begin(), d.end(), 13);
             std::mt19937 g(31415);
             std::shuffle(d.begin(), d.end(), g);
@@ -937,6 +938,7 @@ auto tmp=_main();
 
             Deque<NotDefaultConstructible> copy;
             for (const auto& item : d) {
+// ic(&item-&d[0])
                 copy.insert(copy.end(), item);
             }
             // std::copy(d.cbegin(), d.cend(), std::inserter(copy, copy.begin()));
@@ -1016,29 +1018,53 @@ auto tmp=_main();
         static_assert(!std::is_base_of_v<std::deque<TestsByMesyarik::VerySpecialType>,
                 Deque<TestsByMesyarik::VerySpecialType>>, "You cannot use std::deque, cheater!");
         
+ic()
         TestsByMesyarik::test1();
+ic()
         TestsByMesyarik::test2();
+ic()
         TestsByMesyarik::test3();
+ic()
         TestsByMesyarik::test4();
+ic()
         TestsByMesyarik::test5();
+ic()
         TestsByMesyarik::test6();
+ic()
         TestsByMesyarik::test7();
+ic()
 
+ic()
         TestsByUnrealf1::testDefault();
+ic()
         TestsByUnrealf1::testCopy();
+ic()
         TestsByUnrealf1::testWithSize();
+ic()
         TestsByUnrealf1::testAssignment();
+ic()
         TestsByUnrealf1::testStaticAsserts();
+ic()
         TestsByUnrealf1::testOperatorSubscript();
+ic()
         TestsByUnrealf1::testStaticAssertsAccess();
+ic()
         TestsByUnrealf1::testStaticAssertsIterators();
+ic()
         TestsByUnrealf1::testIteratorsArithmetic();
+ic()
         TestsByUnrealf1::testIteratorsComparison();
+ic()
         TestsByUnrealf1::testIteratorsAlgorithms();
+ic()
         TestsByUnrealf1::testPushAndPop();
+ic()
         TestsByUnrealf1::testInsertAndErase();
+ic()
         TestsByUnrealf1::testExceptions();
+ic()
         TestsByUnrealf1::testStrongGuarantee();
+ic()
 
         std::cout << 0;
     }
