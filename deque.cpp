@@ -1,8 +1,8 @@
 #if 1
     // #include "/home/user/pony/header.hpp"
-    #define ic(...)
+    // #define ic(...)
 
-    #include "deque.hpp"
+    #include "deque.h"
 
     #include <string>
     #include <deque>
@@ -105,8 +105,8 @@ size_t until_throw=-1;
 
     int _main(){
         // srand(0);
-        size_t seed=1679194138;
-        // seed=time(0);
+        size_t seed=1679596224;
+        seed=time(0);
         printf("%zu\n",seed);
         srand(seed);
 
@@ -122,7 +122,6 @@ size_t until_throw=-1;
             Deque<item>&a=*a_ptr;
             std::deque<size_t>&s=*s_ptr;
             goto *cret;
-
         _2:
             for (q=0;q<1024;++q){
                 assert(&a-&a_vec[0]==&s-&s_vec[0]);
@@ -134,13 +133,13 @@ size_t until_throw=-1;
                 ic(q,w,i,v,&a-&a_vec[0],a_vec.size())
                 if (w==0){
                     i%=(a.size()+1);
-                    a.insert_back(i,v);
-                    s.insert(s.begin()+i,v);
+                    // a.insert_back(i,v);
+                    // s.insert(s.begin()+i,v);
                 }
                 if (w==1){
                     i%=(a.size()+1);
-                    a.insert_front(i,v);
-                    s.insert(s.begin()+i,v);
+                    // a.insert_front(i,v);
+                    // s.insert(s.begin()+i,v);
                 }
                 if (w==2){
                     i%=(a.size()+1);
@@ -159,13 +158,13 @@ size_t until_throw=-1;
                 }
                 if (w==5 and a.size()){
                     i%=a.size();
-                    a.erase_back(i);
-                    s.erase(s.begin()+i);
+                    // a.erase_back(i);
+                    // s.erase(s.begin()+i);
                 }
                 if (w==6 and a.size()){
                     i%=a.size();
-                    a.erase_front(i);
-                    s.erase(s.begin()+i);
+                    // a.erase_front(i);
+                    // s.erase(s.begin()+i);
                 }
                 if (w==7 and a.size()){
                     i%=(a.size()+1);
@@ -230,11 +229,11 @@ size_t until_throw=-1;
                     goto _1;
                     _7:{}
                 }
-                if (w==15){
-                    i%=(a_vec.size()*2);
-                    a.add(i-a.size(),v);
-                    s.resize(i,v);
-                }
+                // if (w==15){
+                //     i%=(a_vec.size()*2);
+                //     // a.add(i-a.size(),v);
+                //     // s.resize(i,v);
+                // }
                 if (w==16){
                     i%=(a_vec.size());
                     v%=(a_vec.size());
@@ -254,8 +253,8 @@ size_t until_throw=-1;
                     s_vec[i]=std::move(tmp);
                     a_ptr=&a_vec[i];
                     s_ptr=&s_vec[i];
-                    cret=&&_7;
-                    goto _9;
+                    cret=&&_9;
+                    goto _1;
                     _9:{}
                 }
                 if (w==18){
@@ -282,14 +281,12 @@ size_t until_throw=-1;
                 // ic(s)
                 // ic(a.slice->begin_)
                 // ic(a.slice->end_)
-                // for(auto&w:a.items){
-                //     ic(w->pos)
-                // }
+                // ic(a.data)
 
                 // if (not (rand()%8)){
                 if (1){
                     assert(a_vec.size()==s_vec.size());
-                    a.check();
+                    // a.check();
                     assert(a.size()==s.size());
                     for (e=0;e<a.size();++e){
                         // ic(a.begin().elem->pos)
@@ -308,7 +305,7 @@ size_t until_throw=-1;
     }
 
 auto tmp=_main();
-
+// int main(){}
 // #else
 
 
@@ -322,7 +319,7 @@ auto tmp=_main();
     #include <cassert>
     #include <deque>
 
-    #include "deque.hpp"
+    // #include "deque.hpp"
 
     //template <typename T>
     //using Deque = std::deque<T>;
