@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+#include "test.hpp"
+int main(){
+    test();
+}
+=======
 #include <type_traits>
 #include <unordered_set>
 #include <algorithm>
@@ -736,3 +742,4 @@ int main() {
 
     std::cout << 0;
 }
+>>>>>>> 38358678cc0d887f7a1ba34688823ff84b73933d
