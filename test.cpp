@@ -1,4 +1,4 @@
+#include "test.hpp"
 int main(){
-    int a=0;
+    test();
 }
-
