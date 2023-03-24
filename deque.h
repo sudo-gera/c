@@ -230,7 +230,7 @@ struct Deque {
     Deque(Deque&& oth) : data(std::move(oth.data)), fragment(std::move(oth.fragment)) {
         std::destroy_at(&oth);
         // std::construct_at(&oth);
-        new(&oth)decltype(oth)();
+        new(&oth)Deque();
     }
     Deque(const Deque& oth) : data(oth.data), fragment(oth.fragment) {
         update();
