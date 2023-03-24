@@ -1,6 +1,7 @@
 #include <type_traits>
 #include <algorithm>
 #include <vector>
+#include <cassert>
 template <typename T1, typename T2>
 struct Pair {
     T1 first;
@@ -228,7 +229,8 @@ struct Deque {
     Deque() = default;
     Deque(Deque&& oth) : data(std::move(oth.data)), fragment(std::move(oth.fragment)) {
         std::destroy_at(&oth);
-        std::construct_at(&oth);
+        // std::construct_at(&oth);
+        new(&oth)decltype(oth)();
     }
     Deque(const Deque& oth) : data(oth.data), fragment(oth.fragment) {
         update();
@@ -236,14 +238,16 @@ struct Deque {
     auto& operator=(const Deque& oth) {
         if (&oth != this) {
             std::destroy_at(this);
-            std::construct_at(this, oth);
+            // std::construct_at(this, oth);
+            new(this)Deque(oth);
         }
         return *this;
     }
     auto& operator=(Deque&& oth) {
         if (&oth != this) {
             std::destroy_at(this);
-            std::construct_at(this, std::move(oth));
+            // std::construct_at(this, std::move(oth));
+            new(this)Deque(std::move(oth));
         }
         return *this;
     }
