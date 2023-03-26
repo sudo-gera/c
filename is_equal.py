@@ -10,31 +10,31 @@ if len(set(a))>1:
 	exit(1)
 
 
-def prefix_fun(s):
-	p=[0]*len(s)
-	for i in range(1,len(s)):
-		k = p[i - 1]
-		while k > 0 and s[i] != s[k]:
-			k = p[k - 1]
-		if s[i] == s[k]:
-			k+=1
-		p[i]=k
-	return p
+# def prefix_fun(s):
+# 	p=[0]*len(s)
+# 	for i in range(1,len(s)):
+# 		k = p[i - 1]
+# 		while k > 0 and s[i] != s[k]:
+# 			k = p[k - 1]
+# 		if s[i] == s[k]:
+# 			k+=1
+# 		p[i]=k
+# 	return p
 
-p=p.split('|')[0]
+# p=p.split('|')[0]
 
-for a in a:
-	# a=[[int(e) for e in w.split()] for w in a.splitlines()]
-	# print(a,p)
-	p=[[int(e) for e in w.split()] for w in p.splitlines()]
-	assert prefix_fun(a)==p[1]
-	for q in range(len(a)):
-		s=a[:q]
-		for c in [chr(c) for c in range(ord('a'),ord(a[q]))]:
-			# ic(s+c)
-			# ic(prefix_fun(s+c))
-			# ic(p[1][:q+1])
-			assert prefix_fun(s+c)!=p[1][:q+1]
+# for a in a:
+# 	# a=[[int(e) for e in w.split()] for w in a.splitlines()]
+# 	# print(a,p)
+# 	p=[[int(e) for e in w.split()] for w in p.splitlines()]
+# 	assert prefix_fun(a)==p[1]
+# 	for q in range(len(a)):
+# 		s=a[:q]
+# 		for c in [chr(c) for c in range(ord('a'),ord(a[q]))]:
+# 			# ic(s+c)
+# 			# ic(prefix_fun(s+c))
+# 			# ic(p[1][:q+1])
+# 			assert prefix_fun(s+c)!=p[1][:q+1]
 
 
 # 	assert len(a[0])==1

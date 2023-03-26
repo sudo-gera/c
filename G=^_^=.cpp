@@ -20,8 +20,29 @@
 #include <deque>
 #include <array>
 #include <queue>
-#include <stack>
+#include <cstdio>
+#include <algorithm>
+#include <iostream>
+#include <map>
+#include <set>
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+#ifndef assert
+#include <cassert>
+#endif
+#include <tuple>
+#include <numeric>
+#include <list>
 #include <string_view>
+#include <cstring>
+#include <functional>
+#include <type_traits>
+#include <deque>
+#include <array>
+#include <queue>
+#include <stack>
 using std::back_inserter, std::list, std::hash, std::reverse, std::queue;
 using std::cin, std::cout, std::endl, std::vector, std::string, std::sort;
 using std::copy_if, std::exit, std::enable_if, std::enable_if, std::stack;
@@ -36,7 +57,6 @@ using std::tuple_element, std::tuple_size, std::is_same, std::forward;
 using std::tuple_size, std::lexicographical_compare, std::set_intersection;
 using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
 using std::unique, std::decay_t, std::is_convertible_v, std::array;
-using std::string_view;
 
 template <typename T>
 struct StaticCast {};
@@ -194,4 +214,44 @@ struct Scan{
 
 ///////////////////////////////////////////////////end of lib
 
+template <typename T>
+auto PrefixFun(T&& s) {
+    vector<size_t> p(s.size());
+    for (size_t q = 1; q < s.size(); ++q) {
+        size_t k = p[q - 1];
+        while (k > 0 and s[q] != s[k]) {
+            k = p[k - 1];
+        }
+        if (s[q] == s[k]) {
+            k++;
+        }
+        p[q] = k;
+    }
+    return p;
+}
 
+int main() {
+    string p = Scan<string>()();
+    string f = Scan<string>()();
+    auto p_f = p + " " + f;
+    auto f_p = f + " " + p;
+    reverse(f_p.begin(), f_p.end());
+    auto pfl = PrefixFun(p_f);
+    auto pfr = PrefixFun(f_p);
+    vector<size_t> ans;
+    ic(pfl)
+    ic(pfr)
+    for (size_t q = p.size(); q <= f.size(); ++q) {
+        ic(q)
+        ic(pfl[q + p.size()])
+        ic(pfr[2 * p.size() + f.size() - q])
+        if (pfl[q + p.size()] + pfr[2 * p.size() + f.size() - q] == p.size() or pfl[q + p.size()] == p.size() or
+            pfr[2 * p.size() + f.size() - q] == p.size()) {
+            ans.push_back(q - p.size());
+        }
+    }
+    for (auto q : ans) {
+        cout << q << " ";
+    }
+    cout << endl;
+}
