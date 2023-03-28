@@ -1,0 +1,10 @@
+Script started on Wed Mar 29 02:09:38 2023
+command: tee
+1
+1
+2
+2
+3
+3
+^D
+Script done on Wed Mar 29 02:10:17 2023
