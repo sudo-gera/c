@@ -1,7 +1,14 @@
 #include <bits/stdc++.h>
 using namespace std;
+
+struct q{
+
+};
+
+struct w:decltype(declval<q&>()){
+
+};
+
 int main(){
-    deque<int> d({1,2,3});
-    d=std::move(d);
-    cout<<d.size()<<endl;
+
 }
