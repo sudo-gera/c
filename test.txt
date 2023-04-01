@@ -1,10 +1,4 @@
-Script started on Wed Mar 29 02:09:38 2023
-command: tee
-1
-1
-2
-2
-3
-3
-^D
-Script done on Wed Mar 29 02:10:17 2023
+Script started on Fri Mar 31 12:36:41 2023
+[?1034h[31m12:36:41[0m:[33marm64[0m:[32m~[0m$ pwd[K[K[Kpwd[K[K[Kpwd[K[K[Kpwd[K[K[Kpwd[K[K[Kpwd[K[K[Kpwd[K[K[Kpwd[K[K[Kp[Kexit
+
+Script done on Fri Mar 31 12:37:37 2023
