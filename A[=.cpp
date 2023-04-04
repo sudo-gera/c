@@ -198,4 +198,27 @@ struct Scan{
 
 ///////////////////////////////////////////////////end of lib
 
+pair<ssize_t,ssize_t> Egcd(ssize_t a,ssize_t b){
+    if (b){
+        auto[c,d]=Egcd(b,a%b);
+        return {d,c-a/b*d};
+    }else{
+        return {(a>0)-(a<0),0};
+    }
+}
 
+int main(){
+    auto rand=[
+        gen=make_unique<mt19937_64>(random_device()()),
+        dis=make_unique<uniform_int_distribution<size_t>>(0,-1)
+    ]{
+        return (*dis)(*gen);
+    };
+    for (ssize_t q=-200;q!=201;++q){
+        for (ssize_t e=-200;e!=201;++e){
+            auto [a,s]=Egcd(q,e);
+            assert(q*a+e*s==gcd(q,e));
+        }
+    }
+
+}
