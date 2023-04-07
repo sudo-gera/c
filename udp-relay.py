@@ -45,6 +45,8 @@ while True:
 	if debug:
 		print("Packet received from "+str(addr))
 
+	print(len(data),addr)
+
 	if addr == knownClient:
 		if debug:
 			print("\tforwarding to "+str(knownServer)) 
