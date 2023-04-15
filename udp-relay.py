@@ -6,7 +6,7 @@
 import sys, socket
 
 # Whether or not to print the IP address and port of each packet received
-debug=True
+debug=False
 
 def fail(reason):
 	sys.stderr.write(reason + '\n')
@@ -42,7 +42,7 @@ while True:
 			print("")
 		knownClient = addr
 
-	print([data,addr])
+#	print([data,addr])
 
 	if debug:
 		print("Packet received from "+str(addr))
