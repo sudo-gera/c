@@ -12,11 +12,29 @@ import os
 import base64
 import json
 
+def fail(reason):
+	sys.stderr.write(reason + '\n')
+	sys.exit(1)
+
+if len(sys.argv) != 2 or len(sys.argv[1].split(':')) != 3:
+	fail('Usage: udp-relay.py localPort:remoteHost:remotePort')
+
+localPort, remoteHost, remotePort = sys.argv[1].split(':')
+
+try:
+	localPort = int(localPort)
+except:
+	fail('Invalid port number: ' + str(localPort))
+try:
+	remotePort = int(remotePort)
+except:
+	fail('Invalid port number: ' + str(remotePort))
+
 # Changing the buffer_size and delay, you can improve the speed and bandwidth.
 # But when buffer get to high or delay go too down, you can broke things
 buffer_size = 4096
 delay = 0.0001
-forward_to = ('localhost',9090)
+forward_to = (remoteHost,remotePort)
 # forward_to = ('192.168.238.111',8080)
 
 class Server:
@@ -146,7 +164,7 @@ if __name__ == '__main__':
         pipe=[pipe[0],pipe[3]]
         s=Server()
         s.add_pipe(pipe)
-        s.create_server('',8080)
+        s.create_server('',localPort)
         try:
             s.main_loop()
         except KeyboardInterrupt:

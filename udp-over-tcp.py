@@ -31,23 +31,29 @@ udp_s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 if args.udp_listen:
     udp_s.bind(split(args.udp_listen))
 
-tcp_s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-if args.tcp_listen:
-    tcp_s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    tcp_s.bind(split(args.tcp_listen))
-    tcp_s.listen(200)
-else:
-    tcp_s.connect(split(args.tcp_connect))
+# if args.tcp_listen:
+#     tcp_s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#     tcp_s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+#     tcp_s.bind(split(args.tcp_listen))
+#     tcp_s.listen(200)
+# else:
+#     tcp_s.connect(split(args.tcp_connect))
 
 udp_host=split(args.udp_connect) if args.udp_connect else None
 
 def tcp_server():
     if args.tcp_listen:
+        tcp_s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        tcp_s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        tcp_s.bind(split(args.tcp_listen))
+        tcp_s.listen(200)
         while 1:
             tcp_client,addr=tcp_s.accept()
             threading.Thread(target=t2u, args=(tcp_client,)).start()
             threading.Thread(target=u2t, args=(tcp_client,)).start()
     else:
+        tcp_s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        tcp_s.connect(split(args.tcp_connect))
         threading.Thread(target=t2u, args=(tcp_s,)).start()
         threading.Thread(target=u2t, args=(tcp_s,)).start()
 
