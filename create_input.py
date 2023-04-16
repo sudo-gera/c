@@ -22,16 +22,27 @@ maxlen=20+int(run_num**0.5)
 # strs=[w[:10] for w in strs]
 
 
+n=randint(1,maxlen)
+print(n)
+a=[randint(-64,64) for w in range(n)]
+print(*a)
 
-strs=getstr(maxlen)
-strs=[strs[w:]+strs[:w] for w in range(len(strs))]
 
-a=''.join([choice(choice(strs)) if rand(8) else choice(strs) for w in range(maxlen)])
 
-strs=choice(strs)
+# strs=getstr(maxlen)
+# strs=[strs[w:]+strs[:w] for w in range(len(strs))]
 
-print(strs)
-print(a)
+# a=''.join([choice(choice(strs)) if rand(8) else choice(strs) for w in range(maxlen)])
+
+# strs=choice(strs)
+
+# print(strs)
+# print(a)
+
+# print(0)
+# print(''.join([choice('abcd')*randint(1,8) for w in range(randint(1,maxlen))]))
+
+
 
 
 
@@ -166,7 +177,7 @@ print(a)
 # 		print(s)
 # 		break
 
-# llen=10**5
+# llen=10**2
 
 # n=rand(2,llen)
 # m=rand(0,1+min(llen,(n-1)**2//4))
