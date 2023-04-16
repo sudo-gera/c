@@ -55,6 +55,7 @@ def t2u(tcp_client):
     data=b'1'
     while data:
         data=tcp_client.recv(65536)
+        print(len(data))
         udp_s.sendto(data,udp_host)
 
 
@@ -63,6 +64,7 @@ def u2t(tcp_client):
     data=b'1'
     while data:
         data,udp_host=udp_s.recvfrom(65536)
+        print(len(data))
         tcp_client.send(data)
 
 tcp_server()
