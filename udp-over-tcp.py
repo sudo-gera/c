@@ -1,4 +1,3 @@
-from h import *
 import sys
 import socket
 import argparse
