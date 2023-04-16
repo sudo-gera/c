@@ -71,3 +71,5 @@ Initializing executor providers                   [0;m  builds[0;m=0
 [0;33mWARNING: Checking for jobs... failed              [0;m  [0;33mrunner[0;m=P-uBgzNy [0;33mstatus[0;m=couldn't execute POST against https://gitlab.com/api/v4/jobs/request: Post "https://gitlab.com/api/v4/jobs/request": dial tcp: lookup gitlab.com on 192.168.49.1:53: server misbehaving
 Checking for jobs...nothing                       [0;m  runner[0;m=P-uBgzNy
 Checking for jobs...nothing                       [0;m  runner[0;m=P-uBgzNy
+[0;33mWARNING: Checking for jobs... failed              [0;m  [0;33mrunner[0;m=P-uBgzNy [0;33mstatus[0;m=couldn't execute POST against https://gitlab.com/api/v4/jobs/request: Post "https://gitlab.com/api/v4/jobs/request": read tcp 172.16.0.2:53624->172.65.251.78:443: read: connection reset by peer
+Checking for jobs...nothing                       [0;m  runner[0;m=P-uBgzNy

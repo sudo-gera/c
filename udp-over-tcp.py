@@ -52,19 +52,19 @@ def tcp_server():
         threading.Thread(target=u2t, args=(tcp_s,)).start()
 
 def t2u(tcp_client):
-    data=b'1'
+    data=tcp_client.recv(65536)
     while data:
-        data=tcp_client.recv(65536)
         print(len(data))
         udp_s.sendto(data,udp_host)
+        data=tcp_client.recv(65536)
 
 
 def u2t(tcp_client):
     global udp_host
-    data=b'1'
+    data,udp_host=udp_s.recvfrom(65536)
     while data:
-        data,udp_host=udp_s.recvfrom(65536)
         print(len(data))
         tcp_client.send(data)
+        data,udp_host=udp_s.recvfrom(65536)
 
 tcp_server()
