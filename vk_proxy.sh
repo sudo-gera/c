@@ -1,7 +1,7 @@
-hp="8080"
-sp="1080"
-# hp="8081"
-# sp="8081"
+# hp="8080"
+# sp="1080"
+hp="8081"
+sp="8081"
 pradd="http://192.168.49.1"
 # pradd="socks5h://192.168.49.1"
 # export ftp_proxy="$pradd:$hp";
