@@ -1,4 +1,7 @@
-Script started on Fri Mar 31 12:36:41 2023
-[?1034h[31m12:36:41[0m:[33marm64[0m:[32m~[0m$ pwd[K[K[Kpwd[K[K[Kpwd[K[K[Kpwd[K[K[Kpwd[K[K[Kpwd[K[K[Kpwd[K[K[Kpwd[K[K[Kp[Kexit
+Script started on Thu Apr 13 15:40:30 2023
+[?1034h[31m15:40:31[0m:[33marm64[0m:[32m~[0m$ 
+[31m15:40:32[0m:[33marm64[0m:[32m~[0m$ pwd[K[K[Kpwd[K[K[Kpwd
+/Users/gera
+[31m15:41:35[0m:[33marm64[0m:[32m~[0m$ exit
 
-Script done on Fri Mar 31 12:37:37 2023
+Script done on Thu Apr 13 15:42:18 2023

@@ -1,29 +1,23 @@
-from http.server import BaseHTTPRequestHandler, HTTPServer
-import time
+from multiprocessing import *
+from os import *
 
-hostName = "0.0.0.0"
-hostPort = 9000
+def run(*a):
+    print(hash('0'))
 
-class MyServer(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.send_header("Content-type", "text/html; charset=utf-8")
-        self.end_headers()
-        self.wfile.write(bytes("<html><head><title>Title goes here.</title></head>".encode()))
-        self.wfile.write(bytes("<body><p>This is a test.</p>".encode()))
-        self.wfile.write(bytes(("<p>You accessed path: %s</p>" % self.path).encode()))
-        self.wfile.write(bytes("</body></html>".encode()))
-
-myServer = HTTPServer((hostName, hostPort), MyServer)
-print(time.asctime(), "Server Starts - %s:%s" % (hostName, hostPort))
-
-try:
-    myServer.serve_forever()
-except KeyboardInterrupt:
-    pass
-
-myServer.server_close()
-print(time.asctime(), "Server Stops - %s:%s" % (hostName, hostPort))
+if __name__ == '__main__':
+    system('''python -c "__import__('test').run()"''')
+    run()
 
 
+# import csv
+# with open('/Users/gera/Downloads/flats_moscow.csv', newline='') as csvfile:
+#     dialect = csv.Sniffer().sniff(csvfile.read(1024))
+#     csvfile.seek(0)
+#     reader = list(csv.reader(csvfile, dialect))
 
+# import pandas as pd
+# df=pd.read_csv('/Users/gera/Downloads/flats_moscow.csv', delimiter=',')
+# a=list(df[df.code == 6][df.brick == 0][df.floor == 1][df.livesp <= 48][df.livesp >= 42].price)
+# s=sum(a)/len(a)
+# d=[abs(w-s) for w in a]
+# print(min(a),max(a),sum(a)/len(a),sum(d)/len(d))

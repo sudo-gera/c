@@ -1,47 +1,69 @@
-import sys, socket
+from h import *
+import sys
+import socket
+import argparse
+import queue
+import asyncio
+import threading
 
+def get_args():
+    parser = argparse.ArgumentParser(description='each option requires host:port format')
+    parser.add_argument('--udp-listen')
+    parser.add_argument('--udp-connect')
+    parser.add_argument('--tcp-listen')
+    parser.add_argument('--tcp-connect')
+    return parser.parse_args()
 
+args=get_args()
+def split(s):
+    h,p=(':'+s).split(':')[-2:]
+    p=int(p)
+    return h,p
 
+if [args.tcp_listen,args.tcp_connect].count(None)!=1:
+    print('error')
+    exit(1)
 
+if [args.udp_listen,args.udp_connect].count(None)!=1:
+    print('error')
+    exit(1)
 
-localPort, remoteHost, remotePort = sys.argv[1].split(':')
+udp_s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+if args.udp_listen:
+    udp_s.bind(split(args.udp_listen))
 
-try:
-    localPort = int(localPort)
-except:
-    fail('Invalid port number: ' + str(localPort))
-try:
-    remotePort = int(remotePort)
-except:
-    fail('Invalid port number: ' + str(remotePort))
+tcp_s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+if args.tcp_listen:
+    tcp_s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    tcp_s.bind(split(args.tcp_listen))
+    tcp_s.listen(200)
+else:
+    tcp_s.connect(split(args.tcp_connect))
 
-try:
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind(('', localPort))
-except:
-    fail('Failed to bind on port ' + str(localPort))
+udp_host=split(args.udp_connect) if args.udp_connect else None
 
-knownClient = None
-knownServer = (remoteHost, remotePort)
-sys.stdout.write('All set, listening on '+str(localPort)+'.\n')
-while True:
-    data, addr = s.recvfrom(32768)
-    if knownClient is None or addr != knownServer:
-        if debug:
-            print("")
-        knownClient = addr
-
-    print([data,addr])
-
-    if debug:
-        print("Packet received from "+str(addr))
-
-    if addr == knownClient:
-        if debug:
-            print("\tforwarding to "+str(knownServer)) 
-
-        s.sendto(data, knownServer)
+def tcp_server():
+    if args.tcp_listen:
+        while 1:
+            tcp_client,addr=tcp_s.accept()
+            threading.Thread(target=t2u, args=(tcp_client,)).start()
+            threading.Thread(target=u2t, args=(tcp_client,)).start()
     else:
-        if debug:
-            print("\tforwarding to "+str(knownClient))
-        s.sendto(data, knownClient)
+        threading.Thread(target=t2u, args=(tcp_s,)).start()
+        threading.Thread(target=u2t, args=(tcp_s,)).start()
+
+def t2u(tcp_client):
+    data=b'1'
+    while data:
+        data=tcp_client.recv(65536)
+        udp_s.sendto(data,udp_host)
+
+
+def u2t(tcp_client):
+    global udp_host
+    data=b'1'
+    while data:
+        data,udp_host=udp_s.recvfrom(65536)
+        tcp_client.send(data)
+
+tcp_server()

@@ -21,6 +21,8 @@ from sys import *
 import sys
 from json import *
 import json
+from io import *
+import io
 from random import *
 import random
 from urllib.request import *
