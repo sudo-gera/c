@@ -1,3 +1,11 @@
+<<<<<<< HEAD
+//#include <bits/stdc++.h>
+using namespace std;
+
+int main(){
+
+}
+=======
 #include "test.hpp"
 
 #if 0
@@ -984,3 +992,4 @@ int main() {
 
 
 #endif
+>>>>>>> 1a9049006131447bbd4ab468c20ecb812ac69d49
