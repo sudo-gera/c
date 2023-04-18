@@ -1,43 +1,35 @@
-<<<<<<< HEAD
-from multiprocessing import *
-from os import *
-=======
-<<<<<<< HEAD
-for q in range(60):
- for w in range(5):
-  a=q*2
-  s=q*3
-  a-=w
-  s-=4-w
-  if a*4==s*3:
-   print(a+w,s+4-w)
+import asyncio
+import random
 
-=======
-from http.server import BaseHTTPRequestHandler, HTTPServer
-import time
->>>>>>> fb9b6ebc3ad7dfa14c9b8b138f084c5747ade6e8
+class connection(asyncio.Protocol):
+    def connection_made(self, transport):
+        peername = transport.get_extra_info('peername')
+        print('Connection from {}'.format(peername))
+        self.transport = transport
 
-def run(*a):
-    print(hash('0'))
+    def data_received(self, data):
+        asyncio.create_task(self.dr(data))
 
-if __name__ == '__main__':
-    system('''python -c "__import__('test').run()"''')
-    run()
+    async def dr(self,data):
+        message = data.decode()
+        print('Data received: {!r}'.format(message))
+
+        await asyncio.sleep(random.random())
+
+        print('_________Send: {!r}'.format(message))
+        self.transport.write(data)
+
+        print('Close the client socket')
+        self.transport.close()
 
 
-# import csv
-# with open('/Users/gera/Downloads/flats_moscow.csv', newline='') as csvfile:
-#     dialect = csv.Sniffer().sniff(csvfile.read(1024))
-#     csvfile.seek(0)
-#     reader = list(csv.reader(csvfile, dialect))
+async def main():
+    loop = asyncio.get_running_loop()
+    server = await loop.create_server(
+        connection,
+        '',8787)
+    async with server:
+        await server.serve_forever()
+    await asyncio.gather(*asyncio.all_tasks() - {asyncio.current_task()})
+asyncio.run(main())
 
-<<<<<<< HEAD
-# import pandas as pd
-# df=pd.read_csv('/Users/gera/Downloads/flats_moscow.csv', delimiter=',')
-# a=list(df[df.code == 6][df.brick == 0][df.floor == 1][df.livesp <= 48][df.livesp >= 42].price)
-# s=sum(a)/len(a)
-# d=[abs(w-s) for w in a]
-# print(min(a),max(a),sum(a)/len(a),sum(d)/len(d))
-=======
->>>>>>> 4bbbd537e2b77839d1cb2a08cf6fb785695d288b
->>>>>>> fb9b6ebc3ad7dfa14c9b8b138f084c5747ade6e8
