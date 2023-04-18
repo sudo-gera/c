@@ -1,35 +1,37 @@
-import asyncio
-import random
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import time
 
-class connection(asyncio.Protocol):
-    def connection_made(self, transport):
-        peername = transport.get_extra_info('peername')
-        print('Connection from {}'.format(peername))
-        self.transport = transport
+hostName = "0.0.0.0"
+hostPort = 9000
 
-    def data_received(self, data):
-        asyncio.create_task(self.dr(data))
+class MyServer(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header("Content-type", "text/html; charset=utf-8")
+        self.end_headers()
+        self.wfile.write(bytes("<html><head><title>Title goes here.</title></head>".encode()))
+        self.wfile.write(bytes("<body><p>This is a test.</p>".encode()))
+        self.wfile.write(bytes(("<p>You accessed path: %s</p>" % self.path).encode()))
+        self.wfile.write(bytes("</body></html>".encode()))
+    def do_POST(self):
+        self.send_response(200)
+        self.send_header("Content-type", "text/html; charset=utf-8")
+        self.end_headers()
+        lenn=int(self.headers['Content-Length'])
+        data=self.rfile.read(lenn)
+        self.wfile.write(bytes("<html><head><title>Title goes here.</title></head>".encode()))
+        self.wfile.write(bytes("<body><p>This is a test.</p>".encode()))
+        self.wfile.write(bytes(("<p>You accessed path: %s</p>" % self.path).encode()))
+        self.wfile.write(bytes("</body></html>".encode()))
+        self.wfile.write(bytes(data))
 
-    async def dr(self,data):
-        message = data.decode()
-        print('Data received: {!r}'.format(message))
+myServer = HTTPServer((hostName, hostPort), MyServer)
+print(time.asctime(), "Server Starts - %s:%s" % (hostName, hostPort))
 
-        await asyncio.sleep(random.random())
+try:
+    myServer.serve_forever()
+except KeyboardInterrupt:
+    pass
 
-        print('_________Send: {!r}'.format(message))
-        self.transport.write(data)
-
-        print('Close the client socket')
-        self.transport.close()
-
-
-async def main():
-    loop = asyncio.get_running_loop()
-    server = await loop.create_server(
-        connection,
-        '',8787)
-    async with server:
-        await server.serve_forever()
-    await asyncio.gather(*asyncio.all_tasks() - {asyncio.current_task()})
-asyncio.run(main())
-
+myServer.server_close()
+print(time.asctime(), "Server Stops - %s:%s" % (hostName, hostPort))
