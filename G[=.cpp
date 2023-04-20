@@ -82,4 +82,53 @@ auto ScanVector(T& x) {
 
 ///////////////////////////////////////////////////end of lib
 
+__int128_t Fib(__int128_t n, __int128_t m) {
+    __int128_t t = 0;
+    __int128_t f0 = 0;
+    __int128_t f1 = 0;
+    t = 1;
+    while (t < n) {
+        t <<= 1;
+    }
+    f0 = 0;
+    f1 = 1;
+    while (t > 1) {
+        if (n & t) {
+            f1 += f0;
+            f0 = f1 - f0;
+        }
+        tie(f0, f1) = make_tuple(f1 * f0 * 2 - f0 * f0, f0 * f0 + f1 * f1);
+        if (m) {
+            f0 = f0 % mod % m;
+            f1 = f1 % mod % m;
+        }
+        t >>= 1;
+    }
+    return n % 2 ? f1 : f0;
+}
 
+int main() {
+    size_t n = scan;
+    size_t q = scan;
+    vector<ssize_t> x(n);
+    vector<ssize_t> y(n);
+    vector<size_t> k(n);
+    vector<ssize_t> c(q);
+    for (size_t q = 0; q < n; ++q) {
+        x[q] = scan;
+        y[q] = scan;
+        k[q] = scan;
+    }
+    ScanVector(c);
+    for (size_t w = 0; w < q; ++w) {
+        __int128_t full_ans = 0;
+        for (size_t e = 0; e < n; ++e) {
+            if (y[e] - x[e] - c[w] < 0) {
+                continue;
+            }
+            __int128_t ans = Fib(y[e] - x[e] - c[w] + 1, 1'000'000'009);
+            full_ans += ans * k[e] % 1'000'000'009;
+        }
+        cout << static_cast<size_t>(full_ans % 1'000'000'009) << endl;
+    }
+}

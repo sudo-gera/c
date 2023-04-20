@@ -1,37 +1,18 @@
-from http.server import BaseHTTPRequestHandler, HTTPServer
-import time
-
-hostName = "0.0.0.0"
-hostPort = 9000
-
-class MyServer(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.send_header("Content-type", "text/html; charset=utf-8")
-        self.end_headers()
-        self.wfile.write(bytes("<html><head><title>Title goes here.</title></head>".encode()))
-        self.wfile.write(bytes("<body><p>This is a test.</p>".encode()))
-        self.wfile.write(bytes(("<p>You accessed path: %s</p>" % self.path).encode()))
-        self.wfile.write(bytes("</body></html>".encode()))
-    def do_POST(self):
-        self.send_response(200)
-        self.send_header("Content-type", "text/html; charset=utf-8")
-        self.end_headers()
-        lenn=int(self.headers['Content-Length'])
-        data=self.rfile.read(lenn)
-        self.wfile.write(bytes("<html><head><title>Title goes here.</title></head>".encode()))
-        self.wfile.write(bytes("<body><p>This is a test.</p>".encode()))
-        self.wfile.write(bytes(("<p>You accessed path: %s</p>" % self.path).encode()))
-        self.wfile.write(bytes("</body></html>".encode()))
-        self.wfile.write(bytes(data))
-
-myServer = HTTPServer((hostName, hostPort), MyServer)
-print(time.asctime(), "Server Starts - %s:%s" % (hostName, hostPort))
-
-try:
-    myServer.serve_forever()
-except KeyboardInterrupt:
-    pass
-
-myServer.server_close()
-print(time.asctime(), "Server Stops - %s:%s" % (hostName, hostPort))
+from sys import *
+n=2**16
+if len(argv)>1:
+    print(n-1)
+    for w in range(n):
+        print(9,end=' ')
+    print()
+    print(n-1)
+    for w in range(n):
+        print(-9,end=' ')
+    print()
+else:
+    print(2*n-2,end=' ')
+    for q in range(1,n):
+        print(-q*9*9,end=' ')
+    for q in range(n,0,-1):
+        print(-q*9*9,end=' ')
+print()
