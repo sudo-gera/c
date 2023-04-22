@@ -1,7 +1,9 @@
-#include <cstdio>
-int main(){
-    long n;
-    scanf("%li",&n);
-    n/=7;
-    printf("%li",n);
+
+auto f(const int n){
+    n = 1; //mistake
 }
+
+int main(){
+    f(0);
+}
+
