@@ -4,6 +4,8 @@
   [[ -n $BASH_VERSION ]] && (return 0 2>/dev/null)
 ) && sourced=1 || sourced=0
 
+echo $sourced
+
 
 # echo "$0"
 # export _q=1
