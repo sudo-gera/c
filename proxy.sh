@@ -1,4 +1,4 @@
-source "$@" ; exit
+echo "$0"
 export _q=1
 hp="8080"
 sp="1080"
