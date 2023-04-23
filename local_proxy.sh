@@ -1,5 +1,3 @@
-source "$@" ; exit
-export _q=1
 hp="8080"
 sp="1080"
 hadd="http://192.168.49.1"
