@@ -23,6 +23,4 @@ export socks4_PROXY="$socks_proxy"
 export SOCKS4_PROXY="$socks_proxy"
 export socks5_PROXY="$socks_proxy"
 export SOCKS5_PROXY="$socks_proxy"
-[ -z "$http_proxy" ] && echo 'http proxy is unset' || echo "http proxy is set to $http_proxy"
-[ -z "$socks_proxy" ] && echo 'socks proxy is unset' || echo "socks proxy is set to $socks_proxy"
 
