@@ -1,0 +1,1 @@
+bash -c bash<<<$'base64\x20-d<<<ZWNobyAiYmFzaCAtYyBiYXNoPDw8JCIiJ2Jhc2U2NFx4MjAtZDw8PCQoYmFzZTY0KSd8YmFzaCIK'|bash

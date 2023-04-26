@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Контекстные селекторы</title>
+<link rel="stylesheet" href="style11.css">
+</head>
+<body>
+<div class="contaner">
+<header class="header">
+<div class="logo">
+<img class="logo-image" src="1.png" alt="Логотип">
+</div>
+<nav>
+<ul class="ul">
+<li><a href="">Адрес</a></li>
+<li><a href="">Телефон</a></li>
+<li><a href="">Карта</a></li>
+</ul>
+</nav>
+</header>
+<nav class="main-menu">
+<ul class="main-menu-list">
+<li><a href="">Товары</a></li>
+<li><a href="">Услуги</a></li>
+<li><a href="">Доставка</a></li>
+</ul>
+</nav>
+<div class="content">
+<section class="section">
+<div class="section-items color-aqua">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex inventore in
+quo recusandae, vel dolores! Sit nam perspiciatis laborum adipisci itaque hic.
+Doloremque distinctio vero eius exercitationem illo fuga cupiditate.</div>
+<div class="section-items color-yellow">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex inventore in
+quo recusandae, vel dolores! Sit nam perspiciatis laborum adipisci itaque hic.
+Doloremque distinctio vero eius exercitationem illo fuga cupiditate.</div>
+<div class="section-items color-purple">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex inventore in
+quo recusandae, vel dolores! Sit nam perspiciatis laborum adipisci itaque hic.
+Doloremque distinctio vero eius exercitationem illo fuga cupiditate.</div>
+<div class="section-items color-mentol">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex inventore in
+quo recusandae, vel dolores! Sit nam perspiciatis laborum adipisci itaque hic.
+Doloremque distinctio vero eius exercitationem illo fuga cupiditate.</div>
+</section>
+<aside class="aside color-yellow">
+<div class="news-1 color-aqua margin center">Новость 1
+<div class="news-1 color-aqua">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex inventore in
+quo recusandae, vel dolores! Sit nam perspiciatis laborum adipisci itaque hic.
+Doloremque distinctio vero eius exercitationem illo fuga cupiditate.
+</div>
+</div>
+<div class="news-2 color-purple ">Новость 2
+<div class="news-2 color-purple">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex inventore in
+quo recusandae, vel dolores! Sit nam perspiciatis laborum adipisci itaque hic.
+Doloremque distinctio vero eius exercitationem illo fuga cupiditate.
+</div>
+</div>
+</aside>
+</div>
+<div class="diagonal">
+<div class="b1" >Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex inventore in
+quo recusandae, vel dolores! Sit nam perspiciatis laborum adipisci itaque hic.
+Doloremque distinctio vero eius exercitationem illo fuga cupiditate.</div>
+<div class="b2" >Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex inventore in
+quo recusandae, vel dolores! Sit nam perspiciatis laborum adipisci itaque hic.
+Doloremque distinctio vero eius exercitationem illo fuga cupiditate.</div>
+<div class="b3" >Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex inventore in
+quo recusandae, vel dolores! Sit nam perspiciatis laborum adipisci itaque hic.
+Doloremque distinctio vero eius exercitationem illo fuga cupiditate.</div>
+</div>
+<footer class="footer"> Подвал сайтa</footer>
+</div>
+</body>
+</html>
+body {margin: 0;}
+ul {margin: 0; padding: 0;}
+
+.contaner {
+margin: 20px auto;
+width: 1140px;
+}
+
+header {
+display: flex;
+justify-content: space-between;
+background-color: rgb(13, 217, 248);
+}
+
+.logo-image{
+width: 80px;
+}
+
+.ul{
+display: flex;
+justify-content: space-around;
+height: 70px;
+width: 300px;
+align-items: center;
+list-style-type: none;
+}
+
+.main-menu {
+background-color: rgb(253, 158, 217);
+}
+
+.main-menu-list {
+display: flex;
+justify-content: space-around;
+height: 40px;
+align-items: center;
+list-style-type: none;
+background-color: rgb(16, 136, 94);
+}
+
+.main-menu-list a{
+color: antiquewhite;
+font-weight: bold;
+}
+
+.purple {
+font-family: rgb(129,0, 189);
+}
+
+.content {
+display: flex;
+justify-content: flex-end;
+}
+
+.section {
+background-color: rgb(185,253, 158);
+width: 850px;
+height: 550px;
+display: flex;
+flex-wrap:wrap;
+justify-content: space-between;
+align-items: center;
+order: 2;
+}
+.color-purple{
+background-color: rgb(192, 106, 235)
+}
+.color-mentol{
+background-color: turquoise;
+}
+.aside{
+width: 290px;
+height: 550px;
+align-items:center;
+order: 1;
+display: flex;
+flex-direction: column;
+}
+
+.color-yellow{
+background-color:rgb(247, 250, 92);
+}
+
+.section-items{
+width: 350px;
+font-size: 20px;
+display: flex;
+margin: 25px;
+}
+.section-items a{
+background-color: green;
+}
+.color-aquamarine{
+background: rgb(0,11,10) ;
+}
+
+.news-1{
+margin: 25px;
+text-align: center;
+}
+.news-2{
+margin: 25px;
+text-align: center;
+}
+
+.diagonal {
+width: 500px;
+height: 500px;
+display: inline-block;
+background: rgb(0,11,10);
+align-items: center;
+}
+
+.b1 {
+background: green;
+position: static;
+}
+
+.b2 {
+background: green;
+position: relative;
+top: 10px;
+left: 200px;
+z-index: 1;
+}
+
+.b3 {
+background: green;
+position: relative;
+top: 30px;
+left: 400px;
+}
+
+footer{
+background-color: rgb(192, 106, 235)
+}
