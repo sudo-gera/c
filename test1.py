@@ -1,17 +1,7 @@
-import aiohttp
-import asyncio
-import random
-async def connect(session):
-    a=str(random.random())
-    async with session.get('http://localhost:8089/'+a) as resp:
-        assert a==await resp.text()
-    
+from __future__ import annotations
+from test import test
+class _test1:
+    pass
 
-async def main():
-    async with aiohttp.ClientSession() as session:
-        for q in range(999):
-            asyncio.create_task(connect(session))
-        await asyncio.gather(*asyncio.all_tasks() - {asyncio.current_task()})
-
-
-asyncio.run(main())
+def _f1(a:_test1,b:test._test):
+    ...
