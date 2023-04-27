@@ -30,6 +30,8 @@
 #include <tgmath.h>
 #include <unistd.h>
 
+int unused=0;
+
 int check(const char*place){
     // fprintf(stderr,"--> %s\n",place);
     if (errno){
@@ -223,7 +225,7 @@ int exit_pipe[2]={-1,-1};//
 
 void handler(int sig_num) {
     if (exit_pipe[1]!=-1){_;
-        write(exit_pipe[1],&sig_num,1);
+        unused=write(exit_pipe[1],&sig_num,1);
         if (errno){
             exit(0);
         }
@@ -296,13 +298,13 @@ int main(int argc,char**argv) {
         add_to_epoll(epoll_fd,socket_fd,&fds,0,0);_;
     }
 
-    pipe(exit_pipe);_;
+    unused=pipe(exit_pipe);_;
     add_to_epoll(epoll_fd,exit_pipe[0],&fds,0,1);_;
     add_to_epoll(epoll_fd,0,&fds,0,1);_;
 
     dict* d=dict_create();_;
 
-    char buffer[2048];_;
+    char buffer[4096];_;
     uint64_t b_size=0;_;
 
     while (1){_;
@@ -315,7 +317,7 @@ int main(int argc,char**argv) {
                 int client_fd = accept(socket_fd, NULL, NULL);_;
                 uint64_t name=len(fds)<<32;_;
                 add_connection(epoll_fd,name,client_fd,d,&fds);_;
-                {char pd[1024];sprintf(pd,"%24" PRIu64 " %24i\n",name,'n');_;write(1,pd,strlen(pd));}
+                {char pd[1024];sprintf(pd,"%24" PRIu64 " %24i\n",name,'n');_;unused=write(1,pd,strlen(pd));}
             }elif(event.events & EPOLLIN){_;
                 if (event.data.fd==exit_pipe[0]){_;
                     for (uint64_t q=0;q<len(d->data);++q){_;
@@ -330,7 +332,7 @@ int main(int argc,char**argv) {
                     dict_del(d);_;
                     exit(0);_;
                 }elif (event.data.fd==0){_;
-                    char data[4096];_;
+                    char data[8192];_;
                     memmove(data,buffer,b_size);_;
                     uint64_t l=b_size;_;
                     while((l+=read(0,data+l,2048))-b_size-1<1LLU<<63){_;_;
@@ -361,15 +363,22 @@ int main(int argc,char**argv) {
                                     if (l>=75){_;
                                         uint64_t _len=0;_;
                                         sscanf(data+50,"%" PRIu64 "u",&_len);_;
-                                        if (l>=75+_len){_;
+                                        if (l>=75+_len+1){_;
                                             l-=75;_;
                                             memmove(data,data+75,l);_;
                                             item tmp;_;
                                             tmp.key=name;_;
                                             dict_find(d,&tmp);_;
-                                            send(tmp.value,data,_len,0);_;
-                                            l-=_len;_;
-                                            memmove(data,data+_len,l);_;
+                                            char dec_data[4096];
+                                            uint64_t dec_len=0;
+                                            for (uint64_t q=0;q<_len;q+=2){
+                                                data[q]-='a';
+                                                data[q+1]-='a';
+                                                dec_data[dec_len++]=((uint8_t)(data[q]))+(((uint8_t)(data[q+1]))<<4);
+                                            }
+                                            send(tmp.value,dec_data,dec_len,0);_;
+                                            l-=_len+1;_;
+                                            memmove(data,data+_len+1,l);_;
                                         }else{
                                             break;_;
                                         }
@@ -389,9 +398,16 @@ int main(int argc,char**argv) {
                     uint64_t l=0;_;
                     while((l=recv(event.data.fd,data,sizeof(data),0))-1<1LLU<<63){_;
                         uint64_t name=event.data.u64>>32<<32;_;
-                        {char pd[1024];sprintf(pd,"%24" PRIu64 " %24i\n",name,'g');_;write(1,pd,strlen(pd));}
-                        {char pd[1024];sprintf(pd,"%24" PRIu64 " ",l);_;write(1,pd,strlen(pd));}
-                        write(1,data,l);
+                        {char pd[1024];sprintf(pd,"%24" PRIu64 " %24i\n",name,'g');_;unused=write(1,pd,strlen(pd));}
+                        {char pd[1024];sprintf(pd,"%24" PRIu64 " ",l*2);_;unused=write(1,pd,strlen(pd));}
+                        char b16data[2048];
+                        uint64_t b16l=0;
+                        for (uint64_t q=0;q<l;++q){
+                            b16data[b16l++]=(((uint8_t)(data[q]))&0xF)+'a';
+                            b16data[b16l++]=(((uint8_t)(data[q]))>>4)+'a';
+                        }
+                        unused=write(1,b16data,b16l);
+                        unused=write(1,"\n",1);
                         // send(event.data.fd,data,l,0);_;
                     }errno=0;
                 }
@@ -399,10 +415,11 @@ int main(int argc,char**argv) {
             if (event.events & (EPOLLRDHUP | EPOLLHUP)) {_;
                 uint64_t name=event.data.u64>>32<<32;_;
                 close_connection(epoll_fd,name,event.data.fd,d);_;
-                {char pd[1024];sprintf(pd,"%24" PRIu64 " %24i\n",name,'d');_;write(1,pd,strlen(pd));}
+                {char pd[1024];sprintf(pd,"%24" PRIu64 " %24i\n",name,'d');_;unused=write(1,pd,strlen(pd));}
             }
         }
     }
+    return unused*0;
 }
 
 
