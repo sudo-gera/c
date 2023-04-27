@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 try:
     from urllib.request import Request, urlopen  # Python 3
 except ImportError:
@@ -10,3 +11,12 @@ content = urlopen(req).read()
 
 print(content)
 
+=======
+from __future__ import annotations
+from test import test
+class _test1:
+    pass
+
+def _f1(a:_test1,b:test._test):
+    ...
+>>>>>>> 409b23bb6e0aba34433d9b534b13fbc7cca76958

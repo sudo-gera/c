@@ -42,44 +42,81 @@ using std::uniform_int_distribution, std::make_unique, std::make_shared;
 using std::unique, std::decay_t, std::is_convertible_v, std::array;
 using std::unique_ptr, std::shared_ptr;
 
+#define none 9000000000000000000
+
 template <typename T = void>
 struct Scan {
     template <typename Y = T>
     auto operator()() {
-        // Y val;
-        // cin >> val;
-        // return val;
-        return *this;
+        Y val;
+        cin >> val;
+        return val;
     }
     template <typename Y = T>
-    operator Y() {  // NOLINT
+    operator Y() { // NOLINT
         Y val;
         cin >> val;
         return val;
     }
 };
 
-auto scan = Scan();
-
 struct Mod {
-    __int128_t a = 0;
+    ssize_t a = 0;
 };
 
-auto operator%(__int128_t a, Mod) {
+auto operator%(ssize_t a, Mod) {
     return Mod{a};
 }
 
-auto operator%(Mod a, __int128_t b) {
+auto operator%(Mod a, ssize_t b) {
     return (a.a % b + b) % b;
 }
 
 auto mod = Mod();
 
-template <typename T>
-auto ScanVector(T& x) {
-    generate_n(x.begin(), x.size(), scan);
-}
-
 ///////////////////////////////////////////////////end of lib
 
+size_t Gcd(size_t a, size_t b) {
+    return b ? Gcd(b, a % b) : a;
+}
 
+int main() {
+    size_t n = Scan();
+    vector<size_t> a(n);
+    generate_n(a.begin(), n, Scan<size_t>());
+    size_t not1count = 0;
+    for (size_t q = 0; q < n; ++q) {
+        not1count += (a[q] != 1);
+    }
+    if (not1count != n) {
+        cout << not1count << endl;
+        return 0;
+    }
+    size_t se = 0;
+    size_t minlen = none;
+    while (se < n) {
+        size_t cgcd = a[se];
+        for (; se < n; ++se) {
+            cgcd = Gcd(cgcd, a[se]);
+            if (cgcd == 1) {
+                break;
+            }
+        }
+        if (cgcd == 1) {
+            cgcd = a[se];
+            size_t sb = se;
+            for (; sb != -1LLU; --sb) {
+                cgcd = Gcd(cgcd, a[sb]);
+                if (cgcd == 1) {
+                    break;
+                }
+            }
+            minlen = min(minlen, se - sb + 1);
+        }
+    }
+    if (minlen == none) {
+        cout << -1 << endl;
+    } else {
+        cout << not1count + minlen - 2 << endl;
+    }
+}

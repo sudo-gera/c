@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import http.server
 import socket
 import select
@@ -121,3 +122,12 @@ print(time.asctime(), "Server Stops - %s:%s" % (hostName, hostPort))
 
 
 
+=======
+from __future__ import annotations
+from test1 import test1
+class _test:
+    pass
+
+def _f(a:_test,b:test1._test1):
+    ...
+>>>>>>> 409b23bb6e0aba34433d9b534b13fbc7cca76958

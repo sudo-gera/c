@@ -46,10 +46,9 @@ template <typename T = void>
 struct Scan {
     template <typename Y = T>
     auto operator()() {
-        // Y val;
-        // cin >> val;
-        // return val;
-        return *this;
+        Y val;
+        cin >> val;
+        return val;
     }
     template <typename Y = T>
     operator Y() {  // NOLINT
@@ -59,27 +58,36 @@ struct Scan {
     }
 };
 
-auto scan = Scan();
+///////////////////////////////////////////////////end of lib
+
+pair<ssize_t, ssize_t> Egcd(ssize_t a, ssize_t b) {
+    if (b) {
+        auto [c, d] = Egcd(b, a % b);
+        return {d, c - a / b * d};
+    }
+    return {(a > 0) - (a < 0), 0};
+}
 
 struct Mod {
-    __int128_t a = 0;
+    ssize_t a = 0;
 };
 
-auto operator%(__int128_t a, Mod) {
+auto operator%(ssize_t a, Mod) {
     return Mod{a};
 }
 
-auto operator%(Mod a, __int128_t b) {
+auto operator%(Mod a, ssize_t b) {
     return (a.a % b + b) % b;
 }
 
 auto mod = Mod();
 
-template <typename T>
-auto ScanVector(T& x) {
-    generate_n(x.begin(), x.size(), scan);
+int main() {
+    ssize_t a = Scan();
+    ssize_t b = Scan();
+    ssize_t c = Scan();
+    ssize_t d = Scan();
+    ssize_t e = ((a * d + b * c) % mod % 1'000'000'007 * Egcd(b * d, 1'000'000'007).first) % mod % 1'000'000'007;
+    assert((a * d + b * c - b * d % mod % 1'000'000'007 * e) % mod % 1'000'000'007 == 0);
+    cout << e << endl;
 }
-
-///////////////////////////////////////////////////end of lib
-
-

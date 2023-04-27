@@ -1,29 +1,74 @@
-qemu-system-aarch64 -L /Applications/UTM.app/Contents/Resources/qemu             \
--S -qmp tcp:127.0.0.1:4444,server,nowait                                         \
--nodefaults -vga none                                                            \
--cpu cortex-a72                                                                  \
--smp cpus=4,sockets=1,cores=4,threads=1                                          \
--machine virt,virtualization=on                                                  \
--accel tcg,tb-size=2048                                                          \
--drive if=pflash,format=raw,unit=0,file=/Applications/UTM.app/Contents/Resources/qemu/edk2-aarch64-code.fd,readonly=on \
--drive if=pflash,unit=1,file=/Users/gera/Library/Containers/com.utmapp.UTM/Data/Documents/ubuntu_arm64_emulated.utm/Images/efi_vars.fd \
--boot menu=on                                                                    \
--m 8192                                                                          \
--device intel-hda                                                                \
--device hda-duplex                                                               \
--name ubuntu_arm64_emulated                                                      \
--device nec-usb-xhci,id=usb-bus                                                  \
--device usb-tablet,bus=usb-bus.0                                                 \
--device usb-mouse,bus=usb-bus.0                                                  \
--device usb-kbd,bus=usb-bus.0                                                    \
--device qemu-xhci,id=usb-controller-0                                            \
--device usb-storage,drive=cdrom0,removable=true,bootindex=0,bus=usb-bus.0        \
--drive if=none,media=cdrom,id=cdrom0                                             \
--device virtio-blk-pci,drive=drive0,bootindex=1                                  \
--drive if=none,media=disk,id=drive0,file=/Users/gera/Library/Containers/com.utmapp.UTM/Data/Documents/ubuntu_arm64_emulated.utm/Images/data.qcow2,discard=unmap,detect-zeroes=unmap \
--device virtio-net-pci,mac=7A:DE:36:14:AD:32,netdev=net0                         \
--netdev vmnet-shared,id=net0                                                     \
--device virtio-serial                                                            \
--uuid 5155CC4C-602E-48C7-95E2-65DCDB4604B4                                       \
--device virtio-rng-pci                                                           \
--cdrom /Users/gera/Downloads/ubuntu-22.04.2-live-server-arm64.iso                \
+#!/usr/bin/env bash
+
+set -eux
+
+# Tested on Ubuntu 18.10.
+# - https://superuser.com/questions/942657/how-to-test-arm-ubuntu-under-qemu-the-easiest-way
+# - https://askubuntu.com/questions/797599/how-to-run-ubuntu-16-04-arm-in-qemu
+
+# Parameters.
+id=ubuntu-22.04.2-live-server-arm64
+#id=debian-9.6.0-arm64-xfce-CD-1
+img="${id}.img.qcow2"
+img_snapshot="${id}.img.qcow2"
+iso="${id}.iso"
+flash0="${id}-flash0.img"
+flash1="${id}-flash1.img"
+
+# Images.
+if [ ! -f "$iso" ]; then
+  wget "http://cdimage.ubuntu.com/releases/22.04/release/${iso}"
+fi
+if [ ! -f "$img" ]; then
+  qemu-img create -f qcow2 "$img" 1T
+fi
+if [ ! -f "$img_snapshot" ]; then
+  qemu-img \
+    create \
+    -b "$img" \
+    -f qcow2 \
+    "$img_snapshot" \
+  ;
+fi
+if [ ! -f "$flash0" ]; then
+  dd if=/dev/zero of="$flash0" bs=1M count=64
+  dd if=QEMU_EFI.fd of="$flash0" conv=notrunc
+fi
+if [ ! -f "$flash1" ]; then
+  dd if=/dev/zero of="$flash1" bs=1M count=64
+fi
+
+# Run.
+#
+# cdrom must be scsi or else the installation fails midway with:
+#
+# > Detect and mount CD-ROM
+# >
+# > Your installation CD-ROM couldn't be mounted. This probably means
+# > that the CD-ROM was not in the drive. If so you can insert it and try
+# > again.
+# >
+# > Retry mounting the CD-ROM?
+# > Your installation CD-ROM couldn't be mounted.
+#
+# This is because the drivers for the default virtio are not installed in the ISO,
+# because in the past it was not reliable on qemu-system-aarch64.
+#
+# See also:
+# https://bazaar.launchpad.net/~ubuntu-testcase/ubuntu-manual-tests/trunk/view/head:/testcases/image/1688_ARM64_Headless_KVM_Guest
+qemu-system-aarch64 \
+  -cpu cortex-a57 \
+  -device rtl8139,netdev=net0 \
+  -device virtio-scsi-device \
+  -device scsi-cd,drive=cdrom \
+  -device virtio-blk-device,drive=hd0 \
+  -drive "file=${iso},id=cdrom,if=none,media=cdrom" \
+  -drive "if=none,file=${img_snapshot},id=hd0" \
+  -m 2G \
+  -machine virt \
+  -netdev user,id=net0 \
+  -nographic \
+  -pflash "$flash0" \
+  -pflash "$flash1" \
+  -smp 2 \
+;
