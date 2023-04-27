@@ -22,8 +22,9 @@ class MyServer(BaseHTTPRequestHandler):
         self.wfile.write(bytes("<html><head><title>Title goes here.</title></head>".encode()))
         self.wfile.write(bytes("<body><p>This is a test.</p>".encode()))
         self.wfile.write(bytes(("<p>You accessed path: %s</p>" % self.path).encode()))
+        self.wfile.write(bytes(("<p>data: %s</p>" % repr(data)).encode()))
         self.wfile.write(bytes("</body></html>".encode()))
-        self.wfile.write(bytes(data))
+        # self.wfile.write(bytes(data))
 
 myServer = HTTPServer((hostName, hostPort), MyServer)
 print(time.asctime(), "Server Starts - %s:%s" % (hostName, hostPort))
