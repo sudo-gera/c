@@ -1,133 +1,41 @@
-<<<<<<< HEAD
-import http.server
-import socket
-import select
-import time
+import termios
+import copy
 import sys
-import os
-import base64
-import json
-from icecream import ic
+from termios import *
 
-# class Server:
-
-#     def create_server(self, host, port):
-#         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-#         server.bind((host, port))
-#         server.listen(200)
-#         self.input[server]={
-#             'on_event': self.on_accept,
-#         }
-
-#     def __init__(self):
-#         self.input={}
-#         self.client_by_id={}
-
-#     def main_loop(self):
-#         ss = select.select
-#         while 1:
-#             input_ready, output_ready, except_ready = ss(self.input.keys(), [], [])
-#             ic('got event')
-#             for s in input_ready:
-#                 if not self.input[s]['on_event'](s):
-#                     break
-
-#     def on_event(self,client):
-#         try:
-#             data = client.recv(65536)
-#         except ConnectionResetError:
-#             data = ''
-#         if not data:
-#             self.on_close(client)
-#         else:
-#             self.on_recv(client,data)
-#             return 1
-
-#     def on_accept(self,server):
-#         client, client_addr = server.accept()
-#         print (client_addr, "has connected")
-#         client_id = int(time.time()*2**128)
-#         self.client_by_id[client_id]=client
-#         self.input[client]={
-#             'on_event': self.on_event,
-#             'id': client_id,
-#         }
-
-#     def on_close(self,client):
-#         try:
-#             n=client.getpeername()
-#         except OSError:
-#             n='(undefined)'
-#         print (n, "has disconnected")
-#         client_id=self.input[client]['id']
-#         client.close()
-#         del self.input[client]
-#         del self.client_by_id[client_id]
-
-#     def on_recv(self,client,data):
-#         client_id=self.input[client]['id']
-#         ic(client_id,data)
-#         meth
-
-#     def __del__(self):
-#         for w in self.input:
-#             w.close()
-
-# s=Server()
-# s.create_server('',9009)
-# s.main_loop()
-
-from http.server import BaseHTTPRequestHandler, HTTPServer
-import time
-
-hostName = "0.0.0.0"
-hostPort = 9009
-
-class MyServer(BaseHTTPRequestHandler):
-    def parse_request(self) -> bool:
-        ic(self.raw_requestline)
-        return super().parse_request()
-
-    def do_GET(self):
-        ic(list(self.headers.items()))
-        if self.headers['Connection']=='Upgrade' and self.headers['Upgrade']=='websocket':
-            self.send_response(101)
-            self.send_header("Upgrade", "websocket")
-            self.send_header("Connection", "Upgrade")
-            return
-        self.send_response(200)
-        self.send_header("Content-type", "text/html; charset=utf-8")
-        self.end_headers()
-        # self.wfile.write(bytes("<html><head><title>Title goes here.</title></head>".encode()))
-        # self.wfile.write(bytes("<body><p>This is a test.</p>".encode()))
-        # self.wfile.write(bytes(("<p>You accessed path: %s</p>" % self.path).encode()))
-        # self.wfile.write(bytes("</body></html>".encode()))
-
-myServer = HTTPServer((hostName, hostPort), MyServer)
-print(time.asctime(), "Server Starts - %s:%s" % (hostName, hostPort))
-
-try:
-    myServer.serve_forever()
-except KeyboardInterrupt:
-    pass
-
-myServer.server_close()
-print(time.asctime(), "Server Stops - %s:%s" % (hostName, hostPort))
+def receive_key_event_unsafe():
+    # if you will use it in while(1)
+    # you will never stop
+    # ctrl+C returns as 3
+    fd=sys.stdin.fileno()
+    mode=termios.tcgetattr(fd)
+    save=copy.copy(mode)
+    mode[0] &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON)
+    mode[1] &= ~(OPOST)
+    mode[2] &= ~(CSIZE | PARENB)
+    mode[2] |= CS8
+    mode[3] &= ~(ECHO | ICANON | IEXTEN | ISIG)
+    mode[6][VMIN] = 1
+    mode[6][VTIME] = 0
+    termios.tcsetattr(fd, termios.TCSAFLUSH, mode)
+    c=sys.stdin.read(1);
+    termios.tcsetattr(fd, termios.TCSADRAIN, save);
+    return c;
 
 
+def receive_key_event():
+    k=receive_key_event_unsafe()
+    # stop if
+    #   ctrl+shift+@ is 0
+    #   ctrl+A is 1
+    #   ctrl+B is 2
+    #   ctrl+C is 3
+    #   ctrl+D is 4
+    if ord(k[0])<5:
+        exit(0)
+    return k;
 
 
-
-
-
-
-=======
-from __future__ import annotations
-from test1 import test1
-class _test:
-    pass
-
-def _f(a:_test,b:test1._test1):
-    ...
->>>>>>> 409b23bb6e0aba34433d9b534b13fbc7cca76958
+while(1):
+    print(receive_key_event(),end='')
+    sys.stdout.flush()

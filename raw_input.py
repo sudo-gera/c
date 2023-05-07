@@ -18,7 +18,7 @@ def receive_key_event_unsafe():
     mode[6][VMIN] = 1
     mode[6][VTIME] = 0
     termios.tcsetattr(fd, termios.TCSAFLUSH, mode)
-    c=sys.stdin.buffer.read();
+    c=sys.stdin.read(1);
     termios.tcsetattr(fd, termios.TCSADRAIN, save);
     return c;
 
@@ -31,10 +31,11 @@ def receive_key_event():
     #   ctrl+B is 2
     #   ctrl+C is 3
     #   ctrl+D is 4
-    if k<5:
+    if ord(k[0])<5:
         exit(0)
     return k;
 
 
 while(1):
     print(receive_key_event(),end='')
+    sys.stdout.flush()
