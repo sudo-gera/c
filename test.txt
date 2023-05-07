@@ -1,1 +1,571 @@
-c/test.sh +
+Script started on Sat May  6 23:33:44 2023
+[?1034h[34m23:33:44[0m:[33marm64[0m:[32m~[0m$ a[Knano
+[?2004h[?1049h[22;0;0t[1;58r(B[m[4l[?7h[39;49m[?1h=[?1h=[?25l[39;49m(B[m[H[2J(B[0;7m  GNU nano 7.1                                                                                                      Новый буфер                                                                                                               [1;237H(B[m[56;84H(B[0;7m[ Добро пожаловать в nano. Базовая справка доступна по нажатию Ctrl+G. ](B[m[57d(B[0;7m^G(B[m Справка[57;19H(B[0;7m^O(B[m Записать[37G(B[0;7m^W(B[m Поиск[57;55H(B[0;7m^K(B[m Вырезать[73G(B[0;7m^T(B[m Выполнить[91G(B[0;7m^C(B[m Позиция[57;109H(B[0;7mM-U(B[m Отмена[57;127H(B[0;7mM-A(B[m Установить мет(B[0;7mM-](B[m На скобку     (B[0;7mM-Q(B[m Предыдущий    (B[0;7m^B(B[m Назад[57;199H(B[0;7m^◂(B[m ПредСлово[217G(B[0;7m^A(B[m Начало[58d(B[0;7m^X(B[m Выход[58;19H(B[0;7m^R(B[m ЧитФайл[58;37H(B[0;7m^\(B[m Замена[58;55H(B[0;7m^U(B[m Вставить[73G(B[0;7m^J(B[m Выровнять[91G(B[0;7m^/(B[m К строке[109G(B[0;7mM-E(B[m Повтор[58;127H(B[0;7mM-6(B[m Копировать    (B[0;7m^Q(B[m Обр. поиск     (B[0;7mM-W(B[m Следующий     (B[0;7m^F(B[m Вперёд[58;199H(B[0;7m^▸(B[m СледСлово[217G(B[0;7m^E(B[m Конец[2d[?12l[?25h[?25l[56d[J[58d[?12l[?25h[58;1H[?1049l[23;0;0t[?1l>[?2004l[34m23:33:59[0m:[33marm64[0m:[32m~[0m$ [4@(reverse-i-search)`':[C2': ssh -tp 33336 192.168.49.1 /home/gera/main2': ssh -tp 2222 192.168.49.1 tmux att -t main[1@2[C[C[C[C[C[C[C[C[C[C[C[C[7P[34m23:33:59[0m:[33marm64[0m:[32m~[0m$[34m23:33:59[0m:[33marm64[0m:[32m~[0m$ [C[C[C[C[C[C[C[C[C
+[?1049h[22;0;0t[?1h=[H[2J[?12l[?25h[?1000l[?1002l[?1003l[?1006l[?1005l(B[m[?12l[?25h[?1006l[?1000l[?1002l[?1003l[?2004l[1;1H[1;58r[>c[>q[1;5H[?1006l[?1000l[?1002l[?1003l[?1006h[?1000h[?1002h[?2004h[?25l[32m[H~[39m [97m$[39m [K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[30m[42m
+[main] 0:bash*                                                                                                                                                                                                     "localhost" 23:34 06-May-23(B[m[?12l[?25h[1;5H(B[m[?12l[?25h[?1006l[?1000l[?1002l[?1003l[?2004l[1;1H[1;58r[1;5H[?1006l[?1000l[?1002l[?1003l[?1006h[?1000h[?1002h[?2004h[?25l[32m[H~[39m [97m$[39m [K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[30m[42m
+[main] 0:bash*                                                                                                                                                                                                     "localhost" 23:34 06-May-23(B[m[?12l[?25h[1;5H[?7727h[?69h[?7727h[1;58r[s[1;5HP=1s\[?25l[32m[H~[39m [97m$[39m [55X[1;60H                                                                                                                                                                              [30m[43m[0/0][39m[49m[2;1H[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[?12l[?25h[1;5H[?2004lP=2s\P=1s\[?25l[30m[42m[58;1H[main] 0:[tmux]*                                                                                                                                                                                                   "localhost" 23:34 06-May-23(B[m[?12l[?25h[1;5HP=2s\P=1s\[?25l[32m[H~[39m [97m$[39m [K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[?12l[?25h[1;5H[?2004hP=2s\P=1s\[?25l[30m[42m[58;1H[main] 0:bash*                                                                                                                                                                                                     "localhost" 23:34 06-May-23(B[m[?12l[?25h[1;5HP=2s\P=1s\[?25l[H(0) + IPoVK: 1 windows[K
+(1) + IPoVK_1: 1 windows[K
+(2) + udp-relay: 1 windows[K
+(3) + mipt: 3 windows[K[30m[43m
+(4) + main: 1 windows (attached)[39m[K[49m
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+┌(B[m main (sort: index) ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐[30;1H│(B[m[1X[32m[C~[39m [97m$[39m [7m (B[m                                                      [176X[30;238H│[31;1H│(B[m[236X[31;238H│[32;1H│(B[m[236X[32;238H│[33;1H│(B[m[236X[33;238H│[34;1H│(B[m[236X[34;238H│[35;1H│(B[m[236X[35;238H│[36;1H│(B[m[236X[36;238H│[37;1H│(B[m[236X[37;238H│[38;1H│(B[m[236X[38;238H│[39;1H│(B[m[236X[39;238H│[40;1H│(B[m[236X[40;238H│[41;1H│(B[m[236X[41;238H│[42;1H│(B[m[236X[42;238H│[43;1H│(B[m[113X[43;115H┌────────┐(B[m[113X[43;238H│[44;1H│(B[m[113X[44;115H│(B[m[31m 0:bash [39m│(B[m[113X[44;238H│[45;1H│(B[m[113X[45;115H└────────┘(B[m[113X[45;238H│[46;1H│(B[m[236X[46;238H│[47;1H│(B[m[236X[47;238H│[48;1H│(B[m[236X[48;238H│[49;1H│(B[m[236X[49;238H│[50;1H│(B[m[236X[50;238H│[51;1H│(B[m[236X[51;238H│[52;1H│(B[m[236X[52;238H│[53;1H│(B[m[236X[53;238H│[54;1H│(B[m[236X[54;238H│[55;1H│(B[m[236X[55;238H│[56;1H│(B[m[236X[56;238H│[57;1H└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘(B[m[?12l[?25h[5;1H[?25l[?2004lP=2s\P=1s\[H(0) + IPoVK: 1 windows[K
+(1) + IPoVK_1: 1 windows[K
+(2) + udp-relay: 1 windows[K
+(3) + mipt: 3 windows[K[30m[43m
+(4) + main: 1 windows (attached)[39m[K[49m
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+┌(B[m main (sort: index) ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐[30;1H│(B[m[1X[32m[C~[39m [97m$[39m [7m (B[m                                                      [176X[30;238H│[31;1H│(B[m[236X[31;238H│[32;1H│(B[m[236X[32;238H│[33;1H│(B[m[236X[33;238H│[34;1H│(B[m[236X[34;238H│[35;1H│(B[m[236X[35;238H│[36;1H│(B[m[236X[36;238H│[37;1H│(B[m[236X[37;238H│[38;1H│(B[m[236X[38;238H│[39;1H│(B[m[236X[39;238H│[40;1H│(B[m[236X[40;238H│[41;1H│(B[m[236X[41;238H│[42;1H│(B[m[236X[42;238H│[43;1H│(B[m[112X[43;114H┌──────────┐(B[m[112X[43;238H│[44;1H│(B[m[112X[44;114H│(B[m[31m 0:[tmux] [39m│(B[m[112X[44;238H│[45;1H│(B[m[112X[45;114H└──────────┘(B[m[112X[45;238H│[46;1H│(B[m[236X[46;238H│[47;1H│(B[m[236X[47;238H│[48;1H│(B[m[236X[48;238H│[49;1H│(B[m[236X[49;238H│[50;1H│(B[m[236X[50;238H│[51;1H│(B[m[236X[51;238H│[52;1H│(B[m[236X[52;238H│[53;1H│(B[m[236X[53;238H│[54;1H│(B[m[236X[54;238H│[55;1H│(B[m[236X[55;238H│[56;1H│(B[m[236X[56;238H│[57;1H└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘(B[m[30m[42m[58;1H[main] 0:[tmux]*                                                                                                                                                                                                   "localhost" 23:34 06-May-23(B[m[5;1HP=2s\P=1s\[30m[43m[H(0) + IPoVK: 1 windows[39m[K[49m
+(1) + IPoVK_1: 1 windows[K
+(2) + udp-relay: 1 windows[K
+(3) + mipt: 3 windows[K
+(4) + main: 1 windows (attached)[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+┌(B[m IPoVK (sort: index) ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐[30;1H│(B[m[1X[Clen(data): 91                                              [176X[30;238H│[31;1H│(B[m[1X[Cconnections_len(): 2                                       [176X[31;238H│[32;1H│(B[m[1X[92m[Cpid [94m4454[92m time [94mSat May 6 23:34:17.055 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m [39m                         [116X[32;238H│[33;1H│(B[m[1X[Clen(data): 731                                             [176X[33;238H│[34;1H│(B[m[1X[Cconnections_len(): 2                                       [176X[34;238H│[35;1H│(B[m[1X[92m[Cpid [94m4454[92m time [94mSat May 6 23:34:17.281 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m [39m                         [116X[35;238H│[36;1H│(B[m[1X[Clen(data): 9098                                            [176X[36;238H│[37;1H│(B[m[1X[Cconnections_len(): 2                                       [176X[37;238H│[38;1H│(B[m[1X[92m[Cpid [94m4454[92m time [94mSat May 6 23:34:17.471 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m [39m                         [116X[38;238H│[39;1H│(B[m[1X[Clen(data): 446                                             [176X[39;238H│[40;1H│(B[m[1X[Cconnections_len(): 2                                       [176X[40;238H│[41;1H│(B[m[1X[92m[Cpid [94m4454[92m time [94mSat May 6 23:34:17.670 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m [39m                         [116X[41;238H│[42;1H│(B[m[1X[Clen(data): 755                                             [176X[42;238H│[43;1H│(B[m[1X[Cconnections_len(): 2                                       [52X[43;114H┌──────────┐(B[m[112X[43;238H│[44;1H│(B[m[1X[92m[Cpid [94m4454[92m time [94mSat May 6 23:34:17.811 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m [39m                 │(B[m[31m 0:python [39m│(B[m[112X[44;238H│[45;1H│(B[m[1X[Clen(data): 246                                             [52X[45;114H└──────────┘(B[m[112X[45;238H│[46;1H│(B[m[1X[Cconnections_len(): 2                                       [176X[46;238H│[47;1H│(B[m[1X[92m[Cpid [94m4454[92m time [94mSat May 6 23:34:18.105 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m [39m                         [116X[47;238H│[48;1H│(B[m[1X[Clen(data): 28                                              [176X[48;238H│[49;1H│(B[m[1X[Cconnections_len(): 2                                       [176X[49;238H│[50;1H│(B[m[1X[92m[Cpid [94m4454[92m time [94mSat May 6 23:34:18.218 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m [39m                         [116X[50;238H│[51;1H│(B[m[1X[Clen(data): 1                                               [176X[51;238H│[52;1H│(B[m[1X[Cconnections_len(): 2                                       [176X[52;238H│[53;1H│(B[m[1X[92m[Cpid [94m4454[92m time [94mSat May 6 23:34:18.358 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m [39m                         [116X[53;238H│[54;1H│(B[m[1X[Clen(data): 1                                               [176X[54;238H│[55;1H│(B[m[1X[Cconnections_len(): 1                                       [176X[55;238H│[56;1H│(B[m[1X[7m[C (B[m[234X[56;238H│[57;1H└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘(B[m[1;1HP=2s\P=1s\len(data): 331[K
+connections_len(): 2[K[92m
+pid [94m4454[92m time [94mSat May 6 23:34:02.397 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m [39m[K
+len(data): 6766[K
+connections_len(): 2[K[92m
+pid [94m4454[92m time [94mSat May 6 23:34:02.616 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m [39m[K
+len(data): 418[K
+connections_len(): 2[K[92m
+pid [94m4454[92m time [94mSat May 6 23:34:02.716 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m [39m[K
+len(data): 211[K
+connections_len(): 2[K[92m
+pid [94m4454[92m time [94mSat May 6 23:34:02.913 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m [39m[K
+len(data): 246[K
+connections_len(): 2[K[92m
+pid [94m4454[92m time [94mSat May 6 23:34:03.241 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m [39m[K
+len(data): 119[K
+connections_len(): 2[K[92m
+pid [94m4454[92m time [94mSat May 6 23:34:04.051 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m [39m[K
+len(data): 27[K
+connections_len(): 2[K[92m
+pid [94m4454[92m time [94mSat May 6 23:34:16.143 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m [39m[K
+len(data): 27[K
+connections_len(): 2[K[92m
+pid [94m4454[92m time [94mSat May 6 23:34:16.241 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m [39m[K
+len(data): 192[K
+connections_len(): 2[K[92m
+pid [94m4454[92m time [94mSat May 6 23:34:16.265 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m [39m[K
+len(data): 1[K
+connections_len(): 2[K[92m
+pid [94m4454[92m time [94mSat May 6 23:34:16.881 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m [39m[K
+len(data): 91[K
+connections_len(): 2[K[92m
+pid [94m4454[92m time [94mSat May 6 23:34:17.055 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m [39m[K
+len(data): 731[K
+connections_len(): 2[K[92m
+pid [94m4454[92m time [94mSat May 6 23:34:17.281 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m [39m[K
+len(data): 9098[K
+connections_len(): 2[K[92m
+pid [94m4454[92m time [94mSat May 6 23:34:17.471 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m [39m[K
+len(data): 446[K
+connections_len(): 2[K[92m
+pid [94m4454[92m time [94mSat May 6 23:34:17.670 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m [39m[K
+len(data): 755[K
+connections_len(): 2[K[92m
+pid [94m4454[92m time [94mSat May 6 23:34:17.811 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m [39m[K
+len(data): 246[K
+connections_len(): 2[K[92m
+pid [94m4454[92m time [94mSat May 6 23:34:18.105 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m [39m[K
+len(data): 28[K
+connections_len(): 2[K[92m
+pid [94m4454[92m time [94mSat May 6 23:34:18.218 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m [39m[K
+len(data): 1[K
+connections_len(): 2[K[92m
+pid [94m4454[92m time [94mSat May 6 23:34:18.358 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m [39m[K
+len(data): 1[K
+connections_len(): 1[K
+[K[30m[42m
+[IPoVK] 0:python*                                                                                                                                                                                                  "localhost" 23:34 06-May-23(B[m[57;1H[?12l[?25hP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:20.220 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 27[K
+connections_len(): 1[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:21.337 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 244[K
+connections_len(): 2[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:22.001 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 91[K
+connections_len(): 2[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:22.172 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 731[K
+connections_len(): 2[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:22.280 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 27[K
+connections_len(): 2[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:22.467 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 4803[K
+connections_len(): 2[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:22.543 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 1446[K
+connections_len(): 2[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:22.741 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 807[K
+connections_len(): 2[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:22.903 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 127[K
+connections_len(): 2[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:22.976 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 871[K
+connections_len(): 2[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:23.178 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 331[K
+connections_len(): 2[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:23.258 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 6727[K
+connections_len(): 2[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:23.453 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 418[K
+connections_len(): 2[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:23.520 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 211[K
+connections_len(): 2[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:23.718 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 127[K
+connections_len(): 2[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:23.863 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 119[K
+connections_len(): 2[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:24.015 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 119[K
+connections_len(): 2[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:24.721 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 360[K
+connections_len(): 3[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:25.327 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 91[K
+connections_len(): 3[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[2S[55d[92mpid [94m4454[92m time [94mSat May 6 23:34:25.458 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 731[K
+connections_len(): 3[K[1;58r[57;21HP=2s\P=1s\[1;57r[57;238H
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:25.665 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 5975[K
+connections_len(): 3[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:25.741 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 139[K
+connections_len(): 3[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[2S[55d[92mpid [94m4454[92m time [94mSat May 6 23:34:30.911 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 376[K
+connections_len(): 4[K[1;58r[57;21HP=2s\P=1s\[1;57r[57;238H
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:31.561 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 91[K
+connections_len(): 4[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:31.696 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 1075[K
+connections_len(): 4[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:31.760 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 27[K
+connections_len(): 4[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:31.857 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 192[K
+connections_len(): 4[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:31.880 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 1[K
+connections_len(): 4[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:31.961 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 547[K
+connections_len(): 4[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[2S[55d[92mpid [94m4454[92m time [94mSat May 6 23:34:32.046 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 1027[K
+connections_len(): 4[K[1;58r[57;21HP=2s\P=1s\[1;57r[57;238H
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[2S[55d[92mpid [94m4454[92m time [94mSat May 6 23:34:32.254 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 2667[K
+connections_len(): 4[K[1;58r[57;21HP=2s\P=1s\[1;57r[57;238H
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:32.326 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 179[K
+connections_len(): 4[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[2S[55d[92mpid [94m4454[92m time [94mSat May 6 23:34:32.515 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 91[K
+connections_len(): 4[K[1;58r[57;21HP=2s\P=1s\[1;57r[57;238H
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:32.592 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 731[K
+connections_len(): 4[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:32.801 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 9098[K
+connections_len(): 4[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[2S[55d[92mpid [94m4454[92m time [94mSat May 6 23:34:32.876 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 446[K
+connections_len(): 4[K[1;58r[57;21HP=2s\P=1s\[1;57r[57;238H
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[2S[55d[92mpid [94m4454[92m time [94mSat May 6 23:34:33.062 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 755[K
+connections_len(): 4[K[1;58r[57;21HP=2s\P=1s\[1;57r[57;238H
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:33.211 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 246[K
+connections_len(): 4[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:35.077 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 1423[K
+connections_len(): 4[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:35.285 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 219[K
+connections_len(): 4[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:35.354 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 139[K
+connections_len(): 4[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[2S[55d[92mpid [94m4454[92m time [94mSat May 6 23:34:35.835 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 27[K
+connections_len(): 4[K[1;58r[57;21HP=2s\P=1s\[1;57r[57;238H
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:38.676 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 28[K
+connections_len(): 4[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:38.758 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 71[K
+connections_len(): 3[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:38.836 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 1[K
+connections_len(): 3[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:39.442 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 27[K
+connections_len(): 3[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:39.560 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 1[K
+connections_len(): 3[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:39.671 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 1[K
+connections_len(): 2[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[2S[55d[92mpid [94m4454[92m time [94mSat May 6 23:34:41.837 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 248[K
+connections_len(): 3[K[1;58r[57;21HP=2s\P=1s\[1;57r[57;238H
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:42.559 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 91[K
+connections_len(): 3[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:42.626 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 731[K
+connections_len(): 3[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:42.830 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 4803[K
+connections_len(): 3[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:42.911 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 1446[K
+connections_len(): 3[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:43.109 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 807[K
+connections_len(): 3[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:43.281 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 127[K
+connections_len(): 3[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:43.354 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 953[K
+connections_len(): 3[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:43.539 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 71[K
+connections_len(): 3[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:43.617 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 27[K
+connections_len(): 3[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:43.663 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 299[K
+connections_len(): 3[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:43.724 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 6766[K
+connections_len(): 3[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:43.960 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 461[K
+connections_len(): 3[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:44.040 2023[92m line [94m128[92m file [94mtcp-over-http.py[92m:[94m128[92m func [94msend_data()[92m 
+[39mlen(data): 251[K
+connections_len(): 3[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:44.237 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 119[K
+connections_len(): 3[K
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[2S[55d[92mpid [94m4454[92m time [94mSat May 6 23:34:44.393 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 128[K
+connections_len(): 3[K[1;58r[57;21HP=2s\P=1s\[1;57r[57;238H
+[K[1;58r[57;1HP=2s\P=1s\[1;57r[1;1H[3S[54d[92mpid [94m4454[92m time [94mSat May 6 23:34:44.556 2023[92m line [94m103[92m file [94mtcp-over-http.py[92m:[94m103[92m func [94mrecv_data()[92m 
+[39mlen(data): 120[K
+connections_len(): 3[K
+[K[1;58r[57;1HP=2s\[1;58r(B[m[?1l>[H[2J[?12l[?25h[?1000l[?1002l[?1003l[?1006l[?1005l[?7727l[?1004l[>4m[?69l[?1049l[23;0;0t[detached (from session IPoVK)]
+Connection to 192.168.49.1 closed.
+[34m23:34:46[0m:[33marm64[0m:[32m~[0m$ 
+[34m23:34:47[0m:[33marm64[0m:[32m~[0m$ 
+[34m23:34:47[0m:[33marm64[0m:[32m~[0m$ exit
+
+Script done on Sat May  6 23:34:48 2023
