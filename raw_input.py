@@ -1,7 +1,7 @@
 import termios
 import copy
 import sys
-from termios import *
+# from termios import *
 
 def receive_key_event_unsafe():
     # if you will use it in while(1)
@@ -10,13 +10,13 @@ def receive_key_event_unsafe():
     fd=sys.stdin.fileno()
     mode=termios.tcgetattr(fd)
     save=copy.copy(mode)
-    mode[0] &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON)
-    mode[1] &= ~(OPOST)
-    mode[2] &= ~(CSIZE | PARENB)
-    mode[2] |= CS8
-    mode[3] &= ~(ECHO | ICANON | IEXTEN | ISIG)
-    mode[6][VMIN] = 1
-    mode[6][VTIME] = 0
+    mode[0] &= ~(termios.BRKINT | termios.ICRNL | termios.INPCK | termios.ISTRIP | termios.IXON)
+    mode[1] &= ~(termios.OPOST)
+    mode[2] &= ~(termios.CSIZE | termios.PARENB)
+    mode[2] |= termios.CS8
+    mode[3] &= ~(termios.ECHO | termios.ICANON | termios.IEXTEN | termios.ISIG)
+    mode[6][termios.VMIN] = 1
+    mode[6][termios.VTIME] = 0
     termios.tcsetattr(fd, termios.TCSAFLUSH, mode)
     c=sys.stdin.read(1);
     termios.tcsetattr(fd, termios.TCSADRAIN, save);
