@@ -1,3 +1,6 @@
-from sklearn.model_selection import train_test_split
-
+from h import *
+n=scan()
+a=scan([str]*n)
+while len(a)>1:
+    
 

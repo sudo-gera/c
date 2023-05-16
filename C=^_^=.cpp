@@ -31,18 +31,22 @@ using std::tuple_size, std::lexicographical_compare, std::set_intersection;
 using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
 using std::unique;
 
+// source: https://github.com/maksim1744/programming-library/blob/master/prefix_function.cpp
+
 template <typename T>
-auto PrefixFun(T&& s) {
-    vector<int64_t> p(s.size());
-    for (size_t q = 1; q < s.size(); ++q) {
-        int64_t k = p[q - 1];
-        while (k > 0 and s[q] != s[k]) {
-            k = p[k - 1];
+vector<int> PrefixFun(const T &s) {
+    int n = s.size();
+    vector<int> p(n, 0);
+    for (int i = 1; i < n; ++i) {
+        p[i] = (s[i] == s[0]);
+        int x = i;
+        while (x) {
+            x = p[x - 1];
+            if (s[x] == s[i]) {
+                p[i] = x + 1;
+                break;
+            }
         }
-        if (s[q] == s[k]) {
-            k++;
-        }
-        p[q] = k;
     }
     return p;
 }

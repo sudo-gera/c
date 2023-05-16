@@ -1,5 +1,649 @@
-Непонятно, какой вариант дать при ответах (1.4, 2.3, 3.3, 4.3, 5.2, 6.2, 7.2, 8.2, 9.1, 10.1, 11.2):
-    Подходит ответ 10.1 и 11.2
-    Подходит ответ 10.1 и 3.1/3.3 и 11.2
-    Подходит ответ 10.1 и 4.3 и 11.2
-    Подходит ответ 10.1 и 1.4 и 11.2
+Script started on Mon May 15 17:35:38 2023
+
+
+[?1034h[34m17:35:38[0m:[33marm64[0m:[32m~[0m$ 
+[34m17:35:38[0m:[33marm64[0m:[32m~[0m$ 
+[34m17:35:38[0m:[33marm64[0m:[32m~[0m$ 
+[34m17:35:41[0m:[33marm64[0m:[32m~[0m$ 
+[34m17:35:42[0m:[33marm64[0m:[32m~[0m$ pwd[K[K[Knano
+[?2004h[?1049h[22;0;0t[1;24r(B[m[4l[?7h[39;49m[?1h=[?1h=[?25l[39;49m(B[m[H[2J(B[0;7m  GNU nano 7.1                       Новый буфер                                [1;79H(B[m[22;5H(B[0;7m[ Добро пожаловать в nano. Базовая справка доступна по нажатию Ctrl+G. ](B[m[23d(B[0;7m^G(B[m Справка   (B[0;7m^O(B[m Записать  (B[0;7m^W(B[m Поиск     (B[0;7m^K(B[m Вырезать  (B[0;7m^T(B[m Выполнить (B[0;7m^C(B[m Позиция[24d(B[0;7m^X(B[m Выход     (B[0;7m^R(B[m ЧитФайл   (B[0;7m^\(B[m Замена    (B[0;7m^U(B[m Вставить  (B[0;7m^J(B[m Выровнять (B[0;7m^/(B[m К строке[2d[?12l[?25h[?25l[22d[J[24d[?12l[?25h[24;1H[?1049l[23;0;0t[?1l>[?2004l[34m17:35:53[0m:[33marm64[0m:[32m~[0m$ nano
+[?2004h[?1049h[22;0;0t[1;24r(B[m[4l[?7h[39;49m[?1h=[?1h=[?25l[39;49m(B[m[H[2J(B[0;7m  GNU nano 7.1                       Новый буфер                                [1;79H(B[m[22;5H(B[0;7m[ Добро пожаловать в nano. Базовая справка доступна по нажатию Ctrl+G. ](B[m[23d(B[0;7m^G(B[m Справка   (B[0;7m^O(B[m Записать  (B[0;7m^W(B[m Поиск     (B[0;7m^K(B[m Вырезать  (B[0;7m^T(B[m Выполнить (B[0;7m^C(B[m Позиция[24d(B[0;7m^X(B[m Выход     (B[0;7m^R(B[m ЧитФайл   (B[0;7m^\(B[m Замена    (B[0;7m^U(B[m Вставить  (B[0;7m^J(B[m Выровнять (B[0;7m^/(B[m К строке[2d[?12l[?25h[?25l[22d[J[24d[?12l[?25h[24;1H[?1049l[23;0;0t[?1l>[?2004l[34m17:36:03[0m:[33marm64[0m:[32m~[0m$ 
+[34m17:36:04[0m:[33marm64[0m:[32m~[0m$ 
+
+[34m17:36:04[0m:[33marm64[0m:[32m~[0m$ 
+
+[34m17:36:05[0m:[33marm64[0m:[32m~[0m$ 
+
+[34m17:36:05[0m:[33marm64[0m:[32m~[0m$ 
+
+[34m17:36:05[0m:[33marm64[0m:[32m~[0m$ 
+[34m17:36:05[0m:[33marm64[0m:[32m~[0m$ 
+[34m17:36:05[0m:[33marm64[0m:[32m~[0m$ 
+[34m17:36:05[0m:[33marm64[0m:[32m~[0m$ nano
+[?2004h[?1049h[22;0;0t[1;24r(B[m[4l[?7h[39;49m[?1h=[?1h=[?25l[39;49m(B[m[H[2J(B[0;7m  GNU nano 7.1                       Новый буфер                                [1;79H(B[m[22;5H(B[0;7m[ Добро пожаловать в nano. Базовая справка доступна по нажатию Ctrl+G. ](B[m[23d(B[0;7m^G(B[m Справка   (B[0;7m^O(B[m Записать  (B[0;7m^W(B[m Поиск     (B[0;7m^K(B[m Вырезать  (B[0;7m^T(B[m Выполнить (B[0;7m^C(B[m Позиция[24d(B[0;7m^X(B[m Выход     (B[0;7m^R(B[m ЧитФайл   (B[0;7m^\(B[m Замена    (B[0;7m^U(B[m Вставить  (B[0;7m^J(B[m Выровнять (B[0;7m^/(B[m К строке[2d[?12l[?25h[?25l[22d[J[24d[?12l[?25h[24;1H[?1049l[23;0;0t[?1l>[?2004l[34m17:36:07[0m:[33marm64[0m:[32m~[0m$ man man
+[?1049h[?1h=MAN(1)                      General Commands Manual                     MAN(1)
+
+[1mNAME[0m
+     [1mman[0m, [1mapropos[0m, [1mwhatis[0m – display online manual documentation pages
+
+[1mSYNOPSIS[0m
+     [1mman[0m [[1m-adho[0m] [[1m-t[0m | [1m-w[0m] [[1m-M[0m [4mmanpath[24m] [[1m-P[0m [4mpager[24m] [[1m-S[0m [4mmansect[24m]
+         [[1m-m[0m [4march[24m[:[4mmachine[24m]] [[1m-p[0m [[4meprtv[24m]] [[4mmansect[24m] [4mpage[24m [4m...[24m
+
+     [1mman[0m [1m-f[0m [[1m-d[0m] [[1m-M[0m [4mmanpath[24m] [[1m-P[0m [4mpager[24m] [[1m-S[0m [4mmansect[24m] [4mkeyword[24m [4m...[24m
+     [1mwhatis[0m [[1m-d[0m] [[1m-s[0m [4mmansect[24m] [4mkeyword[24m [4m...[24m
+
+     [1mman[0m [1m-k[0m [[1m-d[0m] [[1m-M[0m [4mmanpath[24m] [[1m-P[0m [4mpager[24m] [[1m-S[0m [4mmansect[24m] [4mkeyword[24m [4m...[24m
+     [1mapropos[0m [[1m-d[0m] [[1m-s[0m [4mmansect[24m] [4mkeyword[24m [4m...[24m
+
+[1mDESCRIPTION[0m
+     The [1mman[0m utility finds and displays online manual documentation pages.  If
+     [4mmansect[24m is provided, [1mman[0m restricts the search to the specific section of
+     the manual.
+
+     The sections of the manual are:
+           1.   General Commands Manual
+           2.   System Calls Manual
+:[K[K [KESCESC[K[[[KBB[K:[K[K [KESCESC[K[[[KBB[K:[K[K [KESCESC[K[[[KBB[K:[K[K [KESCESC[K[[[KBB[K:[K[K [KESCESC[K[[[KBB[K:[K[K [KESCESC[K[[[KBB[K:[K[K [KESCESC[K[[[KAA[K:[K[K [KESCESC[K[[[KBB[K:[K[K[?1l>[?1049l[34m17:36:18[0m:[33marm64[0m:[32m~[0m$ man bash
+[?1049h[?1h=BASH(1)                     General Commands Manual                    BASH(1)
+
+[1mNAME[0m
+       bash - GNU Bourne-Again SHell
+
+[1mSYNOPSIS[0m
+       [1mbash[0m [options] [file]
+
+[1mCOPYRIGHT[0m
+       Bash is Copyright (C) 1989-2005 by the Free Software Foundation, Inc.
+
+[1mDESCRIPTION[0m
+       [1mBash[0m is an [1msh[0m-compatible command language interpreter that executes
+       commands read from the standard input or from a file.  [1mBash[0m also
+       incorporates useful features from the [4mKorn[24m and [4mC[24m shells ([1mksh[0m and [1mcsh[0m).
+
+       [1mBash[0m is intended to be a conformant implementation of the Shell and
+       Utilities portion of the IEEE POSIX specification (IEEE Standard
+       1003.1).  [1mBash[0m can be configured to be POSIX-conformant by default.
+
+[1mOPTIONS[0m
+       In addition to the single-character shell options documented in the
+       description of the [1mset[0m builtin command, [1mbash[0m interprets the following
+:[K[K [KESCESC[K[[[KBB[K:[K[K [KESCESC[K[[[KAA[K:[K[K [KESCESC[K[[[KBB[K:[K[K [KESCESC[K[[[KAA[K:[K[K/[K[1;1HBASH(1)                     General Commands Manual                    BASH(1)
+[2;1H
+[3;1H[1mNAME[0m
+[4;1H       bash - GNU Bourne-Again SHell
+[5;1H
+[6;1H[1mSYNOPSIS[0m
+[7;1H       [1mbash[0m [options] [file]
+[8;1H
+[9;1H[1mCOPYRIGHT[0m
+[10;1H       Bash is Copyright (C) 1989-2005 by the Free Software Foundation, Inc.
+[11;1H
+[12;1H[1mDESCRIPTION[0m
+[13;1H       [1mBash[0m is an [1msh[0m-compatible command language interpreter that executes
+[14;1H       commands read from the standard input or from a file.  [1mBash[0m also
+[15;1H       incorporates useful features from the [4mKorn[24m and [4mC[24m shells ([1mksh[0m and [1mcsh[0m).
+[16;1H
+[17;1H       [1mBash[0m is intended to be a conformant implementation of the Shell and
+[18;1H       Utilities portion of the IEEE POSIX specification (IEEE Standard
+[19;1H       1003.1).  [1mBash[0m can be configured to be POSIX-conformant by default.
+[20;1H
+[21;1H[1mOPTIONS[0m
+[22;1H       In addition to the single-character shell options documented in the
+[23;1H       description of the [1mset[0m builtin command, [1mbash[0m interprets the following
+[24;1H...skipping...
+       [1m--init[0m[1m[7m-f[27m[0m[1mile[0m [4mfile[24m
+       [1m--rcfile[0m [4mfile[24m
+              Execute commands from [4mfile[24m instead of the standard personal
+              initialization file [4m~/.bashrc[24m if the shell is interactive (see
+              [1mINVOCATION[0m below).
+
+       [1m--login[0m
+              Equivalent to [1m-l[0m.
+
+       [1m--noediting[0m
+              Do not use the GNU [1mreadline[0m library to read command lines when
+              the shell is interactive.
+
+       [1m--noprofile[0m
+              Do not read either the system-wide startup file [4m/etc/profile[24m or
+              any of the personal initialization files [4m~/.bash_profile[24m,
+              [4m~/.bash_login[24m, or [4m~/.profile[24m.  By default, [1mbash[0m reads these
+              files when it is invoked as a login shell (see [1mINVOCATION[0m
+              below).
+
+       [1m--norc[0m Do not read and execute the personal initialization file
+              [4m~/.bashrc[24m if the shell is interactive.  This option is on by
+              default if the shell is invoked as [1msh[0m.
+:[K[K/[K...skipping...
+              Conditional operators such as [1m[7m-f[27m[0m must be unquoted to be
+              recognized as primaries.
+
+              When the [1m==[0m and [1m!=[0m operators are used, the string to the right
+              of the operator is considered a pattern and matched according to
+              the rules described below under [1mPattern[0m [1mMatching[0m.  If the shell
+              option [1mnocasematch[0m is enabled, the match is performed without
+              regard to the case of alphabetic characters.  The return value
+              is 0 if the string matches ([1m==[0m) or does not match ([1m!=[0m) the
+              pattern, and 1 otherwise.  Any part of the pattern may be quoted
+              to force it to be matched as a string.
+
+              An additional binary operator, [1m=~[0m, is available, with the same
+              precedence as [1m==[0m and [1m!=[0m.  When it is used, the string to the
+              right of the operator is considered an extended regular
+              expression and matched accordingly (as in [4mregex[24m(3)).  The return
+              value is 0 if the string matches the pattern, and 1 otherwise.
+              If the regular expression is syntactically incorrect, the
+              conditional expression's return value is 2.  If the shell option
+              [1mnocasematch[0m is enabled, the match is performed without regard to
+              the case of alphabetic characters.  Substrings matched by
+              parenthesized subexpressions within the regular expression are
+              saved in the array variable [1mBASH_REMATCH[0m.  The element of
+:[K[K[K[7mDetermining length of file... (interrupt to abort)[27m[K[H[2J[HM       description of the [1mset[0m builtin command, [1mbash[0m interprets the following
+[HM       In addition to the single-character shell options documented in the
+[HM[1mOPTIONS[0m
+[HM
+[HM       1003.1).  [1mBash[0m can be configured to be POSIX-conformant by default.
+[HM       Utilities portion of the IEEE POSIX specification (IEEE Standard
+[HM       [1mBash[0m is intended to be a conformant implementation of the Shell and
+[HM
+[HM       incorporates useful features from the [4mKorn[24m and [4mC[24m shells ([1mksh[0m and [1mcsh[0m).
+[HM       commands read from the standard input or from a file.  [1mBash[0m also
+[HM       [1mBash[0m is an [1msh[0m-compatible command language interpreter that executes
+[HM[1mDESCRIPTION[0m
+[HM
+[HM       Bash is Copyright (C) 1989-2005 by the Free Software Foundation, Inc.
+[HM[1mCOPYRIGHT[0m
+[HM
+[HM       [1mbash[0m [options] [file]
+[HM[1mSYNOPSIS[0m
+[HM
+[HM       bash - GNU Bourne-Again SHell
+[HM[1mNAME[0m
+[HM
+[HMBASH(1)                     General Commands Manual                    BASH(1)
+[24;1H[K:[K[K       options when it is invoked:
+:[K[K
+:[K[K       [1m-c[0m [4mstring[24m If the [1m-c[0m option is present, then commands are read from
+:[K[K                 [4mstring[24m.  If there are arguments after the [4mstring[24m, they are
+:[K[K                 assigned to the positional parameters, starting with [1m$0[0m.
+:[K[K       [1m-i[0m        If the [1m-i[0m option is present, the shell is [4minteractive[24m.
+:[K[K       [1m-l[0m        Make [1mbash[0m act as if it had been invoked as a login shell (see
+:[K[K                 [1mINVOCATION[0m below).
+:[K[K       [1m-r[0m        If the [1m-r[0m option is present, the shell becomes [4mrestricted[24m
+:[K[K                 (see [1mRESTRICTED[0m [1mSHELL[0m below).
+:[K[K       [1m-s[0m        If the [1m-s[0m option is present, or if no arguments remain after
+:[K[K                 option processing, then commands are read from the standard
+:[K[K                 input.  This option allows the positional parameters to be
+:[K[K                 set when invoking an interactive shell.
+:[K[K       [1m-D[0m        A list of all double-quoted strings preceded by [1m$[0m is printed
+:[K[K                 on the standard output.  These are the strings that are
+:[K[K                 subject to language translation when the current locale is
+:[K[K                 not [1mC[0m or [1mPOSIX[0m.  This implies the [1m-n[0m option; no commands will
+:[K[K                 be executed.
+:[K[K       [1m[-+]O[0m [1m[[0m[4mshopt_option[24m[1m][0m
+:[K[K                 [4mshopt_option[24m is one of the shell options accepted by the
+:[K[K                 [1mshopt[0m builtin (see [1mSHELL[0m [1mBUILTIN[0m [1mCOMMANDS[0m below).  If
+:[K[K                 [4mshopt_option[24m is present, [1m-O[0m sets the value of that option; [1m+O[0m
+:[K[K                 unsets it.  If [4mshopt_option[24m is not supplied, the names and
+:[K[K                 values of the shell options accepted by [1mshopt[0m are printed on
+:[K[K                 the standard output.  If the invocation option is [1m+O[0m, the
+:[K[K                 output is displayed in a format that may be reused as input.
+:[K[K       [1m--[0m        A [1m--[0m signals the end of options and disables further option
+:[K[K                 processing.  Any arguments after the [1m--[0m are treated as
+:[K[K                 filenames and arguments.  An argument of [1m-[0m is equivalent to
+:[K[K                 [1m--[0m.
+:[K[K
+:[K[K       [1mBash[0m also interprets a number of multi-character options.  These
+:[K[K       options must appear on the command line before the single-character
+:[K[K       options to be recognized.
+:[K[K
+:[K[K       [1m--debugger[0m
+:[K[K              Arrange for the debugger profile to be executed before the shell
+:[K[K              starts.  Turns on extended debugging mode (see the description
+:[K[K              of the [1mextdebug[0m option to the [1mshopt[0m builtin below) and shell
+:[K[K              function tracing (see the description of the [1m-o[0m [1mfunctrace[0m option
+:[K[K              to the [1mset[0m builtin below).
+:[K[K       [1m--dump-po-strings[0m
+:[K[K              Equivalent to [1m-D[0m, but the output is in the GNU [4mgettext[24m [1mpo[0m
+:[K[K              (portable object) file format.
+:[K[K       [1m--dump-strings[0m
+:[K[K              Equivalent to [1m-D[0m.
+:[K[K       [1m--help[0m Display a usage message on standard output and exit
+:[K[K              successfully.
+:[K[K       [1m--init[0m[1m[7m-f[27m[0m[1mile[0m [4mfile[24m
+:[K[K       [1m--rcfile[0m [4mfile[24m
+:[K[K              Execute commands from [4mfile[24m instead of the standard personal
+:[K[K              initialization file [4m~/.bashrc[24m if the shell is interactive (see
+:[K[K              [1mINVOCATION[0m below).
+:[K[K
+:[K[K       [1m--login[0m
+:[K[K              Equivalent to [1m-l[0m.
+:[K[K
+:[K[K       [1m--noediting[0m
+:[K[K              Do not use the GNU [1mreadline[0m library to read command lines when
+:[K[K              the shell is interactive.
+:[K[K
+:[K[K       [1m--noprofile[0m
+:[K[K              Do not read either the system-wide startup file [4m/etc/profile[24m or
+:[K[K              any of the personal initialization files [4m~/.bash_profile[24m,
+:[K[K              [4m~/.bash_login[24m, or [4m~/.profile[24m.  By default, [1mbash[0m reads these
+:[K[K              files when it is invoked as a login shell (see [1mINVOCATION[0m
+:[K[K              below).
+:[K[K
+:[K[K       [1m--norc[0m Do not read and execute the personal initialization file
+:[K[K              [4m~/.bashrc[24m if the shell is interactive.  This option is on by
+:[K[K              default if the shell is invoked as [1msh[0m.
+:[K[K
+:[K[K       [1m--posix[0m
+:[K[K              Change the behavior of [1mbash[0m where the default operation differs
+:[K[K              from the POSIX standard to match the standard ([4mposix[24m [4mmode[24m).
+:[K[K
+:[K[K       [1m--restricted[0m
+:[K[K              The shell becomes restricted (see [1mRESTRICTED[0m [1mSHELL[0m below).
+:[K[K
+:[K[K       [1m--verbose[0m
+:[K[K              Equivalent to  [1m-v[0m.
+:[K[K
+:[K[K       [1m--version[0m
+:[K[K              Show version information for this instance of [1mbash[0m on the
+:[K[K              standard output and exit successfully.
+:[K[K
+:[K[K[1mARGUMENTS[0m
+:[K[K       If arguments remain after option processing, and neither the [1m-c[0m nor the
+:[K[K       [1m-s[0m option has been supplied, the first argument is assumed to be the
+:[K[K       name of a file containing shell commands.  If [1mbash[0m is invoked in this
+:[K[K       fashion, [1m$0[0m is set to the name of the file, and the positional
+:[K[K       parameters are set to the remaining arguments.  [1mBash[0m reads and executes
+:[K[K       commands from this file, then exits.  [1mBash[0m's exit status is the exit
+:[K[K[HM              [4m~/.bashrc[24m if the shell is interactive.  This option is on by
+[24;1H[K:[K[K[HM       [1m--norc[0m Do not read and execute the personal initialization file
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM              below).
+[24;1H[K:[K[K[HM              files when it is invoked as a login shell (see [1mINVOCATION[0m
+[24;1H[K:[K[K[HM              [4m~/.bash_login[24m, or [4m~/.profile[24m.  By default, [1mbash[0m reads these
+[24;1H[K:[K[K[HM              any of the personal initialization files [4m~/.bash_profile[24m,
+[24;1H[K:[K[K[HM              Do not read either the system-wide startup file [4m/etc/profile[24m or
+[24;1H[K:[K[K[HM       [1m--noprofile[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM              the shell is interactive.
+[24;1H[K:[K[K[HM              Do not use the GNU [1mreadline[0m library to read command lines when
+[24;1H[K:[K[K[HM       [1m--noediting[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM              Equivalent to [1m-l[0m.
+[24;1H[K:[K[K[HM       [1m--login[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM              [1mINVOCATION[0m below).
+[24;1H[K:[K[K[HM              initialization file [4m~/.bashrc[24m if the shell is interactive (see
+[24;1H[K:[K[K[HM              Execute commands from [4mfile[24m instead of the standard personal
+[24;1H[K:[K[K[HM       [1m--rcfile[0m [4mfile[24m
+[24;1H[K:[K[K[HM       [1m--init[0m[1m[7m-f[27m[0m[1mile[0m [4mfile[24m
+[24;1H[K:[K[K[HM              successfully.
+[24;1H[K:[K[K[HM       [1m--help[0m Display a usage message on standard output and exit
+[24;1H[K:[K[K[HM              Equivalent to [1m-D[0m.
+[24;1H[K:[K[K[HM       [1m--dump-strings[0m
+[24;1H[K:[K[K[HM              (portable object) file format.
+[24;1H[K:[K[K[HM              Equivalent to [1m-D[0m, but the output is in the GNU [4mgettext[24m [1mpo[0m
+[24;1H[K:[K[K[HM       [1m--dump-po-strings[0m
+[24;1H[K:[K[K[HM              to the [1mset[0m builtin below).
+[24;1H[K:[K[K[HM              function tracing (see the description of the [1m-o[0m [1mfunctrace[0m option
+[24;1H[K:[K[K[HM              of the [1mextdebug[0m option to the [1mshopt[0m builtin below) and shell
+[24;1H[K:[K[K[HM              starts.  Turns on extended debugging mode (see the description
+[24;1H[K:[K[K[HM              Arrange for the debugger profile to be executed before the shell
+[24;1H[K:[K[K[HM       [1m--debugger[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM       options to be recognized.
+[24;1H[K:[K[K[HM       options must appear on the command line before the single-character
+[24;1H[K:[K[K[HM       [1mBash[0m also interprets a number of multi-character options.  These
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM                 [1m--[0m.
+[24;1H[K:[K[K[HM                 filenames and arguments.  An argument of [1m-[0m is equivalent to
+[24;1H[K:[K[K[HM                 processing.  Any arguments after the [1m--[0m are treated as
+[24;1H[K:[K[K[HM       [1m--[0m        A [1m--[0m signals the end of options and disables further option
+[24;1H[K:[K[K[HM                 output is displayed in a format that may be reused as input.
+[24;1H[K:[K[K[HM                 the standard output.  If the invocation option is [1m+O[0m, the
+[24;1H[K:[K[K[HM                 values of the shell options accepted by [1mshopt[0m are printed on
+[24;1H[K:[K[K[HM                 unsets it.  If [4mshopt_option[24m is not supplied, the names and
+[24;1H[K:[K[K[HM                 [4mshopt_option[24m is present, [1m-O[0m sets the value of that option; [1m+O[0m
+[24;1H[K:[K[K[HM                 [1mshopt[0m builtin (see [1mSHELL[0m [1mBUILTIN[0m [1mCOMMANDS[0m below).  If
+[24;1H[K:[K[K[HM                 [4mshopt_option[24m is one of the shell options accepted by the
+[24;1H[K:[K[K[HM       [1m[-+]O[0m [1m[[0m[4mshopt_option[24m[1m][0m
+[24;1H[K:[K[K[HM                 be executed.
+[24;1H[K:[K[K[HM                 not [1mC[0m or [1mPOSIX[0m.  This implies the [1m-n[0m option; no commands will
+[24;1H[K:[K[K[HM                 subject to language translation when the current locale is
+[24;1H[K:[K[K[HM                 on the standard output.  These are the strings that are
+[24;1H[K:[K[K[HM       [1m-D[0m        A list of all double-quoted strings preceded by [1m$[0m is printed
+[24;1H[K:[K[K[HM                 set when invoking an interactive shell.
+[24;1H[K:[K[K[HM                 input.  This option allows the positional parameters to be
+[24;1H[K:[K[K[HM                 option processing, then commands are read from the standard
+[24;1H[K:[K[K[HM       [1m-s[0m        If the [1m-s[0m option is present, or if no arguments remain after
+[24;1H[K:[K[K[HM                 (see [1mRESTRICTED[0m [1mSHELL[0m below).
+[24;1H[K:[K[K[HM       [1m-r[0m        If the [1m-r[0m option is present, the shell becomes [4mrestricted[24m
+[24;1H[K:[K[K[HM                 [1mINVOCATION[0m below).
+[24;1H[K:[K[K[HM       [1m-l[0m        Make [1mbash[0m act as if it had been invoked as a login shell (see
+[24;1H[K:[K[K[HM       [1m-i[0m        If the [1m-i[0m option is present, the shell is [4minteractive[24m.
+[24;1H[K:[K[K[HM                 assigned to the positional parameters, starting with [1m$0[0m.
+[24;1H[K:[K[K[HM                 [4mstring[24m.  If there are arguments after the [4mstring[24m, they are
+[24;1H[K:[K[K[HM       [1m-c[0m [4mstring[24m If the [1m-c[0m option is present, then commands are read from
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM       options when it is invoked:
+[24;1H[K:[K[K[HM       description of the [1mset[0m builtin command, [1mbash[0m interprets the following
+[24;1H[K:[K[K[HM       In addition to the single-character shell options documented in the
+[24;1H[K:[K[K[HM[1mOPTIONS[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM       1003.1).  [1mBash[0m can be configured to be POSIX-conformant by default.
+[24;1H[K:[K[K[HM       Utilities portion of the IEEE POSIX specification (IEEE Standard
+[24;1H[K:[K[K[HM       [1mBash[0m is intended to be a conformant implementation of the Shell and
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM       incorporates useful features from the [4mKorn[24m and [4mC[24m shells ([1mksh[0m and [1mcsh[0m).
+[24;1H[K:[K[K[HM       commands read from the standard input or from a file.  [1mBash[0m also
+[24;1H[K:[K[K[HM       [1mBash[0m is an [1msh[0m-compatible command language interpreter that executes
+[24;1H[K:[K[K[HM[1mDESCRIPTION[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM       Bash is Copyright (C) 1989-2005 by the Free Software Foundation, Inc.
+[24;1H[K:[K[K[HM[1mCOPYRIGHT[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM       [1mbash[0m [options] [file]
+[24;1H[K:[K[K[HM[1mSYNOPSIS[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM       bash - GNU Bourne-Again SHell
+[24;1H[K:[K[K[HM[1mNAME[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HMBASH(1)                     General Commands Manual                    BASH(1)
+[24;1H[K:[K[K[K:[K[K[K:[K[K[K:[K[K[K:[K[K[K:[K[K[K:[K[K[K:[K[K[K:[K[K[K:[K[K       options when it is invoked:
+:[K[K
+:[K[K       [1m-c[0m [4mstring[24m If the [1m-c[0m option is present, then commands are read from
+:[K[K                 [4mstring[24m.  If there are arguments after the [4mstring[24m, they are
+:[K[K                 assigned to the positional parameters, starting with [1m$0[0m.
+:[K[K       [1m-i[0m        If the [1m-i[0m option is present, the shell is [4minteractive[24m.
+:[K[K       [1m-l[0m        Make [1mbash[0m act as if it had been invoked as a login shell (see
+:[K[K                 [1mINVOCATION[0m below).
+:[K[K       [1m-r[0m        If the [1m-r[0m option is present, the shell becomes [4mrestricted[24m
+:[K[K                 (see [1mRESTRICTED[0m [1mSHELL[0m below).
+:[K[K       [1m-s[0m        If the [1m-s[0m option is present, or if no arguments remain after
+:[K[K                 option processing, then commands are read from the standard
+:[K[K                 input.  This option allows the positional parameters to be
+:[K[K                 set when invoking an interactive shell.
+:[K[K       [1m-D[0m        A list of all double-quoted strings preceded by [1m$[0m is printed
+:[K[K                 on the standard output.  These are the strings that are
+:[K[K                 subject to language translation when the current locale is
+:[K[K                 not [1mC[0m or [1mPOSIX[0m.  This implies the [1m-n[0m option; no commands will
+:[K[K                 be executed.
+:[K[K       [1m[-+]O[0m [1m[[0m[4mshopt_option[24m[1m][0m
+:[K[K                 [4mshopt_option[24m is one of the shell options accepted by the
+:[K[K                 [1mshopt[0m builtin (see [1mSHELL[0m [1mBUILTIN[0m [1mCOMMANDS[0m below).  If
+:[K[K                 [4mshopt_option[24m is present, [1m-O[0m sets the value of that option; [1m+O[0m
+:[K[K                 unsets it.  If [4mshopt_option[24m is not supplied, the names and
+:[K[K                 values of the shell options accepted by [1mshopt[0m are printed on
+:[K[K                 the standard output.  If the invocation option is [1m+O[0m, the
+:[K[K                 output is displayed in a format that may be reused as input.
+:[K[K       [1m--[0m        A [1m--[0m signals the end of options and disables further option
+:[K[K                 processing.  Any arguments after the [1m--[0m are treated as
+:[K[K                 filenames and arguments.  An argument of [1m-[0m is equivalent to
+:[K[K                 [1m--[0m.
+:[K[K
+:[K[K       [1mBash[0m also interprets a number of multi-character options.  These
+:[K[K       options must appear on the command line before the single-character
+:[K[K       options to be recognized.
+:[K[K
+:[K[K       [1m--debugger[0m
+:[K[K              Arrange for the debugger profile to be executed before the shell
+:[K[K              starts.  Turns on extended debugging mode (see the description
+:[K[K              of the [1mextdebug[0m option to the [1mshopt[0m builtin below) and shell
+:[K[K              function tracing (see the description of the [1m-o[0m [1mfunctrace[0m option
+:[K[K              to the [1mset[0m builtin below).
+:[K[K       [1m--dump-po-strings[0m
+:[K[K              Equivalent to [1m-D[0m, but the output is in the GNU [4mgettext[24m [1mpo[0m
+:[K[K              (portable object) file format.
+:[K[K       [1m--dump-strings[0m
+:[K[K              Equivalent to [1m-D[0m.
+:[K[K       [1m--help[0m Display a usage message on standard output and exit
+:[K[K              successfully.
+:[K[K       [1m--init[0m[1m[7m-f[27m[0m[1mile[0m [4mfile[24m
+:[K[K       [1m--rcfile[0m [4mfile[24m
+:[K[K              Execute commands from [4mfile[24m instead of the standard personal
+:[K[K              initialization file [4m~/.bashrc[24m if the shell is interactive (see
+:[K[K              [1mINVOCATION[0m below).
+:[K[K
+:[K[K       [1m--login[0m
+:[K[K              Equivalent to [1m-l[0m.
+:[K[K
+:[K[K       [1m--noediting[0m
+:[K[K              Do not use the GNU [1mreadline[0m library to read command lines when
+:[K[K              the shell is interactive.
+:[K[K
+:[K[K       [1m--noprofile[0m
+:[K[K              Do not read either the system-wide startup file [4m/etc/profile[24m or
+:[K[K              any of the personal initialization files [4m~/.bash_profile[24m,
+:[K[K              [4m~/.bash_login[24m, or [4m~/.profile[24m.  By default, [1mbash[0m reads these
+:[K[K              files when it is invoked as a login shell (see [1mINVOCATION[0m
+:[K[K              below).
+:[K[K
+:[K[K       [1m--norc[0m Do not read and execute the personal initialization file
+:[K[K              [4m~/.bashrc[24m if the shell is interactive.  This option is on by
+:[K[K              default if the shell is invoked as [1msh[0m.
+:[K[K
+:[K[K       [1m--posix[0m
+:[K[K              Change the behavior of [1mbash[0m where the default operation differs
+:[K[K              from the POSIX standard to match the standard ([4mposix[24m [4mmode[24m).
+:[K[K
+:[K[K       [1m--restricted[0m
+:[K[K              The shell becomes restricted (see [1mRESTRICTED[0m [1mSHELL[0m below).
+:[K[K
+:[K[K       [1m--verbose[0m
+:[K[K              Equivalent to  [1m-v[0m.
+:[K[K
+:[K[K       [1m--version[0m
+:[K[K              Show version information for this instance of [1mbash[0m on the
+:[K[K              standard output and exit successfully.
+:[K[K
+:[K[K[1mARGUMENTS[0m
+:[K[K       If arguments remain after option processing, and neither the [1m-c[0m nor the
+:[K[K       [1m-s[0m option has been supplied, the first argument is assumed to be the
+:[K[K       name of a file containing shell commands.  If [1mbash[0m is invoked in this
+:[K[K       fashion, [1m$0[0m is set to the name of the file, and the positional
+:[K[K       parameters are set to the remaining arguments.  [1mBash[0m reads and executes
+:[K[K       commands from this file, then exits.  [1mBash[0m's exit status is the exit
+:[K[K       status of the last command executed in the script.  If no commands are
+:[K[K       executed, the exit status is 0.  An attempt is first made to open the
+:[K[K       file in the current directory, and, if no file is found, then the shell
+:[K[K       searches the directories in [1mPATH[0m for the script.
+:[K[K
+:[K[K[1mINVOCATION[0m
+:[K[K       A [4mlogin[24m [4mshell[24m is one whose first character of argument zero is a [1m-[0m, or
+:[K[K       one started with the [1m--login[0m option.
+:[K[K
+:[K[K       An [4minteractive[24m shell is one started without non-option arguments and
+:[K[K       without the [1m-c[0m option whose standard input and error are both connected
+:[K[K       to terminals (as determined by [4misatty[24m(3)), or one started with the [1m-i[0m
+:[K[K       option.  [1mPS1[0m is set and [1m$-[0m includes [1mi[0m if [1mbash[0m is interactive, allowing
+:[K[K       a shell script or a startup file to test this state.
+:[K[K
+:[K[K       The following paragraphs describe how [1mbash[0m executes its startup files.
+:[K[K       If any of the files exist but cannot be read, [1mbash[0m reports an error.
+:[K[K       Tildes are expanded in file names as described below under [1mTilde[0m
+:[K[K       [1mExpansion[0m in the [1mEXPANSION[0m section.
+:[K[K
+:[K[K       When [1mbash[0m is invoked as an interactive login shell, or as a non-
+:[K[K       interactive shell with the [1m--login[0m option, it first reads and executes
+:[K[K       commands from the file [4m/etc/profile[24m, if that file exists.  After
+:[K[K       reading that file, it looks for [4m~/.bash_profile[24m, [4m~/.bash_login[24m, and
+:[K[K       [4m~/.profile[24m, in that order, and reads and executes commands from the
+:[K[K       first one that exists and is readable.  The [1m--noprofile[0m option may be
+:[K[K       used when the shell is started to inhibit this behavior.
+:[K[K
+:[K[K       When a login shell exits, [1mbash[0m reads and executes commands from the
+:[K[K       file [4m~/.bash_logout[24m, if it exists.
+:[K[K
+:[K[K       When an interactive shell that is not a login shell is started, [1mbash[0m
+:[K[K       reads and executes commands from [4m~/.bashrc[24m, if that file exists.  This
+:[K[K       may be inhibited by using the [1m--norc[0m option.  The [1m--rcfile[0m [4mfile[24m option
+:[K[K       will force [1mbash[0m to read and execute commands from [4mfile[24m instead of
+:[K[K       [4m~/.bashrc[24m.
+:[K[K
+:[K[K       When [1mbash[0m is started non-interactively, to run a shell script, for
+:[K[K       example, it looks for the variable [1mBASH_ENV[0m in the environment, expands
+:[K[K       its value if it appears there, and uses the expanded value as the name
+:[K[K       of a file to read and execute.  [1mBash[0m behaves as if the following
+:[K[K       command were executed:
+:[K[K              if [ -n "$BASH_ENV" ]; then . "$BASH_ENV"; fi
+:[K[K       but the value of the [1mPATH[0m variable is not used to search for the file
+:[K[K       name.
+:[K[K
+:[K[K       If [1mbash[0m is invoked with the name [1msh[0m, it tries to mimic the startup
+:[K[K       behavior of historical versions of [1msh[0m as closely as possible, while
+:[K[K       conforming to the POSIX standard as well.  When invoked as an
+:[K[K       interactive login shell, or a non-interactive shell with the [1m--login[0m
+:[K[K       option, it first attempts to read and execute commands from
+:[K[K       [4m/etc/profile[24m and [4m~/.profile[24m, in that order.  The [1m--noprofile[0m option may
+:[K[K       be used to inhibit this behavior.  When invoked as an interactive shell
+:[K[K       with the name [1msh[0m, [1mbash[0m looks for the variable [1mENV[0m, expands its value if
+:[K[K[HM
+[24;1H[K:[K[K[HM       file [4m~/.bash_logout[24m, if it exists.
+[24;1H[K:[K[K[HM       When a login shell exits, [1mbash[0m reads and executes commands from the
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM       used when the shell is started to inhibit this behavior.
+[24;1H[K:[K[K[HM       first one that exists and is readable.  The [1m--noprofile[0m option may be
+[24;1H[K:[K[K[HM       [4m~/.profile[24m, in that order, and reads and executes commands from the
+[24;1H[K:[K[K[HM       reading that file, it looks for [4m~/.bash_profile[24m, [4m~/.bash_login[24m, and
+[24;1H[K:[K[K[HM       commands from the file [4m/etc/profile[24m, if that file exists.  After
+[24;1H[K:[K[K[HM       interactive shell with the [1m--login[0m option, it first reads and executes
+[24;1H[K:[K[K[HM       When [1mbash[0m is invoked as an interactive login shell, or as a non-
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM       [1mExpansion[0m in the [1mEXPANSION[0m section.
+[24;1H[K:[K[K[HM       Tildes are expanded in file names as described below under [1mTilde[0m
+[24;1H[K:[K[K[HM       If any of the files exist but cannot be read, [1mbash[0m reports an error.
+[24;1H[K:[K[K[HM       The following paragraphs describe how [1mbash[0m executes its startup files.
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM       a shell script or a startup file to test this state.
+[24;1H[K:[K[K[HM       option.  [1mPS1[0m is set and [1m$-[0m includes [1mi[0m if [1mbash[0m is interactive, allowing
+[24;1H[K:[K[K[HM       to terminals (as determined by [4misatty[24m(3)), or one started with the [1m-i[0m
+[24;1H[K:[K[K[HM       without the [1m-c[0m option whose standard input and error are both connected
+[24;1H[K:[K[K[HM       An [4minteractive[24m shell is one started without non-option arguments and
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM       one started with the [1m--login[0m option.
+[24;1H[K:[K[K[HM       A [4mlogin[24m [4mshell[24m is one whose first character of argument zero is a [1m-[0m, or
+[24;1H[K:[K[K[HM[1mINVOCATION[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM       searches the directories in [1mPATH[0m for the script.
+[24;1H[K:[K[K[HM       file in the current directory, and, if no file is found, then the shell
+[24;1H[K:[K[K[HM       executed, the exit status is 0.  An attempt is first made to open the
+[24;1H[K:[K[K[HM       status of the last command executed in the script.  If no commands are
+[24;1H[K:[K[K[HM       commands from this file, then exits.  [1mBash[0m's exit status is the exit
+[24;1H[K:[K[K[HM       parameters are set to the remaining arguments.  [1mBash[0m reads and executes
+[24;1H[K:[K[K[HM       fashion, [1m$0[0m is set to the name of the file, and the positional
+[24;1H[K:[K[K[HM       name of a file containing shell commands.  If [1mbash[0m is invoked in this
+[24;1H[K:[K[K[HM       [1m-s[0m option has been supplied, the first argument is assumed to be the
+[24;1H[K:[K[K[HM       If arguments remain after option processing, and neither the [1m-c[0m nor the
+[24;1H[K:[K[K[HM[1mARGUMENTS[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM              standard output and exit successfully.
+[24;1H[K:[K[K[HM              Show version information for this instance of [1mbash[0m on the
+[24;1H[K:[K[K[HM       [1m--version[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM              Equivalent to  [1m-v[0m.
+[24;1H[K:[K[K[HM       [1m--verbose[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM              The shell becomes restricted (see [1mRESTRICTED[0m [1mSHELL[0m below).
+[24;1H[K:[K[K[HM       [1m--restricted[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM              from the POSIX standard to match the standard ([4mposix[24m [4mmode[24m).
+[24;1H[K:[K[K[HM              Change the behavior of [1mbash[0m where the default operation differs
+[24;1H[K:[K[K[HM       [1m--posix[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM              default if the shell is invoked as [1msh[0m.
+[24;1H[K:[K[K[HM              [4m~/.bashrc[24m if the shell is interactive.  This option is on by
+[24;1H[K:[K[K[HM       [1m--norc[0m Do not read and execute the personal initialization file
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM              below).
+[24;1H[K:[K[K[HM              files when it is invoked as a login shell (see [1mINVOCATION[0m
+[24;1H[K:[K[K[HM              [4m~/.bash_login[24m, or [4m~/.profile[24m.  By default, [1mbash[0m reads these
+[24;1H[K:[K[K[HM              any of the personal initialization files [4m~/.bash_profile[24m,
+[24;1H[K:[K[K[HM              Do not read either the system-wide startup file [4m/etc/profile[24m or
+[24;1H[K:[K[K[HM       [1m--noprofile[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM              the shell is interactive.
+[24;1H[K:[K[K[HM              Do not use the GNU [1mreadline[0m library to read command lines when
+[24;1H[K:[K[K[HM       [1m--noediting[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM              Equivalent to [1m-l[0m.
+[24;1H[K:[K[K[HM       [1m--login[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM              [1mINVOCATION[0m below).
+[24;1H[K:[K[K[HM              initialization file [4m~/.bashrc[24m if the shell is interactive (see
+[24;1H[K:[K[K[HM              Execute commands from [4mfile[24m instead of the standard personal
+[24;1H[K:[K[K[HM       [1m--rcfile[0m [4mfile[24m
+[24;1H[K:[K[K[HM       [1m--init[0m[1m[7m-f[27m[0m[1mile[0m [4mfile[24m
+[24;1H[K:[K[K[HM              successfully.
+[24;1H[K:[K[K[HM       [1m--help[0m Display a usage message on standard output and exit
+[24;1H[K:[K[K[HM              Equivalent to [1m-D[0m.
+[24;1H[K:[K[K[HM       [1m--dump-strings[0m
+[24;1H[K:[K[K[HM              (portable object) file format.
+[24;1H[K:[K[K[HM              Equivalent to [1m-D[0m, but the output is in the GNU [4mgettext[24m [1mpo[0m
+[24;1H[K:[K[K[HM       [1m--dump-po-strings[0m
+[24;1H[K:[K[K[HM              to the [1mset[0m builtin below).
+[24;1H[K:[K[K[HM              function tracing (see the description of the [1m-o[0m [1mfunctrace[0m option
+[24;1H[K:[K[K[HM              of the [1mextdebug[0m option to the [1mshopt[0m builtin below) and shell
+[24;1H[K:[K[K[HM              starts.  Turns on extended debugging mode (see the description
+[24;1H[K:[K[K[HM              Arrange for the debugger profile to be executed before the shell
+[24;1H[K:[K[K[HM       [1m--debugger[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM       options to be recognized.
+[24;1H[K:[K[K[HM       options must appear on the command line before the single-character
+[24;1H[K:[K[K[HM       [1mBash[0m also interprets a number of multi-character options.  These
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM                 [1m--[0m.
+[24;1H[K:[K[K[HM                 filenames and arguments.  An argument of [1m-[0m is equivalent to
+[24;1H[K:[K[K[HM                 processing.  Any arguments after the [1m--[0m are treated as
+[24;1H[K:[K[K[HM       [1m--[0m        A [1m--[0m signals the end of options and disables further option
+[24;1H[K:[K[K[HM                 output is displayed in a format that may be reused as input.
+[24;1H[K:[K[K[HM                 the standard output.  If the invocation option is [1m+O[0m, the
+[24;1H[K:[K[K[HM                 values of the shell options accepted by [1mshopt[0m are printed on
+[24;1H[K:[K[K[HM                 unsets it.  If [4mshopt_option[24m is not supplied, the names and
+[24;1H[K:[K[K[HM                 [4mshopt_option[24m is present, [1m-O[0m sets the value of that option; [1m+O[0m
+[24;1H[K:[K[K[HM                 [1mshopt[0m builtin (see [1mSHELL[0m [1mBUILTIN[0m [1mCOMMANDS[0m below).  If
+[24;1H[K:[K[K[HM                 [4mshopt_option[24m is one of the shell options accepted by the
+[24;1H[K:[K[K[HM       [1m[-+]O[0m [1m[[0m[4mshopt_option[24m[1m][0m
+[24;1H[K:[K[K[HM                 be executed.
+[24;1H[K:[K[K[HM                 not [1mC[0m or [1mPOSIX[0m.  This implies the [1m-n[0m option; no commands will
+[24;1H[K:[K[K[HM                 subject to language translation when the current locale is
+[24;1H[K:[K[K[HM                 on the standard output.  These are the strings that are
+[24;1H[K:[K[K[HM       [1m-D[0m        A list of all double-quoted strings preceded by [1m$[0m is printed
+[24;1H[K:[K[K[HM                 set when invoking an interactive shell.
+[24;1H[K:[K[K[HM                 input.  This option allows the positional parameters to be
+[24;1H[K:[K[K[HM                 option processing, then commands are read from the standard
+[24;1H[K:[K[K[HM       [1m-s[0m        If the [1m-s[0m option is present, or if no arguments remain after
+[24;1H[K:[K[K[HM                 (see [1mRESTRICTED[0m [1mSHELL[0m below).
+[24;1H[K:[K[K[HM       [1m-r[0m        If the [1m-r[0m option is present, the shell becomes [4mrestricted[24m
+[24;1H[K:[K[K[HM                 [1mINVOCATION[0m below).
+[24;1H[K:[K[K[HM       [1m-l[0m        Make [1mbash[0m act as if it had been invoked as a login shell (see
+[24;1H[K:[K[K[HM       [1m-i[0m        If the [1m-i[0m option is present, the shell is [4minteractive[24m.
+[24;1H[K:[K[K[HM                 assigned to the positional parameters, starting with [1m$0[0m.
+[24;1H[K:[K[K[HM                 [4mstring[24m.  If there are arguments after the [4mstring[24m, they are
+[24;1H[K:[K[K[HM       [1m-c[0m [4mstring[24m If the [1m-c[0m option is present, then commands are read from
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM       options when it is invoked:
+[24;1H[K:[K[K[HM       description of the [1mset[0m builtin command, [1mbash[0m interprets the following
+[24;1H[K:[K[K[HM       In addition to the single-character shell options documented in the
+[24;1H[K:[K[K[HM[1mOPTIONS[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM       1003.1).  [1mBash[0m can be configured to be POSIX-conformant by default.
+[24;1H[K:[K[K[HM       Utilities portion of the IEEE POSIX specification (IEEE Standard
+[24;1H[K:[K[K[HM       [1mBash[0m is intended to be a conformant implementation of the Shell and
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM       incorporates useful features from the [4mKorn[24m and [4mC[24m shells ([1mksh[0m and [1mcsh[0m).
+[24;1H[K:[K[K[HM       commands read from the standard input or from a file.  [1mBash[0m also
+[24;1H[K:[K[K[HM       [1mBash[0m is an [1msh[0m-compatible command language interpreter that executes
+[24;1H[K:[K[K[HM[1mDESCRIPTION[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM       Bash is Copyright (C) 1989-2005 by the Free Software Foundation, Inc.
+[24;1H[K:[K[K[HM[1mCOPYRIGHT[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM       [1mbash[0m [options] [file]
+[24;1H[K:[K[K[HM[1mSYNOPSIS[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HM       bash - GNU Bourne-Again SHell
+[24;1H[K:[K[K[HM[1mNAME[0m
+[24;1H[K:[K[K[HM
+[24;1H[K:[K[K[HMBASH(1)                     General Commands Manual                    BASH(1)
+[24;1H[K:[K[K[K:[K[K[K:[K[K[K:[K[K[K:[K[K[K:[K[K[K:[K[K[K:[K[K[K:[K[K[K:[K[K[K:[K[K[K:[K[K[K:[K[K[K:[K[K[?1l>[?1049l[34m17:36:57[0m:[33marm64[0m:[32m~[0m$ 

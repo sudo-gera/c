@@ -14,21 +14,34 @@ def rand(q=2**64,e=None):
 def getstr(l=200):
 	# return ''.join([choice('tw') for w in range(rand(2,l))])[:l]
 	return ''.join([choice('snmrdfhg')+choice('aioue') for w in range(rand(1,l))])[:l]
-maxlen=40+int(run_num**0.5)
+maxlen=20+int(run_num**0.5)
 # strs=[getstr(maxlen) for w in range(maxlen)]
 
 # strs=[w+w[::-1] for w in strs]
 # strs=sum([[w[:q],w[q:]] for w in strs for q in [rand(1,len(w))]],[])
 # strs=[w[:10] for w in strs]
 
+n=randint(0,maxlen)
+print(n,end=' ')
+print(randint(10,27)%19-9,end=' ')
+for q in range(n):
+	print(randint(-9,9),end=' ')
+print()
+m=randint(0,maxlen)
+print(m,end=' ')
+print(randint(10,27)%19-9,end=' ')
+for q in range(m):
+	print(randint(-9,9),end=' ')
+print()
 
-n=randint(1,maxlen)
-q=randint(1,maxlen)
-print(n,q)
-for w in range(n):
-	print(randint(-10**18,10**18),randint(-10**18,10**18),randint(1,10**18))
-for e in range(q):
-	print(randint(-10**18,10**18))
+
+# n=randint(1,maxlen)
+# q=randint(1,maxlen)
+# print(n,q)
+# for w in range(n):
+# 	print(randint(-10**18,10**18),randint(-10**18,10**18),randint(1,10**18))
+# for e in range(q):
+# 	print(randint(-10**18,10**18))
 # a=[randint(-64,64) for w in range(n)]
 # print(*a)
 
