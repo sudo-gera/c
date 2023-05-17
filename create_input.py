@@ -20,10 +20,11 @@ strs=[getstr(maxlen) for w in range(maxlen)]
 # strs=[w+w[::-1] for w in strs]
 # strs=sum([[w[:q],w[q:]] for w in strs for q in [rand(1,len(w))]],[])
 # strs=[w[:10] for w in strs]
+print(*strs[:2])
 
-n=randint(1,maxlen)
-print(n)
-print(*strs[:n])
+# n=randint(1,maxlen)
+# print(n)
+# print(*strs[:n])
 # print(n,end=' ')
 # print(randint(10,27)%19-9,end=' ')
 # for q in range(n):
