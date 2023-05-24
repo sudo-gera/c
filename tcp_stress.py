@@ -73,7 +73,7 @@ class EchoClientProtocol(asyncio.Protocol):
         t=random.randint(40,100)
         # self.message = str(random.random()).encode()
         # self.message = bytes([random.randint(40,100) for _ in range(random.randint(256,512))])
-        self.message = bytes([t for _ in range(random.randint(2048,4096))])
+        # self.message = bytes([t for _ in range(random.randint(2048,4096))])
         self.message = ('%16i'%len(self.message)).encode()+('%16i'%abs(polyhash(self.message)))[:16].encode()+self.message
         # self.message = bytes([random.randint(40,100) for _ in range(random.randint(1024,2048))])
 
@@ -109,7 +109,7 @@ async def main():
 
 
     global count
-    count=64
+    count=16
     for r in range(count):
         asyncio.create_task(connect(loop))
 

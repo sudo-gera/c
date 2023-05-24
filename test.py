@@ -4,7 +4,7 @@ import random
 import sys
 
 WIDTH = 1000
-HEIGHT = 1000
+HEIGHT = 800
 FPS = 30
 
 # Задаем цвета
@@ -22,8 +22,9 @@ pygame.display.set_caption("My Game")
 clock = pygame.time.Clock()
 
 screen.fill(WHITE)
-s=sys.stdin.read()
-exec(s)
+for s in open('stream.py'):
+    exec(s)
+print()
 
 # Цикл игры
 running = True

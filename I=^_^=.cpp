@@ -36,89 +36,42 @@ using std::tuple_size, std::lexicographical_compare, std::set_intersection;
 using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
 using std::unique, std::decay_t, std::is_convertible_v, std::array;
 
-static inline int64_t GetInt() {
-    int sign = 1;
-    int c = 0;
-    unsigned res = 0;
-    while (c = getchar_unlocked(), isspace(c)) {
-    }
-    if (c == '-') {
-        sign = -1;
-    } else {
-        res = c - '0';
-    }
-    while (c = getchar_unlocked(), isdigit(c)) {
-        res *= 10;
-        res += c - '0';
-    }
-    return static_cast<int64_t>(res) * sign;
-}
-
-static inline void PutInt(uint64_t out) {
-    if (out > (1LLU << 63) - 1) {
-        putchar_unlocked('-');
-        out = 1 + ~out;
-    }
-    char data[44];
-    char* dend = data;
-    while (out) {
-        *++dend = static_cast<char>(static_cast<unsigned>('0') + out % 10);
-        out /= 10;
-    }
-    if (dend == data) {
-        putchar_unlocked('0');
-    }
-    for (; dend != data; --dend) {
-        putchar_unlocked(*dend);
-    }
-}
-
-template <typename T = void>
-struct Scan {
-    template <typename Y = T>
-    auto operator()() {
-        Y val;
-        cin >> val;
-        return val;
-    }
-};
-
-template <typename T>
-struct StaticCast {};
-
-template <typename T, typename Y>
-auto operator->*(T v, StaticCast<Y>) {
-    return static_cast<Y>(v);
-}
-
-StaticCast<ssize_t> si;
-StaticCast<unsigned> ui;
-
-///////////////////////////////////////////////////end of lib
-
-struct H {
+struct PolyHash {
     unsigned base = 1000;
     vector<unsigned> powers;
-    vector<vector<unsigned>> data;
-    explicit H(unsigned l) {
-        if (powers.empty()) {
-            powers.push_back(1);
-        }
+    vector<vector<unsigned>> prefixes;
+    explicit PolyHash(unsigned l,unsigned n) {
+        powers.push_back(1);
         while (powers.size() < l) {
             powers.push_back(powers.back() * base);
         }
+        prefixes.resize(n);
     }
     void Add(string& ss, unsigned s) {
-        auto& d = data[s] = vector<unsigned>(ss.size() + 1);
+        auto& d = prefixes[s] = vector<unsigned>(ss.size() + 1);
         unsigned l = 1;
         while (l <= ss.size()) {
             d[l] = (d[l - 1] * base + ss[l - 1]);
             ++l;
         }
     }
-    unsigned operator()(unsigned s, unsigned b, unsigned e) {
-        auto& d = data[s];
+    unsigned F0(unsigned s, unsigned b, unsigned e) {
+        auto& d = prefixes[s];
         return d[e] - d[b] * powers[e - b];
+    }
+    void F1(unsigned&){
+    }
+    template<typename...T>
+    void F1(unsigned&res,unsigned s1,unsigned b1,unsigned e1,T...o){
+        res*=(e1-b1);
+        res+=F0(s1,b1,e1);
+        F1(res,o...);
+    }
+    template<typename...T>
+    unsigned operator()(T...o){
+        unsigned res=0;
+        F1(res,o...);
+        return res;
     }
 };
 
@@ -130,18 +83,15 @@ struct Oth {
 };
 
 int main() {
-    auto h = H(20);
-    unsigned n = GetInt();
+    unsigned n=0;
+    cin>>n;
     vector<string> a(n);
     vector<string> s(n);
-    h.data.resize(2 * n);
+    auto h = PolyHash(20,2*n);
     for (unsigned q = 0; q < n; ++q) {
         auto& w = a[q];
         auto& e = s[q];
-        char data[16];
-        fgets(data, 14, stdin);
-        auto l = strlen(data);
-        w = string(data, data + l - 1);
+        cin>>w;
         e = string(w.rbegin(), w.rend());
         h.Add(w, q);
         h.Add(e, q + n);
@@ -195,13 +145,13 @@ int main() {
     }
     sort(ans.begin(), ans.end());
     ans.resize(unique(ans.begin(), ans.end()) - ans.begin() - 1);
-    PutInt(ans.size());
-    putchar_unlocked('\n');
+    cout<<(ans.size());
+    cout<<('\n');
     for (auto w : ans) {
-        PutInt(w.first + 1);
-        putchar_unlocked(' ');
-        PutInt(w.second + 1);
-        putchar_unlocked('\n');
+        cout<<(w.first + 1);
+        cout<<(' ');
+        cout<<(w.second + 1);
+        cout<<('\n');
     }
 }
 

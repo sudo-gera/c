@@ -83,19 +83,49 @@ auto ScanVector(T& x) {
 
 ///////////////////////////////////////////////////end of lib
 
+
+struct Fenwick {
+private:
+    vector<int64_t> tree_;
+    int64_t F(int64_t x){
+        return x & (x + 1);
+    }
+    int64_t G(int64_t x){
+        return x | (x + 1);
+    }
+public:
+
+    explicit Fenwick(size_t n = 0) : tree_(n) {}
+
+    void Add(int64_t i, int64_t k) {
+        for (; i < static_cast<int64_t>(tree_.size()); i = G(i)) {
+            tree_[i] += k;
+        }
+    }
+
+    int64_t Ask(int64_t r) {
+        int64_t res = 0;
+        for (; r >= 0; r = F(r) - 1) {
+            res += tree_[r];
+        }
+        return res;
+    }
+};
+
 // sources: https://codeforces.com/blog/entry/91632 https://github.com/maksim1744/programming-library/blob/master/prime_count.cpp
+
 
 // works in 250ms for n=1e11, in ~1s for n=1e12
 // O(n^2/3 logn)
 // just call CountPrimes(n)
 struct CountPrimesStructT {
-    vector<int> primes;
-    vector<int> mnprimes;
-    int64_t ans;
-    int64_t y;
-    vector<pair<pair<int64_t, int>, char>> queries;
+    vector<int64_t> primes;
+    vector<int64_t> min_divizor;
+    int64_t ans=0;
+    int64_t y=0;
+    vector<pair<pair<int64_t, int64_t>, char>> queries;
 
-    void Phi(int64_t n, int a, int sign = 1) {
+    void Phi(int64_t n, int64_t a, int64_t sign = 1) {
         if (n == 0) {
             return;
         }
@@ -111,57 +141,39 @@ struct CountPrimesStructT {
         Phi(n / primes[a], a - 1, -sign);
     }
 
-    struct Fenwick {
-        vector<int> tree;
-        int n;
-
-        explicit Fenwick(int n = 0) : n(n) {
-            tree.assign(n, 0);
-        }
-
-        void Add(int i, int k) {
-            for (; i < n; i = (i | (i + 1))) {
-                tree[i] += k;
-            }
-        }
-
-        int Ask(int r) {
-            int res = 0;
-            for (; r >= 0; r = (r & (r + 1)) - 1) {
-                res += tree[r];
-            }
-            return res;
-        }
-    };
-
-    int64_t CountPrimes(int64_t n) {
-        y = static_cast<int64_t>(pow(static_cast<double>(n), 0.64));
-        if (n < 100) {
-            y = n;
-        }
+    void Sieve(int64_t n){
         primes.clear();
-        mnprimes.assign(y + 1, -1);
+        min_divizor.assign(n + 1, -1);
         ans = 0;
-        for (int i = 2; i <= y; ++i) {
-            if (mnprimes[i] == -1) {
-                mnprimes[i] = static_cast<int>(primes.size());
+        for (int64_t i = 2; i <= n; ++i) {
+            if (min_divizor[i] == -1) {
+                min_divizor[i] = static_cast<int64_t>(primes.size());
                 primes.push_back(i);
             }
-            for (int k = 0; k < static_cast<int>(primes.size()); ++k) {
-                int j = primes[k];
-                if (i * j > y) {
+            for (int64_t k = 0; k < static_cast<int64_t>(primes.size()); ++k) {
+                int64_t j = primes[k];
+                if (i * j > n) {
                     break;
                 }
-                mnprimes[i * j] = k;
+                min_divizor[i * j] = k;
                 if (i % j == 0) {
                     break;
                 }
             }
         }
+    }
+
+    int64_t CountPrimes(int64_t n) {
+        if (n < 100) {
+            y = n;
+        }else{
+            y = llroundl(pow(static_cast<double>(n), 0.64));
+        }
+        Sieve(y);
         if (n < 100) {
             return static_cast<int64_t>(primes.size());
         }
-        int64_t s = n / y;
+        int64_t cbrt_n = n / y; // a bit smaller than cbrt(n)
 
         // pi(n) -- prime counting function
         // Phi(n, a) -- number of integers from 1 to n which are not divisible by any prime from 0-th to a-th (p0=2)
@@ -170,40 +182,42 @@ struct CountPrimesStructT {
         // the form p*q, where p >= q >= cbrt(n) (can be counted with two pointers)
 
         // pi(cbrt(n))
-        for (int p : primes) {
-            if (p > s) {
+        for (int64_t p : primes) {
+            if (p > cbrt_n) {
                 break;
             }
             ans++;
         }
 
-        // F
-        int ssz = static_cast<int>(ans);
-        int ptr = static_cast<int>(primes.size()) - 1;
-        for (int i = ssz; i < static_cast<int>(primes.size()); ++i) {
-            while (ptr >= i && static_cast<int64_t>(primes[i]) * primes[ptr] > n) {
-                --ptr;
+        auto pi_cbrt_n = ans;
+
+        // F is the number of composite number of
+        // the form p*q, where p >= q >= cbrt(n) (can be counted with two pointers)
+        // int64_t ;
+        for (int64_t q = pi_cbrt_n, p = static_cast<int64_t>(primes.size()) - 1; ; ++q) {
+            while (p >= q and primes[q] * primes[p] > n) {
+                --p;
             }
-            if (ptr < i) {
+            if (p < q) {
                 break;
             }
-            ans -= ptr - i + 1;
+            ans -= p - q + 1;
         }
 
         // Phi
         // store all queries Phi(m, a) with m < n^2/3, calculate later with Fenwick (sum in a rectangle)
-        Phi(n, ssz - 1);
+        Phi(n, pi_cbrt_n - 1);
         sort(queries.begin(), queries.end());
-        int ind = 2;
-        int sz = static_cast<int>(primes.size());
+        int64_t ind = 2;
+        // auto sz = static_cast<int64_t>(primes.size());
         // the order will be reversed, because prefix sum in a Fenwick is just one query
-        Fenwick fw(sz);
+        Fenwick fw(primes.size());
         for (auto [na, sign] : queries) {
             auto [n, a] = na;
             while (ind <= n) {
-                fw.Add(sz - 1 - mnprimes[ind++], 1);
+                fw.Add(static_cast<int64_t>(primes.size()) - 1 - min_divizor[ind++], 1);
             }
-            ans += (fw.Ask(sz - a - 2) + 1) * sign;
+            ans += (fw.Ask(static_cast<int64_t>(primes.size()) - a - 2) + 1) * sign;
         }
         queries.clear();
         return ans - 1;
