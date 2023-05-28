@@ -13,7 +13,7 @@ function send1(){
         # echo "$buff" | wc -m 
         # curl --noproxy \* http://127.0.0.1:8008/ -d "$(echo "$text" | base64)"
     done
-    echo "123" > "$tmppipe2"
+    echo "1234" > "$tmppipe2"
 }
 function send2(){
     IFS=''
@@ -25,7 +25,7 @@ function send2(){
         # curl --noproxy \* http://127.0.0.1:8008/ -d "$text"
         if read -t 1 -n 4 text
         then
-            if [ "$text" == $'123\n' ]
+            if [ "$text" == $'1234' ]
             then
                 stop=1
             else
