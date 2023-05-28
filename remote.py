@@ -82,9 +82,10 @@ async def start_read():
             r.append(asyncio.create_task(read()))
 
 async def get(req):
+    print(85)
     await start_read()
     t=await q.get_wait()
-    print(t)
+    print(88,t)
     return web.Response(text=base64.b64encode(t).decode())
 
 async def post(req):
