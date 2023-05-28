@@ -21,15 +21,20 @@ function send2(){
     buff=''
     while [ $stop == 0 ]
     do
+        send=1
         if read -t 2 -n 4 text
         then
+            send=0
             if [ "$text" == $'1234' ]
             then
                 stop=1
+                send=1
             else
                 buff="$buff $text"
             fi
-        else
+        fi
+        if [ $send == 1 ]
+        then
             if [ -n "$buff" ]
             then
                 echo "$buff"
