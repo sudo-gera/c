@@ -5,9 +5,12 @@ mkfifo -m 600 "$tmppipe2"
 # base64 < "$tmppipe1" > "$tmppipe2" &
 function send(){
     IFS=''
-    buff=''
-    while read -rn 1 text
+    while read -rn 4096 text
     do
+        
+        # tmp="$(echo "$text" | base64)"
+        # buff="$buff$tmp"
+        # echo "$buff" | wc -m 
         curl --noproxy \* http://127.0.0.1:8008/ -d "$(echo "$text" | base64)"
     done
 }
