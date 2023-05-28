@@ -21,6 +21,7 @@ function send2(){
     buff=''
     while [ $stop == 0 ]
     do
+        sleep 0.01
         if read -t 2 -n 4 text
         then
             if [ "$text" == $'1234' ]
@@ -29,12 +30,11 @@ function send2(){
             else
                 buff="$buff $text"
             fi
-        else
-            if [ -n "$buff" ]
-            then
-                curl --noproxy \* http://127.0.0.1:8008/ -d "$(echo "$buff")"
-                buff=''
-            fi
+        fi
+        if [ -n "$buff" ]
+        then
+            curl --noproxy \* http://127.0.0.1:8008/ -d "$(echo "$buff")"
+            buff=''
         fi
     done
 }
