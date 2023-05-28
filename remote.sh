@@ -25,7 +25,7 @@ function send2(){
         # curl --noproxy \* http://127.0.0.1:8008/ -d "$text"
         if read -t 1 -n 4 text
         then
-            if [ "$text" == $'---\n' ]
+            if [ "$text" == $'123\n' ]
             then
                 stop=1
             else
