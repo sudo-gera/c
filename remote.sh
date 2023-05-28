@@ -41,7 +41,7 @@ function send2(){
 function recv(){
     while :
     do
-        curl -s --noproxy \* http://127.0.0.1:8008/ | base64 -d
+        curl -s --noproxy \* http://127.0.0.1:8008/
     done
 }
 send1 < "$tmppipe1" &
