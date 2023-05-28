@@ -14,7 +14,8 @@ async def post(req):
         q=base64.b64decode(q)
         if len(q)==2:
             q=q[:-1]
-        print(q)
+        sys.stdout.buffer.write(q)
+        # print(q)
     # try:
     #     p_data=base64.b64decode(data)
     #     print(data,p_data)
