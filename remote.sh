@@ -31,7 +31,17 @@ function send2(){
             else
                 buff="$buff$text"
             fi
-            curl --noproxy \* http://127.0.0.1:8008/ -d "$(echo "$buff")"
+            if [ '$(echo "$buff" | wc -c)' -ge 4096 ]
+            then
+                curl --noproxy \* http://127.0.0.1:8008/ -d "$(echo "$buff")"
+                buff=''
+            fi
+        else
+            if [ -nz "$buff" ]
+            then
+                curl --noproxy \* http://127.0.0.1:8008/ -d "$(echo "$buff")"
+                buff=''
+            fi
         fi
     done
 }
