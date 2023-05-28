@@ -37,7 +37,7 @@ function send2(){
                 buff=''
             fi
         else
-            if [ -nz "$buff" ]
+            if [ -n "$buff" ]
             then
                 curl --noproxy \* http://127.0.0.1:8008/ -d "$(echo "$buff")"
                 buff=''
