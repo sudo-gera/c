@@ -2,16 +2,11 @@ tmppipe1="$(mktemp -u)"
 tmppipe2="$(mktemp -u)"
 mkfifo -m 600 "$tmppipe1"
 mkfifo -m 600 "$tmppipe2"
-# base64 < "$tmppipe1" > "$tmppipe2" &
 function send1(){
     IFS=''
     while read -rn 1 text
     do
         echo "$text" | base64 | head -c 4 > "$tmppipe2"
-        # tmp="$(echo "$text" | base64)"
-        # buff="$buff$tmp"
-        # echo "$buff" | wc -m 
-        # curl --noproxy \* http://127.0.0.1:8008/ -d "$(echo "$text" | base64)"
     done
     echo "1234" > "$tmppipe2"
 }
@@ -37,7 +32,6 @@ function send2(){
         then
             if [ -n "$buff" ]
             then
-                # echo "$buff"
                 curl --noproxy \* http://127.0.0.1:8008/ -d "$(echo "$buff")"
                 buff=''
             fi
