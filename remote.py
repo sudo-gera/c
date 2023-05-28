@@ -13,8 +13,8 @@ async def post(req):
     data=base64.b64decode(data)
     if len(data)==2:
         data=data[:-1]
-    # print(data)
-    sys.stdout.buffer.write(data)
+    print(data)
+    # sys.stdout.buffer.write(data)
     sys.stdout.flush()
     return web.Response()
 
