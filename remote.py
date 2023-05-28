@@ -72,6 +72,7 @@ async def read():
     while 1:
         for w in receive_key_event_unsafe():
             f=await r.read(1)
+            print(f)
             q.put(f)
 
 read_lock=asyncio.Lock()
