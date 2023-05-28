@@ -41,7 +41,7 @@ function send2(){
                 curl --noproxy \* http://127.0.0.1:8008/ -d "$(echo "$buff")"
                 buff=''
             fi
-            sleep 0.01
+            sleep 0.1
         fi
     done
 }
