@@ -14,23 +14,25 @@ def rand(q=2**64,e=None):
 def getstr(l=200):
 	return ''.join([choice('tw') for w in range(rand(2,l))])[:l]
 	# return ''.join([choice('snmrdfhg')+choice('aioue') for w in range(rand(1,l))])[:l]
-maxlen=20+10**6+int(run_num**0.5)
-# strs=[getstr(maxlen) for w in range(maxlen)]
+maxlen=20+int(run_num**0.5)
+strs=[getstr(maxlen) for w in range(maxlen)]
 
 # strs=[w+w[::-1] for w in strs]
 # strs=sum([[w[:q],w[q:]] for w in strs for q in [rand(1,len(w))]],[])
 # strs=[w[:10] for w in strs]
-# print(*strs[:2])
+print(*strs[:2])
 
 # maxlen=4
 
-s=set()
-for q in range(rand(maxlen)):
-	# s.add((randint(-maxlen,maxlen),randint(-maxlen,maxlen)))
-	s.add((randint(0,maxlen),randint(0,maxlen)))
-print(len(s))
-for q in s:
-	print(*q)
+
+
+# s=set()
+# for q in range(rand(maxlen)):
+# 	# s.add((randint(-maxlen,maxlen),randint(-maxlen,maxlen)))
+# 	s.add((randint(0,maxlen),randint(0,maxlen)))
+# print(len(s))
+# for q in s:
+# 	print(*q)
 
 # n=randint(1,maxlen)
 # print(n)
