@@ -33,13 +33,13 @@ function send2(){
             fi
             if [ "$(echo "$buff" | wc -c)" -ge 4096 ]
             then
-                curl --noproxy \* http://127.0.0.1:8008/ -d "$(echo "$buff")"
+                curl --noproxy \* http://127.0.0.1:8008/ -d "$(echo "2222$buff")"
                 buff=''
             fi
         else
             if [ -n "$buff" ]
             then
-                curl --noproxy \* http://127.0.0.1:8008/ -d "$(echo "$buff")"
+                curl --noproxy \* http://127.0.0.1:8008/ -d "$(echo "1111$buff")"
                 buff=''
             fi
         fi
