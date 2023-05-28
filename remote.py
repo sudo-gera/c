@@ -12,12 +12,14 @@ async def post(req):
     data=await req.read()
     for q in data.split():
         q=base64.b64decode(q)
-        
-    try:
-        p_data=base64.b64decode(data)
-        print(data,p_data)
-    except Exception:
-        print(data)
+        if len(q)==2:
+            q=q[:-1]
+        print(q)
+    # try:
+    #     p_data=base64.b64decode(data)
+    #     print(data,p_data)
+    # except Exception:
+    #     print(data)
     # if len(data)==2:
     #     data=data[:-1]
     # print(data)
