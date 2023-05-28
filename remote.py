@@ -89,7 +89,6 @@ async def get(req):
 async def post(req):
     data=await req.read()
     for q in data.split():
-        print(q)
         if q==b'^^^^':
             raise KeyboardInterrupt
         q=base64.b64decode(q)
