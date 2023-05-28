@@ -21,7 +21,6 @@ function send2(){
     buff=''
     while [ $stop == 0 ]
     do
-        sleep 1
         if read -t 2 -n 4 text
         then
             if [ "$text" == $'1234' ]
@@ -30,6 +29,8 @@ function send2(){
             else
                 buff="$buff $text"
             fi
+        else
+            sleep 1
         fi
         if [ -n "$buff" ]
         then
