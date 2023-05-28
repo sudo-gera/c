@@ -30,13 +30,13 @@ function send2(){
                 buff="$buff $text"
             fi
         else
+            if [ -n "$buff" ]
+            then
+                echo "$buff"
+                # curl --noproxy \* http://127.0.0.1:8008/ -d "$(echo "$buff")"
+                buff=''
+            fi
             sleep 1
-        fi
-        if [ -n "$buff" ]
-        then
-            echo "$buff"
-            # curl --noproxy \* http://127.0.0.1:8008/ -d "$(echo "$buff")"
-            buff=''
         fi
     done
 }
