@@ -21,7 +21,7 @@ function send2(){
     buff=''
     while [ $stop == 0 ]
     do
-        read -t 1 -n 4 text
+        # read -t 1 -n 4 text
         # curl --noproxy \* http://127.0.0.1:8008/ -d "$text"
         if read -t 2 -n 4 text
         then
