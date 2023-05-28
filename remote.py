@@ -73,10 +73,12 @@ q=DataQueue()
 
 r=[]
 
+running=1
+
 async def read():
     e=await connect_stdin()
     with term:
-        while 1:
+        while running:
             f=await e.read(1)
             q.put(f)
 
@@ -97,17 +99,22 @@ def start_read():
         r.append(asyncio.create_task(read()))
 
 async def get(req):
-    print(85)
-    start_read()
-    t=await q.get_wait()
-    print(88,t)
-    return web.Response(text=base64.b64encode(t).decode())
+    t=b''
+    try:
+        print(85)
+        start_read()
+        t=await q.get_wait()
+        print(88,t)
+    finally:
+        return web.Response(text=base64.b64encode(t).decode())
 
 async def post(req):
     data=await req.read()
     t=[]
     for q in data.split():
         if q==b'^^^^':
+            global running
+            running=0
             raise KeyboardInterrupt
         q=base64.b64decode(q)
         if len(q)==2:
