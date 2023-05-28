@@ -10,6 +10,9 @@ async def handle(request):
 async def post(req):
     # name = req.match_info.get('name', "Anonymous")
     data=await req.read()
+    for q in data.split():
+        q=base64.b64decode(q)
+        
     try:
         p_data=base64.b64decode(data)
         print(data,p_data)
