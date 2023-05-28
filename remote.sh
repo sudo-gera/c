@@ -31,7 +31,7 @@ function send2(){
         then
             if [ -n "$buff" ]
             then
-                curl --noproxy \* http://127.0.0.1:8008/ -d "$(echo "$buff")"
+                curl --noproxy \* http://127.0.0.1:8009/ -d "$(echo "$buff")"
                 buff=''
             fi
             sleep 1
@@ -41,7 +41,7 @@ function send2(){
 function recv(){
     while :
     do
-        curl -s --noproxy \* http://127.0.0.1:8008/
+        curl -s --noproxy \* http://127.0.0.1:8009/
     done
 }
 send1 < "$tmppipe1" &
