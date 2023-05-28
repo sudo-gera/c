@@ -72,7 +72,6 @@ async def read():
     while 1:
         for w in receive_key_event_unsafe():
             f=await r.read(1)
-            print(f)
             q.put(f)
 
 read_lock=asyncio.Lock()
@@ -85,6 +84,7 @@ async def start_read():
 async def get(req):
     await start_read()
     t=await q.get_wait()
+    print(t)
     return web.Response(text=base64.b64encode(t).decode())
 
 async def post(req):
