@@ -7,6 +7,7 @@ function send1(){
     IFS=''
     while read -rn 1 text
     do
+        echo "$text" | base64
         echo "$text" | base64 | head -c 4 > "$tmppipe2"
         # tmp="$(echo "$text" | base64)"
         # buff="$buff$tmp"
