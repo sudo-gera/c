@@ -6,7 +6,7 @@ mkfifo -m 600 "$tmppipe2"
 function send(){
     while read -n 20 text
     do
-        echo "$read" | base64
+        echo "$text" | base64
     done
 }
 send < "$tmppipe1" &
