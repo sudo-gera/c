@@ -27,7 +27,7 @@ function send2(){
             then
                 stop=1
             else
-                buff="$buff|$text"
+                buff="$buff $text"
             fi
         else
             if [ -n "$buff" ]
