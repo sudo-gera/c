@@ -39,6 +39,7 @@ class term_c:
     def __init__(self) -> None:
         self.entered=0
     def __enter__(self):
+        print('enter')
         self.entered=1
         self.fd=sys.stdin.fileno()
         self.mode=termios.tcgetattr(self.fd)
@@ -53,6 +54,7 @@ class term_c:
         termios.tcsetattr(self.fd, termios.TCSAFLUSH, self.mode)
         return self
     def __exit__(self):
+        print('exit')
         if self.entered:
             termios.tcsetattr(self.fd, termios.TCSADRAIN, self.save)
             self.entered=0
@@ -111,7 +113,7 @@ async def post(req):
         if len(q)==2:
             q=q[:-1]
         t.append(q)
-    t=b''.join(q)
+    t=b''.join(t)
     run=term.__exit__()
     sys.stdout.buffer.write(t)
     sys.stdout.flush()
