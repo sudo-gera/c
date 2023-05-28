@@ -21,7 +21,7 @@ function send2(){
     buff=''
     while [ $stop == 0 ]
     do
-        if read -t 0.01 -n 5 text
+        if read -t 1 -n 5 text
         then
             if [ "$text" == $'----\n' ]
             then
