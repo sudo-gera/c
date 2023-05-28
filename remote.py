@@ -9,8 +9,9 @@ async def handle(request):
 
 async def post(req):
     name = req.match_info.get('name', "Anonymous")
-    data=req.read()
+    data=await req.read()
     sys.stdout.buffer.write(base64.b64decode(data))
+    sys.stdout.flush()
     return web.Response()
 
 app = web.Application()
