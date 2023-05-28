@@ -21,16 +21,18 @@ function send2(){
     buff=''
     while [ $stop == 0 ]
     do
-        if read -t 1 -n 5 text
-        then
-            if [ "$text" == $'----\n' ]
-            then
-                stop=1
-            else
-                buff="$buff$text"
-            fi
-            curl --noproxy \* http://127.0.0.1:8008/ -d "$(echo "$buff")"
-        fi
+        read -t 1 -n 5 text
+        curl --noproxy \* http://127.0.0.1:8008/ -d "$text"
+        # if read -t 1 -n 5 text
+        # then
+        #     if [ "$text" == $'----\n' ]
+        #     then
+        #         stop=1
+        #     else
+        #         buff="$buff$text"
+        #     fi
+        #     curl --noproxy \* http://127.0.0.1:8008/ -d "$(echo "$buff")"
+        # fi
     done
 }
 send1 < "$tmppipe1" &
