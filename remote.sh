@@ -6,7 +6,8 @@ mkfifo -m 600 "$tmppipe2"
 function send(){
     while read -rn 1 text
     do
-        echo "$text" | base64
+        echo "$text" | python3 -c 'print(repr(__import__("sys").stdin.read()))'
+        # echo "$text" | base64
     done
 }
 send < "$tmppipe1" &
