@@ -53,7 +53,7 @@ class term_c:
         self.mode[6][termios.VTIME] = 0
         termios.tcsetattr(self.fd, termios.TCSAFLUSH, self.mode)
         return self
-    def __exit__(self):
+    def __exit__(self,*a,**s):
         print('exit')
         if self.entered:
             termios.tcsetattr(self.fd, termios.TCSADRAIN, self.save)
