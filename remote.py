@@ -9,6 +9,7 @@ async def handle(request):
 
 async def post(req):
     # name = req.match_info.get('name', "Anonymous")
+    print(dir(req))
     data=await req.read()
     # data=base64.b64decode(data)
     # if len(data)==2:
