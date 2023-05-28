@@ -35,26 +35,30 @@ class DataQueue:
             data+=g
             return data
 
-def receive_key_event_unsafe():
-    # if you will use it in while(1)
-    # you will never stop
-    # ctrl+C returns as 3
-    fd=sys.stdin.fileno()
-    mode=termios.tcgetattr(fd)
-    save=copy.copy(mode)
-    mode[0] &= ~(termios.BRKINT | termios.ICRNL | termios.INPCK | termios.ISTRIP | termios.IXON)
-    mode[1] &= ~(termios.OPOST)
-    mode[2] &= ~(termios.CSIZE | termios.PARENB)
-    mode[2] |= termios.CS8
-    mode[3] &= ~(termios.ECHO | termios.ICANON | termios.IEXTEN | termios.ISIG)
-    mode[6][termios.VMIN] = 1
-    mode[6][termios.VTIME] = 0
-    termios.tcsetattr(fd, termios.TCSAFLUSH, mode)
-    try:
-        yield
-        # c=sys.stdin.buffer.read(1)
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, save)
+class term_c:
+    def __init__(self) -> None:
+        self.entered=0
+    def __enter__(self):
+        self.entered=1
+        self.fd=sys.stdin.fileno()
+        self.mode=termios.tcgetattr(self.fd)
+        self.save=copy.copy(self.mode)
+        self.mode[0] &= ~(termios.BRKINT | termios.ICRNL | termios.INPCK | termios.ISTRIP | termios.IXON)
+        self.mode[1] &= ~(termios.OPOST)
+        self.mode[2] &= ~(termios.CSIZE | termios.PARENB)
+        self.mode[2] |= termios.CS8
+        self.mode[3] &= ~(termios.ECHO | termios.ICANON | termios.IEXTEN | termios.ISIG)
+        self.mode[6][termios.VMIN] = 1
+        self.mode[6][termios.VTIME] = 0
+        termios.tcsetattr(self.fd, termios.TCSAFLUSH, self.mode)
+        return self
+    def __exit__(self):
+        if self.entered:
+            termios.tcsetattr(self.fd, termios.TCSADRAIN, self.save)
+            self.entered=0
+            return True
+
+term=term_c()
 
 async def connect_stdin():
     loop = asyncio.get_event_loop()
@@ -68,36 +72,51 @@ q=DataQueue()
 r=[]
 
 async def read():
-    r=await connect_stdin()
-    while 1:
-        for w in receive_key_event_unsafe():
-            f=await r.read(1)
+    e=await connect_stdin()
+    with term:
+        while 1:
+            f=await e.read(1)
             q.put(f)
 
-read_lock=asyncio.Lock()
+    # r.append(iter(receive_key_event_unsafe()))
+    # while 1:
+    #     next(r[1])
 
-async def start_read():
-    async with read_lock:
-        if not r:
-            r.append(asyncio.create_task(read()))
+
+    # while 1:
+        # for w in receive_key_event_unsafe():
+            # f=await r.read(1)
+            # q.put(f)
+
+# read_lock=asyncio.Lock()
+
+def start_read():
+    if not r:
+        r.append(asyncio.create_task(read()))
 
 async def get(req):
     print(85)
-    await start_read()
+    start_read()
     t=await q.get_wait()
     print(88,t)
     return web.Response(text=base64.b64encode(t).decode())
 
 async def post(req):
     data=await req.read()
+    t=[]
     for q in data.split():
         if q==b'^^^^':
             raise KeyboardInterrupt
         q=base64.b64decode(q)
         if len(q)==2:
             q=q[:-1]
-        sys.stdout.buffer.write(q)
+        t.append(q)
+    t=b''.join(q)
+    run=term.__exit__()
+    sys.stdout.buffer.write(t)
     sys.stdout.flush()
+    if run:
+        term.__enter__()
     return web.Response()
 
 def stop(req):
