@@ -8,7 +8,7 @@ function send1(){
     do
         echo "$text" | base64 | head -c 4 > "$tmppipe2"
     done
-    echo "1234" > "$tmppipe2"
+    echo "^^^^" > "$tmppipe2"
 }
 function send2(){
     IFS=''
@@ -20,13 +20,12 @@ function send2(){
         if read -t 2 -n 4 text
         then
             send=0
-            if [ "$text" == $'1234' ]
+            if [ "$text" == $'^^^^' ]
             then
                 stop=1
                 send=1
-            else
-                buff="$buff $text"
             fi
+            buff="$buff $text"
         fi
         if [ $send == 1 ]
         then
@@ -39,8 +38,14 @@ function send2(){
         fi
     done
 }
+function recv(){
+    while :
+    do
+        curl --noproxy \* http://127.0.0.1:8008/ | base64 -d
+    done
+}
 send1 < "$tmppipe1" &
 send2 < "$tmppipe2" &
-script -F "$tmppipe1"
+recv | script -F "$tmppipe1"
 
 

@@ -18,9 +18,9 @@ def receive_key_event_unsafe():
     mode[6][termios.VMIN] = 1
     mode[6][termios.VTIME] = 0
     termios.tcsetattr(fd, termios.TCSAFLUSH, mode)
-    c=sys.stdin.read(1);
-    termios.tcsetattr(fd, termios.TCSADRAIN, save);
-    return c;
+    c=sys.stdin.buffer.read(1)
+    termios.tcsetattr(fd, termios.TCSADRAIN, save)
+    return c
 
 
 def receive_key_event():
