@@ -40,7 +40,7 @@ class term_c:
     def __init__(self) -> None:
         self.entered=0
     def __enter__(self):
-        print('enter')
+        # print('enter')
         self.entered=1
         self.fd=sys.stdin.fileno()
         self.mode=termios.tcgetattr(self.fd)
@@ -55,7 +55,7 @@ class term_c:
         termios.tcsetattr(self.fd, termios.TCSAFLUSH, self.mode)
         return self
     def __exit__(self,*a,**s):
-        print('exit')
+        # print('exit')
         if self.entered:
             termios.tcsetattr(self.fd, termios.TCSADRAIN, self.save)
             self.entered=0
