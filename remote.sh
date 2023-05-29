@@ -50,7 +50,7 @@ function main(){
     }
     send1 < "$tmppipe1" &
     send2 < "$tmppipe2" &
-    recv | script -F "$tmppipe1"
+    recv | script -q -F "$tmppipe1"
 }
 main
 
