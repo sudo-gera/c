@@ -93,6 +93,8 @@ async def write():
                         running=0
                     else:
                         w=base64.b64decode(w)
+                        if len(w)==2:
+                            w=w[:-1]
                         t.append(w)
                 t=b''.join(t)
                 run=term.__exit__()
