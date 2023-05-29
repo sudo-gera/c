@@ -1,8 +1,10 @@
 function main(){
     tmppipe1="$(mktemp -u)"
     tmppipe2="$(mktemp -u)"
+    tmppipe3="$(mktemp -u)"
     mkfifo -m 600 "$tmppipe1"
     mkfifo -m 600 "$tmppipe2"
+    mkfifo -m 600 "$tmppipe3"
     function send1(){
         IFS=''
         while read -rn 1 text
@@ -50,7 +52,9 @@ function main(){
     }
     send1 < "$tmppipe1" &
     send2 < "$tmppipe2" &
-    recv | script -F "$tmppipe1"
+    recv > "$tmppipe3" &
+    cat > "$tmppipe3" &
+    script -F "$tmppipe1" < "$tmppipe3"
 }
 main
 
