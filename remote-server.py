@@ -54,7 +54,7 @@ async def post(req):
     name=req.match_info['name']
     if name not in d:
         d[name]=DataQueue()
-    d[name].put(req.read())
+    d[name].put(await req.read())
     return aiohttp.web.Response()
 
 def start(req):
