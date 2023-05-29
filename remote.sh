@@ -32,7 +32,7 @@ function main(){
             then
                 if [ -n "$buff" ]
                 then
-                    if ! curl "$REMOTE_URL"_client -d "$(echo "$buff")"
+                    if ! curl -s "$REMOTE_URL"_client -d "$(echo "$buff")"
                     then
                         stop=1
                     fi
