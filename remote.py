@@ -63,6 +63,8 @@ class term_c:
 
 term=term_c()
 
+running=1
+
 async def connect_stdin():
     loop = asyncio.get_event_loop()
     reader = asyncio.StreamReader()
@@ -74,18 +76,28 @@ async def read():
     e=await connect_stdin()
     async with aiohttp.ClientSession() as session:
         with term:
-            while 1:
+            while running:
                 f=await e.read(1)
                 async with session.post(sys.argv[1]+'_server',data=f) as resp:
                     pass
 
 async def write():
     async with aiohttp.ClientSession() as session:
-        while 1:
+        global running
+        while running:
             async with session.get(sys.argv[1]+'_client') as resp:
                 f=await resp.read()
+                t=[]
+                for w in f.split():
+                    if w==b'^^^^':
+                        running=0
+                    else:
+                        w=base64.b64decode(w)
+                        t.append(w)
+                t=b''.join(t)
                 run=term.__exit__()
-                print(f)
+                sys.stdout.buffer.write(t)
+                sys.stdout.buffer.flush()
                 if run:
                     term.__enter__()
 
