@@ -1,3 +1,4 @@
+export REMOTE_URL='http://127.0.0.1:8010'
 tmppipe1="$(mktemp -u)"
 tmppipe2="$(mktemp -u)"
 mkfifo -m 600 "$tmppipe1"
@@ -31,7 +32,7 @@ function send2(){
         then
             if [ -n "$buff" ]
             then
-                curl --noproxy \* http://127.0.0.1:8009/ -d "$(echo "$buff")"
+                curl --noproxy \* "$REMOTE_URL" -d "$(echo "$buff")"
                 buff=''
             fi
             sleep 1
@@ -41,7 +42,7 @@ function send2(){
 function recv(){
     while :
     do
-        curl -s --noproxy \* http://127.0.0.1:8009/
+        curl -s --noproxy \* "$REMOTE_URL"
     done
 }
 send1 < "$tmppipe1" &
