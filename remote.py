@@ -71,25 +71,28 @@ async def connect_stdin():
     return reader
 
 async def read():
-    e=connect_stdin()
-    with term:
-        async with aiohttp.ClientSession() as session:
-            f=await e.read(1)
-            async with session.post(sys.argv[1]+'_server',data=f) as resp:
-                pass
+    e=await connect_stdin()
+    async with aiohttp.ClientSession() as session:
+        with term:
+            while 1:
+                f=await e.read(1)
+                async with session.post(sys.argv[1]+'_server',data=f) as resp:
+                    pass
 
 async def write():
     async with aiohttp.ClientSession() as session:
-        async with session.get(sys.argv[1]+'_client') as resp:
-            f=await resp.read()
-            run=term.__exit__()
-            print(f)
-            if run:
-                term.__enter__()
+        while 1:
+            async with session.get(sys.argv[1]+'_client') as resp:
+                f=await resp.read()
+                run=term.__exit__()
+                print(f)
+                if run:
+                    term.__enter__()
 
 
 async def main():
-    asyncio.gather(
-        read(),
-        write()
-    )
+    asyncio.create_task(read())
+    asyncio.create_task(write())
+    await asyncio.gather(*asyncio.all_tasks() - {asyncio.current_task()})
+
+asyncio.run(main())
