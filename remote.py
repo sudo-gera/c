@@ -1,3 +1,4 @@
+import aiohttp
 from aiohttp import web
 import asyncio
 import base64
@@ -69,72 +70,26 @@ async def connect_stdin():
     await loop.connect_read_pipe(lambda: protocol, sys.stdin.buffer)
     return reader
 
-q=DataQueue()
-
-r=[]
-
-running=1
-
 async def read():
-    e=await connect_stdin()
+    e=connect_stdin()
     with term:
-        while running:
+        async with aiohttp.ClientSession() as session:
             f=await e.read(1)
-            q.put(f)
+            async with session.post(sys.argv[1]+'_server',data=f) as resp:
+                pass
 
-    # r.append(iter(receive_key_event_unsafe()))
-    # while 1:
-    #     next(r[1])
+async def write():
+    async with aiohttp.ClientSession() as session:
+        async with session.get(sys.argv[1]+'_client') as resp:
+            f=await resp.read()
+            run=term.__exit__()
+            print(f)
+            if run:
+                term.__enter__()
 
 
-    # while 1:
-        # for w in receive_key_event_unsafe():
-            # f=await r.read(1)
-            # q.put(f)
-
-# read_lock=asyncio.Lock()
-
-def start_read():
-    if not r:
-        r.append(asyncio.create_task(read()))
-
-async def get(req):
-    t=b''
-    try:
-        print(85)
-        start_read()
-        t=await q.get_wait()
-        print(88,t)
-    finally:
-        return web.Response(text=base64.b64encode(t).decode())
-
-async def post(req):
-    data=await req.read()
-    t=[]
-    for q in data.split():
-        if q==b'^^^^':
-            global running
-            running=0
-            raise KeyboardInterrupt
-        q=base64.b64decode(q)
-        if len(q)==2:
-            q=q[:-1]
-        t.append(q)
-    t=b''.join(t)
-    run=term.__exit__()
-    sys.stdout.buffer.write(t)
-    sys.stdout.flush()
-    if run:
-        term.__enter__()
-    return web.Response()
-
-def stop(req):
-    raise KeyboardInterrupt
-
-app = web.Application()
-app.add_routes([web.get('/', get),
-                web.get('/stop', stop),
-                web.post('/', post)])
-
-if __name__ == '__main__':
-    web.run_app(app,host=sys.argv[1], port=sys.argv[2])
+async def main():
+    asyncio.gather(
+        read(),
+        write()
+    )
