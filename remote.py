@@ -108,5 +108,6 @@ async def main():
     asyncio.create_task(read())
     asyncio.create_task(write())
     await asyncio.gather(*asyncio.all_tasks() - {asyncio.current_task()})
+    print('connection closed')
 
 asyncio.run(main())

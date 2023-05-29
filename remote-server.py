@@ -58,7 +58,7 @@ async def post(req):
     return aiohttp.web.Response()
 
 def start(req):
-    name=str(time.time())
+    name=base64.b64encode((round(time.time()*1000)&0xff_ff_ff_ff_ff_ff).to_bytes(6,'little')).decode()
     print(f'python remote.py http://127.0.0.1:{sys.argv[2]}/{name}')
     return aiohttp.web.Response(text=
         f'''export REMOTE_URL='http://{req.host}/{name}'\n'''+
