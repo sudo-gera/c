@@ -14,3 +14,9 @@ def swap(d):
     for q,w in d.items():
         res[w].append(q)
     return res
+def print_dict(d):
+    pprint.pprint(d)
+d=create_dict(9)
+print_dict(d)
+d=swap(d)
+print_dict(d)
