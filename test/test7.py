@@ -15,20 +15,32 @@ def create_example_dict_with_strings_and_numbers(length_of_dict:int, min_length_
         for q in range(length_of_dict)
     }
 
-def swap_keys_and_values(d:dict): # solve the task
-    res={}
-    for q,w in d.items():
-        res[w]=[]
-    for q,w in d.items():
-        res[w].append(q)
-    return res
+def create_example_list_of_strings(string_length:int,list_length:int):
+    return [create_example_string(string_length) for q in range(list_length)]
 
-def print_dict(d:dict):
-    pprint.pprint(d)
+def get_max_of_any_container(container): # solve the task
+    result_list=[]
+    for q in container:
+        if result_list:
+            if q>result_list[0]:
+                result_list[0]=q
+        else:
+            result_list.append(q)
+    if result_list:
+        return result_list[0]
+    else:
+        print('error')
+
+def pretty_print_collection(c):
+    pprint.pprint(c)
 
 # showing the work
 
 d=create_example_dict_with_strings_and_numbers(9,4,9,1,9)
-print_dict(d)
-d=swap_keys_and_values(d)
-print_dict(d)
+pretty_print_collection(d)
+print(get_max_of_any_container(d))
+
+length=create_example_list_of_strings(9,9)
+pretty_print_collection(length)
+print(get_max_of_any_container(length))
+

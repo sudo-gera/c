@@ -12,7 +12,7 @@
 size_t locs=0;
 size_t vals=0;
 
-#include "../Downloads/deque.h"
+#include "deque.h"
 
 template<typename T>
 void check(T q,T e){
@@ -84,18 +84,15 @@ struct item{
     operator size_t(){
         return val;
     }
-    #ifdef __all__
-        __all__(val)
-    #endif
 };
 
 
 int main(){
-    size_t seed=2061909537;
+    size_t seed=1299881216;
 
     // seed = std::random_device()();
 
-    // std::cin>>seed;
+    std::cin>>seed;
 
     printf("%zu\n",seed);
 
@@ -109,7 +106,7 @@ int main(){
         std::mt19937_64 generator(seed);
         std::uniform_int_distribution range(0LLU,-1LLU);
         auto rand=[&](){return range(generator);};
-        for (q=0;q<2;++q){
+        for (q=0;q<512;++q){
             assert(&(*a)-&a_vec[0]==&(*s)-&s_vec[0]);
             assert((*a).size()==(*s).size());
             assert(a_vec.size()==s_vec.size());
@@ -204,8 +201,6 @@ int main(){
             }
             assert(a_vec.size()==s_vec.size());
             assert((*a).size()==(*s).size());
-            ic(&*a->begin())
-            ic(vector(a->begin(),a->end()),*s)
             for (e=0;e<(*a).size();++e){
                 assert((*a)[e]==(*s)[e]);
             }
