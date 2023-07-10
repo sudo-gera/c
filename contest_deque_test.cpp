@@ -107,13 +107,13 @@ int main(){
         std::uniform_int_distribution range(0LLU,-1LLU);
         auto rand=[&](){return range(generator);};
         for (q=0;q<512;++q){
-            assert(&(*a)-&a_vec[0]==&(*s)-&s_vec[0]);
+            assert(a-&a_vec[0]==s-&s_vec[0]);
             assert(a->size()==s->size());
             assert(a_vec.size()==s_vec.size());
             w=rand()%14;
             i=rand();
             v=rand();
-            printf("%zu %zu %zu %zu %zu %zu\n",q,w,i,v,&(*a)-&a_vec[0],a_vec.size());
+            printf("%zu %zu %zu %zu %zu %zu\n",q,w,i,v,a-&a_vec[0],a_vec.size());
             if (w==0){
                 i%=(a->size()+1);
                 a->push_back(v);
@@ -158,8 +158,8 @@ int main(){
             }
             if (w==8){
                 i%=(a_vec.size()+1);
-                a_vec.emplace_back((*a));
-                s_vec.emplace_back((*s));
+                a_vec.emplace_back(*a);
+                s_vec.emplace_back(*s);
                 a=&a_vec[i];
                 s=&s_vec[i];
             }
