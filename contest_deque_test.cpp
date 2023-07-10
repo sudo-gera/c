@@ -108,41 +108,41 @@ int main(){
         auto rand=[&](){return range(generator);};
         for (q=0;q<512;++q){
             assert(&(*a)-&a_vec[0]==&(*s)-&s_vec[0]);
-            assert((*a).size()==(*s).size());
+            assert(a->size()==s->size());
             assert(a_vec.size()==s_vec.size());
             w=rand()%14;
             i=rand();
             v=rand();
             printf("%zu %zu %zu %zu %zu %zu\n",q,w,i,v,&(*a)-&a_vec[0],a_vec.size());
             if (w==0){
-                i%=((*a).size()+1);
-                (*a).push_back(v);
-                (*s).push_back(v);
+                i%=(a->size()+1);
+                a->push_back(v);
+                s->push_back(v);
             }
             if (w==1){
-                i%=((*a).size()+1);
-                (*a).push_front(v);
-                (*s).push_front(v);
+                i%=(a->size()+1);
+                a->push_front(v);
+                s->push_front(v);
             }
             if (w==2){
-                i%=((*a).size()+1);
-                (*a).insert(i+(*a).begin(),v);
-                (*s).insert(i+(*s).begin(),v);
+                i%=(a->size()+1);
+                a->insert(i+a->begin(),v);
+                s->insert(i+s->begin(),v);
             }
-            if (w==3 and (*a).size()){
-                i%=((*a).size()+1);
-                (*a).pop_back();
-                (*s).pop_back();
+            if (w==3 and a->size()){
+                i%=(a->size()+1);
+                a->pop_back();
+                s->pop_back();
             }
-            if (w==4 and (*a).size()){
-                i%=((*a).size()+1);
-                (*a).pop_front();
-                (*s).pop_front();
+            if (w==4 and a->size()){
+                i%=(a->size()+1);
+                a->pop_front();
+                s->pop_front();
             }
-            if (w==5 and (*a).size()){
-                i%=(*a).size();
-                (*a).erase((*a).begin()+i);
-                (*s).erase((*s).begin()+i);
+            if (w==5 and a->size()){
+                i%=a->size();
+                a->erase(a->begin()+i);
+                s->erase(s->begin()+i);
             }
             if (w==6){
                 i%=a_vec.size();
@@ -192,20 +192,20 @@ int main(){
                 s=&s_vec[i];
             }
             if (w==12){
-                std::reverse((*a).begin(),(*a).end());
-                std::reverse((*s).begin(),(*s).end());
+                std::reverse(a->begin(),a->end());
+                std::reverse(s->begin(),s->end());
             }
-            if (w==13 and (*a).size()){
-                i%=((*a).size());
+            if (w==13 and a->size()){
+                i%=(a->size());
                 assert(std::to_string((*a)[i])==std::to_string((*s)[i]));
             }
             assert(a_vec.size()==s_vec.size());
-            assert((*a).size()==(*s).size());
-            for (e=0;e<(*a).size();++e){
+            assert(a->size()==s->size());
+            for (e=0;e<a->size();++e){
                 assert((*a)[e]==(*s)[e]);
             }
-            assert((*a).end()-(*a).begin()==(ssize_t)(*a).size());
-            check((*a).begin(),(*a).end());
+            assert(a->end()-a->begin()==(ssize_t)a->size());
+            check(a->begin(),a->end());
         }
     }
     assert(locs==0);
