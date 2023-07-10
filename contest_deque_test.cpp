@@ -9,10 +9,10 @@
 #include <random>
 #include <algorithm>
 
+#include "deque.h"
+
 size_t locs=0;
 size_t vals=0;
-
-#include "deque.h"
 
 template<typename T>
 void check(T q,T e){
