@@ -29,7 +29,13 @@ while 1:
     elif 'message' in a:
         a=a['message']
         if 'text' in a:
-            api('sendMessage',chat_id=a['chat']['id'],text='''[11](https://t.me/east_lion)'''.strip(),disable_web_page_preview=True,parse_mode='MarkdownV2',reply_markup={'remove_keyboard':True})
+            api('sendMessage',
+                chat_id=a['chat']['id'],
+                text='''[11](https://t.me/east_lion)'''.strip(),
+                disable_web_page_preview=True,
+                parse_mode='MarkdownV2',
+                reply_markup={'remove_keyboard':True}
+            )
         else:
             api('sendInvoice',chat_id=a['chat']['id'],title='_1',description='_2',payload='_3',provider_token=pay_token,currency='RUB',prices=[{'label':'_rub_','amount':'9900'}])
     else:
