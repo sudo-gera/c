@@ -11,7 +11,7 @@ import sys
 import os
 import base64
 import json
-# import pprint
+import pprint
 
 def fail(reason):
 	sys.stderr.write(reason + '\n')
@@ -75,7 +75,14 @@ class Server:
             return 1
 
     def pipe_send(self,message):
-        # pprint.pprint(message)
+        if 'data' in message:
+            import copy
+            _mes=copy.copy(message)
+            _d=_mes['data']
+            _mes['data']=base64.b64decode(_d)
+            pprint.pprint(_mes)
+        else:
+            pprint.pprint(message)
         message = json.dumps(message)
         message = message.encode()
         assert b'^' not in message
