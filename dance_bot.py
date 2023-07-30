@@ -31,7 +31,16 @@ while 1:
         if 'text' in a:
             api('sendMessage',
                 chat_id=a['chat']['id'],
-                text='''[11](https://t.me/east_lion)'''.strip(),
+                text='''
+                Здравствуйте!
+
+                Это бот курса танцев!
+
+                [тут будет ссылка на общую группу](http://attachment.zip)
+                [ссылка на админа](https://t.me/east_lion)
+                
+                
+                '''.strip(),
                 disable_web_page_preview=True,
                 parse_mode='MarkdownV2',
                 reply_markup={'remove_keyboard':True}
