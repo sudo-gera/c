@@ -80,9 +80,15 @@ class Server:
             _mes=copy.copy(message)
             _d=_mes['data']
             _mes['data']=base64.b64decode(_d)
+            print(time.asctime())
+            print(time.time())
             pprint.pprint(_mes)
+            time.sleep(0.1)
         else:
+            print(time.asctime())
+            print(time.time())
             pprint.pprint(message)
+            time.sleep(0.1)
         message = json.dumps(message)
         message = message.encode()
         assert b'^' not in message
@@ -152,7 +158,7 @@ class Server:
                 data=data.encode()
                 data=base64.b64decode(data)
                 client.send(data)
-            if w['event']=='del':
+            if w['event']=='del' and w['id'] in self.client_by_id:
                 client=self.client_by_id[w['id']]
                 client.close()
                 del self.input[client]
