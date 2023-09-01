@@ -1,88 +1,61 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-auto heap_push(auto& one_indexed_ptr, size_t pos, auto&& val) {
-    size_t par = pos / 2;
-    while (par and one_indexed_ptr[par] > val) {
-        one_indexed_ptr[pos] = one_indexed_ptr[par], pos = par, par /= 2;
+template<typename FIRST,typename SECOND>
+struct union_pair{
+    union underlying{
+        constexpr underlying(){}
+        constexpr underlying(integral_constant<size_t,1>,auto&&...args):
+            first(std::forward<decltype(args)>(args)...){}
+        constexpr underlying(integral_constant<size_t,2>,auto&&...args):
+            second(std::forward<decltype(args)>(args)...){}
+        FIRST first;
+        SECOND second;
+        constexpr ~underlying(){}
+    } value;
+    constexpr void _01(auto&&...args){
+        value = underlying(integral_constant<size_t,1>());
+        // value.~underlying();
+        // construct_at(&value, FIRST(std::forward<decltype(args)>(args)...) );
+        // construct_at(&value,integral_constant<size_t,1>(),FIRST(std::forward<decltype(args)>(args)...));
+        // new (&value)underlying(integral_constant<size_t,1>(),FIRST(std::forward<decltype(args)>(args)...));
+        // value=underlying{.first=FIRST(std::forward<decltype(args)>(args)...)};
     }
-    one_indexed_ptr[pos] = val;
+    constexpr void _02(auto&&...args){
+        value=underlying{.second=SECOND(std::forward<decltype(args)>(args)...)};
+    }
+    constexpr void _10(){
+        value.first.~FIRST();
+    }
+    constexpr void _20(){
+        value.second.~SECOND();
+    }
+    constexpr void _12(auto&&...args){
+        _10();
+        _02(std::forward<decltype(args)>(args)...);
+    }
+};
+
+template<size_t n>
+struct item{
+    tuple_element_t<n-1, tuple<size_t, char*> > value;
+    constexpr item(){}
+    constexpr ~item(){}
+};
+
+constexpr bool test(bool k){
+    if (k){
+        return true;
+    }
+    // optional<item<1>> p;
+    // union_pair<item<1>,item<2>> p;
+    // p._01();
+    // auto first = p.value.first;
+    // auto second = p.value.second;
+    return true;
 }
 
-auto heap_pop(auto& one_indexed_ptr, size_t len) {
-    auto cur_ptr = one_indexed_ptr + 1, swap_ptr = cur_ptr, left_ptr = cur_ptr, right_ptr = cur_ptr;
-    auto last = one_indexed_ptr[len];
-    while (left_ptr = cur_ptr - one_indexed_ptr + cur_ptr, right_ptr = left_ptr + 1,
-           last > left_ptr[0] or last > right_ptr[0]) {
-        swap_ptr = left_ptr[0] < right_ptr[0] ? left_ptr : right_ptr;
-        cur_ptr[0] = swap_ptr[0], cur_ptr = swap_ptr;
-    }
-    cur_ptr[0] = last;
-}
+static_assert(test(0));
 
-auto k_largest_heap(auto&& a, size_t n) {
-    vector<size_t> result_vect(n * 2 + 1, -1);
-    auto result = result_vect.data() - 1;
-    size_t len = 1;
-    for (auto& s : a) {
-        heap_push(result, len, s);
-        len == n + 1 ? heap_pop(result, len), len : len += 1;
-    }
-    result += 1;
-    sort(result, result + n);
-    result_vect.resize(n);
-    return result_vect;
-}
+int main(){}
 
-auto k_largest_chunk_sort(auto& a, size_t n) {
-    vector<size_t> result_vect(n * 2);
-    auto result = result_vect.data();
-    size_t len = 0;
-    for (auto& s : a) {
-        result[len++] = s;
-        if (len == n * 2) {
-            sort(result_vect.rbegin(), result_vect.rend());
-            len = n;
-        }
-    }
-    sort(result_vect.rbegin(), result_vect.rend());
-    result_vect.resize(n);
-    reverse(result_vect.begin(), result_vect.end());
-    return result_vect;
-}
-
-auto k_largest_sort_all(auto& a, size_t n) {
-    vector<size_t> result_vect(a);
-    sort(result_vect.rbegin(), result_vect.rend());
-    result_vect.resize(n);
-    reverse(result_vect.begin(), result_vect.end());
-    return result_vect;
-}
-
-int main() {
-    vector<size_t> a(10'000'000);
-    auto rand = mt19937_64();
-    for (auto& s : a) {
-        s = rand();
-    }
-    while (1) {
-        size_t k = rand();
-        k = k % a.size() + 1;
-
-        auto time = clock();
-        auto z = k_largest_heap(a, k);
-        auto heap_time = clock()-time;
-
-        time = clock();
-        auto x = k_largest_chunk_sort(a, k);
-        auto chunk_sort_time = clock()-time;
-
-        time = clock();
-        auto c = k_largest_sort_all(a, k);
-        auto sort_all_time = clock()-time;
-
-        assert(z == x and x == c);
-        printf("%zu\t%zu\t%zu\t%zu\n", k,heap_time, chunk_sort_time, sort_all_time);
-        fflush(stdout);
-    }
-}
