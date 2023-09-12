@@ -1,13 +1,26 @@
-cubes = [2,5,3,11,4,7,8,1]
+"""
+Process individual messages from a TCP connection.
 
-n=len(cubes)
-s=[0, cubes[0]]
+This script replaces full occurences of "foo" with "bar" and prints various details for each message.
+Please note that TCP is stream-based and *not* message-based. mitmproxy splits stream contents into "messages"
+as they are received by socket.recv(). This is pretty arbitrary and should not be relied on.
+However, it is sometimes good enough as a quick hack.
 
-while len(s)<=n:
-    s.append(max(
-        s[-1],
-        s[-2] + cubes[len(s)-1]
-    ))
-print(s[-1])
+Example Invocation:
+
+    mitmdump --rawtcp --tcp-hosts ".*" -s examples/tcp-simple.py
+"""
+import logging
+
+from mitmproxy import tcp
+from mitmproxy.utils import strutils
 
 
+def tcp_message(flow: tcp.TCPFlow):
+    message = flow.messages[-1]
+    # message.content = message.content.replace(b"foo", b"bar")
+    print('__hello__')
+
+    logging.info(
+        f"tcp_message[from_client={message.from_client}), content={strutils.bytes_to_escaped_str(message.content)}]"
+    )
