@@ -27,12 +27,12 @@
 
 ## When soft line wrapping is enabled, make it wrap lines at blanks
 ## (tabs and spaces) instead of always at the edge of the screen.
-set atblanks #####################
+set atblanks                                                                     # modified
 
 ## Automatically indent a newly created line to the same number of
 ## tabs and/or spaces as the preceding line -- or as the next line
 ## if the preceding line is the beginning of a paragraph.
-set autoindent ######################
+set autoindent                                                                   # modified
 
 ## Back up files to the current filename plus a tilde.
 # set backup
@@ -65,15 +65,15 @@ set autoindent ######################
 # set fill -8
 
 ## Remember the used search/replace strings for the next session.
-set historylog ######################
+set historylog                                                                   # modified
 
 ## Display line numbers to the left of the text.
-set linenumbers ####################
+set linenumbers                                                                  # modified
 
 ## Enable vim-style lock-files.  This is just to let a vim user know you
 ## are editing a file [s]he is trying to edit and vice versa.  There are
 ## no plans to implement vim-style undo state in these files.
-set locking ########################
+set locking                                                                      # modified
 
 ## The opening and closing brackets that can be found by bracket
 ## searches.  They cannot contain blank characters.  The former set must
@@ -81,17 +81,17 @@ set locking ########################
 # set matchbrackets "(<[{)>]}"
 
 ## Use the blank line below the title bar as extra editing space.
-set morespace ###################
+set morespace                                                                    # modified
 
 ## Enable mouse support, if available for your system.  When enabled,
 ## mouse clicks can be used to place the cursor, set the mark (with a
 ## double click), and execute shortcuts.  The mouse will work in the X
 ## Window System, and on the console when gpm is running.
-set mouse ##########################
+set mouse                                                                        # modified
 
 ## Switch on multiple file buffers (inserting a file will put it into
 ## a separate buffer).
-set multibuffer ###########################
+set multibuffer                                                                  # modified
 
 ## Don't convert files from DOS/Mac format.
 # set noconvert
@@ -116,7 +116,7 @@ set nowrap
 # set operatingdir ""
 
 ## Remember the cursor position in each file for the next editing session.
-set positionlog ##############################
+set positionlog                                                                  # modified
 
 ## Preserve the XON and XOFF keys (^Q and ^S).
 # set preserve
@@ -153,10 +153,10 @@ set positionlog ##############################
 ## will jump to that beginning (either forwards or backwards).  If the
 ## cursor is already at that position, it will jump to the true
 ## beginning of the line.
-set smarthome ######################
+set smarthome                                                                    # modified
 
 ## Use smooth scrolling as the default.
-set smooth ##################
+set smooth                                                                       # modified
 
 ## Enable soft line wrapping (AKA full-line display).
 # set softwrap
@@ -169,13 +169,13 @@ set speller "hunspell"
 # set suspend
 
 ## Use this tab size instead of the default; it must be greater than 0.
-set tabsize 4 #########################
+set tabsize 4                                                                    # modified
 
 ## Convert typed tabs to spaces.
-set tabstospaces ######################
+set tabstospaces                                                                 # modified
 
 ## Save automatically on exit; don't prompt.
-set tempfile ##############################
+set tempfile                                                                     # modified
 
 ## Snip whitespace at the end of lines when justifying or hard-wrapping.
 # set trimblanks
@@ -204,13 +204,13 @@ set tempfile ##############################
 
 ## Paint the interface elements of nano.  These are examples;
 ## by default there are no colors, except for errorcolor.
-set titlecolor brightwhite,blue ########################
-set statuscolor brightwhite,green #########################
-set errorcolor brightwhite,red ###########################
-set selectedcolor brightwhite,magenta ##################
-set numbercolor brightmagenta ######################
-set keycolor cyan ##########################
-set functioncolor green #########################
+set titlecolor brightwhite,blue                                                  # modified
+set statuscolor brightwhite,green                                                # modified
+set errorcolor brightwhite,red                                                   # modified
+set selectedcolor brightwhite,magenta                                            # modified
+set numbercolor brightmagenta                                                    # modified
+set keycolor cyan                                                                # modified
+set functioncolor green                                                          # modified
 ## In root's .nanorc you might want to use:
 # set titlecolor brightwhite,magenta
 # set statuscolor brightwhite,magenta
@@ -277,27 +277,27 @@ include "/usr/share/nano/*.nanorc"
 ## Set this if your Backspace key sends Del most of the time.
 # bind Del backspace all
 
-bind ^J  help all
-bind ^C cancel all
-bind ^W exit all
-bind ^S savefile all
-bind M-R insert all
-bind ^F whereis all
-bind M-F wherewas all
-bind ^G findnext all
-bind M-G findprevious all
-bind ^R replace all
-bind ^X cut all
-#bind ^C copy all
-bind ^V uncut all
-bind M-/ comment all
-#bind M-? uncomment all
-bind ^Z undo all
-bind ^Y redo all
-bind M-M findbracket all
-bind ^Q gotoline all
-bind ^A home all
-bind ^E end all
+bind ^J  help all                                                                # modified
+bind ^C cancel all                                                               # modified
+bind ^W exit all                                                                 # modified
+bind ^S savefile all                                                             # modified
+bind M-R insert all                                                              # modified
+bind ^F whereis all                                                              # modified
+bind M-F wherewas all                                                            # modified
+bind ^G findnext all                                                             # modified
+bind M-G findprevious all                                                        # modified
+bind ^R replace all                                                              # modified
+bind ^X cut all                                                                  # modified
+#bind ^C copy all                                                                # modified
+bind ^V uncut all                                                                # modified
+bind M-/ comment all                                                             # modified
+#bind M-? uncomment all                                                          # modified
+bind ^Z undo all                                                                 # modified
+bind ^Y redo all                                                                 # modified
+bind M-M findbracket all                                                         # modified
+bind ^Q gotoline all                                                             # modified
+bind ^A home all                                                                 # modified
+bind ^E end all                                                                  # modified
 
 
 
