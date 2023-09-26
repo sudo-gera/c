@@ -7,9 +7,18 @@ import urllib.request
 import os
 import logging
 import inspect
+import threading
 logging.basicConfig(level=logging.DEBUG)
 
+inet_status = 0
 
+def check_inet():
+    global inet_status
+    while 1:
+        inet_status = os.system('ping -ot 4 google.com > /dev/null') == 0
+        time.sleep(1)
+    
+threading.Thread(target=check_inet).start()
 
 # listen = [sys.argv[1], sys.argv[2]]
 
@@ -19,18 +28,38 @@ def get_remote(addr: tuple[str,int])->tuple[str,int]:
     if addr not in last_dict:
         last_dict[addr] = [0,0]
     last = last_dict[addr]
-    if addr[1] in [1080,3737,3838]:
-        if time.time() - last[0] > 60:
-            if os.system('ping -ot 1 google.com > /dev/null') == 0:
-                last[1] = ('127.0.0.1',6666)
-            else:
-                last[1] = ('192.168.49.1',1080)
+    d = {
+        1080 : (('127.0.0.1', 6666), ('192.168.49.1', 1080)),
+        3737 : (('127.0.0.1', 6666), ('192.168.49.1', 1080)),
+        3838 : (('127.0.0.1', 6666), ('192.168.49.1', 1080)),
+        8080 : (('127.0.0.1', 7777), ('192.168.49.1', 8080)),
+        8082 : (('127.0.0.1', 7777), ('192.168.49.1', 8080)),
+        # 8082 : (('127.0.0.1', 7777), ('127.0.0.1', 5555)),
+    }
+    # if time.time() - last[0] > 1:
+        # if os.system('ping -ot 1 google.com > /dev/null') == 0:
+    if inet_status:
+        last[1] = d[addr[1]][0]
     else:
-        if time.time() - last[0] > 60:
-            if os.system('ping -ot 1 google.com > /dev/null') == 0:
-                last[1] = ('127.0.0.1',7777)
-            else:
-                last[1] = ('192.168.49.1',8080)
+        last[1] = d[addr[1]][1]
+    # if addr[1] in [8082]:
+    #     if time.time() - last[0] > 60:
+    #         if os.system('ping -ot 1 google.com > /dev/null') == 0:
+    #             last[1] = ('127.0.0.1',6666)
+    #         else:
+    #             last[1] = ('192.168.49.1',1080)
+    # if addr[1] in [1080,3737,3838]:
+    #     if time.time() - last[0] > 60:
+    #         if os.system('ping -ot 1 google.com > /dev/null') == 0:
+    #             last[1] = ('127.0.0.1',6666)
+    #         else:
+    #             last[1] = ('192.168.49.1',1080)
+    # else:
+    #     if time.time() - last[0] > 60:
+    #         if os.system('ping -ot 1 google.com > /dev/null') == 0:
+    #             last[1] = ('127.0.0.1',7777)
+    #         else:
+    #             last[1] = ('192.168.49.1',8080)
     logging.debug([addr,last[1]])
     return last[1]
 

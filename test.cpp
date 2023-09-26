@@ -1,18 +1,10 @@
-#include <bits/stdc++.h>
+// #include <bits/stdc++.h>
+#include <vector>
 using namespace std;
 
-
-constexpr bool test(bool run){
-    if (not run){
-        return 0;
-    }
-    vector<int> a;
-    a.push_back(0);
-    return a.size();
-}
-
-static_assert(test(1));
-
 int main(){
+    vector<int>() < vector<float>();
 }
+
+
 

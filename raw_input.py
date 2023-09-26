@@ -31,11 +31,11 @@ def receive_key_event():
     #   ctrl+B is 2
     #   ctrl+C is 3
     #   ctrl+D is 4
-    if ord(k[0])<5:
+    if k[0]<5:
         exit(0)
     return k;
 
 
 while(1):
-    print(receive_key_event(),end='')
+    sys.stdout.buffer.write(receive_key_event())
     sys.stdout.flush()
