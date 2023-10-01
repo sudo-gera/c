@@ -91,6 +91,7 @@ def read(file):
     head = [file.int() for _ in range(8)]
     blocks = []
     block_gens = []
+    gen = None
     while True:
         try:
             start = file.int()
@@ -106,6 +107,10 @@ def read(file):
             gen.send(value)
         except StopIteration as exc:
             block_gens.remove(gen)
+            if block_gens:
+                gen = block_gens[0]
+            else:
+                gen = None
             blocks.append(exc.value)
     return blocks
 
@@ -124,40 +129,5 @@ def raw_read(file):
 raw_read(flo_file(open(sys.argv[1],'rb')))
 for block in read(flo_file(open(sys.argv[1],'rb'))):
     print(block.num, block.x, block.y, block.args)
-
-
-# data = open(sys.argv[1],'rb').read()
-# def decode_numbes(data:bytes):
-#     res = []
-#     buffer = ''
-#     for q in data:
-#         q=bin(q+2**256)[-8:][::-1]
-#         buffer += q[:-1]
-#         if q[-1]=='0':
-#             res.append(int(buffer[::-1],2))
-#             buffer = ''
-#     return res
-# def decode_negative_numbers(data:list[int]):
-#     return [-(q+1)//2 if q%2 else q//2 for q in data]
-# data = decode_numbes(data)
-# head = data[:8]
-# data = data[8:]
-# data = decode_negative_numbers(data)
-# blocks = []
-# state = [0, 0, 0, 0]
-# for q,w in enumerate(data):
-#     ps = data[q:q+4]+[0,0,0,0]
-#     if q == 0 or ps[0]>999:
-#         state = ps
-#         blocks.append([])
-#     blocks[-1].append(w)
-# for q in blocks:
-#     for w,e in enumerate(q):
-#         if w<4:
-#             print(f'{e:6}',end='')
-#         else:
-#             print(f'{-1-e*2 if e<0 else e*2:6}',end='')
-#     print()
-
 
 
