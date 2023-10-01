@@ -18,9 +18,13 @@ inet_status = 0
 
 def check_inet():
     global inet_status
+    count = 3600
     while 1:
         inet_status = os.system('ping -ot 4 google.com') == 0
         time.sleep(1)
+        count -= 1
+        if not count:
+            exit()
     
 threading.Thread(target=check_inet).start()
 
@@ -117,8 +121,6 @@ async def clear():
                     con.transport.close()
         for con_ref in to_remove:
             con_refs.remove(con_ref)
-
-        
 
 async def main():
     for addr in sys.argv[1:]:
