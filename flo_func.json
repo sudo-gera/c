@@ -1,0 +1,679 @@
+{
+    "300": {
+        "name": "abs",
+        "args": [
+            "number"
+        ]
+    },
+    "301": {
+        "name": "acos",
+        "args": [
+            "number"
+        ]
+    },
+    "302": {
+        "name": "asin",
+        "args": [
+            "number"
+        ]
+    },
+    "303": {
+        "name": "atan",
+        "args": [
+            "number"
+        ]
+    },
+    "304": {
+        "name": "atan2",
+        "args": [
+            "y",
+            "x"
+        ]
+    },
+    "359": {
+        "name": "base64Decode",
+        "args": [
+            "text",
+            "flags"
+        ]
+    },
+    "360": {
+        "name": "base64Encode",
+        "args": [
+            "text",
+            "flags"
+        ]
+    },
+    "353": {
+        "name": "bearing",
+        "args": [
+            "lat1",
+            "lon1",
+            "lat2",
+            "lon2"
+        ]
+    },
+    "305": {
+        "name": "ceil",
+        "args": [
+            "number"
+        ]
+    },
+    "354": {
+        "name": "celsius",
+        "args": [
+            "number"
+        ]
+    },
+    "351": {
+        "name": "char",
+        "args": [
+            "number"
+        ]
+    },
+    "341": {
+        "name": "cliEncode",
+        "args": [
+            "text"
+        ]
+    },
+    "389": {
+        "name": "clock",
+        "args": [
+            "type"
+        ]
+    },
+    "386": {
+        "name": "colorRecode",
+        "args": [
+            "color",
+            "transform",
+            "alpha"
+        ]
+    },
+    "368": {
+        "name": "concat",
+        "args": [
+            "value1",
+            "value2",
+            "\u2026",
+            "valueN"
+        ]
+    },
+    "306": {
+        "name": "contains",
+        "args": [
+            "container",
+            "value",
+            "flags"
+        ]
+    },
+    "388": {
+        "name": "convType",
+        "args": [
+            "dictionary",
+            "key"
+        ]
+    },
+    "307": {
+        "name": "coordFormat",
+        "args": [
+            "degree",
+            "pattern",
+            "language"
+        ]
+    },
+    "348": {
+        "name": "copy",
+        "args": [
+            "value",
+            "deep"
+        ]
+    },
+    "308": {
+        "name": "cos",
+        "args": [
+            "number"
+        ]
+    },
+    "378": {
+        "name": "crc32",
+        "args": [
+            "text",
+            "flags"
+        ]
+    },
+    "363": {
+        "name": "ctz",
+        "args": [
+            "number"
+        ]
+    },
+    "321": {
+        "name": "date",
+        "args": [
+            "year",
+            "month",
+            "dayOfMonth",
+            "timeZone"
+        ]
+    },
+    "309": {
+        "name": "dateFormat",
+        "args": [
+            "timestamp",
+            "pattern",
+            "timeZone",
+            "language"
+        ]
+    },
+    "310": {
+        "name": "dateParts",
+        "args": [
+            "timestamp",
+            "timeZone"
+        ]
+    },
+    "366": {
+        "name": "dateParse",
+        "args": [
+            "text",
+            "pattern",
+            "timeZone",
+            "language"
+        ]
+    },
+    "373": {
+        "name": "disjoint",
+        "args": [
+            "container1",
+            "container2"
+        ]
+    },
+    "311": {
+        "name": "distance",
+        "args": [
+            "latitude1",
+            "longitude1",
+            "latitude2",
+            "longitude2"
+        ]
+    },
+    "376": {
+        "name": "distinct",
+        "args": [
+            "array"
+        ]
+    },
+    "365": {
+        "name": "declination",
+        "args": [
+            "latitude",
+            "longitude",
+            "altitude",
+            "timestamp"
+        ]
+    },
+    "345": {
+        "name": "durationFormat",
+        "args": [
+            "duration",
+            "pattern",
+            "language"
+        ]
+    },
+    "313": {
+        "name": "exp",
+        "args": [
+            "number"
+        ]
+    },
+    "390": {
+        "name": "except",
+        "args": [
+            "container1",
+            "container2"
+        ]
+    },
+    "369": {
+        "name": "extend",
+        "args": [
+            "dict1",
+            "dict2",
+            "\u2026",
+            "dictN"
+        ]
+    },
+    "355": {
+        "name": "fahrenheit",
+        "args": [
+            "number"
+        ]
+    },
+    "392": {
+        "name": "fileUri",
+        "args": [
+            "path",
+            "flags"
+        ]
+    },
+    "367": {
+        "name": "filter",
+        "args": [
+            "container",
+            "flags"
+        ]
+    },
+    "384": {
+        "name": "findAll",
+        "args": [
+            "text",
+            "regex"
+        ]
+    },
+    "314": {
+        "name": "floor",
+        "args": [
+            "number"
+        ]
+    },
+    "342": {
+        "name": "glob",
+        "args": [
+            "text",
+            "pattern"
+        ]
+    },
+    "361": {
+        "name": "hexDecode",
+        "args": [
+            "text",
+            "charset"
+        ]
+    },
+    "350": {
+        "name": "hexEncode",
+        "args": [
+            "value",
+            "charset"
+        ]
+    },
+    "382": {
+        "name": "indexOf",
+        "args": [
+            "container",
+            "value",
+            "startIndex"
+        ]
+    },
+    "370": {
+        "name": "intersect",
+        "args": [
+            "container1",
+            "container2"
+        ]
+    },
+    "315": {
+        "name": "jsonDecode",
+        "args": [
+            "text"
+        ]
+    },
+    "316": {
+        "name": "jsonEncode",
+        "args": [
+            "value"
+        ]
+    },
+    "317": {
+        "name": "join",
+        "args": [
+            "container",
+            "delimiter"
+        ]
+    },
+    "343": {
+        "name": "keys",
+        "args": [
+            "dictionary"
+        ]
+    },
+    "377": {
+        "name": "levenshtein",
+        "args": [
+            "text1",
+            "text2"
+        ]
+    },
+    "318": {
+        "name": "localTime",
+        "args": [
+            "timestamp",
+            "timeZone"
+        ]
+    },
+    "319": {
+        "name": "log",
+        "args": [
+            "number"
+        ]
+    },
+    "320": {
+        "name": "lowerCase",
+        "args": [
+            "text",
+            "language"
+        ]
+    },
+    "322": {
+        "name": "matches",
+        "args": [
+            "value",
+            "regex"
+        ]
+    },
+    "323": {
+        "name": "max",
+        "args": [
+            "value1",
+            "value2",
+            "\u2026",
+            "valueN"
+        ]
+    },
+    "379": {
+        "name": "md5",
+        "args": [
+            "text",
+            "flags"
+        ]
+    },
+    "325": {
+        "name": "mimeType",
+        "args": [
+            "filename"
+        ]
+    },
+    "326": {
+        "name": "min",
+        "args": [
+            "value1",
+            "value2",
+            "\u2026",
+            "valueN"
+        ]
+    },
+    "327": {
+        "name": "numberFormat",
+        "args": [
+            "number",
+            "pattern",
+            "language"
+        ]
+    },
+    "312": {
+        "name": "phoneq",
+        "args": [
+            "phone1",
+            "phone2"
+        ]
+    },
+    "374": {
+        "name": "phoneFormat",
+        "args": [
+            "phone",
+            "standard",
+            "country"
+        ]
+    },
+    "328": {
+        "name": "pow",
+        "args": [
+            "base",
+            "exponent"
+        ]
+    },
+    "349": {
+        "name": "random",
+        "args": [
+            "number"
+        ]
+    },
+    "329": {
+        "name": "replaceAll",
+        "args": [
+            "text",
+            "regex",
+            "replacement"
+        ]
+    },
+    "375": {
+        "name": "reverse",
+        "args": [
+            "value"
+        ]
+    },
+    "330": {
+        "name": "round",
+        "args": [
+            "number"
+        ]
+    },
+    "380": {
+        "name": "sha1",
+        "args": [
+            "text",
+            "flags"
+        ]
+    },
+    "393": {
+        "name": "sha256",
+        "args": [
+            "text",
+            "flags"
+        ]
+    },
+    "344": {
+        "name": "shuffle",
+        "args": [
+            "array"
+        ]
+    },
+    "383": {
+        "name": "slice",
+        "args": [
+            "container",
+            "startIndex",
+            "endIndex"
+        ]
+    },
+    "331": {
+        "name": "sift",
+        "args": [
+            "container",
+            "selection"
+        ]
+    },
+    "332": {
+        "name": "sin",
+        "args": [
+            "number"
+        ]
+    },
+    "395": {
+        "name": "sizeFormat",
+        "args": [
+            "size",
+            "pattern",
+            "language"
+        ]
+    },
+    "371": {
+        "name": "sort",
+        "args": [
+            "array",
+            "flags",
+            "language"
+        ]
+    },
+    "333": {
+        "name": "split",
+        "args": [
+            "text",
+            "regex"
+        ]
+    },
+    "381": {
+        "name": "sqlEncode",
+        "args": [
+            "value"
+        ]
+    },
+    "334": {
+        "name": "sqrt",
+        "args": [
+            "number"
+        ]
+    },
+    "347": {
+        "name": "storage",
+        "args": [
+            "type",
+            "path"
+        ]
+    },
+    "346": {
+        "name": "substr",
+        "args": [
+            "text",
+            "index",
+            "length"
+        ]
+    },
+    "362": {
+        "name": "sum",
+        "args": [
+            "container"
+        ]
+    },
+    "335": {
+        "name": "tan",
+        "args": [
+            "number"
+        ]
+    },
+    "372": {
+        "name": "time",
+        "args": [
+            "hours",
+            "minutes",
+            "seconds",
+            "milliseconds"
+        ]
+    },
+    "324": {
+        "name": "timeMerge",
+        "args": [
+            "timestamp",
+            "timeOfDay",
+            "timeZone"
+        ]
+    },
+    "387": {
+        "name": "timePart",
+        "args": [
+            "timestamp",
+            "timeZone"
+        ]
+    },
+    "336": {
+        "name": "trim",
+        "args": [
+            "text"
+        ]
+    },
+    "337": {
+        "name": "trunc",
+        "args": [
+            "number"
+        ]
+    },
+    "356": {
+        "name": "type",
+        "args": [
+            "value"
+        ]
+    },
+    "391": {
+        "name": "union",
+        "args": [
+            "container1",
+            "container2",
+            "\u2026",
+            "containerN"
+        ]
+    },
+    "338": {
+        "name": "upperCase",
+        "args": [
+            "text",
+            "language"
+        ]
+    },
+    "352": {
+        "name": "urlDecode",
+        "args": [
+            "text",
+            "charset"
+        ]
+    },
+    "339": {
+        "name": "urlEncode",
+        "args": [
+            "value",
+            "charset"
+        ]
+    },
+    "340": {
+        "name": "utcTime",
+        "args": [
+            "timestamp",
+            "timeZone"
+        ]
+    },
+    "364": {
+        "name": "values",
+        "args": [
+            "dictionary"
+        ]
+    },
+    "385": {
+        "name": "vercmp",
+        "args": [
+            "text1",
+            "text2"
+        ]
+    },
+    "357": {
+        "name": "xmlDecode",
+        "args": [
+            "text",
+            "flags",
+            "namespaces"
+        ]
+    },
+    "358": {
+        "name": "xmlEncode",
+        "args": [
+            "value",
+            "flags",
+            "namespaces"
+        ]
+    },
+    "394": {
+        "name": "xpathEncode",
+        "args": [
+            "text"
+        ]
+    }
+}
