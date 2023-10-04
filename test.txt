@@ -1,0 +1,1999 @@
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:[('127.0.0.1', 8082), ('192.168.49.1', 8080)]
+DEBUG:root:['ClientConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:[('127.0.0.1', 8082), ('192.168.49.1', 8080)]
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:[('127.0.0.1', 8082), ('192.168.49.1', 8080)]
+DEBUG:root:['ClientConnection', 'connection_made']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ClientConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:[('127.0.0.1', 8082), ('192.168.49.1', 8080)]
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:[('127.0.0.1', 8082), ('192.168.49.1', 8080)]
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:[('127.0.0.1', 8082), ('192.168.49.1', 8080)]
+DEBUG:root:['ClientConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:[('127.0.0.1', 8082), ('192.168.49.1', 8080)]
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'connection_made']
+DEBUG:root:['ClientConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ClientConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:[('127.0.0.1', 8082), ('192.168.49.1', 8080)]
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'data_received']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4609' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4610' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4611' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4612' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4613' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4614' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4615' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4616' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4617' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4618' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4619' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4620' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4621' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4622' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4623' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4624' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4625' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4626' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4627' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4628' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4629' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4630' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4631' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4632' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4633' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4634' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4635' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4636' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'eof_received']
+DEBUG:root:['ServerConnection', 'connection_lost']
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4639' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4640' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4643' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4644' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4648' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4649' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4650' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4671' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4672' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4673' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4674' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4675' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4676' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4677' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4678' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4679' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4680' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4681' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4682' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4683' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4684' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4685' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4686' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4687' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4688' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4689' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4690' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:[('127.0.0.1', 1080), ('192.168.49.1', 1080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4692' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:['ServerConnection', 'connection_made']
+DEBUG:root:[('127.0.0.1', 8082), ('192.168.49.1', 8080)]
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-4694' coro=<ServerConnection.connect() done, defined at /Users/gera/c/smart-port-forwarding.py:94> exception=OSError(51, 'Network is unreachable')>
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 97, in connect
+    _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1085, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 1069, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 973, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 634, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 642, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+DEBUG:root:['ClientConnection', 'connection_lost']
+DEBUG:root:['ServerConnection', 'connection_lost']
+Traceback (most recent call last):
+  File "/Users/gera/c/smart-port-forwarding.py", line 131, in <module>
+    asyncio.run(main())
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 653, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/Users/gera/c/smart-port-forwarding.py", line 128, in main
+    await clear()
+  File "/Users/gera/c/smart-port-forwarding.py", line 120, in clear
+    con.transport.write_eof()
+  File "/opt/homebrew/Cellar/python@3.11/3.11.5/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py", line 1111, in write_eof
+    self._sock.shutdown(socket.SHUT_WR)
+OSError: [Errno 49] Can't assign requested address
+
+

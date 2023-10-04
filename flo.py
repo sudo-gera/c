@@ -80,20 +80,26 @@ class reader_num(gen_init):
         # return f'flo_num({self.d})'
         return f'{self.d}'
 
-@starts_with(131, 113)
+@starts_with(131, 113, 125, 134, 139, 140, 126, )
 class reader_un_op(gen_init):
     def __init__(self):
         arg = yield
         self.arg = arg
     def __repr__(self) -> str:
+        if self.num == 125:
+            return f'({self.arg})'
         signs = {
             131: '-',
             113: '~',
+            134: '!',
+            139: '+',
+            140: '++',
+            126: '#',
         }
         sign = signs[self.num] if self.num in signs else f'_{self.num}_'
-        return f'''{signs[self.num]}{self.arg}'''
+        return f'''{sign}{self.arg}'''
 
-@starts_with(110, 130, 138, 129, 121, 117, 112, 118, 124, 128)
+@starts_with(110, 130, 138, 129, 121, 117, 112, 118, 124, 128, 141, 114, 115, 116, 122, 135, 123, 127, 111, 136, 119, 137, )
 class reader_bin_op(gen_init):
     def __init__(self):
         left = yield
@@ -101,6 +107,8 @@ class reader_bin_op(gen_init):
         right = yield
         self.right = right
     def __repr__(self) -> str:
+        if self.num == 137:
+            return f'{self.left}[{self.right}]'
         signs = {
             110: '+',
             112: '&',
@@ -112,23 +120,46 @@ class reader_bin_op(gen_init):
             129: '%',
             130: '*',
             138: '-',
+            141: '//',
+            114: '<<',
+            115: '>>',
+            116: '>>>',
+            122: '=',
+            135: '!=',
+            123: '>=',
+            127: '<=',
+            111: '&&',
+            136: '||',
+            119: '++',
         }
         sign = signs[self.num] if self.num in signs else f'_{self.num}_'
         return f'''{self.left} {sign} {self.right}'''
 
-@starts_with(0)
-class reader_null(gen_init):
+@starts_with(120)
+class reader_tern(gen_init):
     def __init__(self):
-        pass
+        condition = yield
+        self.condition = condition
+        then = yield
+        self.then = then
+        orelse = yield
+        self.orelse = orelse
     def __repr__(self) -> str:
-        return 'flo_null()'
+        return f'{self.condition} ? {self.then} : {self.orelse}'
 
-@starts_with(202)
-class reader_now(gen_init):
+@starts_with(0, 103, 201)
+class reader_const(gen_init):
     def __init__(self):
         pass
     def __repr__(self) -> str:
-        return 'flo_now()'
+        names = {
+            0: 'None',
+            202: 'Now',
+            103: 'null',
+            201: 'Nan',
+        }
+        name = names[self.num] if self.num in names else f'_{self.num}_'
+        return f'flo_const({name})'
 
 @starts_with(*map(int, flo_func_db))
 class reader_func(gen_init):
@@ -175,8 +206,6 @@ def read(file):
             except EOFError:
                 break
             if start < 1000:
-                if start not in readers:
-                    readers[start] = readers['308']
                 gens.append(readers[start](file, start))
             else:
                 gens.append(reader_block(file, start))
@@ -192,6 +221,7 @@ def read(file):
         except Exception:
             print(traceback.format_exc())
             break
+    assert not gens
     return blocks
 
             

@@ -20,7 +20,7 @@ def check_inet():
     global inet_status
     count = 3600
     while 1:
-        inet_status = os.system('ping -ot 4 google.com') == 0
+        inet_status = os.system('ping -ot 4 google.com 1>/dev/null 2>/dev/null') == 0
         time.sleep(1)
         count -= 1
         if not count:
