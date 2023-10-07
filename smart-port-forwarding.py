@@ -11,20 +11,30 @@ import inspect
 import threading
 import weakref
 import traceback
+import signal
+import os
 
 logging.basicConfig(level=logging.DEBUG)
 
 inet_status = 0
+inet_checktime = time.time()
+
+def stop():
+    logging.debug(inspect.stack()[1][3])
+    os.kill(os.getpid(), signal.SIGTERM)
 
 def check_inet():
     global inet_status
-    count = 3600
+    global inet_checktime
+    # count = 3600
     while 1:
-        inet_status = os.system('ping -ot 4 google.com 1>/dev/null 2>/dev/null') == 0
+        inet_status = os.system('ping -ot 4 google.com') == 0
+        inet_checktime = time.time()
+        # logging.debug([inet_checktime, inspect.stack()[0][3]])
         time.sleep(1)
-        count -= 1
-        if not count:
-            exit()
+        # count -= 1
+        # if not count:
+        #     exit()
     
 threading.Thread(target=check_inet).start()
 
@@ -40,6 +50,10 @@ def get_remote(addr: tuple[str,int])->tuple[str,int]:
         8080 : (('127.0.0.1', 7777), ('192.168.49.1', 8080)),
         8082 : (('127.0.0.1', 7777), ('192.168.49.1', 8080)),
     }
+    # logging.debug([inet_checktime, inspect.stack()[0][3]])
+    if time.time() - inet_checktime > 8:
+        stop()
+        # exit()
     if inet_status:
         last[1] = d[addr[1]][0]
     else:
@@ -57,24 +71,24 @@ class Connection(asyncio.Protocol):
 
     def connection_made(self, transport) -> None:
         self.time = time.time()
-        logging.debug([type(self).__name__,inspect.stack()[0][3]])
+        # logging.debug([type(self).__name__,inspect.stack()[0][3]])
         self.transport = transport
         self.transport.pause_reading()
         asyncio.create_task(self.connect())
 
     def data_received(self, data: bytes) -> None:
         self.time = time.time()
-        logging.debug([type(self).__name__,inspect.stack()[0][3]])
+        # logging.debug([type(self).__name__,inspect.stack()[0][3]])
         self.other.transport.write(data)
 
     def eof_received(self) -> bool | None:
         self.time = time.time()
-        logging.debug([type(self).__name__,inspect.stack()[0][3]])
+        # logging.debug([type(self).__name__,inspect.stack()[0][3]])
         self.other.transport.write_eof()
     
     def connection_lost(self, exc: Exception | None) -> None:
         self.time = time.time()
-        logging.debug([type(self).__name__,inspect.stack()[0][3]])
+        # logging.debug([type(self).__name__,inspect.stack()[0][3]])
         self.other.transport.close()
         del self.other
 
@@ -92,11 +106,15 @@ class ServerConnection(Connection):
         self.addr = addr
 
     async def connect(self):
-        loop = asyncio.get_running_loop()
-        remote = get_remote(self.addr)
-        _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
-        self.other = other
-        self.transport.resume_reading()
+        try:
+            loop = asyncio.get_running_loop()
+            remote = get_remote(self.addr)
+            _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+            self.other = other
+            self.transport.resume_reading()
+        except Exception:
+            self.transport.write_eof()
+            self.transport.close()
 
 async def create_server(addr):
     addr=addr.split(':')
@@ -117,8 +135,11 @@ async def clear():
                 to_remove.add(con_ref)
             else:
                 if time.time() - con.time > 128:
-                    con.transport.write_eof()
-                    con.transport.close()
+                    try:
+                        con.transport.write_eof()
+                        con.transport.close()
+                    except Exception:
+                        pass
         for con_ref in to_remove:
             con_refs.remove(con_ref)
 
@@ -130,5 +151,4 @@ async def main():
 try:
     asyncio.run(main())
 except Exception:
-    print(traceback.format_exc())
-    exit()
+    stop()
