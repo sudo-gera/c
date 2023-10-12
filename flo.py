@@ -69,7 +69,7 @@ class gen_init:
     def __new1__(self, file, num):
         self.file = file
         self.num = num
-        gen = self.__init__()
+        gen = self.reader()
         if gen is not None:
             yield from gen
         return self
@@ -85,7 +85,7 @@ class gen_init:
 
 @starts_with(105)
 class reader_fstr(gen_init):
-    def __init__(self):
+    def reader(self):
         num_insertions = self.file.uns() - 1
         self.strs = []
         for q in range(num_insertions + 1):
@@ -106,7 +106,7 @@ class reader_fstr(gen_init):
 
 @starts_with(106)
 class reader_str(gen_init):
-    def __init__(self):
+    def reader(self):
         self.data = []
         for q in range(self.file.uns()):
             self.data.append(self.file.char())
@@ -116,7 +116,7 @@ class reader_str(gen_init):
 
 @starts_with(102)
 class reader_str(gen_init):
-    def __init__(self):
+    def reader(self):
         self.data = []
         for q in range(self.file.uns()):
             self.data.append(self.file.char())
@@ -126,7 +126,7 @@ class reader_str(gen_init):
 
 @starts_with(104)
 class reader_num(gen_init):
-    def __init__(self):
+    def reader(self):
         self.data = [self.file.char() for _ in range(8)]
         self.data = ''.join([bin(q + 256)[-8:] for q in self.data])
         a = int(self.data[:12], 2)
@@ -140,7 +140,7 @@ class reader_num(gen_init):
 
 @starts_with(131, 113, 125, 134, 139, 140, 126, )
 class reader_un_op(gen_init):
-    def __init__(self):
+    def reader(self):
         arg = yield 1
         self.arg = arg
     def __repr__(self) -> str:
@@ -159,7 +159,7 @@ class reader_un_op(gen_init):
 
 @starts_with(110, 130, 138, 129, 121, 117, 112, 118, 124, 128, 141, 114, 115, 116, 122, 135, 123, 127, 111, 136, 119, 137, )
 class reader_bin_op(gen_init):
-    def __init__(self):
+    def reader(self):
         left = yield 2
         self.left = left
         right = yield 2
@@ -195,7 +195,7 @@ class reader_bin_op(gen_init):
 
 @starts_with(120)
 class reader_tern(gen_init):
-    def __init__(self):
+    def reader(self):
         condition = yield 3
         self.condition = condition
         then = yield 3
@@ -207,7 +207,7 @@ class reader_tern(gen_init):
 
 @starts_with(0, 103, 201, 202, 203, '-2')
 class reader_const(gen_init):
-    def __init__(self):
+    def reader(self):
         pass
     def __repr__(self) -> str:
         names = {
@@ -222,7 +222,7 @@ class reader_const(gen_init):
 
 @starts_with(*map(int, flo_func_db))
 class reader_func(gen_init):
-    def __init__(self):
+    def reader(self):
         func = flo_func_db[self.num]
         self.args = []
         if '\u2026' in func['args']:
@@ -243,7 +243,7 @@ class reader_func(gen_init):
         return f'{func_name}({args})'
 
 class reader_block(gen_init):
-    def __init__(self):
+    def reader(self):
         self.id = self.file.int()
         self.x = self.file.int()
         self.y = self.file.int()
@@ -262,10 +262,6 @@ class reader_block(gen_init):
         return f'block(id = {self.id})'
 
 
-def read(file):
-    large_blocks = []
-    small_blocks = []
-    
 
 def read(file):
     head = [file.int() for _ in range(8)]
