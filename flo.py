@@ -7,6 +7,7 @@ import functools
 import traceback
 import types
 import typing
+from collections import defaultdict as dd
 
 class flo_file:
     def __init__(self : flo_file, file : typing.BinaryIO):
@@ -40,11 +41,6 @@ with open('flo_func.json') as db_file:
     flo_func_db = {int(key):val for key,val in json.load(db_file).items()}
 readers = {}
 
-def gen_send(gen, *a, **s):
-    try:
-        gen.send(*a, **s)
-    except StopIteration as exc:
-        return exc.value
 
 class starts_with:
     def __init__(self, *nums:int):
@@ -54,38 +50,47 @@ class starts_with:
             readers[num] = func
         return func
 
-class gen_wrap:
-    def __init__(self, gen, obj):
-        self.gen = gen
-        self.obj = obj
-    def __iter__(self, *a, **s):
-        return self.gen.__iter__(*a, **s)
-    def __repr__(self):
-        return repr(self.obj)
-    def send(self, *a, **s):
-        return self.gen.send(*a, **s)
-
 class gen_init:
-    def __new1__(self, file, num):
+    def reader_(self, file, num):
+        reader = self.reader()
+        if reader is not None:
+            yield from reader
+    def __init__(self, file, num):
         self.file = file
         self.num = num
-        gen = self.reader()
-        if gen is not None:
-            yield from gen
-        return self
-    def __new__(cls, file, num):
-        self = super().__new__(cls)
-        gen = self.__new1__(file, num)
-        gen = gen_wrap(gen, self)
-        return gen
+        self.gen = self.reader_(file, num)
+        self.args_read = 0
+        self.yargs = []
+        self.args_need = next(self.gen, 0)
+        if not self.args_need:
+            next(self.gen, 0)
+            self.gen = None
     def __getattr__(self, name: str) -> Any:
         return f'<?{name}?>'
+    def gen_send(self, arg):
+        try:
+            self.yargs.append(arg)
+            self.args_read += 1
+            self.args_need -= 1
+            if self.args_need == 0:
+                self.gen.send(0)
+        except StopIteration:
+            self.gen = None
 
 
+
+@starts_with(16)
+class reader_select(gen_init):
+    def reader(self):
+        self.shared = False
+        self.args = self.file.int()
+    def __repr__(self):
+        return f'select({self.args})'
 
 @starts_with(105)
 class reader_fstr(gen_init):
     def reader(self):
+        self.shared = False
         num_insertions = self.file.uns() - 1
         self.strs = []
         for q in range(num_insertions + 1):
@@ -93,20 +98,20 @@ class reader_fstr(gen_init):
             for q in range(self.file.uns()):
                 data.append(self.file.char())
             self.strs.append(bytes(data).decode())
-        self.values = []
-        for q in range(num_insertions):
-            val = yield num_insertions
-            self.values.append(val)
+        yield num_insertions
+        self.values = self.yargs
         self.file.uns()
     def __repr__(self) -> str:
         res = ''
-        for q,w in list(zip(self.strs + self.values, self.values + self.strs)):
+        for q,w in list(zip(self.strs, self.values)):
             res += repr(q) + '{' + repr(w) + '}'
+        res += repr(self.strs[-1])
         return f'fstr({res})'
 
 @starts_with(106)
 class reader_str(gen_init):
     def reader(self):
+        self.shared = False
         self.data = []
         for q in range(self.file.uns()):
             self.data.append(self.file.char())
@@ -115,8 +120,10 @@ class reader_str(gen_init):
         return f'flo_str({self.data!r})'
 
 @starts_with(102)
-class reader_str(gen_init):
+class reader_var(gen_init):
     def reader(self):
+        self.shared = True
+        yield 0
         self.data = []
         for q in range(self.file.uns()):
             self.data.append(self.file.char())
@@ -124,9 +131,10 @@ class reader_str(gen_init):
     def __repr__(self) -> str:
         return f'flo_var({self.data!r})'
 
-@starts_with(104)
+@starts_with(104, 101)
 class reader_num(gen_init):
     def reader(self):
+        self.shared = False
         self.data = [self.file.char() for _ in range(8)]
         self.data = ''.join([bin(q + 256)[-8:] for q in self.data])
         a = int(self.data[:12], 2)
@@ -141,8 +149,9 @@ class reader_num(gen_init):
 @starts_with(131, 113, 125, 134, 139, 140, 126, )
 class reader_un_op(gen_init):
     def reader(self):
-        arg = yield 1
-        self.arg = arg
+        self.shared = False
+        yield 1
+        self.arg = self.yargs[-1]
     def __repr__(self) -> str:
         if self.num == 125:
             return f'({self.arg})'
@@ -160,10 +169,9 @@ class reader_un_op(gen_init):
 @starts_with(110, 130, 138, 129, 121, 117, 112, 118, 124, 128, 141, 114, 115, 116, 122, 135, 123, 127, 111, 136, 119, 137, )
 class reader_bin_op(gen_init):
     def reader(self):
-        left = yield 2
-        self.left = left
-        right = yield 2
-        self.right = right
+        self.shared = False
+        yield 2
+        self.left, self.right = self.yargs
     def __repr__(self) -> str:
         if self.num == 137:
             return f'{self.left}[{self.right}]'
@@ -196,18 +204,16 @@ class reader_bin_op(gen_init):
 @starts_with(120)
 class reader_tern(gen_init):
     def reader(self):
-        condition = yield 3
-        self.condition = condition
-        then = yield 3
-        self.then = then
-        orelse = yield 3
-        self.orelse = orelse
+        self.shared = False
+        yield 3
+        self.condition, self.then, self.orelse = self.yargs
     def __repr__(self) -> str:
         return f'{self.condition} ? {self.then} : {self.orelse}'
 
 @starts_with(0, 103, 201, 202, 203, '-2')
 class reader_const(gen_init):
     def reader(self):
+        self.shared = True
         pass
     def __repr__(self) -> str:
         names = {
@@ -223,14 +229,15 @@ class reader_const(gen_init):
 @starts_with(*map(int, flo_func_db))
 class reader_func(gen_init):
     def reader(self):
+        self.shared = False
         func = flo_func_db[self.num]
         self.args = []
         if '\u2026' in func['args']:
             arg_count = self.file.uns()
         else:
             arg_count = len(func['args'])
-        for arg_num in range(arg_count):
-            arg = yield arg_count
+        yield arg_count
+        for arg_num,arg in enumerate(self.yargs):
             if '\u2026' in func['args']:
                 arg_name = f"{func['args'][0][:-1]}{arg_num+1}"
             else:
@@ -238,20 +245,23 @@ class reader_func(gen_init):
             self.args.append([arg_name,arg])
         self.args = dict(self.args)
     def __repr__(self) -> str:
-        func_name = flo_func_db[self.num]['name']
-        args = ', '.join([f'{q}={w}' for q,w in self.args.items()])
+        func_name = flo_func_db[self.num]['name'] if self.num in flo_func_db else '<?name?>'
+        args = list(self.args.items()) if isinstance(self.args, dict) else self.args
+        args = ', '.join([f'{q}={w}' for q,w in args]) if isinstance(self.args, list) else self.args
         return f'{func_name}({args})'
 
 class reader_block(gen_init):
     def reader(self):
+        self.shared = True
         self.id = self.file.int()
         self.x = self.file.int()
         self.y = self.file.int()
-        self.args = []
-        for _ in range(flo_db[self.num]['arg_count'] - 4):
-            val = yield (flo_db[self.num]['arg_count'] - 4)
-            self.args.append(val)
+        yield (flo_db[self.num]['arg_count'] - 4)
+        self.args = self.yargs
         return self
+    # TODO:
+    # read last item
+    # or it will be read as next arg
     def __repr__(self) -> str:
         if isinstance(self.num, int):
             count = flo_db[self.num]['arg_count'] - 4
@@ -259,52 +269,52 @@ class reader_block(gen_init):
             count = 0
         args = str(self.args) + "?" * (count - len(self.args)) if isinstance(self.args, list) else []
         # return f'block(num = {self.num}, id = {self.id}, x = {self.x}, y = {self.y}, args = {args})'
-        return f'block(id = {self.id})'
+        # return f'block(id = {self.id})'
+        return f'block(id = {self.id}, num = {self.num})'
 
 
+def get_reader(start):
+    if start < 0:
+        return readers['-2']
+    elif start < 1000:
+        return readers[start]
+    else:
+        return reader_block
+    
 
 def read(file):
     head = [file.int() for _ in range(8)]
     gens = []
     blocks = []
-    value = None
+    objects = []
     while True:
         try:
             try:
                 start = file.int()
             except EOFError:
                 break
-            if start < 0:
-                gens.append(readers['-2'](file, start))                
-            elif start < 1000:
-                gens.append(readers[start](file, start))
-            else:
-                x = reader_block(file, start)
-                gens.append(x)
-            print(*[gen for gen in gens])
-            value = gen_send(gens[-1], None)
-            print(*[gen for gen in gens])
-            while value is not None:
-                gens.pop()
+            gens.append(get_reader(start)(file, start))
+            objects.append(gens[-1])
+
+            while gens and gens[-1].gen is None:
+                value = gens.pop()
                 if value.num >= 1000:
                     blocks.append(value)
-                    if gens:
-                        value = gen_send(gens[-1], value)
-                    else:
-                        value = None
+                if gens:
+                    gens[-1].gen_send(value)
                 else:
-                    if not gens:
-                        break
-                    value = gen_send(gens[-1], value)
-                print(*[gen for gen in gens])
+                    print(value)
+
         except Exception:
-            print(traceback.format_exc())
-            break
+            print(traceback.format_exc(), file=sys.stderr)
+            data = file.file.read()
+            print(data)
+            print(binstr(data))
     assert not gens
-    blocks.sort(key=lambda b:b.id)
+    # blocks.sort(key=lambda b:b.id)
     return blocks
 
-            
+
 
 def raw_read(file):
     head = [file.int() for _ in range(8)]
@@ -317,7 +327,7 @@ def raw_read(file):
         pass
     print(binstr(data))
 
-raw_read(flo_file(open(sys.argv[1],'rb')))
+# raw_read(flo_file(open(sys.argv[1],'rb')))
 for block in read(flo_file(open(sys.argv[1],'rb'))):
     print(block.num, block.id, block.x, block.y, block.args)
 
