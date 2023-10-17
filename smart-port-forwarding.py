@@ -28,7 +28,8 @@ def check_inet():
     global inet_checktime
     # count = 3600
     while 1:
-        inet_status = os.system('ping -ot 4 google.com') == 0
+        # inet_status = os.system('ping -ot 4 google.com') == 0
+        inet_status = os.system('ping -ot 1 192.168.141.135') != 0
         inet_checktime = time.time()
         # logging.debug([inet_checktime, inspect.stack()[0][3]])
         time.sleep(1)
@@ -43,14 +44,22 @@ def get_remote(addr: tuple[str,int])->tuple[str,int]:
     if addr not in last_dict:
         last_dict[addr] = [0,0]
     last = last_dict[addr]
-    d = {
-        1080 : (('127.0.0.1', 6666), ('192.168.49.1', 1080)),
-        3737 : (('127.0.0.1', 6666), ('192.168.49.1', 1080)),
-        3838 : (('127.0.0.1', 6666), ('192.168.49.1', 1080)),
-        8080 : (('127.0.0.1', 7777), ('192.168.49.1', 8080)),
-        8082 : (('127.0.0.1', 7777), ('192.168.49.1', 8080)),
-    }
+    # d = {
+    #     1080 : (('127.0.0.1', 6666), ('192.168.49.1', 1080)),
+    #     3737 : (('127.0.0.1', 6666), ('192.168.49.1', 1080)),
+    #     3838 : (('127.0.0.1', 6666), ('192.168.49.1', 1080)),
+    #     8080 : (('127.0.0.1', 7777), ('192.168.49.1', 8080)),
+    #     # 8082 : (('127.0.0.1', 7777), ('192.168.49.1', 8080)),
+    #     8082 : (('127.0.0.1', 8484), ('192.168.49.1', 8080)),
+    # }
     # logging.debug([inet_checktime, inspect.stack()[0][3]])
+    d = {
+        1080 : (('127.0.0.1', 6666), ('127.0.0.1', 6666)),
+        3737 : (('127.0.0.1', 6666), ('127.0.0.1', 6666)),
+        3838 : (('127.0.0.1', 6666), ('127.0.0.1', 6666)),
+        8080 : (('127.0.0.1', 7777), ('127.0.0.1', 7777)),
+        8082 : (('127.0.0.1', 7777), ('127.0.0.1', 8484)),
+    }
     if time.time() - inet_checktime > 8:
         stop()
         # exit()
@@ -71,7 +80,7 @@ class Connection(asyncio.Protocol):
 
     def connection_made(self, transport) -> None:
         self.time = time.time()
-        # logging.debug([type(self).__name__,inspect.stack()[0][3]])
+        logging.debug([type(self).__name__,inspect.stack()[0][3]])
         self.transport = transport
         self.transport.pause_reading()
         asyncio.create_task(self.connect())
@@ -88,7 +97,7 @@ class Connection(asyncio.Protocol):
     
     def connection_lost(self, exc: Exception | None) -> None:
         self.time = time.time()
-        # logging.debug([type(self).__name__,inspect.stack()[0][3]])
+        logging.debug([type(self).__name__,inspect.stack()[0][3]])
         self.other.transport.close()
         del self.other
 
