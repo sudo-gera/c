@@ -1,126 +1,59 @@
-import math
+# import _socket
+# import http.server
+# import socketserver
+# import sys
+
+# if len(sys.argv) < 2:
+#     print('usage:')
+#     print(f'{sys.executable} {__file__} [listen-host:]listen-port')
+#     exit(1)
+
+# listen_port, listen_host = sys.argv[1][::-1].split(':',1) if ':' in sys.argv[1] else [sys.argv[1][::-1], '0.0.0.0']
+# listen_host = listen_host[::-1]
+# listen_port = listen_port[::-1]
+# print(listen_host, listen_port)
+
+# class Server(http.server.SimpleHTTPRequestHandler):
+#     def do_POST(self):
+#         self.send_response(200)
+#         self.send_header("Content-type", "text/html; charset=utf-8")
+#         self.end_headers()
+#         data = self.rfile.read(int(self.headers['Content-Length']))
+#         open('task_db.json', 'wb').write(data)
+
+# server = http.server.HTTPServer((listen_host, listen_port), Server)
+
+# print('HTTP server is listening at {listen_host}:{listen_port}. You can open it in your browser.')
+
+# try:
+#     server.serve_forever()
+# except KeyboardInterrupt:
+#     pass
+# finally:
+#     server.server_close()
+
+# import pylcs
 import random
-task = 14
-if task == 1:
-    val = input()
-    while val != 0:
-        val = int(input())
-if task == 2:
-    val = int(input())
-    sq_sum = val**2
-    while val != 0:
-        val = int(input())
-        sq_sum += val
-    print(sq_sum)
-if task == 3:
-    n = int(input())
-    q = 1
-    while q <= n:
-        print(q*q)
-        q += 1
-if task == 4:
-    x = int(100*float(input()))
-    p = int(input())
-    y = int(100*float(input()))
-    years = 0
-    while x < y:
-        x *= p+100
-        x //= 100
-        years += 1
-    print(years)
-if task == 5:
-    n = int(input())
-    while n and n % 2 == 0:
-        n //= 2
-    if n == 1:
-        print('YES')
-    else:
-        print('NO')
-if task == 6:
-    a = int(input())
-    b = int(input())
-    while b:
-        a %= b
-        c = a
-        a = b
-        b = c
-    print(a)
-if task == 7:
-    n = int(input())
-    if n < 2:
-        print('Не простое')
-    else:
-        q = 2
-        while q < n:
-            if n % q == 0:
-                print('Не простое')
-                break
-            q += 1
-        else:
-            print('Простое')
-if task == 8:
-    n = int(input())
-    q = 0
-    w = 1
-    while n:
-        print(q)
-        w += q
-        q = w-q
-        n -= 1
-if task == 9:
-    n = float(input())
-    a = float(input())
-    b = float(input())
-    if n > math.pi**2*(3*a+b)/24:
-        print(float('inf'))
-    else:
-        k = 0
-        c = a
-        s = 0
-        while s <= n:
-            k += 1
-            s += c/k/k
-            c = a+b-c
-        print(k)
-if task == 10:
-    n = int(input())
-    while n:
-        print(random.randint(1, 10))
-        n -= 1
-if task == 11:
-    n = int(input())
-    for q in range(n):
-        print(random.random()*10-5)
-if task == 12:
-    n = int(input())-1
-    _min = 0
-    while n:
-        r = random.randint(-10, 10)
-        print(r)
-        if r < _min:
-            _min = r
-        n -= 1
-    print(0)
-    print(_min)
-if task == 13:
-    n = int(input())
-    _max = 0
-    index_max = -1
-    index = 0
-    while index < n-1:
-        r = random.randint(-10, 10)
-        print(r)
-        if r > _max:
-            _max = r
-            index_max = index
-        index += 1
-    print(0)
-    index_max %= n
-    print(index_max)
-if task == 14:
-    n = int(input())
-    while n:
-        r = random.randint(0, 1)
-        print(r)
-        n -= r
-    print(0)
+
+a = bytes([random.randint(0, 255) for q in range(10**6)])
+s = bytes([random.randint(0, 255) for q in range(10**6)])
+
+
+# # A = 'We are shannonai'
+# # B = ['We like shannonai', 'We work in shannonai', 'We are not shannonai']
+# pylcs.lcs_string_length(a,s)
+
+from strsimpy import SIFT4
+
+S = SIFT4()
+
+print(S.distance('aba','b'))
+
+# result: 11.0
+# print(s.distance('This is the first string', 'And this is another string')) # 11.0
+# result: 12.0
+# print(s.distance('Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 'Amet Lorm ispum dolor sit amet, consetetur adixxxpiscing elit.', maxoffset=10))
+
+
+
+

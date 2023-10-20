@@ -1,53 +1,15 @@
-from h import *
-import sys
-sys.setrecursionlimit(80)
-# def f():
-#     q = rand()%3
-#     if q == 0:
-#         return 'a'
-#     if q == 1:
-#         return 'b' + f()
-#     if q == 2:
-#         return 'c' + f() + f()
+import difflib
+import random
 
-# def check(s):
-#     for q in range(len(s)+1):
-#         # print(q)
-#         assert s[q:].count('a') >= s[q:].count('c')
-#     assert s.count('a') -1 == s.count('c')
+s = difflib.SequenceMatcher(
+    None,
+    bytes([random.randint(0,255) for w in range(1024*1024)]),
+    bytes([random.randint(0,255) for q in range(1024*1024)]),
+)
 
-def s_():
-    q = rand()%3
-    if q == 0:
-        return ')'
-    if q == 1:
-        return '(' + s_() + ')'
-    if q == 2:
-        return s_() + '(' + s_()
+print(s.real_quick_ratio())
 
-def check(s):
-    c=0
-    for q in '(' + s:
-        if q=='(':
-           c+=1
-        else:
-            c-=1
-        assert c>=0
-    assert c==0 
+# for block in s.get_opcodes():
+#     print("%6s a[%d:%d] b[%d:%d]" % block)
 
-seed_ = 8859101521918320191
-seed_ = rand()
-print(seed_)
-seed(seed_)
-
-# if 1:
-while 1:
-    try:
-        s = s_()
-    except RecursionError:
-        pass
-    print(s)
-    check(s)
-
-
-
+# list(s.get_matching_blocks())
