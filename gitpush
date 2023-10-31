@@ -10,9 +10,9 @@ then
 	ls -l $(find . -size +51200 | grep -v "^./.git")
 	exit
 fi
-git add *
+git add "$(git rev-parse --show-toplevel)"
 git commit -qam "$d" >/dev/null
 git pull -q --no-edit
-git add *
+git add "$(git rev-parse --show-toplevel)"
 git commit -qam "$d" >/dev/null 2>/dev/null
 git push -q

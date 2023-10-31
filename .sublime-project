@@ -1,0 +1,60 @@
+{
+    "folders":
+    [
+        {
+            "follow_symlinks": true,
+            "path": "~/c/"
+        }
+    ],
+    "settings":
+    {
+        // This is the block the plugin adds to your project file
+        "rsync_ssh":
+        {
+            // To use non-standard ssh specify the path here
+            "ssh_binary": "/usr/local/bin/ssh",
+
+            // To disable sync on save set 'sync_on_save' to false
+            "sync_on_save": true,
+
+            // Rsync options
+            "options":
+            [
+                "--dry-run",
+                "--delete",
+                // Override how we handle permissions, useful for platforms that does not support Unix permissions.
+                // Here we tell rsync to use the umask on the destination to set the permissions
+                "--no-perms", "--chmod=ugo=rwX"
+            ],
+            // Stuff we do not want rsync to copy
+            "excludes":
+            [
+                ".git*",
+            ],
+            // Servers we want to sync to
+            "remotes":
+            {
+                // Each folder from the project will be added here
+                "~/c/":
+                [
+                    {
+                        // You can disable any destination by setting this value to 0
+                        "enabled": 1,
+                        // Stuff we do not want rsync to copy, but just for this destination
+                        "excludes":
+                        [
+                        ],
+                        // ssh options
+                        "remote_host": "192.168.64.1",
+                        "remote_path": "~/c/",
+                        "remote_port": 2222,
+                        "remote_user": "gera",
+                        // Run commands before and after rsync
+                        "remote_pre_command": "",
+                        "remote_post_command": ""
+                    }
+                ]
+            }
+        }
+    }
+}
