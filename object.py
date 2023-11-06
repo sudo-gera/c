@@ -1,4 +1,6 @@
-from h import *
-# a=open('uran.o').read()
-a=run(['objdump','-d','uran.o'],stdout=-1).stdout.read().decode()
-print(a)
+class Object(dict): # allow a.name instead of a['name']
+    def __init__(self,*a,**s):
+        super().__init__(*a,**s)
+        self.__dict__=self
+
+

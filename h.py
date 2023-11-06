@@ -116,13 +116,14 @@ def rand(q=2**64,e=None):
 exec(open(str(Path.home())+'/.pythonrc').read())
 def urlread(*a,**s):
     return urlopen(*a,**s).read().decode()
-class Object(dict):
-    def __getattr__(s,n):
-        return s[n]
-    def __setattr__(s,n,v):
-        s[n]=v
-    def __delattr__(s,n):
-        del s[n]
+from object import *
+# class Object(dict):
+#     def __getattr__(s,n):
+#         return s[n]
+#     def __setattr__(s,n,v):
+#         s[n]=v
+#     def __delattr__(s,n):
+#         del s[n]
 false=False
 true=True
 def bisect_in(a,s):

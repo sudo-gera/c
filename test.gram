@@ -1,0 +1,5 @@
+start[ast.Module]: a=expr_stmt* ENDMARKER { ast.Module(body=a) or [] }
+expr_stmt: a=atom NEWLINE { ast.Expr(value=a) }
+
+
+atom: 'a' {ast.Name(id='a')}
