@@ -29,8 +29,8 @@ def check_inet():
     # count = 3600
     while 1:
         # inet_status = os.system('ping -ot 4 google.com') == 0
-        # inet_status = os.system('ping -ot 1 192.168.141.135') != 0
-        inet_status = None
+        inet_status = os.system('ping -ot 1 192.168.141.135') != 0
+        # inet_status = False
         inet_checktime = time.time()
         # logging.debug([inet_checktime, inspect.stack()[0][3]])
         time.sleep(1)
