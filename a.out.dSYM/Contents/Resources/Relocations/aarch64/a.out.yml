@@ -2,11 +2,8 @@
 triple:          'arm64-apple-darwin'
 binary-path:     a.out
 relocations:
-  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x100002850, symSize: 0x510 }
-  - { offsetInCU: 0x3B, offset: 0x3B, size: 0x8, addend: 0x0, symName: _.str, symObjAddr: 0xF60, symBinAddr: 0x100003900, symSize: 0x0 }
-  - { offsetInCU: 0x6C, offset: 0x6C, size: 0x8, addend: 0x0, symName: _.str.5, symObjAddr: 0xF80, symBinAddr: 0x100003920, symSize: 0x0 }
-  - { offsetInCU: 0x4A14, offset: 0x4A14, size: 0x8, addend: 0x0, symName: __ZNSt3__14endlB7v160006IcNS_11char_traitsIcEEEERNS_13basic_ostreamIT_T0_EES7_, symObjAddr: 0x8E0, symBinAddr: 0x100003130, symSize: 0x210 }
-  - { offsetInCU: 0x77D6, offset: 0x77D6, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x100002850, symSize: 0x510 }
-  - { offsetInCU: 0x7B63, offset: 0x7B63, size: 0x8, addend: 0x0, symName: __ZNK12utf8iteratordeEv, symObjAddr: 0x510, symBinAddr: 0x100002D60, symSize: 0x3D0 }
-  - { offsetInCU: 0x7C01, offset: 0x7C01, size: 0x8, addend: 0x0, symName: __ZNKSt3__19basic_iosIcNS_11char_traitsIcEEE5widenB7v160006Ec, symObjAddr: 0xAF0, symBinAddr: 0x100003340, symSize: 0x3B0 }
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _receive_key_event_unsafe, symObjAddr: 0x0, symBinAddr: 0x100003508, symSize: 0x794 }
+  - { offsetInCU: 0x33, offset: 0x33, size: 0x8, addend: 0x0, symName: _receive_key_event_unsafe, symObjAddr: 0x0, symBinAddr: 0x100003508, symSize: 0x794 }
+  - { offsetInCU: 0x90, offset: 0x90, size: 0x8, addend: 0x0, symName: _receive_key_event, symObjAddr: 0x794, symBinAddr: 0x100003C9C, symSize: 0x60 }
+  - { offsetInCU: 0xB8, offset: 0xB8, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x7F4, symBinAddr: 0x100003CFC, symSize: 0x20 }
 ...
