@@ -3,6 +3,8 @@ from asyncio import transports
 import inspect
 import argparse
 import ipaddress
+import urllib.parse
+import sys
 # class connection(asyncio.DatagramProtocol, asyncio.Protocol):
 #     def __init__(self, channel):
 #         self.__channel = channel
@@ -27,17 +29,39 @@ def channel(reader, writer):
     finally:
         writer.close()
 
-class host_port:
-    def __init__(self, hp: str):
-        self.port = hp[len(hp) - hp[::-1].index(':'):]
-        self.host = ipaddress.ip_address(hp[:len(hp) - len(self.port) - 1])
+class columned:
+    def __init__(self, s):
+        s = s.split(':')
+        a = []
+        while s:
+            for q in range(len(s)):#, 0, -1):
+                try:
+                    d = '//'+':'.join(s[q:])
+                    print(d)
+                    f = urllib.parse.urlsplit(d)
+                    f.hostname
+                    f.port
+                    a.append(f)
+                    s[q:]=[]
+                    break
+                except Exception:
+                    pass
+        a = a[::-1]
+        self.hosts = [q.hostname for q in a]
+        self.ports = [q.port for q in a]
 
-    def __repr__(se)
+    def __repr__(self) -> str:
+        return repr(list(zip(self.hosts, self.ports)))
+
 
 async def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--listen', type=host_port)
+    # parser.add_argument('--tcp', type=host_port, action='append')
+    # parser.add_argument('--udp', type=host_port, action='append')
+    # parser.add_argument('--udp', type=host_port)
     args = parser.parse_args()
     print(args)
 
-asyncio.run(main())
+# asyncio.run(main())
+print(columned(sys.argv[1]))
+
