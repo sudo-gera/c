@@ -9,7 +9,7 @@ def process_one_word(key):
             count += int(value)
             yield
     finally:
-        print(f'word {key} found {count} times')
+        print('word {key} found {count} times'.format(key=key, count=count))
 
 a='''
 q 100
