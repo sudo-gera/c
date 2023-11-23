@@ -1,28 +1,32 @@
 import functools
 
 @functools.lru_cache(1)
-def process_one_word(word_arg):
+def process_one_word(key):
+    count = 0
     try:
         while 1:
-            word = yield
-            print(word, word_arg)
+            value = yield
+            count += int(value)
+            yield
     finally:
-        print('finally', word_arg)
+        print(f'word {key} found {count} times')
 
 a='''
-1
-1
-1
-2
-2
-2
-3
-3
-3
-'''.strip().split()
+q 100
+q 10
+q 1
+w 200
+w 20
+w 2
+e 300
+e 30
+e 3
+'''.strip().splitlines()
 
-for q in a:
-    a = process_one_word(q)
+for line in a:
+    key, value = line.split()
+    a = process_one_word(key)
     a.send(None)
+    a.send(value)
 
 
