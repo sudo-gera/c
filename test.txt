@@ -1,2 +1,53 @@
-a
-a
+Script started on Fri Dec  1 22:53:34 2023
+[34m22:53:34[0m:[33marm64[0m:[32m~[0m$ curl -s 'https://api.vk.com/method/docs.getMessagesUploadServer' \
+> -F "access_token=${token}" \
+> -F "v=5.199" \
+> -F "peer_id=${peer_id}" \
+> | python3 -m json.tool
+{
+    "response": {
+        "upload_url": "https://pu.vk.com/c909328/upload.php?act=add_doc_new&mid=-218708263&aid=-1&gid=0&type=0&peer_id=-218708263&rhash=0398c5f5d2941114f0b4b792fd3dac18&api=1&server=909328&_origin=https%3A%2F%2Fapi.vk.com&_sig=b1408d610d5a1e812c0db831dd4fd050"
+    }
+}
+[34m22:54:18[0m:[33marm64[0m:[32m~[0m$ curl -s \
+> -F 'file=@/Users/gera/c/test1.txt' \
+> "https://pu.vk.com/c909328/upload.php?act=add_doc_new&mid=-218708263&aid=-1&gid=0&type=0&peer_id=-218708263&rhash=0398c5f5d2941114f0b4b792fd3dac18&api=1&server=909328&_origin=https%3A%2F%2Fapi.vk.com&_sig=b1408d610d5a1e812c0db831dd4fd05 0" \
+> | python3 -m json.tool
+{
+    "file": "-218708263|0|-1|909328|cd83e38dff|txt|22698|test1.txt|72cf6a70502728d9627ab224919327c7|32a80589d56035732173f3eb852c268a||||eyJkaXNrIjoiMzciLCJwZWVyX3NlbmRlciI6Ii0yMTg3MDgyNjMifQ=="
+}
+[34m22:54:51[0m:[33marm64[0m:[32m~[0m$ curl -s 'https://api.vk.com/method/docs.save' \
+> -F "access_token=${token}" \
+> -F "v=5.199" \
+> -F "file=-218708263|0|-1|909328|cd83e38dff|txt|22698|test1.txt|72cf6a70502728d9627ab224919327c7|32a80589d56035732173f3eb852c268a||||eyJkaXNrIjoiMzciLCJwZWVyX3NlbmRlciI6Ii0yMTg3MDgyNjMifQ==" \
+> | python3 -m json.tool
+{
+    "response": {
+        "type": "doc",
+        "doc": {
+            "id": 670381440,
+            "owner_id": -218708263,
+            "title": "test1.txt",
+            "size": 22698,
+            "ext": "txt",
+            "date": 1701460518,
+            "type": 1,
+            "url": "https://vk.com/doc-218708263_670381440?hash=IuiCro8xKuAQGY4xyEA1ZDpcDHJyroTzwJjc0SIlwn4&dl=RWc3FFRGoTeX0lfyxJFJZwXGsvBxjzzp6MzW0vQYJk8&api=1&no_preview=1",
+            "is_unsafe": 0,
+            "can_manage": true
+        }
+    }
+}
+[34m22:55:18[0m:[33marm64[0m:[32m~[0m$ curl -s 'https://api.vk.com/method/messages.send' \
+> -F "access_token=${token}" \
+> -F "v=5.199" \
+> -F "random_id=0" \
+> -F "peer_id=${peer_id}" \
+> -F "attachment=doc-${group_id}_670381440" \
+> | python3 -m json.tool
+{
+    "response": 0
+}
+[34m22:55:46[0m:[33marm64[0m:[32m~[0m$ exit
+
+Script done on Fri Dec  1 23:06:38 2023
