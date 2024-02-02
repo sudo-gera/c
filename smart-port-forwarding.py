@@ -29,8 +29,10 @@ def check_inet():
     # count = 3600
     while 1:
         # inet_status = os.system('ping -ot 4 google.com') == 0
-        inet_status = os.system('ping -ot 1 192.168.141.135') != 0
-        # inet_status = True
+        # inet_status = os.system('ping -ot 1 192.168.141.135') != 0
+        # inet_status = bool(i have direct access)
+        # inet_status = os.system('ping -ot 1 192.168.43.64 >/dev/null 2>/dev/null') != 0
+        inet_status = True
         inet_checktime = time.time()
         # logging.debug([inet_checktime, inspect.stack()[0][3]])
         time.sleep(1)
@@ -56,12 +58,12 @@ def get_remote(addr: tuple[str,int])->tuple[str,int]:
     # logging.debug([inet_checktime, inspect.stack()[0][3]])
     d = {
         1080 : (('127.0.0.1', 6666), ('127.0.0.1', 6666)),
-        3737 : (('127.0.0.1', 6666), ('127.0.0.1', 1090)),
-        3838 : (('127.0.0.1', 6666), ('127.0.0.1', 1090)),
+        # 3737 : (('127.0.0.1', 6666), ('127.0.0.1', 1090)),
+        # 3838 : (('127.0.0.1', 6666), ('127.0.0.1', 1090)),
         8080 : (('127.0.0.1', 7777), ('127.0.0.1', 7777)),
         8082 : (('127.0.0.1', 7777), ('127.0.0.1', 8484)),
         # 8082 : (('127.0.0.1', 7777), ('127.0.0.1', 7777)),
-        1084 : (('127.0.0.1', 6666), ('127.0.0.1', 1484))
+        # 1084 : (('127.0.0.1', 6666), ('127.0.0.1', 1484))
         # 1084 : (('127.0.0.1', 6666), ('127.0.0.1', 6666))
     }
     if time.time() - inet_checktime > 8:
@@ -82,16 +84,18 @@ class Connection(asyncio.Protocol):
         self.time = time.time()
         con_refs.add(weakref.ref(self))
 
-    def connection_made(self, transport) -> None:
+    def connection_made(self, transport:asyncio.Transport) -> None:
         self.time = time.time()
         logging.debug([type(self).__name__,inspect.stack()[0][3]])
         self.transport = transport
+        # logging.debug(['pausing', id(self)])
         self.transport.pause_reading()
+        # logging.debug(['paused', id(self)])
         asyncio.create_task(self.connect())
 
     def data_received(self, data: bytes) -> None:
         self.time = time.time()
-        # logging.debug([type(self).__name__,inspect.stack()[0][3]])
+        # logging.debug([type(self).__name__,inspect.stack()[0][3], id(self)])
         self.other.transport.write(data)
 
     def eof_received(self) -> bool | None:
@@ -102,16 +106,20 @@ class Connection(asyncio.Protocol):
     def connection_lost(self, exc: Exception | None) -> None:
         self.time = time.time()
         logging.debug([type(self).__name__,inspect.stack()[0][3]])
-        self.other.transport.close()
-        del self.other
+        if hasattr(self, 'other'):
+            self.other.transport.close()
+            del self.other
 
 class ClientConnection(Connection):
     def __init__(self, other=None):
         super().__init__()
         self.other = other
+        self.wait_connected = asyncio.Queue()
 
     async def connect(self):
+        logging.debug([type(self).__name__,inspect.stack()[0][3]])
         self.transport.resume_reading()
+        self.wait_connected.put_nowait(None)
 
 class ServerConnection(Connection):
     def __init__(self, addr):
@@ -119,12 +127,17 @@ class ServerConnection(Connection):
         self.addr = addr
 
     async def connect(self):
+        logging.debug([type(self).__name__,inspect.stack()[0][3]])
         try:
             loop = asyncio.get_running_loop()
             remote = get_remote(self.addr)
             _, other = await loop.create_connection(lambda: ClientConnection(self), *remote)
+            await other.wait_connected.get()
             self.other = other
+            # logging.debug([id(self), 'other is set'])
+            # logging.debug(['resuming', id(self)])
             self.transport.resume_reading()
+            # logging.debug(['resumed', id(self)])
         except Exception:
             self.transport.write_eof()
             self.transport.close()
