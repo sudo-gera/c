@@ -28,19 +28,22 @@ class Item(Generic[K, V]):
         newer = self.newer;
         return f'({val = } {older = } {newer = })';
 
-
 class Cache(Generic[K, V]):
     def __init__(self, c: int):
         self.capacity: int = c;
-        self.data: dict[Option[K], Item[K, V]] = {};
-        self.data[None] = Item(None);
+        self.data: dict[K, Item[K, V]] = {};
+        self.root : Item[K,V] = Item(None);
         self.check();
 
+    def data_get(self, k: Option[K]) -> Item[K, V]:
+        if k is None:
+            return self.root
+        return self.data[k]
 
     def extract(self, it: Item[K, V], key: K) -> None:
         self.check();
         okey, nkey = it.older, it.newer;
-        older, newer = self.data[okey], self.data[nkey];
+        older, newer = self.data_get(okey), self.data_get(nkey);
         older.sub(okey, it, key);
         it.sub(key, newer, nkey);
         older.add(okey, newer, nkey);
@@ -49,10 +52,10 @@ class Cache(Generic[K, V]):
 
     def insert_as_newest(self, it: Item[K, V], key: K) -> None:
         self.check();
-        nkey = self.data[None].newer;
-        newer = self.data[self.data[None].newer];
+        nkey = self.root.newer;
+        newer = self.data_get(nkey);
         okey = None;
-        older = self.data[None];
+        older = self.root;
         older.sub(okey, newer, nkey);
         older.add(okey, it, key);
         it.add(key, newer, nkey);
@@ -61,8 +64,8 @@ class Cache(Generic[K, V]):
 
     def get(self, k: K) -> Option[V]:
         self.check();
-        it = self.data.get(k, None);
-        if it is not None:
+        if k in self.data:
+            it = self.data[k];
             self.extract(it, k);
             self.insert_as_newest(it, k);
             return it.val;
@@ -70,35 +73,35 @@ class Cache(Generic[K, V]):
 
     def set(self, k: K, v: V) -> Option[V]:
         self.check();
-        it = self.data.get(k, None);
-        if it is not None:
+        if k in self.data:
+            it = self.data[k];
             self.extract(it, k);
             self.insert_as_newest(Item(v), k);
             self.check();
             return it.val;
         else:
-            if len(self.data) == self.capacity + 1:
-                older = self.data[None].older;
+            if len(self.data) == self.capacity:
+                older = self.root.older;
                 assert older is not None;
-                self.extract(self.data[self.data[None].older], older);
+                self.extract(self.data_get(self.root.older), older);
             self.insert_as_newest(Item(v), k);
             self.check();
             return None;
 
     def check(self: Self) -> None:
-        it: Item[K, V] = self.data[None];
+        it: Item[K, V] = self.root;
         its = [];
         while True:
             its.append(it);
-            assert (it != self.data[self.data[None].newer]) ^ (self.data[it.older] is self.data[None]);
-            assert (it != self.data[self.data[None].older]) ^ (self.data[it.newer] is self.data[None]);
-            assert self.data[self.data[it.older].newer] is it;
-            it = self.data[it.older];
-            if it is self.data[None]:
+            assert (it != self.data_get(self.root.newer)) ^ (self.data_get(it.older) is self.root);
+            assert (it != self.data_get(self.root.older)) ^ (self.data_get(it.newer) is self.root);
+            assert self.data_get(self.data_get(it.older).newer) is it;
+            it = self.data_get(it.older);
+            if it is self.root:
                 break;
         assert len(set(map(id, its))) == len(set(map(id, its)));
-        assert self.capacity + 1 >= len(self.data) == len(its);
-        assert sorted([*self.data.values()], key=id) == sorted(its, key=id);
+        assert self.capacity + 1 >= len(self.data)+1 == len(its);
+        assert sorted([*self.data.values(), self.root], key=id) == sorted(its, key=id);
 
 
 c: Cache[int, int] = Cache(2);
