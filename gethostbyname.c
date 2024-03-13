@@ -29,7 +29,16 @@ int main(int argc, char **argv) {
     }
  
     tmp = gethostbyname(argv[1]);
+<<<<<<< HEAD
  
+=======
+    printf("%p\n", tmp);
+    printf("%p\n", &tmp->h_aliases);
+    printf("%p\n", tmp->h_aliases);
+    printf("%p\n", &tmp->h_aliases[0]);
+    printf("%p\n", &tmp->h_aliases[1]);
+
+>>>>>>> 95fb96e1154f703ab88a92a647e59415b646e6fe
     if (!tmp) {
         printf("Lookup Failed: %s\n", hstrerror(h_errno));
         return 0;

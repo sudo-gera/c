@@ -26,19 +26,61 @@ int main(int argc, char *argv[])
     serv_addr.sin_port = htons(5001); 
 
     bind(listenfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)); 
+<<<<<<< HEAD
 
     listen(listenfd, 10); 
+=======
+    if (errno){
+        perror("");
+        fflush(stderr);
+        fflush(stdout);
+    }
+
+    listen(listenfd, 10); 
+    if (errno){
+        perror("");
+        printf("%li\n",__LINE__);
+        fflush(stderr);
+        fflush(stdout);
+    }
+>>>>>>> 95fb96e1154f703ab88a92a647e59415b646e6fe
 
     while(1)
     {
         connfd = accept(listenfd, (struct sockaddr*)NULL, NULL); 
+<<<<<<< HEAD
 	printf("got client\n");
+=======
+    if (errno){
+        perror("");
+        printf("%li\n",__LINE__);
+        fflush(stderr);
+        fflush(stdout);
+    }
+>>>>>>> 95fb96e1154f703ab88a92a647e59415b646e6fe
 
         ticks = time(NULL);
         snprintf(sendBuff, sizeof(sendBuff), "%.24s\r\n", ctime(&ticks));
         write(connfd, sendBuff, strlen(sendBuff)); 
+<<<<<<< HEAD
 
         close(connfd);
+=======
+    if (errno){
+        perror("");
+        printf("%li\n",__LINE__);
+        fflush(stderr);
+        fflush(stdout);
+    }
+
+        close(connfd);
+    if (errno){
+        perror("");
+        printf("%li\n",__LINE__);
+        fflush(stderr);
+        fflush(stdout);
+    }
+>>>>>>> 95fb96e1154f703ab88a92a647e59415b646e6fe
         sleep(1);
      }
 }
