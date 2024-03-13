@@ -8,6 +8,11 @@
 #include <unistd.h>
 #include <errno.h>
 #include <arpa/inet.h> 
+<<<<<<< HEAD
+
+int main(int argc, char *argv[])
+{
+=======
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -84,6 +89,7 @@ int main(int argc, char **argv) {
 
 // int main(int argc, char *argv[])
 // {
+>>>>>>> 95fb96e1154f703ab88a92a647e59415b646e6fe
     int sockfd = 0, n = 0;
     char recvBuff[1024];
     struct sockaddr_in serv_addr; 
@@ -104,10 +110,16 @@ int main(int argc, char **argv) {
     memset(&serv_addr, '0', sizeof(serv_addr)); 
 
     serv_addr.sin_family = AF_INET;
+<<<<<<< HEAD
+    serv_addr.sin_port = htons(5000); 
+
+    if(inet_pton(AF_INET, argv[1], &serv_addr.sin_addr)<=0)
+=======
     serv_addr.sin_port = htons(5001); 
 
     if(inet_pton(AF_INET, host_ip, &serv_addr.sin_addr)<=0)
     // if(inet_pton(AF_INET, argv[1], &serv_addr.sin_addr)<=0)
+>>>>>>> 95fb96e1154f703ab88a92a647e59415b646e6fe
     {
         printf("\n inet_pton error occured\n");
         return 1;
