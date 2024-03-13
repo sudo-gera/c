@@ -19,6 +19,10 @@ int main(int argc, char **argv, char*const* env) {
         #else
             puts("was compiled without COMMAND");
         #endif
+        uid_t id = geteuid();
+        if (errno){perror("geteuid failed");} else{
+            printf("having geteuid() = %lli (note: cp command erases setuid)\n", (long long int)(id));
+        }
         return 0;
     }
     args[0] = TOSTRING(COMMAND);
@@ -27,11 +31,11 @@ int main(int argc, char **argv, char*const* env) {
         #warning "use -DCOMMAND to specify path to executable binary. Now compiling to behave like sudo."
     #endif
     uid_t id = geteuid();
+    if (errno){perror("geteuid failed");goto help;}
     setuid(id);
+    if (errno){perror("setuid failed");goto help;}
     setgid(id);
+    if (errno){perror("setuid failed");goto help;}
     execve(args[0], (char**)args, env);
-    if (errno){
-        perror("execve failed (it requres full path)");
-        goto help;
-    }
+    if (errno){perror("execve failed (note: it requres full path)");goto help;}
 }
