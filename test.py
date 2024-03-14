@@ -6,63 +6,74 @@ K = TypeVar('K');
 V = TypeVar('V');
 
 
-class Item(Generic[K, V]):
-    def __init__(self: Item[K, V], v: Option[V]):
-        self.newer: Option[K] = None;
-        self.older: Option[K] = None;
+class Item(Generic[V]):
+    def __init__(self: Item[V], v: Option[V]):
+        self.newer: int = 0;
+        self.older: int = 0;
         self.val: Option[V] = v;
 
-    def add(self: Item[K, V], skey: Option[K],
-            oth: Item[K, V], okey: Option[K]) -> None:
-        self.newer = okey;
-        oth.older = skey;
-
-    def sub(self: Item[K, V], skey: Option[K],
-            oth: Item[K, V], okey: Option[K]) -> None:
-        self.newer = skey;
-        oth.older = okey;
-
-    def __repr__(self: Item[K, V]) -> str:
+    def __repr__(self: Item[V]) -> str:
         val = self.val;
         older = self.older;
         newer = self.newer;
         return f'({val = } {older = } {newer = })';
 
+def add(left: Item[V], lkey: int,
+        right: Item[V], rkey: int) -> None:
+    left.newer = rkey;
+    right.older = lkey;
+
+def sub(left: Item[V], lkey: int,
+        right: Item[V], rkey: int) -> None:
+    left.newer = lkey;
+    right.older = rkey;
+
 class Cache(Generic[K, V]):
     def __init__(self, c: int):
+        self.counter: int = 0;
         self.capacity: int = c;
-        self.data: dict[K, Item[K, V]] = {};
-        self.root : Item[K,V] = Item(None);
+        self.keys: dict[K, int] = {};
+        self.data: dict[int, Item[V]] = {};
+        self.root : Item[V] = Item(None);
         self.check();
 
-    def data_get(self, k: Option[K]) -> Item[K, V]:
-        if k is None:
+    def data_get(self, k: int) -> Item[V]:
+        if k == 0:
             return self.root
         return self.data[k]
 
-    def extract(self, it: Item[K, V], key: K) -> None:
+    def extract(self, it: Item[V], key: int) -> None:
         self.check();
         okey, nkey = it.older, it.newer;
         older, newer = self.data_get(okey), self.data_get(nkey);
-        older.sub(okey, it, key);
-        it.sub(key, newer, nkey);
-        older.add(okey, newer, nkey);
+        sub(older, okey, it, key);
+        sub(it, key, newer, nkey);
+        add(older, okey, newer, nkey);
         del self.data[key];
         self.check();
 
-    def insert_as_newest(self, it: Item[K, V], key: K) -> None:
+    def insert_as_newest(self, it: Item[V], key: int) -> None:
         self.check();
         nkey = self.root.newer;
         newer = self.data_get(nkey);
-        okey = None;
+        okey = 0;
         older = self.root;
-        older.sub(okey, newer, nkey);
-        older.add(okey, it, key);
-        it.add(key, newer, nkey);
+        sub(older, okey, newer, nkey);
+        add(older, okey, it, key);
+        add(it, key, newer, nkey);
         self.data[key] = it;
         self.check();
 
-    def get(self, k: K) -> Option[V]:
+    def key_to_int(self, key: K) -> int:
+        if len(self.keys) > len(self.data) * 2:
+            self.keys = {k:v for k,v in self.keys.items() if v in self.data}
+        if key not in self.keys:
+            self.counter += 1
+            self.keys[key] = self.counter
+        return self.keys[key]
+
+    def get(self, key: K) -> Option[V]:
+        k = self.key_to_int(key)
         self.check();
         if k in self.data:
             it = self.data[k];
@@ -71,7 +82,8 @@ class Cache(Generic[K, V]):
             return it.val;
         return None;
 
-    def set(self, k: K, v: V) -> Option[V]:
+    def set(self, key: K, v: V) -> Option[V]:
+        k = self.key_to_int(key)
         self.check();
         if k in self.data:
             it = self.data[k];
@@ -79,17 +91,17 @@ class Cache(Generic[K, V]):
             self.insert_as_newest(Item(v), k);
             self.check();
             return it.val;
-        else:
-            if len(self.data) == self.capacity:
-                older = self.root.older;
-                assert older is not None;
-                self.extract(self.data_get(self.root.older), older);
-            self.insert_as_newest(Item(v), k);
-            self.check();
-            return None;
+        if len(self.data) == self.capacity:
+            older = self.root.older;
+            assert older != 0;
+            self.extract(self.data_get(self.root.older), older);
+        self.insert_as_newest(Item(v), k);
+        self.check();
+        return None;
 
     def check(self: Self) -> None:
-        it: Item[K, V] = self.root;
+        assert(len(self.data) * 2 >= len(self.keys) - 4)
+        it: Item[V] = self.root;
         its = [];
         while True:
             its.append(it);
@@ -103,6 +115,27 @@ class Cache(Generic[K, V]):
         assert self.capacity + 1 >= len(self.data)+1 == len(its);
         assert sorted([*self.data.values(), self.root], key=id) == sorted(its, key=id);
 
+class SimpleCache(Generic[K, V]):
+    def __init__(self: SimpleCache[K,V], capacity: int) -> None:
+        self.data : dict[K,V] = {}
+        self.capacity = capacity
+    def get(self: SimpleCache[K,V], k: K) -> V|None:
+        if k not in self.data:
+            return None
+        v = self.data[k]
+        del self.data[k]
+        self.data[k] = v
+        return v
+    def set(self: SimpleCache[K,V], k: K, v: V) -> V|None:
+        if k in self.data:
+            ov = self.data[k]
+            del self.data[k]
+            self.data[k] = v
+            return ov
+        if len(self.data) == self.capacity:
+            del self.data[next(iter(self.data))]
+        self.data[k] = v
+        return None
 
 c: Cache[int, int] = Cache(2);
 assert c.set(1, 11) is None;
@@ -130,4 +163,16 @@ assert c.get(1) is None;
 assert c.get(2) is None;
 assert c.get(3) == 31;
 
+import random
 
+oc : Cache[int, int] = Cache(99)
+sc : SimpleCache[int, int] = SimpleCache(99)
+for q in range(500_0):
+    if random.randint(0,2):
+        k = random.randint(0, 300)
+        v = random.randint(0, 300)
+        assert sc.set(k, v) == oc.set(k,v)
+    else:
+        k = random.randint(0, 300)
+        assert sc.get(k) == oc.get(k)
+        
