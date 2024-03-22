@@ -1,4 +1,5 @@
-HOME=1
+from pathlib import Path
+HOME=str(Path.home())+'/'
 try:
     from dataclasses import *
     import dataclasses

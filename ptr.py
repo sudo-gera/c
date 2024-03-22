@@ -49,7 +49,26 @@ class Pointer:
 
 ptr = Pointer()
 
+def test():
+    f = 0
+    f_ptr = ptr.f
+    f_ptr[0] = 2
+    assert f == 2 # doesnt work...
+    class d:
+        pass
+    s = d()
+    a_ptr = ptr(s).a
+    a_ptr[0] = 3
+    assert s.a == 3
+    q = [10, 11, 12]
+    q_ptr = ptr(q)[1]
+    q_ptr[-1] = 20
+    q_ptr[0] = 21
+    q_ptr[1] = 22
+    assert q == [20, 21, 22]
+
 if __name__ == '__main__':
+    test()
     f = 0
     f_ptr = ptr.f
     f_ptr[0] = 2
