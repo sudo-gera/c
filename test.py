@@ -7,6 +7,36 @@ whois = csv.DictReader(data.splitlines(keepends=True), dialect=csv.Sniffer().sni
 whois = [*whois]
 good_keys = {key for key in whois[0].keys() if all([v[key]!='' for v in whois])}
 
+# good_keys -= {'status'}
+
+# pprint(dict([(key, max([len(v[key]) for v in whois])) for key in good_keys]))
+# exit()
+
+
+a=set()
+for v in whois:
+    a.add(v['domainName'])
+assert len(a) == len(whois)
+
+# for k in good_keys:
+#     if k.endswith('Date'):
+#         a=[v[k] for v in whois]
+#         print(k, min(a))
+#         print(k, max(a))
+
+# st = [int(v[k]) for v in whois for k in good_keys if k.endswith('postalCode')]
+# print(st)
+# f=set()
+# for w in st:
+#     assert len(w.split('|')) <= 5
+#     for e in w.split('|'):
+#         n=e.split(' ',1)[0]
+#         assert e == f'{n} https://icann.org/epp#{n}'
+#         f.add(n)
+# pprint(f)
+
+exit()
+
 
 def check_pk(pks, keys):
     return all([
