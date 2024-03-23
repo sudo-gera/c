@@ -1,4 +1,1 @@
-Script started on Sat Mar 23 19:37:45 2024
-[?1034h[34m19:37:45[0m:[33marm64[0m:[32m~/c[0m$ exit
-
-Script done on Sat Mar 23 19:37:46 2024
+Script started on Sat Mar 23 19:37:47 2024
