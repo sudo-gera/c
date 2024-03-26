@@ -1,13 +1,24 @@
-import sys
-import time
 
-bytes_read = 0
-while (data := sys.stdin.buffer.read(2**20)):
-    bytes_read += len(data)
-    to_print = f'{bytes_read:_}'
-    # print('\x1b[100C' + to_print + '\x1b[100D'  )
-    print('\x1b[100C' + to_print + '\x1b['+ str(len(to_print)) +'D' + '\x1b[100D', end='', file=sys.stderr)
-    sys.stderr.flush()
-    # print(f'{bytes_read:_}', end='\r', file=sys.stderr)
-    sys.stdout.buffer.write(data)
-    time.sleep(0.002)
+from iceream import ic
+
+n = int(input())
+a = [*map(int, input().split())]
+
+
+def solve(state: int):
+    ic(bin(state))
+    f = float('-inf')
+    if state == 2**len(a)-1:
+        return 9
+    for q in range(len(a)):
+        if state & (1<<q) == 0:
+            for w in range(len(a)):
+                if state & (1<<w) == 0 and q != w:
+                    ic(state | (1<<q) | (1<<w))
+                    f = max(f, solve(state | (1<<q) | (1<<w)))
+    return f
+
+print(solve(0))
+    
+    
+
