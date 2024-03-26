@@ -13,10 +13,13 @@ good_keys = {key for key in whois[0].keys() if all([v[key]!='' for v in whois])}
 # exit()
 
 
-a=set()
-for v in whois:
-    a.add(v['domainName'])
-assert len(a) == len(whois)
+# a=set()
+# for v in whois:
+#     a.add(v['domainName'])
+# assert len(a) == len(whois)
+
+for k in good_keys:
+    print(k, all([v[k] != '' for v in whois]))
 
 # for k in good_keys:
 #     if k.endswith('Date'):
