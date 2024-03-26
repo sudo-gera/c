@@ -14,13 +14,20 @@ good_keys = {key for key in whois[0].keys() if all([v[key]!='' for v in whois])}
 
 
 # a=set()
-# for v in whois:
+for v in whois:
+    for k in good_keys:
+        if 'postal' in k.lower():
+            import re
+            print(v[k])
+            if not re.match(r'[0-9]+(-[0-9]+)?', v[k]):
+                import time
+                assert False
 #     a.add(v['domainName'])
 # assert len(a) == len(whois)
 
-for k in good_keys:
-    if any([v[k] == '' for v in whois]):
-        print(k)
+# for k in good_keys:
+#     if any([v[k] == '' for v in whois]):
+#         print(k)
 
 # for k in good_keys:
 #     if k.endswith('Date'):
