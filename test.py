@@ -19,7 +19,8 @@ good_keys = {key for key in whois[0].keys() if all([v[key]!='' for v in whois])}
 # assert len(a) == len(whois)
 
 for k in good_keys:
-    print(k, all([v[k] != '' for v in whois]))
+    if any([v[k] == '' for v in whois]):
+        print(k)
 
 # for k in good_keys:
 #     if k.endswith('Date'):
