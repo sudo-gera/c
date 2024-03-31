@@ -4,6 +4,8 @@
 # 不是很稳定 , 而且使用多线程并不是 select 模型
 # Author : WangYihang <wangyihanger@gmail.com>
 
+# modified by sudo-gera
+
 from python_socks.sync import Proxy
 proxy = Proxy.from_url('http://127.0.0.1:8899')
 
