@@ -3,21 +3,32 @@ import argparse
 from functools import partial
 import traceback
 import re
+import json
 
-async def copy_stream(r_q, w_q, inject):
+async def copy_stream(r_q, w_q, inject, c_a_q):
     reader = await r_q.get()
-    writer = await w_q.get()
+    writer = None
     try:
         assert reader is not None
-        assert writer is not None
+        # assert writer is not None
         while 1:
             if inject is not None:
-                data = await reader.readuntil()
-                data = re.sub(b'([a-zA-Z]+ )', b'\\g<0>'+inject, data, 1)
-                inject = None
+                if inject == '-':
+                    data = await reader.readuntil()
+                    print(data)
+                    c_a_q.put_nowait(json.loads(data))
+                    data=b''
+                    print(c_a_q.qsize(), id(c_a_q))
+                else:
+                    data = re.sub(b'([a-zA-Z]+ )', b'\\g<0>'+inject, data, 1)
+                    inject = None
             else:
                 data = await reader.read(2**16)
             if not data: break
+            if writer is None:
+                print(27)
+                writer = await w_q.get()    
+                print(29)
             writer.write(data)
             await writer.drain()
     except (KeyboardInterrupt, ConnectionResetError):
@@ -32,14 +43,18 @@ async def copy_stream(r_q, w_q, inject):
         
 
 async def connection(host, port, inject, connect, a_reader, a_writer):
+    print(40, host, port, inject, connect)
     c_w_q = asyncio.Queue()
     c_r_q = asyncio.Queue()
     a_w_q = asyncio.Queue()
     a_r_q = asyncio.Queue()
+    c_a_q = asyncio.Queue()
     a_r_q.put_nowait(a_reader)
     a_w_q.put_nowait(a_writer)
-    asyncio.create_task(copy_stream(a_r_q, c_w_q, inject))
-    asyncio.create_task(copy_stream(c_r_q, a_w_q, None))
+    asyncio.create_task(copy_stream(a_r_q, c_w_q, inject, c_a_q))
+    asyncio.create_task(copy_stream(c_r_q, a_w_q, None, None))
+    if inject == '-':
+        connect = await c_a_q.get()
     try:
         c_reader, c_writer = await asyncio.open_connection(host, port)
     except Exception:
