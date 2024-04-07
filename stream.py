@@ -25,16 +25,19 @@ class Stream(asyncio.StreamReader, asyncio.StreamWriter):
         return self
 
     async def __aexit__(self, *a: typing.Any) -> None:
-        await self.drain()
-        if self.can_write_eof():
-            self.write_eof()
-            await self.drain()
-        self.close()
         try:
-            await self.wait_closed()
-        except ssl.SSLError as e:
-            if e.reason != 'APPLICATION_DATA_AFTER_CLOSE_NOTIFY':
-                raise
+            await self.drain()
+            if self.can_write_eof():
+                self.write_eof()
+                await self.drain()
+            self.close()
+            try:
+                await self.wait_closed()
+            except ssl.SSLError as e:
+                if e.reason != 'APPLICATION_DATA_AFTER_CLOSE_NOTIFY':
+                    raise
+        except (OSError, ConnectionResetError):
+            pass
 
     def __del__(self) -> None:
         pass
