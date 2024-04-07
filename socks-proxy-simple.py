@@ -9,10 +9,10 @@ __date__ = '2016-10-17'
 
 #modifed my sudo-gera
 
-# from python_socks.sync import Proxy
+from python_socks.sync import Proxy
 
-# proxy = Proxy.from_url('http://127.0.0.1:8899')
-import websocket
+proxy = Proxy.from_url('http://127.0.0.1:9090')
+# import websocket
 
 import sys
 import argparse
@@ -182,12 +182,10 @@ class Socks5Server:
 
         self.logger.debug('Trying to connect to destination: %s:%d' % (dest_host, dest_port))
         try:
-            dest_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            dest_sock.settimeout(RESEND_TIMEOUT)
+            # dest_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            # dest_sock.settimeout(RESEND_TIMEOUT)
             # dest_sock.connect((dest_host, dest_port))
-            # time.sleep(4)
-            dest_sock.connect(('127.0.0.1', 4444))
-            # dest_sock.send(json.dumps(f'{dest_host}:{dest_port}').encode()+b'\n')
+            dest_sock = proxy.connect(dest_host, dest_port)
         except Exception as e:
             self.logger.error('Failed to connect to requested destination (%s:%d) due to error: %s'
                               % (dest_host, dest_port, e))

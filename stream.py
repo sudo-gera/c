@@ -1,6 +1,7 @@
 from __future__ import annotations
 import asyncio
 import typing
+import ssl
 
 class Stream(asyncio.StreamReader, asyncio.StreamWriter):
     def __init__(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
@@ -27,8 +28,13 @@ class Stream(asyncio.StreamReader, asyncio.StreamWriter):
         await self.drain()
         if self.can_write_eof():
             self.write_eof()
+            await self.drain()
         self.close()
-        await self.wait_closed()
+        try:
+            await self.wait_closed()
+        except ssl.SSLError as e:
+            if e.reason != 'APPLICATION_DATA_AFTER_CLOSE_NOTIFY':
+                raise
 
     def __del__(self) -> None:
         pass

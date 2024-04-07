@@ -28,10 +28,10 @@ import threading
 #         work(ws, conn)
 #     ws.close()
 
-ws = websocket.WebSocket()
-ws.connect("ws://127.0.0.1:2000/apiws",
-        # http_proxy_host='remote.vdi.mipt.ru',
-        # http_proxy_port='55749',
-        # header=['Sec-WebSocket-Protocol: binary, binary']
-)
-ws.send('---')
+# ws = websocket.WebSocket()
+# ws.connect("ws://127.0.0.1:2000/apiws",
+#         # http_proxy_host='remote.vdi.mipt.ru',
+#         # http_proxy_port='55749',
+#         # header=['Sec-WebSocket-Protocol: binary, binary']
+# )
+# ws.send('---')

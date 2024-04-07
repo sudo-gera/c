@@ -47,7 +47,7 @@ import timeout
 async def run(*command, input=None, **s):
     try:
         process = await asyncio.subprocess.create_subprocess_exec(*command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, stdin=asyncio.subprocess.PIPE)
-        stdout, stderr = await timeout.run_with_timeout(process.communicate(input=input), 64)
+        stdout, stderr = await timeout.run_with_timeout(process.communicate(input=input), 4)
         return process.returncode, stdout, stderr
     finally:
         del process
@@ -84,12 +84,15 @@ async def process_one_ip(ip):
     shell = await adb_shell(ip)
     if not shell:
         return
+    print(f'__ connected to {ip}')
     try:
-        a=await shell('mktemp')
-        if a[1] and a[1][0]!=b'/' or b' ' in a[1] or b':' in a[1]:
-            return
-        filename = a[1].strip()
-        print(ip, a)
+        a=await shell('pwd')
+        print(a)
+        # print(f'__ mktemp works for {ip}')
+        # if a[1] and a[1][0]!=b'/' or b' ' in a[1] or b':' in a[1]:
+        #     return
+        # filename = a[1].strip()
+        # print(ip, a, filename)
         # a=await shell('push', 'proxy',filename, _mode=None)
         # print(ip, a)
         # a=await shell('chmod', '+x', filename)
