@@ -27,7 +27,7 @@ async def tcp_connection(reader: asyncio.StreamReader, writer: asyncio.StreamWri
     loop = asyncio.get_running_loop()
 
     async with stream.Stream(reader, writer) as tcp_stream:
-        if is_client:
+        if not is_client:
             transport, protocol = await loop.create_datagram_endpoint(lambda: udp_connection(tcp_stream), local_addr=('127.0.0.1', 60002))
             assert isinstance(transport, asyncio.BaseTransport)
             udp_clients[None] = transport
