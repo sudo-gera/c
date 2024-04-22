@@ -12,7 +12,6 @@ class udp_connection:
         self.transport = transport
 
     def datagram_received(self, data, addr):
-        print(15, data, self.addr)
         message = pickle.dumps((data, self.addr))
         self.tcp_connection.write(len(message).to_bytes(8, 'little'))
         self.tcp_connection.write(message)
@@ -24,9 +23,11 @@ async def tcp_connection(reader, writer):
     loop = asyncio.get_running_loop()
     async with stream.Stream(reader, writer) as tcp_connection:
         while 1:
-            message = await tcp_connection.readexactly(int.from_bytes(await tcp_connection.readexactly(8), 'little'))
+            try:
+                message = await tcp_connection.readexactly(int.from_bytes(await tcp_connection.readexactly(8), 'little'))
+            except asyncio.IncompleteReadError:
+                return
             data, addr = pickle.loads(message)
-            print(29, data, addr)
             if addr not in udp_clients:
                 transport, protocol = await loop.create_datagram_endpoint(
                     lambda: udp_connection(addr, tcp_connection),
