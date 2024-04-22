@@ -5,7 +5,7 @@ import stream
 
 
 class udp_connection(asyncio.DatagramProtocol):
-    def __init__(self, tcp_stream: stream.Stream, addr: tuple[str, int]|None = None) -> None:
+    def __init__(self, tcp_stream: stream.Stream|None=None, addr: tuple[str, int]|None = None) -> None:
         self.addr = addr
         self.tcp_stream = tcp_stream
         print(id(self.tcp_stream), self.tcp_stream.write)
@@ -29,6 +29,10 @@ async def tcp_connection(reader: asyncio.StreamReader, writer: asyncio.StreamWri
     loop = asyncio.get_running_loop()
 
     async with stream.Stream(reader, writer) as tcp_stream:
+        if is_client:
+            transport, protocol = await loop.create_datagram_endpoint(lambda: udp_connection(tcp_stream), local_addr=('127.0.0.1', 60002))
+            assert isinstance(transport, asyncio.BaseTransport)
+            udp_clients[None] = transport
         while 1:
             try:
                 message = await tcp_stream.readexactly(int.from_bytes(await tcp_stream.readexactly(8), 'little'))
