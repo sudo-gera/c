@@ -3,17 +3,17 @@ import pickle
 
 import stream
 
-udp_clients = {}
 
 class udp_connection(asyncio.DatagramProtocol):
     def __init__(self, tcp_stream: stream.Stream, addr: tuple[str, int]|None = None) -> None:
         self.addr = addr
         self.tcp_stream = tcp_stream
     
-    def connection_made(self, transport: asyncio.DatagramTransport):
+    def connection_made(self, transport: object) -> None:
+        assert isinstance(transport, asyncio.DatagramTransport)
         self.transport = transport
 
-    def datagram_received(self, data, addr):
+    def datagram_received(self, data: bytes, addr: tuple[str, int]) -> None:
         if self.addr is not None:
             addr = self.addr
         message = pickle.dumps((data, addr))
@@ -21,7 +21,9 @@ class udp_connection(asyncio.DatagramProtocol):
         self.tcp_stream.write(message)
         asyncio.create_task(self.tcp_stream.drain())
 
-async def tcp_connection(reader, writer, is_local=True):
+udp_clients : dict[tuple[str, int]|None, asyncio.DatagramTransport]= {}
+
+async def tcp_connection(reader: asyncio.StreamReader, writer: asyncio.StreamWriter, is_local:bool=True) -> None:
     loop = asyncio.get_running_loop()
 
     async with stream.Stream(reader, writer) as tcp_stream:
@@ -39,5 +41,6 @@ async def tcp_connection(reader, writer, is_local=True):
                     lambda: udp_connection(tcp_stream, addr),
                     remote_addr=('127.0.0.1', 60002)
                 )
+                assert isinstance(transport, asyncio.DatagramTransport)
                 udp_clients[key] = transport
             udp_clients[key].sendto(data, addr)
