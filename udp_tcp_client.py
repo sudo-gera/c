@@ -30,7 +30,7 @@ async def tcp_connection(reader, writer):
             if addr not in udp_clients:
                 transport, protocol = await loop.create_datagram_endpoint(
                     lambda: udp_connection(addr, tcp_connection),
-                    remote_addr=('127.0.0.1', 60001)
+                    remote_addr=('127.0.0.1', 60002)
                 )
                 udp_clients[addr] = transport
             udp_clients[addr].sendto(data)
