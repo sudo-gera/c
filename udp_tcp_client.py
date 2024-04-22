@@ -1,6 +1,7 @@
+import asyncio
 from udp_tcp import *
 
-async def main():
+async def main() -> None:
     ser = await asyncio.start_server(tcp_connection, '127.0.0.1', 64001)
     async with ser:
         await ser.serve_forever()
