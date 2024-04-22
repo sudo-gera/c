@@ -3,12 +3,13 @@ import pickle
 
 import stream
 
-class udp_connection:
-    def __init__(self, tcp_connection, addr = None):
+
+class udp_connection(asyncio.DatagramProtocol):
+    def __init__(self, tcp_connection: stream.Stream, addr: tuple[str, int]|None = None) -> None:
         self.addr = addr
         self.tcp_connection = tcp_connection
-
-    def connection_made(self, transport):
+    
+    def connection_made(self, transport: asyncio.DatagramTransport):
         self.transport = transport
 
     def datagram_received(self, data, addr):
