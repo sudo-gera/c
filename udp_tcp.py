@@ -16,6 +16,7 @@ class udp_connection(asyncio.DatagramProtocol):
     def datagram_received(self, data: bytes, addr: tuple[str, int]) -> None:
         if self.addr is not None:
             addr = self.addr
+        print(19, data, addr)
         message = pickle.dumps((data, addr))
         self.tcp_stream.write(len(message).to_bytes(8, 'little'))
         self.tcp_stream.write(message)
@@ -47,6 +48,7 @@ async def tcp_connection(reader: asyncio.StreamReader, writer: asyncio.StreamWri
             except asyncio.IncompleteReadError:
                 return
             data, addr = pickle.loads(message)
+            print(50, data, addr)
             key = None
             if is_client:
                 key, addr = addr, key
