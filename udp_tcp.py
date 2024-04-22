@@ -8,6 +8,7 @@ class udp_connection(asyncio.DatagramProtocol):
     def __init__(self, tcp_stream: stream.Stream, addr: tuple[str, int]|None = None) -> None:
         self.addr = addr
         self.tcp_stream = tcp_stream
+        print(id(self.tcp_stream), self.tcp_stream.write)
     
     def connection_made(self, transport: object) -> None:
         assert isinstance(transport, asyncio.BaseTransport)
@@ -17,13 +18,14 @@ class udp_connection(asyncio.DatagramProtocol):
         if self.addr is not None:
             addr = self.addr
         message = pickle.dumps((data, addr))
+        print(id(self.tcp_stream), self.tcp_stream.write)
         self.tcp_stream.write(len(message).to_bytes(8, 'little'))
         self.tcp_stream.write(message)
         asyncio.create_task(self.tcp_stream.drain())
 
 udp_clients : dict[tuple[str, int]|None, asyncio.BaseTransport]= {}
 
-async def tcp_connection(reader: asyncio.StreamReader, writer: asyncio.StreamWriter, is_local:bool=True) -> None:
+async def tcp_connection(reader: asyncio.StreamReader, writer: asyncio.StreamWriter, is_client:bool=True) -> None:
     loop = asyncio.get_running_loop()
 
     async with stream.Stream(reader, writer) as tcp_stream:
@@ -32,11 +34,16 @@ async def tcp_connection(reader: asyncio.StreamReader, writer: asyncio.StreamWri
                 message = await tcp_stream.readexactly(int.from_bytes(await tcp_stream.readexactly(8), 'little'))
             except asyncio.IncompleteReadError:
                 return
+            addr: tuple[str, int]
+            data: bytes
             data, addr = pickle.loads(message)
             key = None
-            if is_local:
+            if is_client:
                 key, addr = addr, key
             if key not in udp_clients:
+                assert key is not None
+                assert addr is None
+                print(id(tcp_stream), tcp_stream.write)
                 transport, protocol = await loop.create_datagram_endpoint(
                     lambda: udp_connection(tcp_stream, addr),
                     remote_addr=('127.0.0.1', 60002)
