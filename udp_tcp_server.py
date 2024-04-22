@@ -10,14 +10,13 @@ class udp_connection(asyncio.DatagramProtocol):
         self.transport = transport
 
     def datagram_received(self, data, addr):
+        print(13, data, addr)
         message = pickle.dumps((data, addr))
         self.tcp_connection.write(len(message).to_bytes(8, 'little'))
         self.tcp_connection.write(message)
         asyncio.create_task(self.tcp_connection.drain())
 
 async def main():
-    print("Starting UDP server")
-
     # Get a reference to the event loop as we plan to use
     # low-level APIs.
     loop = asyncio.get_running_loop()
@@ -27,10 +26,11 @@ async def main():
 
     try:
         async with stream.Stream(*await asyncio.open_connection('127.0.0.1', 64001)) as tcp_connection:
-            transport, protocol = await loop.create_datagram_endpoint(lambda: udp_connection(tcp_connection), local_addr=('127.0.0.1', 60001))
+            transport, protocol = await loop.create_datagram_endpoint(lambda: udp_connection(tcp_connection), local_addr=('127.0.0.1', 60002))
             while 1:
                 message = await tcp_connection.readexactly(int.from_bytes(await tcp_connection.readexactly(8), 'little'))
                 data, addr = pickle.loads(message)
+                print(33, data, addr)
                 transport.sendto(data, addr)
     finally:
         transport.close()
