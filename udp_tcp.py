@@ -1,28 +1,21 @@
 import asyncio
+import pickle
 
+import stream
 
-class udp_connection(asyncio.DatagramProtocol):
-    def connection_made(self, transport: asyncio.DatagramTransport):
+class udp_connection:
+    def __init__(self, tcp_connection, addr = None):
+        self.addr = addr
+        self.tcp_connection = tcp_connection
+
+    def connection_made(self, transport):
         self.transport = transport
 
     def datagram_received(self, data, addr):
-        print(data, addr)
+        if self.addr is not None:
+            addr = self.addr
+        message = pickle.dumps((data, addr))
+        self.tcp_connection.write(len(message).to_bytes(8, 'little'))
+        self.tcp_connection.write(message)
+        asyncio.create_task(self.tcp_connection.drain())
 
-
-async def main():
-    # Get a reference to the event loop as we plan to use
-    # low-level APIs.
-    loop = asyncio.get_running_loop()
-
-    on_con_lost = loop.create_future()
-    message = "Hello World!"
-
-    transport, protocol = await loop.create_datagram_endpoint(udp_connection, remote_addr=('127.0.0.1', 9999))
-
-    try:
-        await on_con_lost
-    finally:
-        transport.close()
-
-
-asyncio.run(main())

@@ -1,21 +1,4 @@
-import asyncio
-import pickle
-
-import stream
-
-class udp_connection:
-    def __init__(self, addr, tcp_connection):
-        self.addr = addr
-        self.tcp_connection = tcp_connection
-
-    def connection_made(self, transport):
-        self.transport = transport
-
-    def datagram_received(self, data, addr):
-        message = pickle.dumps((data, self.addr))
-        self.tcp_connection.write(len(message).to_bytes(8, 'little'))
-        self.tcp_connection.write(message)
-        asyncio.create_task(self.tcp_connection.drain())
+from udp_tcp import *
 
 udp_clients = {}
 
@@ -30,7 +13,7 @@ async def tcp_connection(reader, writer):
             data, addr = pickle.loads(message)
             if addr not in udp_clients:
                 transport, protocol = await loop.create_datagram_endpoint(
-                    lambda: udp_connection(addr, tcp_connection),
+                    lambda: udp_connection(tcp_connection, addr),
                     remote_addr=('127.0.0.1', 60002)
                 )
                 udp_clients[addr] = transport
@@ -42,4 +25,7 @@ async def main():
         await ser.serve_forever()
 
 
-asyncio.run(main())
+try:
+    asyncio.run(main())
+except KeyboardInterrupt:
+    pass

@@ -1,19 +1,4 @@
-import asyncio
-import stream
-import pickle
-
-class udp_connection(asyncio.DatagramProtocol):
-    def __init__(self, tcp_connection: stream.Stream) -> None:
-        self.tcp_connection = tcp_connection
-    
-    def connection_made(self, transport):
-        self.transport = transport
-
-    def datagram_received(self, data, addr):
-        message = pickle.dumps((data, addr))
-        self.tcp_connection.write(len(message).to_bytes(8, 'little'))
-        self.tcp_connection.write(message)
-        asyncio.create_task(self.tcp_connection.drain())
+from udp_tcp import *
 
 async def main():
     loop = asyncio.get_running_loop()
@@ -31,4 +16,7 @@ async def main():
         transport.close()
 
 
-asyncio.run(main())
+try:
+    asyncio.run(main())
+except KeyboardInterrupt:
+    pass
