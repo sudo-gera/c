@@ -10,7 +10,7 @@ class udp_connection(asyncio.DatagramProtocol):
         self.tcp_stream = tcp_stream
     
     def connection_made(self, transport: object) -> None:
-        assert isinstance(transport, asyncio.DatagramTransport)
+        assert isinstance(transport, asyncio.BaseTransport)
         self.transport = transport
 
     def datagram_received(self, data: bytes, addr: tuple[str, int]) -> None:
@@ -21,7 +21,7 @@ class udp_connection(asyncio.DatagramProtocol):
         self.tcp_stream.write(message)
         asyncio.create_task(self.tcp_stream.drain())
 
-udp_clients : dict[tuple[str, int]|None, asyncio.DatagramTransport]= {}
+udp_clients : dict[tuple[str, int]|None, asyncio.BaseTransport]= {}
 
 async def tcp_connection(reader: asyncio.StreamReader, writer: asyncio.StreamWriter, is_local:bool=True) -> None:
     loop = asyncio.get_running_loop()
@@ -41,6 +41,6 @@ async def tcp_connection(reader: asyncio.StreamReader, writer: asyncio.StreamWri
                     lambda: udp_connection(tcp_stream, addr),
                     remote_addr=('127.0.0.1', 60002)
                 )
-                assert isinstance(transport, asyncio.DatagramTransport)
+                assert isinstance(transport, asyncio.BaseTransport)
                 udp_clients[key] = transport
             udp_clients[key].sendto(data, addr)
