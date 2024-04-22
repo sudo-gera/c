@@ -5,7 +5,7 @@ import stream
 
 
 class udp_connection(asyncio.DatagramProtocol):
-    def __init__(self, tcp_stream: stream.Stream|None=None, addr: tuple[str, int]|None = None) -> None:
+    def __init__(self, tcp_stream: stream.Stream, addr: tuple[str, int]|None = None) -> None:
         self.addr = addr
         self.tcp_stream = tcp_stream
     
@@ -26,29 +26,38 @@ udp_clients : dict[tuple[str, int]|None, asyncio.BaseTransport]= {}
 async def tcp_connection(reader: asyncio.StreamReader, writer: asyncio.StreamWriter, is_client:bool=True) -> None:
     loop = asyncio.get_running_loop()
 
+    data = None
+    key = None
+    addr = None
     async with stream.Stream(reader, writer) as tcp_stream:
-        if not is_client:
-            transport, protocol = await loop.create_datagram_endpoint(lambda: udp_connection(tcp_stream), local_addr=('127.0.0.1', 60002))
-            assert isinstance(transport, asyncio.BaseTransport)
-            udp_clients[None] = transport
         while 1:
+            if key not in udp_clients and not (key is None and is_client):
+                transport, protocol = await loop.create_datagram_endpoint(
+                    lambda: udp_connection(tcp_stream, addr),
+                    ('127.0.0.1', 60002) if not is_client else None,
+                    ('127.0.0.1', 60002) if     is_client else None,
+                )
+                # assert isinstance(transport, asyncio.BaseTransport)
+                udp_clients[key] = transport
+            if data is not None:
+                udp_clients[key].sendto(data, addr)
+                data = None
             try:
                 message = await tcp_stream.readexactly(int.from_bytes(await tcp_stream.readexactly(8), 'little'))
             except asyncio.IncompleteReadError:
                 return
-            addr: tuple[str, int]
-            data: bytes
             data, addr = pickle.loads(message)
             key = None
             if is_client:
                 key, addr = addr, key
-            if key not in udp_clients:
-                assert key is not None
-                assert addr is None
-                transport, protocol = await loop.create_datagram_endpoint(
-                    lambda: udp_connection(tcp_stream, addr),
-                    remote_addr=('127.0.0.1', 60002)
-                )
-                assert isinstance(transport, asyncio.BaseTransport)
-                udp_clients[key] = transport
-            udp_clients[key].sendto(data, addr)
+
+async def main(is_client) -> None:
+    if is_client:
+        ser = await asyncio.start_server(tcp_connection, '127.0.0.1', 64001)
+        async with ser:
+            await ser.serve_forever()
+    else:
+        loop = asyncio.get_running_loop()
+        rw = await asyncio.open_connection('127.0.0.1', 64001)
+        await tcp_connection(*rw, False)
+
