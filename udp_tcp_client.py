@@ -34,25 +34,9 @@ async def tcp_connection(reader, writer):
             udp_clients[addr].sendto(data)
 
 async def main():
-    asyncio.start_server(tcp_connection, '127.0.0.1', 64001)
-
-    # Get a reference to the event loop as we plan to use
-    # low-level APIs.
-    loop = asyncio.get_running_loop()
-
-    on_con_lost = loop.create_future()
-    message = 'Hello World!'
-
-    transport, protocol = await loop.create_connection(
-        lambda: udp_connection(message, on_con_lost),
-        '127.0.0.1', 8888)
-
-    # Wait until the protocol signals that the connection
-    # is lost and close the transport.
-    try:
-        await on_con_lost
-    finally:
-        transport.close()
+    ser = await asyncio.start_server(tcp_connection, '127.0.0.1', 64001)
+    async with ser:
+        await ser.serve_forever()
 
 
 asyncio.run(main())
