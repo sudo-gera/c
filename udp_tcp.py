@@ -1,8 +1,18 @@
 import asyncio
-import pickle
+# import pickle
+import json
+import base64
 
 import stream
 
+send_queue = asyncio.Queue()
+
+async def sender(tcp_connection: stream.Stream):
+    while 1:
+        for chunk in range(16):
+            data = await send_queue.get()
+            tcp_connection.write(data)
+        await tcp_connection.drain()        
 
 class udp_connection(asyncio.DatagramProtocol):
     def __init__(self, tcp_connection: stream.Stream, addr: tuple[str, int]|None = None) -> None:
@@ -15,8 +25,9 @@ class udp_connection(asyncio.DatagramProtocol):
     def datagram_received(self, data, addr):
         if self.addr is not None:
             addr = self.addr
-        message = pickle.dumps((data, addr))
-        self.tcp_connection.write(len(message).to_bytes(8, 'little'))
-        self.tcp_connection.write(message)
-        asyncio.create_task(self.tcp_connection.drain())
+        data = base64.b64encode(data).decode()
+        message = json.dumps([data, list(addr)]).encode()
+        message = len(message).to_bytes(8, 'little') + message
+        if send_queue.qsize() < 16:
+            send_queue.put_nowait(message)
 
