@@ -5,15 +5,11 @@ udp_clients = {}
 async def tcp_connection(reader, writer):
     loop = asyncio.get_running_loop()
     async with stream.Stream(reader, writer) as tcp_connection:
-        asyncio.create_task(sender(tcp_connection))
+        # asyncio.create_task(sender(tcp_connection))
         while 1:
-            try:
-                message = await tcp_connection.readexactly(int.from_bytes(await tcp_connection.readexactly(8), 'little'))
-            except asyncio.IncompleteReadError:
+            addr, data = await read_data(tcp_connection)
+            if data is None:
                 return
-            data, addr = json.loads(message)
-            addr = tuple(addr)
-            data = base64.b64decode(data)
             if addr not in udp_clients:
                 transport, protocol = await loop.create_datagram_endpoint(
                     lambda: udp_connection(tcp_connection, addr),
