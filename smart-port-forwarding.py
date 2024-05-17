@@ -29,10 +29,10 @@ def check_inet():
     # count = 3600
     while 1:
         # inet_status = os.system('ping -ot 4 google.com') == 0
-        # inet_status = os.system('ping -ot 1 192.168.141.135') != 0
+        inet_status = os.system('ping -ot 1 192.168.141.135') != 0
         # inet_status = bool(i have direct access)
         # inet_status = os.system('ping -ot 1 192.168.43.64 >/dev/null 2>/dev/null') != 0
-        inet_status = True
+        # inet_status = True
         inet_checktime = time.time()
         # logging.debug([inet_checktime, inspect.stack()[0][3]])
         time.sleep(1)
@@ -57,11 +57,11 @@ def get_remote(addr: tuple[str,int])->tuple[str,int]:
     # }
     # logging.debug([inet_checktime, inspect.stack()[0][3]])
     d = {
-        1080 : (('127.0.0.1', 6666), ('127.0.0.1', 6666)),
+        8080 : (('remote.vdi.mipt.ru', 55749), ('127.0.0.1', 3128)),
         # 3737 : (('127.0.0.1', 6666), ('127.0.0.1', 1090)),
         # 3838 : (('127.0.0.1', 6666), ('127.0.0.1', 1090)),
-        8080 : (('127.0.0.1', 7777), ('127.0.0.1', 7777)),
-        8082 : (('127.0.0.1', 7777), ('127.0.0.1', 8484)),
+        # 8080 : (('127.0.0.1', 7777), ('127.0.0.1', 7777)),
+        # 8082 : (('127.0.0.1', 7777), ('127.0.0.1', 8484)),
         # 8082 : (('127.0.0.1', 7777), ('127.0.0.1', 7777)),
         # 1084 : (('127.0.0.1', 6666), ('127.0.0.1', 1484))
         # 1084 : (('127.0.0.1', 6666), ('127.0.0.1', 6666))
