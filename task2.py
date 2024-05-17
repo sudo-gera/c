@@ -3,50 +3,73 @@ import builtins
 from copy import copy
 
 def solve(a: np.ndarray, b: np.ndarray):
+    b = copy(b)
+    a = copy(a)
     a = a.astype(float)
     n = a.shape[0]
     assert a.shape == (n,n)
 
-    ls = [*map(np.eye, [n]*(n-1))]
-    pjs = np.zeros((n-1), int)
+    permutations = np.zeros((n-1), int)
+    sum_of_ls = np.eye(n)
+    p = np.eye(n)
 
     u = copy(a)
     for i in range(n-1):
         j = np.argmax([*map(abs, u[i:n, i])]) + i
-        pjs[i]=j
+        permutations[i]=j
+        p[[i,j], :] = p[[j,i], :]
         u[[i,j], :] = u[[j,i], :]
+        b[[i, j]] = b[[j, i]]
         for j in range(i+1, n):
             t = -u[j, i] / u[i, i]
-            u[j] += u[i] * t
-            ls[i][j, i] = t
+            u[j, :] += u[i, :] * t
+            sum_of_ls[j, i] = t
 
-    ks = [*map(copy, ls)]
 
-    for i in range(n-1)[::-1]:
-        for k in range(i+1, n-1):
-            kj = pjs[k]
-            ks[i][[k,kj],i] = ks[i][[kj,k],i]
+    for i in range(0, n-1):
+        j = permutations[i]
+        sum_of_ls[[i,j], :i] = sum_of_ls[[j,i], :i]
 
-    p = np.eye(n)
+    l = np.eye(n)
     for i in range(n-1):
-        j = pjs[i]
-        p[[i,j], :] = p[[j,i], :]
+        for j in range(i+1, n):
+            l[:, i] -= l[:, j] * sum_of_ls[j, i]
 
-    r = np.eye(n)
-    for i in range(n-1):
-        for b in range(i+1, n):
-            assert isinstance(ks[i][b, i], float)
-            r[:, i] -= r[:, b] * ks[i][b, i]
+    z = np.zeros(n)
+    for i in range(n):
+        z[i] = (b[i] - np.dot(z[:i], l[i, :i]))/l[i,i]
 
-    assert np.allclose(p @ a, r @ u)
-    for z in range(n):
-        for x in range(n):
-            assert np.allclose(r[z,x], 0) and z<x or z>=x
-            assert np.allclose(u[z,x], 0) and z>x or z<=x
+    x = np.zeros(n)
+    for i in range(n)[::-1]:
+        x[i] = (z[i] - np.dot(x[i+1:], u[i,i+1:]))/u[i,i]
+
+    return l, u, p, x
 
 
+def check(a, b):
+    l, u, p, x = solve(a, b)
+    # assert np.allclose(
+    #     l @ u, p @ a
+    # )
+    # assert np.allclose(
+    #     a @ x, b
+    # )
+    return np.linalg.norm(x - np.linalg.solve(a, b))
 
-a = np.random.rand(4, 4)
-solve(a, None)
-a = np.random.rand(8, 8)
-solve(a, None)
+z = np.ndarray((50, 4))
+for n in range(1, z.shape[0]+1):
+    b = np.random.rand(n)+1
+    a = np.random.rand(n, n)+1
+    z[n-1, :2] = [n, check(a,b)]
+    b = np.exp((np.random.rand(n)-0.5)*8)
+    a = np.exp((np.random.rand(n, n)-0.5)*8)
+    z[n-1, 2:] = [n, check(a,b)]
+
+import matplotlib.pyplot as plt
+fig, axs = plt.subplots(2)
+axs[0].plot(z[:, 0], z[:, 1])
+axs[0].set_title('good numbers')
+axs[1].plot(z[:, 2], z[:, 3])
+axs[1].set_title('bad numbers')
+plt.show()
+
