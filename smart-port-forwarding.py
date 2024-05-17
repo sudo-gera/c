@@ -192,7 +192,7 @@ forward_map_tunnel = {
 }
 
 forward_map_direct = {
-    8080: ('remote.vdi.mipt.ru', 55749)
+    8080: ('93.175.29.204', 55749)
     # 8080: ('127.0.0.1', 8899)
 }
 
