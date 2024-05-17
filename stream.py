@@ -2,6 +2,7 @@ from __future__ import annotations
 import asyncio
 import typing
 import ssl
+import functools
 
 class Stream(asyncio.StreamReader, asyncio.StreamWriter):
     def __init__(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
@@ -11,6 +12,7 @@ class Stream(asyncio.StreamReader, asyncio.StreamWriter):
     def __dir__(self) -> list[str]:
         return dir(self.__reader) + dir(self.__writer)
 
+    @functools.cache
     def __getattribute__(self, name:str) -> typing.Any:
         if name.startswith(f'_Stream_'):
             return super().__getattribute__(name)
