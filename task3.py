@@ -66,7 +66,7 @@ def create_positive_defined_matrix(n):
         A = np.array(
             [
                 [
-                    random.random() + 4.3 * (q==w)
+                    random.random() + 400.3 * (q==w)
                 for q in range(n)]
             for w in range(n)]
         )
