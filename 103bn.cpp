@@ -13,12 +13,12 @@
 
 #ifdef CPP_R
 // #include "bn.h"
-#include "d"
+// #include "d"
 #endif
 
 #ifdef C_R
 // #include "bn.h"
-#include "d"
+// #include "d"
 #endif
 
 
@@ -33,7 +33,8 @@
 #endif
 
 
-
+#include <string>
+using std::string;
 #ifdef CPP_R
 void bn_init_str(bn *q,string e){
 	if (q->vect){
@@ -52,7 +53,7 @@ void bn_init_str(bn *q,string e){
 		for (auto&w:e){
 			w="\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x24\x25\x26\x27\x28\x29\x2a\x2b\x2c\x2d\x2e\x2f\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x3a\x3b\x3c\x3d\x3e\x3f\x40\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x5b\x5c\x5d\x5e\x5f\x60\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x7b\x7c\x7d\x7e\x7f"[int(w)];
 		}
-		for (auto w:range(e.size())){
+		for (size_t w=0;w<e.size();++w){
 			q->vect[w/8]|=uint32_t(uint8_t(e.end()[-1-w]))<<(w%8)*4;
 		}
 	}
@@ -77,7 +78,7 @@ class bn_class{
 public:
 	bn *q;
 	bn_class(){
-		auto v=perf(1);
+
 		q=bn_new();
 #if PERF
 		ic(v);
@@ -87,14 +88,14 @@ public:
 		this->q=q;
 	}
 	bn_class(const bn_class& orig){
-		auto v=perf(1);
+
 		q=bn_init(orig.q);
 #if PERF
 		ic(v);
 #endif
 	}
 // 	bn_class(const long orig){
-// 		auto v=perf(1);
+// 
 // 		q=bn_new();
 // 		bn_init_int(q,int64_t(orig));
 // #if PERF
@@ -102,23 +103,22 @@ public:
 // #endif
 // 	}
 	bn_class(const int orig){
-		auto v=perf(1);
+
 		q=bn_new();
 		bn_init_int(q,int64_t(orig));
 #if PERF
 		ic(v);
 #endif
 	}
-	bn_class(const string orig){
-		auto v=perf(1);
+	bn_class(const string&orig){
+
 		q=bn_new();
 		bn_init_str(q,orig.c_str());
 #if PERF
 		ic(v);
 #endif
 	}
-	bn_class(const string orig,int64_t r){
-		auto v=perf(1);
+	bn_class(const string&orig,int64_t r){
 		q=bn_new();
 		bn_init_string_radix(q,orig.c_str(),r);
 #if PERF
@@ -126,7 +126,7 @@ public:
 #endif
 	}
 	auto&operator=(int64_t orig){
-		auto v=perf(1);
+
 		bn_init_int(q,orig);
 #if PERF
 		ic(v);
@@ -134,7 +134,7 @@ public:
 		return *this;
 	}
 	auto&operator=(const bn_class&orig){
-		auto v=perf(1);
+
 		bn_delete(q);
 		q=bn_init(orig.q);
 #if PERF
@@ -143,12 +143,12 @@ public:
 		return *this;
 	}
 	template <typename T>
-	friend auto &operator<<(T& q,bn_class f){
-		q<<print_one(f.q);
-		return q;
-	}
+	// friend auto &operator<<(T& q,bn_class f){
+	// 	q<<print_one(f.q);
+	// 	return q;
+	// }
 	bool operator<(bn_class const&q){
-		auto v=perf(1);
+
 		auto h=bn_cmp(this->q,q.q)<0;
 #if PERF
 		ic(v);
@@ -156,7 +156,7 @@ public:
 		return h;
 	}
 	bool operator==(bn_class const&q){
-		auto v=perf(1);
+
 		auto h=bn_cmp(this->q,q.q)==0;
 #if PERF
 		ic(v);
@@ -164,7 +164,7 @@ public:
 		return h;
 	}
 	bool operator>(bn_class const&q){
-		auto v=perf(1);
+
 		auto h=bn_cmp(this->q,q.q)>0;
 #if PERF
 		ic(v);
@@ -172,7 +172,7 @@ public:
 		return h;
 	}
 	bool operator<=(bn_class const&q){
-		auto v=perf(1);
+
 		auto h=bn_cmp(this->q,q.q)<=0;
 #if PERF
 		ic(v);
@@ -180,7 +180,7 @@ public:
 		return h;
 	}
 	bool operator!=(bn_class const&q){
-		auto v=perf(1);
+
 		auto h=bn_cmp(this->q,q.q)!=0;
 #if PERF
 		ic(v);
@@ -188,7 +188,7 @@ public:
 		return h;
 	}
 	bool operator>=(bn_class const&q){
-		auto v=perf(1);
+
 		auto h=bn_cmp(this->q,q.q)>=0;
 #if PERF
 		ic(v);
@@ -199,7 +199,7 @@ public:
 		bn_delete(q);
 	}
 	auto&operator+=(const bn_class&q){
-		auto v=perf(1);
+
 		bn_add_to(this->q,q.q);
 #if PERF
 		ic(v);
@@ -207,7 +207,7 @@ public:
 		return *this;
 	}
 	auto&operator-=(const bn_class&q){
-		auto v=perf(1);
+
 		bn_sub_to(this->q,q.q);
 #if PERF
 		ic(v);
@@ -215,7 +215,7 @@ public:
 		return *this;
 	}
 	auto&operator*=(const bn_class&q){
-		auto v=perf(1);
+
 		bn_mul_to(this->q,q.q);
 #if PERF
 		ic(v);
@@ -223,7 +223,7 @@ public:
 		return *this;
 	}
 	auto&operator/=(const bn_class&q){
-		auto v=perf(1);
+
 		bn_div_to(this->q,q.q);
 #if PERF
 		ic(v);
@@ -231,7 +231,7 @@ public:
 		return *this;
 	}
 	auto&operator%=(const bn_class&q){
-		auto v=perf(1);
+
 		bn_mod_to(this->q,q.q);
 #if PERF
 		ic(v);
@@ -242,7 +242,7 @@ public:
 		const bn_class&q;
 		pow(const bn_class&w):q(w){}
 		friend bn_class operator*(const bn_class&q,const pow&w){
-			auto v=perf(1);
+	
 			bn*e=w.q.q;
 			uint64_t r;
 			if (e->size==0){
@@ -259,7 +259,7 @@ public:
 			return h;
 		}
 		friend bn_class operator/(const bn_class&q,const pow&w){
-			auto v=perf(1);
+	
 			bn*e=w.q.q;
 			uint64_t r;
 			if (e->size==0){
@@ -276,7 +276,7 @@ public:
 			return h;
 		}
 		friend auto operator<<(const bn_class&q,const pow&w){
-			auto v=perf(1);
+	
 			bn*e=w.q.q;
 			uint64_t r;
 			if (e->size==0){
@@ -296,8 +296,8 @@ public:
 			return g;
 		}
 		friend auto operator^(const bn_class&q,const pow&w){
-			auto v=perf(1);
-			bn*e=w.q.q;
+	
+			// bn*e=w.q.q;
 			// uint64_t r;
 			// if (e->size==0){
 			// 	r=0;
@@ -324,7 +324,7 @@ public:
 		return pow(*this);
 	}
 	friend bn_class operator+(const bn_class&q,const bn_class&w){
-		auto v=perf(1);
+
 		auto h=bn_add(q.q,w.q);
 #if PERF
 		ic(v);
@@ -332,7 +332,7 @@ public:
 		return h;
 	}
 	friend bn_class operator-(const bn_class&q,const bn_class&w){
-		auto v=perf(1);
+
 		auto h=bn_sub(q.q,w.q);
 #if PERF
 		ic(v);
@@ -340,7 +340,7 @@ public:
 		return h;
 	}
 	friend bn_class operator*(const bn_class&q,const bn_class&w){
-		auto v=perf(1);
+
 		auto h=bn_mul(q.q,w.q);
 #if PERF
 		ic(v);
@@ -348,7 +348,7 @@ public:
 		return h;
 	}
 	friend bn_class operator/(const bn_class&q,const bn_class&w){
-		auto v=perf(1);
+
 		auto h=bn_div(q.q,w.q);
 #if PERF
 		ic(v);
@@ -356,15 +356,15 @@ public:
 		return h;
 	}
 	friend bn_class operator%(const bn_class&q,const bn_class&w){
-		auto v=perf(1);
+
 		auto h=bn_mod(q.q,w.q);
 #if PERF
 		ic(v);
 #endif
 		return h;
 	}
-	std::string str(int64_t w)const{
-		auto v=perf(1);
+	std::string toString(int64_t w=10)const{
+
 		auto h=bn_to_string(q,w);
 		auto g=std::string(h);
 		char *u=(char*)h;
@@ -382,7 +382,7 @@ public:
 	// 	return g;
 	// }
 	operator std::string()const{
-		auto v=perf(1);
+
 		auto h=bn_to_string(q,10);
 		auto g=std::string(h);
 		char *u=(char*)h;
@@ -404,10 +404,17 @@ std::string output_time(T q){
 	}
 	return "\x1b[92m"+to_string(q)+"\x1b[0m";
 }
+#include <iostream>
+using std::cout, std::endl;
 
 // #include "biginteger.h"
-#include "/Users/gera/Downloads/e89224ba7328171c34ad1a08431b97d375dbca1a/075e97c3387e456692f480d67a27365f-e89224ba7328171c34ad1a08431b97d375dbca1a/biginteger.cpp"
-#define bn_class BigInteger
+// #include "/Users/gera/Downloads/e89224ba7328171c34ad1a08431b97d375dbca1a/075e97c3387e456692f480d67a27365f-e89224ba7328171c34ad1a08431b97d375dbca1a/biginteger.cpp"
+// #define bn_class BigInteger
+void check_output(auto&&q, auto&&w){
+	cout << q.toString() << endl;
+	cout << w << endl;
+	assert (q.toString() == w);
+}
 
 signed main(){
 	// test(bn_class("1"),"\x1b[92m+\x1b[0m00000001");
@@ -604,9 +611,9 @@ signed main(){
 
 
 // #define HIDE_162
-auto __h=perf(1);
+// auto __h=perf(1);
 #include "stdout.cpp"
-ic("total:",__h);
+// ic("total:",__h);
 
 // ic(bn_class(1)/bn_class(1))
 
@@ -631,3 +638,4 @@ ic("total:",__h);
 int main(){
 }
 #endif
+

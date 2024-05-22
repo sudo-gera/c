@@ -73,3 +73,4 @@ axs[1].plot(z[:, 2], z[:, 3])
 axs[1].set_title('bad numbers')
 plt.show()
 
+
