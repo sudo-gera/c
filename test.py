@@ -1,26 +1,33 @@
-import numpy as np
-from scipy.special import roots_jacobi
+import asyncio
+import os
+import random
+import sys
 
-def f(x):
-    return np.exp(-1/x)*(np.sin(1/x))
+async def test(i):
+    reader, writer = await asyncio.open_connection('127.0.0.1', 9999)
+    one_message = b'get hash '+os.path.abspath(__file__).encode()
+    multimessage = b'\n'.join([one_message] * random.randint(20, 30)) # join several requests
+    while multimessage:
+        chunk = multimessage[:random.randint(1, len(multimessage))] # split into chunks of random length
+        multimessage = multimessage[len(chunk):]
+        writer.write(multimessage)
+        await writer.drain()
+    writer.write_eof()
+    await writer.drain()
+    await reader.read()
+    writer.close()
+    await writer.wait_closed()
 
-def weight(x):
-    return x
+async def main():
+    process = await asyncio.create_subprocess_exec(sys.argv[1], '9999')
+    await asyncio.sleep(1)
+    await asyncio.gather(*map(test, range(99)))
+    reader, writer = await asyncio.open_connection('127.0.0.1', 9999)
+    writer.write(b'quit')
+    writer.write_eof()
+    await writer.drain()
+    await reader.read()
+    writer.close()
+    await writer.wait_closed()
 
-def gauss_kristoffel(n):
-    nodes, weights = roots_jacobi(n, alpha=0, beta=0) 
-    integral = 0
-    for i in range(n):
-        integral += weights[i] * f(nodes[i]) * weight(nodes[i])
-    return integral
-
-# Вычисляем интеграл с заданной погрешностью
-n = 10
-integral_prev = 0
-integral_curr = gauss_kristoffel(n)
-while abs(integral_curr - integral_prev) > 1e-6:
-    integral_prev = integral_curr
-    n += 1
-    integral_curr = gauss_kristoffel(n)
-
-print("Integral value:", integral_curr)
+asyncio.run(main())
