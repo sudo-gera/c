@@ -1,631 +1,302 @@
-Script started on Mon May 27 06:41:39 2024
-Command: bash -c cd '/Users/gera/rust2024/problems/borrowing/bst'; cargo test ; exit
-[0m[1m[33mwarning[0m[0m[1m: unused imports: `BTreeMap`, `hash::Hash`[0m
-[0m [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/src/tree.rs:2:25[0m
-[0m  [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m2[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0muse std::{collections::{BTreeMap, HashMap}, hash::Hash};[0m
-[0m  [0m[0m[1m[38;5;12m| [0m[0m                        [0m[0m[1m[33m^^^^^^^^[0m[0m            [0m[0m[1m[33m^^^^^^^^^^[0m
-[0m  [0m[0m[1m[38;5;12m|[0m
-[0m  [0m[0m[1m[38;5;12m= [0m[0m[1mnote[0m[0m: `#[warn(unused_imports)]` on by default[0m
-
-[0m[1m[33mwarning[0m[0m[1m: unnecessary parentheses around `if` condition[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/src/tree.rs:83:12[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m83[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m        if (key < *self.key(node).unwrap()){[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m           [0m[0m[1m[33m^[0m[0m                              [0m[0m[1m[33m^[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m= [0m[0m[1mnote[0m[0m: `#[warn(unused_parens)]` on by default[0m
-[0m[1m[38;5;14mhelp[0m[0m: remove these parentheses[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m83[0m[0m [0m[0m[38;5;9m- [0m[0m        if [0m[0m[38;5;9m([0m[0mkey < *self.key(node).unwrap()[0m[0m[38;5;9m)[0m[0m{[0m
-[0m[1m[38;5;12m83[0m[0m [0m[0m[38;5;10m+ [0m[0m        if key < *self.key(node).unwrap()[0m[0m[38;5;10m [0m[0m{[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-
-[0m[1m[33mwarning[0m[0m[1m: unnecessary parentheses around `if` condition[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/src/tree.rs:89:12[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m89[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m        if (key > *self.key(node).unwrap()){[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m           [0m[0m[1m[33m^[0m[0m                              [0m[0m[1m[33m^[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;14mhelp[0m[0m: remove these parentheses[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m89[0m[0m [0m[0m[38;5;9m- [0m[0m        if [0m[0m[38;5;9m([0m[0mkey > *self.key(node).unwrap()[0m[0m[38;5;9m)[0m[0m{[0m
-[0m[1m[38;5;12m89[0m[0m [0m[0m[38;5;10m+ [0m[0m        if key > *self.key(node).unwrap()[0m[0m[38;5;10m [0m[0m{[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-
-[0m[1m[33mwarning[0m[0m[1m: unnecessary parentheses around `if` condition[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/src/tree.rs:99:12[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m99[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m        if (balance > 1 && self.key(pos).unwrap() < self.key(self.right(node)).unwrap()){[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m           [0m[0m[1m[33m^[0m[0m                                                                           [0m[0m[1m[33m^[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;14mhelp[0m[0m: remove these parentheses[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m99[0m[0m [0m[0m[38;5;9m- [0m[0m        if [0m[0m[38;5;9m([0m[0mbalance > 1 && self.key(pos).unwrap() < self.key(self.right(node)).unwrap()[0m[0m[38;5;9m)[0m[0m{[0m
-[0m[1m[38;5;12m99[0m[0m [0m[0m[38;5;10m+ [0m[0m        if balance > 1 && self.key(pos).unwrap() < self.key(self.right(node)).unwrap()[0m[0m[38;5;10m [0m[0m{[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-
-[0m[1m[33mwarning[0m[0m[1m: unnecessary parentheses around `if` condition[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/src/tree.rs:103:12[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m103[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m        if (balance < -1 && self.key(pos).unwrap() > self.key(self.right(node)).unwrap()){[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m           [0m[0m[1m[33m^[0m[0m                                                                            [0m[0m[1m[33m^[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;14mhelp[0m[0m: remove these parentheses[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m103[0m[0m [0m[0m[38;5;9m- [0m[0m        if [0m[0m[38;5;9m([0m[0mbalance < -1 && self.key(pos).unwrap() > self.key(self.right(node)).unwrap()[0m[0m[38;5;9m)[0m[0m{[0m
-[0m[1m[38;5;12m103[0m[0m [0m[0m[38;5;10m+ [0m[0m        if balance < -1 && self.key(pos).unwrap() > self.key(self.right(node)).unwrap()[0m[0m[38;5;10m [0m[0m{[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-
-[0m[1m[33mwarning[0m[0m[1m: unnecessary parentheses around `if` condition[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/src/tree.rs:107:12[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m107[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m        if (balance > 1 && self.key(pos).unwrap() > self.key(self.right(node)).unwrap()){[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m           [0m[0m[1m[33m^[0m[0m                                                                           [0m[0m[1m[33m^[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;14mhelp[0m[0m: remove these parentheses[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m107[0m[0m [0m[0m[38;5;9m- [0m[0m        if [0m[0m[38;5;9m([0m[0mbalance > 1 && self.key(pos).unwrap() > self.key(self.right(node)).unwrap()[0m[0m[38;5;9m)[0m[0m{[0m
-[0m[1m[38;5;12m107[0m[0m [0m[0m[38;5;10m+ [0m[0m        if balance > 1 && self.key(pos).unwrap() > self.key(self.right(node)).unwrap()[0m[0m[38;5;10m [0m[0m{[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-
-[0m[1m[33mwarning[0m[0m[1m: unnecessary parentheses around `if` condition[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/src/tree.rs:115:12[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m115[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m        if (balance < -1 && self.key(pos).unwrap() < self.key(self.right(node)).unwrap()){[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m           [0m[0m[1m[33m^[0m[0m                                                                            [0m[0m[1m[33m^[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;14mhelp[0m[0m: remove these parentheses[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m115[0m[0m [0m[0m[38;5;9m- [0m[0m        if [0m[0m[38;5;9m([0m[0mbalance < -1 && self.key(pos).unwrap() < self.key(self.right(node)).unwrap()[0m[0m[38;5;9m)[0m[0m{[0m
-[0m[1m[38;5;12m115[0m[0m [0m[0m[38;5;10m+ [0m[0m        if balance < -1 && self.key(pos).unwrap() < self.key(self.right(node)).unwrap()[0m[0m[38;5;10m [0m[0m{[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-
-[0m[1m[33mwarning[0m[0m[1m: unused variable: `pos`[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/src/tree.rs:84:29[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m84[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m            let (node_left, pos) = self.insert_into_subtree(self.left(node), key, value);[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                            [0m[0m[1m[33m^^^[0m[0m [0m[0m[1m[33mhelp: if this is intentional, prefix it with an underscore: `_pos`[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m= [0m[0m[1mnote[0m[0m: `#[warn(unused_variables)]` on by default[0m
-
-[0m[1m[33mwarning[0m[0m[1m: unused variable: `pos`[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/src/tree.rs:90:30[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m90[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m            let (node_right, pos) = self.insert_into_subtree(self.right(node), key, value);[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                             [0m[0m[1m[33m^^^[0m[0m [0m[0m[1m[33mhelp: if this is intentional, prefix it with an underscore: `_pos`[0m
-
-[0m[1m[33mwarning[0m[0m[1m: variable does not need to be mutable[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/src/tree.rs:77:13[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m77[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m        let mut pos = 0;[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m            [0m[0m[1m[38;5;12m----[0m[0m[1m[33m^^^[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m            [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m            [0m[0m[1m[38;5;12mhelp: remove this `mut`[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m= [0m[0m[1mnote[0m[0m: `#[warn(unused_mut)]` on by default[0m
-
-[0m[1m[33mwarning[0m[0m[1m: unused variable: `key`[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/src/tree.rs:146:26[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m146[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn insert(&mut self, key: K, value: V) -> Option<V>{[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                         [0m[0m[1m[33m^^^[0m[0m [0m[0m[1m[33mhelp: if this is intentional, prefix it with an underscore: `_key`[0m
-
-[0m[1m[33mwarning[0m[0m[1m: unused variable: `value`[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/src/tree.rs:146:34[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m146[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn insert(&mut self, key: K, value: V) -> Option<V>{[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                                 [0m[0m[1m[33m^^^^^[0m[0m [0m[0m[1m[33mhelp: if this is intentional, prefix it with an underscore: `_value`[0m
-
-[0m[1m[33mwarning[0m[0m[1m: method `cmp` is never used[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/src/node.rs:14:8[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m13[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0mimpl<K: Ord, V> Node<K, V> {[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m[1m[38;5;12m--------------------------[0m[0m [0m[0m[1m[38;5;12mmethod in this implementation[0m
-[0m[1m[38;5;12m14[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn cmp(&self, other: &Node<K, V>) -> Ordering{[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m       [0m[0m[1m[33m^^^[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m= [0m[0m[1mnote[0m[0m: `#[warn(dead_code)]` on by default[0m
-
-[0m[1m[33mwarning[0m[0m[1m: field `counter` is never read[0m
-[0m [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/src/tree.rs:9:5[0m
-[0m  [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m6[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0mpub struct AVLTreeMap<K, V> {[0m
-[0m  [0m[0m[1m[38;5;12m| [0m[0m           [0m[0m[1m[38;5;12m----------[0m[0m [0m[0m[1m[38;5;12mfield in this struct[0m
-[0m[1m[38;5;12m...[0m
-[0m[1m[38;5;12m9[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    counter: u64,[0m
-[0m  [0m[0m[1m[38;5;12m| [0m[0m    [0m[0m[1m[33m^^^^^^^[0m
-
-[0m[1m[33mwarning[0m[0m[1m: multiple methods are never used[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/src/tree.rs:20:8[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m19[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0mimpl<K: Ord, V> AVLTreeMap<K, V>{[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m[1m[38;5;12m--------------------------------[0m[0m [0m[0m[1m[38;5;12mmethods in this implementation[0m
-[0m[1m[38;5;12m20[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn height(&self, node: u64) -> u64{[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m       [0m[0m[1m[33m^^^^^^[0m
-[0m[1m[38;5;12m...[0m
-[0m[1m[38;5;12m24[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn left(&self, node: u64) -> u64{[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m       [0m[0m[1m[33m^^^^[0m
-[0m[1m[38;5;12m...[0m
-[0m[1m[38;5;12m28[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn right(&self, node: u64) -> u64{[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m       [0m[0m[1m[33m^^^^^[0m
-[0m[1m[38;5;12m...[0m
-[0m[1m[38;5;12m32[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn key(&self, node: u64) -> Option<&K>{[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m       [0m[0m[1m[33m^^^[0m
-[0m[1m[38;5;12m...[0m
-[0m[1m[38;5;12m36[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn balance(&self, node: u64) -> i64{[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m       [0m[0m[1m[33m^^^^^^^[0m
-[0m[1m[38;5;12m...[0m
-[0m[1m[38;5;12m40[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn update_height(&mut self, node: u64){[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m       [0m[0m[1m[33m^^^^^^^^^^^^^[0m
-[0m[1m[38;5;12m...[0m
-[0m[1m[38;5;12m48[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn right_rotate(&mut self, y: u64) -> u64{[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m       [0m[0m[1m[33m^^^^^^^^^^^^[0m
-[0m[1m[38;5;12m...[0m
-[0m[1m[38;5;12m62[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn left_rotate(&mut self, x: u64) -> u64{[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m       [0m[0m[1m[33m^^^^^^^^^^^[0m
-[0m[1m[38;5;12m...[0m
-[0m[1m[38;5;12m76[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn insert_into_subtree(&mut self, node: u64, key: K, value: V)->(u64,u64){[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m       [0m[0m[1m[33m^^^^^^^^^^^^^^^^^^^[0m
-
-[0m[1m[33mwarning[0m[0m[1m: method `insert` is never used[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/src/tree.rs:146:8[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m127[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0mimpl<K: Ord, V> AVLTreeMap<K, V> {[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m[1m[38;5;12m--------------------------------[0m[0m [0m[0m[1m[38;5;12mmethod in this implementation[0m
-[0m[1m[38;5;12m...[0m
-[0m[1m[38;5;12m146[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn insert(&mut self, key: K, value: V) -> Option<V>{[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m       [0m[0m[1m[33m^^^^^^[0m
-
-[1m[33mwarning[0m[1m:[0m `bst` (lib) generated 16 warnings (run `cargo fix --lib -p bst` to apply 12 suggestions)
-[1m[32m   Compiling[0m bst v0.1.0 (/Users/gera/rust2024/problems/borrowing/bst)
-[1m[33mwarning[0m[1m:[0m `bst` (lib test) generated 16 warnings (16 duplicates)
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0624][0m[0m[1m: method `insert` is private[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:13:20[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m13[0m[0m  [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.insert(1, 1), None);[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mprivate method[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m::: [0m[0m/Users/gera/rust2024/problems/borrowing/bst/src/tree.rs:146:5[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m146[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn insert(&mut self, key: K, value: V) -> Option<V>{[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m    [0m[0m[1m[38;5;12m---------------------------------------------------[0m[0m [0m[0m[1m[38;5;12mprivate method defined here[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0624][0m[0m[1m: method `insert` is private[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:14:20[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m14[0m[0m  [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.insert(2, 2), None);[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mprivate method[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m::: [0m[0m/Users/gera/rust2024/problems/borrowing/bst/src/tree.rs:146:5[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m146[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn insert(&mut self, key: K, value: V) -> Option<V>{[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m    [0m[0m[1m[38;5;12m---------------------------------------------------[0m[0m [0m[0m[1m[38;5;12mprivate method defined here[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0624][0m[0m[1m: method `insert` is private[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:15:20[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m15[0m[0m  [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.insert(3, 3), None);[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mprivate method[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m::: [0m[0m/Users/gera/rust2024/problems/borrowing/bst/src/tree.rs:146:5[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m146[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn insert(&mut self, key: K, value: V) -> Option<V>{[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m    [0m[0m[1m[38;5;12m---------------------------------------------------[0m[0m [0m[0m[1m[38;5;12mprivate method defined here[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0624][0m[0m[1m: method `insert` is private[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:22:20[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m22[0m[0m  [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.insert(Number(1), 1), None);[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mprivate method[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m::: [0m[0m/Users/gera/rust2024/problems/borrowing/bst/src/tree.rs:146:5[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m146[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn insert(&mut self, key: K, value: V) -> Option<V>{[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m    [0m[0m[1m[38;5;12m---------------------------------------------------[0m[0m [0m[0m[1m[38;5;12mprivate method defined here[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `contains_key` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:23:17[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m23[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert!(map.contains_key(&Number(1)));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `remove` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:29:20[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m29[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.remove("hello"), None);[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0624][0m[0m[1m: method `insert` is private[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:30:20[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m30[0m[0m  [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.insert("hello".to_string(), 1), None);[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mprivate method[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m::: [0m[0m/Users/gera/rust2024/problems/borrowing/bst/src/tree.rs:146:5[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m146[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn insert(&mut self, key: K, value: V) -> Option<V>{[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m    [0m[0m[1m[38;5;12m---------------------------------------------------[0m[0m [0m[0m[1m[38;5;12mprivate method defined here[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `contains_key` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:31:17[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m31[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert!(map.contains_key("hello"));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `contains_key` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:32:18[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m32[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert!(!map.contains_key("world"));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                 [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `remove_entry` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:33:20[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m33[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.remove_entry("hello"), Some(("hello".to_string(), 1)));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0624][0m[0m[1m: method `insert` is private[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:39:20[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m39[0m[0m  [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.insert(1, 1), None);[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mprivate method[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m::: [0m[0m/Users/gera/rust2024/problems/borrowing/bst/src/tree.rs:146:5[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m146[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn insert(&mut self, key: K, value: V) -> Option<V>{[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m    [0m[0m[1m[38;5;12m---------------------------------------------------[0m[0m [0m[0m[1m[38;5;12mprivate method defined here[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0624][0m[0m[1m: method `insert` is private[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:40:20[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m40[0m[0m  [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.insert(2, 2), None);[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mprivate method[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m::: [0m[0m/Users/gera/rust2024/problems/borrowing/bst/src/tree.rs:146:5[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m146[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn insert(&mut self, key: K, value: V) -> Option<V>{[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m    [0m[0m[1m[38;5;12m---------------------------------------------------[0m[0m [0m[0m[1m[38;5;12mprivate method defined here[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0624][0m[0m[1m: method `insert` is private[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:41:20[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m41[0m[0m  [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.insert(3, 3), None);[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mprivate method[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m::: [0m[0m/Users/gera/rust2024/problems/borrowing/bst/src/tree.rs:146:5[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m146[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn insert(&mut self, key: K, value: V) -> Option<V>{[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m    [0m[0m[1m[38;5;12m---------------------------------------------------[0m[0m [0m[0m[1m[38;5;12mprivate method defined here[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `contains_key` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:42:18[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m42[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert!(!map.contains_key(&0));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                 [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `contains_key` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:43:17[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m43[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert!(map.contains_key(&1));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `contains_key` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:44:17[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m44[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert!(map.contains_key(&2));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `contains_key` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:45:17[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m45[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert!(map.contains_key(&3));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `contains_key` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:46:18[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m46[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert!(!map.contains_key(&4));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                 [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0624][0m[0m[1m: method `insert` is private[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:52:20[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m52[0m[0m  [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.insert(1, 1), None);[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mprivate method[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m::: [0m[0m/Users/gera/rust2024/problems/borrowing/bst/src/tree.rs:146:5[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m146[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn insert(&mut self, key: K, value: V) -> Option<V>{[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m    [0m[0m[1m[38;5;12m---------------------------------------------------[0m[0m [0m[0m[1m[38;5;12mprivate method defined here[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0624][0m[0m[1m: method `insert` is private[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:53:20[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m53[0m[0m  [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.insert(2, 2), None);[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mprivate method[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m::: [0m[0m/Users/gera/rust2024/problems/borrowing/bst/src/tree.rs:146:5[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m146[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn insert(&mut self, key: K, value: V) -> Option<V>{[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m    [0m[0m[1m[38;5;12m---------------------------------------------------[0m[0m [0m[0m[1m[38;5;12mprivate method defined here[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0624][0m[0m[1m: method `insert` is private[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:54:20[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m54[0m[0m  [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.insert(3, 3), None);[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mprivate method[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m::: [0m[0m/Users/gera/rust2024/problems/borrowing/bst/src/tree.rs:146:5[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m146[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn insert(&mut self, key: K, value: V) -> Option<V>{[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m    [0m[0m[1m[38;5;12m---------------------------------------------------[0m[0m [0m[0m[1m[38;5;12mprivate method defined here[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `remove` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:55:20[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m55[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.remove(&1), Some(1));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `contains_key` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:56:18[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m56[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert!(!map.contains_key(&1));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                 [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `contains_key` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:57:17[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m57[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert!(map.contains_key(&2));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `contains_key` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:58:17[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m58[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert!(map.contains_key(&3));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `remove` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:59:20[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m59[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.remove(&2), Some(2));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `contains_key` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:60:18[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m60[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert!(!map.contains_key(&1));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                 [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `contains_key` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:61:18[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m61[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert!(!map.contains_key(&2));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                 [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `contains_key` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:62:17[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m62[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert!(map.contains_key(&3));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `remove` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:63:20[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m63[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.remove(&3), Some(3));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `contains_key` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:64:18[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m64[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert!(!map.contains_key(&1));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                 [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `contains_key` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:65:18[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m65[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert!(!map.contains_key(&2));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                 [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `contains_key` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:66:18[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m66[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert!(!map.contains_key(&3));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                 [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0624][0m[0m[1m: method `insert` is private[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:73:20[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m73[0m[0m  [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.insert(2, 2), None);[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mprivate method[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m::: [0m[0m/Users/gera/rust2024/problems/borrowing/bst/src/tree.rs:146:5[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m146[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn insert(&mut self, key: K, value: V) -> Option<V>{[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m    [0m[0m[1m[38;5;12m---------------------------------------------------[0m[0m [0m[0m[1m[38;5;12mprivate method defined here[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0624][0m[0m[1m: method `insert` is private[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:74:20[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m74[0m[0m  [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.insert(1, 1), None);[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mprivate method[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m::: [0m[0m/Users/gera/rust2024/problems/borrowing/bst/src/tree.rs:146:5[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m146[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn insert(&mut self, key: K, value: V) -> Option<V>{[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m    [0m[0m[1m[38;5;12m---------------------------------------------------[0m[0m [0m[0m[1m[38;5;12mprivate method defined here[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0624][0m[0m[1m: method `insert` is private[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:75:20[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m75[0m[0m  [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.insert(3, 3), None);[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mprivate method[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m::: [0m[0m/Users/gera/rust2024/problems/borrowing/bst/src/tree.rs:146:5[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m146[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn insert(&mut self, key: K, value: V) -> Option<V>{[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m    [0m[0m[1m[38;5;12m---------------------------------------------------[0m[0m [0m[0m[1m[38;5;12mprivate method defined here[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `remove_entry` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:77:20[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m77[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.remove_entry(&2), Some((2, 2)));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<u8, u8>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0624][0m[0m[1m: method `insert` is private[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:78:20[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m78[0m[0m  [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.insert(2, 2), None);[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mprivate method[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m::: [0m[0m/Users/gera/rust2024/problems/borrowing/bst/src/tree.rs:146:5[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m146[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn insert(&mut self, key: K, value: V) -> Option<V>{[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m    [0m[0m[1m[38;5;12m---------------------------------------------------[0m[0m [0m[0m[1m[38;5;12mprivate method defined here[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `nth_key_value` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:80:20[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m80[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.nth_key_value(0), Some((&1, &1)));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<u8, u8>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `nth_key_value` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:81:20[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m81[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.nth_key_value(1), Some((&2, &2)));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<u8, u8>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `nth_key_value` found for struct `AVLTreeMap` in the current scope[0m
-[0m  [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:82:20[0m
-[0m   [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m82[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    assert_eq!(map.nth_key_value(2), Some((&3, &3)));[0m
-[0m   [0m[0m[1m[38;5;12m| [0m[0m                   [0m[0m[1m[38;5;9m^^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<u8, u8>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0624][0m[0m[1m: method `insert` is private[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:95:13[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m95[0m[0m  [0m[0m[1m[38;5;12m|[0m[0m [0m[0m        map.insert(key, value);[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m            [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mprivate method[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m::: [0m[0m/Users/gera/rust2024/problems/borrowing/bst/src/tree.rs:146:5[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m146[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn insert(&mut self, key: K, value: V) -> Option<V>{[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m    [0m[0m[1m[38;5;12m---------------------------------------------------[0m[0m [0m[0m[1m[38;5;12mprivate method defined here[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `contains_key` found for struct `AVLTreeMap` in the current scope[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:107:21[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m107[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m        assert!(map.contains_key(key));[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                    [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `nth_key_value` found for struct `AVLTreeMap` in the current scope[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:108:24[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m108[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m        assert_eq!(map.nth_key_value(*index), Some((key, value)));[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                       [0m[0m[1m[38;5;9m^^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `get_key_value` found for struct `AVLTreeMap` in the current scope[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:109:24[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m109[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m        assert_eq!(map.get_key_value(key), Some((key, value)));[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                       [0m[0m[1m[38;5;9m^^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `remove_entry` found for struct `AVLTreeMap` in the current scope[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:112:24[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m112[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m        assert_eq!(map.remove_entry(key), Some((*key, *value)));[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                       [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `contains_key` found for struct `AVLTreeMap` in the current scope[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:113:22[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m113[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m        assert!(!map.contains_key(key));[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                     [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0624][0m[0m[1m: method `insert` is private[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:129:32[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m129[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m                assert_eq!(map.insert(key, value), hash_map.insert(key, value));[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                               [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mprivate method[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m::: [0m[0m/Users/gera/rust2024/problems/borrowing/bst/src/tree.rs:146:5[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m146[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn insert(&mut self, key: K, value: V) -> Option<V>{[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m    [0m[0m[1m[38;5;12m---------------------------------------------------[0m[0m [0m[0m[1m[38;5;12mprivate method defined here[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `remove` found for struct `AVLTreeMap` in the current scope[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:132:32[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m132[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m                assert_eq!(map.remove(&key), hash_map.remove(&key));[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                               [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `remove_entry` found for struct `AVLTreeMap` in the current scope[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:135:32[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m135[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m                assert_eq!(map.remove_entry(&key), hash_map.remove_entry(&key));[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                               [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `contains_key` found for struct `AVLTreeMap` in the current scope[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:141:24[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m141[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m        assert_eq!(map.contains_key(&key), hash_map.contains_key(&key));[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                       [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `get` found for struct `AVLTreeMap` in the current scope[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:142:24[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m142[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m        assert_eq!(map.get(&key), hash_map.get(&key));[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                       [0m[0m[1m[38;5;9m^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `get_key_value` found for struct `AVLTreeMap` in the current scope[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:143:24[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m143[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m        assert_eq!(map.get_key_value(&key), hash_map.get_key_value(&key));[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                       [0m[0m[1m[38;5;9m^^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<_, _>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0624][0m[0m[1m: method `insert` is private[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:155:13[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m155[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m        map.insert(i, value);[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m            [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mprivate method[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m::: [0m[0m/Users/gera/rust2024/problems/borrowing/bst/src/tree.rs:146:5[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m146[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn insert(&mut self, key: K, value: V) -> Option<V>{[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m    [0m[0m[1m[38;5;12m---------------------------------------------------[0m[0m [0m[0m[1m[38;5;12mprivate method defined here[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `contains_key` found for struct `AVLTreeMap` in the current scope[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:158:24[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m158[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m        assert_eq!(map.contains_key(&count), false);[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                       [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<i32, i32>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `remove` found for struct `AVLTreeMap` in the current scope[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:161:13[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m161[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m        map.remove(&i);[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m            [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<i32, i32>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0624][0m[0m[1m: method `insert` is private[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:165:13[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m165[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m        map.insert(-i, value);[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m            [0m[0m[1m[38;5;9m^^^^^^[0m[0m [0m[0m[1m[38;5;9mprivate method[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m   [0m[0m[1m[38;5;12m::: [0m[0m/Users/gera/rust2024/problems/borrowing/bst/src/tree.rs:146:5[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m146[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m    fn insert(&mut self, key: K, value: V) -> Option<V>{[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m    [0m[0m[1m[38;5;12m---------------------------------------------------[0m[0m [0m[0m[1m[38;5;12mprivate method defined here[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1m[38;5;9merror[E0599][0m[0m[1m: no method named `contains_key` found for struct `AVLTreeMap` in the current scope[0m
-[0m   [0m[0m[1m[38;5;12m--> [0m[0mproblems/borrowing/bst/tests/tests.rs:168:24[0m
-[0m    [0m[0m[1m[38;5;12m|[0m
-[0m[1m[38;5;12m168[0m[0m [0m[0m[1m[38;5;12m|[0m[0m [0m[0m        assert_eq!(map.contains_key(&(-count)), false);[0m
-[0m    [0m[0m[1m[38;5;12m| [0m[0m                       [0m[0m[1m[38;5;9m^^^^^^^^^^^^[0m[0m [0m[0m[1m[38;5;9mmethod not found in `AVLTreeMap<i32, i32>`[0m
-
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[0m[1mSome errors have detailed explanations: E0599, E0624.[0m
-[0m[1mFor more information about an error, try `rustc --explain E0599`.[0m
-[1m[36m    Building[0m [=========================> ] 30/31: tests(test)                                                                                                                                 [K[1m[31merror[0m[1m:[0m could not compile `bst` (test "tests") due to 58 previous errors
-
-Command exit status: 101
-Script done on Mon May 27 06:41:39 2024
+.TH MT 1 "April 2008" \" -*- nroff -*-
+.SH NAME
+mt \- control magnetic tape drive operation
+.SH SYNOPSIS
+.B mt
+[\-h] [\-f device] operation [count] [arguments...]
+.SH DESCRIPTION
+This manual page documents the tape control program
+.BR mt .
+.B mt
+performs the given
+.IR operation ,
+which must be one of the tape operations listed below, on a tape
+drive. The commands can also be listed by running the program with the
+.I \-h
+option.
+.PP
+Some operations optionally take an argument or repeat count, which can be given
+after the operation name and defaults to 1. The postfix
+.I k
+,
+.I M
+, or
+.I G
+can be used to give counts in units of 1024, 1024 * 1024, or 1024 *
+1024 * 1024, respectively.
+.PP
+The available operations are listed below.  Unique abbreviations are
+accepted.  Not all operations are available on all systems, or work on
+all types of tape drives.
+.IP fsf
+Forward space
+.I count
+files.
+The tape is positioned on the first block of the next file.
+.IP fsfm
+Forward space
+.I count
+files, then backward space one record. This leaves
+the tape positioned at the last block of the file that is count - 1 files
+past the current file.
+.IP bsf
+Backward space
+.I count
+files.
+The tape is positioned on the last block of the previous file.
+.IP bsfm
+Backward space
+.I count
+files, then forward space one record. This leaves
+the tape positioned at the first block of the file that is count - 1 files
+before the current file.
+.IP asf
+The tape is positioned at the beginning of the
+.I count
+file. Positioning is done by first rewinding the tape and then spacing
+forward over
+.I count
+filemarks.
+.IP fsr
+Forward space
+.I count
+records.
+.IP bsr
+Backward space
+.I count
+records.
+.IP fss
+(SCSI tapes) Forward space
+.I count
+setmarks.
+.IP bss
+(SCSI tapes) Backward space
+.I count
+setmarks.
+.IP "eod, seod"
+Space to end of valid data.  Used on streamer tape
+drives to append data to the logical end of tape.
+.IP rewind
+Rewind the tape.
+.IP "offline, rewoffl, eject"
+Rewind the tape and, if applicable, unload the tape.
+.IP retension
+Rewind the tape, then wind it to the end of the reel,
+then rewind it again.
+.IP "weof, eof"
+Write
+.I count
+EOF marks at current position.
+.IP "wset"
+(SCSI tapes) Write
+.I count
+setmarks at current position (only SCSI tape).
+.IP erase
+Erase the tape. Note that this is a long erase, which on modern
+(high-capacity) tapes can take many hours, and which usually can't be
+aborted.
+.IP status
+Print status information about the tape unit. (If the density code is
+"no translation" in the status output, this does not affect working of the
+tape drive.)
+.IP seek
+(SCSI tapes) Seek to the
+.I count
+block on the tape.  This operation is available on some
+Tandberg and Wangtek streamers and some SCSI-2 tape drives. The block
+address should be obtained from a
+.I tell
+call earlier.
+.IP tell
+(SCSI tapes) Tell the current block on tape.  This operation is available on some
+Tandberg and Wangtek streamers and some SCSI-2 tape drives.
+.IP setpartition
+(SCSI tapes) Switch to the partition determined by
+.I count.
+The default data partition of the tape is numbered zero. Switching
+partition is available only if enabled for the device, the device
+supports multiple partitions, and the tape is formatted with multiple
+partitions.
+.IP partseek
+(SCSI tapes) The tape position is set to block
+.I count
+in the partition given by the argument after count. The default
+partition is zero.
+.IP mkpartition
+(SCSI tapes) Format the tape with one (count is zero) or two partitions
+(count gives the size of the second partition in megabytes). If the count is
+positive, it specifies the size of partition 1. From kernel version 4.6, if
+the count is negative, it specifies the size of partition 0. With older
+kernels, a negative argument formats the tape with one partition. The tape
+drive must be able to format partitioned tapes with
+initiator-specified partition size and partition support
+must be enabled for the drive.
+.IP load
+(SCSI tapes) Send the load command to the tape drive. The drives usually load the
+tape when a new cartridge is inserted. The argument
+.I count
+can usually be omitted. Some HP changers load tape n if the
+.I count
+10000 + n is given (a special function in the Linux st driver).
+.IP lock
+(SCSI tapes) Lock the tape drive door.
+.IP unlock
+(SCSI tapes) Unlock the tape drive door.
+.IP setblk
+(SCSI tapes) Set the block size of the drive to
+.I count
+bytes per record.
+.IP setdensity
+(SCSI tapes) Set the tape density code to
+.I count.
+The proper codes to use with each drive should be looked up from the
+drive documentation.
+.IP densities
+(SCSI tapes) Write explanation of some common density codes to
+standard output.
+.IP drvbuffer
+(SCSI tapes) Set the tape drive buffer code to
+.I number.
+The proper value for unbuffered operation is zero and "normal" buffered
+operation one. The meanings of other values can be found in the drive
+documentation or, in the case of a SCSI-2 drive, from the SCSI-2 standard.
+.IP compression
+(SCSI tapes) The compression within the drive can be switched on or
+off using the MTCOMPRESSION ioctl. Note that this method is not
+supported by all drives implementing compression. For instance, the
+Exabyte 8 mm drives use density codes to select compression.
+.IP stoptions
+(SCSI tapes) Set the driver options bits for the device to the defined
+values. Allowed only for the superuser. The bits can be set
+either by ORing the option bits from the file /usr/include/linux/mtio.h to
+.I count,
+or by using the following keywords (as many keywords can be used on
+the same line as necessary, unambiguous abbreviations allowed):
+.RS
+.IP buffer-writes 15
+buffered writes enabled
+.IP async-writes
+asynchronous writes enabled
+.IP read-ahead
+read-ahead for fixed block size
+.IP debug
+debugging (if compiled into driver)
+.IP two-fms
+write two filemarks when file closed
+.IP fast-eod
+space directly to eod (and lose file number)
+.IP no-wait
+don't wait until rewind, etc. complete
+.IP auto-lock
+automatically lock/unlock drive door
+.IP def-writes
+the block size and density are for writes
+.IP can-bsr
+drive can space backwards as well
+.IP no-blklimits
+drive doesn't support read block limits
+.IP can-partitions
+drive can handle partitioned tapes
+.IP scsi2logical
+seek and tell use SCSI-2 logical block addresses instead of device
+dependent addresses
+.IP sili
+Set the SILI bit is when reading in variable block mode. This may speed up
+reading blocks shorter than the read byte count. Set this option only if
+you know that the drive supports SILI and the HBA reliably returns transfer
+residual byte counts. Requires kernel version >= 2.6.26.
+.IP sysv
+enable the System V semantics
+.RE
+.IP stsetoptions
+(SCSI tapes) Set selected driver options bits.
+The methods to specify the bits to set are given above in the
+description of
+.BR stoptions.
+Allowed only for the superuser.
+.IP stclearoptions
+(SCSI tapes) Clear selected driver option bits.
+The methods to specify the bits to clear are given above in description of
+.BR stoptions.
+Allowed only for the superuser.
+.IP stshowoptions
+(SCSI tapes) Print the currently enabled options for the device. Requires
+kernel version >= 2.6.26 and sysfs must be mounted at /sys.
+.IP stwrthreshold
+(SCSI tapes) The write threshold for the tape device is set to
+.I count
+kilobytes. The value must be smaller than or equal to the driver
+buffer size. Allowed only for the superuser.
+.IP defblksize
+(SCSI tapes) Set the default block size of the device to
+.I count
+bytes. The value -1 disables the default block size.
+The block size set by
+.I setblk
+overrides the default until a new tape is inserted.
+Allowed only for the superuser.
+.IP defdensity
+(SCSI tapes) Set the default density code. The value -1 disables the
+default density. The density set by
+.I setdensity
+overrides the default until a new tape is inserted. Allowed only for the
+superuser.
+.IP defdrvbuffer
+(SCSI tapes) Set the default drive buffer code. The value -1 disables the
+default drive buffer code. The drive buffer code set by
+.I drvbuffer
+overrides the default until a new tape is inserted. Allowed only for the
+superuser.
+.IP defcompression
+(SCSI tapes) Set the default compression state. The value -1 disables the
+default compression. The compression state set by
+.I compression
+overrides the default until a new tape is inserted. Allowed only for the
+superuser.
+.IP sttimeout
+sets the normal timeout for the device. The value is given in
+seconds. Allowed only for the superuser.
+.IP stlongtimeout
+sets the long timeout for the device. The value is given in
+seconds. Allowed only for the superuser.
+.IP stsetcln
+set the cleaning request interpretation parameters.
+.PP
+.B mt
+exits with a status of 0 if the operation succeeded, 1 if the
+operation or device name given was invalid, or 2 if the operation
+failed.
+.SH OPTIONS
+.TP
+.B \-h, \-\-help
+Print a usage message on standard output and exit successfully.
+.TP
+.B \-v, \-\-version
+Print version of mt.
+.TP
+.B \-f, \-t
+The path of the tape device on  which to operate.
+If neither of those options is given,
+and the environment variable
+.B TAPE
+is set, it is used.
+Otherwise, a default device defined in the file
+.I /usr/include/sys/mtio.h
+is used (note that the actual path to
+.I mtio.h
+can vary per architecture and/or distribution).
+.SH NOTES
+The argument of mkpartition specifies the size of the partition in
+megabytes. If you add a postfix, it applies to this definition. For example,
+argument 1G means 1 giga megabytes, which probably is not what the user is
+anticipating.
+.SH AUTHOR
+The program is written by Kai Makisara <Kai.Makisara@kolumbus.fi>, and
+is currently maintained by Iustin Pop <iustin@k1024.org>.
+.SH COPYRIGHT
+The program and the manual page are copyrighted by Kai Makisara, 1998-2008.
+They can be distributed according to the GNU Copyleft.
+.SH BUGS
+Please report bugs to <https://github.com/iustin/mt-st>.
+.SH SEE ALSO
+st(4)
