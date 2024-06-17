@@ -1,31 +1,22 @@
-import sys
+import asyncio
+import stream
 
-def wide_rec(f, last=True, level=1, b=1, e=2):
-    if level == 0:
-        assert b + 1 == e
-        f(b-1)
-    elif last:
-        wide_rec(f, False, level-1, b, e)
-        wide_rec(f, last, level+1, e, e*2)
-    else:
-        assert (b + e) % 2 == 0
-        c = (b+e)//2
-        wide_rec(f, last, level-1, b, c)
-        wide_rec(f, last, level-1, c, e)
-
-a = [0]
-
-def call(n):
-    assert a[0] == n
-    a[0] += 1
-
-for n in range(8, 60):
-    a[0] = 0
-    sys.setrecursionlimit(n)
+async def test():
     try:
-        wide_rec(call)
-    except RecursionError:
-        pass
-    print(n, bin(a[0]))
+        await asyncio.sleep(1)
+    except BaseException as e:
+        print(type(e), e)
+
+async def main():
+    try:
+        asyncio.create_task(test())
+        asyncio.create_task(test())
+        asyncio.create_task(test())
+        async with stream.Stream(*await asyncio.open_connection('127.0.0.1',3322)) as sock:
+            print(await sock.read())
+
+    except BaseException as e:
+        print(e)
 
 
+asyncio.run(main())
