@@ -1,15 +1,7 @@
-const http = require('http');
-const express = require('express');
 const { Server } = require('socket.io');
+const net = require('net');
 
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server);
-
-app.get('/', (_, res) => {
-  console.log("FUNNY")
-  res.send("HELLO FROM SERVER - HTTP");
-});
+const io = new Server();
 
 function base64ToArrayBuffer(base64) {
     var binaryString = atob(base64);
@@ -20,51 +12,32 @@ function base64ToArrayBuffer(base64) {
     return bytes;
 }
 
-io.on('connection', (wsocket) => {
-  // console.log('a user connected');
-
-  // socket.on('message', (msg) => {
-  //   console.log('message: ' + msg);
-  //   socket.emit('message', "HELLO FROM SERVER - WS");
-  // });
-
-  // socket.on('disconnect', () => {
-  //   console.log('user disconnected');
-  // });
-
-  var net = require('net');
-
-  var socket = new net.Socket();
-  socket.connect(22, '127.0.0.1', function() {
-    // console.log('Connected');
-    // client.write('Hello, server! Love, Client.');
-    // client.pipe(socket);
+function connection(wsocket, socket){
     socket.on('data', data => {
-      data = data.toString('base64');
-      // console.log(data);
-      wsocket.send(data);
+        data = data.toString('base64');
+        wsocket.send(data);
     });
-
     wsocket.on('message', message=>{
-    // console.log(atob(message));
-    socket.write(base64ToArrayBuffer(message));
+        message = base64ToArrayBuffer(message);
+        socket.write(message);
     });
     wsocket.on('disconnect', ()=>{
-      socket.destroy();
-    })
-  });
+        socket.end();
+    });
+    
+}
 
-  // client.on('data', function(data) {
-  //   console.log('Received: ' + data);
-  //   client.destroy(); // kill client after server's response
-  // });
-
-  // client.on('close', function() {
-  //   console.log('Connection closed');
-  // });
-
+io.on('connection', (wsocket) => {
+    var socket = null;
+    wsocket.on('message', message=>{
+        if (socket === null){
+            to_connect = JSON.parse(message);
+            socket = new net.Socket();
+            socket.connect(to_connect[1], to_connect[0], ()=>connection(wsocket, socket));
+        }
+    });
 });
 
-server.listen(3000, () => {
-  console.log('listening on localhost:3000');
+io.listen(3000, () => {
+    console.log('listening on localhost:3000');
 });
