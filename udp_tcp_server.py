@@ -1,19 +1,26 @@
 from udp_tcp import *
+import traceback
 
-async def main():
+import asyncio
+import stream
+import functools
+
+
+async def main() -> None:
     loop = asyncio.get_running_loop()
+    transport, protocol = await loop.create_datagram_endpoint(udp_connection, local_addr=args().udp)
+    async def get_udp(key_addr: addr_type) -> tuple[udp_connection, addr_type]:
+        return protocol, key_addr
     try:
-        async with stream.Stream(*await asyncio.open_connection('127.0.0.1', 64001)) as tcp_connection:
-            # asyncio.create_task(sender(tcp_connection))
-            transport, protocol = await loop.create_datagram_endpoint(lambda: udp_connection(tcp_connection), local_addr=('127.0.0.1', 60002))
-            while 1:
-                addr, data = await read_data(tcp_connection)
-                if data is None:
-                    return
-                transport.sendto(data, addr)
+        while 1:
+            try:
+                rw = await asyncio.open_connection(*args().tcp)
+            except (ConnectionRefusedError, OSError):
+                continue
+            await connection_loop(*rw, get_udp)
+            await asyncio.sleep(1)
     finally:
         transport.close()
-
 
 try:
     asyncio.run(main())

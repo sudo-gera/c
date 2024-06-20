@@ -1,46 +1,91 @@
 import asyncio
-# import pickle
 import json
 import base64
-
 import stream
+import argparse
+import typing
+import collections.abc
+import re
+import time
+import timeout
 
-send_queue = asyncio.Queue()
-
-# async def sender(tcp_connection: stream.Stream):
-#     while 1:
-#         for chunk in range(16):
-#             data = await send_queue.get()
-#             tcp_connection.write(data)
-#         await tcp_connection.drain()  
-#         tcp_connection.transport.get_write_buffer_size()
+addr_type = tuple[str, int]
+messages : asyncio.Queue[bytes] = asyncio.Queue()
 
 class udp_connection(asyncio.DatagramProtocol):
-    def __init__(self, tcp_connection: stream.Stream, addr: tuple[str, int]|None = None) -> None:
-        self.addr = addr
-        self.tcp_connection = tcp_connection
-    
-    def connection_made(self, transport: asyncio.DatagramTransport):
-        self.transport = transport
+    def __init__(self, addr: tuple[str, int]|None = None) -> None:
+        self.key_addr = addr
+        self.messages = messages
 
-    def datagram_received(self, data, addr):
-        if self.addr is not None:
-            addr = self.addr
-        data = base64.b64encode(data).decode()
-        message = json.dumps([data, list(addr)]).encode()
-        message = len(message).to_bytes(8, 'little') + message
-        if self.tcp_connection.transport.get_write_buffer_size() < 2**16:
-            self.tcp_connection.write(message)
+    def connection_made(self, transport: asyncio.DatagramTransport | asyncio.BaseTransport) -> None:
+        self.transport: asyncio.DatagramTransport
+        self.transport = transport # type: ignore
 
-        # if send_queue.qsize() < 16:
-        #     send_queue.put_nowait(message)
+    def datagram_received(self, data: bytes, addr: addr_type) -> None:
+        key_addr = self.key_addr if self.key_addr is not None else addr
+        data_str = base64.b64encode(data).decode()
+        data = json.dumps([data_str, list(key_addr)]).encode()
+        data = len(data).to_bytes(8, 'little') + data
+        while not self.messages.empty():
+            self.messages.get_nowait()
+        self.messages.put_nowait(data)
 
-async def read_data(tcp_connection: stream.Stream):
-    try:
-        message = await tcp_connection.readexactly(int.from_bytes(await tcp_connection.readexactly(8), 'little'))
-    except asyncio.IncompleteReadError:
-        return None, None
+async def read_data(tcp_connection: stream.Stream) -> tuple[addr_type, bytes]:
+    message = await tcp_connection.readexactly(int.from_bytes(await tcp_connection.readexactly(8), 'little'))
     data, addr = json.loads(message)
     addr = tuple(addr)
     data = base64.b64decode(data)
     return addr, data
+
+
+async def tcp_to_udp(tcp: stream.Stream, udps: typing.Callable[[addr_type], typing.Awaitable[tuple[udp_connection, addr_type]]]) -> None:
+    while 1:
+        key_addr, data = await read_data(tcp)
+        if not key_addr:
+            global last_message
+            last_message = time.monotonic()
+            continue
+        udp = await udps(key_addr)
+        # if isinstance(udp, collections.abc.Coroutine):
+        #     udp = await udp
+        udp[0].transport.sendto(data, udp[1])
+
+async def tcp_write(tcp: stream.Stream, data: bytes) -> None:
+    tcp.write(data)
+    await timeout.run_with_timeout(tcp.drain(), 5)
+
+async def udp_to_tcp(tcp: stream.Stream) -> None:
+    while 1:
+        data = await messages.get()
+        await tcp_write(tcp, data)
+
+def socket(value: str) -> addr_type:
+    host, port = re.match(r'(.*):(\d*)', value).groups() # type: ignore
+    port = int(port)
+    return host, port
+
+def args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--tcp', type=socket)
+    parser.add_argument('--udp', type=socket)
+    return parser.parse_args()
+
+async def connection_loop(reader: asyncio.StreamReader, writer: asyncio.StreamWriter, get_udp:  typing.Callable[[addr_type], typing.Awaitable[tuple[udp_connection, addr_type]]]) -> None:
+    async with stream.Stream(reader, writer) as tcp_connection:
+        try:
+            await asyncio.gather(
+                tcp_to_udp(tcp_connection, get_udp),
+                udp_to_tcp(tcp_connection),
+                send_ping(tcp_connection)
+            )
+        except Exception as e:
+            print(e)
+
+last_message = 0
+async def send_ping(tcp: stream.Stream):
+    while 1:
+        data = json.dumps(['', '']).encode()
+        data = len(data).to_bytes(8, 'little') + data
+        await tcp_write(tcp, data)
+        await asyncio.sleep(30)
+        assert time.monotonic() - last_message < 60
