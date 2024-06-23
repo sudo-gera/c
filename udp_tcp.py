@@ -23,10 +23,11 @@ class udp_connection(asyncio.DatagramProtocol):
 
     def datagram_received(self, data: bytes, addr: addr_type) -> None:
         key_addr = self.key_addr if self.key_addr is not None else addr
+        print('send', data, key_addr)
         data_str = base64.b64encode(data).decode()
         data = json.dumps([data_str, list(key_addr)]).encode()
         data = len(data).to_bytes(8, 'little') + data
-        while not self.messages.empty():
+        while self.messages.qsize() > 8:
             self.messages.get_nowait()
         self.messages.put_nowait(data)
 
@@ -35,6 +36,7 @@ async def read_data(tcp_connection: stream.Stream) -> tuple[addr_type, bytes]:
     data, addr = json.loads(message)
     addr = tuple(addr)
     data = base64.b64decode(data)
+    print('recv', data, addr)
     return addr, data
 
 
