@@ -59,6 +59,7 @@ async def tcp_write(tcp: stream.Stream, data: bytes) -> None:
 async def udp_to_tcp(tcp: stream.Stream) -> None:
     while 1:
         data = await messages.get()
+        print('send', data)
         await tcp_write(tcp, data)
 
 def socket(value: str) -> addr_type:
@@ -83,7 +84,7 @@ async def connection_loop(reader: asyncio.StreamReader, writer: asyncio.StreamWr
         except Exception as e:
             print(e)
 
-last_message = 0
+last_message = time.monotonic()
 async def send_ping(tcp: stream.Stream):
     while 1:
         data = json.dumps(['', '']).encode()
