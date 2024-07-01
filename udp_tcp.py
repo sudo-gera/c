@@ -25,7 +25,8 @@ class udp_connection(asyncio.DatagramProtocol):
         key_addr = self.key_addr if self.key_addr is not None else addr
         print('send', data, key_addr)
         data_str = base64.b64encode(data).decode()
-        data = json.dumps([data_str, list(key_addr)]).encode()
+        msid = time.time_ns()
+        data = json.dumps([msid, data_str, list(key_addr)]).encode()
         data = len(data).to_bytes(8, 'little') + data
         while self.messages.qsize() > 8:
             self.messages.get_nowait()
@@ -33,10 +34,10 @@ class udp_connection(asyncio.DatagramProtocol):
 
 async def read_data(tcp_connection: stream.Stream) -> tuple[addr_type, bytes]:
     message = await tcp_connection.readexactly(int.from_bytes(await tcp_connection.readexactly(8), 'little'))
-    data, addr = json.loads(message)
+    msid, data, addr = json.loads(message)
     addr = tuple(addr)
     data = base64.b64decode(data)
-    print('recv', data, addr)
+    print('recv', msid, data, addr)
     return addr, data
 
 
@@ -82,13 +83,14 @@ async def connection_loop(reader: asyncio.StreamReader, writer: asyncio.StreamWr
                 send_ping(tcp_connection)
             )
         except Exception as e:
-            print(e)
+            print(type(e), e)
 
 last_message = time.monotonic()
 async def send_ping(tcp: stream.Stream):
     while 1:
-        data = json.dumps(['', '']).encode()
+        data = json.dumps([time.time_ns(), '', '']).encode()
         data = len(data).to_bytes(8, 'little') + data
+        print('send', data)
         await tcp_write(tcp, data)
         await asyncio.sleep(30)
         assert time.monotonic() - last_message < 60
