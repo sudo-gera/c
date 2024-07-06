@@ -1,0 +1,7 @@
+Script started on 2024-06-18 02:20:20+03:00 [TERM="screen-256color" TTY="/dev/pts/24" COLUMNS="238" LINES="57"]
+[01;32mgera@s1145[00m:[01;34m~/russian_accentuation_working_version[00m$ git remote -v[3Ptouch exitgit remote -v
+origin	https://github.com/DmitryVysochin/russian_accentuation_working_version.git (fetch)
+origin	https://github.com/DmitryVysochin/russian_accentuation_working_version.git (push)
+[01;32mgera@s1145[00m:[01;34m~/russian_accentuation_working_version[00m$ g[Kgit [K[K[K[Kexit
+
+Script done on 2024-06-18 02:20:34+03:00 [COMMAND_EXIT_CODE="0"]
