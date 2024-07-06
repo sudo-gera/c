@@ -1,34 +1,43 @@
-const WebSocket = require('ws');
-const wsServer = new WebSocket.Server({port: 9000});
-wsServer.on('connection', onConnect);
-function onConnect(wsClient) {
-    console.log('Новый пользователь');
-    // отправка приветственного сообщения клиенту
-    wsClient.send('Привет');
-    wsClient.on('message', function(message) {
-        try {
-            // сообщение пришло текстом, нужно конвертировать в JSON-формат
-            const jsonMessage = JSON.parse(message);
-            switch (jsonMessage.action) {
-                case 'ECHO':
-                    wsClient.send(jsonMessage.data);
-                    break;
-                case 'PING':
-                    setTimeout(function() {
-                        wsClient.send('PONG');
-                    }, 2000);
-                    break;
-                default:
-                    console.log('Неизвестная команда');
-                    break;
-            }
-        } catch (error) {
-            console.log('Ошибка', error);
-        }
-    })
-    wsClient.on('close', function() {
-        // отправка уведомления в консоль
-        console.log('Пользователь отключился');
-    })
+const { Server } = require('socket.io');
+const net = require('net');
+
+const io = new Server();
+
+function base64ToArrayBuffer(base64) {
+    var binaryString = atob(base64);
+    var bytes = new Uint8Array(binaryString.length);
+    for (var i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes;
 }
-console.log('Сервер запущен на 9000 порту');
+
+function connection(wsocket, socket){
+    socket.on('data', data => {
+        data = data.toString('base64');
+        wsocket.send(data);
+    });
+    wsocket.on('message', message=>{
+        message = base64ToArrayBuffer(message);
+        socket.write(message);
+    });
+    wsocket.on('disconnect', ()=>{
+        socket.end();
+    });
+    
+}
+
+io.on('connection', (wsocket) => {
+    var socket = null;
+    wsocket.on('message', message=>{
+        if (socket === null){
+            to_connect = JSON.parse(message);
+            socket = new net.Socket();
+            socket.connect(to_connect[1], to_connect[0], ()=>connection(wsocket, socket));
+        }
+    });
+});
+
+io.listen(3000, () => {
+    console.log('listening on localhost:3000');
+});

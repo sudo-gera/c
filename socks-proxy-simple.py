@@ -1,270 +1,327 @@
 # -*- coding: utf-8 -*-
-""" socks5_server
-
-Supports both python 2 and 3.
+"""
+ Small Socks5 Proxy Server in Python
+ from https://github.com/MisterDaneel/
 """
 
-__author__ = "Caleb Madrigal"
-__date__ = '2016-10-17'
-
-#modifed my sudo-gera
-
-from python_socks.sync import Proxy
-
-proxy = Proxy.from_url('http://127.0.0.1:9090')
-# import websocket
-
-import sys
-import argparse
-import logging
+# Network
 import socket
 import select
-import threading
-import ssl
-import time
+from struct import pack, unpack
+# System
+import traceback
+from threading import Thread, activeCount
+from signal import signal, SIGINT, SIGTERM
+from time import sleep
+import sys
 
-import json
+#
+# Configuration
+#
+MAX_THREADS = 200
+BUFSIZE = 2048
+TIMEOUT_SOCKET = 5
+LOCAL_ADDR = '0.0.0.0'
+LOCAL_PORT = 9050
+# Parameter to bind a socket to a device, using SO_BINDTODEVICE
+# Only root can set this option
+# If the name is an empty string or None, the interface is chosen when
+# a routing decision is made
+# OUTGOING_INTERFACE = "eth0"
+OUTGOING_INTERFACE = ""
 
-context = ssl.create_default_context()
-
-
-PY3 = sys.version_info[0] == 3
-if PY3:
-    chr_to_int = lambda x: x
-    encode_str = lambda x: x.encode()
-else:
-    chr_to_int = ord
-    encode_str = lambda x: x
-
-SOCK_TIMEOUT = 5  # seconds
-RESEND_TIMEOUT = 60  # seconds
-MAX_RECEIVE_SIZE = 65536
-
+#
+# Constants
+#
+'''Version of the protocol'''
+# PROTOCOL VERSION 5
 VER = b'\x05'
-METHOD = b'\x00'
-SUCCESS = b'\x00'
-SOCK_FAIL = b'\x01'
-NETWORK_FAIL = b'\x02'
-HOST_FAIL = b'\x04'
-REFUSED = b'\x05'
-TTL_EXPIRED = b'\x06'
-UNSUPPORTED_CMD = b'\x07'
-ADDR_TYPE_UNSUPPORT = b'\x08'
-UNASSIGNED = b'\x09'
-
-ADDR_TYPE_IPV4 = b'\x01'
-ADDR_TYPE_DOMAIN = b'\x03'
-ADDR_TYPE_IPV6 = b'\x04'
-
-CMD_TYPE_CONNECT = b'\x01'
-CMD_TYPE_TCP_BIND = b'\x02'
-CMD_TYPE_UDP = b'\x03'
+'''Method constants'''
+# '00' NO AUTHENTICATION REQUIRED
+M_NOAUTH = b'\x00'
+# 'FF' NO ACCEPTABLE METHODS
+M_NOTAVAILABLE = b'\xff'
+'''Command constants'''
+# CONNECT '01'
+CMD_CONNECT = b'\x01'
+'''Address type constants'''
+# IP V4 address '01'
+ATYP_IPV4 = b'\x01'
+# DOMAINNAME '03'
+ATYP_DOMAINNAME = b'\x03'
 
 
-def make_logger(log_path=None, log_level_str='INFO'):
-    formatter = logging.Formatter('%(asctime)s: %(name)s (%(levelname)s): %(message)s')
-    if log_path:
-        log_handler = logging.FileHandler(log_path)
+class ExitStatus:
+    """ Manage exit status """
+    def __init__(self):
+        self.exit = False
+
+    def set_status(self, status):
+        """ set exist status """
+        self.exit = status
+
+    def get_status(self):
+        """ get exit status """
+        return self.exit
+
+
+def error(msg="", err=None):
+    """ Print exception stack trace python """
+    if msg:
+        traceback.print_exc()
+        print("{} - Code: {}, Message: {}".format(msg, str(err[0]), err[1]))
     else:
-        log_handler = logging.StreamHandler(sys.stdout)
-    log_handler.setFormatter(formatter)
-    logger = logging.getLogger('socks5_server')
-    logger.addHandler(log_handler)
-    log_level = logging.getLevelName(log_level_str.upper())
-    logger.setLevel(log_level)
-    return logger
+        traceback.print_exc()
 
 
-class Socks5Server:
-    def __init__(self, host, port, logger, backlog=128):
-        self.host = host
-        self.port = port
-        self.logger = logger
-        self.backlog = backlog
-        self.client_dest_map_lock = threading.Lock()
-        # This holds client_sock -> dest_sock and dest_sock -> client_sock mappings
-        self.client_dest_map = {}
-        # Maps from sock -> buffer to send to sock
-        self.sock_send_buffers = {}
-
-    def buffer_receive(self, sock):
-        """ Reads into the buffer for the corresponding relay socket. """
-        target_sock = self.client_dest_map[sock]
-        buf = sock.recv(MAX_RECEIVE_SIZE)
-        if len(buf) == 0:
-            self.flush_and_close_sock_pair(sock)
-        elif target_sock not in self.sock_send_buffers:
-            self.sock_send_buffers[target_sock] = buf
-        else:
-            self.sock_send_buffers[target_sock] = self.sock_send_buffers[target_sock] + buf
-
-    def buffer_send(self, sock):
-        if sock in self.sock_send_buffers:
-            bytes_sent = sock.send(self.sock_send_buffers[sock])
-            self.sock_send_buffers[sock] = self.sock_send_buffers[sock][bytes_sent:]
-
-    def flush_and_close_sock_pair(self, sock, error_msg=None):
-        """ Flush any remaining send buffers to the correct socket, close the sockets, and remove
-        the pair of sockets from both the client_dest_map and the sock_send_buffers dicts. """
-        if error_msg:
-            self.logger.error('flushing and closing pair due to error: %s' % error_msg)
-        else:
-            self.logger.info('Flushing and closing finished connection pair')
-        with self.client_dest_map_lock:
-            partner_sock = self.client_dest_map.pop(sock)
-            self.client_dest_map.pop(partner_sock)
+def proxy_loop(socket_src, socket_dst):
+    """ Wait for network activity """
+    while not EXIT.get_status():
         try:
-            partner_sock.send(self.sock_send_buffers.pop(partner_sock, b''))
-            partner_sock.close()
-            sock.send(self.sock_send_buffers.pop(sock, b''))
-            sock.close()
-        except Exception:
-            pass
-
-    def establish_socks5(self, sock):
-        """ Speak the SOCKS5 protocol to get and return dest_host, dest_port. """
-        dest_host, dest_port = None, None
+            reader, _, _ = select.select([socket_src, socket_dst], [], [], 1)
+        except select.error as err:
+            error("Select failed", err)
+            return
+        if not reader:
+            continue
         try:
-            ver, nmethods = sock.recv(1), sock.recv(1)
-            methods = sock.recv(nmethods[0])
-            sock.sendall(VER + METHOD)
-            ver, cmd, rsv, address_type = sock.recv(1), sock.recv(1), sock.recv(1), sock.recv(1)
-            dst_addr = None
-            dst_port = None
-            if address_type == ADDR_TYPE_IPV4:
-                dst_addr, dst_port = sock.recv(4), sock.recv(2)
-                dst_addr = '.'.join([str(chr_to_int(i)) for i in dst_addr])
-            elif address_type == ADDR_TYPE_DOMAIN:
-                addr_len = ord(sock.recv(1))
-                dst_addr, dst_port = sock.recv(addr_len), sock.recv(2)
-                dst_addr = ''.join([chr(chr_to_int(i)) for i in dst_addr])
-            elif address_type == ADDR_TYPE_IPV6:
-                dst_addr, dst_port = sock.recv(16), sock.recv(2)
-                tmp_addr = []
-                for i in range(len(dst_addr) // 2):
-                    tmp_addr.append(chr(dst_addr[2 * i] * 256 + dst_addr[2 * i + 1]))
-                dst_addr = ':'.join(tmp_addr)
-            dst_port = chr_to_int(dst_port[0]) * 256 + chr_to_int(dst_port[1])
-            server_sock = sock
-            server_ip = ''.join([chr(int(i)) for i in socket.gethostbyname(self.host).split('.')])
-            if cmd == CMD_TYPE_TCP_BIND:
-                self.logger.error('TCP Bind requested, but is not supported by socks5_server')
-                sock.close()
-            elif cmd == CMD_TYPE_UDP:
-                self.logger.error('UDP requested, but is not supported by socks5_server')
-                sock.close()
-            elif cmd == CMD_TYPE_CONNECT:
-                sock.sendall(VER + SUCCESS + b'\x00' + b'\x01' + encode_str(server_ip +
-                                        chr(self.port // 256) + chr(self.port % 256)))
-                dest_host, dest_port = dst_addr, dst_port
-            else:
-                # Unsupport/unknown Command
-                self.logger.error('Unsupported/unknown SOCKS5 command requested')
-                sock.sendall(VER + UNSUPPORTED_CMD + encode_str(server_ip + chr(self.port // 256) +
-                                        chr(self.port % 256)))
-                sock.close()
-        except KeyboardInterrupt as e:
-            self.logger.error('Error in SOCKS5 establishment: %s' % e)
-
-        return dest_host, dest_port
-
-    def handle_connect_thread(self, client_sock, addr):
-        """ Handles the establishment of the connection from the client, the socks5 protocol,
-        and to the destination. Once finished, it puts the client and dest sockets into the
-        self.client_dest_map, from where they are serviced by the main loop/thread. """
-        self.logger.info('Connection from: %s:%d' % addr)
-        client_sock.settimeout(SOCK_TIMEOUT)
-
-        dest_host, dest_port = self.establish_socks5(client_sock)
-        if None in (dest_host, dest_port):
-            client_sock.close()
-            return None
-
-        self.logger.debug('Trying to connect to destination: %s:%d' % (dest_host, dest_port))
-        try:
-            # dest_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            # dest_sock.settimeout(RESEND_TIMEOUT)
-            # dest_sock.connect((dest_host, dest_port))
-            dest_sock = proxy.connect(dest_host, dest_port)
-        except Exception as e:
-            self.logger.error('Failed to connect to requested destination (%s:%d) due to error: %s'
-                              % (dest_host, dest_port, e))
-            client_sock.close()
-            return None
-
-        self.logger.debug('Connection to %s:%d established' % (dest_host, dest_port))
-
-        # From this point on, we'll be doing nonblocking io on the sockets
-        client_sock.settimeout(RESEND_TIMEOUT)
-        client_sock.setblocking(0)
-        dest_sock.setblocking(0)
-
-        with self.client_dest_map_lock:
-            self.client_dest_map[client_sock] = dest_sock
-            self.client_dest_map[dest_sock] = client_sock
-        self.logger.info('SOCKS5 proxy from %s:%d to %s:%d established' %
-                         (addr[0], addr[1], dest_host, dest_port))
-
-    def accept_connection(self):
-        (client, addr) = self.server_sock.accept()
-        t = threading.Thread(target=self.handle_connect_thread, args=(client, addr))
-        t.daemon = True
-        t.start()
-
-    def serve_forever(self):
-        self.server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_sock.bind((self.host, self.port))
-        self.server_sock.listen(self.backlog)
-        self.logger.info('Serving on %s:%d' % (self.host, self.port))
-
-        while True:
-            connected_sockets = list(self.client_dest_map.keys())
-            in_socks = [self.server_sock] + connected_sockets
-            out_socks = connected_sockets
-            in_ready, out_ready, err_ready = select.select(in_socks, out_socks, [], 0.1)
-
-            for sock in in_ready:
-                if sock == self.server_sock:
-                    self.accept_connection()
+            for sock in reader:
+                data = sock.recv(BUFSIZE)
+                if not data:
+                    return
+                if sock is socket_dst:
+                    socket_src.send(data)
                 else:
-                    try:
-                        self.buffer_receive(sock)
-                    except Exception as e:
-                        self.flush_and_close_sock_pair(sock, str(e))
-
-            for sock in out_ready:
-                try:
-                    self.buffer_send(sock)
-                except Exception:
-                    self.flush_and_close_sock_pair(sock, str(e))
-
-            for sock in err_ready:
-                if sock == self.server_sock:
-                    self.logger.critical('Error in server socket; closing down')
-                    for c in connected_sockets:
-                        c.close()
-                    self.server_sock.close()
-                    sys.exit(1)
-                else:
-                    self.flush_and_close_sock_pair(sock, 'Unknown socket error')
+                    socket_dst.send(data)
+        except socket.error as err:
+            error("Loop failed", err)
+            return
 
 
-def main(args):
-    logger = make_logger(log_path=args.log_path, log_level_str=args.log_level)
-    socks5_server = Socks5Server(args.host, args.port, logger)
-    socks5_server.serve_forever()
+def connect_to_dst(dst_addr, dst_port):
+    """ Connect to desired destination """
+    sock = create_socket()
+    if OUTGOING_INTERFACE:
+        try:
+            sock.setsockopt(
+                socket.SOL_SOCKET,
+                socket.SO_BINDTODEVICE,
+                OUTGOING_INTERFACE.encode(),
+            )
+        except PermissionError as err:
+            print("Only root can set OUTGOING_INTERFACE parameter")
+            EXIT.set_status(True)
+    try:
+        # sock.connect((dst_addr, dst_port))
+        sock.connect(('127.0.0.1', 9090))
+        print(dst_addr, dst_port)
+        if isinstance(dst_addr, str):
+            dst_addr = dst_addr.encode()
+        # sock.connect(('remote.vdi.mipt.ru', 55749))
+        sock.send(b'CONNECT ' + dst_addr + f':{dst_port} HTTP/1.1\r\nHost: '.encode() + dst_addr + f':{dst_port}\r\nUser-Agent: curl/8.4.0\r\nProxy-Connection: Keep-Alive\r\n\r\n'.encode())
+        print(sock.recv(2**16))
+        return sock
+    except socket.error as err:
+        error("Failed to connect to DST", err)
+        return 0
 
 
+def request_client(wrapper):
+    """ Client request details """
+    # +----+-----+-------+------+----------+----------+
+    # |VER | CMD |  RSV  | ATYP | DST.ADDR | DST.PORT |
+    # +----+-----+-------+------+----------+----------+
+    try:
+        s5_request = wrapper.recv(BUFSIZE)
+    except ConnectionResetError:
+        if wrapper != 0:
+            wrapper.close()
+        error()
+        return False
+    # Check VER, CMD and RSV
+    if (
+            s5_request[0:1] != VER or
+            s5_request[1:2] != CMD_CONNECT or
+            s5_request[2:3] != b'\x00'
+    ):
+        return False
+    # IPV4
+    if s5_request[3:4] == ATYP_IPV4:
+        dst_addr = socket.inet_ntoa(s5_request[4:-2])
+        dst_port = unpack('>H', s5_request[8:len(s5_request)])[0]
+    # DOMAIN NAME
+    elif s5_request[3:4] == ATYP_DOMAINNAME:
+        sz_domain_name = s5_request[4]
+        dst_addr = s5_request[5: 5 + sz_domain_name - len(s5_request)]
+        port_to_unpack = s5_request[5 + sz_domain_name:len(s5_request)]
+        dst_port = unpack('>H', port_to_unpack)[0]
+    else:
+        return False
+    print(dst_addr, dst_port)
+    return (dst_addr, dst_port)
+
+
+def request(wrapper):
+    """
+        The SOCKS request information is sent by the client as soon as it has
+        established a connection to the SOCKS server, and completed the
+        authentication negotiations.  The server evaluates the request, and
+        returns a reply
+    """
+    dst = request_client(wrapper)
+    # Server Reply
+    # +----+-----+-------+------+----------+----------+
+    # |VER | REP |  RSV  | ATYP | BND.ADDR | BND.PORT |
+    # +----+-----+-------+------+----------+----------+
+    rep = b'\x07'
+    bnd = b'\x00' + b'\x00' + b'\x00' + b'\x00' + b'\x00' + b'\x00'
+    if dst:
+        socket_dst = connect_to_dst(dst[0], dst[1])
+    if not dst or socket_dst == 0:
+        rep = b'\x01'
+    else:
+        rep = b'\x00'
+        bnd = socket.inet_aton(socket_dst.getsockname()[0])
+        bnd += pack(">H", socket_dst.getsockname()[1])
+    reply = VER + rep + b'\x00' + ATYP_IPV4 + bnd
+    try:
+        wrapper.sendall(reply)
+    except socket.error:
+        if wrapper != 0:
+            wrapper.close()
+        return
+    # start proxy
+    if rep == b'\x00':
+        proxy_loop(wrapper, socket_dst)
+    if wrapper != 0:
+        wrapper.close()
+    if socket_dst != 0:
+        socket_dst.close()
+
+
+def subnegotiation_client(wrapper):
+    """
+        The client connects to the server, and sends a version
+        identifier/method selection message
+    """
+    # Client Version identifier/method selection message
+    # +----+----------+----------+
+    # |VER | NMETHODS | METHODS  |
+    # +----+----------+----------+
+    try:
+        identification_packet = wrapper.recv(BUFSIZE)
+    except socket.error:
+        error()
+        return M_NOTAVAILABLE
+    # VER field
+    if VER != identification_packet[0:1]:
+        return M_NOTAVAILABLE
+    # METHODS fields
+    nmethods = identification_packet[1]
+    methods = identification_packet[2:]
+    if len(methods) != nmethods:
+        return M_NOTAVAILABLE
+    for method in methods:
+        if method == ord(M_NOAUTH):
+            return M_NOAUTH
+    return M_NOTAVAILABLE
+
+
+def subnegotiation(wrapper):
+    """
+        The client connects to the server, and sends a version
+        identifier/method selection message
+        The server selects from one of the methods given in METHODS, and
+        sends a METHOD selection message
+    """
+    method = subnegotiation_client(wrapper)
+    # Server Method selection message
+    # +----+--------+
+    # |VER | METHOD |
+    # +----+--------+
+    if method != M_NOAUTH:
+        return False
+    reply = VER + method
+    try:
+        wrapper.sendall(reply)
+    except socket.error:
+        error()
+        return False
+    return True
+
+
+def connection(wrapper):
+    """ Function run by a thread """
+    if subnegotiation(wrapper):
+        request(wrapper)
+
+
+def create_socket():
+    """ Create an INET, STREAMing socket """
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(TIMEOUT_SOCKET)
+    except socket.error as err:
+        error("Failed to create socket", err)
+        sys.exit(0)
+    return sock
+
+
+def bind_port(sock):
+    """
+        Bind the socket to address and
+        listen for connections made to the socket
+    """
+    try:
+        print('Bind {}'.format(str(LOCAL_PORT)))
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        sock.bind((LOCAL_ADDR, LOCAL_PORT))
+    except socket.error as err:
+        error("Bind failed", err)
+        sock.close()
+        sys.exit(0)
+    # Listen
+    try:
+        sock.listen(10)
+    except socket.error as err:
+        error("Listen failed", err)
+        sock.close()
+        sys.exit(0)
+    return sock
+
+
+def exit_handler(signum, frame):
+    """ Signal handler called with signal, exit script """
+    print('Signal handler called with signal', signum)
+    EXIT.set_status(True)
+
+
+def main():
+    """ Main function """
+    new_socket = create_socket()
+    bind_port(new_socket)
+    signal(SIGINT, exit_handler)
+    signal(SIGTERM, exit_handler)
+    while not EXIT.get_status():
+        if activeCount() > MAX_THREADS:
+            sleep(3)
+            continue
+        try:
+            wrapper, _ = new_socket.accept()
+            wrapper.setblocking(1)
+        except socket.timeout:
+            continue
+        except socket.error:
+            error()
+            continue
+        except TypeError:
+            error()
+            sys.exit(0)
+        recv_thread = Thread(target=connection, args=(wrapper, ))
+        recv_thread.start()
+    new_socket.close()
+
+
+EXIT = ExitStatus()
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-s', '--host', action='store', default='',
-                        help='IP/Hostname to serve on', type=str)
-    parser.add_argument('-p', '--port', action='store', default=1080,
-                        help='Port to serve on', type=int)
-    parser.add_argument('--log-path', action='store', default=None,
-                        help='DEBUG, INFO, WARNING, ERROR, or CRITICAL', type=str)
-    parser.add_argument('--log-level', action='store', default='INFO',
-                        help='Log file path', type=str)
-    args = parser.parse_args()
-
-    main(args)
+    main()

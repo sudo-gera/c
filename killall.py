@@ -52,7 +52,10 @@ while 1:
         if len(g[1]) > 256:
             print(time.asctime(), f'found {g[0]!r} having {len(g[1])} processes')
             for pid in map(int, g[1]):
-                os.kill(pid, signal.SIGTERM)
+                try:
+                 os.kill(pid, signal.SIGTERM)
+                except Exception as e:
+                 print(type(e), e)
 
 
 
