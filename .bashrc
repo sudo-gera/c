@@ -216,8 +216,6 @@ function scan_range() { for ip in $(seq 1 255) ; do ( ( ping -ot 1 "$1.$ip" 2>/d
 
 
 function ussh(){
-    local current_path
-    current_path="$(pwd)"
     local port
     port="3"
     port="$port$(head -c 99 /dev/urandom | sum | head -c 1)"
@@ -225,10 +223,11 @@ function ussh(){
     port="$port$(head -c 99 /dev/urandom | sum | head -c 1)"
     port="$port$(head -c 99 /dev/urandom | sum | head -c 1)"
     echo "$port"
-    cd ~
-    nohup -- python ~/udp_over_tcp/client.py --connections 16 --listen 0.0.0.0:"$port" --connect 127.0.0.1:64001 --forward 127.0.0.1:"$port" &
+    local client_pid
+    python ~/udp_over_tcp/client.py --connections 16 --listen 0.0.0.0:"$port" --connect 127.0.0.1:64001 --forward 127.0.0.1:"$port" 2>&1 >/dev/null &
+    client_pid="$!"
     mosh -p "$port" --ssh 'ssh -p 2244' localhost -- ssh "$@"
-    kill $(lsof -Pni udp:"$port" | tail -n 1 | sed -E 's/[^0-9]*([0-9]+).*/\1/')
-    cd "$current_path"
+#    kill $(lsof -Plni udp:"$port" | tail -n 1 | sed -E 's/[^0-9]*([0-9]+).*/\1/')
+    kill "${client_pid}"
 }
 
