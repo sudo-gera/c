@@ -1,11 +1,14 @@
 import asyncio
 import argparse
+import time
 
 import stream
 import forwarding_parser
 
 async def copy(reader: stream.Stream, writer: stream.Stream):
     while (data := await reader.read(2**16)):
+        await asyncio.sleep(5)
+        print(time.asctime(), data)
         writer.write(data)
         await writer.drain()
 
