@@ -1,11 +1,18 @@
-#include <atomic>
 
+#include <vector>
+#include <iostream>
 
-auto f(std::atomic<size_t>&a){
-    return a.fetch_add(1);
-}
+struct leak{
+    leak(){
+        std::cout << "constructor" << std::endl;
+    }
+    ~leak(){
+        std::cout << "destructor" << std::endl;
+    }
+    std::vector<leak> a;
+};
 
 int main(){
-    std::atomic<size_t> a;
-    f(a);
+    std::vector<leak> a(1);
+    a[0].a = std::move(a);
 }
