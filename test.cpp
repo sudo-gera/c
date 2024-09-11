@@ -2,6 +2,10 @@
 #include <vector>
 #include <iostream>
 
+
+template<size_t n>
+using f=int;
+
 struct leak{
     leak(){
         std::cout << "constructor" << std::endl;
@@ -10,6 +14,7 @@ struct leak{
         std::cout << "destructor" << std::endl;
     }
     std::vector<leak> a;
+    using f=constant_value<int, sizeof(leak)>;
 };
 
 int main(){
