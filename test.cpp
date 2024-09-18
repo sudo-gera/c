@@ -1,23 +1,23 @@
-
-#include <vector>
+#include <tuple>
+#include <array>
 #include <iostream>
+#include <fstream>
+#include <cassert>
+using namespace std;
 
+int l(){
+    std::ifstream in("");
+}
 
-template<size_t n>
-using f=int;
+constexpr int c(int x){
+    assert(x);
+    return x;
+    // return x < 10 ? x : x * l();
+}
 
-struct leak{
-    leak(){
-        std::cout << "constructor" << std::endl;
-    }
-    ~leak(){
-        std::cout << "destructor" << std::endl;
-    }
-    std::vector<leak> a;
-    using f=constant_value<int, sizeof(leak)>;
-};
+static_assert(c(1));
 
 int main(){
-    std::vector<leak> a(1);
-    a[0].a = std::move(a);
+    array<int, 1> a;
+    cout << get<0>(a) << endl;;
 }
