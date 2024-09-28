@@ -1,12 +1,23 @@
-import asyncio
-from operator import methodcaller
-from functools import partial
+data : dict[int, int] = {}
+exec(open('test.txt').read())
 
-@asyncio.run if __name__ == '__main__' else partial
-@methodcaller(methodcaller.__call__.__name__) if __name__ == '__main__' else partial
-async def main():
-    print(12345)
+import numpy as np
+import matplotlib.pyplot as plt
+import time
 
+data = {k:v for k,v in sorted(data.items())}
+keys = np.array([*data.keys()])
+values = np.array([*data.values()])
 
-# if __name__ == '__main__':
-    # asyncio.run(main())
+fig = plt.figure()
+
+plt.plot(keys, keys)
+plt.plot(keys, keys + 300)
+plt.plot(keys, keys * 0 + int(time.time()))
+plt.plot(keys, values, 'ob')
+
+timer = fig.canvas.new_timer(interval = 5000)
+timer.add_callback(plt.close)
+
+plt.show()
+
