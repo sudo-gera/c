@@ -8,18 +8,8 @@ import forwarding_parser
 
 async def copy(reader: stream.Stream, writer: stream.Stream):
     while (data := await reader.read(2**16)):
-        print(data)
-        print('\n')
-        print(time.asctime(), 'sending...')
-        # await asyncio.sleep(3)
-        # for chunk in data.splitlines(keepends=True):
-        #     writer.write(chunk)
-        #     await writer.drain()
-        #     await asyncio.sleep(0.1)
         writer.write(data)
         await writer.drain()
-        print(time.asctime(), 'done')
-        print('\n')
 
 @stream.streamify
 async def connection(server_socket: stream.Stream):
