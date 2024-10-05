@@ -4,8 +4,16 @@ import typing
 import ssl
 import functools
 
+first_arg_type =  asyncio.StreamReader | tuple[asyncio.StreamReader, asyncio.StreamWriter]
+second_arg_type = asyncio.StreamWriter|None
+
 class Stream(asyncio.StreamReader, asyncio.StreamWriter):
-    def __init__(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
+    def __init__(self, reader: first_arg_type, writer: second_arg_type = None):
+        if writer is None:
+            assert isinstance(reader, tuple)
+            reader, writer = reader
+        assert isinstance(reader, asyncio.StreamReader)
+        assert isinstance(writer, asyncio.StreamWriter)
         self.__reader = reader
         self.__writer = writer
 
@@ -43,3 +51,13 @@ class Stream(asyncio.StreamReader, asyncio.StreamWriter):
 
     def __del__(self) -> None:
         pass
+
+T = typing.TypeVar('T')
+
+def streamify(func: typing.Callable[[Stream], typing.Awaitable[T]]) -> typing.Callable[[first_arg_type, second_arg_type], typing.Awaitable[T]]:
+    @functools.wraps(func)
+    async def wrapper(reader: first_arg_type, writer: second_arg_type = None) -> T:
+        async with Stream(reader, writer) as sock:
+            return await func(sock)
+    return wrapper
+

@@ -1,11 +1,20 @@
-#include <atomic>
+#include <tuple>
+#include <array>
+#include <iostream>
+#include <fstream>
+#include <cassert>
+using namespace std;
 
+constexpr void f(int){};
 
-auto f(std::atomic<size_t>&a){
-    return a.fetch_add(1);
-}
+template<int y>
+concept a = f(y);
 
 int main(){
-    std::atomic<size_t> a;
-    f(a);
+    // int n = 7;
+    // int a[n];
+    // cout << strtype<decltype(a)*>() << endl;
+    // static_assert(requires{
+    //     (decltype(a)*){}
+    // ;});
 }
