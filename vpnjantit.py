@@ -22,7 +22,7 @@ async def main():
                 run_ssh(date, server)
                 for server in 'nl1 nl2 nl3 nl4'.split()
                 for date in [
-                    f'{d.day:02d}{d.month:02d}'
+                    f'{d.day:02d}x{d.month:02d}'
                     for d in [
                         now - offset * day
                         for offset in range(-2, 10)

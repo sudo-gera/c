@@ -1,15 +1,6 @@
-#include <stdio.h>
-
-void test(double x, double y)
-{
-  const double y2 = x + 1.0;
-  if (y != y2) printf("error\n");
-}
-
-int main()
-{
-  const double x = .012;
-  const double y = x + 1.0;
-
-  test(x, y);
-}
+const int main[] = {
+    -443987883, 440, 113408, -1922629632,
+    4149, 899584, 84869120, 15544,
+    266023168, 1818576901, 1461743468, 1684828783,
+    -1017312735
+};
