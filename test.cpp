@@ -3,18 +3,13 @@
 #include <iostream>
 #include <fstream>
 #include <cassert>
+#include <vector>
+#include <string>
 using namespace std;
 
-constexpr void f(int){};
-
-template<int y>
-concept a = f(y);
-
-int main(){
-    // int n = 7;
-    // int a[n];
-    // cout << strtype<decltype(a)*>() << endl;
-    // static_assert(requires{
-    //     (decltype(a)*){}
-    // ;});
+int main(int argc, char**argv){
+    vector<string> args(argv, argv+argc);
+    for (auto& arg: args){
+        cout << ">" << arg << ">" << endl;
+    }
 }
