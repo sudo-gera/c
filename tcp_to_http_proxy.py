@@ -7,7 +7,16 @@ import stream
 import forwarding_parser
 
 async def copy(reader: stream.Stream, writer: stream.Stream):
-    while (data := await reader.read(2**16)):
+    buf = b''
+    while (data := buf + await reader.read(2**16)):
+        buf=b''
+        if args.hex == 'encode':
+            data = b''.join([f'{0:02x}'.encode() for c in data])
+        if args.hex == 'decode':
+            if len(data) % 2:
+                buf += data[-1:]
+                data = data[:-1]
+            data = int(data, 16).to_bytes(len(data)//2, 'big')
         writer.write(data)
         await writer.drain()
 
@@ -28,6 +37,7 @@ async def main():
     parser.add_argument('--listen', type=forwarding_parser.ColonSeparatedSocketSequence(1), required=True)
     parser.add_argument('--proxy', type=forwarding_parser.ColonSeparatedSocketSequence(1), required=True)
     parser.add_argument('--connect', type=forwarding_parser.ColonSeparatedSocketSequence(1))
+    parser.add_argument('--hex', choices=['encode', 'decode', 'none'], default='none')
     global args
     args = parser.parse_args()
 
