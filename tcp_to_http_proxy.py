@@ -6,13 +6,13 @@ import time
 import stream
 import forwarding_parser
 
-async def copy(reader: stream.Stream, writer: stream.Stream):
+async def copy(reader: stream.Stream, writer: stream.Stream, _hex):
     buf = b''
     while (data := buf + await reader.read(2**16)):
         buf=b''
-        if args.hex == 'encode':
-            data = b''.join([f'{0:02x}'.encode() for c in data])
-        if args.hex == 'decode':
+        if _hex == 'encode':
+            data = b''.join([f'{c:02x}'.encode() for c in data])
+        if _hex == 'decode':
             if len(data) % 2:
                 buf += data[-1:]
                 data = data[:-1]
@@ -28,8 +28,8 @@ async def connection(server_socket: stream.Stream):
             await client_socket.drain()
             await client_socket.readuntil(b'\r\n\r\n')
         await asyncio.gather(
-            copy(client_socket, server_socket),
-            copy(server_socket, client_socket),
+            copy(client_socket, server_socket, args.hex),
+            copy(server_socket, client_socket, {'none':'none', 'encode':'decode', 'decode':'encode'}[args.hex]),
         )
 
 async def main():
