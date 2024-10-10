@@ -49,7 +49,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('~')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('~')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -83,7 +83,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('~')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('~')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -114,7 +114,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('\\`')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('\\`')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -148,7 +148,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('?')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('?')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -182,7 +182,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('?')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('?')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -213,7 +213,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('/')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('/')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -247,7 +247,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('>')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('>')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -281,7 +281,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('>')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('>')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -312,7 +312,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('.')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('.')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -346,7 +346,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('<')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('<')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -380,7 +380,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('<')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('<')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -411,7 +411,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press(',')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press(',')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -445,7 +445,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('\\\\\\\"')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('\\\\\\\"')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -479,7 +479,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('\\\\\\\"')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('\\\\\\\"')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -510,7 +510,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('\\'')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('\\'')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -544,7 +544,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('|')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('|')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -578,7 +578,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('|')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('|')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -609,7 +609,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('\\\\\\\\')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('\\\\\\\\')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -643,7 +643,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press(':')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press(':')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -677,7 +677,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press(':')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press(':')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -708,7 +708,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press(';')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press(';')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -742,7 +742,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('}')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('}')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -776,7 +776,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('}')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('}')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -807,7 +807,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press(']')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press(']')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -841,7 +841,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('{')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('{')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -875,7 +875,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('{')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('{')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -906,7 +906,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('[')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('[')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -940,7 +940,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Q')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Q')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -974,7 +974,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('W')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('W')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1008,7 +1008,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('E')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('E')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1042,7 +1042,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('R')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('R')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1076,7 +1076,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('T')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('T')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1110,7 +1110,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Y')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Y')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1144,7 +1144,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('U')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('U')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1178,7 +1178,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('I')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('I')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1212,7 +1212,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('O')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('O')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1246,7 +1246,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('P')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('P')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1280,7 +1280,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('A')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('A')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1314,7 +1314,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('S')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('S')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1348,7 +1348,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('D')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('D')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1382,7 +1382,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('F')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('F')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1416,7 +1416,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('G')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('G')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1450,7 +1450,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('H')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('H')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1484,7 +1484,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('J')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('J')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1518,7 +1518,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('K')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('K')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1552,7 +1552,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('L')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('L')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1586,7 +1586,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Z')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Z')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1620,7 +1620,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('X')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('X')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1654,7 +1654,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('C')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('C')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1688,7 +1688,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('V')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('V')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1722,7 +1722,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('B')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('B')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1756,7 +1756,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('N')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('N')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1790,7 +1790,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('M')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('M')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1824,7 +1824,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Q')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Q')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1858,7 +1858,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('W')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('W')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1892,7 +1892,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('E')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('E')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1926,7 +1926,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('R')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('R')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1960,7 +1960,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('T')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('T')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -1994,7 +1994,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Y')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Y')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2028,7 +2028,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('U')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('U')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2062,7 +2062,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('I')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('I')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2096,7 +2096,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('O')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('O')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2130,7 +2130,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('P')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('P')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2164,7 +2164,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('A')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('A')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2198,7 +2198,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('S')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('S')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2232,7 +2232,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('D')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('D')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2266,7 +2266,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('F')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('F')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2300,7 +2300,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('G')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('G')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2334,7 +2334,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('H')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('H')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2368,7 +2368,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('J')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('J')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2402,7 +2402,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('K')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('K')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2436,7 +2436,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('L')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('L')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2470,7 +2470,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Z')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('Z')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2504,7 +2504,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('X')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('X')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2538,7 +2538,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('C')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('C')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2572,7 +2572,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('V')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('V')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2606,7 +2606,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('B')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('B')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2640,7 +2640,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('N')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('N')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2674,7 +2674,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('M')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('M')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2705,7 +2705,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('q')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('q')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2736,7 +2736,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('w')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('w')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2767,7 +2767,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('e')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('e')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2798,7 +2798,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('r')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('r')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2829,7 +2829,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('t')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('t')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2860,7 +2860,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('y')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('y')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2891,7 +2891,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('u')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('u')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2922,7 +2922,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('i')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('i')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2953,7 +2953,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('o')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('o')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -2984,7 +2984,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('p')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('p')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -3015,7 +3015,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('a')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('a')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -3046,7 +3046,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('s')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('s')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -3077,7 +3077,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('d')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('d')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -3108,7 +3108,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('f')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('f')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -3139,7 +3139,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('g')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('g')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -3170,7 +3170,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('h')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('h')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -3201,7 +3201,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('j')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('j')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -3232,7 +3232,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('k')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('k')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -3263,7 +3263,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('l')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('l')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -3294,7 +3294,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('z')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('z')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -3325,7 +3325,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('x')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('x')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -3356,7 +3356,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('c')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('c')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -3387,7 +3387,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('v')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('v')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -3418,7 +3418,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('b')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('b')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -3449,7 +3449,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('n')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('n')\""
                                     }
                                 ],
                                 "type": "basic"
@@ -3480,7 +3480,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3 -c \"__import__('pynput.keyboard').keyboard.Controller().press('m')\""
+                                        "shell_command": "/opt/homebrew/opt/python@3.10/bin/python3.10 -c \"__import__('pynput.keyboard').keyboard.Controller().press('m')\""
                                     }
                                 ],
                                 "type": "basic"
