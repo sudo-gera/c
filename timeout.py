@@ -10,20 +10,20 @@ async def run_with_timeout(coro: typing.Coroutine[typing.Any, typing.Any, typing
     task.cancel()
     raise asyncio.TimeoutError
 
-async def get_with_timeout(queue, timeout):
-    return await run_with_timeout(queue.get(), timeout) 
+# async def get_with_timeout(queue, timeout):
+#     return await run_with_timeout(queue.get(), timeout) 
 
-async def _test():
-    try:
-        print('begin')
-        await asyncio.sleep(1)
-        print('end')
-    finally:
-        print(traceback.format_exc())
+# async def _test():
+#     try:
+#         print('begin')
+#         await asyncio.sleep(1)
+#         print('end')
+#     finally:
+#         print(traceback.format_exc())
 
-async def _main():
-    await run_with_timeout(_test(), 1.5)
-    await run_with_timeout(_test(), 0.5)
+# async def _main():
+#     await run_with_timeout(_test(), 1.5)
+#     await run_with_timeout(_test(), 0.5)
 
-if __name__ == '__main__':
-    asyncio.run(_main())
+# if __name__ == '__main__':
+#     asyncio.run(_main())

@@ -13,6 +13,7 @@ import time
 import bisect
 import collections
 import retry_loop
+import timeout
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -54,7 +55,7 @@ class OuterConnection:
             # self.inner_recv_count = 0
             self.chunks : collections.deque[tuple[int, bytes]] = collections.deque()
             assert has_never_seen.has_never_seen(con_id)
-            self.sock = stream.Stream(await asyncio.open_connection(*args.connect[0])) if sock is None else sock
+            self.sock = stream.Stream(await timeout.run_with_timeout(asyncio.open_connection(*args.connect[0]), 2)) if sock is None else sock
             self.read_task = asyncio.create_task(self.reader_loop())
         if hasattr(self, 'gateway') and self.gateway is not None:
             await self.gateway.safe_close()
