@@ -35,6 +35,9 @@ class Stream(asyncio.StreamReader, asyncio.StreamWriter):
         return self
 
     async def __aexit__(self, *a: typing.Any) -> None:
+        return await self.safe_close()
+
+    async def safe_close(self) -> None:
         try:
             await self.drain()
             if self.can_write_eof():
