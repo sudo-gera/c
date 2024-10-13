@@ -29,8 +29,13 @@ fail_count = wait_interval * 9
 class InnerStream:
     def __init__(self, s: stream.Stream):
         self.s = s
+    async def _send_msg(self, data: bytes) -> None:
+        try:
+            await self.s.send_msg(data)
+        except Exception as e:
+            logger.debug(f'inner socket is closed: {type(e) = }, {e = }')
     async def send_msg(self, data: bytes) -> None:
-        await timeout.run_with_timeout(self.s.send_msg(data), 2)
+        await timeout.run_with_timeout(self._send_msg(data), 2)
     async def recv_msg(self) -> bytes:
         return cast(bytes, await timeout.run_with_timeout(self.s.recv_msg(), 4))
     async def safe_close(self) -> None:
