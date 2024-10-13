@@ -153,7 +153,7 @@ async def client_connection(sock_: stream.Stream) -> None:
     try:
         while 1:
             try:
-                async with stream.Stream(await asyncio.open_connection(*args.connect[0])) as sock_:
+                async with stream.Stream(await timeout.run_with_timeout(asyncio.open_connection(*args.connect[0]), 2)) as sock_:
                     sock = InnerStream(sock_)
                     await sock.send_msg(con_id + outer_connection.outer_send_count.to_bytes(8, 'big'))
                     outer_connection.inner_send_count = int.from_bytes(await sock.recv_msg(), 'big')
