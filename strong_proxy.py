@@ -22,6 +22,8 @@ args = argparse.Namespace()
 signer = sign.Sign(8)
 con_id_len = 8
 
+wait_interval = 30 * 10**9
+fail_count = wait_interval * 9
 
 class OuterConnection:
     def __new__(cls, con_id: bytes, gateway: stream.Stream | None, sock: stream.Stream | None = None) -> OuterConnection:
@@ -48,7 +50,7 @@ class OuterConnection:
             async with self.sock:
                 while (data := await self.sock.read(2**16)):
                     logger.debug(f'Got data to send inside: {data!r}')
-                    retry = retry_loop.Retry(4*10**9, 32)
+                    retry = retry_loop.Retry(wait_interval, fail_count)
                     while data is not None:
                         while self.gateway is None:
                             logger.debug(f'Waiting while holding: {data!r}')
@@ -106,7 +108,7 @@ async def client_connection(sock: stream.Stream) -> None:
     con_id = random.randbytes(con_id_len)
     logging.debug(f'outer client connected with {con_id.hex() = }')
     outer_connection = await OuterConnection(con_id, None, sock)
-    retry = retry_loop.Retry(4*10**9, 32)
+    retry = retry_loop.Retry(wait_interval, fail_count)
     try:
         while 1:
             try:
