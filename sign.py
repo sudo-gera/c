@@ -2,7 +2,7 @@ import random
 
 Bytes = bytes | bytearray
 
-class Sign:
+class Signer:
     def __init__(self, hash_len: int):
         assert isinstance(hash_len, int)
         assert hash_len >= 0
@@ -30,7 +30,7 @@ class Sign:
 
 if __name__ == '__main__':
     raw_data = b'it works!'
-    signer = Sign(8)
+    signer = Signer(8)
     signed_data = signer.sign(raw_data)
     assert len(signed_data) == len(raw_data) + signer.hash_len
     assert signer.unsign(signed_data) == raw_data
@@ -42,5 +42,5 @@ if __name__ == '__main__':
     except ValueError:
         pass
 
-assert Sign(8).sign(b'it works!')
-assert Sign(8).unsign(Sign(8).sign(b'it works!')) == b'it works!'
+assert Signer(8).sign(b'it works!')
+assert Signer(8).unsign(Signer(8).sign(b'it works!')) == b'it works!'

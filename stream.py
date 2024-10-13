@@ -4,6 +4,9 @@ import typing
 import ssl
 import functools
 
+import sign
+signer = sign.Signer(8)
+
 first_arg_type =  asyncio.StreamReader | tuple[asyncio.StreamReader, asyncio.StreamWriter]
 second_arg_type = asyncio.StreamWriter|None
 
@@ -22,7 +25,7 @@ class Stream(asyncio.StreamReader, asyncio.StreamWriter):
 
     @functools.cache
     def __getattribute__(self, name:str) -> typing.Any:
-        if name.startswith(f'_Stream_') or name in 'safe_write safe_close'.split():
+        if name.startswith(f'_Stream_') or name in 'safe_write safe_close send_msg recv_msg'.split():
             return super().__getattribute__(name)
         a = [w for w in [self.__reader, self.__writer] if name in dir(w)]
         assert len(a) == 1, name
@@ -51,6 +54,17 @@ class Stream(asyncio.StreamReader, asyncio.StreamWriter):
                     raise
         except (OSError, ConnectionResetError):
             pass
+    
+    async def send_msg(self, data: bytes) -> None:
+        data = signer.sign(data)
+        data = len(data).to_bytes(8, 'big') + data
+        await self.safe_write(data)
+
+    async def recv_msg(self) -> bytes:
+        l = int.from_bytes(await self.readexactly(8), 'big')
+        data = await self.readexactly(l)
+        data = signer.unsign(data)
+        return data
 
     def __del__(self) -> None:
         pass
