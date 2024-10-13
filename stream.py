@@ -55,7 +55,7 @@ class Stream(asyncio.StreamReader, asyncio.StreamWriter):
     def __del__(self) -> None:
         pass
 
-    async def safe_write(self, data: bytes):
+    async def safe_write(self, data: bytes) -> None:
         self.write(data)
         await self.drain()
 
