@@ -160,7 +160,7 @@ async def client_connection(sock_: stream.Stream) -> None:
                     logging.debug(f'senging header... {con_id.hex() = }')
                     await sock.send_msg(con_id + outer_connection.outer_send_count.to_bytes(8, 'big'))
                     logging.debug(f'header sent. recving headers... {con_id.hex() = }')
-                    outer_connection.inner_send_count = int.from_bytes(await sock.recv_msg(), 'big')
+                    outer_connection.inner_send_count = int.from_bytes(await timeout.run_with_timeout(sock.recv_msg(), 2), 'big')
                     logging.debug(f'header recved. {con_id.hex() = }')
                     retry.success()
                     outer_connection.gateway = sock
