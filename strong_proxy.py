@@ -10,7 +10,7 @@ signer = sign.Sign(8)
 con_id_len = 256
 
 class OuterConnection:
-    def __new__(cls, con_id: bytes, gateway: stream.Stream):
+    def __new__(cls, con_id: bytes, gateway: stream.Stream, sock: stream.Stream ):
         if con_id not in outer_connections:
             outer_connections[con_id] = super().__new__(cls)
         self = outer_connections[con_id]
@@ -38,7 +38,7 @@ class OuterConnection:
                         await self.gateway.safe_close()
                         self.gateway = None
 
-outer_connections : dict[bytes, OuterConnection] = {}
+outer_connections : dict[bytes, OuterConnection] = {} 
 
 import types
 types.coroutine
