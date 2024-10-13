@@ -126,7 +126,10 @@ types.coroutine
 @stream.streamify
 async def server_connection(sock_: stream.Stream) -> None:
     sock = InnerStream(sock_)
-    data = await sock.recv_msg()
+    try:
+        data = await sock.recv_msg()
+    except Exception as e:
+        logging.debug(f'inner client failed {type(e) = } {e = }')
     con_id, inner_send_count = data[:con_id_len], int.from_bytes(data[con_id_len:], 'big')
     logging.debug(f'inner client connected with {con_id.hex() = }')
     try:
