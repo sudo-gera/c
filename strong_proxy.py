@@ -22,7 +22,7 @@ args = argparse.Namespace()
 # signer = sign.Signer(8)
 con_id_len = 8
 
-wait_interval = 30 * 10**9
+wait_interval = 15 * 10**9
 fail_count = wait_interval * 9
 
 class OuterConnection:
@@ -105,7 +105,7 @@ class OuterConnection:
                 logger.debug(f'successfully send outside: {data!r}')
             return False
         except Exception as e:
-            logger.debug(f'outer socket is closed: {type(e) = }, {e = }')
+            logger.debug(f'inner socket is closed: {type(e) = }, {e = }')
             return True
 
 outer_connections : dict[bytes, OuterConnection] = {} 
@@ -125,12 +125,7 @@ async def server_connection(sock: stream.Stream) -> None:
         await sock.send_msg(outer_connection.outer_send_count.to_bytes(8, 'big'))
     except Exception:
         return
-    try:
-        if not await outer_connection.writer_loop():
-            return
-    except Exception as e:
-        logger.debug(f'inner socket is closed: {con_id.hex()!r}, {type(e) = }, {e = }')
-        return
+    await outer_connection.writer_loop()
 
 
 @stream.streamify
