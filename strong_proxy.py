@@ -15,7 +15,7 @@ import collections
 import retry_loop
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 args = argparse.Namespace()
 
