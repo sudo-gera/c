@@ -145,7 +145,7 @@ async def server_connection(sock_: stream.Stream) -> None:
         return
     await outer_connection.writer_loop()
 
-async def connect_one(out_q: asyncio.Queue[InnerStream], kill_prev: asyncio.Queue[None], kill_this: asyncio.Queue[None]) -> None:
+async def connect_one(out_q: asyncio.Queue[InnerStream], kill_prev: asyncio.Queue[None], kill_this: asyncio.Queue[None], done: asyncio.Queue[None]) -> None:
     try:
         logging.debug(f'_ _ _ opening internal connection...')
         async with stream.Stream(await timeout.run_with_timeout(asyncio.open_connection(*args.connect[0]), 2)) as sock_:
@@ -154,8 +154,11 @@ async def connect_one(out_q: asyncio.Queue[InnerStream], kill_prev: asyncio.Queu
             await sock.send_msg(b'hello')
             assert await sock.recv_msg() == b'hello'
             logging.debug(f'_ _ _ header exchange successfull.')
+            while not out_q.empty():
+                out_q.get_nowait()
             out_q.put_nowait(sock)
             kill_prev.put_nowait(None)
+            done.put_nowait(None)
             await kill_this.get()
     except Exception as e:
         logger.debug(f'_ _ _ inner socket is closed, retrying: {type(e) = }, {e = }')
@@ -165,7 +168,12 @@ async def connect_many(out_q: asyncio.Queue[InnerStream]) -> None:
     while 1:
         kill_prev = kill_this
         kill_this = asyncio.Queue()
-        asyncio.create_task(connect_one(out_q, kill_prev, kill_this))
+        done = asyncio.Queue()
+        asyncio.create_task(connect_one(out_q, kill_prev, kill_this, done))
+        try:
+            await timeout.run_with_timeout(done.get(), 2)
+        except Exception:
+            continue
         await asyncio.sleep(8)
 
 @stream.streamify
@@ -176,7 +184,7 @@ async def client_connection(sock_: stream.Stream) -> None:
     retry = retry_loop.Retry(wait_interval, fail_count)
     try:
         out_q : asyncio.Queue[InnerStream] = asyncio.Queue()
-        asyncio.create_task(connect_many(out_q))
+        many = asyncio.create_task(connect_many(out_q))
         while 1:
             try:
                 logging.debug(f'opening internal connection... {con_id.hex() = }')
@@ -200,6 +208,7 @@ async def client_connection(sock_: stream.Stream) -> None:
                     return
             await asyncio.sleep(0.1)
     finally:
+        many.cancel()
         outer_connections.pop(con_id, None)
 
 
