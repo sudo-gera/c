@@ -128,8 +128,6 @@ types.coroutine
 async def server_connection(sock_: stream.Stream) -> None:
     sock = InnerStream(sock_)
     try:
-        await sock.send_msg(b'hello')
-        assert await sock.recv_msg() == b'hello'
         data = await sock.recv_msg()
     except Exception as e:
         logging.debug(f'inner client failed {type(e) = } {e = }')
@@ -145,36 +143,6 @@ async def server_connection(sock_: stream.Stream) -> None:
         return
     await outer_connection.writer_loop()
 
-async def connect_one(out_q: asyncio.Queue[InnerStream], kill_prev: asyncio.Queue[None], kill_this: asyncio.Queue[None], done: asyncio.Queue[None]) -> None:
-    try:
-        logging.debug(f'_ _ _ opening internal connection...')
-        async with stream.Stream(await timeout.run_with_timeout(asyncio.open_connection(*args.connect[0]), 2)) as sock_:
-            logging.debug(f'_ _ _ internal connection made.')
-            sock = InnerStream(sock_)
-            await sock.send_msg(b'hello')
-            assert await sock.recv_msg() == b'hello'
-            logging.debug(f'_ _ _ header exchange successfull.')
-            while not out_q.empty():
-                out_q.get_nowait()
-            out_q.put_nowait(sock)
-            kill_prev.put_nowait(None)
-            done.put_nowait(None)
-            await kill_this.get()
-    except Exception as e:
-        logger.debug(f'_ _ _ inner socket is closed, retrying: {type(e) = }, {e = }')
-
-async def connect_many(out_q: asyncio.Queue[InnerStream]) -> None:
-    kill_this : asyncio.Queue[None] = asyncio.Queue()
-    while 1:
-        kill_prev = kill_this
-        kill_this = asyncio.Queue()
-        done = asyncio.Queue()
-        asyncio.create_task(connect_one(out_q, kill_prev, kill_this, done))
-        try:
-            await timeout.run_with_timeout(done.get(), 2)
-        except Exception:
-            continue
-        await asyncio.sleep(8)
 
 @stream.streamify
 async def client_connection(sock_: stream.Stream) -> None:
@@ -183,24 +151,21 @@ async def client_connection(sock_: stream.Stream) -> None:
     outer_connection = await OuterConnection(con_id, None, sock_)
     retry = retry_loop.Retry(wait_interval, fail_count)
     try:
-        out_q : asyncio.Queue[InnerStream] = asyncio.Queue()
-        many = asyncio.create_task(connect_many(out_q))
         while 1:
             try:
                 logging.debug(f'opening internal connection... {con_id.hex() = }')
-                sock = await out_q.get()
-                # async with stream.Stream(await timeout.run_with_timeout(asyncio.open_connection(*args.connect[0]), 2)) as sock_:
-                logging.debug(f'internal connection made. {con_id.hex() = }')
-                # sock = InnerStream(sock_)
-                logging.debug(f'senging header... {con_id.hex() = }')
-                await sock.send_msg(con_id + outer_connection.outer_send_count.to_bytes(8, 'big'))
-                logging.debug(f'header sent. recving headers... {con_id.hex() = }')
-                outer_connection.inner_send_count = int.from_bytes(await timeout.run_with_timeout(sock.recv_msg(), 2), 'big')
-                logging.debug(f'header recved. {con_id.hex() = }')
-                retry.success()
-                outer_connection.gateway = sock
-                if not await outer_connection.writer_loop():
-                    return
+                async with stream.Stream(await timeout.run_with_timeout(asyncio.open_connection(*args.connect[0]), 2)) as sock_:
+                    logging.debug(f'internal connection made. {con_id.hex() = }')
+                    sock = InnerStream(sock_)
+                    logging.debug(f'senging header... {con_id.hex() = }')
+                    await sock.send_msg(con_id + outer_connection.outer_send_count.to_bytes(8, 'big'))
+                    logging.debug(f'header sent. recving headers... {con_id.hex() = }')
+                    outer_connection.inner_send_count = int.from_bytes(await timeout.run_with_timeout(sock.recv_msg(), 2), 'big')
+                    logging.debug(f'header recved. {con_id.hex() = }')
+                    retry.success()
+                    outer_connection.gateway = sock
+                    if not await outer_connection.writer_loop():
+                        return
             except Exception as e:
                 outer_connection.gateway = None
                 logger.debug(f'inner socket is closed, retrying: {con_id.hex() = } {type(e) = }, {e = }')
@@ -208,7 +173,6 @@ async def client_connection(sock_: stream.Stream) -> None:
                     return
             await asyncio.sleep(0.1)
     finally:
-        many.cancel()
         outer_connections.pop(con_id, None)
 
 
