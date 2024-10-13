@@ -30,7 +30,7 @@ class InnerStream:
     def __init__(self, s: stream.Stream):
         self.s = s
     async def send_msg(self, data: bytes) -> None:
-        return await self.s.send_msg(data)
+        return await timeout.run_with_timeout(self.s.send_msg(data), 2)
     async def recv_msg(self) -> bytes:
         return await self.s.recv_msg()
     async def safe_close(self) -> None:
