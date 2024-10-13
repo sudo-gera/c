@@ -148,10 +148,13 @@ async def server_connection(sock_: stream.Stream) -> None:
 async def connect_one(out_q: asyncio.Queue[InnerStream], kill_prev: asyncio.Queue[None], kill_this: asyncio.Queue[None]) -> None:
     while 1:
         try:
+            logging.debug(f'_ opening internal connection...')
             async with stream.Stream(await timeout.run_with_timeout(asyncio.open_connection(*args.connect[0]), 2)) as sock_:
+                logging.debug(f'_ internal connection made.')
                 sock = InnerStream(sock_)
                 await sock.send_msg(b'hello')
                 assert await sock.recv_msg() == b'hello'
+                logging.debug(f'_ header exchange successfull.')
                 out_q.put_nowait(sock)
                 kill_prev.put_nowait(None)
                 await kill_this.get()
