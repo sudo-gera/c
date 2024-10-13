@@ -130,6 +130,7 @@ async def server_connection(sock_: stream.Stream) -> None:
         data = await sock.recv_msg()
     except Exception as e:
         logging.debug(f'inner client failed {type(e) = } {e = }')
+        return
     con_id, inner_send_count = data[:con_id_len], int.from_bytes(data[con_id_len:], 'big')
     logging.debug(f'inner client connected with {con_id.hex() = }')
     try:
