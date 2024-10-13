@@ -30,7 +30,7 @@ class InnerStream:
     def __init__(self, s: stream.Stream):
         self.s = s
     async def send_msg(self, data: bytes) -> None:
-        return await timeout.run_with_timeout(self.s.send_msg(data), 2)
+        await timeout.run_with_timeout(self.s.send_msg(data), 2)
     async def recv_msg(self) -> bytes:
         return await self.s.recv_msg()
     async def safe_close(self) -> None:
@@ -153,10 +153,15 @@ async def client_connection(sock_: stream.Stream) -> None:
     try:
         while 1:
             try:
+                logging.debug(f'opening internal connection... {con_id.hex() = }')
                 async with stream.Stream(await timeout.run_with_timeout(asyncio.open_connection(*args.connect[0]), 2)) as sock_:
+                    logging.debug(f'internal connection made. {con_id.hex() = }')
                     sock = InnerStream(sock_)
+                    logging.debug(f'senging header... {con_id.hex() = }')
                     await sock.send_msg(con_id + outer_connection.outer_send_count.to_bytes(8, 'big'))
+                    logging.debug(f'header sent. recving headers... {con_id.hex() = }')
                     outer_connection.inner_send_count = int.from_bytes(await sock.recv_msg(), 'big')
+                    logging.debug(f'header recved. {con_id.hex() = }')
                     retry.success()
                     outer_connection.gateway = sock
                     if not await outer_connection.writer_loop():
