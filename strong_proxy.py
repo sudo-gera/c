@@ -36,8 +36,15 @@ class InnerStream:
             logger.debug(f'inner socket is closed: {type(e) = }, {e = }')
     async def send_msg(self, data: bytes) -> None:
         await timeout.run_with_timeout(self._send_msg(data), 2)
+    async def _recv_msg(self) -> bytes | None:
+        try:
+            return await self.s.recv_msg()
+        except Exception as e:
+            logger.debug(f'inner socket is closed: {type(e) = }, {e = }')
     async def recv_msg(self) -> bytes:
-        return cast(bytes, await timeout.run_with_timeout(self.s.recv_msg(), 4))
+        data = cast(bytes, await timeout.run_with_timeout(self._recv_msg(), 4))
+        assert isinstance(data, bytes)
+        return data
     async def safe_close(self) -> None:
         return await self.s.safe_close()
 
