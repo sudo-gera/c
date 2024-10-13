@@ -25,17 +25,27 @@ con_id_len = 8
 wait_interval = 15 * 10**9
 fail_count = wait_interval * 9
 
+class InnerStream:
+    def __init__(self, s: stream.Stream):
+        self.s = s
+    async def send_msg(self, data: bytes) -> None:
+        return await self.s.send_msg(data)
+    async def recv_msg(self) -> bytes:
+        return await self.s.recv_msg()
+    async def safe_close(self) -> None:
+        return await self.s.safe_close()
+
 class OuterConnection:
-    def __new__(cls, con_id: bytes, gateway: stream.Stream | None, sock: stream.Stream | None = None) -> OuterConnection:
+    def __new__(cls, con_id: bytes, *a: Any) -> OuterConnection:
         if con_id not in outer_connections:
             outer_connections[con_id] = super().__new__(cls)
         self = outer_connections[con_id]
         return self
-    def __init__(self, con_id: bytes, gateway: stream.Stream | None, sock: stream.Stream | None = None):
+    def __init__(self, con_id: bytes, gateway: InnerStream | None, sock: stream.Stream | None = None):
         self._awaiter = self._ainit(con_id, gateway, sock).__await__
     def __await__(self) -> Generator[Any, Any, OuterConnection]:
         return self._awaiter()
-    async def _ainit(self, con_id: bytes, gateway: stream.Stream | None, sock: stream.Stream | None) -> OuterConnection:
+    async def _ainit(self, con_id: bytes, gateway: InnerStream | None, sock: stream.Stream | None) -> OuterConnection:
         self.con_id = con_id
         if not hasattr(self, 'sock'):
             self.outer_send_count = 0
@@ -48,7 +58,7 @@ class OuterConnection:
             self.read_task = asyncio.create_task(self.reader_loop())
         if hasattr(self, 'gateway') and self.gateway is not None:
             await self.gateway.safe_close()
-        self.gateway : stream.Stream | None = gateway
+        self.gateway : InnerStream | None = gateway
         return self
     async def reader_loop(self) -> None:
         try:
@@ -114,7 +124,8 @@ import types
 types.coroutine
 
 @stream.streamify
-async def server_connection(sock: stream.Stream) -> None:
+async def server_connection(sock_: stream.Stream) -> None:
+    sock = InnerStream(sock_)
     data = await sock.recv_msg()
     con_id, inner_send_count = data[:con_id_len], int.from_bytes(data[con_id_len:], 'big')
     logging.debug(f'inner client connected with {con_id.hex() = }')
@@ -129,15 +140,16 @@ async def server_connection(sock: stream.Stream) -> None:
 
 
 @stream.streamify
-async def client_connection(sock: stream.Stream) -> None:
+async def client_connection(sock_: stream.Stream) -> None:
     con_id = random.randbytes(con_id_len)
     logging.debug(f'outer client connected with {con_id.hex() = }')
-    outer_connection = await OuterConnection(con_id, None, sock)
+    outer_connection = await OuterConnection(con_id, None, sock_)
     retry = retry_loop.Retry(wait_interval, fail_count)
     try:
         while 1:
             try:
-                async with stream.Stream(await asyncio.open_connection(*args.connect[0])) as sock:
+                async with stream.Stream(await asyncio.open_connection(*args.connect[0])) as sock_:
+                    sock = InnerStream(sock_)
                     await sock.send_msg(con_id + outer_connection.outer_send_count.to_bytes(8, 'big'))
                     outer_connection.inner_send_count = int.from_bytes(await sock.recv_msg(), 'big')
                     retry.success()
