@@ -66,7 +66,7 @@ class InnerStream:
         await self.s.__aexit__(self, *a)
 
 class OuterConnection:
-    def __new__(cls, con_id: bytes, *a: Any) -> OuterConnection:
+    def __new__(cls, con_id: bytes, *__: Any, **_: Any) -> OuterConnection:
         if con_id not in outer_connections:
             outer_connections[con_id] = super().__new__(cls)
         self = outer_connections[con_id]
