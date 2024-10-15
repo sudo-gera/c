@@ -194,14 +194,14 @@ async def client_connection(sock_: stream.Stream) -> None:
                     logger.debug(f'{con_id.hex() = } senging header...')
                     await sock.send_msg(con_id + outer_connection.outer_send_count.to_bytes(8, 'big'))
                     logger.debug(f'{con_id.hex() = } header sent. recving headers...')
-                    outer_connection.inner_send_count = int.from_bytes(await timeout.run_with_timeout(sock.recv_msg(), 2), 'big')
+                    outer_connection.inner_send_count = int.from_bytes(sock.recv_msg(), 'big')
                     logger.debug(f'{con_id.hex() = } header recved.')
                     retry.success()
                     outer_connection.gateway = sock
                     if not await outer_connection.writer_loop():
                         return
             except Exception as e:
-                assert outer_connection.gateway is sock
+                assert outer_connection.gateway is sock or outer_connection.gateway is None
                 outer_connection.gateway = None
                 logger.debug(f'{con_id.hex() = } Inner socket is closed, retrying: {type(e) = }, {e = }')
                 if retry.fail():
