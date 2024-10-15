@@ -52,12 +52,18 @@ class InnerStream:
             return await self.s.recv_msg()
         except Exception as e:
             logger.debug(f'inner socket raised exc: {type(e) = }, {e = }')
+            return None
     async def recv_msg(self) -> bytes:
         data = cast(bytes, await timeout.run_with_timeout(self._recv_msg(), 4))
         assert isinstance(data, bytes)
         return data
     async def safe_close(self) -> None:
         return await self.s.safe_close()
+    async def __aenter__(self) -> InnerStream:
+        await self.s.__aenter__()
+        return self
+    async def __aexit__(self, *a: Any) -> None:
+        await self.s.__aexit__(self, *a)
 
 class OuterConnection:
     def __new__(cls, con_id: bytes, *a: Any) -> OuterConnection:
