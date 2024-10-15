@@ -139,7 +139,13 @@ class OuterConnection:
             try:
                 while (data := await self.gateway.recv_msg()):
                     chunk = num, data = int.from_bytes(data[:8], 'big'), data[8:]
-                    logger.debug(f'{con_id.hex() = } Got data to send outside: {num = } {chunk[1][:80] = }')
+                    part = chunk[1].splitlines()[0][80:]
+                    try:
+                        part.decode()
+                    except Exception:
+                        part = b''
+                    part = part if part.decode().replace('\n', '').replace('\r', ' ').isprintable() else b''
+                    logger.debug(f'{con_id.hex() = } Got data to send outside: {num = } {part.decode()}')
                     assert num == self.outer_send_count
                     try:
                         await self.sock.safe_write(data)
