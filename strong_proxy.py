@@ -102,11 +102,13 @@ class OuterConnection:
                     if len(self.chunks) > 16:
                         self.chunks.popleft()
                     while self.inner_send_count != self.outer_recv_count:
-                        while self.gateway is None:
-                            logger.debug(f'{con_id.hex() = } Waiting...')
-                            await asyncio.sleep(0.1)
-                            if retry.fail():
-                                return
+                        if self.gateway is None:
+                            logger.debug(f'{con_id.hex() = } Start waiting for gateway...')
+                            while self.gateway is None:
+                                await asyncio.sleep(0.1)
+                                if retry.fail():
+                                    return
+                            logger.debug(f'{con_id.hex() = } Got gateway.')
                         for chunk in self.chunks:
                             if chunk[0] == self.inner_send_count:
                                 break
