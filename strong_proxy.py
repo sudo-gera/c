@@ -65,7 +65,7 @@ class InnerStream:
             return None
     async def recv_msg(self) -> bytes:
         data = cast(bytes, await timeout.run_with_timeout(self._recv_msg(), 4))
-        assert isinstance(data, bytes)
+        assert isinstance(data, bytes), f'Inner socket raised exc'
         return data
     async def safe_close(self) -> None:
         return await self.s.safe_close()
@@ -92,7 +92,7 @@ class OuterConnection:
             self.outer_recv_count = 0
             self.inner_send_count = 0
             self.chunks : collections.deque[tuple[int, bytes]] = collections.deque()
-            assert has_never_seen.has_never_seen(con_id)
+            assert has_never_seen.has_never_seen(con_id), 'duplicate connection'
             self.sock = stream.Stream(await timeout.run_with_timeout(asyncio.open_connection(*args.connect[0]), 2)) if sock is None else sock
             self.read_task = asyncio.create_task(self.reader_loop())
         if hasattr(self, 'gateway') and self.gateway is not None:
@@ -128,7 +128,7 @@ class OuterConnection:
                             return
                         logger.debug(f'{con_id.hex() = } Trying to send inside {chunk[0] = } {get_part(chunk[1])}')
                         try:
-                            assert self.gateway is not None
+                            assert self.gateway is not None, 'no gateway'
                             await self.gateway.send_msg(chunk[0].to_bytes(8, 'big')+chunk[1])
                         except Exception as e:
                             logger.debug(f'{con_id.hex() = } Send inside failed {chunk[0] = } {type(e) = }, {e = }')
@@ -153,13 +153,13 @@ class OuterConnection:
 
     async def writer_loop(self) -> bool:
         con_id = self.con_id
-        assert self.gateway is not None
+        assert self.gateway is not None, 'gateway is none'
         async with self.gateway:
             try:
                 while (data := await self.gateway.recv_msg()):
                     chunk = num, data = int.from_bytes(data[:8], 'big'), data[8:]
                     logger.debug(f'{con_id.hex() = } Got data to send outside: {num = } {get_part(chunk[1])}')
-                    assert num == self.outer_send_count
+                    assert num == self.outer_send_count, 'received wrong packet'
                     try:
                         await self.sock.safe_write(data)
                     except Exception as e:
@@ -223,7 +223,7 @@ async def client_connection(sock_: stream.Stream) -> None:
                     if not await outer_connection.writer_loop():
                         return
             except Exception as e:
-                assert outer_connection.gateway is sock or outer_connection.gateway is None
+                assert outer_connection.gateway is sock or outer_connection.gateway is None, f'{con_id.hex() = } Concurent internal connections.'
                 outer_connection.gateway = None
                 logger.debug(f'{con_id.hex() = } Inner socket is closed, retrying: {type(e) = }, {e = }')
                 if retry.fail():
