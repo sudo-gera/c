@@ -12,19 +12,30 @@ import has_never_seen
 import time
 import bisect
 import collections
-import retry_loop
 import timeout
+from collections import deque
+
+class Retry:
+    def __init__(self, interval: int):
+        self.interval = interval
+    
+    def fail(self) -> bool:
+        ct = time.time_ns()
+        return self.interval + self.last_success < ct
+    
+    def success(self) -> None:
+        self.last_success = time.time_ns()
+    
+
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 args = argparse.Namespace()
 
-# signer = sign.Signer(8)
 con_id_len = 8
 
 wait_interval = 15 * 10**9
-fail_count = wait_interval * 9
 
 class InnerStream:
     def __init__(self, s: stream.Stream):
@@ -33,14 +44,14 @@ class InnerStream:
         try:
             await self.s.send_msg(data)
         except Exception as e:
-            logger.debug(f'inner socket is closed: {type(e) = }, {e = }')
+            logger.debug(f'inner socket raised exc: {type(e) = }, {e = }')
     async def send_msg(self, data: bytes) -> None:
         await timeout.run_with_timeout(self._send_msg(data), 2)
     async def _recv_msg(self) -> bytes | None:
         try:
             return await self.s.recv_msg()
         except Exception as e:
-            logger.debug(f'inner socket is closed: {type(e) = }, {e = }')
+            logger.debug(f'inner socket raised exc: {type(e) = }, {e = }')
     async def recv_msg(self) -> bytes:
         data = cast(bytes, await timeout.run_with_timeout(self._recv_msg(), 4))
         assert isinstance(data, bytes)
@@ -64,7 +75,6 @@ class OuterConnection:
             self.outer_send_count = 0
             self.outer_recv_count = 0
             self.inner_send_count = 0
-            # self.inner_recv_count = 0
             self.chunks : collections.deque[tuple[int, bytes]] = collections.deque()
             assert has_never_seen.has_never_seen(con_id)
             self.sock = stream.Stream(await timeout.run_with_timeout(asyncio.open_connection(*args.connect[0]), 2)) if sock is None else sock
@@ -74,9 +84,10 @@ class OuterConnection:
         self.gateway : InnerStream | None = gateway
         return self
     async def reader_loop(self) -> None:
+        con_id = self.con_id
         try:
             async with self.sock:
-                retry = retry_loop.Retry(wait_interval, fail_count)
+                retry = Retry(wait_interval)
                 while (data := await self.sock.read(2**16)):
                     chunk = (self.outer_recv_count, data)
                     self.outer_recv_count += 1
@@ -85,7 +96,7 @@ class OuterConnection:
                         self.chunks.popleft()
                     while self.inner_send_count != self.outer_recv_count:
                         while self.gateway is None:
-                            logger.debug(f'Waiting...')
+                            logger.debug(f'{con_id.hex() = } Waiting...')
                             await asyncio.sleep(0.1)
                             if retry.fail():
                                 return
@@ -94,42 +105,45 @@ class OuterConnection:
                                 break
                         else:
                             return
-                        logger.debug(f'Got data to send inside: {chunk!r}')
+                        logger.debug(f'{con_id.hex() = } Trying to send inside {chunk[0] = }')
                         try:
                             assert self.gateway is not None
                             await self.gateway.send_msg(chunk[0].to_bytes(8, 'big')+chunk[1])
                         except Exception as e:
-                            logger.debug(f'Send inside failed with, retrying: {data!r}, {type(e) = }, {e = }')
+                            logger.debug(f'{con_id.hex() = } Send inside failed {chunk[0] = } {type(e) = }, {e = }')
                             await self.gateway.safe_close()
                             self.gateway = None
                             if retry.fail():
                                 return
                         else:
-                            logger.debug(f'Successfully sent inside: {chunk!r}')
+                            logger.debug(f'{con_id.hex() = } Sent inside. {chunk[0] = }')
                             retry.success()
                             self.inner_send_count += 1
         finally:
+            logger.debug(f'{con_id.hex() = } Closing outer connection.')
             outer_connections.pop(self.con_id, None)
 
     async def writer_loop(self) -> bool:
+        con_id = self.con_id
         assert self.gateway is not None
-        try:
-            while (chunk := await self.gateway.recv_msg()):
-                num, data = int.from_bytes(chunk[:8], 'big'), chunk[8:]
-                logger.debug(f'got data to send outside: {(num, data)!r}')
-                assert num == self.outer_send_count
-                try:
-                    await self.sock.safe_write(data)
-                except Exception as e:
-                    outer_connections.pop(self.con_id, None)
-                    logger.debug(f'outer socket is closed: {data!r}, {type(e) = }, {e = }')
-                    return False
-                self.outer_send_count += 1
-                logger.debug(f'successfully send outside: {data!r}')
-            return False
-        except Exception as e:
-            logger.debug(f'inner socket is closed: {type(e) = }, {e = }')
-            return True
+        async with self.gateway:
+            try:
+                while (chunk := await self.gateway.recv_msg()):
+                    num, data = int.from_bytes(chunk[:8], 'big'), chunk[8:]
+                    logger.debug(f'{con_id.hex() = } Got data to send outside: {num = }')
+                    assert num == self.outer_send_count
+                    try:
+                        await self.sock.safe_write(data)
+                    except Exception as e:
+                        outer_connections.pop(self.con_id, None)
+                        logger.debug(f'{con_id.hex() = } Outer socket is closed: {type(e) = }, {e = }')
+                        return False
+                    self.outer_send_count += 1
+                    logger.debug(f'{con_id.hex() = } Sent outside {num = }')
+                return False
+            except Exception as e:
+                logger.debug(f'{con_id.hex() = } inner socket is closed: {type(e) = }, {e = }')
+                return True
 
 outer_connections : dict[bytes, OuterConnection] = {} 
 
@@ -145,11 +159,10 @@ async def server_connection(sock_: stream.Stream) -> None:
         logging.debug(f'inner client failed {type(e) = } {e = }')
         return
     con_id, inner_send_count = data[:con_id_len], int.from_bytes(data[con_id_len:], 'big')
-    logging.debug(f'inner client connected with {con_id.hex() = }')
+    logging.debug(f'{con_id.hex() = } New inner client connected.')
     try:
-        outer_connection = await OuterConnection(con_id, sock)
+        outer_connection = await OuterConnection(con_id, gateway=sock)
         outer_connection.inner_send_count = inner_send_count
-        logging.debug(f'sending good for {con_id.hex() = }')
         await sock.send_msg(outer_connection.outer_send_count.to_bytes(8, 'big'))
     except Exception:
         return
@@ -159,32 +172,34 @@ async def server_connection(sock_: stream.Stream) -> None:
 @stream.streamify
 async def client_connection(sock_: stream.Stream) -> None:
     con_id = random.randbytes(con_id_len)
-    logging.debug(f'outer client connected with {con_id.hex() = }')
-    outer_connection = await OuterConnection(con_id, None, sock_)
-    retry = retry_loop.Retry(wait_interval, fail_count)
+    logging.debug(f'{con_id.hex() = } New outer client connected.')
+    outer_connection = await OuterConnection(con_id, gateway=None, sock=sock_)
+    retry = Retry(wait_interval)
     try:
         while 1:
             try:
-                logging.debug(f'opening internal connection... {con_id.hex() = }')
+                logging.debug(f'{con_id.hex() = } opening internal connection...')
                 async with stream.Stream(await timeout.run_with_timeout(asyncio.open_connection(*args.connect[0]), 2)) as sock_:
-                    logging.debug(f'internal connection made. {con_id.hex() = }')
+                    logging.debug(f'{con_id.hex() = } internal connection made.')
                     sock = InnerStream(sock_)
-                    logging.debug(f'senging header... {con_id.hex() = }')
+                    logging.debug(f'{con_id.hex() = } senging header...')
                     await sock.send_msg(con_id + outer_connection.outer_send_count.to_bytes(8, 'big'))
-                    logging.debug(f'header sent. recving headers... {con_id.hex() = }')
+                    logging.debug(f'{con_id.hex() = } header sent. recving headers...')
                     outer_connection.inner_send_count = int.from_bytes(await timeout.run_with_timeout(sock.recv_msg(), 2), 'big')
-                    logging.debug(f'header recved. {con_id.hex() = }')
+                    logging.debug(f'{con_id.hex() = } header recved.')
                     retry.success()
                     outer_connection.gateway = sock
                     if not await outer_connection.writer_loop():
                         return
             except Exception as e:
+                assert outer_connection.gateway is sock
                 outer_connection.gateway = None
-                logger.debug(f'inner socket is closed, retrying: {con_id.hex() = } {type(e) = }, {e = }')
+                logger.debug(f'{con_id.hex() = } Inner socket is closed, retrying: {type(e) = }, {e = }')
                 if retry.fail():
                     return
             await asyncio.sleep(0.1)
     finally:
+        logger.debug(f'{con_id.hex() = } Closing outer connection.')
         outer_connections.pop(con_id, None)
 
 
