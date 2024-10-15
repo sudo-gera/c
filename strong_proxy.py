@@ -48,21 +48,22 @@ def get_part(data: bytes) -> str:
     return part
 
 class InnerStream:
-    def __init__(self, s: stream.Stream):
-        self.s = s
     async def _send_msg(self, data: bytes) -> None:
         try:
             await self.s.send_msg(data)
         except Exception as e:
             logger.debug(f'inner socket raised exc: {type(e) = }, {e = }')
-    async def send_msg(self, data: bytes) -> None:
-        await timeout.run_with_timeout(self._send_msg(data), 2)
     async def _recv_msg(self) -> bytes | Exception:
         try:
             return await self.s.recv_msg()
         except Exception as e:
             logger.debug(f'inner socket raised exc: {type(e) = }, {e = }')
             return e
+
+    def __init__(self, s: stream.Stream):
+        self.s = s
+    async def send_msg(self, data: bytes) -> None:
+        await timeout.run_with_timeout(self._send_msg(data), 2)
     async def recv_msg(self) -> bytes:
         data = cast(bytes, await timeout.run_with_timeout(self._recv_msg(), 4))
         e=data
