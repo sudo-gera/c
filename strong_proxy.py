@@ -30,7 +30,7 @@ class Retry:
 
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG, format='%(levelname)8s %(asctime)s %(filename)s:%(lineno)d %(funcName)s %(message)s')
+logging.basicConfig(level=logging.DEBUG, format='%(levelname)8s %(asctime)s %(filename)s:%(lineno)d %(message)s')
 
 args = argparse.Namespace()
 
@@ -114,7 +114,7 @@ class OuterConnection:
                                 break
                         else:
                             return
-                        logger.debug(f'{con_id.hex() = } Trying to send inside {chunk[0] = }')
+                        logger.debug(f'{con_id.hex() = } Trying to send inside {chunk[0] = } {chunk[1][:80] = }')
                         try:
                             assert self.gateway is not None
                             await self.gateway.send_msg(chunk[0].to_bytes(8, 'big')+chunk[1])
@@ -137,9 +137,9 @@ class OuterConnection:
         assert self.gateway is not None
         async with self.gateway:
             try:
-                while (chunk := await self.gateway.recv_msg()):
-                    num, data = int.from_bytes(chunk[:8], 'big'), chunk[8:]
-                    logger.debug(f'{con_id.hex() = } Got data to send outside: {num = }')
+                while (data := await self.gateway.recv_msg()):
+                    chunk = num, data = int.from_bytes(data[:8], 'big'), data[8:]
+                    logger.debug(f'{con_id.hex() = } Got data to send outside: {num = } {chunk[1][:80] = }')
                     assert num == self.outer_send_count
                     try:
                         await self.sock.safe_write(data)
