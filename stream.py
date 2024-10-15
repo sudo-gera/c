@@ -25,7 +25,7 @@ class Stream(asyncio.StreamReader, asyncio.StreamWriter):
 
     @functools.cache
     def __getattribute__(self, name:str) -> typing.Any:
-        if name.startswith(f'_Stream_') or name in 'safe_write safe_close send_msg recv_msg'.split():
+        if name.startswith(f'_Stream_') or name in 'safe_write safe_close send_msg recv_msg __aenter__ __aexit__'.split():
             return super().__getattribute__(name)
         a = [w for w in [self.__reader, self.__writer] if name in dir(w)]
         assert len(a) == 1, name
