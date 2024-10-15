@@ -137,8 +137,11 @@ class OuterConnection:
                             logger.debug(f'{con_id.hex() = } Sent inside. {chunk[0] = }')
                             retry.success()
                             self.inner_send_count += 1
-        finally:
+        except Exception as e:
+            logger.debug(f'{con_id.hex() = } Closing outer connection. {type(e) = }, {e = }')
+        else:
             logger.debug(f'{con_id.hex() = } Closing outer connection.')
+        finally:
             outer_connections.pop(self.con_id, None)
 
     async def writer_loop(self) -> bool:
@@ -216,8 +219,11 @@ async def client_connection(sock_: stream.Stream) -> None:
                 if retry.fail():
                     return
             await asyncio.sleep(0.1)
-    finally:
+    except Exception as e:
+        logger.debug(f'{con_id.hex() = } Closing outer connection. {type(e) = }, {e = }')
+    else:
         logger.debug(f'{con_id.hex() = } Closing outer connection.')
+    finally:
         outer_connections.pop(con_id, None)
 
 
