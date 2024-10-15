@@ -18,6 +18,7 @@ from collections import deque
 class Retry:
     def __init__(self, interval: int):
         self.interval = interval
+        self.last_success = time.time_ns()
     
     def fail(self) -> bool:
         ct = time.time_ns()
