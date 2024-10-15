@@ -39,13 +39,13 @@ con_id_len = 8
 wait_interval = 15 * 10**9
 
 def get_part(data: bytes) -> str:
-    part = data.splitlines()[0][80:]
     try:
-        part.decode()
+        part = data.decode()
     except Exception:
-        part = b''
-    part = part if part.decode().replace('\n', '').replace('\r', ' ').isprintable() else b''
-    return part.decode()
+        part = ''
+    part = part.splitlines()[0][:80]
+    part = part if part.isprintable() else ''
+    return part
 
 class InnerStream:
     def __init__(self, s: stream.Stream):
