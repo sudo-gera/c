@@ -30,7 +30,7 @@ class Retry:
 
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG, format='%(levelname)8s:%(asctime)s:%(filename)s:%(lineno)d:%(funcName)s')
 
 args = argparse.Namespace()
 
