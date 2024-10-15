@@ -38,6 +38,15 @@ con_id_len = 8
 
 wait_interval = 15 * 10**9
 
+def get_part(data: bytes) -> str:
+    part = data.splitlines()[0][80:]
+    try:
+        part.decode()
+    except Exception:
+        part = b''
+    part = part if part.decode().replace('\n', '').replace('\r', ' ').isprintable() else b''
+    return part.decode()
+
 class InnerStream:
     def __init__(self, s: stream.Stream):
         self.s = s
@@ -114,7 +123,7 @@ class OuterConnection:
                                 break
                         else:
                             return
-                        logger.debug(f'{con_id.hex() = } Trying to send inside {chunk[0] = } {chunk[1][:80] = }')
+                        logger.debug(f'{con_id.hex() = } Trying to send inside {chunk[0] = } {get_part(chunk[1])}')
                         try:
                             assert self.gateway is not None
                             await self.gateway.send_msg(chunk[0].to_bytes(8, 'big')+chunk[1])
@@ -139,13 +148,7 @@ class OuterConnection:
             try:
                 while (data := await self.gateway.recv_msg()):
                     chunk = num, data = int.from_bytes(data[:8], 'big'), data[8:]
-                    part = chunk[1].splitlines()[0][80:]
-                    try:
-                        part.decode()
-                    except Exception:
-                        part = b''
-                    part = part if part.decode().replace('\n', '').replace('\r', ' ').isprintable() else b''
-                    logger.debug(f'{con_id.hex() = } Got data to send outside: {num = } {part.decode()}')
+                    logger.debug(f'{con_id.hex() = } Got data to send outside: {num = } {get_part(chunk[1])}')
                     assert num == self.outer_send_count
                     try:
                         await self.sock.safe_write(data)
