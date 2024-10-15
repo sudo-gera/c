@@ -43,7 +43,7 @@ def get_part(data: bytes) -> str:
         part = data.decode()
     except Exception:
         part = ''
-    part = part.splitlines()[0][:80]
+    part = (part.splitlines() + [''])[0][:80]
     part = part if part.isprintable() else ''
     return part
 
