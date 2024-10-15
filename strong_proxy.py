@@ -162,10 +162,10 @@ async def server_connection(sock_: stream.Stream) -> None:
     try:
         data = await sock.recv_msg()
     except Exception as e:
-        logging.debug(f'inner client failed {type(e) = } {e = }')
+        logger.debug(f'inner client failed {type(e) = } {e = }')
         return
     con_id, inner_send_count = data[:con_id_len], int.from_bytes(data[con_id_len:], 'big')
-    logging.debug(f'{con_id.hex() = } New inner client connected.')
+    logger.debug(f'{con_id.hex() = } New inner client connected.')
     try:
         outer_connection = await OuterConnection(con_id, gateway=sock)
         outer_connection.inner_send_count = inner_send_count
@@ -178,21 +178,21 @@ async def server_connection(sock_: stream.Stream) -> None:
 @stream.streamify
 async def client_connection(sock_: stream.Stream) -> None:
     con_id = random.randbytes(con_id_len)
-    logging.debug(f'{con_id.hex() = } New outer client connected.')
+    logger.debug(f'{con_id.hex() = } New outer client connected.')
     outer_connection = await OuterConnection(con_id, gateway=None, sock=sock_)
     retry = Retry(wait_interval)
     try:
         while 1:
             try:
-                logging.debug(f'{con_id.hex() = } opening internal connection...')
+                logger.debug(f'{con_id.hex() = } opening internal connection...')
                 async with stream.Stream(await timeout.run_with_timeout(asyncio.open_connection(*args.connect[0]), 2)) as sock_:
-                    logging.debug(f'{con_id.hex() = } internal connection made.')
+                    logger.debug(f'{con_id.hex() = } internal connection made.')
                     sock = InnerStream(sock_)
-                    logging.debug(f'{con_id.hex() = } senging header...')
+                    logger.debug(f'{con_id.hex() = } senging header...')
                     await sock.send_msg(con_id + outer_connection.outer_send_count.to_bytes(8, 'big'))
-                    logging.debug(f'{con_id.hex() = } header sent. recving headers...')
+                    logger.debug(f'{con_id.hex() = } header sent. recving headers...')
                     outer_connection.inner_send_count = int.from_bytes(await timeout.run_with_timeout(sock.recv_msg(), 2), 'big')
-                    logging.debug(f'{con_id.hex() = } header recved.')
+                    logger.debug(f'{con_id.hex() = } header recved.')
                     retry.success()
                     outer_connection.gateway = sock
                     if not await outer_connection.writer_loop():
