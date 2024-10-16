@@ -36,7 +36,8 @@ class StreamImpl:
 
     async def __aexit__(self, *a: typing.Any) -> None:
         await self.safe_close()
-        await drainers.pop(id(self), asyncio.sleep(0))
+        if id(self) in drainers:
+            await drainers.pop(id(self))
 
     def __del__(self) -> None:
         drainers.pop(id(self), None)
@@ -103,10 +104,11 @@ class Stream(asyncio.StreamReader, asyncio.StreamWriter, StreamImpl):
         self.__impl = StreamImpl(self, reader, writer)
 
     def __dir__(self) -> list[str]:
-        return dir(self.__reader) + dir(self.__writer) + dir(self.__impl)
+        return dir(self.__impl.reader) + dir(self.__impl.writer) + dir(self.__impl)
 
     @functools.cache
     def __getattribute__(self, name:str) -> typing.Any:
+        print('get', name)
         if name.startswith(f'_Stream_') or name in 'safe_write safe_close send_msg recv_msg __aenter__ __aexit__'.split():
             return super().__getattribute__(name)
         a = [w for w in [self.__impl.reader, self.__impl.writer, self.__impl] if name in dir(w)]
@@ -118,6 +120,12 @@ class Stream(asyncio.StreamReader, asyncio.StreamWriter, StreamImpl):
 
     def __del__(self) -> None:
         pass
+
+    async def __aenter__(self) -> Stream:
+        return await self.__impl.__aenter__()
+
+    async def __aexit__(self, *a: typing.Any) -> None:
+        return await self.__impl.__aexit__(*a)
 
 T = typing.TypeVar('T')
 
