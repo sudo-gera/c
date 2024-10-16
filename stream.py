@@ -8,27 +8,30 @@ import await_if_necessary
 import sign
 signer = sign.Signer(8)
 
-first_arg_type =  asyncio.StreamReader | tuple[asyncio.StreamReader, asyncio.StreamWriter] | typing.Awaitable[asyncio.StreamReader], 
-second_arg_type = asyncio.StreamWriter|None
+first_arg_type =  asyncio.StreamReader | tuple[asyncio.StreamReader, asyncio.StreamWriter] | typing.Awaitable[asyncio.StreamReader] | typing.Awaitable[tuple[asyncio.StreamReader, asyncio.StreamWriter]]
+second_arg_type = asyncio.StreamWriter | None | typing.Awaitable[asyncio.StreamWriter]
 
-drainers : dict[int, asyncio.Task] = {}
+drainers : dict[int, asyncio.Task[None]] = {}
 
 class StreamImpl:
-    def __init__(self, stream: Stream, reader, writer):
+    def __init__(self, stream: Stream, reader: first_arg_type, writer: second_arg_type):
         self.stream = stream
-        self.write_exc = Exception | None = None
-        self.reader = reader
-        self.writer = writer
+        self.write_exc : Exception | None = None
+        self._reader = reader
+        self._writer = writer
 
     async def __aenter__(self) -> Stream:
-        self.reader = await await_if_necessary.await_if_necessary(self.reader)
-        self.writer = await await_if_necessary.await_if_necessary(self.writer)
-        if self.writer is None:
-            self.reader, self.writer = self.reader
-        self.reader = await await_if_necessary.await_if_necessary(self.reader)
-        self.writer = await await_if_necessary.await_if_necessary(self.writer)
-        assert isinstance(self.reader, asyncio.StreamReader)
-        assert isinstance(self.writer, asyncio.StreamWriter)
+        self._reader = await await_if_necessary.await_if_necessary(self._reader)
+        self._writer = await await_if_necessary.await_if_necessary(self._writer)
+        if self._writer is None:
+            assert isinstance(self._reader, tuple)
+            self._reader, self._writer = self._reader
+        self._reader = await await_if_necessary.await_if_necessary(self._reader)
+        self._writer = await await_if_necessary.await_if_necessary(self._writer)
+        assert isinstance(self._reader, asyncio.StreamReader)
+        assert isinstance(self._writer, asyncio.StreamWriter)
+        self.reader = self._reader
+        self.writer = self._writer
         return self.stream
 
     async def __aexit__(self, *a: typing.Any) -> None:
@@ -106,12 +109,12 @@ class Stream(asyncio.StreamReader, asyncio.StreamWriter, StreamImpl):
     def __getattribute__(self, name:str) -> typing.Any:
         if name.startswith(f'_Stream_') or name in 'safe_write safe_close send_msg recv_msg __aenter__ __aexit__'.split():
             return super().__getattribute__(name)
-        a = [w for w in [self.__reader, self.__writer, self.__impl] if name in dir(w)]
+        a = [w for w in [self.__impl.reader, self.__impl.writer, self.__impl] if name in dir(w)]
         assert len(a) == 1, name
         return getattr(a[0], name)
 
     def __repr__(self) -> str:
-        return repr((self.__reader, self.__writer))
+        return repr((self.__impl.reader, self.__impl.writer))
 
     def __del__(self) -> None:
         pass
