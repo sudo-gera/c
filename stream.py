@@ -3,21 +3,32 @@ import asyncio
 import typing
 import ssl
 import functools
+import await_if_necessary
 
 import sign
 signer = sign.Signer(8)
 
-first_arg_type =  asyncio.StreamReader | tuple[asyncio.StreamReader, asyncio.StreamWriter]
+first_arg_type =  asyncio.StreamReader | tuple[asyncio.StreamReader, asyncio.StreamWriter] | typing.Awaitable[asyncio.StreamReader], 
 second_arg_type = asyncio.StreamWriter|None
 
 drainers : dict[int, asyncio.Task] = {}
 
-class StreamPlugin:
-    def __init__(self, stream: Stream):
+class StreamImpl:
+    def __init__(self, stream: Stream, reader, writer):
         self.stream = stream
         self.write_exc = Exception | None = None
+        self.reader = reader
+        self.writer = writer
 
     async def __aenter__(self) -> Stream:
+        self.reader = await await_if_necessary.await_if_necessary(self.reader)
+        self.writer = await await_if_necessary.await_if_necessary(self.writer)
+        if self.writer is None:
+            self.reader, self.writer = self.reader
+        self.reader = await await_if_necessary.await_if_necessary(self.reader)
+        self.writer = await await_if_necessary.await_if_necessary(self.writer)
+        assert isinstance(self.reader, asyncio.StreamReader)
+        assert isinstance(self.writer, asyncio.StreamWriter)
         return self.stream
 
     async def __aexit__(self, *a: typing.Any) -> None:
@@ -54,15 +65,21 @@ class StreamPlugin:
         return data
 
     async def safe_write(self, data: bytes) -> None:
-        self.stream.write(data)
-        await self.safe_drain()
+        await self.safe_drain(lambda: self.stream.write(data))
 
-    async def safe_drain(self) -> None:
+    async def safe_write_eof(self) -> None:
+        await self.safe_drain(lambda: self.stream.write_eof())
+
+    async def safe_drain(self, writer: typing.Callable[[], None] | None = None) -> None:
         if self.write_exc is not None:
             raise self.write_exc
+        if writer is not None:
+            writer()
         if id(self) not in drainers:
             drainers[id(self)] = asyncio.create_task(self._safe_drain())
         await asyncio.shield(drainers[id(self)])
+        if self.write_exc is not None:
+            raise self.write_exc
 
     async def _safe_drain(self) -> None:
         try:
@@ -71,25 +88,25 @@ class StreamPlugin:
             self.write_exc = e
 
 
-class Stream(asyncio.StreamReader, asyncio.StreamWriter, StreamPlugin):
+class Stream(asyncio.StreamReader, asyncio.StreamWriter, StreamImpl):
     def __init__(self, reader: first_arg_type, writer: second_arg_type = None):
-        if writer is None:
-            assert isinstance(reader, tuple)
-            reader, writer = reader
-        assert isinstance(reader, asyncio.StreamReader)
-        assert isinstance(writer, asyncio.StreamWriter)
-        self.__reader = reader
-        self.__writer = writer
-        self.__plugin = StreamPlugin(self)
+        # if writer is None:
+        #     assert isinstance(reader, tuple)
+        #     reader, writer = reader
+        # assert isinstance(reader, asyncio.StreamReader)
+        # assert isinstance(writer, asyncio.StreamWriter)
+        # self.__reader = reader
+        # self.__writer = writer
+        self.__impl = StreamImpl(self, reader, writer)
 
     def __dir__(self) -> list[str]:
-        return dir(self.__reader) + dir(self.__writer) + dir(self.__plugin)
+        return dir(self.__reader) + dir(self.__writer) + dir(self.__impl)
 
     @functools.cache
     def __getattribute__(self, name:str) -> typing.Any:
         if name.startswith(f'_Stream_') or name in 'safe_write safe_close send_msg recv_msg __aenter__ __aexit__'.split():
             return super().__getattribute__(name)
-        a = [w for w in [self.__reader, self.__writer, self.__plugin] if name in dir(w)]
+        a = [w for w in [self.__reader, self.__writer, self.__impl] if name in dir(w)]
         assert len(a) == 1, name
         return getattr(a[0], name)
 
