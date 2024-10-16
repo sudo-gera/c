@@ -41,12 +41,9 @@ class StreamImpl:
         await self.safe_close()
         if id(self) in drainers:
             await drainers.pop(id(self))
-<<<<<<< HEAD
         del self.reader
         del self.writer
         self.entered = False
-=======
->>>>>>> 462427cefd2494cf156b0490e6221d25ed699fb0
 
     def __del__(self) -> None:
         drainers.pop(id(self), None)
