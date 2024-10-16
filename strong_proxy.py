@@ -144,16 +144,17 @@ class OuterConnection:
                 logger.debug(f'{con_id.hex() = } Outer socket is closed: {type(e) = }, {e = }')
                 raise
 
-            chunk = (self.outer_recv_count, data)
-            self.outer_recv_count += 1
+            if self.outer_recv_reached_EOF_at is None:
+                if not data:
+                    logger.debug(f'{con_id.hex() = } EOF is reached while reading outer connection.')
+                    self.outer_recv_reached_EOF_at = self.outer_recv_count
 
-            if not data:
-                logger.debug(f'{con_id.hex() = } EOF is reached while reading outer connection.')
-                self.outer_recv_reached_EOF_at = self.outer_recv_count
+                chunk = (self.outer_recv_count, data)
+                self.outer_recv_count += 1
 
-            self.chunks.append(chunk)
-            if len(self.chunks) > 16:
-                self.chunks.popleft()
+                self.chunks.append(chunk)
+                if len(self.chunks) > 16:
+                    self.chunks.popleft()
 
             while self.inner_send_count != self.outer_recv_count:
                 if self.gateway is None:
@@ -163,7 +164,7 @@ class OuterConnection:
                         if self.retry.fail():
                             logger.debug(f'{con_id.hex() = } Waiting for gateway timed out.')
                             raise TabError('Waiting for timed out.')
-                logger.debug(f'{con_id.hex() = } Got gateway for recving.')
+                logger.debug(f'{con_id.hex() = } Got gateway for sending.')
                 gateway = self.gateway
                 assert gateway is not None, 'no gateway'
                 for chunk in self.chunks:
