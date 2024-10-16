@@ -110,7 +110,7 @@ class Stream(asyncio.StreamReader, asyncio.StreamWriter, StreamImpl):
 
     @functools.cache
     def __getattribute__(self, name:str) -> typing.Any:
-        if name.startswith(f'_Stream_'):
+        if name.startswith(f'_Stream_') or name in '__aexit__'.split():
             return super().__getattribute__(name)
         a = [w for w in [self.__impl.reader, self.__impl.writer, self.__impl] if name in dir(w)]
         assert len(a) == 1, name

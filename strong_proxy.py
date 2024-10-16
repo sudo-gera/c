@@ -128,8 +128,6 @@ class OuterConnection:
                 )
         except Exception as e:
             logger.debug(f'{con_id.hex() = } Closing outer connection. {type(e) = }, {e = }')
-            if isinstance(e, AssertionError):
-                raise
         else:
             logger.debug(f'{con_id.hex() = } Closing outer connection.')
         finally:
