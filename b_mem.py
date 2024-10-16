@@ -77,13 +77,13 @@ class node(typing.Generic[T]):
             self.data[t] = elem;
         elif (self.down[0] is None):
             w = 0;
-            while w < list_size(self.data) and self.data[w] < elem:
+            while (w < list_size(self.data) and self.data[w] < elem):
                 w += 1;
             list_insert(self.data, w, elem);
             list_insert(self.down, 0, None);
         else:
             w = 0;
-            while w < list_size(self.data) and self.data[w] < elem:
+            while (w < list_size(self.data) and self.data[w] < elem):
                 w += 1;
             self.down[w] = node.insert(self.down[w], elem, max_len);
             tmp = self.down[w];
@@ -118,7 +118,7 @@ class node(typing.Generic[T]):
         if (self.down[0] is None):
             return False;
         w = 0;
-        while w < list_size(self.data) and self.data[w] < elem:
+        while (w < list_size(self.data) and self.data[w] < elem):
             w += 1;
         tmp = self.down[w];
         assert tmp is not None;
@@ -138,7 +138,7 @@ class node(typing.Generic[T]):
             list_erase(self.down, 0);
         else:
             w = 0;
-            while w < list_size(self.data) and self.data[w] < elem:
+            while (w < list_size(self.data) and self.data[w] < elem):
                 w += 1;
             tmp = self.down[w];
             assert tmp is not None;
@@ -259,7 +259,7 @@ class b_set(typing.Generic[T]):
         if (a[-1][0].down[0] is not None):
             t = a[-1][0].down[list_index(a[-1][0].data, v) + 1];
             assert t is not None;
-            while t.down[0] is not None:
+            while (t.down[0] is not None):
                 t = t.down[0];
             kw = t.data[0];
             r = node.erase(r, kw, self.max_len);
@@ -386,7 +386,7 @@ if (__name__ == '__main__'):
     #     f = set(s_s.to_list());
     #     assert a_s == f;
 
-    # while a_s:
+    # while (a_s):
     #     r = random.choice(list(a_s));
     #     a_s.remove(r);
     #     s_s.remove(r);
@@ -417,7 +417,7 @@ if (__name__ == '__main__'):
             del s_d[k];
         if (q == 4 and a_d):
             k = random.randint(-9999, 9999);
-            while k in a_d:
+            while (k in a_d):
                 k = random.randint(-9999, 9999);
             try:
                 del a_d[k];
@@ -427,7 +427,7 @@ if (__name__ == '__main__'):
             del s_d[k];
         if (q == 5 and a_d):
             k = random.randint(-9999, 9999);
-            while k in a_d:
+            while (k in a_d):
                 k = random.randint(-9999, 9999);
             try:
                 a_d[k];
@@ -457,7 +457,7 @@ if (__name__ == '__main__'):
     print([time.time()-t,(t:=time.time())][0]);
 
     w = 0;
-    while a_d:
+    while (a_d):
         k = random.choice(list(a_d));
         del a_d[k];
         del s_d[k];
@@ -503,7 +503,7 @@ if (__name__ == '__main__'):
     # root_set(0.0);
 
     # w = 0;
-    # while a_d:
+    # while (a_d):
     #     k = random.choice(list(a_d));
     #     del a_d[k];
     #     del s_d[k];
