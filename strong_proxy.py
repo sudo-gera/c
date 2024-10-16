@@ -48,27 +48,32 @@ def get_part(data: bytes) -> str:
     return part
 
 class InnerStream:
-    async def _send_msg(self, data: bytes) -> None:
-        try:
-            await self.s.send_msg(data)
-        except Exception as e:
-            logger.debug(f'inner socket raised exc: {type(e) = }, {e = }')
-    async def _recv_msg(self) -> bytes | Exception:
-        try:
-            return await self.s.recv_msg()
-        except Exception as e:
-            logger.debug(f'inner socket raised exc: {type(e) = }, {e = }')
-            return e
+    # async def _send_msg(self, data: bytes) -> None:
+    #     try:
+    #         await self.s.send_msg(data)
+    #     except Exception as e:
+    #         logger.debug(f'inner socket raised exc: {type(e) = }, {e = }')
+    # async def _recv_msg(self) -> bytes | Exception:
+    #     try:
+    #         return await self.s.recv_msg()
+    #     except Exception as e:
+    #         logger.debug(f'inner socket raised exc: {type(e) = }, {e = }')
+    #         return e
+
+    # async def send_msg(self, data: bytes) -> None:
+    #     await timeout.run_with_timeout(self._send_msg(data), 2)
+    # async def recv_msg(self) -> bytes:
+    #     data = cast(bytes, await timeout.run_with_timeout(self._recv_msg(), 4))
+    #     e=data
+    #     assert isinstance(data, bytes), f'Inner socket raised exc: {type(e) = }, {e = }'
+    #     return data
+    async def send_msg(self, data: bytes) -> None:
+        await timeout.run_with_timeout(self.s.send_msg(data), 2)
+    async def recv_msg(self) -> bytes:
+        return await timeout.run_with_timeout(self.s.recv_msg(), 4)
 
     def __init__(self, s: stream.Stream):
         self.s = s
-    async def send_msg(self, data: bytes) -> None:
-        await timeout.run_with_timeout(self._send_msg(data), 2)
-    async def recv_msg(self) -> bytes:
-        data = cast(bytes, await timeout.run_with_timeout(self._recv_msg(), 4))
-        e=data
-        assert isinstance(data, bytes), f'Inner socket raised exc: {type(e) = }, {e = }'
-        return data
     async def safe_close(self) -> None:
         return await self.s.safe_close()
     async def __aenter__(self) -> InnerStream:
