@@ -78,7 +78,7 @@ class InnerStream:
     async def send_msg(self, data: bytes) -> None:
         return await timeout.run_with_timeout(self.s.send_msg(data), 2)
     async def recv_msg(self) -> bytes:
-        return await timeout.run_with_timeout(self.s.recv_msg(), 15)
+        return await timeout.run_with_timeout(self.s.recv_msg(), 300)
 
     def __init__(self, s: stream.Stream):
         self.s = s
@@ -289,10 +289,10 @@ async def client_connection(r: asyncio.StreamReader, w: asyncio.StreamWriter) ->
                 outer_connection.inner_send_count = int.from_bytes(await sock.recv_msg(), 'big')
                 outer_connection.check_for_eof()
                 0;                                          logger.debug(f'{con_id.hex()!r} header recved.')
-                retry.success()
                 gateway_queue : asyncio.Queue[None] = asyncio.Queue()
                 outer_connection.gateway = (sock, gateway_queue)
                 await gateway_queue.get()
+                retry.success()
         except Exception as e:
             assert outer_connection.gateway is None or outer_connection.gateway[0] is sock, f'{con_id.hex()!r} Concurent internal connections.'
             outer_connection.gateway = None
