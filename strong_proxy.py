@@ -15,22 +15,30 @@ import collections
 import timeout
 from collections import deque
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG, format='%(levelname)8s %(asctime)s %(filename)s:%(lineno)d %(message)s')
+
 class Retry:
-    def __init__(self, interval: int):
+    def __init__(self, interval: int, con_id: bytes):
         self.interval = interval
+        self.con_id = con_id
         self.last_success = time.time_ns()
+        logger.debug(f'{con_id.hex() = } Setup new retry at {self.last_success}')
     
     def fail(self) -> bool:
         ct = time.time_ns()
-        return self.interval + self.last_success < ct
+        con_id = self.con_id
+        value = self.interval + self.last_success < ct
+        logger.debug(f'{con_id.hex() = } Failure {self.last_success} < {ct} < {self.last_success + self.interval}')
+        return value
     
     def success(self) -> None:
+        con_id = self.con_id
         self.last_success = time.time_ns()
+        logger.debug(f'{con_id.hex() = } Success at {self.last_success}')
     
 
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG, format='%(levelname)8s %(asctime)s %(filename)s:%(lineno)d %(message)s')
 
 args = argparse.Namespace()
 
@@ -102,7 +110,7 @@ class OuterConnection:
             self.outer_recv_reached_EOF_at : None | int = None
             self.inner_send_reached_EOF = False
             self.chunks : collections.deque[tuple[int, bytes]] = collections.deque()
-            self.retry = Retry(wait_interval)
+            self.retry = Retry(wait_interval, self.con_id)
             self.sock = stream.Stream(await asyncio.open_connection(*args.connect[0])) if sock is None else sock
             self.read_task = asyncio.create_task(self.main_loop())
         self.gateway : tuple[InnerStream, asyncio.Queue[None]] | None
@@ -128,8 +136,6 @@ class OuterConnection:
                 )
         except Exception as e:
             logger.debug(f'{con_id.hex() = } Closing outer connection. {type(e) = }, {e = }')
-            if isinstance(e, AssertionError):
-                raise
         else:
             logger.debug(f'{con_id.hex() = } Closing outer connection.')
         finally:
@@ -264,12 +270,13 @@ async def server_connection(sock_: stream.Stream) -> None:
     await gateway_queue.get()
 
 
-@stream.streamify
-async def client_connection(sock_: stream.Stream) -> None:
+# @stream.streamify
+async def client_connection(r: asyncio.StreamReader, w: asyncio.StreamWriter) -> None:
+    sock_ = stream.Stream(r,w)
     con_id = random.randbytes(con_id_len)
     logger.debug(f'{con_id.hex() = } New outer client connected.')
     outer_connection = await OuterConnection(con_id, gateway=None, sock=sock_)
-    retry = Retry(wait_interval)
+    retry = Retry(wait_interval, con_id)
     while 1:
         try:
             logger.debug(f'{con_id.hex() = } opening internal connection...')
