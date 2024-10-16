@@ -19,32 +19,34 @@ class StreamImpl:
         self.write_exc : Exception | None = None
         self._reader = reader
         self._writer = writer
-        self.entered=False
+        self.entered = False
+        self.exited = False
 
     async def __aenter__(self) -> Stream:
-        if not self.entered:
-            self._reader = await await_if_necessary.await_if_necessary(self._reader)
-            self._writer = await await_if_necessary.await_if_necessary(self._writer)
-            if self._writer is None:
-                assert isinstance(self._reader, tuple)
-                self._reader, self._writer = self._reader
-            self._reader = await await_if_necessary.await_if_necessary(self._reader)
-            self._writer = await await_if_necessary.await_if_necessary(self._writer)
-            assert isinstance(self._reader, asyncio.StreamReader)
-            assert isinstance(self._writer, asyncio.StreamWriter)
-            self.reader = self._reader
-            self.writer = self._writer
-            self.entered=True
+        assert not self.entered
+        self._reader = await await_if_necessary.await_if_necessary(self._reader)
+        self._writer = await await_if_necessary.await_if_necessary(self._writer)
+        if self._writer is None:
+            assert isinstance(self._reader, tuple)
+            self._reader, self._writer = self._reader
+        self._reader = await await_if_necessary.await_if_necessary(self._reader)
+        self._writer = await await_if_necessary.await_if_necessary(self._writer)
+        assert isinstance(self._reader, asyncio.StreamReader)
+        assert isinstance(self._writer, asyncio.StreamWriter)
+        self.reader = self._reader
+        self.writer = self._writer
+        self.entered=True
         return self.stream
 
     async def __aexit__(self, *a: typing.Any) -> None:
-        if self.entered:
-            await self.safe_close()
-            if id(self) in drainers:
-                await drainers.pop(id(self))
-            del self.reader
-            del self.writer
-            self.entered = False
+        assert self.entered
+        assert not self.exited
+        await self.safe_close()
+        if id(self) in drainers:
+            await drainers.pop(id(self))
+        del self.reader
+        del self.writer
+        self.exited = True
 
     def __del__(self) -> None:
         drainers.pop(id(self), None)
