@@ -19,6 +19,7 @@ class StreamImpl:
         self.write_exc : Exception | None = None
         self._reader = reader
         self._writer = writer
+        self.entered=False
 
     async def __aenter__(self) -> Stream:
         self._reader = await await_if_necessary.await_if_necessary(self._reader)
@@ -32,12 +33,17 @@ class StreamImpl:
         assert isinstance(self._writer, asyncio.StreamWriter)
         self.reader = self._reader
         self.writer = self._writer
+        self.entered=True
         return self.stream
 
     async def __aexit__(self, *a: typing.Any) -> None:
+        assert self.entered
         await self.safe_close()
         if id(self) in drainers:
             await drainers.pop(id(self))
+        del self.reader
+        del self.writer
+        self.entered = False
 
     def __del__(self) -> None:
         drainers.pop(id(self), None)
@@ -86,21 +92,16 @@ class StreamImpl:
             raise self.write_exc
 
     async def _safe_drain(self) -> None:
-        try:
-            await self.stream.drain()
-        except Exception as e:
-            self.write_exc = e
+        while self.writer.transport.get_write_buffer_size():
+            try:
+                await self.stream.drain()
+            except Exception as e:
+                self.write_exc = e
+                break
 
 
 class Stream(asyncio.StreamReader, asyncio.StreamWriter, StreamImpl):
     def __init__(self, reader: first_arg_type, writer: second_arg_type = None):
-        # if writer is None:
-        #     assert isinstance(reader, tuple)
-        #     reader, writer = reader
-        # assert isinstance(reader, asyncio.StreamReader)
-        # assert isinstance(writer, asyncio.StreamWriter)
-        # self.__reader = reader
-        # self.__writer = writer
         self.__impl = StreamImpl(self, reader, writer)
 
     def __dir__(self) -> list[str]:
@@ -108,7 +109,6 @@ class Stream(asyncio.StreamReader, asyncio.StreamWriter, StreamImpl):
 
     @functools.cache
     def __getattribute__(self, name:str) -> typing.Any:
-        print('get', name)
         if name.startswith(f'_Stream_') or name in 'safe_write safe_close send_msg recv_msg __aenter__ __aexit__'.split():
             return super().__getattribute__(name)
         a = [w for w in [self.__impl.reader, self.__impl.writer, self.__impl] if name in dir(w)]

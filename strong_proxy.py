@@ -83,105 +83,154 @@ class OuterConnection:
             outer_connections[con_id] = super().__new__(cls)
         self = outer_connections[con_id]
         return self
-    def __init__(self, con_id: bytes, gateway: InnerStream | None, sock: stream.Stream | None = None):
+    def __init__(self, con_id: bytes, gateway: tuple[InnerStream, asyncio.Queue[None]] | None, sock: stream.Stream | None = None):
         self._awaiter = self._ainit(con_id, gateway, sock).__await__
     def __await__(self) -> Generator[Any, Any, OuterConnection]:
         return self._awaiter()
-    async def _ainit(self, con_id: bytes, gateway: InnerStream | None, sock: stream.Stream | None) -> OuterConnection:
+    async def _ainit(self, con_id: bytes, gateway: tuple[InnerStream, asyncio.Queue[None]] | None, sock: stream.Stream | None) -> OuterConnection:
         self.con_id = con_id
         if not hasattr(self, 'sock'):
             self.outer_send_count = 0
             self.outer_recv_count = 0
             self.inner_send_count = 0
+            self.outer_recv_reached_EOF_at : None | int = None
+            self.inner_send_reached_EOF = False
             self.chunks : collections.deque[tuple[int, bytes]] = collections.deque()
+            self.retry = Retry(wait_interval)
             assert has_never_seen.has_never_seen(con_id), 'duplicate connection'
-            self.sock = stream.Stream(await timeout.run_with_timeout(asyncio.open_connection(*args.connect[0]), 2)) if sock is None else sock
-            self.read_task = asyncio.create_task(self.reader_loop())
+            self.sock = stream.Stream(await asyncio.open_connection(*args.connect[0])) if sock is None else sock
+            self.read_task = asyncio.create_task(self.main_loop())
+        self.gateway : tuple[InnerStream, asyncio.Queue[None]] | None
         if hasattr(self, 'gateway') and self.gateway is not None:
-            await self.gateway.safe_close()
-        self.gateway : InnerStream | None = gateway
+            await self.gateway[0].safe_close()
+        self.gateway = gateway
         return self
-    async def reader_loop(self) -> None:
+
+    def check_for_eof(self) -> None:
+        con_id = self.con_id
+        if self.inner_send_count == self.outer_recv_reached_EOF_at:
+            self.inner_send_reached_EOF = True
+            logger.debug(f'{con_id.hex() = } Data is sent including EOF.')
+
+    async def main_loop(self) -> None:
         con_id = self.con_id
         try:
             async with self.sock:
-                retry = Retry(wait_interval)
-                while 1:
-                    data = await self.sock.read(2**16)
-                    chunk = (self.outer_recv_count, data)
-                    self.outer_recv_count += 1
-                    self.chunks.append(chunk)
-                    if len(self.chunks) > 16:
-                        self.chunks.popleft()
-                    while self.inner_send_count != self.outer_recv_count:
-                        if self.gateway is None:
-                            logger.debug(f'{con_id.hex() = } Start waiting for gateway...')
-                            while self.gateway is None:
-                                await asyncio.sleep(0.1)
-                                if retry.fail():
-                                    logger.debug(f'{con_id.hex() = } Waiting for gateway timed out.')
-                                    return
-                            logger.debug(f'{con_id.hex() = } Got gateway.')
-                        for chunk in self.chunks:
-                            if chunk[0] == self.inner_send_count:
-                                break
-                        else:
-                            logger.debug(f'{con_id.hex() = } {self.inner_send_count = } Requested chunk is not found.')
-                            return
-                        logger.debug(f'{con_id.hex() = } Trying to send inside {chunk[0] = } {get_part(chunk[1])}')
-                        try:
-                            assert self.gateway is not None, 'no gateway'
-                            await self.gateway.send_msg(chunk[0].to_bytes(8, 'big')+chunk[1])
-                        except Exception as e:
-                            logger.debug(f'{con_id.hex() = } Send inside failed {chunk[0] = } {type(e) = }, {e = }')
-                            await self.gateway.safe_close()
-                            self.gateway = None
-                            if retry.fail():
-                                logger.debug(f'{con_id.hex() = } Too may attempts to send inside.')
-                                return
-                        else:
-                            logger.debug(f'{con_id.hex() = } Sent inside. {chunk[0] = }')
-                            retry.success()
-                            self.inner_send_count += 1
-                    if not data:
-                        logger.debug(f'{con_id.hex() = } EOF is reached while reading outer connection.')
-                        break
+                await asyncio.gather(
+                    self.reader_loop(),
+                    self.writer_loop(),
+                )
         except Exception as e:
             logger.debug(f'{con_id.hex() = } Closing outer connection. {type(e) = }, {e = }')
         else:
             logger.debug(f'{con_id.hex() = } Closing outer connection.')
         finally:
+            if self.gateway is not None:
+                self.gateway[1].put_nowait(None)
             outer_connections.pop(self.con_id, None)
 
-    async def writer_loop(self) -> bool:
+    async def reader_loop(self) -> None:
         con_id = self.con_id
-        assert self.gateway is not None, 'gateway is none'
-        async with self.gateway:
+        while 1:
             try:
-                while (data := await self.gateway.recv_msg()):
-                    chunk = num, data = int.from_bytes(data[:8], 'big'), data[8:]
-                    logger.debug(f'{con_id.hex() = } Got data to send outside: {num = } {get_part(chunk[1])}')
-                    assert num == self.outer_send_count, 'received wrong packet'
-                    try:
-                        await self.sock.safe_write(data)
-                    except Exception as e:
-                        outer_connections.pop(self.con_id, None)
-                        logger.debug(f'{con_id.hex() = } Outer socket is closed: {type(e) = }, {e = }')
-                        return False
-                    self.outer_send_count += 1
-                    logger.debug(f'{con_id.hex() = } Sent outside {num = }')
-                logger.debug(f'{con_id.hex() = } Received inner connection EOF.')
-                self.sock.write_eof()
-                await self.sock.drain()
-                return False
+                if self.outer_recv_reached_EOF_at is not None:
+                    if self.inner_send_reached_EOF:
+                        logger.debug(f'{con_id.hex() = } Stop reader loop.')
+                        return
+                    await asyncio.sleep(1)
+                else:
+                    data = await self.sock.read(2**16)
             except Exception as e:
-                logger.debug(f'{con_id.hex() = } inner socket is closed: {type(e) = }, {e = }')
-                return True
+                logger.debug(f'{con_id.hex() = } Outer socket is closed: {type(e) = }, {e = }')
+                raise
+
+            chunk = (self.outer_recv_count, data)
+            self.outer_recv_count += 1
+
+            if not data:
+                logger.debug(f'{con_id.hex() = } EOF is reached while reading outer connection.')
+                self.outer_recv_reached_EOF_at = self.outer_recv_count
+
+            self.chunks.append(chunk)
+            if len(self.chunks) > 16:
+                self.chunks.popleft()
+
+            while self.inner_send_count != self.outer_recv_count:
+                if self.gateway is None:
+                    logger.debug(f'{con_id.hex() = } Start waiting for gateway for sending...')
+                    while self.gateway is None:
+                        await asyncio.sleep(0.1)
+                        if self.retry.fail():
+                            logger.debug(f'{con_id.hex() = } Waiting for gateway timed out.')
+                            raise TabError('Waiting for timed out.')
+                logger.debug(f'{con_id.hex() = } Got gateway for recving.')
+                gateway = self.gateway
+                assert gateway is not None, 'no gateway'
+                for chunk in self.chunks:
+                    if chunk[0] == self.inner_send_count:
+                        break
+                else:
+                    logger.debug(f'{con_id.hex() = } {self.inner_send_count = } Requested chunk is not found.')
+                    raise TabError('Requested chunk is not found.')
+                logger.debug(f'{con_id.hex() = } Trying to send inside {chunk[0] = } {get_part(chunk[1])}')
+                try:
+                    await gateway[0].send_msg(chunk[0].to_bytes(8, 'big')+chunk[1])
+                except Exception as e:
+                    logger.debug(f'{con_id.hex() = } Send inside failed {chunk[0] = } {type(e) = }, {e = }')
+                    gateway[1].put_nowait(None)
+                    if self.gateway is gateway:
+                        self.gateway = None
+                    if self.retry.fail():
+                        logger.debug(f'{con_id.hex() = } Too may attempts to send inside.')
+                        raise TabError('Too may attempts to send inside.')
+                else:
+                    logger.debug(f'{con_id.hex() = } Sent inside. {chunk[0] = }')
+                    self.retry.success()
+                    self.inner_send_count += 1
+
+    async def writer_loop(self) -> None:
+        con_id = self.con_id
+        while 1:
+            if self.gateway is None:
+                logger.debug(f'{con_id.hex() = } Start waiting for gateway for recving...')
+                while self.gateway is None:
+                    await asyncio.sleep(0.1)
+                    if self.retry.fail():
+                        logger.debug(f'{con_id.hex() = } Waiting for gateway timed out.')
+                        raise TabError('Waiting for timed out.')
+            logger.debug(f'{con_id.hex() = } Got gateway for recving.')
+            gateway = self.gateway
+            assert gateway is not None, 'no gateway'
+
+            try:
+                data = await gateway[0].recv_msg()
+            except Exception as e:
+                logger.debug(f'{con_id.hex() = } Recv inside failed {type(e) = }, {e = }')
+                gateway[1].put_nowait(None)
+                if gateway is self.gateway:
+                    self.gateway = None
+                continue
+
+            chunk = num, data = int.from_bytes(data[:8], 'big'), data[8:]
+            logger.debug(f'{con_id.hex() = } Got data to send outside: {num = } {get_part(chunk[1])}')
+            assert num == self.outer_send_count, 'received wrong packet'
+
+            try:
+                await self.sock.safe_write(data)
+            except Exception as e:
+                logger.debug(f'{con_id.hex() = } Outer socket is closed: {type(e) = }, {e = }')
+                raise
+            else:
+                self.outer_send_count += 1
+                logger.debug(f'{con_id.hex() = } Sent outside {num = }')
+
+            if not data:
+                logger.debug(f'{con_id.hex() = } Received inner connection EOF.')
+                await self.sock.safe_write_eof()
+                logger.debug(f'{con_id.hex() = } Stop writer loop.')
+                return
 
 outer_connections : dict[bytes, OuterConnection] = {} 
-
-import types
-types.coroutine
 
 @stream.streamify
 async def server_connection(sock_: stream.Stream) -> None:
@@ -193,13 +242,17 @@ async def server_connection(sock_: stream.Stream) -> None:
         return
     con_id, inner_send_count = data[:con_id_len], int.from_bytes(data[con_id_len:], 'big')
     logger.debug(f'{con_id.hex() = } New inner client connected.')
+
     try:
-        outer_connection = await OuterConnection(con_id, gateway=sock)
+        gateway_queue : asyncio.Queue[None] = asyncio.Queue()
+        outer_connection = await OuterConnection(con_id, gateway=(sock, gateway_queue))
         outer_connection.inner_send_count = inner_send_count
+        outer_connection.check_for_eof()
         await sock.send_msg(outer_connection.outer_send_count.to_bytes(8, 'big'))
-    except Exception:
+    except Exception as e:
+        logger.debug(f'outer client failed {type(e) = } {e = }')
         return
-    await outer_connection.writer_loop()
+    await gateway_queue.get()
 
 
 @stream.streamify
@@ -208,36 +261,33 @@ async def client_connection(sock_: stream.Stream) -> None:
     logger.debug(f'{con_id.hex() = } New outer client connected.')
     outer_connection = await OuterConnection(con_id, gateway=None, sock=sock_)
     retry = Retry(wait_interval)
-    try:
-        while 1:
-            try:
-                logger.debug(f'{con_id.hex() = } opening internal connection...')
-                async with stream.Stream(await timeout.run_with_timeout(asyncio.open_connection(*args.connect[0]), 2)) as sock_:
-                    logger.debug(f'{con_id.hex() = } internal connection made.')
-                    sock = InnerStream(sock_)
-                    logger.debug(f'{con_id.hex() = } senging header...')
-                    await sock.send_msg(con_id + outer_connection.outer_send_count.to_bytes(8, 'big'))
-                    logger.debug(f'{con_id.hex() = } header sent. recving headers...')
-                    outer_connection.inner_send_count = int.from_bytes(await sock.recv_msg(), 'big')
-                    logger.debug(f'{con_id.hex() = } header recved.')
-                    retry.success()
-                    outer_connection.gateway = sock
-                    if not await outer_connection.writer_loop():
-                        return
-            except Exception as e:
-                assert outer_connection.gateway is sock or outer_connection.gateway is None, f'{con_id.hex() = } Concurent internal connections.'
-                outer_connection.gateway = None
-                logger.debug(f'{con_id.hex() = } Inner socket is closed, retrying: {type(e) = }, {e = }')
-                if retry.fail():
-                    logger.debug(f'{con_id.hex() = } Too may attempts to reopen inner socket.')
-                    return
-            await asyncio.sleep(0.1)
-    except Exception as e:
-        logger.debug(f'{con_id.hex() = } Closing outer connection. {type(e) = }, {e = }')
-    else:
-        logger.debug(f'{con_id.hex() = } Closing outer connection.')
-    finally:
-        outer_connections.pop(con_id, None)
+    while 1:
+        try:
+            logger.debug(f'{con_id.hex() = } opening internal connection...')
+            async with stream.Stream(timeout.run_with_timeout(asyncio.open_connection(*args.connect[0]), 2)) as sock_:
+                0;                                          logger.debug(f'{con_id.hex() = } internal connection made.')
+                sock = InnerStream(sock_)
+                0;                                          logger.debug(f'{con_id.hex() = } senging header...')
+                await sock.send_msg(con_id + outer_connection.outer_send_count.to_bytes(8, 'big'))
+                0;                                          logger.debug(f'{con_id.hex() = } header sent. recving headers...')
+                outer_connection.inner_send_count = int.from_bytes(await sock.recv_msg(), 'big')
+                outer_connection.check_for_eof()
+                0;                                          logger.debug(f'{con_id.hex() = } header recved.')
+                retry.success()
+                gateway_queue : asyncio.Queue[None] = asyncio.Queue()
+                outer_connection.gateway = (sock, gateway_queue)
+                await gateway_queue.get()
+        except Exception as e:
+            assert outer_connection.gateway is None or outer_connection.gateway[0] is sock, f'{con_id.hex() = } Concurent internal connections.'
+            outer_connection.gateway = None
+            logger.debug(f'{con_id.hex() = } Inner socket is closed, retrying: {type(e) = }, {e = }')
+            if retry.fail():
+                logger.debug(f'{con_id.hex() = } Too may attempts to reopen inner socket.')
+                return
+        await asyncio.sleep(0.1)
+        if con_id not in outer_connections:
+            logger.debug(f'{con_id.hex() = } Stop inner socket loop.')
+            return
 
 
 async def main() -> None:
