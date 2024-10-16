@@ -10,5 +10,4 @@ async def run_with_timeout(coro: typing.Coroutine[typing.Any, typing.Any, T], ti
     if task.done():
         return task.result()
     task.cancel()
-    await task
     raise asyncio.TimeoutError
