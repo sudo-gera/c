@@ -41,6 +41,9 @@ class StreamImpl:
         await self.safe_close()
         if id(self) in drainers:
             await drainers.pop(id(self))
+        del self.reader
+        del self.writer
+        self.entered = False
 
     def __del__(self) -> None:
         drainers.pop(id(self), None)
@@ -89,21 +92,16 @@ class StreamImpl:
             raise self.write_exc
 
     async def _safe_drain(self) -> None:
-        try:
-            await self.stream.drain()
-        except Exception as e:
-            self.write_exc = e
+        while self.writer.transport.get_write_buffer_size():
+            try:
+                await self.stream.drain()
+            except Exception as e:
+                self.write_exc = e
+                break
 
 
 class Stream(asyncio.StreamReader, asyncio.StreamWriter, StreamImpl):
     def __init__(self, reader: first_arg_type, writer: second_arg_type = None):
-        # if writer is None:
-        #     assert isinstance(reader, tuple)
-        #     reader, writer = reader
-        # assert isinstance(reader, asyncio.StreamReader)
-        # assert isinstance(writer, asyncio.StreamWriter)
-        # self.__reader = reader
-        # self.__writer = writer
         self.__impl = StreamImpl(self, reader, writer)
 
     def __dir__(self) -> list[str]:
