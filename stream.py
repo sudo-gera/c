@@ -10,15 +10,22 @@ signer = sign.Signer(8)
 first_arg_type =  asyncio.StreamReader | tuple[asyncio.StreamReader, asyncio.StreamWriter]
 second_arg_type = asyncio.StreamWriter|None
 
+drainers : dict[int, asyncio.Task] = {}
+
 class StreamPlugin:
     def __init__(self, stream: Stream):
         self.stream = stream
+        self.write_exc = Exception | None = None
 
     async def __aenter__(self) -> Stream:
         return self.stream
 
     async def __aexit__(self, *a: typing.Any) -> None:
-        return await self.safe_close()
+        await self.safe_close()
+        await drainers.pop(id(self), asyncio.sleep(0))
+
+    def __del__(self) -> None:
+        drainers.pop(id(self), None)
 
     async def safe_close(self) -> None:
         try:
@@ -48,7 +55,20 @@ class StreamPlugin:
 
     async def safe_write(self, data: bytes) -> None:
         self.stream.write(data)
-        await self.stream.drain()
+        await self.safe_drain()
+
+    async def safe_drain(self) -> None:
+        if self.write_exc is not None:
+            raise self.write_exc
+        if id(self) not in drainers:
+            drainers[id(self)] = asyncio.create_task(self._safe_drain())
+        await asyncio.shield(drainers[id(self)])
+
+    async def _safe_drain(self) -> None:
+        try:
+            await self.stream.drain()
+        except Exception as e:
+            self.write_exc = e
 
 
 class Stream(asyncio.StreamReader, asyncio.StreamWriter, StreamPlugin):
