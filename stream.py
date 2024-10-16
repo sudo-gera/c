@@ -19,6 +19,7 @@ class StreamImpl:
         self.write_exc : Exception | None = None
         self._reader = reader
         self._writer = writer
+        self.entered=False
 
     async def __aenter__(self) -> Stream:
         self._reader = await await_if_necessary.await_if_necessary(self._reader)
@@ -32,9 +33,11 @@ class StreamImpl:
         assert isinstance(self._writer, asyncio.StreamWriter)
         self.reader = self._reader
         self.writer = self._writer
+        self.entered=True
         return self.stream
 
     async def __aexit__(self, *a: typing.Any) -> None:
+        assert self.entered
         await self.safe_close()
         if id(self) in drainers:
             await drainers.pop(id(self))
@@ -108,7 +111,6 @@ class Stream(asyncio.StreamReader, asyncio.StreamWriter, StreamImpl):
 
     @functools.cache
     def __getattribute__(self, name:str) -> typing.Any:
-        print('get', name)
         if name.startswith(f'_Stream_') or name in 'safe_write safe_close send_msg recv_msg __aenter__ __aexit__'.split():
             return super().__getattribute__(name)
         a = [w for w in [self.__impl.reader, self.__impl.writer, self.__impl] if name in dir(w)]
