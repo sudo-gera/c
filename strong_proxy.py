@@ -95,6 +95,7 @@ class OuterConnection:
     async def _ainit(self, con_id: bytes, gateway: tuple[InnerStream, asyncio.Queue[None]] | None, sock: stream.Stream | None) -> OuterConnection:
         self.con_id = con_id
         if not hasattr(self, 'sock'):
+            assert has_never_seen.has_never_seen(con_id), 'duplicate connection'
             self.outer_send_count = 0
             self.outer_recv_count = 0
             self.inner_send_count = 0
@@ -102,7 +103,6 @@ class OuterConnection:
             self.inner_send_reached_EOF = False
             self.chunks : collections.deque[tuple[int, bytes]] = collections.deque()
             self.retry = Retry(wait_interval)
-            assert has_never_seen.has_never_seen(con_id), 'duplicate connection'
             self.sock = stream.Stream(await asyncio.open_connection(*args.connect[0])) if sock is None else sock
             self.read_task = asyncio.create_task(self.main_loop())
         self.gateway : tuple[InnerStream, asyncio.Queue[None]] | None
@@ -119,6 +119,7 @@ class OuterConnection:
 
     async def main_loop(self) -> None:
         con_id = self.con_id
+        logger.debug(f'{con_id.hex() = } Starting main loop.')
         try:
             async with self.sock:
                 await asyncio.gather(
@@ -127,6 +128,8 @@ class OuterConnection:
                 )
         except Exception as e:
             logger.debug(f'{con_id.hex() = } Closing outer connection. {type(e) = }, {e = }')
+            if isinstance(e, AssertionError):
+                raise
         else:
             logger.debug(f'{con_id.hex() = } Closing outer connection.')
         finally:
