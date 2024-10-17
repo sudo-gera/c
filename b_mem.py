@@ -34,6 +34,7 @@ def list_insert(self: List[T_], i: int, v: T_) -> None:
 def list_erase(self: List[T_], i: int) -> T_:
     return self.l.pop(i);
 def list_slice_assign(self: List[T_], begin: int, end: int, val: list[T_]|List[T_]) -> None:
+    assert 0 <= begin <= end <= len(self.l)
     self.l[begin:end] = val if isinstance(val, list) else val.l;
 def list_contains(self: List[T_], val: T_) -> bool:
     return val in self.l;
@@ -171,10 +172,18 @@ class node(typing.Generic[T]):
                     assert tmp is not None;
                     t = tmp.copy();
                     l = (q - w) * list_size(t.down);
-                    list_slice_assign(t.data, l,l, [self.data[r]]);
+                    tmp_1 = l
+                    if (tmp_1 < 0):
+                        tmp_1 += list_size(t.data)
+                    if (tmp_1 < 0):
+                        tmp_1 = 0
+                    if (tmp_1 > list_size(t.data)):
+                        tmp_1 = list_size(t.data)
+                    list_slice_assign(t.data, tmp_1, tmp_1, [self.data[r]]);
                     tmp = self.down[e];
                     assert tmp is not None;
-                    list_slice_assign(t.down, l,l, [tmp.down[(e - q + list_size(tmp.down)) % list_size(tmp.down)]]);
+                    tmp_1 = l
+                    list_slice_assign(t.down, tmp_1, tmp_1, [tmp.down[(e - q + list_size(tmp.down)) % list_size(tmp.down)]]);
                     self.down[w] = t;
                     tmp = self.down[e];
                     assert tmp is not None;
@@ -182,8 +191,20 @@ class node(typing.Generic[T]):
                     tmp = self.down[e];
                     assert tmp is not None;
                     t = tmp.copy();
-                    list_slice_assign(t.data, e - q, list_size(t.data) * (q - e) + (q - w), []);
-                    list_slice_assign(t.down, e - q, list_size(t.down) * (q - e) + (q - w), []);
+                    tmp_1 = e - q
+                    if (tmp_1 < 0):
+                        tmp_1 += list_size(t.data);
+                    tmp_2 = list_size(t.data) * (q - e) + (q - w)
+                    if (tmp_2 < 0):
+                        tmp_2 += list_size(t.data)
+                    list_slice_assign(t.data, tmp_1, tmp_2, []);
+                    tmp_1 = e - q
+                    if (tmp_1 < 0):
+                        tmp_1 += list_size(t.down);
+                    tmp_2 = list_size(t.down) * (q - e) + (q - w)
+                    if (tmp_2 < 0):
+                        tmp_2 += list_size(t.data)
+                    list_slice_assign(t.down, tmp_1, tmp_2, []);
                     self.down[e] = t;
         return self;
 

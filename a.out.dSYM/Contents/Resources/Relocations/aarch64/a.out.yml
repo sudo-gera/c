@@ -2,6 +2,12 @@
 triple:          'arm64-apple-darwin'
 binary-path:     a.out
 relocations:
-  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x100003F1C, symSize: 0x8 }
-  - { offsetInCU: 0x2E46, offset: 0x2E46, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x100003F1C, symSize: 0x8 }
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x100002F84, symSize: 0x1C8 }
+  - { offsetInCU: 0x7CFC, offset: 0x7CFC, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x100002F84, symSize: 0x1C8 }
+  - { offsetInCU: 0x7EB9, offset: 0x7EB9, size: 0x8, addend: 0x0, symName: __ZNSt3__16__treeINS_12basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEENS_4lessIS6_EENS4_IS6_EEEC2ERKS8_, symObjAddr: 0x5BC, symBinAddr: 0x100003540, symSize: 0xC8 }
+  - { offsetInCU: 0x7FA7, offset: 0x7FA7, size: 0x8, addend: 0x0, symName: __ZNSt3__16__treeINS_12basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEENS_4lessIS6_EENS4_IS6_EEED2Ev, symObjAddr: 0x684, symBinAddr: 0x100003608, symSize: 0x9C }
+  - { offsetInCU: 0x8014, offset: 0x8014, size: 0x8, addend: 0x0, symName: __ZNSt3__110shared_ptrI4nodeINS_12basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEEEED2B8ue170006Ev, symObjAddr: 0x1C8, symBinAddr: 0x10000314C, symSize: 0xFC }
+  - { offsetInCU: 0x804A, offset: 0x804A, size: 0x8, addend: 0x0, symName: __ZNSt3__119__shared_weak_count16__release_sharedB8ue170006Ev, symObjAddr: 0x2C4, symBinAddr: 0x100003248, symSize: 0x128 }
+  - { offsetInCU: 0x8097, offset: 0x8097, size: 0x8, addend: 0x0, symName: __ZNSt3__114__shared_count16__release_sharedB8ue170006Ev, symObjAddr: 0x3EC, symBinAddr: 0x100003370, symSize: 0x1D0 }
+  - { offsetInCU: 0x825A, offset: 0x825A, size: 0x8, addend: 0x0, symName: __ZNSt3__16__treeINS_12basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEENS_4lessIS6_EENS4_IS6_EEE7destroyEPNS_11__tree_nodeIS6_PvEE, symObjAddr: 0x720, symBinAddr: 0x1000036A4, symSize: 0x18C }
 ...
