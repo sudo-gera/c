@@ -50,192 +50,192 @@ class node(typing.Generic[T]):
         self.down = List(down);
         node.check(self);
 
-    @staticmethod
-    def check(self: node[T]|None, s: set[int]|None = None, l: int = 0) -> None:
-        if (s is None):
-            s = set();
-        if (self is None):
-            s.add(l);
-            return;
-        for i in range(list_size(self.down)):
-            w = self.down[i];
-            node.check(w, s, l+1);
-        if (l == 0):
-            assert len(s) == 1;
-        assert list_size(self.down) == 1 + list_size(self.data);
-        assert len([w for w in self.down if w is None]) in {0, list_size(self.down)}; # type: ignore
+@staticmethod
+def check(self: node[T]|None, s: set[int]|None = None, l: int = 0) -> None:
+    if (s is None):
+        s = set();
+    if (self is None):
+        s.add(l);
+        return;
+    for i in range(list_size(self.down)):
+        w = self.down[i];
+        node.check(w, s, l+1);
+    if (l == 0):
+        assert len(s) == 1;
+    assert list_size(self.down) == 1 + list_size(self.data);
+    assert len([w for w in self.down if w is None]) in {0, list_size(self.down)}; # type: ignore
 
-    def copy(self) -> node[T]:
-        return node(data=self.data, down=self.down);
+def copy(self) -> node[T]:
+    return node(data=self.data, down=self.down);
 
-    @staticmethod
-    def insert(self: node[T]|None, elem: T, max_len: int) -> node[T]:
-        node.check(self);
-        assert self is not None;
-        self = self.copy();
-        if (list_contains(self.data, elem)):
-            t = list_index(self.data, elem);
-            self.data[t] = elem;
-        elif (self.down[0] is None):
-            w = 0;
-            while (w < list_size(self.data) and self.data[w] < elem):
-                w += 1;
-            list_insert(self.data, w, elem);
-            list_insert(self.down, 0, None);
-        else:
-            w = 0;
-            while (w < list_size(self.data) and self.data[w] < elem):
-                w += 1;
-            self.down[w] = node.insert(self.down[w], elem, max_len);
-            tmp = self.down[w];
-            assert tmp is not None;
-            if (list_size(tmp.data) > max_len):
-                assert list_size(tmp.data) == 1 + max_len;
-                q = tmp.copy();
-                a = q.copy();
-                list_slice_assign(a.data, max_len // 2,list_size(a.data), []);
-                list_slice_assign(a.down, max_len // 2 + 1,list_size(a.down),[]);
-                kw = q.data[max_len // 2];
-                list_slice_assign(q.data, 0, max_len // 2 + 1, []);
-                list_slice_assign(q.down, 0,max_len // 2 + 1, []);
-                list_insert(self.data, w, kw);
-                self.down[w] = q;
-                list_insert(self.down, w, a);
-        return self;
+@staticmethod
+def insert(self: node[T]|None, elem: T, max_len: int) -> node[T]:
+    node.check(self);
+    assert self is not None;
+    self = self.copy();
+    if (list_contains(self.data, elem)):
+        t = list_index(self.data, elem);
+        self.data[t] = elem;
+    elif (self.down[0] is None):
+        w = 0;
+        while (w < list_size(self.data) and self.data[w] < elem):
+            w += 1;
+        list_insert(self.data, w, elem);
+        list_insert(self.down, 0, None);
+    else:
+        w = 0;
+        while (w < list_size(self.data) and self.data[w] < elem):
+            w += 1;
+        self.down[w] = node.insert(self.down[w], elem, max_len);
+        tmp = self.down[w];
+        assert tmp is not None;
+        if (list_size(tmp.data) > max_len):
+            assert list_size(tmp.data) == 1 + max_len;
+            q = tmp.copy();
+            a = q.copy();
+            list_slice_assign(a.data, max_len // 2,list_size(a.data), []);
+            list_slice_assign(a.down, max_len // 2 + 1,list_size(a.down),[]);
+            kw = q.data[max_len // 2];
+            list_slice_assign(q.data, 0, max_len // 2 + 1, []);
+            list_slice_assign(q.down, 0,max_len // 2 + 1, []);
+            list_insert(self.data, w, kw);
+            self.down[w] = q;
+            list_insert(self.down, w, a);
+    return self;
 
-    @staticmethod
-    def find_path(self: node[T], elem: T) -> list[tuple[node[T], int]] | None:
-        output : list[tuple[node[T], int]] = [];
-        if (node.find_path_(self, elem, output)):
-            return output;
-        return None;
+@staticmethod
+def find_path(self: node[T], elem: T) -> list[tuple[node[T], int]] | None:
+    output : list[tuple[node[T], int]] = [];
+    if (node.find_path_(self, elem, output)):
+        return output;
+    return None;
 
-    @staticmethod
-    def find_path_(self: node[T], elem: T, output: list[tuple[node[T], int]]) -> bool:
-        node.check(self);
-        if (list_contains(self.data, elem)):
-            output.append((self, list_index(self.data, (elem))));
-            return True;
-        if (self.down[0] is None):
-            return False;
+@staticmethod
+def find_path_(self: node[T], elem: T, output: list[tuple[node[T], int]]) -> bool:
+    node.check(self);
+    if (list_contains(self.data, elem)):
+        output.append((self, list_index(self.data, (elem))));
+        return True;
+    if (self.down[0] is None):
+        return False;
+    w = 0;
+    while (w < list_size(self.data) and self.data[w] < elem):
+        w += 1;
+    tmp = self.down[w];
+    assert tmp is not None;
+    if (node.find_path_(tmp, elem, output)):
+        output.append((self, w));
+        return True;
+    return False;
+
+@staticmethod
+def erase(self: node[T], elem: T, max_len: int) -> node[T]:
+    node.check(self);
+    t: None|node[T];
+    self = self.copy();
+    if (self.down[0] is None):
+        t_ = list_index(self.data, (elem));
+        list_erase(self.data, t_);
+        list_erase(self.down, 0);
+    else:
         w = 0;
         while (w < list_size(self.data) and self.data[w] < elem):
             w += 1;
         tmp = self.down[w];
         assert tmp is not None;
-        if (node.find_path_(tmp, elem, output)):
-            output.append((self, w));
-            return True;
-        return False;
-
-    @staticmethod
-    def erase(self: node[T], elem: T, max_len: int) -> node[T]:
-        node.check(self);
-        t: None|node[T];
-        self = self.copy();
-        if (self.down[0] is None):
-            t_ = list_index(self.data, (elem));
-            list_erase(self.data, t_);
-            list_erase(self.down, 0);
-        else:
-            w = 0;
-            while (w < list_size(self.data) and self.data[w] < elem):
-                w += 1;
-            tmp = self.down[w];
+        self.down[w] = node.erase(tmp, elem, max_len);
+        tmp = self.down[w];
+        assert tmp is not None;
+        if (list_size(tmp.data) < max_len // 2):
+            assert list_size(tmp.data) == max_len // 2 - 1;
+            e = w - 1 if w else w + 1;
+            q = max(w, e);
+            r = min(w, e);
+            tmp = self.down[e];
             assert tmp is not None;
-            self.down[w] = node.erase(tmp, elem, max_len);
-            tmp = self.down[w];
-            assert tmp is not None;
-            if (list_size(tmp.data) < max_len // 2):
-                assert list_size(tmp.data) == max_len // 2 - 1;
-                e = w - 1 if w else w + 1;
-                q = max(w, e);
-                r = min(w, e);
+            if (list_size(tmp.data) == max_len // 2):
+                tmp = self.down[q];
+                assert tmp is not None;
+                t = tmp.copy();
+                tmp = self.down[r];
+                assert tmp is not None;
+                __t = tmp.data;
+                list_append(__t, self.data[r]);
+                list_slice_assign(t.data, 0, 0, __t);
+                tmp = self.down[r];
+                assert tmp is not None;
+                list_slice_assign(t.down, 0,0,tmp.down);
+                list_slice_assign(self.down, r,q + 1, [t]); # type: ignore
+                list_slice_assign(self.data, r,q , []);
+            else:
+                tmp = self.down[w];
+                assert tmp is not None;
+                t = tmp.copy();
+                l = (q - w) * list_size(t.down);
+                tmp_1 = l
+                if (tmp_1 < 0):
+                    tmp_1 += list_size(t.data)
+                if (tmp_1 < 0):
+                    tmp_1 = 0
+                if (tmp_1 > list_size(t.data)):
+                    tmp_1 = list_size(t.data)
+                list_slice_assign(t.data, tmp_1, tmp_1, [self.data[r]]);
                 tmp = self.down[e];
                 assert tmp is not None;
-                if (list_size(tmp.data) == max_len // 2):
-                    tmp = self.down[q];
-                    assert tmp is not None;
-                    t = tmp.copy();
-                    tmp = self.down[r];
-                    assert tmp is not None;
-                    __t = tmp.data;
-                    list_append(__t, self.data[r]);
-                    list_slice_assign(t.data, 0, 0, __t);
-                    tmp = self.down[r];
-                    assert tmp is not None;
-                    list_slice_assign(t.down, 0,0,tmp.down);
-                    list_slice_assign(self.down, r,q + 1, [t]); # type: ignore
-                    list_slice_assign(self.data, r,q , []);
-                else:
-                    tmp = self.down[w];
-                    assert tmp is not None;
-                    t = tmp.copy();
-                    l = (q - w) * list_size(t.down);
-                    tmp_1 = l
-                    if (tmp_1 < 0):
-                        tmp_1 += list_size(t.data)
-                    if (tmp_1 < 0):
-                        tmp_1 = 0
-                    if (tmp_1 > list_size(t.data)):
-                        tmp_1 = list_size(t.data)
-                    list_slice_assign(t.data, tmp_1, tmp_1, [self.data[r]]);
-                    tmp = self.down[e];
-                    assert tmp is not None;
-                    tmp_1 = l
-                    list_slice_assign(t.down, tmp_1, tmp_1, [tmp.down[(e - q + list_size(tmp.down)) % list_size(tmp.down)]]);
-                    self.down[w] = t;
-                    tmp = self.down[e];
-                    assert tmp is not None;
-                    self.data[r] = tmp.data[(e - q + list_size(tmp.data)) % list_size(tmp.data)];
-                    tmp = self.down[e];
-                    assert tmp is not None;
-                    t = tmp.copy();
-                    tmp_1 = e - q
-                    if (tmp_1 < 0):
-                        tmp_1 += list_size(t.data);
-                    tmp_2 = list_size(t.data) * (q - e) + (q - w)
-                    if (tmp_2 < 0):
-                        tmp_2 += list_size(t.data)
-                    list_slice_assign(t.data, tmp_1, tmp_2, []);
-                    tmp_1 = e - q
-                    if (tmp_1 < 0):
-                        tmp_1 += list_size(t.down);
-                    tmp_2 = list_size(t.down) * (q - e) + (q - w)
-                    if (tmp_2 < 0):
-                        tmp_2 += list_size(t.data)
-                    list_slice_assign(t.down, tmp_1, tmp_2, []);
-                    self.down[e] = t;
-        return self;
+                tmp_1 = l
+                list_slice_assign(t.down, tmp_1, tmp_1, [tmp.down[(e - q + list_size(tmp.down)) % list_size(tmp.down)]]);
+                self.down[w] = t;
+                tmp = self.down[e];
+                assert tmp is not None;
+                self.data[r] = tmp.data[(e - q + list_size(tmp.data)) % list_size(tmp.data)];
+                tmp = self.down[e];
+                assert tmp is not None;
+                t = tmp.copy();
+                tmp_1 = e - q
+                if (tmp_1 < 0):
+                    tmp_1 += list_size(t.data);
+                tmp_2 = list_size(t.data) * (q - e) + (q - w)
+                if (tmp_2 < 0):
+                    tmp_2 += list_size(t.data)
+                list_slice_assign(t.data, tmp_1, tmp_2, []);
+                tmp_1 = e - q
+                if (tmp_1 < 0):
+                    tmp_1 += list_size(t.down);
+                tmp_2 = list_size(t.down) * (q - e) + (q - w)
+                if (tmp_2 < 0):
+                    tmp_2 += list_size(t.data)
+                list_slice_assign(t.down, tmp_1, tmp_2, []);
+                self.down[e] = t;
+    return self;
 
-    @staticmethod
-    def to_list(self: node[T], l: list[T]) -> list[T]:
-        if (self.down[0] is None):
-            for i_ in range(list_size(self.data)):
-                w_ = self.data[i_];
-                l.append(w_);
-        else:
-            node.to_list(self.down[0], l);
-            for w in range(list_size(self.data)):
-                l.append(self.data[w]);
-                tmp = self.down[w + 1];
-                assert isinstance(tmp, node);
-                node.to_list(tmp, l);
-        return l;
+@staticmethod
+def to_list(self: node[T], l: list[T]) -> list[T]:
+    if (self.down[0] is None):
+        for i_ in range(list_size(self.data)):
+            w_ = self.data[i_];
+            l.append(w_);
+    else:
+        node.to_list(self.down[0], l);
+        for w in range(list_size(self.data)):
+            l.append(self.data[w]);
+            tmp = self.down[w + 1];
+            assert isinstance(tmp, node);
+            node.to_list(tmp, l);
+    return l;
 
-    @staticmethod
-    def chval(self: node[T], a: list[tuple[node[T], int]], t: int, kw: T, n: int) -> node[T]:
-        self = self.copy();
-        if (n):
-            v = a[n][1];
-            tmp = self.down[v];
-            assert tmp is not None;
-            self.down[v] = node.chval(tmp, a, t, kw, n - 1);
-        else:
-            assert self.data is not None;
-            assert isinstance(t, int);
-            self.data[t] = kw;
-        return self;
+@staticmethod
+def chval(self: node[T], a: list[tuple[node[T], int]], t: int, kw: T, n: int) -> node[T]:
+    self = self.copy();
+    if (n):
+        v = a[n][1];
+        tmp = self.down[v];
+        assert tmp is not None;
+        self.down[v] = node.chval(tmp, a, t, kw, n - 1);
+    else:
+        assert self.data is not None;
+        assert isinstance(t, int);
+        self.data[t] = kw;
+    return self;
 
 
 Node = node[T] | None;
@@ -400,19 +400,6 @@ if (__name__ == '__main__'):
         assert a_s == f;
 
     print([time.time()-t,(t:=time.time())][0]);
-    # for w in range(199):
-    #     r = random.randint(-9999, 9999);
-    #     a_s.add(r);
-    #     s_s.add(r);
-    #     f = set(s_s.to_list());
-    #     assert a_s == f;
-
-    # while (a_s):
-    #     r = random.choice(list(a_s));
-    #     a_s.remove(r);
-    #     s_s.remove(r);
-    #     f = set(s_s.to_list());
-    #     assert a_s == f;
 
 
     a_d: dict[int, int] = dict();
