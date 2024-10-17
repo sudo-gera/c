@@ -7,6 +7,7 @@ import random;
 import time;
 import copy;
 
+
 class ComparableProto(typing.Protocol):
     def __lt__(self: T, __other: T) -> bool: ...;
 
@@ -131,57 +132,72 @@ T = typing.TypeVar('T') ; # type: ignore
 
 
 ###################################################################################################################################
+# define True true
+# define False false
+# define None nullptr
 
+''' # CPP_REMOVE
+#include <vector>
+#include <memory>
+template<typename T>
+struct node_s{
+    std::vector<T> data;
+    std::vector<node> down;
+};
 
+template<typename T>
+struct node{
+    std::shared_ptr<std::vector<node_s>> data_;
+    auto& data(){
+        return data_->data;
+    }
+    auto& down(){
+        return data_->down;
+    }
+};
+
+template<typename T>
+node<T> node_copy(node<T> self){
+    return node{make_shared<node_s<T>>(*self.data_)};
+}
+/*
+''' # CPP_REMOVE
 class node(typing.Generic[T]):
-    ''' # CPP_REMOVE
-    { // BEGIN
-    ''' # CPP_REMOVE
     def __init__(self, *, data:List_[T], down: List_[node[T]|None]):
-        ''' # CPP_REMOVE
-        { // BEGIN
-        ''' # CPP_REMOVE
-        self.data = List_(data);
-        self.down = List_(down);
-        ''' # CPP_REMOVE
-        } // END
-        ''' # CPP_REMOVE
-    ''' # CPP_REMOVE
-    } // END
-    ''' # CPP_REMOVE
+        self.data_ = List_(data);
+        self.down_ = List_(down);
+    def data(self):
+        return self.data_
+    def down(self):
+        return self.down_
 
 def node_copy(self: node[T]) -> node[T]:
-    ''' # CPP_REMOVE
-    { // BEGIN
-    ''' # CPP_REMOVE
-    return node(data=self.data, down=self.down);
-    ''' # CPP_REMOVE
-    } // END
-    ''' # CPP_REMOVE
-
+    return node(data=self.data(), down=self.down());
 
 def node_insert(self: node[T]|None, elem: T, max_len: int) -> node[T]:
     ''' # CPP_REMOVE
-    { // BEGIN
+    */
+template<typename T>
+auto node_insert(node self, T&& elem, int64_t max_len) -> node{
     ''' # CPP_REMOVE
     assert (self is not None); # CPP_REMOVE
     assert (self != None);
-    self = node_copy(self)
-    if (list_contains(self.data, elem))// simple():
+    self = node_copy(self);
+    if (list_contains(self.data(), elem))// simple():
         ''' # CPP_REMOVE
         { // BEGIN
         ''' # CPP_REMOVE
-        t = list_index(self.data, elem);
-        self.data[t] = elem;
+        t = list_index(self.data(), elem);
+        self.data()[t] = elem;
         ''' # CPP_REMOVE
         } // END
         ''' # CPP_REMOVE
-    elif (self.down[0] == None)// simple():
+    elif (self.down()[0] == None)// simple():
         ''' # CPP_REMOVE
         { // BEGIN
         ''' # CPP_REMOVE
         w = 0;
-        while (w < list_size(self.data) and self.data[w] < elem)// simple():
+        while (w < list_size(self.data()) and self.data()[w] < elem)// simple():
             ''' # CPP_REMOVE
             { // BEGIN
             ''' # CPP_REMOVE
@@ -189,8 +205,8 @@ def node_insert(self: node[T]|None, elem: T, max_len: int) -> node[T]:
             ''' # CPP_REMOVE
             } // END
             ''' # CPP_REMOVE
-        list_insert(self.data, w, elem);
-        list_insert(self.down, 0, None);
+        list_insert(self.data(), w, elem);
+        list_insert(self.down(), 0, None);
         ''' # CPP_REMOVE
         } // END
         ''' # CPP_REMOVE
@@ -199,7 +215,7 @@ def node_insert(self: node[T]|None, elem: T, max_len: int) -> node[T]:
         { // BEGIN
         ''' # CPP_REMOVE
         w = 0;
-        while (w < list_size(self.data) and self.data[w] < elem)// simple():
+        while (w < list_size(self.data()) and self.data()[w] < elem)// simple():
             ''' # CPP_REMOVE
             { // BEGIN
             ''' # CPP_REMOVE
@@ -207,25 +223,25 @@ def node_insert(self: node[T]|None, elem: T, max_len: int) -> node[T]:
             ''' # CPP_REMOVE
             } // END
             ''' # CPP_REMOVE
-        self.down[w] = node_insert(self.down[w], elem, max_len);
-        tmp = self.down[w];
+        self.down()[w] = node_insert(self.down()[w], elem, max_len);
+        tmp = self.down()[w];
         assert (tmp is not None); # CPP_REMOVE
         assert (tmp != None);
-        if (list_size(tmp.data) > max_len)// simple():
+        if (list_size(tmp.data()) > max_len)// simple():
             ''' # CPP_REMOVE
             { // BEGIN
             ''' # CPP_REMOVE
-            assert (list_size(tmp.data) == 1 + max_len);
+            assert (list_size(tmp.data()) == 1 + max_len);
             q = node_copy(tmp);
             a = node_copy(q);
-            list_slice_assign(a.data,x__div( max_len ,  2),list_size(a.data), []);
-            list_slice_assign(a.down,x__div( max_len ,  2) + 1,list_size(a.down),[]);
-            kw = q.data[x__div(max_len ,  2)];
-            list_slice_assign(q.data, 0,x__div( max_len ,  2) + 1, []);
-            list_slice_assign(q.down, 0,x__div(max_len ,  2) + 1, []);
-            list_insert(self.data, w, kw);
-            self.down[w] = q;
-            list_insert(self.down, w, a);
+            list_slice_assign(a.data(),x__div( max_len ,  2),list_size(a.data()), []);
+            list_slice_assign(a.down(),x__div( max_len ,  2) + 1,list_size(a.down()),[]);
+            kw = q.data()[x__div(max_len ,  2)];
+            list_slice_assign(q.data(), 0,x__div( max_len ,  2) + 1, []);
+            list_slice_assign(q.down(), 0,x__div(max_len ,  2) + 1, []);
+            list_insert(self.data(), w, kw);
+            self.down()[w] = q;
+            list_insert(self.down(), w, a);
             ''' # CPP_REMOVE
             } // END
             ''' # CPP_REMOVE
@@ -260,16 +276,16 @@ def node_find_path_(self: node[T], elem: T, output: list[tuple[node[T], int]]) -
     { // BEGIN
     ''' # CPP_REMOVE
     (self);
-    if (list_contains(self.data, elem))// simple():
+    if (list_contains(self.data(), elem))// simple():
         ''' # CPP_REMOVE
         { // BEGIN
         ''' # CPP_REMOVE
-        output.append((self, list_index(self.data, (elem))));
+        output.append((self, list_index(self.data(), (elem))));
         return True;
         ''' # CPP_REMOVE
         } // END
         ''' # CPP_REMOVE
-    if (self.down[0] == None)// simple():
+    if (self.down()[0] == None)// simple():
         ''' # CPP_REMOVE
         { // BEGIN
         ''' # CPP_REMOVE
@@ -278,7 +294,7 @@ def node_find_path_(self: node[T], elem: T, output: list[tuple[node[T], int]]) -
         } // END
         ''' # CPP_REMOVE
     w = 0;
-    while (w < list_size(self.data) and self.data[w] < elem)// simple():
+    while (w < list_size(self.data()) and self.data()[w] < elem)// simple():
         ''' # CPP_REMOVE
         { // BEGIN
         ''' # CPP_REMOVE
@@ -286,7 +302,7 @@ def node_find_path_(self: node[T], elem: T, output: list[tuple[node[T], int]]) -
         ''' # CPP_REMOVE
         } // END
         ''' # CPP_REMOVE
-    tmp = self.down[w];
+    tmp = self.down()[w];
     assert (tmp is not None); # CPP_REMOVE
     assert (tmp != None);
     if (node_find_path_(tmp, elem, output))// simple():
@@ -310,13 +326,13 @@ def node_erase(self: node[T], elem: T, max_len: int) -> node[T]:
     (self);
     t: None|node[T];
     self = node_copy(self);
-    if (self.down[0] == None)// simple():
+    if (self.down()[0] == None)// simple():
         ''' # CPP_REMOVE
         { // BEGIN
         ''' # CPP_REMOVE
-        t_ = list_index(self.data, (elem));
-        list_erase(self.data, t_);
-        list_erase(self.down, 0);
+        t_ = list_index(self.data(), (elem));
+        list_erase(self.data(), t_);
+        list_erase(self.down(), 0);
         ''' # CPP_REMOVE
         } // END
         ''' # CPP_REMOVE
@@ -325,7 +341,7 @@ def node_erase(self: node[T], elem: T, max_len: int) -> node[T]:
         { // BEGIN
         ''' # CPP_REMOVE
         w = 0;
-        while (w < list_size(self.data) and self.data[w] < elem)// simple():
+        while (w < list_size(self.data()) and self.data()[w] < elem)// simple():
             ''' # CPP_REMOVE
             { // BEGIN
             ''' # CPP_REMOVE
@@ -333,18 +349,18 @@ def node_erase(self: node[T], elem: T, max_len: int) -> node[T]:
             ''' # CPP_REMOVE
             } // END
             ''' # CPP_REMOVE
-        tmp = self.down[w];
+        tmp = self.down()[w];
         assert (tmp is not None); # CPP_REMOVE
         assert (tmp != None);
-        self.down[w] = node_erase(tmp, elem, max_len);
-        tmp = self.down[w];
+        self.down()[w] = node_erase(tmp, elem, max_len);
+        tmp = self.down()[w];
         assert (tmp is not None); # CPP_REMOVE
         assert (tmp != None);
-        if (list_size(tmp.data) <x__div( max_len ,  2))// simple():
+        if (list_size(tmp.data()) <x__div( max_len ,  2))// simple():
             ''' # CPP_REMOVE
             { // BEGIN
             ''' # CPP_REMOVE
-            assert (list_size(tmp.data) ==x__div( max_len ,  2) - 1);
+            assert (list_size(tmp.data()) ==x__div( max_len ,  2) - 1);
             if (w)// simple():
                 ''' # CPP_REMOVE
                 { // BEGIN
@@ -363,29 +379,29 @@ def node_erase(self: node[T], elem: T, max_len: int) -> node[T]:
                 ''' # CPP_REMOVE
             q = max(w, e);
             r = min(w, e);
-            tmp = self.down[e];
+            tmp = self.down()[e];
             assert (tmp is not None); # CPP_REMOVE
             assert (tmp != None);
-            if (list_size(tmp.data) ==x__div( max_len ,  2))// simple():
+            if (list_size(tmp.data()) ==x__div( max_len ,  2))// simple():
                 ''' # CPP_REMOVE
                 { // BEGIN
                 ''' # CPP_REMOVE
-                tmp = self.down[q];
+                tmp = self.down()[q];
                 assert (tmp is not None); # CPP_REMOVE
                 assert (tmp != None);
                 t = node_copy(tmp);
-                tmp = self.down[r];
+                tmp = self.down()[r];
                 assert (tmp is not None); # CPP_REMOVE
                 assert (tmp != None);
-                __t = tmp.data;
-                list_append(__t, self.data[r]);
-                list_slice_assign(t.data, 0, 0, __t);
-                tmp = self.down[r];
+                __t = tmp.data();
+                list_append(__t, self.data()[r]);
+                list_slice_assign(t.data(), 0, 0, __t);
+                tmp = self.down()[r];
                 assert (tmp is not None); # CPP_REMOVE
                 assert (tmp != None);
-                list_slice_assign(t.down, 0,0,tmp.down);
-                list_slice_assign(self.down, r,q + 1, [t]); # type: ignore
-                list_slice_assign(self.data, r,q , []);
+                list_slice_assign(t.down(), 0,0,tmp.down());
+                list_slice_assign(self.down(), r,q + 1, [t]); # type: ignore
+                list_slice_assign(self.data(), r,q , []);
                 ''' # CPP_REMOVE
                 } // END
                 ''' # CPP_REMOVE
@@ -393,17 +409,17 @@ def node_erase(self: node[T], elem: T, max_len: int) -> node[T]:
                 ''' # CPP_REMOVE
                 { // BEGIN
                 ''' # CPP_REMOVE
-                tmp = self.down[w];
+                tmp = self.down()[w];
                 assert (tmp is not None); # CPP_REMOVE
                 assert (tmp != None);
                 t = node_copy(tmp);
-                l = (q - w) * list_size(t.down);
+                l = (q - w) * list_size(t.down());
                 tmp_1 = l
                 if (tmp_1 < 0)// simple():
                     ''' # CPP_REMOVE
                     { // BEGIN
                     ''' # CPP_REMOVE
-                    tmp_1 += list_size(t.data)
+                    tmp_1 += list_size(t.data())
                     ''' # CPP_REMOVE
                     } // END
                     ''' # CPP_REMOVE
@@ -415,26 +431,26 @@ def node_erase(self: node[T], elem: T, max_len: int) -> node[T]:
                     ''' # CPP_REMOVE
                     } // END
                     ''' # CPP_REMOVE
-                if (tmp_1 > list_size(t.data))// simple():
+                if (tmp_1 > list_size(t.data()))// simple():
                     ''' # CPP_REMOVE
                     { // BEGIN
                     ''' # CPP_REMOVE
-                    tmp_1 = list_size(t.data)
+                    tmp_1 = list_size(t.data())
                     ''' # CPP_REMOVE
                     } // END
                     ''' # CPP_REMOVE
-                list_slice_assign(t.data, tmp_1, tmp_1, [self.data[r]]);
-                tmp = self.down[e];
+                list_slice_assign(t.data(), tmp_1, tmp_1, [self.data()[r]]);
+                tmp = self.down()[e];
                 assert (tmp is not None); # CPP_REMOVE
                 assert (tmp != None);
                 tmp_1 = l
-                list_slice_assign(t.down, tmp_1, tmp_1, [tmp.down[(e - q + list_size(tmp.down)) % list_size(tmp.down)]]);
-                self.down[w] = t;
-                tmp = self.down[e];
+                list_slice_assign(t.down(), tmp_1, tmp_1, [tmp.down()[(e - q + list_size(tmp.down())) % list_size(tmp.down())]]);
+                self.down()[w] = t;
+                tmp = self.down()[e];
                 assert (tmp is not None); # CPP_REMOVE
                 assert (tmp != None);
-                self.data[r] = tmp.data[(e - q + list_size(tmp.data)) % list_size(tmp.data)];
-                tmp = self.down[e];
+                self.data()[r] = tmp.data()[(e - q + list_size(tmp.data())) % list_size(tmp.data())];
+                tmp = self.down()[e];
                 assert (tmp is not None); # CPP_REMOVE
                 assert (tmp != None);
                 t = node_copy(tmp);
@@ -443,40 +459,40 @@ def node_erase(self: node[T], elem: T, max_len: int) -> node[T]:
                     ''' # CPP_REMOVE
                     { // BEGIN
                     ''' # CPP_REMOVE
-                    tmp_1 += list_size(t.data);
+                    tmp_1 += list_size(t.data());
                     ''' # CPP_REMOVE
                     } // END
                     ''' # CPP_REMOVE
-                tmp_2 = list_size(t.data) * (q - e) + (q - w)
+                tmp_2 = list_size(t.data()) * (q - e) + (q - w)
                 if (tmp_2 < 0)// simple():
                     ''' # CPP_REMOVE
                     { // BEGIN
                     ''' # CPP_REMOVE
-                    tmp_2 += list_size(t.data)
+                    tmp_2 += list_size(t.data())
                     ''' # CPP_REMOVE
                     } // END
                     ''' # CPP_REMOVE
-                list_slice_assign(t.data, tmp_1, tmp_2, []);
+                list_slice_assign(t.data(), tmp_1, tmp_2, []);
                 tmp_1 = e - q
                 if (tmp_1 < 0)// simple():
                     ''' # CPP_REMOVE
                     { // BEGIN
                     ''' # CPP_REMOVE
-                    tmp_1 += list_size(t.down);
+                    tmp_1 += list_size(t.down());
                     ''' # CPP_REMOVE
                     } // END
                     ''' # CPP_REMOVE
-                tmp_2 = list_size(t.down) * (q - e) + (q - w)
+                tmp_2 = list_size(t.down()) * (q - e) + (q - w)
                 if (tmp_2 < 0)// simple():
                     ''' # CPP_REMOVE
                     { // BEGIN
                     ''' # CPP_REMOVE
-                    tmp_2 += list_size(t.data)
+                    tmp_2 += list_size(t.data())
                     ''' # CPP_REMOVE
                     } // END
                     ''' # CPP_REMOVE
-                list_slice_assign(t.down, tmp_1, tmp_2, []);
-                self.down[e] = t;
+                list_slice_assign(t.down(), tmp_1, tmp_2, []);
+                self.down()[e] = t;
                 ''' # CPP_REMOVE
                 } // END
                 ''' # CPP_REMOVE
@@ -495,13 +511,13 @@ def node_to_list(self: node[T], l: list[T]) -> list[T]:
     ''' # CPP_REMOVE
     { // BEGIN
     ''' # CPP_REMOVE
-    if (self.down[0] == None)// simple():
+    if (self.down()[0] == None)// simple():
         ''' # CPP_REMOVE
         { // BEGIN
         ''' # CPP_REMOVE
         i_ = 0
-        while i_ < list_size(self.data):
-            w_ = self.data[i_];
+        while i_ < list_size(self.data()):
+            w_ = self.data()[i_];
             l.append(w_);
             i_ += 1
         ''' # CPP_REMOVE
@@ -511,18 +527,18 @@ def node_to_list(self: node[T], l: list[T]) -> list[T]:
         ''' # CPP_REMOVE
         { // BEGIN
         ''' # CPP_REMOVE
-        tmp = self.down[0]
+        tmp = self.down()[0]
         assert (tmp != None)
         assert (tmp is not None) # CPP_REMOVE
         node_to_list(tmp, l);
         i_ = 0
-        while i_ < list_size(self.data):
+        while i_ < list_size(self.data()):
             w = i_
             ''' # CPP_REMOVE
             { // BEGIN
             ''' # CPP_REMOVE
-            l.append(self.data[w]);
-            tmp = self.down[w + 1];
+            l.append(self.data()[w]);
+            tmp = self.down()[w + 1];
             assert (isinstance(tmp, node));
             node_to_list(tmp, l);
             ''' # CPP_REMOVE
@@ -547,10 +563,10 @@ def node_chval(self: node[T], a: list[tuple[node[T], int]], t: int, kw: T, n: in
         { // BEGIN
         ''' # CPP_REMOVE
         v = a[n][1];
-        tmp = self.down[v];
+        tmp = self.down()[v];
         assert (tmp is not None); # CPP_REMOVE
         assert (tmp != None);
-        self.down[v] = node_chval(tmp, a, t, kw, n - 1);
+        self.down()[v] = node_chval(tmp, a, t, kw, n - 1);
         ''' # CPP_REMOVE
         } // END
         ''' # CPP_REMOVE
@@ -558,9 +574,9 @@ def node_chval(self: node[T], a: list[tuple[node[T], int]], t: int, kw: T, n: in
         ''' # CPP_REMOVE
         { // BEGIN
         ''' # CPP_REMOVE
-        assert (self.data != None);
+        assert (self.data() != None);
         assert (isinstance(t, int));
-        self.data[t] = kw;
+        self.data()[t] = kw;
         ''' # CPP_REMOVE
         } // END
         ''' # CPP_REMOVE
@@ -591,11 +607,11 @@ class b_set(typing.Generic[T]):
         ''' # CPP_REMOVE
         q = node(data=List_([]), down=List_([self.root, ]));
         q = node_insert(q, v, self.max_len);
-        if (not list_size(q.data))// simple():
+        if (not list_size(q.data()))// simple():
             ''' # CPP_REMOVE
             { // BEGIN
             ''' # CPP_REMOVE
-            tmp = q.down[0];
+            tmp = q.down()[0];
             assert (tmp is not None); # CPP_REMOVE
             assert (tmp != None);
             q = tmp;
@@ -634,7 +650,7 @@ class b_set(typing.Generic[T]):
         assert (f != None)
         assert (f is not None) # CPP_REMOVE
         _f = f[0];
-        return [_f[0].data[_f[1]]];
+        return [_f[0].data()[_f[1]]];
         ''' # CPP_REMOVE
         } // END
         ''' # CPP_REMOVE
@@ -669,30 +685,30 @@ class b_set(typing.Generic[T]):
         assert (a != None)
         assert (a is not None) # CPP_REMOVE
         a = a[::-1];
-        if (a[-1][0].down[0] != None)// simple():
+        if (a[-1][0].down()[0] != None)// simple():
             ''' # CPP_REMOVE
             { // BEGIN
             ''' # CPP_REMOVE
-            t = a[-1][0].down[list_index(a[-1][0].data, v) + 1];
+            t = a[-1][0].down()[list_index(a[-1][0].data(), v) + 1];
             assert (t is not None); # CPP_REMOVE
             assert (t != None);
-            while (t.down[0] != None)// simple():
+            while (t.down()[0] != None)// simple():
                 ''' # CPP_REMOVE
                 { // BEGIN
                 ''' # CPP_REMOVE
-                t = t.down[0];
+                t = t.down()[0];
                 assert (t is not None); # CPP_REMOVE
                 assert (t != None);
                 ''' # CPP_REMOVE
                 } // END
                 ''' # CPP_REMOVE
-            kw = t.data[0];
+            kw = t.data()[0];
             r = node_erase(r, kw, self.max_len);
             a = node_find_path(r, v);
             assert (a is not None); # CPP_REMOVE
             assert (a != None);
             del t;
-            t_ = list_index(a[0][0].data, v);
+            t_ = list_index(a[0][0].data(), v);
             r = node_chval(r, a, t_, kw, len(a) - 1);
             ''' # CPP_REMOVE
             } // END
@@ -705,11 +721,11 @@ class b_set(typing.Generic[T]):
             ''' # CPP_REMOVE
             } // END
             ''' # CPP_REMOVE
-        if (list_size(r.data) == 0)// simple():
+        if (list_size(r.data()) == 0)// simple():
             ''' # CPP_REMOVE
             { // BEGIN
             ''' # CPP_REMOVE
-            r = r.down[0];
+            r = r.down()[0];
             ''' # CPP_REMOVE
             } // END
             ''' # CPP_REMOVE
