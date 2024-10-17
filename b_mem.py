@@ -12,87 +12,127 @@ class ComparableProto(typing.Protocol):
 T_ = typing.TypeVar('T_');
 
 class List(typing.Generic[T_]):
-    def __init__(self, a: list[T_]|List[T_]) -> None:
+    def __init__(self, a: list[T_]|List[T_]) -> None\
+    :
+    # { // BEGIN
         self.l : list[T_];
-        if (isinstance(a, list)):
+        if (isinstance(a, list))\
+        :
+        # { // BEGIN
             self.l = a;
-        else:
+        else\
+        :
+        # { // BEGIN
             self.l = a.l;
         self.l = copy.copy(self.l);
-    def __getitem__(self, i: int) -> T_:
+    def __getitem__(self, i: int) -> T_\
+    :
+    # { // BEGIN
         assert 0 <= i;
         return self.l.__getitem__(i);
-    def __setitem__(self, i: int, v: T_) -> None:
+    def __setitem__(self, i: int, v: T_) -> None\
+    :
+    # { // BEGIN
         assert 0 <= i;
         return self.l.__setitem__(i, v);
-def list_size(self: List[T_]) -> int:
+def list_size(self: List[T_]) -> int\
+:
+# { // BEGIN
     return self.l.__len__();
-def list_append(self: List[T_], v: T_) -> None:
+# } // END
+def list_append(self: List[T_], v: T_) -> None\
+:
+# { // BEGIN
     return self.l.append(v);
-def list_insert(self: List[T_], i: int, v: T_) -> None:
+# } // END
+def list_insert(self: List[T_], i: int, v: T_) -> None\
+:
+# { // BEGIN
     return self.l.insert(i, v);
-def list_erase(self: List[T_], i: int) -> T_:
+# } // END
+def list_erase(self: List[T_], i: int) -> T_\
+:
+# { // BEGIN
     return self.l.pop(i);
-def list_slice_assign(self: List[T_], begin: int, end: int, val: list[T_]|List[T_]) -> None:
+# } // END
+def list_slice_assign(self: List[T_], begin: int, end: int, val: list[T_]|List[T_]) -> None\
+:
+# { // BEGIN
     assert 0 <= begin <= end <= len(self.l)
     self.l[begin:end] = val if isinstance(val, list) else val.l;
-def list_contains(self: List[T_], val: T_) -> bool:
+# } // END
+def list_contains(self: List[T_], val: T_) -> bool\
+:
+# { // BEGIN
     return val in self.l;
-def list_index(self: List[T_], v: T_) -> int:
+# } // END
+def list_index(self: List[T_], v: T_) -> int\
+:
+# { // BEGIN
     return self.l.index(v);
+# } // END
 
 T = typing.TypeVar('T', bound=ComparableProto);
 T = typing.TypeVar('T') ; # type: ignore
 
+# } // END
 class node(typing.Generic[T]):
-    def __init__(self, *, data:List[T], down: List[node[T]|None]):
+    def __init__(self, *, data:List[T], down: List[node[T]|None])\
+    :
+    # { // BEGIN
         self.data = List(data);
         self.down = List(down);
-        node.check(self);
 
-@staticmethod
-def check(self: node[T]|None, s: set[int]|None = None, l: int = 0) -> None:
-    if (s is None):
-        s = set();
-    if (self is None):
-        s.add(l);
-        return;
-    for i in range(list_size(self.down)):
-        w = self.down[i];
-        node.check(w, s, l+1);
-    if (l == 0):
-        assert len(s) == 1;
-    assert list_size(self.down) == 1 + list_size(self.data);
-    assert len([w for w in self.down if w is None]) in {0, list_size(self.down)}; # type: ignore
-
-def copy(self) -> node[T]:
+# } // END
+def node_copy(self: node[T]) -> node[T]\
+:
+# { // BEGIN
     return node(data=self.data, down=self.down);
+# } // END
 
-@staticmethod
-def insert(self: node[T]|None, elem: T, max_len: int) -> node[T]:
-    node.check(self);
+
+def node_insert(self: node[T]|None, elem: T, max_len: int) -> node[T]\
+:
+# { // BEGIN
+    (self);
     assert self is not None;
-    self = self.copy();
-    if (list_contains(self.data, elem)):
+    self = node_copy(self)
+    if (list_contains(self.data, elem))\
+    :
+    # { // BEGIN
         t = list_index(self.data, elem);
         self.data[t] = elem;
-    elif (self.down[0] is None):
+    # } // END
+    elif (self.down[0] is None)\
+    :
+    # { // BEGIN
         w = 0;
-        while (w < list_size(self.data) and self.data[w] < elem):
+        while (w < list_size(self.data) and self.data[w] < elem)\
+        :
+        # { // BEGIN
             w += 1;
+        # } // END
         list_insert(self.data, w, elem);
         list_insert(self.down, 0, None);
-    else:
+    # } // END
+    else\
+    :
+    # { // BEGIN
         w = 0;
-        while (w < list_size(self.data) and self.data[w] < elem):
+        while (w < list_size(self.data) and self.data[w] < elem)\
+        :
+        # { // BEGIN
             w += 1;
-        self.down[w] = node.insert(self.down[w], elem, max_len);
+        # } // END
+        self.down[w] = node_insert(self.down[w], elem, max_len);
         tmp = self.down[w];
         assert tmp is not None;
-        if (list_size(tmp.data) > max_len):
+        if (list_size(tmp.data) > max_len)\
+        :
+        # { // BEGIN
             assert list_size(tmp.data) == 1 + max_len;
-            q = tmp.copy();
-            a = q.copy();
+            q = node_copy(tmp);
+            a = node_copy(q);
             list_slice_assign(a.data, max_len // 2,list_size(a.data), []);
             list_slice_assign(a.down, max_len // 2 + 1,list_size(a.down),[]);
             kw = q.data[max_len // 2];
@@ -101,62 +141,106 @@ def insert(self: node[T]|None, elem: T, max_len: int) -> node[T]:
             list_insert(self.data, w, kw);
             self.down[w] = q;
             list_insert(self.down, w, a);
+        # } // END
+    # } // END
     return self;
+# } // END
 
-@staticmethod
-def find_path(self: node[T], elem: T) -> list[tuple[node[T], int]] | None:
+def node_find_path(self: node[T], elem: T) -> list[tuple[node[T], int]] | None\
+:
+# { // BEGIN
     output : list[tuple[node[T], int]] = [];
-    if (node.find_path_(self, elem, output)):
+    if (node_find_path_(self, elem, output))\
+    :
+    # { // BEGIN
         return output;
+    # } // END
     return None;
+# } // END
 
-@staticmethod
-def find_path_(self: node[T], elem: T, output: list[tuple[node[T], int]]) -> bool:
-    node.check(self);
-    if (list_contains(self.data, elem)):
+def node_find_path_(self: node[T], elem: T, output: list[tuple[node[T], int]]) -> bool\
+:
+# { // BEGIN
+    (self);
+    if (list_contains(self.data, elem))\
+    :
+    # { // BEGIN
         output.append((self, list_index(self.data, (elem))));
         return True;
-    if (self.down[0] is None):
+    # } // END
+    if (self.down[0] is None)\
+    :
+    # { // BEGIN
         return False;
+    # } // END
     w = 0;
-    while (w < list_size(self.data) and self.data[w] < elem):
+    while (w < list_size(self.data) and self.data[w] < elem)\
+    :
+    # { // BEGIN
         w += 1;
+    # } // END
     tmp = self.down[w];
     assert tmp is not None;
-    if (node.find_path_(tmp, elem, output)):
+    if (node_find_path_(tmp, elem, output))\
+    :
+    # { // BEGIN
         output.append((self, w));
         return True;
+    # } // END
     return False;
+# } // END
 
-@staticmethod
-def erase(self: node[T], elem: T, max_len: int) -> node[T]:
-    node.check(self);
+def node_erase(self: node[T], elem: T, max_len: int) -> node[T]\
+:
+# { // BEGIN
+# { // BEGIN
+    (self);
     t: None|node[T];
-    self = self.copy();
-    if (self.down[0] is None):
+    self = node_copy(self);
+    if (self.down[0] is None)\
+    :
+    # { // BEGIN
         t_ = list_index(self.data, (elem));
         list_erase(self.data, t_);
         list_erase(self.down, 0);
-    else:
+    # } // END
+    else\
+    :
+    # { // BEGIN
         w = 0;
-        while (w < list_size(self.data) and self.data[w] < elem):
+        while (w < list_size(self.data) and self.data[w] < elem)\
+        :
+        # { // BEGIN
             w += 1;
+        # } // END
         tmp = self.down[w];
         assert tmp is not None;
-        self.down[w] = node.erase(tmp, elem, max_len);
+        self.down[w] = node_erase(tmp, elem, max_len);
         tmp = self.down[w];
         assert tmp is not None;
-        if (list_size(tmp.data) < max_len // 2):
+        if (list_size(tmp.data) < max_len // 2)\
+        :
+        # { // BEGIN
             assert list_size(tmp.data) == max_len // 2 - 1;
-            e = w - 1 if w else w + 1;
+            if (w)\
+            :
+            # { // BEGIN
+                e = w - 1;
+            # } // END
+            else\
+            :
+            # { // BEGIN
+                e = w + 1;
             q = max(w, e);
             r = min(w, e);
             tmp = self.down[e];
             assert tmp is not None;
-            if (list_size(tmp.data) == max_len // 2):
+            if (list_size(tmp.data) == max_len // 2)\
+            :
+            # { // BEGIN
                 tmp = self.down[q];
                 assert tmp is not None;
-                t = tmp.copy();
+                t = node_copy(tmp);
                 tmp = self.down[r];
                 assert tmp is not None;
                 __t = tmp.data;
@@ -167,18 +251,30 @@ def erase(self: node[T], elem: T, max_len: int) -> node[T]:
                 list_slice_assign(t.down, 0,0,tmp.down);
                 list_slice_assign(self.down, r,q + 1, [t]); # type: ignore
                 list_slice_assign(self.data, r,q , []);
-            else:
+            # } // END
+            else\
+            :
+            # { // BEGIN
                 tmp = self.down[w];
                 assert tmp is not None;
-                t = tmp.copy();
+                t = node_copy(tmp);
                 l = (q - w) * list_size(t.down);
                 tmp_1 = l
-                if (tmp_1 < 0):
+                if (tmp_1 < 0)\
+                :
+                # { // BEGIN
                     tmp_1 += list_size(t.data)
-                if (tmp_1 < 0):
+                # } // END
+                if (tmp_1 < 0)\
+                :
+                # { // BEGIN
                     tmp_1 = 0
-                if (tmp_1 > list_size(t.data)):
+                # } // END
+                if (tmp_1 > list_size(t.data))\
+                :
+                # { // BEGIN
                     tmp_1 = list_size(t.data)
+                # } // END
                 list_slice_assign(t.data, tmp_1, tmp_1, [self.data[r]]);
                 tmp = self.down[e];
                 assert tmp is not None;
@@ -190,48 +286,74 @@ def erase(self: node[T], elem: T, max_len: int) -> node[T]:
                 self.data[r] = tmp.data[(e - q + list_size(tmp.data)) % list_size(tmp.data)];
                 tmp = self.down[e];
                 assert tmp is not None;
-                t = tmp.copy();
+                t = node_copy(tmp);
                 tmp_1 = e - q
-                if (tmp_1 < 0):
+                if (tmp_1 < 0)\
+                :
+                # { // BEGIN
                     tmp_1 += list_size(t.data);
+                # } // END
                 tmp_2 = list_size(t.data) * (q - e) + (q - w)
-                if (tmp_2 < 0):
+                if (tmp_2 < 0)\
+                :
+                # { // BEGIN
                     tmp_2 += list_size(t.data)
+                # } // END
                 list_slice_assign(t.data, tmp_1, tmp_2, []);
                 tmp_1 = e - q
-                if (tmp_1 < 0):
+                if (tmp_1 < 0)\
+                :
+                # { // BEGIN
                     tmp_1 += list_size(t.down);
+                # } // END
                 tmp_2 = list_size(t.down) * (q - e) + (q - w)
-                if (tmp_2 < 0):
+                if (tmp_2 < 0)\
+                :
+                # { // BEGIN
                     tmp_2 += list_size(t.data)
+                # } // END
                 list_slice_assign(t.down, tmp_1, tmp_2, []);
                 self.down[e] = t;
+            # } // END
+        # } // END
+    # } // END
     return self;
+# } // END
 
-@staticmethod
-def to_list(self: node[T], l: list[T]) -> list[T]:
-    if (self.down[0] is None):
+def node_to_list(self: node[T], l: list[T]) -> list[T]\
+:
+# { // BEGIN
+    if (self.down[0] is None)\
+    :
+    # { // BEGIN
         for i_ in range(list_size(self.data)):
             w_ = self.data[i_];
             l.append(w_);
-    else:
-        node.to_list(self.down[0], l);
+    else\
+    :
+    # { // BEGIN
+        node_to_list(self.down[0], l);
         for w in range(list_size(self.data)):
             l.append(self.data[w]);
             tmp = self.down[w + 1];
             assert isinstance(tmp, node);
-            node.to_list(tmp, l);
+            node_to_list(tmp, l);
     return l;
 
-@staticmethod
-def chval(self: node[T], a: list[tuple[node[T], int]], t: int, kw: T, n: int) -> node[T]:
-    self = self.copy();
-    if (n):
+def node_chval(self: node[T], a: list[tuple[node[T], int]], t: int, kw: T, n: int) -> node[T]\
+:
+# { // BEGIN
+    self = node_copy(self);
+    if (n)\
+    :
+    # { // BEGIN
         v = a[n][1];
         tmp = self.down[v];
         assert tmp is not None;
-        self.down[v] = node.chval(tmp, a, t, kw, n - 1);
-    else:
+        self.down[v] = node_chval(tmp, a, t, kw, n - 1);
+    else\
+    :
+    # { // BEGIN
         assert self.data is not None;
         assert isinstance(t, int);
         self.data[t] = kw;
@@ -243,69 +365,105 @@ Node = node[T] | None;
 
 class b_set(typing.Generic[T]):
 
-    def __init__(self) -> None:
+    def __init__(self) -> None\
+    :
+    # { // BEGIN
         self.root: Node[T] = None;
         self.max_len = 99;
 
-    def add(self, v: T) -> None:
+    def add(self, v: T) -> None\
+    :
+    # { // BEGIN
         q = node(data=List([]), down=List([self.root, ]));
-        q = node.insert(q, v, self.max_len);
-        if (not list_size(q.data)):
+        q = node_insert(q, v, self.max_len);
+        if (not list_size(q.data))\
+        :
+        # { // BEGIN
             tmp = q.down[0];
             assert tmp is not None;
             q = tmp;
         self.root = q;
 
-    def find(self, v: T) -> list[T]:
+    def find(self, v: T) -> list[T]\
+    :
+    # { // BEGIN
         r = self.root;
-        if (r is None):
+        if (r is None)\
+        :
+        # { // BEGIN
             return [];
-        f = node.find_path(r, v);
-        if (f is None):
+        f = node_find_path(r, v);
+        if (f is None)\
+        :
+        # { // BEGIN
             return [];
         _f = f[0];
         return [_f[0].data[_f[1]]];
 
-    def __contains__(self, v: T) -> bool:
+    def __contains__(self, v: T) -> bool\
+    :
+    # { // BEGIN
         return bool(self.find(v));
 
-    def remove(self, v: T) -> None:
+    def remove(self, v: T) -> None\
+    :
+    # { // BEGIN
         r = self.root;
-        if (r is None):
+        if (r is None)\
+        :
+        # { // BEGIN
             return;
-        a = node.find_path(r, v);
-        if (a is None):
+        a = node_find_path(r, v);
+        if (a is None)\
+        :
+        # { // BEGIN
             return;
         a = a[::-1];
-        if (a[-1][0].down[0] is not None):
+        if (a[-1][0].down[0] is not None)\
+        :
+        # { // BEGIN
             t = a[-1][0].down[list_index(a[-1][0].data, v) + 1];
             assert t is not None;
-            while (t.down[0] is not None):
+            while (t.down[0] is not None)\
+            :
+            # { // BEGIN
                 t = t.down[0];
             kw = t.data[0];
-            r = node.erase(r, kw, self.max_len);
-            a = node.find_path(r, v);
+            r = node_erase(r, kw, self.max_len);
+            a = node_find_path(r, v);
             assert a is not None;
             del t;
             t_ = list_index(a[0][0].data, v);
-            r = node.chval(r, a, t_, kw, len(a) - 1);
-        else:
-            r = node.erase(r, v, self.max_len);
-        if (list_size(r.data) == 0):
+            r = node_chval(r, a, t_, kw, len(a) - 1);
+        else\
+        :
+        # { // BEGIN
+            r = node_erase(r, v, self.max_len);
+        if (list_size(r.data) == 0)\
+        :
+        # { // BEGIN
             r = r.down[0];
         self.root = r;
 
-    def __repr__(self) -> str:
+    def __repr__(self) -> str\
+    :
+    # { // BEGIN
         r = self.root;
         return repr(r);
 
-    def to_list(self) -> list[T]:
+    def to_list(self) -> list[T]\
+    :
+    # { // BEGIN
         r = self.root;
-        if (r is None):
+        if (r is None)\
+        :
+        # { // BEGIN
             return [];
-        return node.to_list(r, []);
+        return node_to_list(r, []);
 
-    def __del__(self) -> None:
+    def __del__(self) -> None\
+    :
+    # { // BEGIN
         pass;
 
 
@@ -317,60 +475,94 @@ V = typing.TypeVar('V');
 @functools.total_ordering
 class item(typing.Generic[K, V]):
 
-    def __init__(self, k: K | item[K,V], v: V|None=None):
-        if (not isinstance(k, item)):
+    def __init__(self, k: K | item[K,V], v: V|None=None)\
+    :
+    # { // BEGIN
+        if (not isinstance(k, item))\
+        :
+        # { // BEGIN
             self.k : K = k;
             self.v : V|None = v;
-        else:
+        else\
+        :
+        # { // BEGIN
             self.k, self.v = k.k, k.v;
 
-    def __lt__(self, o: item[K, V]) -> bool:
+    def __lt__(self, o: item[K, V]) -> bool\
+    :
+    # { // BEGIN
         return self.k < o.k;
 
-    def __eq__(self, o: object|item[K, V]) -> bool:
-        if (isinstance(o, item)):
+    def __eq__(self, o: object|item[K, V]) -> bool\
+    :
+    # { // BEGIN
+        if (isinstance(o, item))\
+        :
+        # { // BEGIN
             return self.k == o.k;
         return False;
 
-    def __repr__(self) -> str:
+    def __repr__(self) -> str\
+    :
+    # { // BEGIN
         return 'item' + repr((self.k, self.v));
 
-    def to_list(self) -> list[K|V|None]:
+    def to_list(self) -> list[K|V|None]\
+    :
+    # { // BEGIN
         return [self.k, self.v];
 
 
 class b_dict(typing.Generic[K, V]):
 
-    def __init__(self) -> None:
+    def __init__(self) -> None\
+    :
+    # { // BEGIN
         self.b_set: b_set[item[K, V]] = b_set();
 
-    def __getitem__(self, k:K)->V:
+    def __getitem__(self, k:K)->V\
+    :
+    # { // BEGIN
         r = self.b_set.find(item(k));
-        if (not r):
+        if (not r)\
+        :
+        # { // BEGIN
             raise KeyError(k);
         tmp = r[0].v;
         assert tmp is not None;
         return tmp;
 
-    def __setitem__(self, k:K, v:V)->None:
+    def __setitem__(self, k:K, v:V)->None\
+    :
+    # { // BEGIN
         self.b_set.add(item(k, v));
 
-    def __delitem__(self, k:K)->None:
+    def __delitem__(self, k:K)->None\
+    :
+    # { // BEGIN
         self.b_set.remove(item(k));
 
-    def __repr__(self)->str:
+    def __repr__(self)->str\
+    :
+    # { // BEGIN
         return repr(self.b_set);
 
-    def __contains__(self, k:K) -> bool:
+    def __contains__(self, k:K) -> bool\
+    :
+    # { // BEGIN
         return bool(self.b_set.find(item(k)));
 
-    def to_dict(self) -> dict[K, V]:
+    def to_dict(self) -> dict[K, V]\
+    :
+    # { // BEGIN
         r_ = self.b_set.to_list();
         r = [w.to_list() for w in r_];
         return dict(r); # type: ignore
 
 
-if (__name__ == '__main__'):
+if (__name__ == '__main__')\
+:
+# { // BEGIN
     # max_len=8;
 
     t=time.time();
@@ -383,16 +575,22 @@ if (__name__ == '__main__'):
     a_s = set();
     for w in range(99):
         q = random.choice([0] * 3 + [1] + [2]);
-        if (q == 0):
+        if (q == 0)\
+        :
+        # { // BEGIN
             r = random.randint(-9999, 9999);
             a_s.add(r);
             s_s.add(r);
-        if (q == 1):
+        if (q == 1)\
+        :
+        # { // BEGIN
             r = random.choice(list(a_s)) if a_s and random.randint(
                 0, -1 + 2) else random.randint(0, -1 + 9);
             assert (r in a_s) == (r in a_s);
             assert r not in a_s or s_s.find(r)[0] == r;
-        if (q == 2 and a_s):
+        if (q == 2 and a_s)\
+        :
+        # { // BEGIN
             r = random.choice(list(a_s));
             a_s.remove(r);
             s_s.remove(r);
@@ -406,26 +604,38 @@ if (__name__ == '__main__'):
     s_d: b_dict[int, int] = b_dict();
     for w in range(49):
         q = random.choice([0] * 3 + [1] + [2] + [3]+[4]+[5]+[6]);
-        if (q == 0):
+        if (q == 0)\
+        :
+        # { // BEGIN
             k = random.choice(list(a_d)) if a_d and random.randint(
                 0, 1) else random.randint(-9999, 9999);
             v = random.randint(-9999, 9999);
             a_d[k] = v;
             s_d[k] = v;
-        if (q == 1):
+        if (q == 1)\
+        :
+        # { // BEGIN
             k = random.choice(list(a_d)) if a_d and random.randint(
                 0, 1) else random.randint(-9999, 9999);
             assert (k in a_d) == (k in s_d);
-        if (q == 2 and a_d):
+        if (q == 2 and a_d)\
+        :
+        # { // BEGIN
             k = random.choice(list(a_d));
             a_d[k] == s_d[k];
-        if (q == 3 and a_d):
+        if (q == 3 and a_d)\
+        :
+        # { // BEGIN
             k = random.choice(list(a_d));
             del a_d[k];
             del s_d[k];
-        if (q == 4 and a_d):
+        if (q == 4 and a_d)\
+        :
+        # { // BEGIN
             k = random.randint(-9999, 9999);
-            while (k in a_d):
+            while (k in a_d)\
+            :
+            # { // BEGIN
                 k = random.randint(-9999, 9999);
             try:
                 del a_d[k];
@@ -433,9 +643,13 @@ if (__name__ == '__main__'):
             except KeyError:
                 pass;
             del s_d[k];
-        if (q == 5 and a_d):
+        if (q == 5 and a_d)\
+        :
+        # { // BEGIN
             k = random.randint(-9999, 9999);
-            while (k in a_d):
+            while (k in a_d)\
+            :
+            # { // BEGIN
                 k = random.randint(-9999, 9999);
             try:
                 a_d[k];
@@ -465,12 +679,16 @@ if (__name__ == '__main__'):
     print([time.time()-t,(t:=time.time())][0]);
 
     w = 0;
-    while (a_d):
+    while (a_d)\
+    :
+    # { // BEGIN
         k = random.choice(list(a_d));
         del a_d[k];
         del s_d[k];
         w += 1;
-        if (w % 100 == 0):
+        if (w % 100 == 0)\
+        :
+        # { // BEGIN
             assert s_d.to_dict() == a_d;
     assert s_d.to_dict() == a_d;
 
@@ -488,20 +706,28 @@ if (__name__ == '__main__'):
 
     for w in range(19):
         q = random.choice([0] + [1] + [2] + [3]);
-        if (q == 0):
+        if (q == 0)\
+        :
+        # { // BEGIN
             k = random.choice(list(a_d)) if a_d and random.randint(
                 0, 1) else random.randint(-9999, 9999);
             v = random.randint(-9999, 9999);
             a_d[k] = v;
             s_d[k] = v;
-        if (q == 1):
+        if (q == 1)\
+        :
+        # { // BEGIN
             k = random.choice(list(a_d)) if a_d and random.randint(
                 0, 1) else random.randint(-9999, 9999);
             assert (k in a_d) == (k in s_d);
-        if (q == 2 and a_d):
+        if (q == 2 and a_d)\
+        :
+        # { // BEGIN
             k = random.choice(list(a_d));
             a_d[k] == s_d[k];
-        if (q == 3 and a_d):
+        if (q == 3 and a_d)\
+        :
+        # { // BEGIN
             k = random.choice(list(a_d));
             del a_d[k];
             del s_d[k];
@@ -526,11 +752,13 @@ if (__name__ == '__main__'):
 
     a :   dict[str, str] = dict();
     s : b_dict[str, str] = b_dict();
-    for q in range(10**2*3):
+    for q in range(10**4):
         funcs = {}; # type: ignore
         @(lambda x: funcs.setdefault(len(funcs), x))
         @(lambda x: funcs.setdefault(len(funcs), x))
-        def add() -> None:
+        def add() -> None\
+        :
+        # { // BEGIN
             k = random.randbytes(8).hex();
             v = random.randbytes(8).hex();
             assert (k in a) == (k in s);
@@ -540,8 +768,12 @@ if (__name__ == '__main__'):
             assert k in s;
             assert a[k] == s[k];
         @(lambda x: funcs.setdefault(len(funcs), x))
-        def mod() -> None:
-            if (a):
+        def mod() -> None\
+        :
+        # { // BEGIN
+            if (a)\
+            :
+            # { // BEGIN
                 k = random.choice([*a.keys()]);
                 v = random.randbytes(8).hex();
                 assert k in a;
@@ -552,15 +784,23 @@ if (__name__ == '__main__'):
                 assert k in s;
                 assert a[k] == s[k];
         @(lambda x: funcs.setdefault(len(funcs), x))
-        def get() -> None:
-            if (a):
+        def get() -> None\
+        :
+        # { // BEGIN
+            if (a)\
+            :
+            # { // BEGIN
                 k = random.choice([*a.keys()]);
                 assert k in a;
                 assert k in s;
                 assert a[k] == s[k];
         @(lambda x: funcs.setdefault(len(funcs), x))
-        def rem() -> None:
-            if (a):
+        def rem() -> None\
+        :
+        # { // BEGIN
+            if (a)\
+            :
+            # { // BEGIN
                 k = random.choice([*a.keys()]);
                 assert k in a;
                 assert k in s;
@@ -569,5 +809,9 @@ if (__name__ == '__main__'):
                 del s[k];
                 assert k not in a;
                 assert k not in s;
+            # } // END
+        # } // END
         random.choice(funcs)();
+    # } // END
+# } // END
 
