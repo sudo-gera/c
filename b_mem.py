@@ -351,7 +351,7 @@ def node_erase(self: node[T], elem: T, max_len: int) -> node[T]:
                 assert (tmp is not None);
                 assert (tmp != None);
                 t = node_copy(tmp);
-                tmp = self.down()[r];
+                tmp = node_copy(self.down()[r]);
                 assert (tmp is not None);
                 assert (tmp != None);
                 __t = tmp.data();

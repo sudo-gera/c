@@ -8,8 +8,10 @@
 #include <set>
 #include <random>
 
+#ifdef assert_m
 #undef assert
 #define assert assert_m
+#endif
 
 int64_t x__div(int64_t l, int64_t r) {
     assert(r);
@@ -63,6 +65,9 @@ void x__print(auto&&... a) {
     (void)d;
     std::cout << std::endl;
 }
+#define aaas(x) #x
+#define aaaa(x) aaas(x)
+#define x__print(...) x__print(aaaa((__VA_ARGS__)),"\t", __VA_ARGS__)
 auto tuple_get_0(auto&& a) {
     return a.first;
 }
@@ -89,31 +94,43 @@ template <typename T>
 void list_reverse(std::vector<T>& a) {
     std::reverse(a.begin(), a.end());
 }
-template <typename T>
+template <typename T, bool can_write>
 struct node_ptr;
 template <typename T>
 struct node {
     std::vector<T> data;
-    std::vector<node_ptr<T>> down = std::vector<node_ptr<T>>(1);
+    std::vector<node_ptr<T, false>> down = std::vector<node_ptr<T, false>>(1);
     std::weak_ptr<node<T>> maybe_parent;
 };
-template <typename T>
+template <typename T, bool can_write>
 struct node_ptr {
     std::shared_ptr<node<T>> data_;
-    T& data(int64_t f) {
+    T& data(int64_t f)
+    requires(can_write){
         assert(f < data_size());
         assert(0 <= f);
         return data_->data[f];
     }
-    node_ptr<T>& down(int64_t f){
+    const T& data(int64_t f) const {
+        assert(f < data_size());
+        assert(0 <= f);
+        return data_->data[f];
+    }
+    node_ptr<T, false>& down(int64_t f)
+    requires(can_write){
         assert(f < down_size());
         assert(0 <= f);
         return data_->down[f];
     }
-    int64_t down_size(){
+    const node_ptr<T, false>& down(int64_t f)const{
+        assert(f < down_size());
+        assert(0 <= f);
+        return data_->down[f];
+    }
+    int64_t down_size()const{
         return data_->down.size();
     }
-    int64_t data_size(){
+    int64_t data_size()const{
         return data_->data.size();
     }
     bool down_contains(auto&&q){
@@ -128,49 +145,64 @@ struct node_ptr {
     int64_t data_index(auto&&q){
         return list_index(data_->data, std::forward<decltype(q)>(q));;
     }
-    void down_insert(auto&&q, auto&&w){
-        return list_insert(data_->down, std::forward<decltype(q)>(q), std::forward<decltype(w)>(w));;
+    void down_insert(auto&&q, auto&&w)
+    requires(can_write){
+        return list_insert<node_ptr<T, false>>(data_->down, std::forward<decltype(q)>(q), std::forward<decltype(w)>(w));;
     }
-    void data_insert(auto&&q, auto&&w){
+    void data_insert(auto&&q, auto&&w)
+    requires(can_write){
         return list_insert(data_->data, std::forward<decltype(q)>(q), std::forward<decltype(w)>(w));;
     }
-    void data_slice_assign_zero(auto&&...q){
+    void data_slice_assign_zero(auto&&...q)
+    requires(can_write){
         return list_slice_assign_zero(data_->data, std::forward<decltype(q)>(q)...);
     }
-    void down_slice_assign_zero(auto&&...q){
-        return list_slice_assign_zero(data_->down, std::forward<decltype(q)>(q)...);
+    void down_slice_assign_zero(auto&&...q)
+    requires(can_write){
+        return list_slice_assign_zero<node_ptr<T, false>>(data_->down, std::forward<decltype(q)>(q)...);
     }
-    void data_slice_assign_one(auto&&...q){
+    void data_slice_assign_one(auto&&...q)
+    requires(can_write){
         return list_slice_assign_one(data_->data, std::forward<decltype(q)>(q)...);
     }
-    void down_slice_assign_one(auto&&...q){
-        return list_slice_assign_one(data_->down, std::forward<decltype(q)>(q)...);
+    void down_slice_assign_one(auto&&...q)
+    requires(can_write){
+        return list_slice_assign_one<node_ptr<T, false>>(data_->down, std::forward<decltype(q)>(q)...);
     }
-    void data_erase(auto&&...q){
+    void data_erase(auto&&...q)
+    requires(can_write){
         return list_erase(data_->data, std::forward<decltype(q)>(q)...);
     }
-    void down_erase(auto&&...q){
-        return list_erase(data_->down, std::forward<decltype(q)>(q)...);
+    void down_erase(auto&&...q)
+    requires(can_write){
+        return list_erase<node_ptr<T, false>>(data_->down, std::forward<decltype(q)>(q)...);
     }
-    void data_append(auto&&...q){
+    void data_append(auto&&...q)
+    requires(can_write){
         return list_append(data_->data, std::forward<decltype(q)>(q)...);
     }
-    void down_append(auto&&...q){
-        return list_append(data_->down, std::forward<decltype(q)>(q)...);
+    void down_append(auto&&...q)
+    requires(can_write){
+        return list_append<node_ptr<T, false>>(data_->down, std::forward<decltype(q)>(q)...);
     }
-    void data_slice_assign_self(int64_t q_0, int64_t q_1, node_ptr& o){
+    void data_slice_assign_self(int64_t q_0, int64_t q_1, node_ptr<T, false> o)
+    requires(can_write){
         return list_slice_assign(data_->data, q_0, q_1, o.data_->data);
     }
-    void down_slice_assign_self(int64_t q_0, int64_t q_1, node_ptr& o){
+    void down_slice_assign_self(int64_t q_0, int64_t q_1, node_ptr<T, false> o)
+    requires(can_write){
         return list_slice_assign(data_->down, q_0,q_1, o.data_->down);
+    }
+    node_ptr<T, false> parent()const{
+        return {data_->maybe_parent.lock()};
     }
     operator bool() const {
         return data_ != nullptr;
     }
-    bool operator!=(std::nullptr_t) {
+    bool operator!=(std::nullptr_t) const {
         return data_ != nullptr;
     }
-    bool operator==(std::nullptr_t) {
+    bool operator==(std::nullptr_t) const {
         return data_ == nullptr;
     }
     node_ptr(std::shared_ptr<node<T>> a) : data_(a) {
@@ -179,23 +211,34 @@ struct node_ptr {
     }
     node_ptr() {
     }
+    node_ptr(node_ptr<T, true>a): data_(a.data_) {}
 };
-template <typename T>
-node_ptr<T> create_node() {
-    return node_ptr<T>(std::make_shared<node<T>>());
+template <typename T, bool can_write>
+bool operator==(node_ptr<T, can_write> left, node_ptr<T, can_write> right){
+    return left.data_ == right.data_;
+}
+template <typename T, bool can_write>
+bool operator!=(node_ptr<T, can_write> left, node_ptr<T, can_write> right){
+    return not(left == right);
 }
 template <typename T>
-node_ptr<T> node_copy(node_ptr<T> self) {
+node_ptr<T, false> create_node(node_ptr<T, false> next) {
+    node_ptr<T, true> tmp =  node_ptr<T, true>(std::make_shared<node<T>>());
+    tmp.down(0) = next;
+    return tmp;
+}
+template <typename T, bool can_write>
+node_ptr<T, true> node_copy(node_ptr<T, can_write> self) {
     if (self) {
-        return node_ptr<T>{std::make_shared<node<T>>(*self.data_)};
+        return node_ptr<T, true>{std::make_shared<node<T>>(*self.data_)};
     } else {
-        return node_ptr<T>{std::shared_ptr<node<T>>()};
+        return node_ptr<T, true>{std::shared_ptr<node<T>>()};
     }
 }
 template <typename T>
-auto node_insert(node_ptr<T> self, T&& elem, int64_t max_len) -> node_ptr<T> {
-    assert(self != nullptr);
-    self = node_copy(self);
+auto node_insert(node_ptr<T, false> _self, const T& elem, int64_t max_len) -> node_ptr<T, false> {
+    assert(_self != nullptr);
+    auto self = node_copy(_self);
     if (self.data_contains(elem)) {
         int64_t t = self.data_index(elem);
         self.data(t) = std::move(elem);
@@ -205,7 +248,7 @@ auto node_insert(node_ptr<T> self, T&& elem, int64_t max_len) -> node_ptr<T> {
             w += 1;
         }
         self.data_insert(w, elem);
-        node_ptr<T> tmp_3 = {nullptr};
+        node_ptr<T, false> tmp_3 = {nullptr};
         tmp_3 = nullptr;
         self.down_insert( 0, tmp_3);
     } else if (true) {
@@ -233,24 +276,46 @@ auto node_insert(node_ptr<T> self, T&& elem, int64_t max_len) -> node_ptr<T> {
     return self;
 }
 template <typename T>
-auto node_find_path(node_ptr<T> self, const T& elem) -> std::vector<std::pair<node_ptr<T>, int64_t>> {
-    std::vector<std::pair<node_ptr<T>, int64_t>> output;
+auto node_find_path(node_ptr<T, false> self, const T& elem) -> std::vector<std::pair<node_ptr<T, false>, int64_t>> {
+    std::vector<std::pair<node_ptr<T, false>, int64_t>> output;
     if (node_find_path_(self, elem, output)) {
         return output;
     }
-    return std::vector<std::pair<node_ptr<T>, int64_t>>();
+    return std::vector<std::pair<node_ptr<T, false>, int64_t>>();
 }
 template <typename T>
-auto node_set_parent(node_ptr<T> self) -> void {
-    for (auto& child: self.down()){
+auto node_set_parent(node_ptr<T, false> self) -> void {
+    if (not self){
+        return;
+    }
+    self.data_->maybe_parent = std::weak_ptr<node<T>>();
+    for (int64_t child_i = 0; child_i < self.down_size() ; ++child_i){
+        auto& child = self.down(child_i);
         if (child){
-            child->maybe_parent = self.data_;
             node_set_parent(child);
+            child.data_->maybe_parent = self.data_;
         }
     }
 }
-template <typename T>
-auto node_check(node_ptr<T> self, std::set<int64_t>* s = nullptr, int64_t l = 0) -> void{
+// template<typename T>
+// std::shared_ptr<node<T>> non_existent_ptr = std::make_shared<node<T>>();
+
+// template <typename T>
+// auto node_clear_parent(node_ptr<T, false> self) -> void {
+//     self.data_->maybe_parent = std::weak_ptr<node<T>>(non_existent_ptr<T>);
+//     for (int64_t child_i = 0; child_i < self.down_size() ; ++child_i){
+//         auto& child = self.down(child_i);
+//         if (child){
+//             child.data_->maybe_parent = non_existent_ptr<T>;
+//             node_set_parent(child);
+//         }
+//     }
+// }
+template <typename T, bool can_write>
+auto node_check(node_ptr<T, can_write> self, std::set<int64_t>* s = nullptr, int64_t l = 0) -> void{
+    #ifndef CHECK
+    return;
+    #endif
     if (self == nullptr){
         return;
     }
@@ -276,14 +341,17 @@ auto node_check(node_ptr<T> self, std::set<int64_t>* s = nullptr, int64_t l = 0)
     if (l != *s->begin()){
         for (int64_t q = 0 ; q < self.data_size() ; ++q){
             assert (self.down(q).data(self.down(q).data_size()-1) < self.data(q));
+            // x__print(self.data_size(), q, self.down_size(), q+1);
+            // x__print(self.down(q+1).data_size());
+            // x__print(self.down(q+1).down_size());
             assert (self.data(q) < self.down(q+1).data(0));
         }
     }
 }
 template <typename T, typename OUT_IT>
-auto node_find_path_(node_ptr<T> self, const T& elem, OUT_IT& output) -> bool {
+auto node_find_path_(node_ptr<T, false> self, const T& elem, OUT_IT& output) -> bool {
     if (self.data_contains(elem)) {
-        list_append(output, std::pair<node_ptr<T>, int64_t>{self, self.data_index( (elem))});
+        list_append(output, std::pair<node_ptr<T, false>, int64_t>{self, self.data_index( (elem))});
         return true;
     }
     if (self.down(0) == nullptr) {
@@ -303,16 +371,31 @@ auto node_find_path_(node_ptr<T> self, const T& elem, OUT_IT& output) -> bool {
 }
 template<typename T>
 struct node_iter{
-    node_ptr<T> self;
+    node_ptr<T, false> self;
     int64_t pos;
     auto& operator++(){
+        if (not self){
+            return *this;
+        }
+        if (pos == -1){
+            *this = node_first(self);
+            assert(0 <= pos);
+            assert(pos < self.data_size());
+            return *this;
+        }
         if (self.down(0) == nullptr){
             if (pos + 1 < self.data_size()){
                 pos += 1;
+                assert(0 <= pos);
+                assert(pos < self.data_size());
                 return *this;
             }
             while (1){
-                auto p = node_ptr{self->maybe_parent.lock()};
+                auto p = self.parent();
+                if (p == nullptr){
+                    pos = -1;
+                    return *this;
+                }
                 assert (p != nullptr);
                 auto i = p.down_index( self);
                 if (i + 1 == p.down_size()){
@@ -321,6 +404,8 @@ struct node_iter{
                 }
                 self = p;
                 pos = i;
+                assert(0 <= pos);
+                assert(pos < self.data_size());
                 return *this;
             }
         }else{
@@ -330,68 +415,92 @@ struct node_iter{
             }
             pos = 0;
         }
+        assert(0 <= pos);
+        assert(pos < self.data_size());
         return *this;
     }
-    auto operator--(){
-        if (self.down(0) == nullptr){
-            if (pos - 1 >= 0){
-                pos -= 1;
-                return *this;
-            }
-            while (1){
-                auto p = node_ptr{self->maybe_parent.lock()};
-                assert (p != nullptr);
-                auto i = p.down_index( self);
-                if (i == 0){
-                    self = p;
-                    continue;
-                }
-                self = p;
-                pos = i - 1;
-                return *this;
-            }
-        }else{
-            self = self.down(pos);
-            while (self.down(self.down_size()-1)){
-                self = self.down(self.down_size()-1);
-            }
-            pos = self.down_size() - 1;
-        }
-        return *this;
-    }
-    auto& operator*(){
+    // auto operator--(){
+    //     if (not self){
+    //         return *this;
+    //     }
+    //     if (pos == -1){
+    //         *this = node_last(self);
+    //         assert(0 <= pos);
+    //         assert(pos < self.data_size());
+    //         return *this;
+    //     }
+    //     if (self.down(0) == nullptr){
+    //         if (pos - 1 >= 0){
+    //             pos -= 1;
+    //             assert(0 <= pos);
+    //             assert(pos < self.data_size());
+    //             return *this;
+    //         }
+    //         while (1){
+    //             auto p = self.parent();
+    //             if (p == nullptr){
+    //                 pos = -1;
+    //                 return *this;
+    //             }
+    //             assert (p != nullptr);
+    //             auto i = p.down_index( self);
+    //             if (i == 0){
+    //                 self = p;
+    //                 continue;
+    //             }
+    //             self = p;
+    //             pos = i - 1;
+    //             assert(0 <= pos);
+    //             assert(pos < self.data_size());
+    //             return *this;
+    //         }
+    //     }else{
+    //         self = self.down(pos);
+    //         while (self.down(self.down_size()-1)){
+    //             self = self.down(self.down_size()-1);
+    //         }
+    //         pos = self.data_size() - 1;
+    //         assert(0 <= pos);
+    //         assert(pos < self.data_size());
+    //     }
+    //     return *this;
+    // }
+    const auto& operator*(){
+        assert(pos != -1);
+        assert(0 <= pos);
+        assert(pos < self.data_size());
         return self.data(pos);
-    }
-    auto operator->(){
-        return &*self;
     }
 };
 template<typename T>
 bool operator==(node_iter<T> left, node_iter<T> right){
-    return left.self == right.self;
+    return left.self == right.self and left.pos == right.pos;
 }
 template<typename T>
 bool operator!=(node_iter<T> left, node_iter<T> right){
-    return left.self != right.self;
+    return not(left == right);
 }
 template<typename T>
-node_iter<T> node_begin(node_ptr<T> self){
+node_iter<T> node_first(node_ptr<T, false> self){
     while (self and self.down(0)){
         self = self.down(0);
     }
     return node_iter<T>{self, 0};
 }
 template<typename T>
-node_iter<T> node_end(node_ptr<T> self){
+node_iter<T> node_last(node_ptr<T, false> self){
     while (self and self.down(self.down_size()-1)){
         self = self.down(self.down_size()-1);
+    }
+    if (not self){
+        return node_iter<T>{self, 0};
     }
     return node_iter<T>{self, self.data_size() - 1};
 }
 template <typename T>
-auto node_erase(node_ptr<T> self, const T& elem, int64_t max_len) -> node_ptr<T> {
-    node_ptr<T> t;
-    self = node_copy(self);
+auto node_erase(node_ptr<T, false> self_, const T& elem, int64_t max_len) -> node_ptr<T, false> {
+    node_ptr<T, false> t;
+    node_ptr<T, true> self = node_copy(self_);
     if (self.down(0) == nullptr) {
         node_check(self);
         int64_t t_ = self.data_index( (elem));
@@ -411,7 +520,6 @@ auto node_erase(node_ptr<T> self, const T& elem, int64_t max_len) -> node_ptr<T>
         tmp = self.down(w);
         assert(tmp != nullptr);
         if ((tmp.data_size()) < x__div(max_len, 2)) {
-            node_check(self);
             assert((tmp.data_size()) == x__div(max_len, 2) - 1);
             int64_t e = 0;
             if (w) {
@@ -424,14 +532,13 @@ auto node_erase(node_ptr<T> self, const T& elem, int64_t max_len) -> node_ptr<T>
             node_ptr tmp = self.down(e);
             assert(tmp != nullptr);
             if ((tmp.data_size()) == x__div(max_len, 2)) {
-                node_check(self);
                 tmp = self.down(q);
                 assert(tmp != nullptr);
-                t = node_copy(tmp);
-                tmp = self.down(r);
-                assert(tmp != nullptr);
-                tmp.data_append( self.data(r));
-                t.data_slice_assign_self( 0, 0, tmp);
+                auto t = node_copy(tmp);
+                auto tmp_ = node_copy(self.down(r));
+                assert(tmp_ != nullptr);
+                tmp_.data_append( self.data(r));
+                t.data_slice_assign_self( 0, 0, tmp_);
                 tmp = self.down(r);
                 assert(tmp != nullptr);
                 t.down_slice_assign_self( 0, 0, tmp);
@@ -439,10 +546,9 @@ auto node_erase(node_ptr<T> self, const T& elem, int64_t max_len) -> node_ptr<T>
                 self.data_slice_assign_zero(r, q);
                 node_check(self);
             } else if (true) {
-                node_check(self);
                 tmp = self.down(w);
                 assert(tmp != nullptr);
-                t = node_copy(tmp);
+                auto t = node_copy(tmp);
                 int64_t l = (q - w) * (t.down_size());
                 int64_t tmp_1 = l;
                 if (tmp_1 < 0) {
@@ -495,7 +601,7 @@ auto node_erase(node_ptr<T> self, const T& elem, int64_t max_len) -> node_ptr<T>
     return self;
 }
 template <typename T>
-auto node_to_list(node_ptr<T> self, std::vector<T>& l) -> std::vector<T>& {
+auto node_to_list(node_ptr<T, false> self, std::vector<T>& l) -> std::vector<T>& {
     if (self.down(0) == nullptr) {
         int64_t i_ = 0;
         while (i_ < self.data_size()) {
@@ -519,9 +625,9 @@ auto node_to_list(node_ptr<T> self, std::vector<T>& l) -> std::vector<T>& {
     return l;
 }
 template <typename T>
-auto node_chval(node_ptr<T> self, const std::vector<std::pair<node_ptr<T>, int64_t>>& a, int64_t t, T kw, int64_t n)
-    -> node_ptr<T> {
-    self = node_copy(self);
+auto node_chval(node_ptr<T, false> self_, const std::vector<std::pair<node_ptr<T, false>, int64_t>>& a, int64_t t, T kw, int64_t n)
+    -> node_ptr<T, false> {
+    auto self = node_copy(self_);
     if (n) {
         int64_t v = tuple_get_1(a[n]);
         node_ptr tmp = self.down(v);
@@ -534,16 +640,15 @@ auto node_chval(node_ptr<T> self, const std::vector<std::pair<node_ptr<T>, int64
 }
 template <typename T>
 struct b_set {
-    node_ptr<T> root;
-    int64_t max_len = 5;
-    auto add(T&& v) -> void {
+    node_ptr<T, false> root;
+    int64_t max_len = 3;
+    auto add(const T& v) -> void {
         auto& self = *this;
         node_check(self.root);
-        node_ptr<T> q = create_node<T>();
-        q.down(0) = self.root;
-        q = node_insert(q, std::move(v), self.max_len);
+        node_ptr<T, false> q = create_node<T>(self.root);
+        q = node_insert<T>(q, v, self.max_len);
         if (not (q.data_size())) {
-            node_ptr<T> tmp = q.down(0);
+            node_ptr<T, false> tmp = q.down(0);
             assert(tmp);
             q = tmp;
         }
@@ -589,7 +694,6 @@ struct b_set {
         }
         assert(list_size(a));
         list_reverse(a);
-        node_check(r);
         if (tuple_get_0(a[list_size(a) - 1]).down(0) != nullptr) {
             node_ptr t =
                 tuple_get_0(a[list_size(a) - 1]).down(tuple_get_0(a[list_size(a) - 1]).data_index(v) + 1);
@@ -599,21 +703,14 @@ struct b_set {
                 assert(t != nullptr);
             }
             auto kw = t.data(0);
-            node_check(r);
             r = node_erase(r, kw, self.max_len);
-            node_check(r);
             a = node_find_path(r, v);
             assert(list_size(a));
             int64_t t_ = tuple_get_0(a[0]).data_index( v);
-            node_check(r);
             r = node_chval(r, a, t_, kw, list_size(a) - 1);
-            node_check(r);
         } else if (true) {
-            node_check(r);
             r = node_erase(r, v, self.max_len);
-            node_check(r);
         }
-        node_check(r);
         if ((r.data_size()) == 0) {
             r = r.down(0);
         }
@@ -631,62 +728,101 @@ struct b_set {
         return node_to_list(r, std::vector<T>());
         return std::vector<T>();
     }
-    auto begin(){
+    auto first()const{
         auto& self = *this;
         node_check(self.root);
-        return node_begin(self.root);
+        return node_first(self.root);
     }
-    auto end(){
+    auto last()const{
         auto& self = *this;
         node_check(self.root);
-        return node_end(self.root);
+        return node_last(self.root);
+    }
+    auto begin()const{
+        return first();
+    }
+    auto end()const{
+        auto tmp = last();
+        ++tmp;
+        return tmp;
     }
 };
 template <typename K, typename V>
 struct item {
     K k;
     std::optional<V> v;
-    auto operator<(const item<K, V>& o) -> bool {
-        auto& self = *this;
-        return self.k < o.k;
-    }
-    auto operator==(const item<K, V>& o) -> bool {
-        auto& self = *this;
-        {
-            return self.k == o.k;
-        }
-    }
     auto to_list() -> std::pair<K, std::optional<V>> {
         auto& self = *this;
         return {k, v};
     }
 };
+
+template <typename K, typename V>
+auto operator<(const item<K, V>& self,const item<K, V>& o) -> bool {
+    return self.k < o.k;
+}
+template <typename K, typename V>
+auto operator==(const item<K, V>& self,const item<K, V>& o) -> bool {
+    return self.k == o.k;
+}
 template <typename K, typename V>
 struct b_dict {
     b_set<item<K, V>> b_set_;
-    auto operator[](const K& k) -> V {
+    auto operator[](const K& k) -> std::optional<V> {
         auto& self = *this;
-        auto r = self.b_set.find(item(k));
-        if (not r) {
+        auto r = self.b_set_.find(item<K,V>{k, {}});
+        if (r.empty()) {
             return std::optional<V>();
         }
         auto tmp = r[0].v;
-        assert(tmp != nullptr);
-        return {tmp};
+        assert(bool(tmp));
+        return tmp;
     }
     auto setitem(const K& k, V&& v) -> void {
         auto& self = *this;
-        self.b_set.add(item(k, v));
+        self.b_set_.add(item<K,V>{k, v});
     }
     auto delitem(const K& k) -> void {
         auto& self = *this;
-        self.b_set.remove(item(k));
+        self.b_set_.remove(item<K,V>{k, {}});
     }
     auto contains(const K& k) -> bool {
         auto& self = *this;
-        return bool(self.b_set.find(item(k)));
+        return self.b_set_.find(item<K,V>{k, {}}).size();
     }
 };
+
+template<typename T>
+b_set<T> merge(const b_set<T>& left, const b_set<T>& right){
+    node_set_parent(left.root);
+    node_set_parent(right.root);
+    b_set<T> r;
+    auto left_i = left.begin();
+    auto right_i = right.begin();
+    while (left_i != left.end() or right_i != right.end()){
+        if (left_i == left.end()){
+            assert(right_i != right.end());
+            r.add(*right_i);
+            ++right_i;
+        }else
+        if (right_i == right.end()){
+            assert(left_i != left.end());
+            x__print(left_i.pos, left_i.self.data_);
+            x__print(left.end().pos, left.end().self.data_);
+            r.add(*left_i);
+            ++left_i;
+        }else
+        if (*left_i < *right_i){
+            r.add(*left_i);
+            ++left_i;
+        }else{
+            r.add(*right_i);
+            ++right_i;
+        }
+    }
+    return r;
+}
+
 int main() {
     b_set<int> a;
     assert(not a.contains(9));
@@ -715,10 +851,29 @@ int main() {
     assert(a.contains(4));
     assert(not a.contains(3));
     assert(not a.contains(2));
+    node_set_parent(a.root);
+    a.check();
+    auto it = a.end();
+    it = a.begin();
+    assert(it != a.end());
+    ++it;
+    assert(it != a.end());
+    ++it;
+    assert(it != a.end());
+    ++it;
+    assert(it == a.end());
+    a = b_set<int>();
+    assert(a.begin() == a.end());
     a = b_set<int>();
     std::set<int> s;
     std::mt19937_64 rand;
-    for (size_t q = 0; q < 4999; ++q) {
+    for (size_t q = 0; q < 
+                        #ifdef CHECK
+                        49999
+                        #else
+                        4999
+                        #endif
+                        ; ++q) {
         std::vector<std::function<void()>> funcs;
         funcs.push_back([&]() {
             int64_t w = rand();
@@ -801,7 +956,13 @@ int main() {
     std::vector<std::set<int>> ss(1);
     size_t ap = 0;
     size_t sp = 0;
-    for (size_t q = 0; q < 99999; ++q) {
+    for (size_t q = 0; q <
+                        #ifdef CHECK
+                        99
+                        #else
+                        99999
+                        #endif
+                        ; ++q) {
         std::vector<std::function<void()>> funcs;
         funcs.push_back([&]() { // 0
             auto&a=as[ap];
@@ -938,47 +1099,79 @@ int main() {
                 a.check();
             }
         });
-        // funcs.push_back([&]() { // 10
-        //     node_set_parent(a.root);
-        //     auto ai = a.begin();
-        //     auto si = s.begin();
-        //     while (1){
-        //         assert ((ai == a.end()) == (si == s.end()));
-        //         if (ai == a.end()){
-        //             break;
-        //         }
-        //         assert (*ai == *si);
-        //         ++ai;
-        //         ++si;
-        //     }
-        //     assert ((ai == a.end()) and (si == s.end()));
-        // });
+        funcs.push_back([&]() { // 10
+            node_set_parent(a.root);
+            auto ai = a.begin();
+            auto si = s.begin();
+            while (1){
+                assert ((ai == a.end()) == (si == s.end()));
+                if (ai == a.end()){
+                    break;
+                }
+                assert (*ai == *si);
+                ++ai;
+                ++si;
+            }
+            assert ((ai == a.end()) and (si == s.end()));
+        });
         // funcs.push_back([&]() { // 11
-        //     node_set_parent(a.root);
-        //     auto ai = a.end();
-        //     auto si = s.end();
-        //     while (1){
-        //         assert ((ai == a.begin()) == (si == s.begin()));
-        //         if (ai == a.begin()){
-        //             break;
-        //         }
-        //         assert (*ai == *si);
-        //         --ai;
-        //         --si;
+        //     {
+        //         auto&a=as[ap];
+        //         a.check();
         //     }
-        //     assert ((ai == a.begin()) and (si == s.begin()));
+        //     size_t w = rand();
+        //     w %= as.size();
+        //     {
+        //         auto&a=as[w];
+        //         a.check();
+        //     }
+        //     auto&a=as[ap];
+        //     auto&s=ss[sp];
+        //     a.check();
+        //     as.push_back(merge(a, as[w]));
+        //     std::set<int> tmp;
+        //     for (auto& q: s){
+        //         tmp.insert(q);
+        //     }
+        //     for (auto& q: ss[w]){
+        //         tmp.insert(q);
+        //     }
+        //     ss.push_back(tmp);
+        //     {
+        //         auto&a=as[ap];
+        //         a.check();
+        //     }
+        //     {
+        //         auto&a=as[w];
+        //         a.check();
+        //     }
+        //     ap = as.size()-1;
+        //     sp = ss.size()-1;
+        //     {
+        //         auto&a=as[ap];
+        //         a.check();
+        //     }
         // });
         size_t s = rand();
         s = s % funcs.size();
-        x__print(s);
         funcs[s]();
-        x__print("ap =", ap);
         for (size_t ap = 0 ; ap < as.size() ; ++ ap){
             {
-                x__print("check.ap =", ap);
                 auto&a=as[ap];
                 a.check();
+
             }
         }
     }
+    b_dict<int, int> d;
+    d.setitem(1000, 2000);
+    d.setitem(1001, 2001);
+    d.setitem(1002, 2002);
+    assert( d.contains(1000) );
+    assert( d[1000] == 2000 );
+    assert( not d.contains(1003) );
+    d.delitem(1000);
+    assert( not d.contains(1000) );
+    assert( d.contains(1001) );
+    assert( d.contains(1002) );
 }
