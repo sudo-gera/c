@@ -1114,44 +1114,6 @@ int main() {
             }
             assert ((ai == a.end()) and (si == s.end()));
         });
-        // funcs.push_back([&]() { // 11
-        //     {
-        //         auto&a=as[ap];
-        //         a.check();
-        //     }
-        //     size_t w = rand();
-        //     w %= as.size();
-        //     {
-        //         auto&a=as[w];
-        //         a.check();
-        //     }
-        //     auto&a=as[ap];
-        //     auto&s=ss[sp];
-        //     a.check();
-        //     as.push_back(merge(a, as[w]));
-        //     std::set<int> tmp;
-        //     for (auto& q: s){
-        //         tmp.insert(q);
-        //     }
-        //     for (auto& q: ss[w]){
-        //         tmp.insert(q);
-        //     }
-        //     ss.push_back(tmp);
-        //     {
-        //         auto&a=as[ap];
-        //         a.check();
-        //     }
-        //     {
-        //         auto&a=as[w];
-        //         a.check();
-        //     }
-        //     ap = as.size()-1;
-        //     sp = ss.size()-1;
-        //     {
-        //         auto&a=as[ap];
-        //         a.check();
-        //     }
-        // });
         size_t s = rand();
         s = s % funcs.size();
         funcs[s]();
