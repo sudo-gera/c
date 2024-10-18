@@ -16,6 +16,13 @@ import random;
 import time;
 import copy;
 
+x__max = max
+x__min = min
+
+int64_t = 1;
+def REMOVE_CPP_BEGIN(a: typing.Any) -> None: pass
+
+
 class ComparableProto(typing.Protocol):
     def __lt__(self: T, __other: T) -> bool: ...;
 
@@ -56,6 +63,10 @@ def list_erase(self: List_[T_], i: int) -> T_:
 def list_slice_assign(self: List_[T_], begin: int, end: int, val: list[T_]|List_[T_]) -> None:
     assert 0 <= begin <= end <= len(self.l)
     self.l[begin:end] = val if isinstance(val, list) else val.l;
+def list_slice_assign_zero(self: List_[T_], begin: int, end: int) -> None:
+    return list_slice_assign(self, begin, end, [])
+def list_slice_assign_one(self: List_[T_], begin: int, end: int, el: T_) -> None:
+    return list_slice_assign(self, begin, end, [el])
 def list_contains(self: List_[T_], val: T_) -> bool:
     return val in self.l;
 def list_index(self: List_[T_], v: T_) -> int:
@@ -71,15 +82,33 @@ UNIQUE_IDENTIFIER = """*/"_""";
 # define True true
 # define False false
 # define None nullptr
+# define elif else if
+# define REMOVE_CPP_BEGIN(...)
+# define REMOVE_CPP_END
 
 UNIQUE_IDENTIFIER = """_"/*""";
-''' 
+''':'
 UNIQUE_IDENTIFIER = """*/"_""";
 
 #include <vector>
 #include <memory>
 #include <cinttypes>
 #include <cstdint>
+#include <cassert>
+
+int64_t x__div(int64_t l, int64_t r){
+    assert(r);
+    return l / r;
+}
+
+int64_t x__max(int64_t a, int64_t b){
+    return a>b?a:b;
+}
+
+int64_t x__min(int64_t a, int64_t b){
+    return a<b?a:b;
+}
+
 template<typename T>
 struct node_s{
     std::vector<T> data;
@@ -88,11 +117,11 @@ struct node_s{
 
 template<typename T>
 struct node{
-    std::shared_ptr<std::vector<node_s<T>>> data_;
-    auto& data(){
+    std::shared_ptr<node_s<T>> data_;
+    std::vector<T>& data(){
         return data_->data;
     }
-    auto& down(){
+    std::vector<std::shared_ptr<node_s<T>>>& down(){
         return data_->down;
     }
 };
@@ -103,7 +132,7 @@ node<T> node_copy(node<T> self){
 }
 
 UNIQUE_IDENTIFIER = """_"/*""";
-''' 
+':'''
 class node(typing.Generic[T]):
     def __init__(self, *, data:List_[T], down: List_[node[T]|None]):
         self.data_ = List_(data);
@@ -117,1073 +146,1451 @@ def node_copy(self: node[T]) -> node[T]:
     return node(data=self.data(), down=self.down());
 
 def node_insert(self: node[T]|None, elem: T, max_len: int) -> node[T]:
-    '''
-    UNIQUE_IDENTIFIER = """*/"_""";
+    ''':'
+UNIQUE_IDENTIFIER = """*/"_""";
 template<typename T>
 auto node_insert(node<T> self, T&& elem, int64_t max_len) -> node<T>{
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    assert (self is not None); 
-    UNIQUE_IDENTIFIER = """*/"_""";
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    /* REMOVE_PYTHON_END */ ':'''
+    assert (self is not None);
+    ((""":" )) REMOVE_CPP_END ":""" ))
     assert (self != None);
     self = node_copy(self);
     if (list_contains(self.data(), elem))// simple():
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        int64_t
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+        int64_t // int64_t
         t = list_index(self.data(), elem);
         self.data()[t] = elem;
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
     elif (self.down()[0] == None)// simple():
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        int64_t
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         w = 0;
         while (w < list_size(self.data()) and self.data()[w] < elem)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             w += 1;
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
         list_insert(self.data(), w, elem);
         list_insert(self.down(), 0, None);
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
     elif (True)// simple():
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        int64_t
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         w = 0;
         while (w < list_size(self.data()) and self.data()[w] < elem)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             w += 1;
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
         self.down()[w] = node_insert(self.down()[w], elem, max_len);
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
+        node
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         tmp = self.down()[w];
-        UNIQUE_IDENTIFIER = """_"/*""";
-        assert (tmp is not None); 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        assert (tmp is not None);
+        ((""":" )) REMOVE_CPP_END ":""" ))
         assert (tmp != None);
         if (list_size(tmp.data()) > max_len)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             assert (list_size(tmp.data()) == 1 + max_len);
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
+            node
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             q = node_copy(tmp);
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
+            node
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             a = node_copy(q);
-            list_slice_assign(a.data(),x__div( max_len ,  2),list_size(a.data()), []);
-            list_slice_assign(a.down(),x__div( max_len ,  2) + 1,list_size(a.down()),[]);
+            list_slice_assign_zero(a.data(),x__div( max_len ,  2),list_size(a.data()));
+            list_slice_assign_zero(a.down(),x__div( max_len ,  2) + 1,list_size(a.down()));
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
+            auto
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             kw = q.data()[x__div(max_len ,  2)];
-            list_slice_assign(q.data(), 0,x__div( max_len ,  2) + 1, []);
-            list_slice_assign(q.down(), 0,x__div(max_len ,  2) + 1, []);
+            list_slice_assign_zero(q.data(), 0,x__div( max_len ,  2) + 1);
+            list_slice_assign_zero(q.down(), 0,x__div(max_len ,  2) + 1);
             list_insert(self.data(), w, kw);
             self.down()[w] = q;
             list_insert(self.down(), w, a);
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
     return self;
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    ''':' /* REMOVE_PYTHON_BEGIN */
+    ((""":" )) REMOVE_CPP_END ":""" ))
     } // END
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    /* REMOVE_PYTHON_END */ ':'''
+    ((""":" )) REMOVE_CPP_END ":""" ))
 
-def node_find_path(self: node[T], elem: T) -> list[tuple[node[T], int]] | None:
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
-    { // BEGIN
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
+REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+''':' /* REMOVE_PYTHON_BEGIN */
+((""":" )) REMOVE_CPP_END ":""" ))
+template<typename T>
+auto node_find_path(node<T> self, const T& elem) -> std::vector<std::pair<node<T>, int64_t>>{
+REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+/* REMOVE_PYTHON_END */ ':'''
+def node_find_path(self: node[T], elem: T) -> list[tuple[node[T], int]]:
+    ((""":" )) REMOVE_CPP_END ":""" ))
+
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    ''':' /* REMOVE_PYTHON_BEGIN */
+    ((""":" )) REMOVE_CPP_END ":""" ))
+    std::vector<std::pair<node<T>, int64_t>> output;
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    /* REMOVE_PYTHON_END */ ':'''
     output : list[tuple[node[T], int]] = [];
-    if (node_find_path_(self, elem, output))// simple():
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
-        { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
-        return output;
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
-        } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
-    return None;
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
-    } // END
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
+    ((""":" )) REMOVE_CPP_END ":""" ))
 
-def node_find_path_(self: node[T], elem: T, output: list[tuple[node[T], int]]) -> bool:
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
-    { // BEGIN
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
-    (self);
-    if (list_contains(self.data(), elem))// simple():
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+    if (node_find_path_(self, elem, output))// simple():
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+        return output;
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
+        } // END
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    ''':' /* REMOVE_PYTHON_BEGIN */
+    ((""":" )) REMOVE_CPP_END ":""" ))
+    return std::vector<std::pair<node<T>, int64_t>>();
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    /* REMOVE_PYTHON_END */ ':'''
+    return [];
+    ((""":" )) REMOVE_CPP_END ":""" ))
+
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    ''':' /* REMOVE_PYTHON_BEGIN */
+    ((""":" )) REMOVE_CPP_END ":""" ))
+    } // END
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    /* REMOVE_PYTHON_END */ ':'''
+    ((""":" )) REMOVE_CPP_END ":""" ))
+
+REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+''':' /* REMOVE_PYTHON_BEGIN */
+((""":" )) REMOVE_CPP_END ":""" ))
+template<typename T, typename OUT_IT>
+auto node_find_path_(node<T> self , const T& elem, OUT_IT output) -> bool{
+REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+/* REMOVE_PYTHON_END */ ':'''
+def node_find_path_(self: node[T], elem: T, output: list[tuple[node[T], int]]) -> bool:
+    ((""":" )) REMOVE_CPP_END ":""" ))
+
+    if (list_contains(self.data(), elem))// simple():
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
+        { // BEGIN
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
         output.append((self, list_index(self.data(), (elem))));
         return True;
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
     if (self.down()[0] == None)// simple():
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
         return False;
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    ''':' /* REMOVE_PYTHON_BEGIN */
+    ((""":" )) REMOVE_CPP_END ":""" ))
+    int64_t
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    /* REMOVE_PYTHON_END */ ':'''
+    ((""":" )) REMOVE_CPP_END ":""" ))
+
     w = 0;
     while (w < list_size(self.data()) and self.data()[w] < elem)// simple():
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
         w += 1;
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    ''':' /* REMOVE_PYTHON_BEGIN */
+    ((""":" )) REMOVE_CPP_END ":""" ))
+    node
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    /* REMOVE_PYTHON_END */ ':'''
+    ((""":" )) REMOVE_CPP_END ":""" ))
+
     tmp = self.down()[w];
-    UNIQUE_IDENTIFIER = """_"/*""";
-    assert (tmp is not None); 
-    UNIQUE_IDENTIFIER = """*/"_""";
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    assert (tmp is not None);
+    ((""":" )) REMOVE_CPP_END ":""" ))
     assert (tmp != None);
     if (node_find_path_(tmp, elem, output))// simple():
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
         output.append((self, w));
         return True;
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
-        } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
-    return False;
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
-    } // END
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
 
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
+        } // END
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
+    return False;
+
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    ''':' /* REMOVE_PYTHON_BEGIN */
+    ((""":" )) REMOVE_CPP_END ":""" ))
+    } // END
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    /* REMOVE_PYTHON_END */ ':'''
+    ((""":" )) REMOVE_CPP_END ":""" ))
+
+REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+''':' /* REMOVE_PYTHON_BEGIN */
+((""":" )) REMOVE_CPP_END ":""" ))
+template<typename T>
+auto node_erase(node<T> self  , const T& elem, int64_t max_len) -> node<T>{
+REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+/* REMOVE_PYTHON_END */ ':'''
 def node_erase(self: node[T], elem: T, max_len: int) -> node[T]:
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
-    { // BEGIN
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
-    (self);
+    ((""":" )) REMOVE_CPP_END ":""" ))
+
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    ''':' /* REMOVE_PYTHON_BEGIN */
+    ((""":" )) REMOVE_CPP_END ":""" ))
+    node<T> t;
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    /* REMOVE_PYTHON_END */ ':'''
     t: None|node[T];
+    ((""":" )) REMOVE_CPP_END ":""" ))
+
     self = node_copy(self);
     if (self.down()[0] == None)// simple():
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
+        int64_t
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
         t_ = list_index(self.data(), (elem));
         list_erase(self.data(), t_);
         list_erase(self.down(), 0);
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
     elif (True)// simple():
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+        
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
+        int64_t
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
+        
         w = 0;
         while (w < list_size(self.data()) and self.data()[w] < elem)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             w += 1;
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
+        node
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
         tmp = self.down()[w];
-        UNIQUE_IDENTIFIER = """_"/*""";
-        assert (tmp is not None); 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        assert (tmp is not None);
+        ((""":" )) REMOVE_CPP_END ":""" ))
         assert (tmp != None);
         self.down()[w] = node_erase(tmp, elem, max_len);
         tmp = self.down()[w];
-        UNIQUE_IDENTIFIER = """_"/*""";
-        assert (tmp is not None); 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        assert (tmp is not None);
+        ((""":" )) REMOVE_CPP_END ":""" ))
         assert (tmp != None);
         if (list_size(tmp.data()) <x__div( max_len ,  2))// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             assert (list_size(tmp.data()) ==x__div( max_len ,  2) - 1);
+
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
+            int64_t
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
+
+            e = 0;
             if (w)// simple():
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 { // BEGIN
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
+
                 e = w - 1;
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 } // END
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
+
             elif (True)// simple():
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 { // BEGIN
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
+
                 e = w + 1;
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 } // END
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
-            q = max(w, e);
-            r = min(w, e);
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
+
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
+            int64_t
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
+
+            q = x__max(w, e);
+
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
+            int64_t
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
+
+            r = x__min(w, e);
+
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
+            node
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
+
             tmp = self.down()[e];
-            UNIQUE_IDENTIFIER = """_"/*""";
-            assert (tmp is not None); 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            assert (tmp is not None);
+            ((""":" )) REMOVE_CPP_END ":""" ))
             assert (tmp != None);
             if (list_size(tmp.data()) ==x__div( max_len ,  2))// simple():
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 { // BEGIN
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 tmp = self.down()[q];
-                UNIQUE_IDENTIFIER = """_"/*""";
-                assert (tmp is not None); 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                assert (tmp is not None);
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 assert (tmp != None);
                 t = node_copy(tmp);
                 tmp = self.down()[r];
-                UNIQUE_IDENTIFIER = """_"/*""";
-                assert (tmp is not None); 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                assert (tmp is not None);
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 assert (tmp != None);
+
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
+                auto&
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
+
                 __t = tmp.data();
                 list_append(__t, self.data()[r]);
                 list_slice_assign(t.data(), 0, 0, __t);
                 tmp = self.down()[r];
-                UNIQUE_IDENTIFIER = """_"/*""";
-                assert (tmp is not None); 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                assert (tmp is not None);
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 assert (tmp != None);
                 list_slice_assign(t.down(), 0,0,tmp.down());
-                list_slice_assign(self.down(), r,q + 1, [t]); # type: ignore
-                list_slice_assign(self.data(), r,q , []);
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                list_slice_assign_one(self.down(), r,q + 1, t);
+                list_slice_assign_zero(self.data(), r,q );
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 } // END
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
             elif (True)// simple():
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 { // BEGIN
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 tmp = self.down()[w];
-                UNIQUE_IDENTIFIER = """_"/*""";
-                assert (tmp is not None); 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                assert (tmp is not None);
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 assert (tmp != None);
                 t = node_copy(tmp);
+
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
+                int64_t
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
+
                 l = (q - w) * list_size(t.down());
-                tmp_1 = l
+
+
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
+                int64_t
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
+
+                tmp_1 = l;
                 if (tmp_1 < 0)// simple():
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
+
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    ''':' /* REMOVE_PYTHON_BEGIN */
+                    ((""":" )) REMOVE_CPP_END ":""" ))
                     { // BEGIN
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
-                    tmp_1 += list_size(t.data())
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    /* REMOVE_PYTHON_END */ ':'''
+                    ((""":" )) REMOVE_CPP_END ":""" ))
+
+                    tmp_1 += list_size(t.data());
+
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    ''':' /* REMOVE_PYTHON_BEGIN */
+                    ((""":" )) REMOVE_CPP_END ":""" ))
                     } // END
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    /* REMOVE_PYTHON_END */ ':'''
+                    ((""":" )) REMOVE_CPP_END ":""" ))
+
                 if (tmp_1 < 0)// simple():
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
+
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    ''':' /* REMOVE_PYTHON_BEGIN */
+                    ((""":" )) REMOVE_CPP_END ":""" ))
                     { // BEGIN
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
-                    tmp_1 = 0
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    /* REMOVE_PYTHON_END */ ':'''
+                    ((""":" )) REMOVE_CPP_END ":""" ))
+
+                    tmp_1 = 0;
+
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    ''':' /* REMOVE_PYTHON_BEGIN */
+                    ((""":" )) REMOVE_CPP_END ":""" ))
                     } // END
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    /* REMOVE_PYTHON_END */ ':'''
+                    ((""":" )) REMOVE_CPP_END ":""" ))
+
                 if (tmp_1 > list_size(t.data()))// simple():
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
+
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    ''':' /* REMOVE_PYTHON_BEGIN */
+                    ((""":" )) REMOVE_CPP_END ":""" ))
                     { // BEGIN
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
-                    tmp_1 = list_size(t.data())
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    /* REMOVE_PYTHON_END */ ':'''
+                    ((""":" )) REMOVE_CPP_END ":""" ))
+
+                    tmp_1 = list_size(t.data());
+
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    ''':' /* REMOVE_PYTHON_BEGIN */
+                    ((""":" )) REMOVE_CPP_END ":""" ))
                     } // END
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
-                list_slice_assign(t.data(), tmp_1, tmp_1, [self.data()[r]]);
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    /* REMOVE_PYTHON_END */ ':'''
+                    ((""":" )) REMOVE_CPP_END ":""" ))
+
+                list_slice_assign_one(t.data(), tmp_1, tmp_1, self.data()[r]);
                 tmp = self.down()[e];
-                UNIQUE_IDENTIFIER = """_"/*""";
-                assert (tmp is not None); 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                assert (tmp is not None);
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 assert (tmp != None);
-                tmp_1 = l
-                list_slice_assign(t.down(), tmp_1, tmp_1, [tmp.down()[(e - q + list_size(tmp.down())) % list_size(tmp.down())]]);
+                tmp_1 = l;
+                list_slice_assign_one(t.down(), tmp_1, tmp_1, tmp.down()[(e - q + list_size(tmp.down())) % list_size(tmp.down())]);
                 self.down()[w] = t;
                 tmp = self.down()[e];
-                UNIQUE_IDENTIFIER = """_"/*""";
-                assert (tmp is not None); 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                assert (tmp is not None);
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 assert (tmp != None);
                 self.data()[r] = tmp.data()[(e - q + list_size(tmp.data())) % list_size(tmp.data())];
                 tmp = self.down()[e];
-                UNIQUE_IDENTIFIER = """_"/*""";
-                assert (tmp is not None); 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                assert (tmp is not None);
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 assert (tmp != None);
                 t = node_copy(tmp);
-                tmp_1 = e - q
+                tmp_1 = e - q;
                 if (tmp_1 < 0)// simple():
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
-                    { // BEGIN
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
-                    tmp_1 += list_size(t.data());
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
-                    } // END
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
-                tmp_2 = list_size(t.data()) * (q - e) + (q - w)
-                if (tmp_2 < 0)// simple():
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
-                    { // BEGIN
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
-                    tmp_2 += list_size(t.data())
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
-                    } // END
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
-                list_slice_assign(t.data(), tmp_1, tmp_2, []);
-                tmp_1 = e - q
-                if (tmp_1 < 0)// simple():
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
-                    { // BEGIN
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
-                    tmp_1 += list_size(t.down());
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
-                    } // END
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
-                tmp_2 = list_size(t.down()) * (q - e) + (q - w)
-                if (tmp_2 < 0)// simple():
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
-                    { // BEGIN
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
-                    tmp_2 += list_size(t.data())
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
-                    } // END
-                    UNIQUE_IDENTIFIER = """_"/*""";
-                    ''' 
-                    UNIQUE_IDENTIFIER = """*/"_""";
-                list_slice_assign(t.down(), tmp_1, tmp_2, []);
-                self.down()[e] = t;
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
-                } // END
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
-            } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
-        } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
-    return self;
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
-    } // END
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
 
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    ''':' /* REMOVE_PYTHON_BEGIN */
+                    ((""":" )) REMOVE_CPP_END ":""" ))
+                    { // BEGIN
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    /* REMOVE_PYTHON_END */ ':'''
+                    ((""":" )) REMOVE_CPP_END ":""" ))
+
+                    tmp_1 += list_size(t.data());
+
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    ''':' /* REMOVE_PYTHON_BEGIN */
+                    ((""":" )) REMOVE_CPP_END ":""" ))
+                    } // END
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    /* REMOVE_PYTHON_END */ ':'''
+                    ((""":" )) REMOVE_CPP_END ":""" ))
+
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
+                int64_t
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
+
+                tmp_2 = list_size(t.data()) * (q - e) + (q - w);
+                if (tmp_2 < 0)// simple():
+
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    ''':' /* REMOVE_PYTHON_BEGIN */
+                    ((""":" )) REMOVE_CPP_END ":""" ))
+                    { // BEGIN
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    /* REMOVE_PYTHON_END */ ':'''
+                    ((""":" )) REMOVE_CPP_END ":""" ))
+
+                    tmp_2 += list_size(t.data());
+
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    ''':' /* REMOVE_PYTHON_BEGIN */
+                    ((""":" )) REMOVE_CPP_END ":""" ))
+                    } // END
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    /* REMOVE_PYTHON_END */ ':'''
+                    ((""":" )) REMOVE_CPP_END ":""" ))
+
+                list_slice_assign_zero(t.data(), tmp_1, tmp_2);
+                tmp_1 = e - q;
+                if (tmp_1 < 0)// simple():
+
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    ''':' /* REMOVE_PYTHON_BEGIN */
+                    ((""":" )) REMOVE_CPP_END ":""" ))
+                    { // BEGIN
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    /* REMOVE_PYTHON_END */ ':'''
+                    ((""":" )) REMOVE_CPP_END ":""" ))
+
+                    tmp_1 += list_size(t.down());
+
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    ''':' /* REMOVE_PYTHON_BEGIN */
+                    ((""":" )) REMOVE_CPP_END ":""" ))
+                    } // END
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    /* REMOVE_PYTHON_END */ ':'''
+                    ((""":" )) REMOVE_CPP_END ":""" ))
+
+                tmp_2 = list_size(t.down()) * (q - e) + (q - w);
+                if (tmp_2 < 0)// simple():
+
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    ''':' /* REMOVE_PYTHON_BEGIN */
+                    ((""":" )) REMOVE_CPP_END ":""" ))
+                    { // BEGIN
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    /* REMOVE_PYTHON_END */ ':'''
+                    ((""":" )) REMOVE_CPP_END ":""" ))
+
+                    tmp_2 += list_size(t.data());
+
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    ''':' /* REMOVE_PYTHON_BEGIN */
+                    ((""":" )) REMOVE_CPP_END ":""" ))
+                    } // END
+                    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                    /* REMOVE_PYTHON_END */ ':'''
+                    ((""":" )) REMOVE_CPP_END ":""" ))
+
+                list_slice_assign_zero(t.down(), tmp_1, tmp_2);
+                self.down()[e] = t;
+
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
+                } // END
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
+
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
+            } // END
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
+        } // END
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
+    return self;
+
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    ''':' /* REMOVE_PYTHON_BEGIN */
+    ((""":" )) REMOVE_CPP_END ":""" ))
+    } // END
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    /* REMOVE_PYTHON_END */ ':'''
+    ((""":" )) REMOVE_CPP_END ":""" ))
+
+REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+''':' /* REMOVE_PYTHON_BEGIN */
+((""":" )) REMOVE_CPP_END ":""" ))
+template<typename T>
+auto node_to_list(node<T> self, std::vector<T>& l) -> std::vector<T>&{
+REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+/* REMOVE_PYTHON_END */ ':'''
 def node_to_list(self: node[T], l: list[T]) -> list[T]:
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
-    { // BEGIN
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
+    ((""":" )) REMOVE_CPP_END ":""" ))
+
     if (self.down()[0] == None)// simple():
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
-        i_ = 0
-        while i_ < list_size(self.data()):
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
+        int64_t
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
+        i_ = 0;
+        while (i_ < list_size(self.data()))// simple():
+
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
+            { // BEGIN
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
+
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
+            auto
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
+
             w_ = self.data()[i_];
             l.append(w_);
-            i_ += 1
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+            i_ += 1;
+
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
+            } // END
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
     elif (True)// simple():
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
-        tmp = self.down()[0]
-        assert (tmp != None)
-        UNIQUE_IDENTIFIER = """_"/*""";
-        assert (tmp is not None) 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
+        node
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
+        tmp = self.down()[0];
+        assert (tmp != None);
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        assert (tmp is not None);
+        ((""":" )) REMOVE_CPP_END ":""" ))
         node_to_list(tmp, l);
-        i_ = 0
-        while i_ < list_size(self.data()):
-            w = i_
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
+        int64_t
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
+        i_ = 0;
+        while (i_ < list_size(self.data()))// simple():
+
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
+
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
+            int64_t
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
+
+            w = i_;
             l.append(self.data()[w]);
             tmp = self.down()[w + 1];
-            assert (isinstance(tmp, node));
-            node_to_list(tmp, l);
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
-            } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
-            i_ += 1
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
-        } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
-    return l;
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
-    } // END
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
 
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            assert (isinstance(tmp, node));
+            ((""":" )) REMOVE_CPP_END ":""" ))
+
+            node_to_list(tmp, l);
+            i_ += 1;
+
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
+            } // END
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
+        } // END
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
+    return l;
+
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    ''':' /* REMOVE_PYTHON_BEGIN */
+    ((""":" )) REMOVE_CPP_END ":""" ))
+    } // END
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    /* REMOVE_PYTHON_END */ ':'''
+    ((""":" )) REMOVE_CPP_END ":""" ))
+
+REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+''':' /* REMOVE_PYTHON_BEGIN */
+((""":" )) REMOVE_CPP_END ":""" ))
+template<typename T>
+auto node_chval(node<T> self, const std::vector<std::pair<node<T>, int64_t>>& a,int64_t t,T kw,int64_t n) -> node<T>{
+REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+/* REMOVE_PYTHON_END */ ':'''
 def node_chval(self: node[T], a: list[tuple[node[T], int]], t: int, kw: T, n: int) -> node[T]:
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
-    { // BEGIN
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
+    ((""":" )) REMOVE_CPP_END ":""" ))
+
     self = node_copy(self);
     if (n)// simple():
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
+        int64_t
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
         v = a[n][1];
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
+        node
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
         tmp = self.down()[v];
-        UNIQUE_IDENTIFIER = """_"/*""";
-        assert (tmp is not None); 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        assert (tmp is not None);
+        ((""":" )) REMOVE_CPP_END ":""" ))
         assert (tmp != None);
         self.down()[v] = node_chval(tmp, a, t, kw, n - 1);
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
     elif (True)// simple():
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
         assert (self.data() != None);
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
         assert (isinstance(t, int));
+        ((""":" )) REMOVE_CPP_END ":""" ))
         self.data()[t] = kw;
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
     return self;
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
+
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    ''':' /* REMOVE_PYTHON_BEGIN */
+    ((""":" )) REMOVE_CPP_END ":""" ))
     } // END
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    /* REMOVE_PYTHON_END */ ':'''
+    ((""":" )) REMOVE_CPP_END ":""" ))
 
 
+REMOVE_CPP_BEGIN(( int64_t // int64_t ))
 Node = node[T] | None;
+((""":" )) REMOVE_CPP_END ":""" ))
 
+REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+''':' /* REMOVE_PYTHON_BEGIN */
+((""":" )) REMOVE_CPP_END ":""" ))
 
+template<typename T>
+struct b_set{
+    node root;
+    int64_t max_len = 99;
+};
+
+REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+/* REMOVE_PYTHON_END */ ':'''
 class b_set(typing.Generic[T]):
 
     def __init__(self) -> None:
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         self.root: Node[T] = None;
         self.max_len = 99;
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
 
+    ((""":" )) REMOVE_CPP_END ":""" ))
+
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    ''':' /* REMOVE_PYTHON_BEGIN */
+    ((""":" )) REMOVE_CPP_END ":""" ))
+    template<typename T>
+    auto add(T&& v) -> void{
+        auto& self = *this;
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    /* REMOVE_PYTHON_END */ ':'''
     def add(self, v: T) -> None:
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
-        { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
+        auto q = node{std::vector<T>(), std::vector<node<T>>({self.root})};
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
         q = node(data=List_([]), down=List_([self.root, ]));
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
         q = node_insert(q, v, self.max_len);
         if (not list_size(q.data()))// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
+
             tmp = q.down()[0];
-            UNIQUE_IDENTIFIER = """_"/*""";
-            assert (tmp is not None); 
-            UNIQUE_IDENTIFIER = """*/"_""";
+
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            assert (tmp is not None);
+            ((""":" )) REMOVE_CPP_END ":""" ))
             assert (tmp != None);
+
             q = tmp;
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
+
         self.root = q;
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+
+
+
 
     def find(self, v: T) -> list[T]:
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         r = self.root;
         if (r == None)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             return [];
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
         assert (r != None)
-        UNIQUE_IDENTIFIER = """_"/*""";
-        assert (r is not None) 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        assert (r is not None)
+        ((""":" )) REMOVE_CPP_END ":""" ))
         f = node_find_path(r, v);
-        if (f == None)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+        if (not f)// simple():
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             return [];
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
         assert (f != None)
-        UNIQUE_IDENTIFIER = """_"/*""";
-        assert (f is not None) 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        assert (f is not None)
+        ((""":" )) REMOVE_CPP_END ":""" ))
         _f = f[0];
         return [_f[0].data()[_f[1]]];
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
 
     def __contains__(self, v: T) -> bool:
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         return bool(self.find(v));
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
 
     def remove(self, v: T) -> None:
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         r = self.root;
         if (r == None)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             return;
         assert (r != None)
-        UNIQUE_IDENTIFIER = """_"/*""";
-        assert (r is not None) 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        assert (r is not None)
+        ((""":" )) REMOVE_CPP_END ":""" ))
         a = node_find_path(r, v);
-        if (a == None)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+        if (not a)// simple():
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             return;
-        assert (a != None)
-        UNIQUE_IDENTIFIER = """_"/*""";
-        assert (a is not None) 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        assert (a)
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        assert (a is not None)
+        ((""":" )) REMOVE_CPP_END ":""" ))
         a = a[::-1];
         if (a[-1][0].down()[0] != None)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             t = a[-1][0].down()[list_index(a[-1][0].data(), v) + 1];
-            UNIQUE_IDENTIFIER = """_"/*""";
-            assert (t is not None); 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            assert (t is not None);
+            ((""":" )) REMOVE_CPP_END ":""" ))
             assert (t != None);
             while (t.down()[0] != None)// simple():
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 { // BEGIN
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 t = t.down()[0];
-                UNIQUE_IDENTIFIER = """_"/*""";
-                assert (t is not None); 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                assert (t is not None);
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 assert (t != None);
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 } // END
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
             kw = t.data()[0];
             r = node_erase(r, kw, self.max_len);
             a = node_find_path(r, v);
-            UNIQUE_IDENTIFIER = """_"/*""";
-            assert (a is not None); 
-            UNIQUE_IDENTIFIER = """*/"_""";
-            assert (a != None);
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            assert (a);
+            ((""":" )) REMOVE_CPP_END ":""" ))
+            assert (a);
             del t;
             t_ = list_index(a[0][0].data(), v);
             r = node_chval(r, a, t_, kw, len(a) - 1);
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
         elif (True)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             r = node_erase(r, v, self.max_len);
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
         if (list_size(r.data()) == 0)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             r = r.down()[0];
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
         self.root = r;
 
     def __repr__(self) -> str:
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         r = self.root;
         return repr(r);
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
 
     def to_list(self) -> list[T]:
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         r = self.root;
         if (r == None)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             return [];
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
-        UNIQUE_IDENTIFIER = """_"/*""";
-        assert (r is not None); 
-        UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        assert (r is not None);
+        ((""":" )) REMOVE_CPP_END ":""" ))
         assert (r != None);
         return node_to_list(r, []);
 
     def __del__(self) -> None:
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         pass;
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    ''':' /* REMOVE_PYTHON_BEGIN */
+    ((""":" )) REMOVE_CPP_END ":""" ))
     } // END
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    /* REMOVE_PYTHON_END */ ':'''
+    ((""":" )) REMOVE_CPP_END ":""" ))
 
 
 K = typing.TypeVar('K', bound=ComparableProto);
@@ -1195,269 +1602,269 @@ V = typing.TypeVar('V');
 class item(typing.Generic[K, V]):
 
     def __init__(self, k: K | item[K,V], v: V|None=None):
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         if (not isinstance(k, item))// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             assert (not isinstance(k, item));
             self.k : K = k;
             self.v : V|None = v;
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
         elif (True)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             assert (isinstance(k, item));
             self.k, self.v = k.k, k.v;
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
 
     def __lt__(self, o: item[K, V]) -> bool:
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         return self.k < o.k;
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
 
     def __eq__(self, o: object|item[K, V]) -> bool:
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         if (isinstance(o, item))// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             assert (isinstance(o, item));
             return self.k == o.k;
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
         return False;
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
 
     def __repr__(self) -> str:
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         return 'item' + repr((self.k, self.v));
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
 
     def to_list(self) -> list[K|V|None]:
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         return [self.k, self.v];
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
 
 
 class b_dict(typing.Generic[K, V]):
 
     def __init__(self) -> None:
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         self.b_set: b_set[item[K, V]] = b_set();
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
 
     def __getitem__(self, k:K)->V:
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         r = self.b_set.find(item(k));
         if (not r)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             raise KeyError(k);
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
         tmp = r[0].v;
-        UNIQUE_IDENTIFIER = """_"/*""";
-        assert (tmp is not None); 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        assert (tmp is not None);
+        ((""":" )) REMOVE_CPP_END ":""" ))
         assert (tmp != None);
         return tmp;
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
 
     def __setitem__(self, k:K, v:V)->None:
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         self.b_set.add(item(k, v));
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
 
     def __delitem__(self, k:K)->None:
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         self.b_set.remove(item(k));
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
 
     def __repr__(self)->str:
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         return repr(self.b_set);
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
 
     def __contains__(self, k:K) -> bool:
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         return bool(self.b_set.find(item(k)));
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
 
     def to_dict(self) -> dict[K, V]:
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         r_:list[item[K, V]] = self.b_set.to_list();
         r:List_[item[K, V]] = List_([])
         i_ = 0
@@ -1468,23 +1875,23 @@ class b_dict(typing.Generic[K, V]):
             i_ += 1
         # r = [w.to_list() for w in r_];
         return dict(r); # type: ignore
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
 
 
 if (__name__ == '__main__')// simple():
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    ''':' /* REMOVE_PYTHON_BEGIN */
+    ((""":" )) REMOVE_CPP_END ":""" ))
     { // BEGIN
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    /* REMOVE_PYTHON_END */ ':'''
+    ((""":" )) REMOVE_CPP_END ":""" ))
 
     t=time.time();
     print([time.time()-t,(t:=time.time())][0]);
@@ -1497,69 +1904,69 @@ if (__name__ == '__main__')// simple():
     for w in range(99):
         q = random.choice([0] * 3 + [1] + [2]);
         if (q == 0)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             r = random.randint(-9999, 9999);
             a_s.add(r);
             s_s.add(r);
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
         if (q == 1)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             r = random.choice(list(a_s)) if a_s and random.randint(
                 0, -1 + 2) else random.randint(0, -1 + 9);
             assert ((r in a_s) == (r in a_s));
             assert (r not in a_s or s_s.find(r)[0] == r);
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
         if (q == 2 and a_s)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             r = random.choice(list(a_s));
             a_s.remove(r);
             s_s.remove(r);
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
         f = set(s_s.to_list());
         assert (a_s == f);
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
 
     print([time.time()-t,(t:=time.time())][0]);
 
@@ -1567,157 +1974,157 @@ if (__name__ == '__main__')// simple():
     a_d: dict[int, int] = dict();
     s_d: b_dict[int, int] = b_dict();
     for w in range(49):
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         q = random.choice([0] * 3 + [1] + [2] + [3]+[4]+[5]+[6]);
         if (q == 0)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             k = random.choice(list(a_d)) if a_d and random.randint(
                 0, 1) else random.randint(-9999, 9999);
             v = random.randint(-9999, 9999);
             a_d[k] = v;
             s_d[k] = v;
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
         if (q == 1)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             k = random.choice(list(a_d)) if a_d and random.randint(
                 0, 1) else random.randint(-9999, 9999);
             assert ((k in a_d) == (k in s_d));
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
         if (q == 2 and a_d)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             k = random.choice(list(a_d));
             a_d[k] == s_d[k];
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
         if (q == 3 and a_d)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             k = random.choice(list(a_d));
             del a_d[k];
             del s_d[k];
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
         if (q == 4 and a_d)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             k = random.randint(-9999, 9999);
             while (k in a_d)// simple():
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 { // BEGIN
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 k = random.randint(-9999, 9999);
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 } // END
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
             try:
                 del a_d[k];
                 assert (0);
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 } // END
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
             except KeyError:
                 pass;
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 } // END
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
             del s_d[k];
         if (q == 5 and a_d)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             k = random.randint(-9999, 9999);
             while (k in a_d)// simple():
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 { // BEGIN
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 k = random.randint(-9999, 9999);
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 } // END
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
             try:
                 a_d[k];
                 assert (0);
@@ -1745,25 +2152,25 @@ if (__name__ == '__main__')// simple():
 
     w = 0;
     while (a_d)// simple():
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         { // BEGIN
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
         k = random.choice(list(a_d));
         del a_d[k];
         del s_d[k];
         w += 1;
         if (w % 100 == 0)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             assert (s_d.to_dict() == a_d);
     assert (s_d.to_dict() == a_d);
 
@@ -1782,47 +2189,47 @@ if (__name__ == '__main__')// simple():
     for w in range(19):
         q = random.choice([0] + [1] + [2] + [3]);
         if (q == 0)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             k = random.choice(list(a_d)) if a_d and random.randint(
                 0, 1) else random.randint(-9999, 9999);
             v = random.randint(-9999, 9999);
             a_d[k] = v;
             s_d[k] = v;
         if (q == 1)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             k = random.choice(list(a_d)) if a_d and random.randint(
                 0, 1) else random.randint(-9999, 9999);
             assert ((k in a_d) == (k in s_d));
         if (q == 2 and a_d)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             k = random.choice(list(a_d));
             a_d[k] == s_d[k];
         if (q == 3 and a_d)// simple():
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             k = random.choice(list(a_d));
             del a_d[k];
             del s_d[k];
@@ -1838,13 +2245,13 @@ if (__name__ == '__main__')// simple():
         @(lambda x: funcs.setdefault(len(funcs), x))
         @(lambda x: funcs.setdefault(len(funcs), x))
         def add() -> None:
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             k = random.randbytes(8).hex();
             v = random.randbytes(8).hex();
             assert ((k in a) == (k in s));
@@ -1855,21 +2262,21 @@ if (__name__ == '__main__')// simple():
             assert (a[k] == s[k]);
         @(lambda x: funcs.setdefault(len(funcs), x))
         def mod() -> None:
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             if (a)// simple():
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 { // BEGIN
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 k = random.choice([*a.keys()]);
                 v = random.randbytes(8).hex();
                 assert (k in a);
@@ -1881,42 +2288,42 @@ if (__name__ == '__main__')// simple():
                 assert (a[k] == s[k]);
         @(lambda x: funcs.setdefault(len(funcs), x))
         def get() -> None:
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             if (a)// simple():
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 { // BEGIN
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 k = random.choice([*a.keys()]);
                 assert (k in a);
                 assert (k in s);
                 assert (a[k] == s[k]);
         @(lambda x: funcs.setdefault(len(funcs), x))
         def rem() -> None:
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             { // BEGIN
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
             if (a)// simple():
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 { // BEGIN
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 k = random.choice([*a.keys()]);
                 assert (k in a);
                 assert (k in s);
@@ -1925,33 +2332,33 @@ if (__name__ == '__main__')// simple():
                 del s[k];
                 assert (k not in a);
                 assert (k not in s);
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                ''':' /* REMOVE_PYTHON_BEGIN */
+                ((""":" )) REMOVE_CPP_END ":""" ))
                 } // END
-                UNIQUE_IDENTIFIER = """_"/*""";
-                ''' 
-                UNIQUE_IDENTIFIER = """*/"_""";
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+                REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+                /* REMOVE_PYTHON_END */ ':'''
+                ((""":" )) REMOVE_CPP_END ":""" ))
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            ''':' /* REMOVE_PYTHON_BEGIN */
+            ((""":" )) REMOVE_CPP_END ":""" ))
             } // END
-            UNIQUE_IDENTIFIER = """_"/*""";
-            ''' 
-            UNIQUE_IDENTIFIER = """*/"_""";
+            REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+            /* REMOVE_PYTHON_END */ ':'''
+            ((""":" )) REMOVE_CPP_END ":""" ))
         random.choice(funcs)();
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        ''':' /* REMOVE_PYTHON_BEGIN */
+        ((""":" )) REMOVE_CPP_END ":""" ))
         } // END
-        UNIQUE_IDENTIFIER = """_"/*""";
-        ''' 
-        UNIQUE_IDENTIFIER = """*/"_""";
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
+        REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+        /* REMOVE_PYTHON_END */ ':'''
+        ((""":" )) REMOVE_CPP_END ":""" ))
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    ''':' /* REMOVE_PYTHON_BEGIN */
+    ((""":" )) REMOVE_CPP_END ":""" ))
     } // END
-    UNIQUE_IDENTIFIER = """_"/*""";
-    ''' 
-    UNIQUE_IDENTIFIER = """*/"_""";
+    REMOVE_CPP_BEGIN(( int64_t // int64_t ))
+    /* REMOVE_PYTHON_END */ ':'''
+    ((""":" )) REMOVE_CPP_END ":""" ))
 
