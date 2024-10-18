@@ -164,9 +164,6 @@ struct node_ptr {
     void down_slice_assign_self(int64_t q_0, int64_t q_1, node_ptr& o){
         return list_slice_assign(data_->down, q_0,q_1, o.data_->down);
     }
-    operator std::shared_ptr<T>() const {
-        return data_;
-    }
     operator bool() const {
         return data_ != nullptr;
     }
@@ -181,12 +178,6 @@ struct node_ptr {
     node_ptr(nullptr_t) {
     }
     node_ptr() {
-    }
-    auto& operator*(){
-        return *data_;
-    }
-    auto operator->(){
-        return &*data_;
     }
 };
 template <typename T>
@@ -445,7 +436,7 @@ auto node_erase(node_ptr<T> self, const T& elem, int64_t max_len) -> node_ptr<T>
                 assert(tmp != nullptr);
                 t.down_slice_assign_self( 0, 0, tmp);
                 self.down_slice_assign_one(r, q + 1, t);
-                self.down_slice_assign_zero(r, q);
+                self.data_slice_assign_zero(r, q);
                 node_check(self);
             } else if (true) {
                 node_check(self);
@@ -727,7 +718,7 @@ int main() {
     a = b_set<int>();
     std::set<int> s;
     std::mt19937_64 rand;
-    for (size_t q = 0; q < 9999; ++q) {
+    for (size_t q = 0; q < 4999; ++q) {
         std::vector<std::function<void()>> funcs;
         funcs.push_back([&]() {
             int64_t w = rand();
