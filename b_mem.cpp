@@ -1,101 +1,3 @@
-#define COMBINE1(X,Y) X##Y
-#define COMBINE(X,Y) COMBINE1(X,Y)
-#define UNIQUE_IDENTIFIER COMBINE(const char* x__,__LINE__)
-
-#define aaaaa aaaa\
-from __future__ import annotations
-
-UNIQUE_IDENTIFIER = """_"/*""";
-
-import functools;
-import json;
-import traceback;
-import typing;
-import random;
-import time;
-import copy;
-
-x__max = max
-x__min = min
-
-int64_t = 1;
-def PAUSE_CPP(a: typing.Any) -> None: pass
-
-
-class ComparableProto(typing.Protocol):
-    def __lt__(self: T, __other: T) -> bool: ...;
-
-T_ = typing.TypeVar('T_');
-
-def move(q: T_) -> T_:
-    return q
-
-class simple:
-    def __rfloordiv__(self, o: T_) -> T_:
-        return o
-
-def x__div(a: T_, b: T_) -> T_:
-    a = a // b # type: ignore
-    return a
-
-class List_(typing.Generic[T_]):
-    def __init__(self, a: list[T_]|List_[T_]) -> None:
-        self.l : list[T_];
-        if (isinstance(a, list))// simple():
-            assert isinstance(a, list)
-            self.l = a;
-        elif (True)// simple():
-            assert isinstance(a, List_)
-            self.l = a.l;
-        self.l = copy.copy(self.l);
-    def __getitem__(self, i: int) -> T_:
-        assert (0 <= i);
-        return self.l.__getitem__(i);
-    def __setitem__(self, i: int, v: T_) -> None:
-        assert (0 <= i);
-        return self.l.__setitem__(i, v);
-    def __bool__(self) -> bool:
-        assert False
-        return False
-def list_size(self: List_[T_]) -> int:
-    return self.l.__len__();
-def list_append(self: List_[T_], v: T_) -> None:
-    return self.l.append(v);
-def list_insert(self: List_[T_], i: int, v: T_) -> None:
-    return self.l.insert(i, v);
-def list_erase(self: List_[T_], i: int) -> T_:
-    return self.l.pop(i);
-def list_slice_assign(self: List_[T_], begin: int, end: int, val: list[T_]|List_[T_]) -> None:
-    assert 0 <= begin <= end <= len(self.l)
-    self.l[begin:end] = val if isinstance(val, list) else val.l;
-def list_slice_assign_zero(self: List_[T_], begin: int, end: int) -> None:
-    return list_slice_assign(self, begin, end, [])
-def list_slice_assign_one(self: List_[T_], begin: int, end: int, el: T_) -> None:
-    return list_slice_assign(self, begin, end, [el])
-def list_contains(self: List_[T_], val: T_) -> bool:
-    return val in self.l;
-def list_index(self: List_[T_], v: T_) -> int:
-    return self.l.index(v);
-def list_reverse(self: List_[T_]) -> None:
-    self.l = self.l[::-1]
-T0 = typing.TypeVar('T0');
-T1 = typing.TypeVar('T1');
-def tuple_get_0(a: tuple[T0, T1]) -> T0:
-    return a[0]
-def tuple_get_1(a: tuple[T0, T1]) -> T1:
-    return a[1]
-
-T = typing.TypeVar('T', bound=ComparableProto);
-T = typing.TypeVar('T') ; # type: ignore
-
-###################################################################################################################################
-
-UNIQUE_IDENTIFIER = """*/"_""";
-
-UNIQUE_IDENTIFIER = """_"/*""";
-''':'
-UNIQUE_IDENTIFIER = """*/"_""";
-
 #include <vector>
 #include <memory>
 #include <cinttypes>
@@ -106,2737 +8,695 @@ UNIQUE_IDENTIFIER = """*/"_""";
 #include <set>
 #include <random>
 
-# define True true
-# define False false
-# define None nullptr
-# define elif else if
-# define PAUSE_CPP(...)
-# define RESUME_CPP
-# define PAUSE_PYTHON
-# define RESUME_PYTHON
-# define move std::move
-# define forward std::forward
+#undef assert
+#define assert assert_m
 
-int64_t x__div(int64_t l, int64_t r){
+int64_t x__div(int64_t l, int64_t r) {
     assert(r);
     return l / r;
 }
-
-int64_t x__max(int64_t a, int64_t b){
-    return a>b?a:b;
+int64_t x__max(int64_t a, int64_t b) {
+    return a > b ? a : b;
 }
-
-int64_t x__min(int64_t a, int64_t b){
-    return a<b?a:b;
+int64_t x__min(int64_t a, int64_t b) {
+    return a < b ? a : b;
 }
-
-template<typename T>
-int64_t list_size(const std::vector<T>& a){
+template <typename T>
+int64_t list_size(const std::vector<T>& a) {
     return a.size();
 }
-
-template<typename T>
-int64_t len(const std::vector<T>& a){
+template <typename T>
+int64_t len(const std::vector<T>& a) {
     return a.size();
 }
-
-template<typename T>
-bool list_contains(const std::vector<T>& a, const T& e){
+template <typename T>
+bool list_contains(const std::vector<T>& a, const T& e) {
     return std::find(a.begin(), a.end(), e) != a.end();
 }
-
-template<typename T>
-int64_t list_index(const std::vector<T>& a, const T& e){
+template <typename T>
+int64_t list_index(const std::vector<T>& a, const T& e) {
     return std::find(a.begin(), a.end(), e) - a.begin();
 }
-
-template<typename T>
-void list_insert(std::vector<T>& a, int64_t pos, const T& e){
+template <typename T>
+void list_insert(std::vector<T>& a, int64_t pos, const T& e) {
     a.insert(a.begin() + pos, e);
 }
-
-template<typename T>
-void list_append(std::vector<T>& a, const T& e){
+template <typename T>
+void list_append(std::vector<T>& a, const T& e) {
     a.push_back(e);
 }
-
-template<typename T>
-void list_erase(std::vector<T>& a, int64_t e){
+template <typename T>
+void list_erase(std::vector<T>& a, int64_t e) {
     std::vector<T> f;
-    std::copy(a.begin(), a.begin()+e, std::back_inserter(f));
-    std::copy(a.begin()+e+1, a.end(), std::back_inserter(f));
+    // assert(0 <= e);
+    // assert(e < (int64_t)a.size());
+    std::copy(a.begin(), a.begin() + e, std::back_inserter(f));
+    std::copy(a.begin() + e + 1, a.end(), std::back_inserter(f));
     swap(f, a);
 }
-
-
-
-auto print_one(auto&&a){
+auto x__print_one(auto&& a) {
     std::cout << a << " ";
     return 0;
 }
-
-void print(auto&&...a){
-    (print_one(a),...);
+void x__print(auto&&... a) {
+    int d[] = {x__print_one(a)...};
+    (void)d;
     std::cout << std::endl;
 }
-
-# define make_int_const(x) (std::integral_constant<int64_t, x>())
-
-auto tuple_get_0(auto&&a){
+auto tuple_get_0(auto&& a) {
     return a.first;
 }
-
-auto tuple_get_1(auto&&a){
+auto tuple_get_1(auto&& a) {
     return a.second;
 }
-
-template<typename T>
-void list_slice_assign(std::vector<T>& a, int64_t begin, int64_t end, std::vector<T> v){
+template <typename T>
+void list_slice_assign(std::vector<T>& a, int64_t begin, int64_t end, std::vector<T> v) {
     std::vector<T> f;
     std::copy(a.begin(), a.begin() + begin, std::back_inserter(f));
     std::copy(v.begin(), v.end(), std::back_inserter(f));
-    std::copy(a.begin() + end, a.end() , std::back_inserter(f));
+    std::copy(a.begin() + end, a.end(), std::back_inserter(f));
     swap(a, f);
 }
-
-template<typename T>
-void list_slice_assign_zero(std::vector<T>& a, int64_t begin, int64_t end){
+template <typename T>
+void list_slice_assign_zero(std::vector<T>& a, int64_t begin, int64_t end) {
     list_slice_assign(a, begin, end, std::vector<T>());
 }
-
-template<typename T>
-void list_slice_assign_one(std::vector<T>& a, int64_t begin, int64_t end, T val){
-    list_slice_assign(a, begin, end, std::vector<T>({move(val)}));
+template <typename T>
+void list_slice_assign_one(std::vector<T>& a, int64_t begin, int64_t end, T val) {
+    list_slice_assign(a, begin, end, std::vector<T>({std::move(val)}));
 }
-
-template<typename T>
-void list_reverse(std::vector<T>& a){
+template <typename T>
+void list_reverse(std::vector<T>& a) {
     std::reverse(a.begin(), a.end());
 }
-
-
-template<typename T>
-struct node;
-
-template<typename T>
-struct node_s{
+template <typename T>
+struct node_ptr;
+template <typename T>
+struct node {
     std::vector<T> data;
-    std::vector<node<T>> down = std::vector<node<T>>(1);
+    std::vector<node_ptr<T>> down = std::vector<node_ptr<T>>(1);
+    std::weak_ptr<node<T>> maybe_parent;
 };
-
-template<typename T>
-struct node{
-    std::shared_ptr<node_s<T>> data_;
-    std::vector<T>& data(){
-        return data_->data;
+template <typename T>
+struct node_ptr {
+    std::shared_ptr<node<T>> data_;
+    T& data(int64_t f) {
+        assert(f < data_size());
+        assert(0 <= f);
+        return data_->data[f];
     }
-    std::vector<node<T>>& down(){
-        return data_->down;
+    node_ptr<T>& down(int64_t f){
+        assert(f < down_size());
+        assert(0 <= f);
+        return data_->down[f];
     }
-    operator std::shared_ptr<T>()const{
+    int64_t down_size(){
+        return data_->down.size();
+    }
+    int64_t data_size(){
+        return data_->data.size();
+    }
+    bool down_contains(auto&&q){
+        return list_contains(data_->down, std::forward<decltype(q)>(q));;
+    }
+    bool data_contains(auto&&q){
+        return list_contains(data_->data, std::forward<decltype(q)>(q));;
+    }
+    int64_t down_index(auto&&q){
+        return list_index(data_->down, std::forward<decltype(q)>(q));;
+    }
+    int64_t data_index(auto&&q){
+        return list_index(data_->data, std::forward<decltype(q)>(q));;
+    }
+    void down_insert(auto&&q, auto&&w){
+        return list_insert(data_->down, std::forward<decltype(q)>(q), std::forward<decltype(w)>(w));;
+    }
+    void data_insert(auto&&q, auto&&w){
+        return list_insert(data_->data, std::forward<decltype(q)>(q), std::forward<decltype(w)>(w));;
+    }
+    void data_slice_assign_zero(auto&&...q){
+        return list_slice_assign_zero(data_->data, std::forward<decltype(q)>(q)...);
+    }
+    void down_slice_assign_zero(auto&&...q){
+        return list_slice_assign_zero(data_->down, std::forward<decltype(q)>(q)...);
+    }
+    void data_slice_assign_one(auto&&...q){
+        return list_slice_assign_one(data_->data, std::forward<decltype(q)>(q)...);
+    }
+    void down_slice_assign_one(auto&&...q){
+        return list_slice_assign_one(data_->down, std::forward<decltype(q)>(q)...);
+    }
+    void data_erase(auto&&...q){
+        return list_erase(data_->data, std::forward<decltype(q)>(q)...);
+    }
+    void down_erase(auto&&...q){
+        return list_erase(data_->down, std::forward<decltype(q)>(q)...);
+    }
+    void data_append(auto&&...q){
+        return list_append(data_->data, std::forward<decltype(q)>(q)...);
+    }
+    void down_append(auto&&...q){
+        return list_append(data_->down, std::forward<decltype(q)>(q)...);
+    }
+    void data_slice_assign_self(int64_t q_0, int64_t q_1, node_ptr& o){
+        return list_slice_assign(data_->data, q_0, q_1, o.data_->data);
+    }
+    void down_slice_assign_self(int64_t q_0, int64_t q_1, node_ptr& o){
+        return list_slice_assign(data_->down, q_0,q_1, o.data_->down);
+    }
+    operator std::shared_ptr<T>() const {
         return data_;
     }
-    operator bool()const{
+    operator bool() const {
         return data_ != nullptr;
     }
-    bool operator!=(std::nullptr_t){
+    bool operator!=(std::nullptr_t) {
         return data_ != nullptr;
     }
-    bool operator==(std::nullptr_t){
+    bool operator==(std::nullptr_t) {
         return data_ == nullptr;
     }
-    node(std::shared_ptr<node_s<T>> a): data_(a){}
-    node(nullptr_t){}
-    node(){}
+    node_ptr(std::shared_ptr<node<T>> a) : data_(a) {
+    }
+    node_ptr(nullptr_t) {
+    }
+    node_ptr() {
+    }
+    auto& operator*(){
+        return *data_;
+    }
+    auto operator->(){
+        return &*data_;
+    }
 };
-
-template<typename T>
-node<T> create_node(){
-    return node<T>(std::make_shared<node_s<T>>());
+template <typename T>
+node_ptr<T> create_node() {
+    return node_ptr<T>(std::make_shared<node<T>>());
 }
-
-
-template<typename T>
-node<T> node_copy(node<T> self){
-    if (self){
-        return node<T>{std::make_shared<node_s<T>>(*self.data_)};
-    }else{
-        return node<T>{std::shared_ptr<node_s<T>>()};
+template <typename T>
+node_ptr<T> node_copy(node_ptr<T> self) {
+    if (self) {
+        return node_ptr<T>{std::make_shared<node<T>>(*self.data_)};
+    } else {
+        return node_ptr<T>{std::shared_ptr<node<T>>()};
     }
 }
-
-UNIQUE_IDENTIFIER = """_"/*""";
-':'''
-class node(typing.Generic[T]):
-    def __init__(self, *, data:List_[T], down: List_[node[T]|None]):
-        self.data_ = List_(data);
-        self.down_ = List_(down);
-    def data(self) -> List_[T]:
-        return self.data_
-    def down(self) -> List_[node[T]|None]:
-        return self.down_
-
-def node_copy(self: node[T]) -> node[T]:
-    return node(data=self.data(), down=self.down());
-
-def node_insert(self: node[T]|None, elem: T, max_len: int) -> node[T]:
-    ''':'
-UNIQUE_IDENTIFIER = """*/"_""";
-template<typename T>
-auto node_insert(node<T> self, T&& elem, int64_t max_len) -> node<T>{
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    assert (self is not None);
-    ((""":" )) RESUME_CPP ":""" ))
-    assert (self != None);
+template <typename T>
+auto node_insert(node_ptr<T> self, T&& elem, int64_t max_len) -> node_ptr<T> {
+    assert(self != nullptr);
     self = node_copy(self);
-    if (list_contains(self.data(), elem))// simple():
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        { // BEGIN
-        PAUSE_CPP(( int64_t // int64_t ))
-        ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-        int64_t // int64_t
-        t = list_index(self.data(), elem);
-        self.data()[t] = elem;
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-    elif (self.down()[0] == None)// simple():
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        { // BEGIN
-        int64_t
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-        w = 0;
-        while (w < list_size(self.data()) and self.data()[w] < elem)// simple():
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
+    if (self.data_contains(elem)) {
+        int64_t t = self.data_index(elem);
+        self.data(t) = std::move(elem);
+    } else if (self.down(0) == nullptr) {
+        int64_t w = 0;
+        while (w < (self.data_size()) and self.data(w) < elem) {
             w += 1;
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-        list_insert(self.data(), w, elem);
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        node<T> tmp_3 = {nullptr};
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        tmp_3 = None;
-        list_insert(self.down(), 0, tmp_3);
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-    elif (True)// simple():
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        { // BEGIN
-        int64_t
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-        w = 0;
-        while (w < list_size(self.data()) and self.data()[w] < elem)// simple():
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
+        }
+        self.data_insert(w, elem);
+        node_ptr<T> tmp_3 = {nullptr};
+        tmp_3 = nullptr;
+        self.down_insert( 0, tmp_3);
+    } else if (true) {
+        int64_t w = 0;
+        while (w < (self.data_size()) and self.data(w) < elem) {
             w += 1;
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-        self.down()[w] = node_insert(self.down()[w], move(elem), max_len);
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        node
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-        tmp = self.down()[w];
-        PAUSE_CPP(( int64_t // int64_t ))
-        assert (tmp is not None);
-        ((""":" )) RESUME_CPP ":""" ))
-        assert (tmp != None);
-        if (list_size(tmp.data()) > max_len)// simple():
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            assert (list_size(tmp.data()) == 1 + max_len);
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            node
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            q = node_copy(tmp);
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            node
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            a = node_copy(q);
-            list_slice_assign_zero(a.data(),x__div( max_len ,  2),list_size(a.data()));
-            list_slice_assign_zero(a.down(),x__div( max_len ,  2) + 1,list_size(a.down()));
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            auto
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            kw = q.data()[x__div(max_len ,  2)];
-            list_slice_assign_zero(q.data(), 0,x__div( max_len ,  2) + 1);
-            list_slice_assign_zero(q.down(), 0,x__div(max_len ,  2) + 1);
-            list_insert(self.data(), w, kw);
-            self.down()[w] = q;
-            list_insert(self.down(), w, a);
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
+        }
+        self.down(w) = node_insert(self.down(w), std::move(elem), max_len);
+        node_ptr tmp = self.down(w);
+        assert(tmp != nullptr);
+        if ((tmp.data_size()) > max_len) {
+            assert((tmp.data_size()) == 1 + max_len);
+            node_ptr q = node_copy(tmp);
+            node_ptr a = node_copy(q);
+            a.data_slice_assign_zero( x__div(max_len, 2), (a.data_size()));
+            a.down_slice_assign_zero( x__div(max_len, 2) + 1, (a.down_size()));
+            auto kw = std::move(q.data(x__div(max_len, 2)));
+            q.data_slice_assign_zero( 0, x__div(max_len, 2) + 1);
+            q.down_slice_assign_zero(0, x__div(max_len, 2) + 1);
+            self.data_insert( w, kw);
+            self.down(w) = q;
+            self.down_insert( w, a);
+        }
+    }
     return self;
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    } // END
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    ((""":" )) RESUME_CPP ":""" ))
-
-PAUSE_CPP(( int64_t // int64_t ))
-''':' PAUSE_PYTHON
-((""":" )) RESUME_CPP ":""" ))
-template<typename T>
-auto node_find_path(node<T> self, const T& elem) -> std::vector<std::pair<node<T>, int64_t>>{
-PAUSE_CPP(( int64_t // int64_t ))
-RESUME_PYTHON ':'''
-def node_find_path(self: node[T], elem: T) -> List_[tuple[node[T], int]]:
-    ((""":" )) RESUME_CPP ":""" ))
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    std::vector<std::pair<node<T>, int64_t>> output;
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    output : List_[tuple[node[T], int]] = List_([]);
-    ((""":" )) RESUME_CPP ":""" ))
-
-    if (node_find_path_(self, elem, output))// simple():
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        { // BEGIN
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
+}
+template <typename T>
+auto node_find_path(node_ptr<T> self, const T& elem) -> std::vector<std::pair<node_ptr<T>, int64_t>> {
+    std::vector<std::pair<node_ptr<T>, int64_t>> output;
+    if (node_find_path_(self, elem, output)) {
         return output;
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    return std::vector<std::pair<node<T>, int64_t>>();
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    return List_([]);
-    ((""":" )) RESUME_CPP ":""" ))
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    } // END
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    ((""":" )) RESUME_CPP ":""" ))
-
-PAUSE_CPP(( int64_t // int64_t ))
-''':' PAUSE_PYTHON
-((""":" )) RESUME_CPP ":""" ))
-template<typename T, typename OUT_IT>
-auto node_find_path_(node<T> self , const T& elem, OUT_IT& output) -> bool{
-PAUSE_CPP(( int64_t // int64_t ))
-RESUME_PYTHON ':'''
-def node_find_path_(self: node[T], elem: T, output: List_[tuple[node[T], int]]) -> bool:
-    ((""":" )) RESUME_CPP ":""" ))
-
-    if (list_contains(self.data(), elem))// simple():
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        { // BEGIN
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-
-        list_append(output, std::pair{self, list_index(self.data(), (elem))});
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-
-        list_append(output, (self, list_index(self.data(), (elem))));
-
-        ((""":" )) RESUME_CPP ":""" ))
-
-        return True;
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-    if (self.down()[0] == None)// simple():
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        { // BEGIN
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        return False;
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    int64_t
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    ((""":" )) RESUME_CPP ":""" ))
-
-    w = 0;
-    while (w < list_size(self.data()) and self.data()[w] < elem)// simple():
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        { // BEGIN
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
+    }
+    return std::vector<std::pair<node_ptr<T>, int64_t>>();
+}
+template <typename T>
+auto node_set_parent(node_ptr<T> self) -> void {
+    for (auto& child: self.down()){
+        if (child){
+            child->maybe_parent = self.data_;
+            node_set_parent(child);
+        }
+    }
+}
+template <typename T>
+auto node_check(node_ptr<T> self, std::set<int64_t>* s = nullptr, int64_t l = 0) -> void{
+    if (self == nullptr){
+        return;
+    }
+    std::set<int64_t> aaa;
+    if (not s){
+        s = &aaa;
+    }
+    for (int64_t child_i=0; child_i<self.down_size(); ++child_i){
+        auto& child = self.down(child_i);
+        node_check(child, s, l + 1);
+    }
+    assert(self.down_size() == self.data_size() + 1);
+    for (int64_t q = 0 ; q < self.data_size() ; ++q){
+        assert ((self.down(q) == nullptr) == (self.down(q+1) == nullptr));
+    }
+    if (self.down(0) == nullptr){
+        s->insert(l);
+    }
+    assert(s->size() == 1);
+    for (int64_t q = 1 ; q < self.data_size() ; ++q){
+        assert (self.data(q-1) < self.data(q));
+    }
+    if (l != *s->begin()){
+        for (int64_t q = 0 ; q < self.data_size() ; ++q){
+            assert (self.down(q).data(self.down(q).data_size()-1) < self.data(q));
+            assert (self.data(q) < self.down(q+1).data(0));
+        }
+    }
+}
+template <typename T, typename OUT_IT>
+auto node_find_path_(node_ptr<T> self, const T& elem, OUT_IT& output) -> bool {
+    if (self.data_contains(elem)) {
+        list_append(output, std::pair<node_ptr<T>, int64_t>{self, self.data_index( (elem))});
+        return true;
+    }
+    if (self.down(0) == nullptr) {
+        return false;
+    }
+    int64_t w = 0;
+    while (w < self.data_size() and self.data(w) < elem) {
         w += 1;
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    node
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    ((""":" )) RESUME_CPP ":""" ))
-
-    tmp = self.down()[w];
-    PAUSE_CPP(( int64_t // int64_t ))
-    assert (tmp is not None);
-    ((""":" )) RESUME_CPP ":""" ))
-    assert (tmp != None);
-    if (node_find_path_(tmp, elem, output))// simple():
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        { // BEGIN
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-
+    }
+    node_ptr tmp = self.down(w);
+    assert(tmp != nullptr);
+    if (node_find_path_(tmp, elem, output)) {
         list_append(output, std::pair{self, w});
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        list_append(output, (self, w));
-        ((""":" )) RESUME_CPP ":""" ))
-
-        return True;
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-    return False;
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    } // END
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    ((""":" )) RESUME_CPP ":""" ))
-
-PAUSE_CPP(( int64_t // int64_t ))
-''':' PAUSE_PYTHON
-((""":" )) RESUME_CPP ":""" ))
+        return true;
+    }
+    return false;
+}
 template<typename T>
-auto node_erase(node<T> self  , const T& elem, int64_t max_len) -> node<T>{
-PAUSE_CPP(( int64_t // int64_t ))
-RESUME_PYTHON ':'''
-def node_erase(self: node[T], elem: T, max_len: int) -> node[T]:
-    ((""":" )) RESUME_CPP ":""" ))
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    node<T> t;
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    t: None|node[T];
-    ((""":" )) RESUME_CPP ":""" ))
-
+struct node_iter{
+    node_ptr<T> self;
+    int64_t pos;
+    auto& operator++(){
+        if (self.down(0) == nullptr){
+            if (pos + 1 < self.data_size()){
+                pos += 1;
+                return *this;
+            }
+            while (1){
+                auto p = node_ptr{self->maybe_parent.lock()};
+                assert (p != nullptr);
+                auto i = p.down_index( self);
+                if (i + 1 == p.down_size()){
+                    self = p;
+                    continue;
+                }
+                self = p;
+                pos = i;
+                return *this;
+            }
+        }else{
+            self = self.down(pos + 1);
+            while (self.down(0)){
+                self = self.down(0);
+            }
+            pos = 0;
+        }
+        return *this;
+    }
+    auto operator--(){
+        if (self.down(0) == nullptr){
+            if (pos - 1 >= 0){
+                pos -= 1;
+                return *this;
+            }
+            while (1){
+                auto p = node_ptr{self->maybe_parent.lock()};
+                assert (p != nullptr);
+                auto i = p.down_index( self);
+                if (i == 0){
+                    self = p;
+                    continue;
+                }
+                self = p;
+                pos = i - 1;
+                return *this;
+            }
+        }else{
+            self = self.down(pos);
+            while (self.down(self.down_size()-1)){
+                self = self.down(self.down_size()-1);
+            }
+            pos = self.down_size() - 1;
+        }
+        return *this;
+    }
+    auto& operator*(){
+        return self.data(pos);
+    }
+    auto operator->(){
+        return &*self;
+    }
+};
+template<typename T>
+bool operator==(node_iter<T> left, node_iter<T> right){
+    return left.self == right.self;
+}
+template<typename T>
+bool operator!=(node_iter<T> left, node_iter<T> right){
+    return left.self != right.self;
+}
+template<typename T>
+node_iter<T> node_begin(node_ptr<T> self){
+    while (self and self.down(0)){
+        self = self.down(0);
+    }
+    return node_iter<T>{self, 0};
+}
+template<typename T>
+node_iter<T> node_end(node_ptr<T> self){
+    while (self and self.down(self.down_size()-1)){
+        self = self.down(self.down_size()-1);
+    }
+    return node_iter<T>{self, self.data_size() - 1};
+}
+template <typename T>
+auto node_erase(node_ptr<T> self, const T& elem, int64_t max_len) -> node_ptr<T> {
+    node_ptr<T> t;
     self = node_copy(self);
-    if (self.down()[0] == None)// simple():
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        { // BEGIN
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        int64_t
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        t_ = list_index(self.data(), (elem));
-        list_erase(self.data(), t_);
-        list_erase(self.down(), 0);
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-    elif (True)// simple():
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        { // BEGIN
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-        
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        int64_t
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        
-        w = 0;
-        while (w < list_size(self.data()) and self.data()[w] < elem)// simple():
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
+    if (self.down(0) == nullptr) {
+        node_check(self);
+        int64_t t_ = self.data_index( (elem));
+        self.data(t_);
+        self.data_erase( t_);
+        self.down_erase( 0);
+        node_check(self);
+    } else if (true) {
+        node_check(self);
+        int64_t w = 0;
+        while (w < (self.data_size()) and self.data(w) < elem) {
             w += 1;
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        node
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        tmp = self.down()[w];
-        PAUSE_CPP(( int64_t // int64_t ))
-        assert (tmp is not None);
-        ((""":" )) RESUME_CPP ":""" ))
-        assert (tmp != None);
-        self.down()[w] = node_erase(tmp, elem, max_len);
-        tmp = self.down()[w];
-        PAUSE_CPP(( int64_t // int64_t ))
-        assert (tmp is not None);
-        ((""":" )) RESUME_CPP ":""" ))
-        assert (tmp != None);
-        if (list_size(tmp.data()) <x__div( max_len ,  2))// simple():
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            assert (list_size(tmp.data()) ==x__div( max_len ,  2) - 1);
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            int64_t
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-            e = 0;
-            if (w)// simple():
-
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                { // BEGIN
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-
+        }
+        node_ptr tmp = self.down(w);
+        assert(tmp != nullptr);
+        self.down(w) = node_erase(tmp, elem, max_len);
+        tmp = self.down(w);
+        assert(tmp != nullptr);
+        if ((tmp.data_size()) < x__div(max_len, 2)) {
+            node_check(self);
+            assert((tmp.data_size()) == x__div(max_len, 2) - 1);
+            int64_t e = 0;
+            if (w) {
                 e = w - 1;
-
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                } // END
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-
-            elif (True)// simple():
-
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                { // BEGIN
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-
+            } else if (true) {
                 e = w + 1;
-
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                } // END
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            int64_t
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-            q = x__max(w, e);
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            int64_t
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-            r = x__min(w, e);
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            node
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-            tmp = self.down()[e];
-            PAUSE_CPP(( int64_t // int64_t ))
-            assert (tmp is not None);
-            ((""":" )) RESUME_CPP ":""" ))
-            assert (tmp != None);
-            if (list_size(tmp.data()) ==x__div( max_len ,  2))// simple():
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                { // BEGIN
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-                tmp = self.down()[q];
-                PAUSE_CPP(( int64_t // int64_t ))
-                assert (tmp is not None);
-                ((""":" )) RESUME_CPP ":""" ))
-                assert (tmp != None);
+            }
+            int64_t q = x__max(w, e);
+            int64_t r = x__min(w, e);
+            node_ptr tmp = self.down(e);
+            assert(tmp != nullptr);
+            if ((tmp.data_size()) == x__div(max_len, 2)) {
+                node_check(self);
+                tmp = self.down(q);
+                assert(tmp != nullptr);
                 t = node_copy(tmp);
-                tmp = self.down()[r];
-                PAUSE_CPP(( int64_t // int64_t ))
-                assert (tmp is not None);
-                ((""":" )) RESUME_CPP ":""" ))
-                assert (tmp != None);
-
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                auto&
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-
-                __t = tmp.data();
-                list_append(__t, self.data()[r]);
-                list_slice_assign(t.data(), 0, 0, __t);
-                tmp = self.down()[r];
-                PAUSE_CPP(( int64_t // int64_t ))
-                assert (tmp is not None);
-                ((""":" )) RESUME_CPP ":""" ))
-                assert (tmp != None);
-                list_slice_assign(t.down(), 0,0,tmp.down());
-                list_slice_assign_one(self.down(), r,q + 1, t);
-                list_slice_assign_zero(self.data(), r,q );
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                } // END
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-            elif (True)// simple():
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                { // BEGIN
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-                tmp = self.down()[w];
-                PAUSE_CPP(( int64_t // int64_t ))
-                assert (tmp is not None);
-                ((""":" )) RESUME_CPP ":""" ))
-                assert (tmp != None);
+                tmp = self.down(r);
+                assert(tmp != nullptr);
+                tmp.data_append( self.data(r));
+                t.data_slice_assign_self( 0, 0, tmp);
+                tmp = self.down(r);
+                assert(tmp != nullptr);
+                t.down_slice_assign_self( 0, 0, tmp);
+                self.down_slice_assign_one(r, q + 1, t);
+                self.down_slice_assign_zero(r, q);
+                node_check(self);
+            } else if (true) {
+                node_check(self);
+                tmp = self.down(w);
+                assert(tmp != nullptr);
                 t = node_copy(tmp);
-
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                int64_t
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-
-                l = (q - w) * list_size(t.down());
-
-
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                int64_t
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-
-                tmp_1 = l;
-                if (tmp_1 < 0)// simple():
-
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    ''':' PAUSE_PYTHON
-                    ((""":" )) RESUME_CPP ":""" ))
-                    { // BEGIN
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    RESUME_PYTHON ':'''
-                    ((""":" )) RESUME_CPP ":""" ))
-
-                    tmp_1 += list_size(t.data());
-
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    ''':' PAUSE_PYTHON
-                    ((""":" )) RESUME_CPP ":""" ))
-                    } // END
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    RESUME_PYTHON ':'''
-                    ((""":" )) RESUME_CPP ":""" ))
-
-                if (tmp_1 < 0)// simple():
-
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    ''':' PAUSE_PYTHON
-                    ((""":" )) RESUME_CPP ":""" ))
-                    { // BEGIN
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    RESUME_PYTHON ':'''
-                    ((""":" )) RESUME_CPP ":""" ))
-
+                int64_t l = (q - w) * (t.down_size());
+                int64_t tmp_1 = l;
+                if (tmp_1 < 0) {
+                    tmp_1 += t.data_size();
+                }
+                if (tmp_1 < 0) {
                     tmp_1 = 0;
-
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    ''':' PAUSE_PYTHON
-                    ((""":" )) RESUME_CPP ":""" ))
-                    } // END
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    RESUME_PYTHON ':'''
-                    ((""":" )) RESUME_CPP ":""" ))
-
-                if (tmp_1 > list_size(t.data()))// simple():
-
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    ''':' PAUSE_PYTHON
-                    ((""":" )) RESUME_CPP ":""" ))
-                    { // BEGIN
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    RESUME_PYTHON ':'''
-                    ((""":" )) RESUME_CPP ":""" ))
-
-                    tmp_1 = list_size(t.data());
-
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    ''':' PAUSE_PYTHON
-                    ((""":" )) RESUME_CPP ":""" ))
-                    } // END
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    RESUME_PYTHON ':'''
-                    ((""":" )) RESUME_CPP ":""" ))
-
-                list_slice_assign_one(t.data(), tmp_1, tmp_1, self.data()[r]);
-                tmp = self.down()[e];
-                PAUSE_CPP(( int64_t // int64_t ))
-                assert (tmp is not None);
-                ((""":" )) RESUME_CPP ":""" ))
-                assert (tmp != None);
+                }
+                if (tmp_1 > t.data_size()) {
+                    tmp_1 = t.data_size();
+                }
+                t.data_slice_assign_one( tmp_1, tmp_1, self.data(r));
+                tmp = self.down(e);
+                assert(tmp != nullptr);
                 tmp_1 = l;
-                list_slice_assign_one(t.down(), tmp_1, tmp_1, tmp.down()[(e - q + list_size(tmp.down())) % list_size(tmp.down())]);
-                self.down()[w] = t;
-                tmp = self.down()[e];
-                PAUSE_CPP(( int64_t // int64_t ))
-                assert (tmp is not None);
-                ((""":" )) RESUME_CPP ":""" ))
-                assert (tmp != None);
-                self.data()[r] = tmp.data()[(e - q + list_size(tmp.data())) % list_size(tmp.data())];
-                tmp = self.down()[e];
-                PAUSE_CPP(( int64_t // int64_t ))
-                assert (tmp is not None);
-                ((""":" )) RESUME_CPP ":""" ))
-                assert (tmp != None);
+                t.down_slice_assign_one( tmp_1, tmp_1,
+                                      tmp.down((e - q + tmp.down_size()) % tmp.down_size()));
+                self.down(w) = t;
+                tmp = self.down(e);
+                assert(tmp != nullptr);
+                self.data(r) = tmp.data((e - q + tmp.data_size()) % tmp.data_size());
+                tmp = self.down(e);
+                assert(tmp != nullptr);
                 t = node_copy(tmp);
                 tmp_1 = e - q;
-                if (tmp_1 < 0)// simple():
-
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    ''':' PAUSE_PYTHON
-                    ((""":" )) RESUME_CPP ":""" ))
-                    { // BEGIN
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    RESUME_PYTHON ':'''
-                    ((""":" )) RESUME_CPP ":""" ))
-
-                    tmp_1 += list_size(t.data());
-
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    ''':' PAUSE_PYTHON
-                    ((""":" )) RESUME_CPP ":""" ))
-                    } // END
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    RESUME_PYTHON ':'''
-                    ((""":" )) RESUME_CPP ":""" ))
-
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                int64_t
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-
-                tmp_2 = list_size(t.data()) * (q - e) + (q - w);
-                if (tmp_2 < 0)// simple():
-
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    ''':' PAUSE_PYTHON
-                    ((""":" )) RESUME_CPP ":""" ))
-                    { // BEGIN
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    RESUME_PYTHON ':'''
-                    ((""":" )) RESUME_CPP ":""" ))
-
-                    tmp_2 += list_size(t.data());
-
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    ''':' PAUSE_PYTHON
-                    ((""":" )) RESUME_CPP ":""" ))
-                    } // END
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    RESUME_PYTHON ':'''
-                    ((""":" )) RESUME_CPP ":""" ))
-
-                list_slice_assign_zero(t.data(), tmp_1, tmp_2);
+                if (tmp_1 < 0) {
+                    tmp_1 += t.data_size();
+                }
+                int64_t tmp_2 = t.data_size() * (q - e) + (q - w);
+                if (tmp_2 < 0) {
+                    tmp_2 += t.data_size();
+                }
+                t.data_slice_assign_zero( tmp_1, tmp_2);
                 tmp_1 = e - q;
-                if (tmp_1 < 0)// simple():
-
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    ''':' PAUSE_PYTHON
-                    ((""":" )) RESUME_CPP ":""" ))
-                    { // BEGIN
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    RESUME_PYTHON ':'''
-                    ((""":" )) RESUME_CPP ":""" ))
-
-                    tmp_1 += list_size(t.down());
-
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    ''':' PAUSE_PYTHON
-                    ((""":" )) RESUME_CPP ":""" ))
-                    } // END
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    RESUME_PYTHON ':'''
-                    ((""":" )) RESUME_CPP ":""" ))
-
-                tmp_2 = list_size(t.down()) * (q - e) + (q - w);
-                if (tmp_2 < 0)// simple():
-
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    ''':' PAUSE_PYTHON
-                    ((""":" )) RESUME_CPP ":""" ))
-                    { // BEGIN
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    RESUME_PYTHON ':'''
-                    ((""":" )) RESUME_CPP ":""" ))
-
-                    tmp_2 += list_size(t.data());
-
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    ''':' PAUSE_PYTHON
-                    ((""":" )) RESUME_CPP ":""" ))
-                    } // END
-                    PAUSE_CPP(( int64_t // int64_t ))
-                    RESUME_PYTHON ':'''
-                    ((""":" )) RESUME_CPP ":""" ))
-
-                list_slice_assign_zero(t.down(), tmp_1, tmp_2);
-                self.down()[e] = t;
-
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                } // END
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
+                if (tmp_1 < 0) {
+                    tmp_1 += t.down_size();
+                }
+                tmp_2 = t.down_size() * (q - e) + (q - w);
+                if (tmp_2 < 0) {
+                    tmp_2 += t.data_size();
+                }
+                t.down_slice_assign_zero( tmp_1, tmp_2);
+                self.down(e) = t;
+                node_check(self);
+            }
+            node_check(self);
+        }
+        node_check(self);
+    }
     return self;
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    } // END
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    ((""":" )) RESUME_CPP ":""" ))
-
-PAUSE_CPP(( int64_t // int64_t ))
-''':' PAUSE_PYTHON
-((""":" )) RESUME_CPP ":""" ))
-template<typename T>
-auto node_to_list(node<T> self, std::vector<T>& l) -> std::vector<T>&{
-PAUSE_CPP(( int64_t // int64_t ))
-RESUME_PYTHON ':'''
-def node_to_list(self: node[T], l: list[T]) -> list[T]:
-    ((""":" )) RESUME_CPP ":""" ))
-
-    if (self.down()[0] == None)// simple():
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        { // BEGIN
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        int64_t
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        i_ = 0;
-        while (i_ < list_size(self.data()))// simple():
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            auto
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-            w_ = self.data()[i_];
+}
+template <typename T>
+auto node_to_list(node_ptr<T> self, std::vector<T>& l) -> std::vector<T>& {
+    if (self.down(0) == nullptr) {
+        int64_t i_ = 0;
+        while (i_ < self.data_size()) {
+            auto w_ = self.data(i_);
             l.append(w_);
             i_ += 1;
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-    elif (True)// simple():
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        { // BEGIN
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        node
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        tmp = self.down()[0];
-        assert (tmp != None);
-        PAUSE_CPP(( int64_t // int64_t ))
-        assert (tmp is not None);
-        ((""":" )) RESUME_CPP ":""" ))
+        }
+    } else if (true) {
+        node_ptr tmp = self.down(0);
+        assert(tmp != nullptr);
         node_to_list(tmp, l);
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        int64_t
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        i_ = 0;
-        while (i_ < list_size(self.data()))// simple():
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            int64_t
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-            w = i_;
-            l.append(self.data()[w]);
-            tmp = self.down()[w + 1];
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            assert (isinstance(tmp, node));
-            ((""":" )) RESUME_CPP ":""" ))
-
+        int64_t i_ = 0;
+        while (i_ < self.data_size()) {
+            int64_t w = i_;
+            l.append(self.data(w));
+            tmp = self.down(w + 1);
             node_to_list(tmp, l);
             i_ += 1;
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
+        }
+    }
     return l;
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    } // END
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    ((""":" )) RESUME_CPP ":""" ))
-
-PAUSE_CPP(( int64_t // int64_t ))
-''':' PAUSE_PYTHON
-((""":" )) RESUME_CPP ":""" ))
-template<typename T>
-auto node_chval(node<T> self, const std::vector<std::pair<node<T>, int64_t>>& a,int64_t t,T kw,int64_t n) -> node<T>{
-PAUSE_CPP(( int64_t // int64_t ))
-RESUME_PYTHON ':'''
-def node_chval(self: node[T], a: List_[tuple[node[T], int]], t: int, kw: T, n: int) -> node[T]:
-    ((""":" )) RESUME_CPP ":""" ))
-
+}
+template <typename T>
+auto node_chval(node_ptr<T> self, const std::vector<std::pair<node_ptr<T>, int64_t>>& a, int64_t t, T kw, int64_t n)
+    -> node_ptr<T> {
     self = node_copy(self);
-    if (n)// simple():
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        { // BEGIN
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        int64_t
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        v = tuple_get_1(a[n]);
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        node
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        tmp = self.down()[v];
-        PAUSE_CPP(( int64_t // int64_t ))
-        assert (tmp is not None);
-        ((""":" )) RESUME_CPP ":""" ))
-        assert (tmp != None);
-        self.down()[v] = node_chval(tmp, a, t, kw, n - 1);
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-    elif (True)// simple():
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        { // BEGIN
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        assert (self.data() != None);
-        assert (isinstance(t, int));
-        ((""":" )) RESUME_CPP ":""" ))
-        self.data()[t] = kw;
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
+    if (n) {
+        int64_t v = tuple_get_1(a[n]);
+        node_ptr tmp = self.down(v);
+        assert(tmp != nullptr);
+        self.down(v) = node_chval(tmp, a, t, kw, n - 1);
+    } else if (true) {
+        self.data(t) = kw;
+    }
     return self;
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    } // END
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    ((""":" )) RESUME_CPP ":""" ))
-
-
-PAUSE_CPP(( int64_t // int64_t ))
-Node = node[T] | None;
-((""":" )) RESUME_CPP ":""" ))
-
-PAUSE_CPP(( int64_t // int64_t ))
-''':' PAUSE_PYTHON
-((""":" )) RESUME_CPP ":""" ))
-
-template<typename T>
-struct b_set{
-    node<T> root;
+}
+template <typename T>
+struct b_set {
+    node_ptr<T> root;
     int64_t max_len = 5;
-
-PAUSE_CPP(( int64_t // int64_t ))
-RESUME_PYTHON ':'''
-class b_set(typing.Generic[T]):
-
-    def __init__(self) -> None:
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        { // BEGIN
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-        self.root: Node[T] = None;
-        self.max_len = 99;
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-    ((""":" )) RESUME_CPP ":""" ))
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    auto add(T&& v) -> void{
+    auto add(T&& v) -> void {
         auto& self = *this;
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    def add(self, v: T) -> None:
-        ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        node<T> q = create_node<T>();
-        q.down()[0] = self.root;
-        // auto q = std::make_shared<node_s<T>>(node_s<T>{std::vector<T>(), std::vector<node<T>>({self.root})});
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        q = node(data=List_([]), down=List_([self.root, ]));
-        ((""":" )) RESUME_CPP ":""" ))
-
-        q = node_insert(q, move(v), self.max_len);
-        if (not list_size(q.data()))// simple():
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            node<T>
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-            tmp = q.down()[0];
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            assert (tmp is not None);
-            ((""":" )) RESUME_CPP ":""" ))
-            assert (tmp);
-
+        node_check(self.root);
+        node_ptr<T> q = create_node<T>();
+        q.down(0) = self.root;
+        q = node_insert(q, std::move(v), self.max_len);
+        if (not (q.data_size())) {
+            node_ptr<T> tmp = q.down(0);
+            assert(tmp);
             q = tmp;
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
+        }
         self.root = q;
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    auto find(const T& v) -> std::vector<T>{
+    }
+    auto find(const T& v) -> std::vector<T> {
         auto& self = *this;
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    def find(self, v: T) -> list[T]:
-        ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        node
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        r = self.root;
-        if (r == None)// simple():
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
+        node_check(self.root);
+        node_ptr r = self.root;
+        if (r == nullptr) {
             return std::vector<T>();
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            return [];
-            ((""":" )) RESUME_CPP ":""" ))
-
-        assert (r != None);
-        PAUSE_CPP(( int64_t // int64_t ))
-        assert (r is not None);
-        ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        auto
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        f = node_find_path(r, v);
-        if (not list_size(f))// simple():
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
+        }
+        assert(r != nullptr);
+        auto f = node_find_path(r, v);
+        if (not list_size(f)) {
             return std::vector<T>();
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-
-            return [];
-
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        assert (f != None);
-        assert (f is not None)
-        ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        auto&
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        _f = f[0];
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        return [tuple_get_0(_f).data()[tuple_get_1(_f)]]
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        return std::vector<T>({tuple_get_0(_f).data()[tuple_get_1(_f)]});
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    auto contains(const T& v) -> bool{
+        }
+        auto& _f = f[0];
+        return std::vector<T>({tuple_get_0(_f).data(tuple_get_1(_f))});
+    }
+    auto contains(const T& v) -> bool {
         auto& self = *this;
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    def __contains__(self, v: T) -> bool:
-        ((""":" )) RESUME_CPP ":""" ))
-
+        node_check(self.root);
         return bool(len(self.find(v)));
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    auto remove(const T& v) -> void{
+    }
+    auto check() -> void {
         auto& self = *this;
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    def remove(self, v: T) -> None:
-        ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        node
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        r = self.root;
-        if (r == None)// simple():
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
+        node_check(self.root);
+    }
+    auto remove(const T& v) -> void {
+        auto& self = *this;
+        node_check(self.root);
+        node_ptr r = self.root;
+        if (r == nullptr) {
+            node_check(self.root);
             return;
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-        assert (r != None);
-        PAUSE_CPP(( int64_t // int64_t ))
-        assert (r is not None)
-        ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        auto
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        a = node_find_path(r, v);
-        if (not list_size(a))// simple():
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
+        }
+        assert(r != nullptr);
+        auto a = node_find_path(r, v);
+        if (not list_size(a)) {
+            node_check(self.root);
             return;
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-        assert (list_size(a));
-        PAUSE_CPP(( int64_t // int64_t ))
-        assert (a is not None)
-        ((""":" )) RESUME_CPP ":""" ))
-
+        }
+        assert(list_size(a));
         list_reverse(a);
-        if (tuple_get_0(a[list_size(a)-1]).down()[0] != None)// simple():
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            node
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-            t = tuple_get_0(a[list_size(a)-1]).down()[list_index(tuple_get_0(a[list_size(a)-1]).data(), v) + 1];
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            assert (t is not None);
-            ((""":" )) RESUME_CPP ":""" ))
-            assert (t != None);
-
-            while (t.down()[0] != None)// simple():
-
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                { // BEGIN
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-
-                t = t.down()[0];
-
-                PAUSE_CPP(( int64_t // int64_t ))
-                assert (t is not None);
-                ((""":" )) RESUME_CPP ":""" ))
-                assert (t != None);
-
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                } // END
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            auto
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-            kw = t.data()[0];
+        node_check(r);
+        if (tuple_get_0(a[list_size(a) - 1]).down(0) != nullptr) {
+            node_ptr t =
+                tuple_get_0(a[list_size(a) - 1]).down(tuple_get_0(a[list_size(a) - 1]).data_index(v) + 1);
+            assert(t != nullptr);
+            while (t.down(0) != nullptr) {
+                t = t.down(0);
+                assert(t != nullptr);
+            }
+            auto kw = t.data(0);
+            node_check(r);
             r = node_erase(r, kw, self.max_len);
+            node_check(r);
             a = node_find_path(r, v);
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            assert (list_size(a));
-            ((""":" )) RESUME_CPP ":""" ))
-            assert (list_size(a));
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            int64_t
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-            t_ = list_index(tuple_get_0(a[0]).data(), v);
+            assert(list_size(a));
+            int64_t t_ = tuple_get_0(a[0]).data_index( v);
+            node_check(r);
             r = node_chval(r, a, t_, kw, list_size(a) - 1);
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-        elif (True)// simple():
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
+            node_check(r);
+        } else if (true) {
+            node_check(r);
             r = node_erase(r, v, self.max_len);
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-        if (list_size(r.data()) == 0)// simple():
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-            r = r.down()[0];
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
+            node_check(r);
+        }
+        node_check(r);
+        if ((r.data_size()) == 0) {
+            r = r.down(0);
+        }
         self.root = r;
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    auto to_list() -> std::vector<T>{
+        node_check(self.root);
+    }
+    auto to_list() -> std::vector<T> {
         auto& self = *this;
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    def to_list(self) -> list[T]:
-        ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        node
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        r = self.root;
-        if (r == None)// simple():
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            return [];
-            ((""":" )) RESUME_CPP ":""" ))
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
+        node_check(self.root);
+        node_ptr r = self.root;
+        if (r == nullptr) {
             return std::vector<T>();
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-        PAUSE_CPP(( int64_t // int64_t ))
-        assert (r is not None);
-        ((""":" )) RESUME_CPP ":""" ))
-        assert (r != None);
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
+        }
+        assert(r != nullptr);
         return node_to_list(r, std::vector<T>());
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        return node_to_list(r, []);
-        ((""":" )) RESUME_CPP ":""" ))
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    return std::vector<T>();
-    } // END
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    ((""":" )) RESUME_CPP ":""" ))
-
-PAUSE_CPP(( int64_t // int64_t ))
-''':' PAUSE_PYTHON
-((""":" )) RESUME_CPP ":""" ))
-}; // END
-PAUSE_CPP(( int64_t // int64_t ))
-RESUME_PYTHON ':'''
-((""":" )) RESUME_CPP ":""" ))
-
-
-PAUSE_CPP(( int64_t // int64_t ))
-K = typing.TypeVar('K', bound=ComparableProto);
-K = typing.TypeVar('K') ; # type: ignore
-V = typing.TypeVar('V');
-((""":" )) RESUME_CPP ":""" ))
-
-
-PAUSE_CPP(( int64_t // int64_t ))
-@functools.total_ordering
-class item(typing.Generic[K, V]):
-    ((""":" )) RESUME_CPP ":""" ))
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    template<typename K, typename V>
-    struct item{
-        K k;
-        std::optional<V> v;
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    ((""":" )) RESUME_CPP ":""" ))
-
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    def __init__(self, k: K | item[K,V], v: V|None=None):
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        { // BEGIN
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-        if (not isinstance(k, item))// simple():
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            assert (not isinstance(k, item));
-            self.k : K = k;
-            self.v : V|None = v;
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-        elif (True)// simple():
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            assert (isinstance(k, item));
-            self.k, self.v = k.k, k.v;
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-    ((""":" )) RESUME_CPP ":""" ))
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    auto operator<(const item<K, V>& o) -> bool{
+        return std::vector<T>();
+    }
+    auto begin(){
         auto& self = *this;
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    def __lt__(self, o: item[K, V]) -> bool:
-        ((""":" )) RESUME_CPP ":""" ))
-
+        node_check(self.root);
+        return node_begin(self.root);
+    }
+    auto end(){
+        auto& self = *this;
+        node_check(self.root);
+        return node_end(self.root);
+    }
+};
+template <typename K, typename V>
+struct item {
+    K k;
+    std::optional<V> v;
+    auto operator<(const item<K, V>& o) -> bool {
+        auto& self = *this;
         return self.k < o.k;
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    auto operator==(const item<K, V>& o) -> bool{
+    }
+    auto operator==(const item<K, V>& o) -> bool {
         auto& self = *this;
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    def __eq__(self, o: object|item[K, V]) -> bool:
-        if (isinstance(o, item))// simple():
-            ((""":" )) RESUME_CPP ":""" ))
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            assert (isinstance(o, item));
-            ((""":" )) RESUME_CPP ":""" ))
+        {
             return self.k == o.k;
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        return False;
-        ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    auto to_list() -> std::pair<K, std::optional<V>>{
+        }
+    }
+    auto to_list() -> std::pair<K, std::optional<V>> {
         auto& self = *this;
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    def to_list(self) -> list[K|V|None]:
-        ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
         return {k, v};
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        return [self.k, self.v];
-        ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    }; // END
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    ((""":" )) RESUME_CPP ":""" ))
-
-
-PAUSE_CPP(( int64_t // int64_t ))
-''':' PAUSE_PYTHON
-((""":" )) RESUME_CPP ":""" ))
-
-template<typename K, typename V>
-struct b_dict{
+    }
+};
+template <typename K, typename V>
+struct b_dict {
     b_set<item<K, V>> b_set_;
-
-PAUSE_CPP(( int64_t // int64_t ))
-RESUME_PYTHON ':'''
-class b_dict(typing.Generic[K, V]):
-
-    def __init__(self) -> None:
-        self.b_set: b_set[item[K, V]] = b_set();
-
-    ((""":" )) RESUME_CPP ":""" ))
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    auto operator[](const K& k) -> V{
+    auto operator[](const K& k) -> V {
         auto& self = *this;
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    def __getitem__(self, k:K)->V:
-        ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        auto
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        r = self.b_set.find(item(k));
-        if (not r)// simple():
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
+        auto r = self.b_set.find(item(k));
+        if (not r) {
             return std::optional<V>();
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            raise KeyError(k);
-            ((""":" )) RESUME_CPP ":""" ))
-
-
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        auto
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-        tmp = r[0].v;
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        assert (tmp is not None);
-        ((""":" )) RESUME_CPP ":""" ))
-        assert (tmp != None);
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
+        }
+        auto tmp = r[0].v;
+        assert(tmp != nullptr);
         return {tmp};
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        return tmp;
-        ((""":" )) RESUME_CPP ":""" ))
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    auto setitem(const K& k, V&&v) -> void{
+    }
+    auto setitem(const K& k, V&& v) -> void {
         auto& self = *this;
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    def __setitem__(self, k:K, v:V)->None:
-        ((""":" )) RESUME_CPP ":""" ))
-
         self.b_set.add(item(k, v));
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    auto delitem(const K& k) -> void{
+    }
+    auto delitem(const K& k) -> void {
         auto& self = *this;
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    def __delitem__(self, k:K)->None:
-        ((""":" )) RESUME_CPP ":""" ))
-
         self.b_set.remove(item(k));
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    auto contains(const K& k) -> bool{
+    }
+    auto contains(const K& k) -> bool {
         auto& self = *this;
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    def __contains__(self, k:K) -> bool:
-        ((""":" )) RESUME_CPP ":""" ))
-
         return bool(self.b_set.find(item(k)));
-
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    def to_dict(self) -> dict[K, V]:
-        r_:list[item[K, V]] = self.b_set.to_list();
-        r:List_[item[K, V]] = List_([])
-        i_ = 0
-        while i_ < len(r_):
-            w = r_[i_]
-            e = w.to_list()
-            list_append(r, e) # type: ignore
-            i_ += 1
-        return dict(r); # type: ignore
-    ((""":" )) RESUME_CPP ":""" ))
-
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    }; // END
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    ((""":" )) RESUME_CPP ":""" ))
-
-UNIQUE_IDENTIFIER = """_"/*""";
-
-PAUSE_CPP(( int64_t // int64_t ))
-if (__name__ == '__main__')// simple():
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    int main()
-    { // BEGIN
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    ((""":" )) RESUME_CPP ":""" ))
-
-    t=time.time();
-    print([time.time()-t,(t:=time.time())][0]);
-
-    sed = random.randint(-9999, 9999);
-    print(sed);
-    random.seed(sed);
-    s_s: b_set[int] = b_set();
-    a_s = set();
-    for w in range(99):
-        q = random.choice([0] * 3 + [1] + [2]);
-        if (q == 0)// simple():
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            r = random.randint(-9999, 9999);
-            a_s.add(r);
-            s_s.add(r);
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-        if (q == 1)// simple():
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            r = random.choice(list(a_s)) if a_s and random.randint(
-                0, -1 + 2) else random.randint(0, -1 + 9);
-            assert ((r in a_s) == (r in a_s));
-            assert (r not in a_s or s_s.find(r)[0] == r);
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-        if (q == 2 and a_s)// simple():
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            r = random.choice(list(a_s));
-            a_s.remove(r);
-            s_s.remove(r);
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-        f = set(s_s.to_list());
-        assert (a_s == f);
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-
-
-    a_d: dict[int, int] = dict();
-    s_d: b_dict[int, int] = b_dict();
-    for w in range(49):
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        { // BEGIN
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-        q = random.choice([0] * 3 + [1] + [2] + [3]+[4]+[5]+[6]);
-        if (q == 0)// simple():
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            k = random.choice(list(a_d)) if a_d and random.randint(
-                0, 1) else random.randint(-9999, 9999);
-            v = random.randint(-9999, 9999);
-            a_d[k] = v;
-            s_d[k] = v;
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-        if (q == 1)// simple():
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            k = random.choice(list(a_d)) if a_d and random.randint(
-                0, 1) else random.randint(-9999, 9999);
-            assert ((k in a_d) == (k in s_d));
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-        if (q == 2 and a_d)// simple():
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            k = random.choice(list(a_d));
-            a_d[k] == s_d[k];
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-        if (q == 3 and a_d)// simple():
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            k = random.choice(list(a_d));
-            del a_d[k];
-            del s_d[k];
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-        if (q == 4 and a_d)// simple():
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            k = random.randint(-9999, 9999);
-            while (k in a_d)// simple():
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                { // BEGIN
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-                k = random.randint(-9999, 9999);
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                } // END
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-            try:
-                del a_d[k];
-                assert (0);
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                } // END
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-            except KeyError:
-                pass;
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                } // END
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-            del s_d[k];
-        if (q == 5 and a_d)// simple():
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            k = random.randint(-9999, 9999);
-            while (k in a_d)// simple():
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                { // BEGIN
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-                k = random.randint(-9999, 9999);
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                } // END
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-            try:
-                a_d[k];
-                assert (0);
-            except KeyError:
-                pass;
-            try:
-                s_d[k];
-                assert (0);
-            except KeyError:
-                pass;
-        assert (s_d.to_dict() == a_d);
-
-    print([time.time()-t,(t:=time.time())][0]);
-
-    a_d = dict();
-    s_d = b_dict();
-    for w in range(199):
-        k = random.randint(-9999, 9999);
-        v = random.randint(-9999, 9999);
-        s_d[k] = v;
-        a_d[k] = v;
-
-
-    print([time.time()-t,(t:=time.time())][0]);
-
-    w = 0;
-    while (a_d)// simple():
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        { // BEGIN
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-        k = random.choice(list(a_d));
-        del a_d[k];
-        del s_d[k];
-        w += 1;
-        if (w % 100 == 0)// simple():
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            assert (s_d.to_dict() == a_d);
-    assert (s_d.to_dict() == a_d);
-
-    print([time.time()-t,(t:=time.time())][0]);
-
-    a_d = dict();
-    for w in range(999):
-        k = random.randint(-9999, 9999);
-        v = random.randint(-9999, 9999);
-        s_d[k] = v;
-        a_d[k] = v;
-
-    print([time.time()-t,(t:=time.time())][0]);
-
-
-    for w in range(19):
-        q = random.choice([0] + [1] + [2] + [3]);
-        if (q == 0)// simple():
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            k = random.choice(list(a_d)) if a_d and random.randint(
-                0, 1) else random.randint(-9999, 9999);
-            v = random.randint(-9999, 9999);
-            a_d[k] = v;
-            s_d[k] = v;
-        if (q == 1)// simple():
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            k = random.choice(list(a_d)) if a_d and random.randint(
-                0, 1) else random.randint(-9999, 9999);
-            assert ((k in a_d) == (k in s_d));
-        if (q == 2 and a_d)// simple():
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            k = random.choice(list(a_d));
-            a_d[k] == s_d[k];
-        if (q == 3 and a_d)// simple():
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            k = random.choice(list(a_d));
-            del a_d[k];
-            del s_d[k];
-
-    print([time.time()-t,(t:=time.time())][0]);
-
-    print([time.time()-t,(t:=time.time())][0]);
-
-    a :   dict[str, str] = dict();
-    s : b_dict[str, str] = b_dict();
-    for q in range(10**4):
-        funcs = {}; # type: ignore
-        @(lambda x: funcs.setdefault(len(funcs), x))
-        @(lambda x: funcs.setdefault(len(funcs), x))
-        def add() -> None:
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            k = random.randbytes(8).hex();
-            v = random.randbytes(8).hex();
-            assert ((k in a) == (k in s));
-            a[k] = v;
-            s[k] = v;
-            assert (k in a);
-            assert (k in s);
-            assert (a[k] == s[k]);
-        @(lambda x: funcs.setdefault(len(funcs), x))
-        def mod() -> None:
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            if (a)// simple():
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                { // BEGIN
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-                k = random.choice([*a.keys()]);
-                v = random.randbytes(8).hex();
-                assert (k in a);
-                assert (k in s);
-                a[k] = v;
-                s[k] = v;
-                assert (k in a);
-                assert (k in s);
-                assert (a[k] == s[k]);
-        @(lambda x: funcs.setdefault(len(funcs), x))
-        def get() -> None:
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            if (a)// simple():
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                { // BEGIN
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-                k = random.choice([*a.keys()]);
-                assert (k in a);
-                assert (k in s);
-                assert (a[k] == s[k]);
-        @(lambda x: funcs.setdefault(len(funcs), x))
-        def rem() -> None:
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            { // BEGIN
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-            if (a)// simple():
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                { // BEGIN
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-                k = random.choice([*a.keys()]);
-                assert (k in a);
-                assert (k in s);
-                assert (a[k] == s[k]);
-                del a[k];
-                del s[k];
-                assert (k not in a);
-                assert (k not in s);
-                PAUSE_CPP(( int64_t // int64_t ))
-                ''':' PAUSE_PYTHON
-                ((""":" )) RESUME_CPP ":""" ))
-                } // END
-                PAUSE_CPP(( int64_t // int64_t ))
-                RESUME_PYTHON ':'''
-                ((""":" )) RESUME_CPP ":""" ))
-            PAUSE_CPP(( int64_t // int64_t ))
-            ''':' PAUSE_PYTHON
-            ((""":" )) RESUME_CPP ":""" ))
-            } // END
-            PAUSE_CPP(( int64_t // int64_t ))
-            RESUME_PYTHON ':'''
-            ((""":" )) RESUME_CPP ":""" ))
-        random.choice(funcs)();
-        PAUSE_CPP(( int64_t // int64_t ))
-        ''':' PAUSE_PYTHON
-        ((""":" )) RESUME_CPP ":""" ))
-        } // END
-        PAUSE_CPP(( int64_t // int64_t ))
-        RESUME_PYTHON ':'''
-        ((""":" )) RESUME_CPP ":""" ))
-    PAUSE_CPP(( int64_t // int64_t ))
-    ''':' PAUSE_PYTHON
-    ((""":" )) RESUME_CPP ":""" ))
-    } // END
-    PAUSE_CPP(( int64_t // int64_t ))
-    RESUME_PYTHON ':'''
-    ((""":" )) RESUME_CPP ":""" ))
-
-PAUSE_CPP(( int64_t // int64_t ))
-''':' PAUSE_PYTHON
-((""":" )) RESUME_CPP ":""" ))
-} // END
-PAUSE_CPP(( int64_t // int64_t ))
-RESUME_PYTHON ':'''
-((""":" )) RESUME_CPP ":""" ))
-
-PAUSE_CPP(( int64_t // int64_t ))
-''':' PAUSE_PYTHON
-((""":" )) RESUME_CPP ":""" ))
-} // END
-PAUSE_CPP(( int64_t // int64_t ))
-RESUME_PYTHON ':'''
-((""":" )) RESUME_CPP ":""" ))
-
-PAUSE_CPP(( int64_t // int64_t ))
-''':' PAUSE_PYTHON
-((""":" )) RESUME_CPP ":""" ))
-} // END
-PAUSE_CPP(( int64_t // int64_t ))
-RESUME_PYTHON ':'''
-((""":" )) RESUME_CPP ":""" ))
-
-
-PAUSE_CPP(( int64_t // int64_t ))
-''':' PAUSE_PYTHON
-((""":" )) RESUME_CPP ":""" ))
-} // END
-PAUSE_CPP(( int64_t // int64_t ))
-RESUME_PYTHON ':'''
-((""":" )) RESUME_CPP ":""" ))
-
-PAUSE_CPP(( int64_t // int64_t ))
-''':' PAUSE_PYTHON
-((""":" )) RESUME_CPP ":""" ))
-} // END
-PAUSE_CPP(( int64_t // int64_t ))
-RESUME_PYTHON ':'''
-((""":" )) RESUME_CPP ":""" ))
-
-PAUSE_CPP(( int64_t // int64_t ))
-''':' PAUSE_PYTHON
-((""":" )) RESUME_CPP ":""" ))
-} // END
-PAUSE_CPP(( int64_t // int64_t ))
-RESUME_PYTHON ':'''
-((""":" )) RESUME_CPP ":""" ))
-
-PAUSE_CPP(( int64_t // int64_t ))
-''':' PAUSE_PYTHON
-((""":" )) RESUME_CPP ":""" ))
-} // END
-PAUSE_CPP(( int64_t // int64_t ))
-RESUME_PYTHON ':'''
-((""":" )) RESUME_CPP ":""" ))
-
-PAUSE_CPP(( int64_t // int64_t ))
-''':' PAUSE_PYTHON
-((""":" )) RESUME_CPP ":""" ))
-} // END
-PAUSE_CPP(( int64_t // int64_t ))
-RESUME_PYTHON ':'''
-((""":" )) RESUME_CPP ":""" ))
-
-PAUSE_CPP(( int64_t // int64_t ))
-''':' PAUSE_PYTHON
-((""":" )) RESUME_CPP ":""" ))
-} // END
-PAUSE_CPP(( int64_t // int64_t ))
-RESUME_PYTHON ':'''
-((""":" )) RESUME_CPP ":""" ))
-
-PAUSE_CPP(( int64_t // int64_t ))
-''':' PAUSE_PYTHON
-((""":" )) RESUME_CPP ":""" ))
-} // END
-PAUSE_CPP(( int64_t // int64_t ))
-RESUME_PYTHON ':'''
-((""":" )) RESUME_CPP ":""" ))
-
-PAUSE_CPP(( int64_t // int64_t ))
-''':' PAUSE_PYTHON
-((""":" )) RESUME_CPP ":""" ))
-} // END
-PAUSE_CPP(( int64_t // int64_t ))
-RESUME_PYTHON ':'''
-((""":" )) RESUME_CPP ":""" ))
-
-PAUSE_CPP(( int64_t // int64_t ))
-''':' PAUSE_PYTHON
-((""":" )) RESUME_CPP ":""" ))
-}; // END
-PAUSE_CPP(( int64_t // int64_t ))
-RESUME_PYTHON ':'''
-((""":" )) RESUME_CPP ":""" ))
-
-PAUSE_CPP(( int64_t // int64_t ))
-''':' PAUSE_PYTHON
-((""":" )) RESUME_CPP ":""" ))
-}; // END
-PAUSE_CPP(( int64_t // int64_t ))
-RESUME_PYTHON ':'''
-((""":" )) RESUME_CPP ":""" ))
-
-PAUSE_CPP(( int64_t // int64_t ))
-''':' PAUSE_PYTHON
-((""":" )) RESUME_CPP ":""" ))
-} // END
-PAUSE_CPP(( int64_t // int64_t ))
-RESUME_PYTHON ':'''
-((""":" )) RESUME_CPP ":""" ))
-
-UNIQUE_IDENTIFIER = """*/"_""";
-
-PAUSE_CPP(( int64_t // int64_t ))
-''':' PAUSE_PYTHON
-((""":" )) RESUME_CPP ":""" ))
-
-int main(){
+    }
+};
+int main() {
     b_set<int> a;
     assert(not a.contains(9));
     a.add(9);
@@ -2857,21 +717,19 @@ int main(){
     a.remove(5);
     a.remove(3);
     assert(not a.contains(9));
-    assert(    a.contains(8));
+    assert(a.contains(8));
     assert(not a.contains(7));
-    assert(    a.contains(6));
+    assert(a.contains(6));
     assert(not a.contains(5));
-    assert(    a.contains(4));
+    assert(a.contains(4));
     assert(not a.contains(3));
     assert(not a.contains(2));
-
-    a =    b_set<int>();
+    a = b_set<int>();
     std::set<int> s;
-
     std::mt19937_64 rand;
-    for (size_t q = 0; q < 999999; ++q){
+    for (size_t q = 0; q < 9999; ++q) {
         std::vector<std::function<void()>> funcs;
-        funcs.push_back([&](){
+        funcs.push_back([&]() {
             int64_t w = rand();
             assert(s.count(w) == a.contains(w));
             a.add(w);
@@ -2879,7 +737,8 @@ int main(){
             assert(s.count(w));
             assert(a.contains(w));
         });
-        funcs.push_back([&](){
+        assert(funcs.size() == 1);
+        funcs.push_back([&]() {
             int64_t w = rand();
             assert(s.count(w) == a.contains(w));
             a.add(w);
@@ -2887,38 +746,43 @@ int main(){
             assert(s.count(w));
             assert(a.contains(w));
         });
-        funcs.push_back([&](){
+        assert(funcs.size() == 2);
+        funcs.push_back([&]() {
+            if (s.size()){
+                std::vector<int> g(s.begin(), s.end());
+                int64_t d = rand();
+                int w = g[d % g.size()];
+                assert(s.count(w));
+                assert(a.contains(w));
+            }
+        });
+        funcs.push_back([&]() {
+            if (s.size()){
+                std::vector<int> g(s.begin(), s.end());
+                int64_t d = rand();
+                int w = g[d % g.size()];
+                assert(s.count(w));
+                assert(a.contains(w));
+            }
+        });
+        funcs.push_back([&]() {
             std::vector<int> g(s.begin(), s.end());
             int64_t d = rand();
-            int w = g[d%g.size()];
+            int w = g[d % g.size()];
             assert(s.count(w));
             assert(a.contains(w));
         });
-        funcs.push_back([&](){
+        funcs.push_back([&]() {
             std::vector<int> g(s.begin(), s.end());
             int64_t d = rand();
-            int w = g[d%g.size()];
+            int w = g[d % g.size()];
             assert(s.count(w));
             assert(a.contains(w));
         });
-        funcs.push_back([&](){
+        funcs.push_back([&]() {
             std::vector<int> g(s.begin(), s.end());
             int64_t d = rand();
-            int w = g[d%g.size()];
-            assert(s.count(w));
-            assert(a.contains(w));
-        });
-        funcs.push_back([&](){
-            std::vector<int> g(s.begin(), s.end());
-            int64_t d = rand();
-            int w = g[d%g.size()];
-            assert(s.count(w));
-            assert(a.contains(w));
-        });
-        funcs.push_back([&](){
-            std::vector<int> g(s.begin(), s.end());
-            int64_t d = rand();
-            int w = g[d%g.size()];
+            int w = g[d % g.size()];
             assert(s.count(w));
             assert(a.contains(w));
             s.erase(w);
@@ -2926,7 +790,7 @@ int main(){
             assert(not s.count(w));
             assert(not a.contains(w));
         });
-        funcs.push_back([&](){
+        funcs.push_back([&]() {
             int w = rand();
             assert(s.count(w) == a.contains(w));
             s.erase(w);
@@ -2934,14 +798,196 @@ int main(){
             assert(not s.count(w));
             assert(not a.contains(w));
         });
-        funcs.push_back([&](){
+        funcs.push_back([&]() {
             auto tmp = a;
             a = tmp;
         });
+        assert(funcs.size());
+        size_t s = rand();
+        funcs[s % funcs.size()]();
+    }
+    std::vector<b_set<int>> as(1);
+    std::vector<std::set<int>> ss(1);
+    size_t ap = 0;
+    size_t sp = 0;
+    for (size_t q = 0; q < 99999; ++q) {
+        std::vector<std::function<void()>> funcs;
+        funcs.push_back([&]() { // 0
+            auto&a=as[ap];
+            auto&s=ss[sp];
+            a.check();
+            int64_t w = rand();
+            assert(s.count(w) == a.contains(w));
+            a.add(w);
+            s.insert(w);
+            assert(s.count(w));
+            assert(a.contains(w));
+            a.check();
+        });
+        funcs.push_back([&]() { // 1
+            auto&a=as[ap];
+            auto&s=ss[sp];
+            a.check();
+            int64_t w = rand();
+            assert(s.count(w) == a.contains(w));
+            a.add(w);
+            s.insert(w);
+            assert(s.count(w));
+            assert(a.contains(w));
+            a.check();
+        });
+        funcs.push_back([&]() { // 2
+            auto&a=as[ap];
+            auto&s=ss[sp];
+            a.check();
+            if (s.size()){
+                std::vector<int> g(s.begin(), s.end());
+                int64_t d = rand();
+                int w = g[d % g.size()];
+                assert(s.count(w));
+                assert(a.contains(w));
+            }
+            a.check();
+        });
+        funcs.push_back([&]() { // 3
+            auto&a=as[ap];
+            auto&s=ss[sp];
+            a.check();
+            if (s.size()){
+                std::vector<int> g(s.begin(), s.end());
+                int64_t d = rand();
+                int w = g[d % g.size()];
+                assert(s.count(w));
+                assert(a.contains(w));
+            }
+            a.check();
+        });
+        funcs.push_back([&]() { // 4
+            auto&a=as[ap];
+            auto&s=ss[sp];
+            a.check();
+            if (s.size()){
+                std::vector<int> g(s.begin(), s.end());
+                int64_t d = rand();
+                int w = g[d % g.size()];
+                assert(s.count(w));
+                assert(a.contains(w));
+            }
+            a.check();
+        });
+        funcs.push_back([&]() { // 5
+            auto&a=as[ap];
+            auto&s=ss[sp];
+            a.check();
+            if (s.size()){
+                std::vector<int> g(s.begin(), s.end());
+                int64_t d = rand();
+                int w = g[d % g.size()];
+                assert(s.count(w));
+                assert(a.contains(w));
+            }
+            a.check();
+        });
+        funcs.push_back([&]() { // 6
+            auto&a=as[ap];
+            auto&s=ss[sp];
+            a.check();
+            if (s.size()){
+                std::vector<int> g(s.begin(), s.end());
+                int64_t d = rand();
+                int w = g[d % g.size()];
+                assert(s.count(w));
+                assert(a.contains(w));
+                s.erase(w);
+                a.remove(w);
+                assert(not s.count(w));
+                assert(not a.contains(w));
+            }
+            a.check();
+        });
+        funcs.push_back([&]() { // 7
+            a.check();
+            auto&a=as[ap];
+            auto&s=ss[sp];
+            int w = rand();
+            assert(s.count(w) == a.contains(w));
+            s.erase(w);
+            a.remove(w);
+            assert(not s.count(w));
+            assert(not a.contains(w));
+            a.check();
+        });
+        funcs.push_back([&]() { // 8
+            auto&a=as[ap];
+            auto&s=ss[sp];
+            a.check();
+            as.push_back(a);
+            ss.push_back(s);
+            {
+                auto&a=as[ap];
+                a.check();
+            }
+            ap = as.size()-1;
+            sp = ss.size()-1;
+            {
+                auto&a=as[ap];
+                a.check();
+            }
+        });
+        funcs.push_back([&]() { // 9
+            {
+                auto&a=as[ap];
+                a.check();
+            }
+            size_t w = rand();
+            ap = w % as.size();
+            sp = w % ss.size();
+            {
+                auto&a=as[ap];
+                a.check();
+            }
+        });
+        // funcs.push_back([&]() { // 10
+        //     node_set_parent(a.root);
+        //     auto ai = a.begin();
+        //     auto si = s.begin();
+        //     while (1){
+        //         assert ((ai == a.end()) == (si == s.end()));
+        //         if (ai == a.end()){
+        //             break;
+        //         }
+        //         assert (*ai == *si);
+        //         ++ai;
+        //         ++si;
+        //     }
+        //     assert ((ai == a.end()) and (si == s.end()));
+        // });
+        // funcs.push_back([&]() { // 11
+        //     node_set_parent(a.root);
+        //     auto ai = a.end();
+        //     auto si = s.end();
+        //     while (1){
+        //         assert ((ai == a.begin()) == (si == s.begin()));
+        //         if (ai == a.begin()){
+        //             break;
+        //         }
+        //         assert (*ai == *si);
+        //         --ai;
+        //         --si;
+        //     }
+        //     assert ((ai == a.begin()) and (si == s.begin()));
+        // });
+        size_t s = rand();
+        s = s % funcs.size();
+        x__print(s);
+        funcs[s]();
+        x__print("ap =", ap);
+        for (size_t ap = 0 ; ap < as.size() ; ++ ap){
+            {
+                x__print("check.ap =", ap);
+                auto&a=as[ap];
+                a.check();
+            }
+        }
     }
 }
-
-PAUSE_CPP(( int64_t // int64_t ))
-RESUME_PYTHON ':'''
-((""":" )) RESUME_CPP ":""" ))
-
