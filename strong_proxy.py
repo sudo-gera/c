@@ -307,7 +307,7 @@ async def client_connection(r: asyncio.StreamReader, w: asyncio.StreamWriter) ->
 
 async def log():
     while 1:
-        await asyncio.sleep(30)
+        await asyncio.sleep(5)
         logger.debug(f'connections state:\n'+''.join(
             [
                 '+' if c.gateway is not None else '-'
