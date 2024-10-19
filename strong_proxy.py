@@ -305,6 +305,17 @@ async def client_connection(r: asyncio.StreamReader, w: asyncio.StreamWriter) ->
             logger.debug(f'{con_id.hex()!r} Stop inner socket loop.')
             return
 
+async def log():
+    while 1:
+        await asyncio.sleep(30)
+        logger.debug(f'connections state:\n'+''.join(
+            [
+                '+' if c.gateway is not None else '-'
+                for c in outer_connections.values()
+            ]
+        ))
+        
+
 
 async def main() -> None:
     global args
@@ -313,6 +324,7 @@ async def main() -> None:
     parser.add_argument('--connect', type=forwarding_parser.ColonSeparatedSocketSequence(1), required=True)
     parser.add_argument('--is-server', action='store_true')
     args = parser.parse_args()
+    asyncio.create_task(log())
     async with await asyncio.start_server(server_connection if args.is_server else client_connection, *args.listen[0]) as server:
         await server.serve_forever()
 
