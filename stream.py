@@ -22,7 +22,7 @@ class Stream(asyncio.StreamReader, asyncio.StreamWriter):
 
     @functools.cache
     def __getattribute__(self, name:str) -> typing.Any:
-        if name.startswith(f'_Stream_'):
+        if name.startswith(f'_Stream_') or name in 'safe_write safe_close'.split():
             return super().__getattribute__(name)
         a = [w for w in [self.__reader, self.__writer] if name in dir(w)]
         assert len(a) == 1, name
@@ -35,6 +35,9 @@ class Stream(asyncio.StreamReader, asyncio.StreamWriter):
         return self
 
     async def __aexit__(self, *a: typing.Any) -> None:
+        return await self.safe_close()
+
+    async def safe_close(self) -> None:
         try:
             await self.drain()
             if self.can_write_eof():
@@ -51,6 +54,10 @@ class Stream(asyncio.StreamReader, asyncio.StreamWriter):
 
     def __del__(self) -> None:
         pass
+
+    async def safe_write(self, data: bytes) -> None:
+        self.write(data)
+        await self.drain()
 
 T = typing.TypeVar('T')
 
