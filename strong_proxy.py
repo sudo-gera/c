@@ -56,25 +56,6 @@ def get_part(data: bytes) -> str:
     return part
 
 class InnerStream:
-    # async def _send_msg(self, data: bytes) -> None:
-    #     try:
-    #         await self.s.send_msg(data)
-    #     except Exception as e:
-    #         logger.debug(f'inner socket raised exc: {type(e) = }, {e = }')
-    # async def _recv_msg(self) -> bytes | Exception:
-    #     try:
-    #         return await self.s.recv_msg()
-    #     except Exception as e:
-    #         logger.debug(f'inner socket raised exc: {type(e) = }, {e = }')
-    #         return e
-
-    # async def send_msg(self, data: bytes) -> None:
-    #     await timeout.run_with_timeout(self._send_msg(data), 2)
-    # async def recv_msg(self) -> bytes:
-    #     data = cast(bytes, await timeout.run_with_timeout(self._recv_msg(), 4))
-    #     e=data
-    #     assert isinstance(data, bytes), f'Inner socket raised exc: {type(e) = }, {e = }'
-    #     return data
     async def send_msg(self, data: bytes) -> None:
         return await timeout.run_with_timeout(self.s.send_msg(data), 2)
     async def recv_msg(self) -> bytes:
@@ -133,6 +114,8 @@ class OuterConnection:
                 await asyncio.gather(
                     self.reader_loop(),
                     self.writer_loop(),
+                    self.rm_dangling_loop(),
+                    self.pinger_loop(),
                 )
         except Exception as e:
             logger.debug(f'{con_id.hex()!r} Closing outer connection. {type(e) = }, {e = }')
@@ -142,6 +125,43 @@ class OuterConnection:
             if self.gateway is not None:
                 self.gateway[1].put_nowait(None)
             outer_connections.pop(self.con_id, None)
+
+    async def rm_dangling_loop(self) -> None:
+        while 1:
+            await asyncio.sleep(30)
+            assert not self.retry.fail(), 'Too long time without data'
+
+    async def get_gateway(self) -> tuple[InnerStream, asyncio.Queue[None]]:
+        con_id = self.con_id
+        if self.gateway is None:
+            logger.debug(f'{con_id.hex()!r} Start waiting for gateway...')
+            while self.gateway is None:
+                await asyncio.sleep(0.1)
+                if self.retry.fail():
+                    logger.debug(f'{con_id.hex()!r} Waiting for gateway timed out.')
+                    raise TabError('Waiting for timed out.')
+        logger.debug(f'{con_id.hex()!r} Got gateway.')
+        assert self.gateway is not None
+        return self.gateway
+
+    async def send_to_gateway(self, gateway: tuple[InnerStream, asyncio.Queue[None]], data: bytes) -> None:
+        con_id = self.con_id
+        try:
+            await gateway[0].send_msg(data)
+        except Exception as e:
+            gateway[1].put_nowait(None)
+            if self.gateway is gateway:
+                self.gateway = None
+            logger.debug(f'{con_id.hex()!r} Send inside failed {type(e) = }, {e = }')
+            if self.retry.fail():
+                logger.debug(f'{con_id.hex()!r} Too may attempts to send inside.')
+                raise TabError('Too may attempts to send inside.')
+
+    async def pinger_loop(self) -> None:
+        while 1:
+            await asyncio.sleep(1)
+            gateway = await self.get_gateway()
+            await self.send_to_gateway(gateway, (2**64-1).to_bytes(8, 'big'))
 
     async def reader_loop(self) -> None:
         con_id = self.con_id
@@ -171,15 +191,7 @@ class OuterConnection:
                     self.chunks.popleft()
 
             while self.inner_send_count != self.outer_recv_count:
-                if self.gateway is None:
-                    logger.debug(f'{con_id.hex()!r} Start waiting for gateway for sending...')
-                    while self.gateway is None:
-                        await asyncio.sleep(0.1)
-                        if self.retry.fail():
-                            logger.debug(f'{con_id.hex()!r} Waiting for gateway timed out.')
-                            raise TabError('Waiting for timed out.')
-                logger.debug(f'{con_id.hex()!r} Got gateway for sending.')
-                gateway = self.gateway
+                gateway = await self.get_gateway()
                 assert gateway is not None, 'no gateway'
                 for chunk in self.chunks:
                     if chunk[0] == self.inner_send_count:
@@ -188,33 +200,16 @@ class OuterConnection:
                     logger.debug(f'{con_id.hex()!r} {self.inner_send_count = } Requested chunk is not found.')
                     raise TabError('Requested chunk is not found.')
                 logger.debug(f'{con_id.hex()!r} Trying to send inside {chunk[0] = } {get_part(chunk[1])}')
-                try:
-                    await gateway[0].send_msg(chunk[0].to_bytes(8, 'big')+chunk[1])
-                except Exception as e:
-                    logger.debug(f'{con_id.hex()!r} Send inside failed {chunk[0] = } {type(e) = }, {e = }')
-                    gateway[1].put_nowait(None)
-                    if self.gateway is gateway:
-                        self.gateway = None
-                    if self.retry.fail():
-                        logger.debug(f'{con_id.hex()!r} Too may attempts to send inside.')
-                        raise TabError('Too may attempts to send inside.')
-                else:
-                    logger.debug(f'{con_id.hex()!r} Sent inside. {chunk[0] = }')
-                    self.retry.success()
-                    self.inner_send_count += 1
+                data = chunk[0].to_bytes(8, 'big')+chunk[1]
+                await self.send_to_gateway(gateway, data)
+                logger.debug(f'{con_id.hex()!r} Sent inside. {chunk[0] = }')
+                self.retry.success()
+                self.inner_send_count += 1
 
     async def writer_loop(self) -> None:
         con_id = self.con_id
         while 1:
-            if self.gateway is None:
-                logger.debug(f'{con_id.hex()!r} Start waiting for gateway for recving...')
-                while self.gateway is None:
-                    await asyncio.sleep(0.1)
-                    if self.retry.fail():
-                        logger.debug(f'{con_id.hex()!r} Waiting for gateway timed out.')
-                        raise TabError('Waiting for timed out.')
-            logger.debug(f'{con_id.hex()!r} Got gateway for recving.')
-            gateway = self.gateway
+            gateway = await self.get_gateway()
             assert gateway is not None, 'no gateway'
 
             try:
@@ -228,6 +223,8 @@ class OuterConnection:
 
             chunk = num, data = int.from_bytes(data[:8], 'big'), data[8:]
             logger.debug(f'{con_id.hex()!r} Got data to send outside: {num = } {get_part(chunk[1])}')
+            if num == 2**64 - 1:
+                continue
             assert num == self.outer_send_count, 'received wrong packet'
 
             try:
@@ -286,7 +283,7 @@ async def client_connection(r: asyncio.StreamReader, w: asyncio.StreamWriter) ->
                 0;                                          logger.debug(f'{con_id.hex()!r} senging header...')
                 await sock.send_msg(con_id + outer_connection.outer_send_count.to_bytes(8, 'big'))
                 0;                                          logger.debug(f'{con_id.hex()!r} header sent. recving headers...')
-                outer_connection.inner_send_count = int.from_bytes(await sock.recv_msg(), 'big')
+                outer_connection.inner_send_count = int.from_bytes(await timeout.run_with_timeout(sock.recv_msg(), 3), 'big')
                 outer_connection.check_for_eof()
                 0;                                          logger.debug(f'{con_id.hex()!r} header recved.')
                 gateway_queue : asyncio.Queue[None] = asyncio.Queue()
@@ -305,9 +302,9 @@ async def client_connection(r: asyncio.StreamReader, w: asyncio.StreamWriter) ->
             logger.debug(f'{con_id.hex()!r} Stop inner socket loop.')
             return
 
-async def log():
+async def log() -> None:
     while 1:
-        await asyncio.sleep(5)
+        await asyncio.sleep(1)
         logger.debug(f'connections state:\n'+''.join(
             [
                 '+' if c.gateway is not None else '-'
