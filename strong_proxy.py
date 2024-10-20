@@ -23,19 +23,19 @@ class Retry:
         self.interval = interval
         self.con_id = con_id
         self.last_success = time.time_ns()
-        logger.debug(f'{con_id.hex()!r} {id(self)} Setup new retry at {self.last_success}')
+        # logger.debug(f'{con_id.hex()!r} {id(self)} Setup new retry at {self.last_success}')
     
     def fail(self) -> bool:
         ct = time.time_ns()
         con_id = self.con_id
         value = self.interval + self.last_success < ct
-        logger.debug(f'{con_id.hex()!r} {id(self)} Failure {self.last_success} < {ct} < {self.last_success + self.interval}')
+        # logger.debug(f'{con_id.hex()!r} {id(self)} Failure {self.last_success} < {ct} < {self.last_success + self.interval}')
         return value
     
     def success(self) -> None:
         con_id = self.con_id
         self.last_success = time.time_ns()
-        logger.debug(f'{con_id.hex()!r} {id(self)} Success at {self.last_success}')
+        # logger.debug(f'{con_id.hex()!r} {id(self)} Success at {self.last_success}')
     
 
 
@@ -302,15 +302,22 @@ async def client_connection(r: asyncio.StreamReader, w: asyncio.StreamWriter) ->
             logger.debug(f'{con_id.hex()!r} Stop inner socket loop.')
             return
 
+prev_outer_connections : list[bytes] = []
 async def log() -> None:
     while 1:
         await asyncio.sleep(1)
         logger.debug(f'connections state:\n'+''.join(
             [
+                '?' if k not in outer_connections else ('+' if outer_connections[k].gateway is not None else '-')
+                for k in prev_outer_connections
+            ] + [
                 '+' if c.gateway is not None else '-'
-                for c in outer_connections.values()
+                for k, c in outer_connections.items()
+                if k not in prev_outer_connections
             ]
         ))
+        prev_outer_connections.clear()
+        prev_outer_connections.extend(outer_connections.keys())
         
 
 

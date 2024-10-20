@@ -17,10 +17,12 @@ class StreamImpl:
     def __init__(self, stream: Stream, reader: first_arg_type, writer: second_arg_type):
         self.stream = stream
         self.write_exc : Exception | None = None
+        self.read_exc : Exception | None = None
         self._reader = reader
         self._writer = writer
         self.entered = False
         self.exited = False
+        self.read_lock = asyncio.Lock()
 
     async def __aenter__(self) -> Stream:
         assert not self.entered
@@ -76,6 +78,35 @@ class StreamImpl:
         data = await self.stream.readexactly(l)
         data = signer.unsign(data)
         return data
+    
+    async def _safe_reader(self, reader: typing.Awaitable[bytes]) -> bytes | None:
+        async with self.read_lock:
+            try:
+                return await reader
+            except Exception as e:
+                self.read_exc = e
+                return None
+    
+    async def safe_reader(self, reader: typing.Awaitable[bytes]) -> bytes:
+        if self.read_exc is not None:
+            raise self.read_exc
+        res = await asyncio.shield(self._safe_reader(reader))
+        if res is None:
+            assert self.read_exc is not None
+            raise self.read_exc
+        return res
+
+    async def safe_read(self, n:int=-1) -> bytes:
+        return await self.safe_reader(self.stream.read(n))
+
+    async def safe_readexactly(self, n:int) -> bytes:
+        return await self.safe_reader(self.stream.readexactly(n))
+
+    async def safe_readline(self) -> bytes:
+        return await self.safe_reader(self.stream.readline())
+
+    async def safe_readuntil(self, separator: bytes = b'\n') -> bytes:
+        return await self.safe_reader(self.stream.until(separator))
 
     async def safe_write(self, data: bytes) -> None:
         await self.safe_drain(lambda: self.stream.write(data))
