@@ -16,7 +16,7 @@ import timeout
 from collections import deque
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG, format='%(levelname)8s %(asctime)s %(filename)s:%(lineno)d %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(levelname)8s %(asctime)s %(filename)s:%(lineno)d %(message)s')
 
 class Retry:
     def __init__(self, interval: int, con_id: bytes):
@@ -306,7 +306,7 @@ prev_outer_connections : list[bytes] = []
 async def log() -> None:
     while 1:
         await asyncio.sleep(1)
-        logger.debug(f'connections state:\n'+''.join(
+        logger.info(f'connections state:\n'+''.join(
             [
                 '?' if k not in outer_connections else ('+' if outer_connections[k].gateway is not None else '-')
                 for k in prev_outer_connections

@@ -114,7 +114,7 @@ class StreamImpl:
         return await self.safe_reader(self.stream.readline())
 
     async def safe_readuntil(self, separator: bytes = b'\n') -> bytes:
-        return await self.safe_reader(self.stream.until(separator))
+        return await self.safe_reader(self.stream.readuntil(separator))
 
     async def safe_write(self, data: bytes) -> None:
         await self.safe_drain(lambda: self.stream.write(data))

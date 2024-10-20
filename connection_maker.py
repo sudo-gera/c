@@ -30,6 +30,11 @@ def remove_from_queue(q: asyncio.Queue[T], elem: T) -> asyncio.Queue[T]:
 async def make_connection():
     global unused_connections
     async with stream.Stream(asyncio.open_connection(*args.connect[0])) as client_sock:
+        logger.debug('sending get')
+        await client_sock.safe_write(b'GET http://s1145/empty.html HTTP/1.1\r\nHost: s1145\r\nUser-Agent: curl/8.4.0\r\nAccept: */*\r\nProxy-Connection: Keep-Alive\r\n\r\n')
+        logger.debug('sent get')
+        logger.debug(await client_sock.safe_readuntil(b'\r\n\r\n'))
+        logger.debug('recved get')
         a = (client_sock, asyncio.Queue(), asyncio.Queue())
         unused_connections.put_nowait(a)
         try:
