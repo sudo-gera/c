@@ -14,7 +14,7 @@ unused_connections : asyncio.Queue[tuple[stream.Stream, asyncio.Queue[None], asy
 connection_request : asyncio.Queue[None] = asyncio.Queue()
 
 async def copy(rsock: stream.Stream, wsock: stream.Stream):
-    while (data := await rsock.read(2**16)):
+    while (data := await rsock.safe_read(2**16)):
         await wsock.safe_write(data)
     await wsock.safe_write_eof()
 

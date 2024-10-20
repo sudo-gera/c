@@ -58,8 +58,8 @@ def get_part(data: bytes) -> str:
 class InnerStream:
     async def send_msg(self, data: bytes) -> None:
         return await timeout.run_with_timeout(self.s.send_msg(data), 2)
-    async def recv_msg(self) -> bytes:
-        return await timeout.run_with_timeout(self.s.recv_msg(), 300)
+    async def recv_msg(self, timeout_:int=300) -> bytes:
+        return await timeout.run_with_timeout(self.s.recv_msg(), timeout_)
 
     def __init__(self, s: stream.Stream):
         self.s = s
@@ -173,7 +173,7 @@ class OuterConnection:
                         return
                     await asyncio.sleep(1)
                 else:
-                    data = await self.sock.read(2**16)
+                    data = await self.sock.safe_read(2**16)
             except Exception as e:
                 logger.debug(f'{con_id.hex()!r} Outer socket is closed: {type(e) = }, {e = }')
                 raise
@@ -283,7 +283,7 @@ async def client_connection(r: asyncio.StreamReader, w: asyncio.StreamWriter) ->
                 0;                                          logger.debug(f'{con_id.hex()!r} senging header...')
                 await sock.send_msg(con_id + outer_connection.outer_send_count.to_bytes(8, 'big'))
                 0;                                          logger.debug(f'{con_id.hex()!r} header sent. recving headers...')
-                outer_connection.inner_send_count = int.from_bytes(await timeout.run_with_timeout(sock.recv_msg(), 3), 'big')
+                outer_connection.inner_send_count = int.from_bytes(await sock.recv_msg(timeout_=3), 'big')
                 outer_connection.check_for_eof()
                 0;                                          logger.debug(f'{con_id.hex()!r} header recved.')
                 gateway_queue : asyncio.Queue[None] = asyncio.Queue()

@@ -74,23 +74,31 @@ class StreamImpl:
         await self.safe_write(data)
 
     async def recv_msg(self) -> bytes:
-        l = int.from_bytes(await self.stream.readexactly(8), 'big')
-        data = await self.stream.readexactly(l)
+        try:
+            l = int.from_bytes(await self.stream.safe_readexactly(8), 'big')
+            data = await self.stream.safe_readexactly(l)
+        except BaseException as e:
+            raise
         data = signer.unsign(data)
         return data
     
-    async def _safe_reader(self, reader: typing.Awaitable[bytes]) -> bytes | None:
+    async def _safe_reader(self, reader: typing.Awaitable[bytes], f: asyncio.Queue[None|bytes]) -> bytes | None:
         async with self.read_lock:
             try:
-                return await reader
+                r = await reader
             except Exception as e:
                 self.read_exc = e
-                return None
+                r = None
+            f.put_nowait(r)
+            assert f.qsize() == 1
+            return r
     
     async def safe_reader(self, reader: typing.Awaitable[bytes]) -> bytes:
         if self.read_exc is not None:
             raise self.read_exc
-        res = await asyncio.shield(self._safe_reader(reader))
+        f : asyncio.Queue[None|bytes] = asyncio.Queue()
+        asyncio.create_task(self._safe_reader(reader, f))
+        res = await f.get()
         if res is None:
             assert self.read_exc is not None
             raise self.read_exc
@@ -112,7 +120,8 @@ class StreamImpl:
         await self.safe_drain(lambda: self.stream.write(data))
 
     async def safe_write_eof(self) -> None:
-        await self.safe_drain(lambda: self.stream.write_eof())
+        if self.stream.can_write_eof() and not self.stream.is_closing():
+            await self.safe_drain(lambda: self.stream.write_eof())
 
     async def safe_drain(self, writer: typing.Callable[[], None] | None = None) -> None:
         if self.write_exc is not None:
