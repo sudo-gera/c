@@ -224,12 +224,11 @@ class OuterConnection:
             chunk = num, data = int.from_bytes(data[:8], 'big'), data[8:]
             logger.debug(f'{con_id.hex()!r} Got data to send outside: {num = } {get_part(chunk[1])}')
             if num == 2**64 - 1:
-		contunue
+	        contunue
                 # self.inner_send_count = int.from_bytes(data[:8], 'big')
 
-            assert num == self.outer_send_count, 'received wrong packet'
-
             try:
+                assert num == self.outer_send_count, 'received wrong packet'
                 await self.sock.safe_write(data)
             except Exception as e:
                 logger.debug(f'{con_id.hex()!r} Outer socket is closed: {type(e) = }, {e = }')
