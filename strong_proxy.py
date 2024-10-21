@@ -159,7 +159,7 @@ class OuterConnection:
 
     async def pinger_loop(self) -> None:
         while 1:
-            await asyncio.sleep(1)
+            await asyncio.sleep(5)
             gateway = await self.get_gateway()
             await self.send_to_gateway(gateway, (2**64-1).to_bytes(8, 'big'))
 
