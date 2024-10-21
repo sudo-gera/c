@@ -29,13 +29,14 @@ class Retry:
         ct = time.time_ns()
         con_id = self.con_id
         value = self.interval + self.last_success < ct
-        # logger.debug(f'{con_id.hex()!r} {id(self)} Failure {self.last_success} < {ct} < {self.last_success + self.interval}')
+        if value:
+            logger.debug(f'{con_id.hex()!r} {id(self)} Failure {self.last_success} < {ct} < {self.last_success + self.interval}')
         return value
     
     def success(self) -> None:
         con_id = self.con_id
         self.last_success = time.time_ns()
-        # logger.debug(f'{con_id.hex()!r} {id(self)} Success at {self.last_success}')
+        logger.debug(f'{con_id.hex()!r} {id(self)} Success at {self.last_success}')
     
 
 
