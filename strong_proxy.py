@@ -187,7 +187,7 @@ class OuterConnection:
                 self.outer_recv_count += 1
 
                 self.chunks.append(chunk)
-                if len(self.chunks) > 16:
+                if len(self.chunks) > 64:
                     self.chunks.popleft()
 
             while self.inner_send_count != self.outer_recv_count:
@@ -224,7 +224,8 @@ class OuterConnection:
             chunk = num, data = int.from_bytes(data[:8], 'big'), data[8:]
             logger.debug(f'{con_id.hex()!r} Got data to send outside: {num = } {get_part(chunk[1])}')
             if num == 2**64 - 1:
-                self.inner_send_count = int.from_bytes(data[:8], 'big')
+		contunue
+                # self.inner_send_count = int.from_bytes(data[:8], 'big')
 
             assert num == self.outer_send_count, 'received wrong packet'
 
