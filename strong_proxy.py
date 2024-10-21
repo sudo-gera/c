@@ -16,7 +16,7 @@ import timeout
 from collections import deque
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG, format='%(levelname)8s %(asctime)s %(filename)s:%(lineno)d %(message)s')
+logging.basicConfig(level=logging.DEBUG, format='%(levelname)8s %(asctime)s %(created)9.7f %(filename)s:%(lineno)d %(message)s')
 
 class Retry:
     def __init__(self, interval: int, con_id: bytes):
