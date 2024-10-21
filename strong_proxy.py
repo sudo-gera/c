@@ -187,8 +187,6 @@ class OuterConnection:
                 self.outer_recv_count += 1
 
                 self.chunks.append(chunk)
-                if len(self.chunks) > 64:
-                    self.chunks.popleft()
 
             while self.inner_send_count != self.outer_recv_count:
                 gateway = await self.get_gateway()
@@ -224,8 +222,11 @@ class OuterConnection:
             chunk = num, data = int.from_bytes(data[:8], 'big'), data[8:]
             logger.debug(f'{con_id.hex()!r} Got data to send outside: {num = } {get_part(chunk[1])}')
             if num == 2**64 - 1:
+                inner_send_count = int.from_bytes(data[:8], 'big')
+                logger.debug(f'{con_id.hex()!r} inner socket already has received {inner_send_count} chunks.')
+                while self.chunks[0][0] < inner_send_count:
+                    self.chunks.popleft()
                 continue
-                # self.inner_send_count = int.from_bytes(data[:8], 'big')
 
             try:
                 assert num == self.outer_send_count, 'received wrong packet'
