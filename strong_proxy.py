@@ -225,7 +225,7 @@ class OuterConnection:
             if num == 2**64 - 1:
                 inner_send_count = int.from_bytes(data[:8], 'big')
                 logger.debug(f'{con_id.hex()!r} inner socket already has received {inner_send_count} chunks.')
-                while self.chunks[0][0] < inner_send_count:
+                while len(self.chunks) > 1 and self.chunks[0][0] < inner_send_count:
                     self.chunks.popleft()
                 continue
 
