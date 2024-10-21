@@ -295,7 +295,7 @@ async def one_client_connection(con_id: bytes, outer_connection: OuterConnection
         0;                                          logger.debug(f'{con_id.hex()!r} senging header...')
         await sock.send_msg(con_id + outer_connection.outer_send_count.to_bytes(8, 'big'))
         0;                                          logger.debug(f'{con_id.hex()!r} header sent. recving headers...')
-        outer_connection.inner_send_count = int.from_bytes(await sock.recv_msg(timeout_=2), 'big')
+        outer_connection.inner_send_count = int.from_bytes(await sock.recv_msg(timeout_=4), 'big')
         outer_connection.check_for_eof()
         0;                                          logger.debug(f'{con_id.hex()!r} header recved.')
         gateway_queue : asyncio.Queue[None] = asyncio.Queue()
