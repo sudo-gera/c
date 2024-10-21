@@ -159,9 +159,9 @@ class OuterConnection:
 
     async def pinger_loop(self) -> None:
         while 1:
-            await asyncio.sleep(5)
+            await asyncio.sleep(15)
             gateway = await self.get_gateway()
-            await self.send_to_gateway(gateway, (2**64-1).to_bytes(8, 'big'))
+            await self.send_to_gateway(gateway, (2**64-1).to_bytes(8, 'big') + outer_connection.outer_send_count.to_bytes(8, 'big'))
 
     async def reader_loop(self) -> None:
         con_id = self.con_id
@@ -224,7 +224,8 @@ class OuterConnection:
             chunk = num, data = int.from_bytes(data[:8], 'big'), data[8:]
             logger.debug(f'{con_id.hex()!r} Got data to send outside: {num = } {get_part(chunk[1])}')
             if num == 2**64 - 1:
-                continue
+                outer_connection.inner_send_count = int.from_bytes(data[:8], 'big')
+
             assert num == self.outer_send_count, 'received wrong packet'
 
             try:
@@ -283,7 +284,7 @@ async def client_connection(r: asyncio.StreamReader, w: asyncio.StreamWriter) ->
                 0;                                          logger.debug(f'{con_id.hex()!r} senging header...')
                 await sock.send_msg(con_id + outer_connection.outer_send_count.to_bytes(8, 'big'))
                 0;                                          logger.debug(f'{con_id.hex()!r} header sent. recving headers...')
-                outer_connection.inner_send_count = int.from_bytes(await sock.recv_msg(timeout_=3), 'big')
+                outer_connection.inner_send_count = int.from_bytes(await sock.recv_msg(timeout_=2), 'big')
                 outer_connection.check_for_eof()
                 0;                                          logger.debug(f'{con_id.hex()!r} header recved.')
                 gateway_queue : asyncio.Queue[None] = asyncio.Queue()
