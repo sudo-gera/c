@@ -13,6 +13,18 @@ second_arg_type = asyncio.StreamWriter | None | typing.Awaitable[asyncio.StreamW
 
 drainers : dict[int, asyncio.Task[None]] = {}
 
+<<<<<<< HEAD
+    @functools.cache
+    def __getattribute__(self, name:str) -> typing.Any:
+        if name.startswith(f'_Stream_') or name in 'safe_write safe_close'.split():
+            return super().__getattribute__(name)
+        a = [w for w in [self.__reader, self.__writer] if name in dir(w)]
+        assert len(a) == 1, name
+        return getattr(a[0], name)
+
+    def __repr__(self) -> str:
+        return repr((self.__reader, self.__writer))
+=======
 class StreamImpl:
     def __init__(self, stream: Stream, reader: first_arg_type, writer: second_arg_type):
         self.stream = stream
@@ -23,6 +35,7 @@ class StreamImpl:
         self.entered = False
         self.exited = False
         self.read_lock = asyncio.Lock()
+>>>>>>> 550e90b37f478fcee644803cf61b9cd43b7d7274
 
     async def __aenter__(self) -> Stream:
         assert not self.entered
@@ -41,6 +54,9 @@ class StreamImpl:
         return self.stream
 
     async def __aexit__(self, *a: typing.Any) -> None:
+<<<<<<< HEAD
+        return await self.safe_close()
+=======
         assert self.entered
         assert not self.exited
         await self.safe_close()
@@ -52,6 +68,7 @@ class StreamImpl:
 
     def __del__(self) -> None:
         drainers.pop(id(self), None)
+>>>>>>> 550e90b37f478fcee644803cf61b9cd43b7d7274
 
     async def safe_close(self) -> None:
         try:
@@ -164,11 +181,17 @@ class Stream(asyncio.StreamReader, asyncio.StreamWriter, StreamImpl):
     def __del__(self) -> None:
         pass
 
+<<<<<<< HEAD
+    async def safe_write(self, data: bytes) -> None:
+        self.write(data)
+        await self.drain()
+=======
     async def __aenter__(self) -> Stream:
         return await self.__impl.__aenter__()
 
     async def __aexit__(self, *a: typing.Any) -> None:
         return await self.__impl.__aexit__(*a)
+>>>>>>> 550e90b37f478fcee644803cf61b9cd43b7d7274
 
 T = typing.TypeVar('T')
 
