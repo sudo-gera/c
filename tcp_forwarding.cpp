@@ -216,7 +216,6 @@ struct callback_storer{
         callback_storage callbacks;
         size_t callbacks_num = 0;
 
-    public:
         void add_descriptor(int desc, Task callback, short filter){
             std::unique_lock lock(m);
             auto& new_event = events_to_add.emplace_back();
@@ -250,6 +249,15 @@ struct callback_storer{
                 throw std::runtime_error{"kevent_add"};
             }
             events_to_add.resize(0);
+        }
+
+    public:
+        void add_descriptor_read(int desc, Task callback){
+            add_descriptor(desc, std::move(callback), EVFILT_READ);
+        }
+
+        void add_descriptor_write(int desc, Task callback){
+            add_descriptor(desc, std::move(callback), EVFILT_WRITE);
         }
 
         Selector(){
@@ -394,19 +402,19 @@ struct Socket{
     void async_read(Task then){
         safe_assert (not has_read_task);
         has_read_task = true;
-        selector.add_descriptor(read_socket, Task([&, then=then](){
+        selector.add_descriptor_read(read_socket, Task([&, then=then](){
             safe_assert (has_read_task);
             has_read_task = false;
             SYSCALL read_buffer.second = read(read_socket, read_buffer.first.data(), read_buffer.first.size());
             push_task(std::move(then));
-        }), EVFILT_READ);
+        }));
     }
 
     void async_write(Task then){
         safe_assert (not has_write_task);
         has_write_task = true;
         // safe_assert(write_buffer.second);
-        selector.add_descriptor(write_socket, Task([&, then=then](){
+        selector.add_descriptor_write(write_socket, Task([&, then=then](){
             safe_assert(write_buffer.second < write_buffer.first.size());
             Print() << "have " << write_buffer.second << " bytes to write." << std::endl;
             size_t written = 0;
@@ -422,7 +430,7 @@ struct Socket{
             }
             memmove(write_buffer.first.data(), write_buffer.first.data() + written, write_buffer.second);
             async_write(std::move(then));
-        }), EVFILT_WRITE);
+        }));
     }
 
     ~Socket(){
@@ -489,13 +497,13 @@ int main(int argc, char**argv){
     int listen_socket = create_listen_socket(listen_port);
 
     Task setup_accept_handler = [&](){
-        selector.add_descriptor(listen_socket, Task([&](){
+        selector.add_descriptor_read(listen_socket, Task([&](){
             int accept_socket = create_accept_socket(listen_socket);
             push_task([&](){
                 handle_new_socket(accept_socket);
             });
             setup_accept_handler();
-        }), EVFILT_READ);
+        }));
     };
     setup_accept_handler();
 
