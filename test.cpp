@@ -7,9 +7,11 @@
 #include <string>
 using namespace std;
 
+std::unique_ptr<int> test(){
+    std::unique_ptr<int> q;
+    return q;
+}
+
 int main(int argc, char**argv){
-    vector<string> args(argv, argv+argc);
-    for (auto& arg: args){
-        cout << ">" << arg << ">" << endl;
-    }
+    auto tmp = test();
 }
