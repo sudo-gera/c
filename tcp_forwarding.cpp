@@ -14,6 +14,10 @@
 #include <random>
 #include <new>
 #include <sstream>
+#include <list>
+#include <map>
+#include <csignal>
+#include <cerrno>
 
 #define TEXT_AS_STR(x) #x
 #define VALUE_AS_STR(x) TEXT_AS_STR(x)
@@ -22,6 +26,8 @@
 #define VALUE_AS_STRING_AND_VALUE(x) #x << "\t\t\t\t" << x
 
 #define assert_m(...) assert_f(__VA_ARGS__,#__VA_ARGS__)
+
+int exit_pipe[2] = {0, 0};
 
 bool assert_f(bool q,std::string f){
 	bool*a=&q;
@@ -58,10 +64,6 @@ struct Print: std::stringstream{
         std::cout << str();
     }
 };
-
-// auto& Print(){
-//     return *new Print_();
-// }
 
 template<typename T>
 struct QueueMPMC{
@@ -145,6 +147,14 @@ Task pop_task(){
     }
     return threads[current_thread_num].queue.pop_wait();
 }
+struct callback_storer;
+using callback_storage = std::map<size_t, callback_storer>;
+using callback_storage_iter = callback_storage::iterator;
+
+struct callback_storer{
+    Task task;
+    callback_storage_iter iter;
+};
 
 
 #if 1
@@ -194,17 +204,23 @@ Task pop_task(){
             struct kevent
         > events_to_add;
         std::mutex m;
+        callback_storage callbacks;
+        size_t callbacks_num = 0;
 
     public:
-        void add_descriptor(int desc, void* data, short filter){
+        void add_descriptor(int desc, Task callback, short filter){
             std::unique_lock lock(m);
             auto& new_event = events_to_add.emplace_back();
             memset(&new_event, 0, sizeof(new_event));
 
+            auto tmp = callbacks.insert({callbacks_num++, {std::move(callback), {}}});
+            assert(tmp.second);
+            tmp.first->second.iter = tmp.first;
+
             new_event.ident = desc;
             new_event.filter = filter;
             new_event.flags = EV_ADD | EV_ENABLE | EV_ONESHOT;
-            new_event.udata = data;
+            new_event.udata = &tmp.first->second.iter;
 
 
             Print() << "have " << events_to_add.size() << " events to add." << std::endl;
@@ -234,32 +250,36 @@ Task pop_task(){
             }
         }
 
-        struct kevent select(){
-            while (events_to_process.second == 0){
-                // Print() << "have " << events_to_add.size() << " events to add." << std::endl;
-                // for (auto& event : events_to_add){
-                //     print_kevent(event);
-                // }
-                SYSCALL events_to_process.second = kevent(
-                    kq,
-                    0,// events_to_add.data(),
-                    0,// events_to_add.size(),
-                    events_to_process.first.data(),
-                    events_to_process.first.size(),
-                    nullptr
-                );
-                // events_to_add.resize(0);
-                Print() << "have " << events_to_process.second << " events to process." << std::endl;
-                // if (events_to_process.second == size_t(-1)){
-                //     throw std::runtime_error{"kevent"};
-                // }
-                for (size_t q = 0; q < events_to_process.second; ++q){
-                    auto& event = events_to_process.first[0];
-                    print_kevent(event);
+        void select_loop(){
+            while(1){
+                while (events_to_process.second-1 >= events_to_process.first.size()){
+                    SYSCALL events_to_process.second = kevent(
+                        kq,
+                        0,
+                        0,
+                        events_to_process.first.data(),
+                        events_to_process.first.size(),
+                        nullptr
+                    );
+                    Print() << "have " << events_to_process.second << " events to process." << std::endl;
+                    if (events_to_process.second == size_t(-1)){
+                        if (errno == EINTR){
+                            continue;
+                        }
+                        throw std::runtime_error{"kevent"};
+                    }
+                    for (size_t q = 0; q < events_to_process.second; ++q){
+                        auto& event = events_to_process.first[0];
+                        print_kevent(event);
+                    }
                 }
+                safe_assert(events_to_process.second != 0);
+                auto tmp = events_to_process.first[--events_to_process.second];
+                auto iter = *(callback_storage_iter*)(tmp.udata);
+                auto task = std::move(iter->second.task);
+                task();
+                callbacks.erase(iter);
             }
-            safe_assert(events_to_process.second != 0);
-            return events_to_process.first[--events_to_process.second];
         }
     };
 
@@ -328,6 +348,12 @@ int create_accept_socket(int listen_socket){
     return client_socket;
 }
 
+struct Socket;
+
+std::map<size_t, Socket*> sockets;
+size_t socket_num = 0;
+
+
 struct Socket{
 
     alignas(hardware_destructive_interference_size)
@@ -346,12 +372,18 @@ struct Socket{
         int
     > write_buffer = {{}, 0};
 
-    Socket(int socket): read_socket(socket), write_socket(socket) {}
+    decltype(sockets)::iterator sockets_iter;
+
+    Socket(int socket): read_socket(socket), write_socket(socket) {
+        auto tmp = sockets.insert({socket_num++,this});
+        assert(tmp.second);
+        sockets_iter = tmp.first;
+    }
 
     void async_read(Task then){
         safe_assert (not has_read_task);
         has_read_task = true;
-        selector.add_descriptor(read_socket, new Task([&, then=then](){
+        selector.add_descriptor(read_socket, Task([&, then=then](){
             safe_assert (has_read_task);
             has_read_task = false;
             SYSCALL read_buffer.second = read(read_socket, read_buffer.first.data(), read_buffer.first.size());
@@ -363,7 +395,7 @@ struct Socket{
         safe_assert (not has_write_task);
         has_write_task = true;
         // safe_assert(write_buffer.second);
-        selector.add_descriptor(write_socket, new Task([&, then=then](){
+        selector.add_descriptor(write_socket, Task([&, then=then](){
             safe_assert(write_buffer.second < write_buffer.first.size());
             Print() << "have " << write_buffer.second << " bytes to write." << std::endl;
             size_t written = 0;
@@ -385,6 +417,7 @@ struct Socket{
     ~Socket(){
         SYSCALL close(read_socket);
         assert(read_socket == write_socket);
+        sockets.erase(sockets_iter);
     }
 };
 
@@ -421,7 +454,17 @@ void handle_new_socket(int accept_socket){
     copy(cs, as);
 }
 
+void sighandler(int){
+    write(exit_pipe[0], "exit\n", 5);
+    write(1, "handled signal\n", 15);
+}
+
 int main(int argc, char**argv){
+    SYSCALL signal(SIGHUP, sighandler);
+    SYSCALL signal(SIGINT, sighandler);
+    SYSCALL signal(SIGQUIT, sighandler);
+    SYSCALL signal(SIGTERM, sighandler);
+
     args = decltype(args)(argv, argv+argc);
     safe_assert(args.size() >= 4);
     uint16_t listen_port = std::stol(argv[1]);
@@ -430,7 +473,7 @@ int main(int argc, char**argv){
 
 
     Task setup_accept_handler = [&](){
-        selector.add_descriptor(listen_socket, new Task([&](){
+        selector.add_descriptor(listen_socket, Task([&](){
             int accept_socket = create_accept_socket(listen_socket);
             push_task([&](){
                 handle_new_socket(accept_socket);
@@ -439,11 +482,6 @@ int main(int argc, char**argv){
         }), EVFILT_READ);
     };
     setup_accept_handler();
-
-    // selector.add_descriptor(SIGHUP, 0, EVFILT_SIGNAL);
-    // selector.add_descriptor(SIGINT, 0, EVFILT_SIGNAL);
-    // selector.add_descriptor(SIGQUIT, 0, EVFILT_SIGNAL);
-    // selector.add_descriptor(SIGTERM, 0, EVFILT_SIGNAL);
 
     for (auto& thread: threads){
         size_t current_thread_num_ = &thread - &threads[0];
@@ -455,151 +493,24 @@ int main(int argc, char**argv){
         });
     }
 
-    while (true){
-        struct kevent event = selector.select();
-        auto func_ptr = (Task*)event.udata;
-        func_ptr[0]();
-        delete func_ptr;
+    int ret = 0;
+    SYSCALL ret = pipe(exit_pipe);
+    if (ret){
+        throw std::runtime_error{"pipe failed."};
     }
+
+    selector.add_descriptor(exit_pipe[0], [&](){
+        SYSCALL close(listen_socket);
+        for (auto& socket: sockets){
+            SYSCALL shutdown(socket.second->read_socket, SHUT_RDWR);
+            SYSCALL close(socket.second->read_socket);
+        }
+    }, EVFILT_READ);
+
+    selector.select_loop();
 
     for (auto& thread: threads){
         thread.thread.join();
     }
 }
-
-// int main()
-// {
-//     // All needed variables.
-//     int socket_listen_fd,
-//         portno = 1815,
-//         client_len,
-//         socket_connection_fd,
-//         kq,
-//         new_events;
-//     struct kevent change_event[4],
-//         event[4];
-//     struct sockaddr_in serv_addr,
-//         client_addr;
-
-//     // Create socket.
-//     if (((socket_listen_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0))
-//     {
-//         perror("ERROR opening socket");
-//         exit(1);
-//     }
-
-//     // Create socket structure and bind to ip address.
-//     bzero((char *)&serv_addr, sizeof(serv_addr));
-//     serv_addr.sin_family = AF_INET;
-//     serv_addr.sin_addr.s_addr = INADDR_ANY;
-//     serv_addr.sin_port = htons(portno);
-
-//     if (bind(socket_listen_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-//     {
-//         perror("Error binding socket");
-//         exit(1);
-//     }
-
-//     // Start listening.
-//     listen(socket_listen_fd, 3);
-//     client_len = sizeof(client_addr);
-
-//     // Prepare the kqueue.
-//     // kq = kqueue();
-//     auto selector = Selector();
-
-//     // Create event 'filter', these are the events we want to monitor.
-//     // Here we want to monitor: socket_listen_fd, for the events: EVFILT_READ 
-//     // (when there is data to be read on the socket), and perform the following
-//     // actions on this kevent: EV_ADD and EV_ENABLE (add the event to the kqueue 
-//     // and enable it).
-//     // EV_SET(change_event, socket_listen_fd, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 0);
-
-//     // Register kevent with the kqueue.
-//     // if (kevent(kq, change_event, 1, NULL, 0, NULL) == -1)
-//     // {
-//     //     perror("kevent");
-//     //     exit(1);
-//     // }
-//     selector.add_descriptor(socket_listen_fd, nullptr, EVFILT_READ);
-
-//     // Actual event loop.
-//     for (;;)
-//     {
-//         // Check for new events, but do not register new events with
-//         // the kqueue. Hence the 2nd and 3rd arguments are NULL, 0.
-//         // Only handle 1 new event per iteration in the loop; 5th
-//         // argument is 1.
-//         // SYSCALL new_events = kevent(selector.kq, 0,0, 0, 0, NULL);
-//         // if (new_events == -1)
-//         // {
-//         //     perror("kevent");
-//         //     exit(1);
-//         // }
-//         // SYSCALL new_events = kevent(selector.kq, selector.events_to_add.first.data(), selector.events_to_add.second, 0, 0, NULL);
-//         // if (new_events == -1)
-//         // {
-//         //     perror("kevent");
-//         //     exit(1);
-//         // }
-//         // SYSCALL new_events = kevent(selector.kq, NULL, 0, event, 1, NULL);
-//         new_events = 1;
-//         event[0] = selector.select();
-//         // if (new_events == -1)
-//         // {
-//         //     perror("kevent");
-//         //     exit(1);
-//         // }
-
-//         for (int i = 0; new_events > i; i++)
-//         {
-//             printf("amount of new events: %d\n", new_events);
-//             int event_fd = event[i].ident;
-
-//             // When the client disconnects an EOF is sent. By closing the file
-//             // descriptor the event is automatically removed from the kqueue.
-//             if (event[i].flags == EV_EOF)
-//             {
-//                 printf("Client has disconnected\n");
-//                close(event_fd);
-//             }
-//             // If the new event's file descriptor is the same as the listening
-//             // socket's file descriptor, we are sure that a new client wants 
-//             // to connect to our socket.
-//             else if (event_fd == socket_listen_fd)
-//             {
-//                 printf("New connection coming in...\n");    
-
-//                 // Incoming socket connection on the listening socket.
-//                 // Create a new socket for the actual connection to client.
-//                 socket_connection_fd = accept(event_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_len);
-//                 if (socket_connection_fd == -1)
-//                 {
-//                     perror("Accept socket error");
-//                 }
-
-//                 // Put this new socket connection also as a 'filter' event
-//                 // to watch in kqueue, so we can now watch for events on this
-//                 // new socket.
-//                 // EV_SET(change_event, socket_connection_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
-//                 // if (kevent(kq, change_event, 1, NULL, 0, NULL) < 0)
-//                 // {
-//                 //     perror("kevent error");
-//                 // }
-//                 selector.add_descriptor(socket_connection_fd, nullptr);
-//             }
-
-//             else if (event[i].filter == EVFILT_READ)
-//             {
-//                 // Read bytes from socket
-//                 char buf[1024];
-//                 size_t bytes_read = recv(event_fd, buf, sizeof(buf), 0);
-//                 printf("read %zu bytes\n", bytes_read);
-//             }
-//         }
-//     }
-
-//     return 0;
-// }
-
 
