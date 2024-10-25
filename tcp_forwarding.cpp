@@ -264,8 +264,10 @@ struct callback_storer{
                     Print() << "have " << events_to_process.second << " events to process." << std::endl;
                     if (events_to_process.second == size_t(-1)){
                         if (errno == EINTR){
-                            close_all_sockets();
-                            continue;
+                            // close_all_sockets();
+                            // continue;
+                            callbacks.clear();
+                            return;
                         }
                         throw std::runtime_error{"kevent"};
                     }
@@ -477,7 +479,7 @@ int main(int argc, char**argv){
     uint16_t listen_port = std::stol(argv[1]);
 
     int listen_socket = create_listen_socket(listen_port);
-    auto ls = Socket(listen_socket);
+    // auto ls = Socket(listen_socket);
 
     Task setup_accept_handler = [&](){
         selector.add_descriptor(listen_socket, Task([&](){
