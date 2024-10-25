@@ -19,6 +19,8 @@
 #include <csignal>
 #include <cerrno>
 
+// debug
+
 #define TEXT_AS_STR(x) #x
 #define VALUE_AS_STR(x) TEXT_AS_STR(x)
 #define SYSCALL for (errno = 0;;({if (errno) {perror("SYSCALL ERROR: " __FILE__ ":" VALUE_AS_STR(__LINE__));}break;}))
@@ -26,8 +28,6 @@
 #define VALUE_AS_STRING_AND_VALUE(x) #x << "\t\t\t\t" << x
 
 #define assert_m(...) assert_f(__VA_ARGS__,#__VA_ARGS__)
-
-void close_all_sockets();
 
 bool assert_f(bool q,std::string f){
 	bool*a=&q;
@@ -42,7 +42,15 @@ bool assert_f(bool q,std::string f){
 
 #define safe_assert assert_m
 
-using Task = std::function<void()>;
+std::mutex cout_mutex;
+struct Print: std::stringstream{
+    ~Print(){
+        std::unique_lock lock(cout_mutex);
+        std::cout << str();
+    }
+};
+
+// cache friendly constans
 
 #ifdef __cpp_lib_hardware_interference_size
     using std::hardware_constructive_interference_size;
@@ -53,17 +61,9 @@ using Task = std::function<void()>;
     constexpr std::size_t hardware_destructive_interference_size = 64;
 #endif
 
+// threading
+
 std::atomic<bool> have_to_stop = false;
-
-std::vector<std::string> args;
-
-std::mutex cout_mutex;
-struct Print: std::stringstream{
-    ~Print(){
-        std::unique_lock lock(cout_mutex);
-        std::cout << str();
-    }
-};
 
 template<typename T>
 struct QueueMPMC{
@@ -102,6 +102,10 @@ struct QueueMPMC{
         return tmp;
     }
 };
+
+using Task = std::function<void()>;
+
+std::vector<std::string> args;
 
 struct alignas(hardware_destructive_interference_size) thread_info{
     std::thread thread;
@@ -150,6 +154,9 @@ std::optional<Task> pop_task(){
     }
     return threads[current_thread_num].queue.pop_wait();
 }
+
+// callbacks
+
 struct callback_storer;
 using callback_storage = std::map<size_t, callback_storer>;
 using callback_storage_iter = callback_storage::iterator;
@@ -158,7 +165,6 @@ struct callback_storer{
     Task task;
     callback_storage_iter iter;
 };
-
 
 #if 1
 
@@ -296,6 +302,8 @@ struct callback_storer{
 
 #endif
 
+// socket syscall wrapper
+
 Selector selector;
 
 int create_listen_socket(uint16_t listen_port){
@@ -359,10 +367,7 @@ int create_accept_socket(int listen_socket){
     return client_socket;
 }
 
-struct Socket;
-
-std::map<size_t, Socket*> sockets;
-size_t socket_num = 0;
+// socket interface
 
 struct Socket{
 
@@ -382,12 +387,8 @@ struct Socket{
         int
     > write_buffer = {{}, 0};
 
-    decltype(sockets)::iterator sockets_iter;
 
     Socket(int socket): read_socket(socket), write_socket(socket) {
-        auto tmp = sockets.insert({socket_num++,this});
-        assert(tmp.second);
-        sockets_iter = tmp.first;
     }
 
     void async_read(Task then){
@@ -427,16 +428,10 @@ struct Socket{
     ~Socket(){
         SYSCALL close(read_socket);
         assert(read_socket == write_socket);
-        sockets.erase(sockets_iter);
     }
 };
 
-void close_all_sockets(){
-    for (auto& socket: sockets){
-        SYSCALL shutdown(socket.second->read_socket, SHUT_RDWR);
-        SYSCALL close(socket.second->read_socket);
-    }
-}
+// work with sockets
 
 void copy(std::shared_ptr<Socket> r, std::shared_ptr<Socket> w){
     r->async_read([r=r, w=w](){
@@ -460,21 +455,25 @@ void copy(std::shared_ptr<Socket> r, std::shared_ptr<Socket> w){
 
 void handle_new_socket(int accept_socket){
     Print() << "handled socket " << accept_socket << std::endl;
+    auto as = std::make_shared<Socket>(accept_socket);
+
     Print() << "connecting to " << args[2] << ":" << args[3] << std::endl;
     int connect_socket = create_connect_socket(std::stol(args[3]), args[2].data());
     Print() << "made socket " << connect_socket << std::endl;
-
-    auto as = std::make_shared<Socket>(accept_socket);
     auto cs = std::make_shared<Socket>(connect_socket);
 
     copy(as, cs);
     copy(cs, as);
 }
 
+// handle signals
+
 void sighandler(int){
     char message[] = "exiting...\n";
     write(1, message, sizeof(message)-1);
 }
+
+// main
 
 int main(int argc, char**argv){
     SYSCALL signal(SIGHUP, sighandler);
@@ -483,11 +482,11 @@ int main(int argc, char**argv){
     SYSCALL signal(SIGTERM, sighandler);
 
     args = decltype(args)(argv, argv+argc);
-    safe_assert(args.size() >= 4);
+    safe_assert(args.size() == 4);
+
     uint16_t listen_port = std::stol(argv[1]);
 
     int listen_socket = create_listen_socket(listen_port);
-    // auto ls = Socket(listen_socket);
 
     Task setup_accept_handler = [&](){
         selector.add_descriptor(listen_socket, Task([&](){
