@@ -286,7 +286,10 @@ struct callback_storer{
                 auto iter = *(callback_storage_iter*)(tmp.udata);
                 auto task = std::move(iter->second.task);
                 task();
-                callbacks.erase(iter);
+                {
+                    std::unique_lock lock(m);
+                    callbacks.erase(iter);
+                }
             }
         }
     };
