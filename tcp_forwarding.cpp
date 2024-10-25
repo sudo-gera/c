@@ -53,7 +53,7 @@ using Task = std::function<void()>;
     constexpr std::size_t hardware_destructive_interference_size = 64;
 #endif
 
-std::atomic<bool> have_to_stop = true;
+std::atomic<bool> have_to_stop = false;
 
 std::vector<std::string> args;
 
@@ -88,9 +88,12 @@ struct QueueMPMC{
         --size;
         return result;
     }
-    T pop_wait(){
+    std::optional<T> pop_wait(){
         std::unique_lock lock(m);
         while (q.empty()){
+            if (have_to_stop){
+                return std::optional<T>();
+            }
             cv.wait(lock);
         }
         auto tmp = std::move(q.front());
@@ -125,10 +128,10 @@ void push_task(Task t){
     threads[q].queue.push(std::move(t));
 }
 
-Task pop_task(){
+std::optional<Task> pop_task(){
     auto task = threads[current_thread_num].queue.pop_nowait();
     if (task){
-        return task.value();
+        return task;
     }
     size_t q = random_thread_num();
     size_t w = random_thread_num();
@@ -137,12 +140,12 @@ Task pop_task(){
     }
     task = threads[q].queue.pop_nowait();
     if (task){
-        return task.value();
+        return task;
     }
     for (auto& thread: threads){
         auto task = thread.queue.pop_nowait();
         if (task){
-            return task.value();
+            return task;
         }
     }
     return threads[current_thread_num].queue.pop_wait();
@@ -264,9 +267,11 @@ struct callback_storer{
                     Print() << "have " << events_to_process.second << " events to process." << std::endl;
                     if (events_to_process.second == size_t(-1)){
                         if (errno == EINTR){
-                            // close_all_sockets();
-                            // continue;
+                            have_to_stop = true;
                             callbacks.clear();
+                            for (auto& thread: threads){
+                                thread.queue.cv.notify_all();
+                            }
                             return;
                         }
                         throw std::runtime_error{"kevent"};
@@ -497,18 +502,23 @@ int main(int argc, char**argv){
         thread.thread = std::thread([&, current_thread_num_=current_thread_num_](){
             current_thread_num = current_thread_num_;
             while (1){
-                pop_task()();
+                auto task = pop_task();
+                if (not task.has_value()){
+                    break;
+                }
+                task.value()();
             }
         });
     }
-
-    // selector.add_descriptor(exit_pipe[0], [&](){
-    // }, EVFILT_READ);
 
     selector.select_loop();
 
     for (auto& thread: threads){
         thread.thread.join();
     }
+
+    SYSCALL close(listen_socket);
+
+    Print() << " all threads joined. " << std::endl;
 }
 
