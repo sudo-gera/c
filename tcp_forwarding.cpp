@@ -278,7 +278,6 @@ struct callback_storer{
                         events_to_process.first.size(),
                         nullptr
                     );
-                    Print() << "have " << events_to_process.second << " events to process." << std::endl;
                     if (events_to_process.second == size_t(-1)){
                         if (errno == EINTR){
                             have_to_stop = true;
@@ -290,6 +289,7 @@ struct callback_storer{
                         }
                         throw std::runtime_error{"kevent"};
                     }
+                    Print() << "have " << events_to_process.second << " events to process." << std::endl;
                     for (size_t q = 0; q < events_to_process.second; ++q){
                         auto& event = events_to_process.first[0];
                         print_kevent(event);
