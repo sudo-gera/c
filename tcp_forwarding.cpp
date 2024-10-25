@@ -27,7 +27,7 @@
 
 #define assert_m(...) assert_f(__VA_ARGS__,#__VA_ARGS__)
 
-int exit_pipe[2] = {0, 0};
+void close_all_sockets();
 
 bool assert_f(bool q,std::string f){
 	bool*a=&q;
@@ -264,6 +264,7 @@ struct callback_storer{
                     Print() << "have " << events_to_process.second << " events to process." << std::endl;
                     if (events_to_process.second == size_t(-1)){
                         if (errno == EINTR){
+                            close_all_sockets();
                             continue;
                         }
                         throw std::runtime_error{"kevent"};
@@ -353,7 +354,6 @@ struct Socket;
 std::map<size_t, Socket*> sockets;
 size_t socket_num = 0;
 
-
 struct Socket{
 
     alignas(hardware_destructive_interference_size)
@@ -421,6 +421,13 @@ struct Socket{
     }
 };
 
+void close_all_sockets(){
+    for (auto& socket: sockets){
+        SYSCALL shutdown(socket.second->read_socket, SHUT_RDWR);
+        SYSCALL close(socket.second->read_socket);
+    }
+}
+
 void copy(std::shared_ptr<Socket> r, std::shared_ptr<Socket> w){
     r->async_read([r=r, w=w](){
         if (r->read_buffer.second <= 0){
@@ -455,8 +462,8 @@ void handle_new_socket(int accept_socket){
 }
 
 void sighandler(int){
-    write(exit_pipe[0], "exit\n", 5);
-    write(1, "handled signal\n", 15);
+    char message[] = "exiting...\n";
+    write(1, message, sizeof(message)-1);
 }
 
 int main(int argc, char**argv){
@@ -470,7 +477,7 @@ int main(int argc, char**argv){
     uint16_t listen_port = std::stol(argv[1]);
 
     int listen_socket = create_listen_socket(listen_port);
-
+    auto ls = Socket(listen_socket);
 
     Task setup_accept_handler = [&](){
         selector.add_descriptor(listen_socket, Task([&](){
@@ -493,19 +500,8 @@ int main(int argc, char**argv){
         });
     }
 
-    int ret = 0;
-    SYSCALL ret = pipe(exit_pipe);
-    if (ret){
-        throw std::runtime_error{"pipe failed."};
-    }
-
-    selector.add_descriptor(exit_pipe[0], [&](){
-        SYSCALL close(listen_socket);
-        for (auto& socket: sockets){
-            SYSCALL shutdown(socket.second->read_socket, SHUT_RDWR);
-            SYSCALL close(socket.second->read_socket);
-        }
-    }, EVFILT_READ);
+    // selector.add_descriptor(exit_pipe[0], [&](){
+    // }, EVFILT_READ);
 
     selector.select_loop();
 
