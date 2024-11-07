@@ -1,4 +1,14 @@
 import asyncio
+<<<<<<< HEAD
+class test:
+    def __await__(self):
+        return asyncio.sleep(1).__await__()
+    
+async def main():
+    print(await test())
+
+asyncio.run(main())
+=======
 import stream
 import sys
 import timeout
@@ -54,3 +64,4 @@ async def main():
 
 if __name__ == '__main__':
     asyncio.run(main())
+>>>>>>> 550e90b37f478fcee644803cf61b9cd43b7d7274

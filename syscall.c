@@ -6,6 +6,6 @@
 #define VALUE_AS_STR(x) TEXT_AS_STR(x)
 #define SYSCALL for (errno = 0;;({if (errno) {perror("SYSCALL ERROR: " __FILE__ ":" VALUE_AS_STR(__LINE__));}break;}))
 
-int main(){
-    SYSCALL write(4, "hello\n", 6);
-}
+// int main(){
+//     SYSCALL write(4, "hello\n", 6);
+// }
