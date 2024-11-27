@@ -1,67 +1,71 @@
+#!/usr/bin/env python3
 import asyncio
-<<<<<<< HEAD
-class test:
-    def __await__(self):
-        return asyncio.sleep(1).__await__()
-    
-async def main():
-    print(await test())
-
-asyncio.run(main())
-=======
-import stream
-import sys
-import timeout
+import argparse
 import time
+import random
+import sys
+
+import stream
+import forwarding_parser
+
+class New:
+    def __rlshift__(self, oth):
+        self.left = oth
+        self.work()
+        return self
+    def __lshift__(self, oth):
+        self.right = oth
+        self.work()
+        return self
+    def work(self):
+        try:
+            self.left
+            self.right
+        except AttributeError:
+            return
+        self.left.append(self.right)
+
+new = New()
+
+async def copy(reader: stream.Stream, writer: stream.Stream, c2s):
+    lt = 0
+    while (data := await reader.read(2**16)):
+        t = time.time_ns()/10**7
+        eb='\x1b['
+        l = len(data)
+        if 1 and (l != 36 or not 1.8 < t - lt < 3 or 1):
+            print(f'{t:022.7f}{eb}{c2s*100}C{eb}{random.Random((l)).randint(31,38)}m{l:07d}     {t:022.7f}  {t-lt:022.7f}')
+        await writer.safe_write(data)
+        lt = t
 
 @stream.streamify
-async def connection(sock: stream.Stream):
-    print(sock.transport.get_write_buffer_limits())
-    l = 0
-    while 1:
-        c = await sock.read(1)
-        if not c:
-            break
-        l += 1
-        if l % 10000 == 0:
-            print('\x1b[s\x1b[999;80H'+f'{l:020_d}'+'\x1b[u', end='')
-        sys.stdout.flush()
-        await asyncio.sleep(0.0000001)
+async def connection(server_socket: stream.Stream):
+    try:
+        async with stream.Stream(await asyncio.open_connection(*args.proxy[0])) as client_socket:
+            await asyncio.gather(
+                copy(client_socket, server_socket, False),
+                copy(server_socket, client_socket, True),
+            )
+    except Exception as e:
+        print(type(e), e)
+        # raise
 
-async def loop_check():
-    ct = time.monotonic_ns()
-    while 1:
-        await asyncio.sleep(0.1)
-        a = ct
-        ct = time.monotonic_ns()
-        assert ct - a < 11 * 10**7
-        print('\x1b[s\x1b[999;160H'+f'loop_is_ok'+'\x1b[u', end='')
-        await asyncio.sleep(0.1)
-        print('\x1b[s\x1b[999;160H'+f'          '+'\x1b[u', end='')
-        sys.stdout.flush()
-        ct = time.monotonic_ns()
-
-async def client():
-    await asyncio.sleep(0.1)
-    async with stream.Stream(await asyncio.open_connection('127.0.0.1', 8888)) as sock:
-        for q in range(1000):
-            sock.write(b'-'*1_000_0)
-            print('\ndone writing', q)
-            print('\n1->', sock.transport.get_write_buffer_size())
-            try:
-                await timeout.run_with_timeout(sock.drain(), 0.1)
-                # await sock.drain()
-                print('\ndrained!')
-            except asyncio.TimeoutError:
-                print('\ntimeout')
-            print('\n2->', sock.transport.get_write_buffer_size())
+# async def pinger():
+#     while 1:
+#         await asyncio.sleep(0.002)
+#         t=time.time_ns()/10**6
+#         print('\x1b[s\r\x1b[99C'+f'{t:022.6f}'+'\x1b[u',end='')
+#         sys.stdout.flush()
 
 async def main():
-    asyncio.create_task(loop_check())
-    asyncio.create_task(client())
-    async with await asyncio.start_server(connection, None, 8888) as server:
+    # asyncio.create_task(pinger())
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--listen', type=forwarding_parser.ColonSeparatedSocketSequence(1), required=True)
+    parser.add_argument('--proxy', type=forwarding_parser.ColonSeparatedSocketSequence(1), required=True)
+    global args
+    args = parser.parse_args()
+
+    async with await asyncio.start_server(connection, *args.listen[0]) as server:
         await server.serve_forever()
 
-if __name__ == '__main__':
-    asyncio.run(main())
->>>>>>> 550e90b37f478fcee644803cf61b9cd43b7d7274
+asyncio.run(main())
