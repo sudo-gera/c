@@ -1,133 +1,60 @@
-<<<<<<< HEAD
-import http.server
-import socket
-import select
-import time
-import sys
-import os
-import base64
+from urllib.request import *
 import json
-from icecream import ic
 
-# class Server:
+headers = {'Content-Type': 'application/json'}
+def call(path, data = None, **a):
+    url = 'http://localhost:8000'
+    req = Request(url + path, data=json.dumps(data).encode(), **a)
+    for k,v in headers.items():
+        req.add_header(k,v)
+    res=urlopen(req).read().decode()
+    return json.loads(res) if res else None
 
-#     def create_server(self, host, port):
-#         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-#         server.bind((host, port))
-#         server.listen(200)
-#         self.input[server]={
-#             'on_event': self.on_accept,
-#         }
-
-#     def __init__(self):
-#         self.input={}
-#         self.client_by_id={}
-
-#     def main_loop(self):
-#         ss = select.select
-#         while 1:
-#             input_ready, output_ready, except_ready = ss(self.input.keys(), [], [])
-#             ic('got event')
-#             for s in input_ready:
-#                 if not self.input[s]['on_event'](s):
-#                     break
-
-#     def on_event(self,client):
-#         try:
-#             data = client.recv(65536)
-#         except ConnectionResetError:
-#             data = ''
-#         if not data:
-#             self.on_close(client)
-#         else:
-#             self.on_recv(client,data)
-#             return 1
-
-#     def on_accept(self,server):
-#         client, client_addr = server.accept()
-#         print (client_addr, "has connected")
-#         client_id = int(time.time()*2**128)
-#         self.client_by_id[client_id]=client
-#         self.input[client]={
-#             'on_event': self.on_event,
-#             'id': client_id,
-#         }
-
-#     def on_close(self,client):
-#         try:
-#             n=client.getpeername()
-#         except OSError:
-#             n='(undefined)'
-#         print (n, "has disconnected")
-#         client_id=self.input[client]['id']
-#         client.close()
-#         del self.input[client]
-#         del self.client_by_id[client_id]
-
-#     def on_recv(self,client,data):
-#         client_id=self.input[client]['id']
-#         ic(client_id,data)
-#         meth
-
-#     def __del__(self):
-#         for w in self.input:
-#             w.close()
-
-# s=Server()
-# s.create_server('',9009)
-# s.main_loop()
-
-from http.server import BaseHTTPRequestHandler, HTTPServer
-import time
-
-hostName = "0.0.0.0"
-hostPort = 9009
-
-class MyServer(BaseHTTPRequestHandler):
-    def parse_request(self) -> bool:
-        ic(self.raw_requestline)
-        return super().parse_request()
-
-    def do_GET(self):
-        ic(list(self.headers.items()))
-        if self.headers['Connection']=='Upgrade' and self.headers['Upgrade']=='websocket':
-            self.send_response(101)
-            self.send_header("Upgrade", "websocket")
-            self.send_header("Connection", "Upgrade")
-            return
-        self.send_response(200)
-        self.send_header("Content-type", "text/html; charset=utf-8")
-        self.end_headers()
-        # self.wfile.write(bytes("<html><head><title>Title goes here.</title></head>".encode()))
-        # self.wfile.write(bytes("<body><p>This is a test.</p>".encode()))
-        # self.wfile.write(bytes(("<p>You accessed path: %s</p>" % self.path).encode()))
-        # self.wfile.write(bytes("</body></html>".encode()))
-
-myServer = HTTPServer((hostName, hostPort), MyServer)
-print(time.asctime(), "Server Starts - %s:%s" % (hostName, hostPort))
-
-try:
-    myServer.serve_forever()
-except KeyboardInterrupt:
-    pass
-
-myServer.server_close()
-print(time.asctime(), "Server Stops - %s:%s" % (hostName, hostPort))
+# res = call('/api/create_user', dict(username='testuser3', password='testpassword3'))
+# print(res)
+token = call('/api/token/access', dict(username="testuser1", password="testpassword1"))['access']
+headers['Authorization'] = 'Bearer '+token
+# res = call('/api/del_user',dict(title='new_flow'))
+# print(res)
+res = call('/api/create_flow',dict(title='new_flow'))
+print(res)
+# res = call('/api/get_flows')
+# print(res)
+# res = call('/api/create_block', dict(flow_id=6, content='hello world'))
+# print(res)
+# res = call('/api/set_block', dict(flow_id=6, content='goodbye world', block_id=2))
+# print(res)
+# res = call('/api/del_block', dict(flow_id=6, content='goodbye world', block_id=2))
+# print(res)
+# res = call('/api/get_blocks', dict(flow_id=6))
+# print(res)
 
 
+# res = call('/api/create_flow_link', dict(id=1, mode=2))
+# print(res)
+# res = call('/api/redeem_link', dict(token='ro-c15e546c16ddad0e093b8a740829c5e1662b8af56e38856166cf4b709ac6f837e3d38bbd7306492f641a1b88cd6b095e740ac57c665f90e603a65d8cd5a485104f59d82d60e52df2cbb11e0fef9e2f7958cb4ed5e95bcae3a7b77d188ebfbdf4d0f7368d4932c2d51edf0055f4ce6a606b8ec12fba45794f91e898e0168d287c7ee0fb05eb7bccda64a52d5c0da148a378058a41ed3197ff5e0ca10cba8f7b5cf573935fb67ff6a11dd57823886a05dc9740c4e33f7b3bd9f0b403a936945563d81d03cd9123a02c2f2e73eb30194d81d782427f82842958758d0fe0ae898e8aad75437c11ba272ce92ab2fa4bc90a757ba36263e86cbe7dcda3'))
+# print(res)
+# res = call('/api/redeem_link', dict(token='rw-fcb1020642ff79680bddfe9a8c6b807ab7de998b68cbbc3cfa4de723cf164b2f2a60ae12238f33037df61e405d79eac7bb212e75530a0fe2acbecd4cfdcf6dfb6ac70c0a46304c4ccfeb6cdc16bc1ec478e174d72cf8577a8f445558de0921ee156d321a10486932168d6d255095bddd77b17bf903a30cf5b988c5896ea578eac2653096963ef2509a1a29cef3c47949907655ee0d0503f4e44dfe46767c8c903734fc3c93e91c8355d5a8b8f22c4627b4e741f35a03922755462f2119de5dcb514496ce80af324357d301a53c9ee033a7398109421cfba686602a1d0effdab100670a8f095cf8ab9ae9354ff2298fe9dde8cd33051cce679bae'))
+# print(res)
+# res = call('/api/get_flow_users', dict(flow_id=1))
+# print(res)
+# res = call('/api/del_flow', dict(flow_id=1))
+# print(res)
+# res = call('/api/kick_flow_user', dict(flow_id=1, user_id=3))
+# print(res)
+# res = call('/api/del_flow_link', dict(id=1, link_id=4))
+# print(res)
+# links = call('/api/get_flow_links', dict(id=1))
+# print(links)
+# flows = call('/api/get_flows/')
+# print(flows)
+# res = call('/api/redeem_link/', dict(token='some token'))
+# print(res)
+# objects = call('/api/get_flow_links/', dict(id=1))
+# print(objects)
+# print(call('/api/set_flow_title/', dict(id=1, title='new_title')))
 
 
+# req = urllib.request.Request('http://localhost:8000/api/token/access/')
 
 
-
-
-=======
-from __future__ import annotations
-from test1 import test1
-class _test:
-    pass
-
-def _f(a:_test,b:test1._test1):
-    ...
->>>>>>> 409b23bb6e0aba34433d9b534b13fbc7cca76958

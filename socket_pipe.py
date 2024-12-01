@@ -11,6 +11,7 @@ import sys
 import os
 import base64
 import json
+import pprint
 
 def fail(reason):
 	sys.stderr.write(reason + '\n')
@@ -74,6 +75,24 @@ class Server:
             return 1
 
     def pipe_send(self,message):
+        if 'data' in message:
+            import copy
+            _mes=copy.copy(message)
+            _d=_mes['data']
+            del _mes['data']
+            print(time.asctime())
+            print(time.time())
+            pprint.pprint(_mes)
+            time.sleep(0.1)
+            print()
+            print()
+        else:
+            print(time.asctime())
+            print(time.time())
+            pprint.pprint(message)
+            time.sleep(0.1)
+            print()
+            print()
         message = json.dumps(message)
         message = message.encode()
         assert b'^' not in message
@@ -143,7 +162,7 @@ class Server:
                 data=data.encode()
                 data=base64.b64decode(data)
                 client.send(data)
-            if w['event']=='del':
+            if w['event']=='del' and w['id'] in self.client_by_id:
                 client=self.client_by_id[w['id']]
                 client.close()
                 del self.input[client]

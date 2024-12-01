@@ -1,34 +1,29 @@
-const WebSocket = require('ws');
-const wsServer = new WebSocket.Server({port: 9000});
-wsServer.on('connection', onConnect);
-function onConnect(wsClient) {
-    console.log('Новый пользователь');
-    // отправка приветственного сообщения клиенту
-    wsClient.send('Привет');
-    wsClient.on('message', function(message) {
-        try {
-            // сообщение пришло текстом, нужно конвертировать в JSON-формат
-            const jsonMessage = JSON.parse(message);
-            switch (jsonMessage.action) {
-                case 'ECHO':
-                    wsClient.send(jsonMessage.data);
-                    break;
-                case 'PING':
-                    setTimeout(function() {
-                        wsClient.send('PONG');
-                    }, 2000);
-                    break;
-                default:
-                    console.log('Неизвестная команда');
-                    break;
-            }
-        } catch (error) {
-            console.log('Ошибка', error);
-        }
-    })
-    wsClient.on('close', function() {
-        // отправка уведомления в консоль
-        console.log('Пользователь отключился');
-    })
-}
-console.log('Сервер запущен на 9000 порту');
+const http = require('http');
+const express = require('express');
+const { Server } = require('socket.io');
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+
+app.get('/', (_, res) => {
+  console.log("FUNNY")
+  res.send("HELLO FROM SERVER - HTTP");
+});
+
+io.on('connection', (socket) => {
+  console.log('a user connected');
+
+  socket.on('message', (msg) => {
+    console.log('message: ' + msg);
+    socket.emit('message', "HELLO FROM SERVER - WS");
+  });
+
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+});
+
+server.listen(3000, () => {
+  console.log('listening on localhost:3000');
+});
