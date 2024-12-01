@@ -166,8 +166,6 @@ struct Pointer{
 
 struct UringLoop{
     Pointer<struct io_uring> ring;
-    // Heap<Function<void(struct io_uring_cqe*)>> callbacks;
-    // std::deque<Function<void()>> tasks_to_run;
     struct io_uring_sqe* sqe_to_use = nullptr;
     size_t objects_in_queue_count = 0;
     UringLoop(){
@@ -364,6 +362,5 @@ void handle_rw(void*data, struct io_uring_cqe*cqe)
 
 int main(int argc, char**argv){
     assert(argc == 3);
-    auto file_copy = FileCopy(argv[1], argv[2]);
-    // std::unique_ptr<int> a()
+    (FileCopy(argv[1], argv[2]));
 }
