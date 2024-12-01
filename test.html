@@ -1,211 +1,76 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Контекстные селекторы</title>
-<link rel="stylesheet" href="style11.css">
+<meta charset="ISO-8859-1">
+<style type="text/css">
+pre {
+  font-family:Courier New;
+  font-size:10pt;
+}
+
+.af_line {
+  color: gray;
+  text-decoration: none;
+}
+
+</style>
+<title>test.txt</title>
 </head>
 <body>
-<div class="contaner">
-<header class="header">
-<div class="logo">
-<img class="logo-image" src="1.png" alt="Логотип">
-</div>
-<nav>
-<ul class="ul">
-<li><a href="">Адрес</a></li>
-<li><a href="">Телефон</a></li>
-<li><a href="">Карта</a></li>
-</ul>
-</nav>
-</header>
-<nav class="main-menu">
-<ul class="main-menu-list">
-<li><a href="">Товары</a></li>
-<li><a href="">Услуги</a></li>
-<li><a href="">Доставка</a></li>
-</ul>
-</nav>
-<div class="content">
-<section class="section">
-<div class="section-items color-aqua">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex inventore in
-quo recusandae, vel dolores! Sit nam perspiciatis laborum adipisci itaque hic.
-Doloremque distinctio vero eius exercitationem illo fuga cupiditate.</div>
-<div class="section-items color-yellow">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex inventore in
-quo recusandae, vel dolores! Sit nam perspiciatis laborum adipisci itaque hic.
-Doloremque distinctio vero eius exercitationem illo fuga cupiditate.</div>
-<div class="section-items color-purple">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex inventore in
-quo recusandae, vel dolores! Sit nam perspiciatis laborum adipisci itaque hic.
-Doloremque distinctio vero eius exercitationem illo fuga cupiditate.</div>
-<div class="section-items color-mentol">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex inventore in
-quo recusandae, vel dolores! Sit nam perspiciatis laborum adipisci itaque hic.
-Doloremque distinctio vero eius exercitationem illo fuga cupiditate.</div>
-</section>
-<aside class="aside color-yellow">
-<div class="news-1 color-aqua margin center">Новость 1
-<div class="news-1 color-aqua">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex inventore in
-quo recusandae, vel dolores! Sit nam perspiciatis laborum adipisci itaque hic.
-Doloremque distinctio vero eius exercitationem illo fuga cupiditate.
-</div>
-</div>
-<div class="news-2 color-purple ">Новость 2
-<div class="news-2 color-purple">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex inventore in
-quo recusandae, vel dolores! Sit nam perspiciatis laborum adipisci itaque hic.
-Doloremque distinctio vero eius exercitationem illo fuga cupiditate.
-</div>
-</div>
-</aside>
-</div>
-<div class="diagonal">
-<div class="b1" >Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex inventore in
-quo recusandae, vel dolores! Sit nam perspiciatis laborum adipisci itaque hic.
-Doloremque distinctio vero eius exercitationem illo fuga cupiditate.</div>
-<div class="b2" >Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex inventore in
-quo recusandae, vel dolores! Sit nam perspiciatis laborum adipisci itaque hic.
-Doloremque distinctio vero eius exercitationem illo fuga cupiditate.</div>
-<div class="b3" >Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex inventore in
-quo recusandae, vel dolores! Sit nam perspiciatis laborum adipisci itaque hic.
-Doloremque distinctio vero eius exercitationem illo fuga cupiditate.</div>
-</div>
-<footer class="footer"> Подвал сайтa</footer>
-</div>
+<pre>Script started on Fri Dec  1 22:53:34 2023
+<span style="color:#0000ee;">22:53:34</span>:<span style="color:#cdcd00;">arm64</span>:<span style="color:#00cd00;">~</span>$ curl -s &apos;https://api.vk.com/method/docs.getMessagesUploadServer&apos; \
+&gt; -F &quot;access_token=${token}&quot; \
+&gt; -F &quot;v=5.199&quot; \
+&gt; -F &quot;peer_id=${peer_id}&quot; \
+&gt; | python3 -m json.tool
+{
+    &quot;response&quot;: {
+        &quot;upload_url&quot;: &quot;https://pu.vk.com/c909328/upload.php?act=add_doc_new&amp;mid=-218708263&amp;aid=-1&amp;gid=0&amp;type=0&amp;peer_id=-218708263&amp;rhash=0398c5f5d2941114f0b4b792fd3dac18&amp;api=1&amp;server=909328&amp;_origin=https%3A%2F%2Fapi.vk.com&amp;_sig=b1408d610d5a1e812c0db831dd4fd050&quot;
+    }
+}
+<span style="color:#0000ee;">22:54:18</span>:<span style="color:#cdcd00;">arm64</span>:<span style="color:#00cd00;">~</span>$ curl -s \
+&gt; -F &apos;file=&#64;/Users/gera/c/test1.txt&apos; \
+0&quot; \t;https://pu.vk.com/c909328/upload.php?act=add_doc_new&amp;mid=-218708263&amp;aid=-1&amp;gid=0&amp;type=0&amp;peer_id=-218708263&amp;rhash=0398c5f5d2941114f0b4b792fd3dac18&amp;api=1&amp;server=909328&amp;_origin=https%3A%2F%2Fapi.vk.com&amp;_sig=b1408d610d5a1e812c0db831dd4fd05 
+&gt; | python3 -m json.tool
+{
+    &quot;file&quot;: &quot;-218708263|0|-1|909328|cd83e38dff|txt|22698|test1.txt|72cf6a70502728d9627ab224919327c7|32a80589d56035732173f3eb852c268a||||eyJkaXNrIjoiMzciLCJwZWVyX3NlbmRlciI6Ii0yMTg3MDgyNjMifQ==&quot;
+}
+<span style="color:#0000ee;">22:54:51</span>:<span style="color:#cdcd00;">arm64</span>:<span style="color:#00cd00;">~</span>$ curl -s &apos;https://api.vk.com/method/docs.save&apos; \
+&gt; -F &quot;access_token=${token}&quot; \
+&gt; -F &quot;v=5.199&quot; \
+&gt; -F &quot;file=-218708263|0|-1|909328|cd83e38dff|txt|22698|test1.txt|72cf6a70502728d9627ab224919327c7|32a80589d56035732173f3eb852c268a||||eyJkaXNrIjoiMzciLCJwZWVyX3NlbmRlciI6Ii0yMTg3MDgyNjMifQ==&quot; \
+&gt; | python3 -m json.tool
+{
+    &quot;response&quot;: {
+        &quot;type&quot;: &quot;doc&quot;,
+        &quot;doc&quot;: {
+            &quot;id&quot;: 670381440,
+            &quot;owner_id&quot;: -218708263,
+            &quot;title&quot;: &quot;test1.txt&quot;,
+            &quot;size&quot;: 22698,
+            &quot;ext&quot;: &quot;txt&quot;,
+            &quot;date&quot;: 1701460518,
+            &quot;type&quot;: 1,
+            &quot;url&quot;: &quot;https://vk.com/doc-218708263_670381440?hash=IuiCro8xKuAQGY4xyEA1ZDpcDHJyroTzwJjc0SIlwn4&amp;dl=RWc3FFRGoTeX0lfyxJFJZwXGsvBxjzzp6MzW0vQYJk8&amp;api=1&amp;no_preview=1&quot;,
+            &quot;is_unsafe&quot;: 0,
+            &quot;can_manage&quot;: true
+        }
+    }
+}
+<span style="color:#0000ee;">22:55:18</span>:<span style="color:#cdcd00;">arm64</span>:<span style="color:#00cd00;">~</span>$ curl -s &apos;https://api.vk.com/method/messages.send&apos; \
+&gt; -F &quot;access_token=${token}&quot; \
+&gt; -F &quot;v=5.199&quot; \
+&gt; -F &quot;random_id=0&quot; \
+&gt; -F &quot;peer_id=${peer_id}&quot; \
+&gt; -F &quot;attachment=doc-${group_id}_670381440&quot; \
+&gt; | python3 -m json.tool
+{
+    &quot;response&quot;: 0
+}
+<span style="color:#0000ee;">22:55:46</span>:<span style="color:#cdcd00;">arm64</span>:<span style="color:#00cd00;">~</span>$ exit
+
+Script done on Fri Dec  1 23:06:38 2023
+</pre>
 </body>
 </html>
-body {margin: 0;}
-ul {margin: 0; padding: 0;}
-
-.contaner {
-margin: 20px auto;
-width: 1140px;
-}
-
-header {
-display: flex;
-justify-content: space-between;
-background-color: rgb(13, 217, 248);
-}
-
-.logo-image{
-width: 80px;
-}
-
-.ul{
-display: flex;
-justify-content: space-around;
-height: 70px;
-width: 300px;
-align-items: center;
-list-style-type: none;
-}
-
-.main-menu {
-background-color: rgb(253, 158, 217);
-}
-
-.main-menu-list {
-display: flex;
-justify-content: space-around;
-height: 40px;
-align-items: center;
-list-style-type: none;
-background-color: rgb(16, 136, 94);
-}
-
-.main-menu-list a{
-color: antiquewhite;
-font-weight: bold;
-}
-
-.purple {
-font-family: rgb(129,0, 189);
-}
-
-.content {
-display: flex;
-justify-content: flex-end;
-}
-
-.section {
-background-color: rgb(185,253, 158);
-width: 850px;
-height: 550px;
-display: flex;
-flex-wrap:wrap;
-justify-content: space-between;
-align-items: center;
-order: 2;
-}
-.color-purple{
-background-color: rgb(192, 106, 235)
-}
-.color-mentol{
-background-color: turquoise;
-}
-.aside{
-width: 290px;
-height: 550px;
-align-items:center;
-order: 1;
-display: flex;
-flex-direction: column;
-}
-
-.color-yellow{
-background-color:rgb(247, 250, 92);
-}
-
-.section-items{
-width: 350px;
-font-size: 20px;
-display: flex;
-margin: 25px;
-}
-.section-items a{
-background-color: green;
-}
-.color-aquamarine{
-background: rgb(0,11,10) ;
-}
-
-.news-1{
-margin: 25px;
-text-align: center;
-}
-.news-2{
-margin: 25px;
-text-align: center;
-}
-
-.diagonal {
-width: 500px;
-height: 500px;
-display: inline-block;
-background: rgb(0,11,10);
-align-items: center;
-}
-
-.b1 {
-background: green;
-position: static;
-}
-
-.b2 {
-background: green;
-position: relative;
-top: 10px;
-left: 200px;
-z-index: 1;
-}
-
-.b3 {
-background: green;
-position: relative;
-top: 30px;
-left: 400px;
-}
-
-footer{
-background-color: rgb(192, 106, 235)
-}
+<!--HTML generated by ansifilter 2.20, http://www.andre-simon.de/-->

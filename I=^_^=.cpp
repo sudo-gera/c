@@ -1,207 +1,190 @@
-#include <cstdio>
 #include <algorithm>
 #include <iostream>
-#include <map>
-#include <set>
 #include <string>
-#include <unordered_map>
-#include <unordered_set>
 #include <vector>
-#ifndef assert
-#include <cassert>
-#endif
-#include <tuple>
-#include <numeric>
-#include <list>
-#include <string_view>
-#include <cstring>
-#include <functional>
-#include <type_traits>
-#include <deque>
 #include <array>
-#include <memory>
-using std::back_inserter, std::list, std::hash, std::reverse;
-using std::cin, std::cout, std::endl, std::vector, std::string, std::sort;
-using std::copy_if, std::exit, std::enable_if, std::enable_if;
-using std::destroy_at, std::cerr;
-using std::generate, std::generate_n, std::remove_reference_t, std::iota;
-using std::lower_bound, std::upper_bound, std::flush, std::prev, std::next;
-using std::min, std::max, std::tuple, std::tie, std::get, std::make_tuple;
-using std::move, std::swap, std::generate, std::generate_n, std::deque;
-using std::pair, std::set, std::unordered_set, std::map, std::unordered_map;
-using std::ref, std::cref, std::reference_wrapper, std::remove_reference;
-using std::tuple_cat, std::find, std::find_if, std::find_if_not;
-using std::tuple_element, std::tuple_size, std::is_same, std::forward;
-using std::tuple_size, std::lexicographical_compare, std::set_intersection;
-using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
-using std::unique, std::decay_t, std::is_convertible_v, std::array;
 
-static inline int64_t GetInt() {
-    int sign = 1;
-    int c = 0;
-    unsigned res = 0;
-    while (c = getchar_unlocked(), isspace(c)) {
+/// @class PolyHash
+/// @brief simple polynomial hash
+/// @details supports hashes of concatenation of substrings
+struct PolyHash {
+private:
+    /// @brief base of polynomial
+    unsigned base_ = 1000;
+    /// @brief for storing powers of base
+    std::vector<unsigned> powers_;
+    /// @brief for storing hashes of prefixes
+    std::vector<std::vector<unsigned>> prefixes_;
+    /// @brief implementation of operator()
+    void HashImpl(unsigned&) {
     }
-    if (c == '-') {
-        sign = -1;
-    } else {
-        res = c - '0';
+    /// @brief implementation of operator()
+    template <typename... T>
+    void HashImpl(unsigned& res, unsigned s1, unsigned b1, unsigned e1, T... args) {
+        auto& d = prefixes_[s1];
+        res *= powers_[e1 - b1];
+        res += d[e1] - d[b1] * powers_[e1 - b1];
+        HashImpl(res, args...);
     }
-    while (c = getchar_unlocked(), isdigit(c)) {
-        res *= 10;
-        res += c - '0';
-    }
-    return static_cast<int64_t>(res) * sign;
-}
 
-static inline void PutInt(uint64_t out) {
-    if (out > (1LLU << 63) - 1) {
-        putchar_unlocked('-');
-        out = 1 + ~out;
-    }
-    char data[44];
-    char* dend = data;
-    while (out) {
-        *++dend = static_cast<char>(static_cast<unsigned>('0') + out % 10);
-        out /= 10;
-    }
-    if (dend == data) {
-        putchar_unlocked('0');
-    }
-    for (; dend != data; --dend) {
-        putchar_unlocked(*dend);
-    }
-}
-
-template <typename T = void>
-struct Scan {
-    template <typename Y = T>
-    auto operator()() {
-        Y val;
-        cin >> val;
-        return val;
-    }
-};
-
-template <typename T>
-struct StaticCast {};
-
-template <typename T, typename Y>
-auto operator->*(T v, StaticCast<Y>) {
-    return static_cast<Y>(v);
-}
-
-StaticCast<ssize_t> si;
-StaticCast<unsigned> ui;
-
-///////////////////////////////////////////////////end of lib
-
-struct H {
-    unsigned base = 1000;
-    vector<unsigned> powers;
-    vector<vector<unsigned>> data;
-    explicit H(unsigned l) {
-        if (powers.empty()) {
-            powers.push_back(1);
+public:
+    /// @brief constructor
+    /// @param l - maximum length of string
+    /// @param n - maximum number of strings
+    /// @details would be made n locations with indexes 0..n-1
+    explicit PolyHash(unsigned l, unsigned n) {
+        powers_.push_back(1);
+        while (powers_.size() < l) {
+            powers_.push_back(powers_.back() * base_);
         }
-        while (powers.size() < l) {
-            powers.push_back(powers.back() * base);
-        }
+        prefixes_.resize(n);
     }
-    void Add(string& ss, unsigned s) {
-        auto& d = data[s] = vector<unsigned>(ss.size() + 1);
+    /// @brief get length of a string by its index
+    /// @param s - index
+    /// @return length
+    size_t Size(unsigned s) {
+        return prefixes_[s].size() - 1;
+    }
+    /// @brief get number of strings
+    /// @return number of strings
+    size_t Size() {
+        return prefixes_.size();
+    }
+    /// @brief add string to hashing
+    /// @param ss - string
+    /// @param s - index
+    void Add(std::string& ss, unsigned s) {
+        auto& d = prefixes_[s] = std::vector<unsigned>(ss.size() + 1);
         unsigned l = 1;
         while (l <= ss.size()) {
-            d[l] = (d[l - 1] * base + ss[l - 1]);
+            d[l] = (d[l - 1] * base_ + ss[l - 1]);
             ++l;
         }
     }
-    unsigned operator()(unsigned s, unsigned b, unsigned e) {
-        auto& d = data[s];
-        return d[e] - d[b] * powers[e - b];
+    /// @brief get hash of substirngs
+    /// @param args - description of substirngs in format: s1, b1, e2, s2, b2 e2, ...
+    /// @details if more than one substrings are given, return value is hash of concatenation of strings
+    /// @details note: s1, s2, ... are indexes of strings
+    /// @return hash(s1[b1:e1]+s2[b2:e2]+s3[b3:e3]+...)
+    template <typename... T>
+    unsigned operator()(T... args) {
+        unsigned res = 0;
+        HashImpl(res, args...);
+        return res;
     }
 };
 
-struct Oth {
-    array<unsigned, 10> ff;
-    array<unsigned, 10> sf;
-    unsigned fs;
-    unsigned ss;
+/// \class Pairs
+/// \brief if there would be a prefix or suffix not longer than given string, its hash is in one of these arrays
+/// \details each string would have personal Pairs object
+struct Pairs {
+    std::array<unsigned, 10> prefix_array;
+    std::array<unsigned, 10> suffix_array;
+    unsigned prefix_array_size;
+    unsigned suffix_array_size;
 };
 
-int main() {
-    auto h = H(20);
-    unsigned n = GetInt();
-    vector<string> a(n);
-    vector<string> s(n);
-    h.data.resize(2 * n);
-    for (unsigned q = 0; q < n; ++q) {
-        auto& w = a[q];
-        auto& e = s[q];
-        char data[16];
-        fgets(data, 14, stdin);
-        auto l = strlen(data);
-        w = string(data, data + l - 1);
-        e = string(w.rbegin(), w.rend());
-        h.Add(w, q);
-        h.Add(e, q + n);
-    }
-    vector<vector<unsigned>> by_hash(n);
-    vector<Oth> pref(n);
+/// @brief find all strings by given hash
+/// @param h - PolyHash object
+/// @return vector that works like map[hash -> vector of string indexes]
+auto CreateBH(PolyHash& h) {
+    size_t n=h.Size()/2;
+    std::vector<std::vector<unsigned>> by_hash(n);
     for (unsigned w = 0; w < n; ++w) {
-        by_hash[h(w, 0, a[w].size()) % n].push_back(w);
-        auto& pref_w = pref[w];
-        auto u_s = a[w].size();
-        for (unsigned e = 0; e < a[w].size(); ++e) {
-            if (h(w + n, 0, u_s - e) * h.powers[u_s] + h(w, 0, u_s) ==
-                h(w + n, 0, u_s) * h.powers[u_s - e] + h(w, e, u_s)) {
-                pref_w.ff[pref_w.fs++] = h(w + n, 0, u_s - e);
+        by_hash[h(w, 0, h.Size(w)) % n].push_back(w);
+    }
+    return by_hash;
+}
+
+/// @brief create Pairs objects for each stirng and fill them with values
+/// @param h - PolyHash object
+/// @return vector of Pairs
+auto CreatePairs(PolyHash& h) {
+    size_t n=h.Size()/2;
+    std::vector<Pairs> pairs(n);
+    for (unsigned w = 0; w < pairs.size(); ++w) {
+        auto& pair = pairs[w];
+        auto len = h.Size(w);
+        for (unsigned overlap_len = 0; overlap_len < len; ++overlap_len) {
+            if (h(w + n, 0, len - overlap_len, w, 0, len) == h(w + n, 0, len, w, overlap_len, len)) {
+                pair.prefix_array[pair.prefix_array_size++] = h(w + n, 0, len - overlap_len);
             }
         }
-        for (unsigned e = 0; e < a[w].size(); ++e) {
-            if (h(w, 0, u_s) * h.powers[u_s - e] + h(w + n, e, u_s) ==
-                h(w, 0, u_s - e) * h.powers[u_s] + h(w + n, 0, u_s)) {
-                pref_w.sf[pref_w.ss++] = h(w + n, e, u_s);
+        for (unsigned overlap_len = 0; overlap_len < len; ++overlap_len) {
+            if (h(w, 0, len, w + n, overlap_len, len) == h(w, 0, len - overlap_len, w + n, 0, len)) {
+                pair.suffix_array[pair.suffix_array_size++] = h(w + n, overlap_len, len);
             }
         }
     }
-    vector<pair<unsigned, unsigned>> ans({{0U - 1, 0U - 1}});
-    for (unsigned q = 0; q < n; ++q) {
-        auto& pref_q = pref[q];
-        for (unsigned u_w = 0; u_w < pref_q.fs; ++u_w) {
-            auto w = pref_q.ff[u_w];
-            for (auto e : by_hash[w % n]) {
+    return pairs;
+}
+
+/// @brief create almost ans
+/// @param by_hash - vector from CreateBH
+/// @param pairs - vector from CreatePairs
+/// @return vector of pairs of indexes of strings which is almost answer
+/// @details this vector would contain (-1,-1) pair, pairs of same strings (q,q), pairs of strings, repetitions, hash equality is not checked
+auto CreateAns(std::vector<std::vector<unsigned>> by_hash, std::vector<Pairs>& pairs) {
+    size_t n=by_hash.size();
+    std::vector<std::pair<unsigned, unsigned>> ans({{0U - 1, 0U - 1}});
+    for (unsigned q = 0; q < pairs.size(); ++q) {
+        auto& pairs_q = pairs[q];
+        for (unsigned i = 0; i < pairs_q.prefix_array_size; ++i) {
+            auto hash = pairs_q.prefix_array[i];
+            for (auto str : by_hash[hash % n]) {
                 ans.emplace_back();
-                ans.back() = {e, q};
+                ans.back() = {str, q};
             }
         }
-        for (unsigned u_w = 0; u_w < pref_q.ss; ++u_w) {
-            auto w = pref_q.sf[u_w];
-            for (auto e : by_hash[w % n]) {
+        for (unsigned i = 0; i < pairs_q.suffix_array_size; ++i) {
+            auto hash = pairs_q.suffix_array[i];
+            for (auto str : by_hash[hash % n]) {
                 ans.emplace_back();
-                ans.back() = {q, e};
+                ans.back() = {q, str};
             }
         }
     }
+    return ans;
+}
+
+/// @brief replace same pairs (q,q) and pairs which are palindromes only by hashes with (-1,-1) pairs
+/// @param ans - from CreateAns
+/// @param strings - original vector of strings (for hash checking)
+void FilterAns(std::vector<std::pair<unsigned, unsigned>>& ans, std::vector<std::string>& strings) {
     for (auto& [q, w] : ans) {
         if (q != w) {
-            auto t = a[q] + a[w];
-            if (t != string(t.rbegin(), t.rend())) {
+            auto t = strings[q] + strings[w];
+            if (t != std::string(t.rbegin(), t.rend())) {
                 q = w = -1;
             }
         } else {
             q = w = -1;
         }
     }
-    sort(ans.begin(), ans.end());
-    ans.resize(unique(ans.begin(), ans.end()) - ans.begin() - 1);
-    PutInt(ans.size());
-    putchar_unlocked('\n');
-    for (auto w : ans) {
-        PutInt(w.first + 1);
-        putchar_unlocked(' ');
-        PutInt(w.second + 1);
-        putchar_unlocked('\n');
-    }
 }
 
+int main() {
+    unsigned n = 0;
+    std::cin >> n;
+    std::vector<std::string> strings(n);
+    std::vector<std::string> reversed_strings(n);
+    auto h = PolyHash(20, 2 * n);
+    for (unsigned q = 0; q < n; ++q) {
+        auto& w = strings[q];
+        auto& e = reversed_strings[q];
+        std::cin >> w;
+        e = std::string(w.rbegin(), w.rend());
+        h.Add(w, q);     // 0...n-1 for normal strings
+        h.Add(e, q + n); // n...2n-1 for reversed strings
+    }
+    auto by_hash = CreateBH(h);
+    auto pairs = CreatePairs(h);
+    auto ans = CreateAns(by_hash, pairs);
+    FilterAns(ans, strings);
+    sort(ans.begin(), ans.end());
+    ans.resize(unique(ans.begin(), ans.end()) - ans.begin() - 1);
+    std::cout << ans.size() << '\n';
+    for (auto w : ans) {
+        std::cout << w.first + 1 << ' ' << w.second + 1 << '\n';
+    }
+}

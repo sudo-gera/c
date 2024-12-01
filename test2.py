@@ -1,2 +1,2 @@
-from h import *
-sleep(12)
+from test1 import get_name
+print(get_name())

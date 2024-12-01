@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from urllib.request import *
 import json
 
@@ -28,8 +29,68 @@ print(res)
 # print(res)
 # res = call('/api/get_blocks', dict(flow_id=6))
 # print(res)
+=======
+#!/usr/bin/env python3
+import asyncio
+import argparse
+import time
+import random
+import sys
 
+import stream
+import forwarding_parser
 
+class New:
+    def __rlshift__(self, oth):
+        self.left = oth
+        self.work()
+        return self
+    def __lshift__(self, oth):
+        self.right = oth
+        self.work()
+        return self
+    def work(self):
+        try:
+            self.left
+            self.right
+        except AttributeError:
+            return
+        self.left.append(self.right)
+
+new = New()
+
+async def copy(reader: stream.Stream, writer: stream.Stream, c2s):
+    lt = 0
+    while (data := await reader.read(2**16)):
+        t = time.time_ns()/10**7
+        eb='\x1b['
+        l = len(data)
+        if 1 and (l != 36 or not 1.8 < t - lt < 3 or 1):
+            print(f'{t:022.7f}{eb}{c2s*100}C{eb}{random.Random((l)).randint(31,38)}m{l:07d}     {t:022.7f}  {t-lt:022.7f}')
+        await writer.safe_write(data)
+        lt = t
+
+@stream.streamify
+async def connection(server_socket: stream.Stream):
+    try:
+        async with stream.Stream(await asyncio.open_connection(*args.proxy[0])) as client_socket:
+            await asyncio.gather(
+                copy(client_socket, server_socket, False),
+                copy(server_socket, client_socket, True),
+            )
+    except Exception as e:
+        print(type(e), e)
+        # raise
+>>>>>>> 4af092fe4429bddb023f075574e6c9ff28b9e788
+
+# async def pinger():
+#     while 1:
+#         await asyncio.sleep(0.002)
+#         t=time.time_ns()/10**6
+#         print('\x1b[s\r\x1b[99C'+f'{t:022.6f}'+'\x1b[u',end='')
+#         sys.stdout.flush()
+
+<<<<<<< HEAD
 # res = call('/api/create_flow_link', dict(id=1, mode=2))
 # print(res)
 # res = call('/api/redeem_link', dict(token='ro-c15e546c16ddad0e093b8a740829c5e1662b8af56e38856166cf4b709ac6f837e3d38bbd7306492f641a1b88cd6b095e740ac57c665f90e603a65d8cd5a485104f59d82d60e52df2cbb11e0fef9e2f7958cb4ed5e95bcae3a7b77d188ebfbdf4d0f7368d4932c2d51edf0055f4ce6a606b8ec12fba45794f91e898e0168d287c7ee0fb05eb7bccda64a52d5c0da148a378058a41ed3197ff5e0ca10cba8f7b5cf573935fb67ff6a11dd57823886a05dc9740c4e33f7b3bd9f0b403a936945563d81d03cd9123a02c2f2e73eb30194d81d782427f82842958758d0fe0ae898e8aad75437c11ba272ce92ab2fa4bc90a757ba36263e86cbe7dcda3'))
@@ -53,8 +114,23 @@ print(res)
 # objects = call('/api/get_flow_links/', dict(id=1))
 # print(objects)
 # print(call('/api/set_flow_title/', dict(id=1, title='new_title')))
+=======
+async def main():
+    # asyncio.create_task(pinger())
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--listen', type=forwarding_parser.ColonSeparatedSocketSequence(1), required=True)
+    parser.add_argument('--proxy', type=forwarding_parser.ColonSeparatedSocketSequence(1), required=True)
+    global args
+    args = parser.parse_args()
+>>>>>>> 4af092fe4429bddb023f075574e6c9ff28b9e788
 
+    async with await asyncio.start_server(connection, *args.listen[0]) as server:
+        await server.serve_forever()
 
+<<<<<<< HEAD
 # req = urllib.request.Request('http://localhost:8000/api/token/access/')
 
 
+=======
+asyncio.run(main())
+>>>>>>> 4af092fe4429bddb023f075574e6c9ff28b9e788

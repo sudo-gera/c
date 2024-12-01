@@ -47,6 +47,7 @@ auto PrefixFun(T&& s) {
     return p;
 }
 
+
 int main() {
     size_t n = 0;
     cin >> n;
@@ -56,9 +57,15 @@ int main() {
         cin >> tmp;
         return tmp;
     });
-    cout << s[0];
+    string d = s[0];
     for (size_t q = 1; q < n; ++q) {
-        cout << string(s[q].begin() + PrefixFun(s[q] + " " + s[q - 1]).back(), s[q].end());
+        d += string(s[q].begin() + PrefixFun(s[q] + " " + string(d.end() - static_cast<int64_t>(min(d.size(), s[q].size())), d.end())).back(),
+                    s[q].end());
     }
+    cout << d;
+    // cout << s[0];
+    // for (size_t q = 1; q < n; ++q) {
+    //     cout << string(s[q].begin() + PrefixFun(s[q] + " " + s[q - 1]).back(), s[q].end());
+    // }
     cout << endl;
 }

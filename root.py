@@ -1,14 +1,19 @@
-from fractions import Fraction
-from functools import total_ordering
-from functools import reduce
-from functools import *
+import fractions
+import bisect
+import numbers
+import functools
+import math
+# from fractions import Fraction
+# from functools import total_ordering
+# from functools import reduce
+# from functools import cache, lru_cache
 try:
-	cache
+	cache = functools.cache
 except:
-	cache=lru_cache(maxsize=None)
+	cache=functools.lru_cache(maxsize=None)
 from numbers import Rational
-from time import time
-from bisect import *
+# from time import time
+# from bisect import *
 @cache
 def find_root(q):
 	w=2
@@ -32,7 +37,7 @@ def find_root(q):
 	d=sum([[w]*d[w] for w in d],[])
 	e=sum([[w]*e[w] for w in e],[])
 	g=lambda a,s:a*s
-	return [reduce(g,d,1),reduce(g,e,1)]
+	return [functools.reduce(g,d,1),functools.reduce(g,e,1)]
 
 class froot(Rational):
 	def __init__(s,r,a=None,b=None):
@@ -45,9 +50,9 @@ class froot(Rational):
 			a,b=0,1
 		elif b==None:
 			b=0
-		r=Fraction(r)
-		a=Fraction(a)
-		b=Fraction(b)
+		r=fractions.Fraction(r)
+		a=fractions.Fraction(a)
+		b=fractions.Fraction(b)
 		assert r>0
 		b/=r.denominator
 		r=r.numerator*r.denominator
@@ -194,12 +199,12 @@ class froot(Rational):
 			d-=1
 		return d
 	def __int__(s):
-		return int(Fraction(ceil(s)+floor(s))/2)
+		return int(fractions.Fraction(math.ceil(s)+math.floor(s))/2)
 	@cache
 	def divmod(s,a):
 		if type(a)!=froot:
 			a=froot(s.r,a)
-		z=floor(s/a)
+		z=math.floor(s/a)
 		return [z,s-z*a]
 	def __floordiv__(s,o):
 		return s.divmod(o)[0]
@@ -222,7 +227,7 @@ class froot(Rational):
 	def __ifloordiv__(s,o):
 		return s//o
 	def __round__(s,d=0):
-		return round(Fraction(s))
+		return round(fractions.Fraction(s))
 	def __rpow__(s,o):
 		return o**float(s)
 	def __trunc__(s):
@@ -256,23 +261,23 @@ class froot(Rational):
 
 
 def continued_root(q):
-	if type(q)==Fraction:
-		return root(q.numerator)/root(q.denominator)
+	if type(q)==fractions.Fraction:
+		return math.root(q.numerator)/math.root(q.denominator)
 	if type(q)==froot:
 		return q.as_fraction()
 	if type(q)!=int:
-		return root(Fraction(q))
+		return math.root(fractions.Fraction(q))
 	if q==0:
-		return Fraction(0)
+		return fractions.Fraction(0)
 	e=froot(q)
 	# if e.b==0:
 	# 	return e.a
 
 	a=[]
-	ie=floor(e)
+	ie=math.floor(e)
 	a.append(ie)
 	e=1/(e-ie)
-	ie=floor(e)
+	ie=math.floor(e)
 	a.append(ie)
 	e=1/(e-ie)
 
@@ -286,7 +291,7 @@ def continued_root(q):
 	d=set()
 	for w in range(2,9999):
 		if index == -1:
-			ie=floor(e)
+			ie=math.floor(e)
 			a=ie
 			if e in d:
 				s=s[s.index(a):]
@@ -304,7 +309,7 @@ def continued_root(q):
 		q=a*q_1+q_2
 		p_1,p_2=p,p_1
 		q_1,q_2=q,q_1
-	return Fraction(p)/Fraction(q)
+	return fractions.Fraction(p)/fractions.Fraction(q)
 
 def floor_root(q):
 	q=int(q)
@@ -329,15 +334,15 @@ def ceil_root(q):
 	return s
 
 def fractional_root(q):
-	if type(q)==Fraction:
-		return fraction_root(q.numerator)/fraction_root(q.denominator)
+	if type(q)==fractions.Fraction:
+		return fractional_root(q.numerator)/fractional_root(q.denominator)
 	if type(q)==froot:
 		return q.as_fraction()
 	if type(q)!=int:
-		return fraction_root(Fraction(q))
+		return fractional_root(fractions.Fraction(q))
 	p=2**15
 	# p=2**p
-	return Fraction(floor_root(q<<p<<p),1<<p)
+	return fractions.Fraction(floor_root(q<<p<<p),1<<p)
 
 
 

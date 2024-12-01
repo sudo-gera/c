@@ -1,258 +1,203 @@
-#include <cstdio>
+#include <numeric>
+#include <vector>
+#include <string>
 #include <algorithm>
 #include <iostream>
-#include <map>
-#include <set>
-#include <string>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
-#ifndef assert
-#include <cassert>
-#endif
-#include <tuple>
-#include <numeric>
-#include <list>
-#include <string_view>
-#include <cstring>
-#include <functional>
-#include <type_traits>
-#include <deque>
-#include <array>
-#include <queue>
-#include <stack>
-#include <string_view>
 
-using std::back_inserter, std::list, std::hash, std::reverse, std::queue;
-using std::cin, std::cout, std::endl, std::vector, std::string, std::sort;
-using std::copy_if, std::exit, std::enable_if, std::enable_if, std::stack;
-using std::generate, std::generate_n, std::remove_reference_t, std::iota;
-using std::lower_bound, std::upper_bound, std::flush, std::prev, std::next;
-using std::min, std::max, std::tuple, std::tie, std::get, std::make_tuple;
-using std::move, std::swap, std::generate, std::generate_n, std::deque;
-using std::pair, std::set, std::unordered_set, std::map, std::unordered_map;
-using std::ref, std::cref, std::reference_wrapper, std::remove_reference;
-using std::string_view;
-using std::tuple_cat, std::find, std::find_if, std::find_if_not;
-using std::tuple_element, std::tuple_size, std::is_same, std::forward;
-using std::tuple_size, std::lexicographical_compare, std::set_intersection;
-using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
-using std::unique, std::decay_t, std::is_convertible_v, std::array;
 
-struct Node {
-    size_t len = 0;
-    size_t link = 9000000000000000000;
-    size_t index = 9000000000000000000;
-    map<int, size_t> next = {};
+// source: https://github.com/maksim1744/programming-library/blob/master/SuffixArray.cpp
 
-    vector<pair<pair<size_t, size_t>, size_t>> elink = {};
-    pair<size_t, size_t> frag = {9000000000000000000, 9000000000000000000};
-    bool term = false;
-};
+/// @brief for holding buf
+/// @tparam T value type of str
+template <typename T>
+struct SuffixArrayBuf {
 
-struct Sa {
-    vector<Node> nodes = decltype(nodes)(1);
+    std::vector<T> buf1, buf2, buf3;
 
-    size_t last = 0;
-
-    size_t add_count = 0;
-
-    string s;
-
-    void Add(int c) {
-        nodes.emplace_back(Node{nodes[last].len + 1});
-        size_t cur = nodes.size() - 1;
-        nodes[cur].index = add_count++;
-        size_t p = last;
-        while (p != 9000000000000000000 and not nodes[p].next.count(c)) {
-            nodes[p].next[c] = cur;
-            p = nodes[p].link;
-        }
-        if (p == 9000000000000000000) {
-            nodes[cur].link = 0;
-        } else {
-            size_t q = nodes[p].next[c];
-            if (nodes[p].len + 1 == nodes[q].len) {
-                nodes[cur].link = q;
-            } else {
-                nodes.emplace_back(nodes[q]);
-                size_t clone = nodes.size() - 1;
-                nodes[clone].len = nodes[p].len + 1;
-                while (p != 9000000000000000000 and nodes[p].next[c] == q) {
-                    nodes[p].next[c] = clone;
-                    p = nodes[p].link;
+    /// @brief create suffix array
+    /// @param str - array to create
+    /// @param max_value - all elements of str must be less than max_value
+    /// @details all elements of str must be greater than 0
+    /// @return suffix array
+    std::vector<T> SuffixArray(std::vector<T> str, T max_value) {
+        if (str.size() <= 4) {
+            std::vector<T> res(str.size());
+            iota(res.begin(), res.end(), 0);
+            sort(res.begin(), res.end(), [&](T i1, T i2) {
+                if (i1 == i2) {
+                    return false;
                 }
-                nodes[q].link = nodes[cur].link = clone;
-            }
-        }
-        last = cur;
-    }
-
-    void MakeAdd() {
-        for (auto w : s) {
-            Add(w);
-        }
-    }
-
-    void MakeTerm() {
-        size_t p = last;
-        while (p != 9000000000000000000) {
-            nodes[p].term = true;
-            p = nodes[p].link;
-        }
-    }
-
-    void MakeFrag() {
-        for (size_t q = 0; q < s.size(); ++q) {
-            if (nodes[0].next.count(s[q]) and nodes[nodes[0].next[s[q]]].frag.first == 9000000000000000000) {
-                nodes[nodes[0].next[s[q]]].frag.second = 1 + (nodes[nodes[0].next[s[q]]].frag.first = q);
-            }
-        }
-        size_t cur = 0;
-        decltype(nodes[0].next.begin()) q;
-
-        size_t sval = 0;
-
-        struct {
-            decltype(tie(cur, q)) x_tie;
-            vector<pair<decltype(make_tuple(cur, q)), size_t>> call_stack;
-            size_t to_return_ptr = 0;
-        } x_rec{
-            tie(cur, q),
-            {{{}, 0}},
-        };
-
-    x_sw:
-        switch (sval) {
-            case 0:
-
-                // start:
-                if (not(x_rec.call_stack.empty())) {
-                    if (cur) {
-                        for (q = nodes[cur].next.begin(); q != nodes[cur].next.end(); ++q) {
-                            if (nodes[q->second].len == nodes[cur].len + 1) {
-                                nodes[q->second].frag = nodes[cur].frag;
-                                nodes[q->second].frag.second++;
-                            }
-                        }
-                    }
-                    for (q = nodes[cur].next.begin(); q != nodes[cur].next.end(); ++q) {
-                        {
-                            x_rec.call_stack.emplace_back();
-                            x_rec.call_stack.back() = {x_rec.x_tie, 144};
-                            x_rec.x_tie = decltype(x_rec.call_stack[0].first){q->second, q};
-                            sval = 0;
-                            goto x_sw;  // NOLINT
-                            case 144: {
-                            }
-                        };
-                    }
-                    {
-                        x_rec.x_tie = x_rec.call_stack.back().first;
-                        x_rec.to_return_ptr = x_rec.call_stack.back().second;
-                        x_rec.call_stack.pop_back();
-                        sval = x_rec.to_return_ptr;
-                        goto x_sw;  // NOLINT
-                        // goto *x_rec.to_return_ptr; //NOLINT
-                    };
+                while (i1 < static_cast<T>(str.size()) && i2 < static_cast<T>(str.size()) && str[i1] == str[i2]) {
+                    ++i1;
+                    ++i2;
                 }
-        }
-    }
-
-    void MakeTree() {
-        for (size_t q = 0; q < nodes.size(); ++q) {
-            if (nodes[q].link != 9000000000000000000) {
-                auto &t = nodes[q];
-                auto &tmp = nodes[t.link];
-                tmp.elink.emplace_back();
-                tmp.elink.back() = {t.frag, q};
-            }
-        }
-    };
-
-    auto Rev() {
-        reverse(s.begin(), s.end());
-        for (auto &q : nodes) {
-            for (auto &w : q.elink) {
-                w.first.first = s.size() - w.first.first;
-                w.first.second = s.size() - w.first.second;
-                swap(w.first.first, w.first.second);
-            }
-            q.frag = {9000000000000000000, 9000000000000000000};
-        }
-    }
-
-    void SortTree() {
-        for (auto &q : nodes) {
-            sort(q.elink.begin(), q.elink.end(), [&](auto &l, auto &r) {
-                return string_view(s.data() + l.first.first, l.first.second - l.first.first) <
-                       string_view(s.data() + r.first.first, r.first.second - r.first.first);
+                if (i1 == static_cast<T>(str.size()) || i2 == static_cast<T>(str.size())) {
+                    return i1 > i2;
+                }
+                return str[i1] < str[i2];
             });
+            return res;
         }
-    }
+        T init_size = static_cast<T>(str.size());
+        str.resize(str.size() + 3, 0);
 
-    auto SuffArray() {
-        vector<size_t> a;
-        size_t cur = 0;
-        size_t q = 0;
+        std::vector<T> triple_inds;
+        for (T i = 0; i + 3 <= static_cast<T>(str.size()); ++i) {
+            if (i % 3 != 0) {
+                triple_inds.push_back(i);
+            }
+        }
 
-        struct {
-            decltype(tie(cur, q)) x_tie;
-            vector<pair<decltype(make_tuple(cur, q)), size_t>> call_stack;
-            size_t to_return_ptr = 0;
-        } x_rec{
-            tie(cur, q),
-            {{{}, 0}},
+        // sort triples
+        for (T it = 2; it >= 0; --it) {
+            buf1.assign(max_value + 1, 0);
+            for (T i : triple_inds) {
+                buf1[str[i + it]]++;
+            }
+            for (T i = 1; i < static_cast<T>(buf1.size()); ++i) {
+                buf1[i] += buf1[i - 1];
+            }
+            buf2.resize(triple_inds.size());
+            for (T i = static_cast<T>(triple_inds.size()) - 1; i >= 0; --i) {
+                buf2[--buf1[str[triple_inds[i] + it]]] = triple_inds[i];
+            }
+            swap(triple_inds, buf2);
+        }
+
+        // assign equivalency classes to triples
+        buf2.resize(triple_inds.size());
+        buf2[0] = 1;
+        for (T i = 1; i < static_cast<T>(triple_inds.size()); ++i) {
+            if (str[triple_inds[i]] == str[triple_inds[i - 1]] &&
+                str[triple_inds[i] + 1] == str[triple_inds[i - 1] + 1] &&
+                str[triple_inds[i] + 2] == str[triple_inds[i - 1] + 2]) {
+                buf2[i] = buf2[i - 1];
+            } else {
+                buf2[i] = buf2[i - 1] + 1;
+            }
+        }
+
+        // recursively sort triples if there are equal
+        if (buf2.back() != static_cast<T>(buf2.size())) {
+            T last = buf2.back();
+            buf1.resize(str.size());
+            for (T i = 0; i < static_cast<T>(triple_inds.size()); ++i) {
+                buf1[triple_inds[i]] = buf2[i];
+            }
+            buf2.clear();
+            for (T i = 1; i + 3 <= static_cast<T>(str.size()); i += 3) {
+                buf2.push_back(buf1[i]);
+            }
+            T n1 = static_cast<T>(buf2.size());
+            for (T i = 2; i + 3 <= static_cast<T>(str.size()); i += 3) {
+                buf2.push_back(buf1[i]);
+            }
+            triple_inds = SuffixArray(buf2, last);
+            for (T &i : triple_inds) {
+                {
+                    if (i * 3 + 1 + 3 <= static_cast<T>(str.size())) {
+                        i = i * 3 + 1;
+                    } else {
+                        i = (i - n1) * 3 + 2;
+                    }
+                }
+            }
+        }
+
+        buf2.clear();
+        if (str.size() % 3 == 0) {
+            buf2.push_back(static_cast<T>(str.size()) - 3);
+        }
+        for (T i : triple_inds) {
+            if (i % 3 == 1) {
+                buf2.push_back(i - 1);
+            }
+        }
+
+        // sort suffixes with i % 3 = 0
+        {
+            buf1.assign(max_value + 1, 0);
+            for (T i : buf2) {
+                buf1[str[i]]++;
+            }
+            for (T i = 1; i < static_cast<T>(buf1.size()); ++i) {
+                buf1[i] += buf1[i - 1];
+            }
+
+            buf3.resize(buf2.size());
+            for (T i = static_cast<T>(buf2.size()) - 1; i >= 0; --i) {
+                buf3[--buf1[str[buf2[i]]]] = buf2[i];
+            }
+
+            swap(buf2, buf3);
+        }
+
+        buf1.assign(str.size(), 0);
+        for (T i = 0; i < static_cast<T>(triple_inds.size()); ++i) {
+            buf1[triple_inds[i]] = i + 1;
+        }
+
+        // compare suffixes with i1 % 3 != 0 and i2 % 3 == 0
+        auto cmp = [&](T i1, T i2) {
+            if (str[i1] != str[i2]) {
+                return str[i1] < str[i2];
+            }
+            ++i1;
+            ++i2;
+            if (i1 % 3 != 0) {
+                return buf1[i1] < buf1[i2];
+            }
+            if (str[i1] != str[i2]) {
+                return str[i1] < str[i2];
+            }
+            ++i1;
+            ++i2;
+            return buf1[i1] < buf1[i2];
         };
 
-        size_t sval = 0;
-    x_sw:
-        switch (sval)
-        case 0:
-            if (not(x_rec.call_stack.empty())) {
-                for (q = 0; q < nodes[cur].elink.size(); ++q) {
-                    if (nodes[nodes[cur].elink[q].second].elink.empty()) {
-                        a.push_back(nodes[cur].elink[q].first.first + 1);
-                    }
-
-                    {
-                        x_rec.call_stack.emplace_back();
-                        x_rec.call_stack.back() = {x_rec.x_tie, 193};
-                        x_rec.x_tie = decltype(x_rec.call_stack[0].first){nodes[cur].elink[q].second, 0};
-                        sval = 0;
-                        goto x_sw;  // NOLINT
-                        case 193: {
-                        }
-                    };
-                }
-                {
-                    x_rec.x_tie = x_rec.call_stack.back().first;
-                    x_rec.to_return_ptr = x_rec.call_stack.back().second;
-                    x_rec.call_stack.pop_back();
-                    sval = x_rec.to_return_ptr;
-                    goto x_sw;  // NOLINT
-                };
+        // merge suf12 and suf0
+        buf3.clear();
+        auto &res = buf3;
+        res.reserve(str.size());
+        T i1 = 0;
+        T i2 = 0;
+        while (i1 < static_cast<T>(triple_inds.size()) || i2 < static_cast<T>(buf2.size())) {
+            bool choose1 = false;
+            if (i1 == static_cast<T>(triple_inds.size())) {
+                choose1 = false;
+            } else if (i2 == static_cast<T>(buf2.size())) {
+                choose1 = true;
+            } else if (cmp(triple_inds[i1], buf2[i2])) {
+                choose1 = true;
+            } else {
+                choose1 = false;
             }
-        a.erase(a.begin());
-        return a;
+
+            if (choose1) {
+                if (triple_inds[i1] < init_size) {
+                    res.push_back(triple_inds[i1]);
+                }
+                ++i1;
+            } else {
+                if (buf2[i2] < init_size) {
+                    res.push_back(buf2[i2]);
+                }
+                ++i2;
+            }
+        }
+
+        return res;
     }
 };
 
 int main() {
-    Sa a;
-
-    getline(cin, a.s);
-    a.s += '\0';
-    reverse(a.s.begin(), a.s.end());
-    a.MakeAdd();
-    a.MakeTerm();
-    a.MakeFrag();
-    a.MakeTree();
-    a.Rev();
-    a.SortTree();
-    auto d = a.SuffArray();
-    for (auto w : d) {
-        cout << w << " ";
+    std::string s;
+    getline(std::cin, s);
+    std::vector<int> a(s.begin(), s.end());
+    auto d = SuffixArrayBuf<int>().SuffixArray(a, 128);
+    for (auto &q : d) {
+        q += 1;
+        std::cout << q << " ";
     }
-    cout << endl;
+    std::cout << std::endl;
 }

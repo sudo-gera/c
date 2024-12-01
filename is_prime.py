@@ -1,5 +1,7 @@
-from math import *
-from builtins import *
+# from math import *
+# from builtins import *
+import math
+import builtins
 mmh=[]
 def prime_checker(a,n,s,d):
 	ad=pow(a,d,n)
@@ -24,7 +26,7 @@ def is_prime_Miller(n):
 	n=nn
 	s=t
 	d=r
-	for a in range(2, min(ceil(2*log(n)**2),n) ):
+	for a in range(2, min(math.ceil(2*math.log(n)**2),n) ):
 		if not prime_checker(a,n,s,d):
 			return False
 	return True

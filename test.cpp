@@ -1,26 +1,17 @@
-<<<<<<< HEAD
-#include <bits/stdc++.h>
-struct leak{
-    std::vector<leak> v;
-};
+#include <tuple>
+#include <array>
+#include <iostream>
+#include <fstream>
+#include <cassert>
+#include <vector>
+#include <string>
+using namespace std;
 
-
-
-
-int main(){
-    leak l;
-    l.v.emplace_back();
-    l.v.back()=std::move(l);
-    assert(l.v.empty());
-
-=======
-
-auto f(const int n){
-    n = 1; //mistake
+std::unique_ptr<int> test(){
+    std::unique_ptr<int> q;
+    return q;
 }
 
-int main(){
-    f(0);
->>>>>>> 409b23bb6e0aba34433d9b534b13fbc7cca76958
+int main(int argc, char**argv){
+    auto tmp = test();
 }
-

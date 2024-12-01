@@ -40,7 +40,7 @@ using std::tuple_size, std::lexicographical_compare, std::set_intersection;
 using std::tuple_size_v, std::is_same_v, std::enable_if_t, std::tuple_element_t;
 using std::uniform_int_distribution, std::make_unique, std::make_shared;
 using std::unique, std::decay_t, std::is_convertible_v, std::array;
-using std::unique_ptr, std::shared_ptr;
+using std::unique_ptr, std::shared_ptr, std::transform, std::apply;
 
 template <typename T = void>
 struct Scan {

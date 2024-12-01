@@ -1,48 +1,94 @@
-class Module:
-	def __init__(s):
-		from pathlib import Path
-		class _:
-			def __init__(s):
-				s.filename=str(Path.home())+'/.python_modules_db'
-			def get_modules(s):
-				try:
-					ms=open(s.filename).read().split()
-				except:
-					ms=[]
-
-				return ms
-			def put_modules(s,ms):
-				open(s.filename,'w').write(ms)
-			def get(s,n):
-				try:
-					return __import__(n)
-				except Exception:
-					pass
-				try:
-					exec(f'from h import {n}')
-					return eval(n)
-				except Exception:
-					pass
-		s._=_()
-	def __dir__(s):
-		return s._.get_modules()
-	def __getattr__(s,n):
-		from pathlib import Path
-		mn=n.replace('___','.')
-		m=s._.get(mn)
-		ms=s._.get_modules()
-		if n in ms and m==None:
-			ms=[w for w in ms if w!=n]
-		if n not in ms and m!= None:
-			ms.append(n)
-		s._.put_modules(' '.join(ms))
-		return m
-modules=Module()
-modules.sys.ps2='    '
-modules.sys.ps1='\x1b[32m#############################################################\x1b[0m\n>>> '
+import os
+import atexit
+import readline
 from pathlib import Path
-modules.sys.path.append(str(Path.home())+'/c')
-try:
-	HOME=HOME
-except:
-	from h import *
+import sys
+import tempfile
+
+def process_history():
+    home = Path.home()
+    hist_file_path = home / '.python_history_mac'
+    if not hist_file_path.is_file():
+        raise OSError(f"'{hist_file_path}' is not a file")
+
+
+    if hasattr(readline, 'append_history_file'):
+        readline.read_history_file(str(hist_file_path))
+        old_hist_len = readline.get_current_history_length()
+        yield
+        new_hist_len = readline.get_current_history_length()
+        readline.append_history_file(new_hist_len - old_hist_len, str(hist_file_path))
+    else:
+        with tempfile.NamedTemporaryFile('r+', prefix='_') as tmp:
+            tmp.write('_HiStOrY_V2_\n')
+            with open(hist_file_path) as file:
+                for line in file:
+                    line = line.replace('\\', '\\134').replace(' ', '\\040')
+                    tmp.write(line)
+            tmp.flush()
+            readline.read_history_file(tmp.name)
+            old_hist_len = readline.get_current_history_length()
+            yield
+            new_hist_len = readline.get_current_history_length()
+            readline.write_history_file(tmp.name)
+            tmp.seek(0)
+            with open(hist_file_path, 'a') as file:
+                for line in [*tmp][old_hist_len + 1:]:
+                    line = line.replace('\\040',' ').replace('\\134','\\')
+                    file.write(line)
+
+    
+class Module:
+    def __init__(s):
+        from pathlib import Path
+        class _:
+            def __init__(s):
+                s.filename=str(Path.home())+'/.python_modules_db'
+            def get_modules(s):
+                try:
+                    ms=open(s.filename).read().split()
+                except:
+                    ms=[]
+
+                return ms
+            def put_modules(s,ms):
+                open(s.filename,'w').write(ms)
+            def get(s,n):
+                try:
+                    return __import__(n)
+                except Exception:
+                    pass
+                try:
+                    exec(f'from h import {n}')
+                    return eval(n)
+                except Exception:
+                    pass
+        s._=_()
+    def __dir__(s):
+        return s._.get_modules()
+    def __getattr__(s,n):
+        from pathlib import Path
+        mn=n.replace('___','.')
+        m=s._.get(mn)
+        ms=s._.get_modules()
+        if n in ms and m==None:
+            ms=[w for w in ms if w!=n]
+        if n not in ms and m!= None:
+            ms.append(n)
+        s._.put_modules(' '.join(ms))
+        return m
+
+
+
+if __name__ == '__main__':
+    import sys
+    import pathlib
+    sys.path.append(str(pathlib.Path.home()/'c'))
+    from h import *
+else:
+    modules=Module()
+    modules.sys.ps2='    '
+    __hist_processor = process_history()
+    next(__hist_processor)
+    atexit.register(next, __hist_processor, None)
+

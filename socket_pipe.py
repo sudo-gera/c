@@ -79,20 +79,30 @@ class Server:
             import copy
             _mes=copy.copy(message)
             _d=_mes['data']
+<<<<<<< HEAD
             del _mes['data']
+=======
+            _mes['data']=base64.b64decode(_d)
+>>>>>>> 4af092fe4429bddb023f075574e6c9ff28b9e788
             print(time.asctime())
             print(time.time())
             pprint.pprint(_mes)
             time.sleep(0.1)
+<<<<<<< HEAD
             print()
             print()
+=======
+>>>>>>> 4af092fe4429bddb023f075574e6c9ff28b9e788
         else:
             print(time.asctime())
             print(time.time())
             pprint.pprint(message)
             time.sleep(0.1)
+<<<<<<< HEAD
             print()
             print()
+=======
+>>>>>>> 4af092fe4429bddb023f075574e6c9ff28b9e788
         message = json.dumps(message)
         message = message.encode()
         assert b'^' not in message
