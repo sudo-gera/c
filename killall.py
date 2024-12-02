@@ -4,6 +4,7 @@ import re
 import bisect
 from collections import defaultdict as dd
 import signal
+import sys
 
 def parse_ps_and_get_popular_process(text: bytes) -> tuple[bytes, list[bytes]]:
     a = text.split(b'\n')
@@ -56,6 +57,8 @@ while 1:
                  os.kill(pid, signal.SIGTERM)
                 except Exception as e:
                  print(type(e), e)
+            if len(sys.argv) == 2:
+                os.system(sys.argv[1])
 
 
 
