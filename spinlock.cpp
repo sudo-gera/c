@@ -638,18 +638,18 @@ struct plot{
 
     constexpr static inline bool is_tests_on_plot_more_than_colors = plot::tests_on_same_plot > plot::max_plot_colors;
     
-    template<size_t a, size_t s, bool d>
+    template<size_t a, size_t s>
     struct more_tests_on_plot_than_colors{};
 
     template<>
     struct [[
         deprecated("It may lead to showing multiple tests with the same color.")
-    ]] more_tests_on_plot_than_colors<max_plot_colors, tests_on_same_plot, true>{};
+    ]] more_tests_on_plot_than_colors<max_plot_colors, tests_on_same_plot>{};
 
     more_tests_on_plot_than_colors<
-        plot::max_plot_colors,
-        plot::tests_on_same_plot,
-        plot::is_tests_on_plot_more_than_colors
+        plot::is_tests_on_plot_more_than_colors ? plot::max_plot_colors : 0LLU-1,
+        plot::tests_on_same_plot
+        // plot::is_tests_on_plot_more_than_colors
     > tmp;
 
 };
