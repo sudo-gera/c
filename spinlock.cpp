@@ -193,7 +193,7 @@ struct record_type{
     clock_t max_wait_time;
 };
 
-template<CriticalSection cs, typename Lock, typename time = std::ratio<1, 10>>
+template<CriticalSection cs, typename Lock, typename time = std::ratio<1, 2>>
 void run_test_for_lock(std::function<void(record_type)> on_result){
     for (auto thread_count: thread_counts){
         lock_test<Lock, time, cs> t(thread_count);
@@ -205,7 +205,7 @@ void run_test_for_lock(std::function<void(record_type)> on_result){
     }
 }
 
-template<typename T, bool check=true>
+template<typename T, bool check=false>
 struct CAS{
     std::atomic<T>& a;
     CAS(std::atomic<T>& a):a(a){}
@@ -545,8 +545,11 @@ struct Sleep{
     }
 };
 
-struct NoCriticalSection{
-    void critical_section(){}
+struct IncCriticalSection{
+    size_t data;
+    void critical_section(){
+        ++data;
+    }
 };
 
 
@@ -643,7 +646,7 @@ decltype(auto) tuple_for(auto&& tuple, auto&& f){
 
 int main(){
     auto pre_tests = std::tuple<void*
-        , run_test_case<NoCriticalSection>*
+        , run_test_case<IncCriticalSection>*
         // , run_test_case<FlushCriticalSection>*
         // , run_test_case<SetCriticalSection>*
     >();
