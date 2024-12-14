@@ -1,4 +1,5 @@
 #include <set>
+#include <any>
 #include <cassert>
 #include <string>
 #include <iostream>
@@ -349,7 +350,7 @@ struct TicketLock{
     }
 };
 
-template<Backoff backoff>
+template<Backoff backoff = void>
 struct TicketWaitLock{
     std::atomic<size_t> first_unused_ticket;
     std::atomic<size_t> owner_ticket;
@@ -407,7 +408,7 @@ struct FTicketLock{
 
 template<Backoff backoff>
 struct QueueLock{
-    struct queue_item{
+    struct alignas(hardware_destructive_interference_size) queue_item{
         std::atomic<queue_item*> comes_after_me = nullptr;
         std::atomic<bool> is_owner = false;
     };
@@ -449,7 +450,7 @@ struct QueueLock{
 
 template<Backoff backoff>
 struct ArrayLock{
-    struct queue_item{
+    struct alignas(hardware_destructive_interference_size) queue_item{
         std::atomic<queue_item*> comes_after_me = nullptr;
         std::atomic<bool> is_owner = false;
         std::atomic<bool> used = false;
@@ -506,8 +507,12 @@ struct ArrayLock{
     }
 };
 
-struct Nop{
+struct Emp{
     void yield(){}
+};
+
+struct Alg{
+    void yield(){assert(false);}
 };
 
 struct Yield{
@@ -579,12 +584,12 @@ std::string strtype() {
     #endif
 }
 
-template<CriticalSection crit_sec_>
+template<CriticalSection crit_sec_, typename function = std::function<void(std::function<void(record_type)>)>>
 struct run_test_case{
     using crit_sec = crit_sec_;
-    #define add_test(...) {run_test_for_lock<crit_sec, __VA_ARGS__>, #__VA_ARGS__}
-    std::vector<std::pair<std::function<void(std::function<void(record_type)>)>, std::string>> tests = {
-        add_test(TAS<Nop>),
+    #define add_test(...) {function(run_test_for_lock<crit_sec, __VA_ARGS__>), #__VA_ARGS__}
+    std::vector<std::pair<function, std::string>> tests = {
+        add_test(TAS<Emp>),
         add_test(TAS<Yield>),
         // add_test(TAS<LinYield>),
         // add_test(TAS<ExpYield>),
@@ -594,7 +599,7 @@ struct run_test_case{
         // add_test(TAS<Sleep<1000000>>),
         // add_test(TAS<Sleep<100000000>>),
 
-        add_test(TTAS<Nop>),
+        add_test(TTAS<Emp>),
         add_test(TTAS<Yield>),
         // add_test(TTAS<LinYield>),
         // add_test(TTAS<Sleep<10000>>),
@@ -604,11 +609,14 @@ struct run_test_case{
         // add_test(TTAS<Sleep<1000000>>),
         // add_test(TTAS<Sleep<100000000>>),
 
+        add_test(TicketLock<Emp>),
         add_test(TicketLock<Yield>),
-        add_test(TicketWaitLock<Yield>),
+        add_test(TicketWaitLock<Alg>),
         // add_test(FTicketLock<Yield>),
         // add_test(FTicketWaitLock<Yield>),
+        // add_test(QueueLock<Emp>),
         add_test(QueueLock<Yield>),
+        add_test(ArrayLock<Emp>),
         add_test(ArrayLock<Yield>),
         add_test(std::mutex),
     };
@@ -617,6 +625,33 @@ struct run_test_case{
     }
     // int work(size_t& current_progress){
     // }
+};
+
+
+struct plot{
+    constexpr static inline size_t max_plot_colors = 10;
+
+    constexpr static inline size_t tests_on_same_plot = [](){
+        run_test_case<IncCriticalSection, void (*)(std::function<void (record_type)>) > a;
+        return a.tests.size();
+    }();
+
+    constexpr static inline bool is_tests_on_plot_more_than_colors = plot::tests_on_same_plot > plot::max_plot_colors;
+    
+    template<size_t a, size_t s, bool d>
+    struct more_tests_on_plot_than_colors{};
+
+    template<>
+    struct [[
+        deprecated("It may lead to showing multiple tests with the same color.")
+    ]] more_tests_on_plot_than_colors<max_plot_colors, tests_on_same_plot, true>{};
+
+    more_tests_on_plot_than_colors<
+        plot::max_plot_colors,
+        plot::tests_on_same_plot,
+        plot::is_tests_on_plot_more_than_colors
+    > tmp;
+
 };
 
 template<size_t b, size_t e>
@@ -680,7 +715,7 @@ int main(){
                 auto pos = ++current_progress;
                 for (size_t i = 0; i < pos * progress_bar_width  / total_iterations; ++i){
                     if ((i + pos) % 8 == 0){
-                        std::clog << "#";
+                        std::clog << "$";
                     }else{
                         std::clog << ".";
                     }
