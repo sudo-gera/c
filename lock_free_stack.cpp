@@ -341,7 +341,7 @@ namespace hazard_pointers{
                     return;
                 }
             }
-            assert_m(false);
+            assert(false);
         }
         ~hazard_pointer_owner(){
             owned_ptr->data.store(nullptr, std::memory_order::seq_cst);
@@ -374,6 +374,8 @@ namespace hazard_pointers{
         };
         put_to_stack(sd, scheduled_deletions);
     }
+    template<typename T>
+    
     bool is_present_among_hazard_pointers(void* item){
         for (auto& hazard_pointer: hazard_pointers){
             // Print() << "hp at " << &hazard_pointer.data << " has " << hazard_pointer.data << std::endl;
