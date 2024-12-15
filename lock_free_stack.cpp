@@ -286,6 +286,7 @@ struct lock_free_stack{
         T data;
         std::atomic<Node*> prev = nullptr;
         Node(auto&&data):data(data){
+            std::cerr << allocated_nodes << std::endl;
             allocated_nodes.fetch_add(1, std::memory_order::seq_cst);
         }
         ~Node(){
