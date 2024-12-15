@@ -194,7 +194,7 @@ struct record_type{
     clock_t max_wait_time;
 };
 
-template<CriticalSection cs, typename Lock, typename time = std::ratio<1, 2>>
+template<CriticalSection cs, typename Lock, typename time = std::ratio<4>>
 void run_test_for_lock(std::function<void(record_type)> on_result){
     for (auto thread_count: thread_counts){
         lock_test<Lock, time, cs> t(thread_count);
@@ -295,12 +295,13 @@ struct TAS{
             cas.may_fail = true;
             cas.success = std::memory_order::relaxed;
             cas.failure = std::memory_order::relaxed;
-            if (cas()){
-                is_locked.load(std::memory_order::acquire);
+            if (cas())[[unlikely]]{
+                is_locked.load(std::memory_order::relaxed);
                 break;
             }
             b.yield();
         }
+        is_locked.load(std::memory_order::acquire);
     }
     void unlock(){
         is_locked.store(false, std::memory_order::release);
@@ -320,12 +321,13 @@ struct TTAS{
             cas.if_equals_to = false;
             cas.then_assign = true;
             cas.may_fail = true;
-            cas.success = std::memory_order::acq_rel;
+            cas.success = std::memory_order::relaxed;
             cas.failure = std::memory_order::relaxed;
-            if ((cas())){
+            if (cas())[[unlikely]]{
                 break;
             }
         }
+        is_locked.load(std::memory_order::acquire);
     }
     void unlock(){
         is_locked.store(false, std::memory_order::release);
@@ -340,6 +342,24 @@ struct TicketLock{
         backoff b;
         auto my_ticket = first_unused_ticket.fetch_add(1, std::memory_order::relaxed);
         while ((owner_ticket.load(std::memory_order::relaxed) != my_ticket))[[likely]]{
+            b.yield();
+        }
+        owner_ticket.load(std::memory_order::acquire);
+    }
+    void unlock(){
+        auto next_owner = owner_ticket.load(std::memory_order::relaxed) + 1;
+        owner_ticket.store(next_owner, std::memory_order::release);
+    }
+};
+
+template<Backoff backoff>
+struct ATicketLock{
+    std::atomic<size_t> first_unused_ticket;
+    std::atomic<size_t> owner_ticket;
+    void lock(){
+        backoff b;
+        auto my_ticket = first_unused_ticket.fetch_add(1, std::memory_order::relaxed);
+        while ((owner_ticket.load(std::memory_order::acquire) != my_ticket))[[likely]]{
             b.yield();
         }
         owner_ticket.load(std::memory_order::acquire);
@@ -378,7 +398,7 @@ struct FTicketWaitLock{
         backoff b;
         auto my_ticket = first_unused_ticket.fetch_add(1, std::memory_order::relaxed);
         size_t owner_ticket_value = 0;
-        while (((owner_ticket_value = owner_ticket.load(std::memory_order::relaxed)) != my_ticket)){
+        while (((owner_ticket_value = owner_ticket.load(std::memory_order::relaxed)) != my_ticket))[[likely]]{
             owner_ticket.wait(owner_ticket_value, std::memory_order::relaxed);
         }
         owner_ticket.load(std::memory_order::acquire);
@@ -418,7 +438,7 @@ struct QueueLock{
         backoff b;
         auto item = new queue_item;
         auto prev_item = last_added_to_queue.exchange(item, std::memory_order::acq_rel);
-        if (prev_item != nullptr){
+        if (prev_item != nullptr)[[likely]]{
             prev_item->comes_after_me.store(item, std::memory_order::relaxed);
             while ((not item->is_owner.load(std::memory_order::relaxed)))[[likely]]{
                 b.yield();
@@ -437,7 +457,7 @@ struct QueueLock{
         last_added_to_queue_cas.may_fail = false;
         last_added_to_queue_cas.success = std::memory_order::release;
         last_added_to_queue_cas.failure = std::memory_order::acquire;
-        if (not last_added_to_queue_cas()){
+        if (not last_added_to_queue_cas())[[likely]]{
             queue_item* next_item = nullptr;
             while ((next_item = item->comes_after_me.load(std::memory_order::relaxed)) == nullptr)[[likely]]{
                 b.yield();
@@ -477,7 +497,7 @@ struct ArrayLock{
         item->comes_after_me.store(nullptr, std::memory_order::relaxed);
         item->is_owner.store(false, std::memory_order::relaxed);
         auto prev_item = last_added_to_queue.exchange(item, std::memory_order::acq_rel);
-        if (prev_item != nullptr){
+        if (prev_item != nullptr)[[likely]]{
             prev_item->comes_after_me.store(item, std::memory_order::relaxed);
             while ((not item->is_owner.load(std::memory_order::relaxed)))[[likely]]{
                 b.yield();
@@ -496,12 +516,73 @@ struct ArrayLock{
         last_added_to_queue_cas.may_fail = false;
         last_added_to_queue_cas.success = std::memory_order::release;
         last_added_to_queue_cas.failure = std::memory_order::acquire;
-        if (not last_added_to_queue_cas()){
+        if (not last_added_to_queue_cas())[[likely]]{
             queue_item* next_item = nullptr;
             while ((next_item = item->comes_after_me.load(std::memory_order::relaxed)) == nullptr)[[likely]]{
                 b.yield();
             }
             next_item->is_owner.store(true, std::memory_order::release);
+        }
+        item->used.store(false, std::memory_order::relaxed);
+    }
+};
+
+template<Backoff backoff>
+struct ArrayWaitLock{
+    struct alignas(hardware_destructive_interference_size) queue_item{
+        std::atomic<queue_item*> comes_after_me = nullptr;
+        std::atomic<bool> is_owner = false;
+        std::atomic<bool> used = false;
+    };
+    std::array<queue_item, thread_counts.back()> items;
+    std::atomic<queue_item*> last_added_to_queue = nullptr;
+    std::atomic<size_t> item_to_get = 0;
+    queue_item* owner = nullptr;
+    void lock(){
+        backoff b;
+        queue_item* item = nullptr;
+        while (true){
+            item = items.data() + item_to_get.fetch_add(1, std::memory_order::relaxed) % items.size();
+            CAS item_cas(item->used);
+            item_cas.if_equals_to = false;
+            item_cas.then_assign = true;
+            item_cas.may_fail = false;
+            item_cas.success = std::memory_order::relaxed;
+            item_cas.failure = std::memory_order::relaxed;
+            if ((item_cas()))[[likely]]{
+                break;
+            }
+        }
+        item->comes_after_me.store(nullptr, std::memory_order::relaxed);
+        item->is_owner.store(false, std::memory_order::relaxed);
+        auto prev_item = last_added_to_queue.exchange(item, std::memory_order::acq_rel);
+        if (prev_item != nullptr)[[likely]]{
+            prev_item->comes_after_me.store(item, std::memory_order::relaxed);
+            while ((not item->is_owner.load(std::memory_order::relaxed)))[[likely]]{
+                // b.yield();
+                item->is_owner.wait(false, std::memory_order::relaxed);
+            }
+            item->is_owner.load(std::memory_order::acquire);
+        }
+        owner = item;
+    }
+    void unlock(){
+        backoff b;
+        queue_item* item = owner;
+        owner = nullptr;
+        CAS last_added_to_queue_cas(last_added_to_queue);
+        last_added_to_queue_cas.if_equals_to = item;
+        last_added_to_queue_cas.then_assign = nullptr;
+        last_added_to_queue_cas.may_fail = false;
+        last_added_to_queue_cas.success = std::memory_order::release;
+        last_added_to_queue_cas.failure = std::memory_order::acquire;
+        if (not last_added_to_queue_cas())[[likely]]{
+            queue_item* next_item = nullptr;
+            while ((next_item = item->comes_after_me.load(std::memory_order::relaxed)) == nullptr)[[likely]]{
+                b.yield();
+            }
+            next_item->is_owner.store(true, std::memory_order::release);
+            next_item->is_owner.notify_one();
         }
         item->used.store(false, std::memory_order::relaxed);
     }
@@ -611,13 +692,16 @@ struct run_test_case{
 
         add_test(TicketLock<Emp>),
         add_test(TicketLock<Yield>),
+        // add_test(ATicketLock<Emp>),
+        // add_test(ATicketLock<Yield>),
         add_test(TicketWaitLock<Alg>),
         // add_test(FTicketLock<Yield>),
         // add_test(FTicketWaitLock<Yield>),
         // add_test(QueueLock<Emp>),
-        add_test(QueueLock<Yield>),
-        add_test(ArrayLock<Emp>),
+        // add_test(QueueLock<Yield>),
+        // add_test(ArrayLock<Emp>),
         add_test(ArrayLock<Yield>),
+        add_test(ArrayWaitLock<Yield>),
         add_test(std::mutex),
     };
     size_t tests_count(){
@@ -644,13 +728,15 @@ struct plot{
     template<>
     struct [[
         deprecated("It may lead to showing multiple tests with the same color.")
-    ]] more_tests_on_plot_than_colors<max_plot_colors, tests_on_same_plot>{};
+    ]] more_tests_on_plot_than_colors<
+        tests_on_same_plot,
+        max_plot_colors
+    >{};
 
     more_tests_on_plot_than_colors<
-        plot::is_tests_on_plot_more_than_colors ? plot::max_plot_colors : 0LLU-1,
-        plot::tests_on_same_plot
-        // plot::is_tests_on_plot_more_than_colors
-    > tmp;
+        plot::is_tests_on_plot_more_than_colors ? plot::tests_on_same_plot: 0LLU-1,
+        plot::is_tests_on_plot_more_than_colors ? plot::max_plot_colors : 0LLU-1
+    > warn;
 
 };
 
