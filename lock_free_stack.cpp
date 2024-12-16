@@ -107,8 +107,8 @@ consteval auto thread_counts_vector(){
     std::vector<size_t> thread_counts(1);
     for (size_t i = 0; i < thread_counts.size() ; ++i){
         // thread_counts[i] = i + 1;
-        thread_counts[i] = 64;
-        // thread_counts[i] = ;
+        // thread_counts[i] = 64;
+        thread_counts[i] = 4;
     }
     std::sort(thread_counts.begin(), thread_counts.end());
     return thread_counts;
@@ -486,9 +486,11 @@ struct lock_free_stack{
     lock_free_stack(){
         //memset(&elimination, 0, sizeof(elimination));
     }
+    struct Node;
     struct task{
         std::optional<T> value;
         std::atomic<bool> is_done = false;
+        Node* item = nullptr;
     };
     using elim_ptr_t = task*;
     struct Node{
@@ -509,10 +511,11 @@ struct lock_free_stack{
     std::atomic<Node*> head = nullptr;
     thread_local static std::mt19937 rand;
     void put(T data){
-        auto item = hazard_pointers::allocate_and_construct<Node>(std::move(data));
+        Node* item = hazard_pointers::allocate_and_construct<Node>(std::move(data));
         auto& elim = elimination[rand() % elimination.size()];
         task t;
         t.value = item->data;
+        t.item = item;
         back_off b;
         put_to_stack<
             std::memory_order::relaxed,
@@ -559,7 +562,10 @@ struct lock_free_stack{
         hazard_pointer.store(nullptr, std::memory_order::relaxed);
         if (item and not t.value.has_value()){
             t.value = std::move(item->data);
-            hazard_pointers::async_delete<back_off>(item);
+            t.item = item;
+        }
+        if (t.item){
+            hazard_pointers::async_delete<back_off>(t.item);
         }
         return t.value;
     }
@@ -592,8 +598,10 @@ struct lock_free_stack{
                     // Print() << thread_index << " eliming task " << &t << " failed, but stole task " << elim_ptr << std::endl;
                     if constexpr(type == stack_test_event::types::get){
                         t.value = std::move(elim_ptr->value);
+                        t.item = elim_ptr->item;
                     }else{
                         elim_ptr->value = std::move(t.value);
+                        elim_ptr->item = t.item;
                     }
                     t.is_done.store(true, std::memory_order::seq_cst);
                     elim_ptr->is_done.store(true, std::memory_order::seq_cst);
