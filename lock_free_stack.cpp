@@ -38,6 +38,7 @@
 #include <chrono>
 #include <random>
 #include <new>
+#include <mutex>
 
 #define assert_m(...) assert_f(__VA_ARGS__,#__VA_ARGS__)
 
@@ -483,7 +484,7 @@ struct lock_free_stack{
     using T = size_t;
     std::array<std::atomic<uintptr_t>, 16> elimination;
     lock_free_stack(){
-        memset(&elimination, 0, sizeof(elimination));
+        //memset(&elimination, 0, sizeof(elimination));
     }
     struct task{
         std::optional<T> value;
@@ -925,7 +926,7 @@ int main(){
     return 0;    
 }
 
-struct plot{
+namespace plot{
     constexpr static inline size_t max_plot_colors = 10;
 
     constexpr static inline size_t tests_on_same_plot = [](){
