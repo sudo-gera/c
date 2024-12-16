@@ -88,9 +88,10 @@ namespace thread_safe_time{
 };
 
 consteval auto thread_counts_vector(){
-    std::vector<size_t> thread_counts(16);
+    std::vector<size_t> thread_counts(1);
     for (size_t i = 0; i < thread_counts.size() ; ++i){
-        thread_counts[i] = i + 1;
+        // thread_counts[i] = i + 1;
+        thread_counts[i] = 64;
     }
     std::sort(thread_counts.begin(), thread_counts.end());
     return thread_counts;
@@ -114,7 +115,6 @@ struct record_type{
 };
 
 static thread_local size_t thread_index = 0LLU-2;
-// using hazard_pointer_array = std::array<std::atomic<void*>,1>;
 
 template<typename T, bool check=true>
 struct CAS{
@@ -298,33 +298,35 @@ auto check_allocated_nodes = std::unique_ptr<char,
     })
 >((char*)&allocated_nodes);
 
-constexpr size_t hazard_pointer_count = thread_counts.back() + 1;
 
-template<typename Node>
+template<std::memory_order put_to_head_order, std::memory_order put_to_prev_order, Backoff back_off, typename Node>
 void put_to_stack(Node* item, std::atomic<Node*>& place){
-    auto prev_item = place.load(std::memory_order::seq_cst);
+    auto prev_item = place.load(std::memory_order::relaxed);
+    back_off b;
     while (true){
-        item->prev.store(prev_item, std::memory_order::seq_cst);
+        item->prev.store(prev_item, put_to_prev_order);
         CAS cas(place);
         cas.if_equals_to = prev_item;
         cas.then_assign = item;
         cas.may_fail = true;
-        cas.success = std::memory_order::seq_cst;
-        cas.failure = std::memory_order::seq_cst;
+        cas.success = put_to_head_order;
+        cas.failure = std::memory_order::relaxed;
         if (cas()){
             break;
         }else{
             prev_item = cas;
         }
+        b.yield();
     }
 }
 
 namespace hazard_pointers{
+    constexpr size_t hazard_pointer_count = thread_counts.back() + 1;
     struct hazard_pointer{
         std::atomic<size_t> owner = 0LLU-1;
         std::atomic<void*> data = nullptr;
     };
-    std::array<hazard_pointer, hazard_pointer_count> hazard_pointers;
+    std::array<hazard_pointer, hazard_pointers::hazard_pointer_count> hazard_pointers;
     struct hazard_pointer_owner{
         hazard_pointer* owned_ptr = nullptr;
         hazard_pointer_owner(){
@@ -334,8 +336,8 @@ namespace hazard_pointers{
                 cas.if_equals_to = 0LLU-1;
                 cas.then_assign = thread_index;
                 cas.may_fail = false;
-                cas.success = std::memory_order::seq_cst;
-                cas.failure = std::memory_order::seq_cst;
+                cas.success = std::memory_order::relaxed;
+                cas.failure = std::memory_order::relaxed;
                 if (cas()){
                     owned_ptr = &ptr;
                     return;
@@ -344,121 +346,145 @@ namespace hazard_pointers{
             assert(false);
         }
         ~hazard_pointer_owner(){
-            owned_ptr->data.store(nullptr, std::memory_order::seq_cst);
-            owned_ptr->owner.store(0LLU-1, std::memory_order::seq_cst);
-        }
-        operator std::atomic<void*>&(){
-            return owned_ptr->data;
+            owned_ptr->data.store(nullptr, std::memory_order::relaxed);
+            owned_ptr->owner.store(0LLU-1, std::memory_order::relaxed);
         }
         static std::atomic<void*>& get(){
             static thread_local hazard_pointer_owner owner;
-            return owner;
+            return owner.owned_ptr->data;
         }
     };
     template<typename T>
     void delete_from_void_ptr(void*ptr){
         delete (T*)ptr;
-        // ((T*)ptr)->is_deleted=true;
     }
-    struct scheduled_deletion{
+    struct scheduled_deletion_node{
         void(*deleter)(void*) = nullptr;
-        void* data = nullptr;
-        std::atomic<scheduled_deletion*> prev = nullptr;
+        void* data;
+        std::atomic<scheduled_deletion_node*> prev = nullptr;
     };
-    std::atomic<scheduled_deletion*> scheduled_deletions = nullptr;
     template<typename T>
-    void schedule_deletion(T* item){
-        auto sd = new scheduled_deletion{
-            .deleter = delete_from_void_ptr<T>,
-            .data = item,
-        };
-        put_to_stack(sd, scheduled_deletions);
-    }
-    template<typename T>
-    
+    struct scheduled_deletion_data{
+        T data;
+        scheduled_deletion_node node;
+        scheduled_deletion_data(auto&&...args):data(FORWARD(args)...){}
+    };
+    std::atomic<scheduled_deletion_node*> scheduled_deletions = nullptr;
+    using scheduled_deletion = scheduled_deletion_node;
+    std::atomic<size_t> scheduled_to_delete_count = 0;
     bool is_present_among_hazard_pointers(void* item){
         for (auto& hazard_pointer: hazard_pointers){
-            // Print() << "hp at " << &hazard_pointer.data << " has " << hazard_pointer.data << std::endl;
-            if (hazard_pointer.data.load(std::memory_order::seq_cst) == item){
+            if (hazard_pointer.data.load(std::memory_order::relaxed) == item){
                 return true;
             }
         }
         return false;
     }
+    template<Backoff back_off>
     void flush(){
         auto item = scheduled_deletions.exchange(nullptr);
         while (item){
-            auto prev_item = item->prev.load(std::memory_order::seq_cst);
+            auto prev_item = item->prev.load(std::memory_order::relaxed);
             if (is_present_among_hazard_pointers(item->data)){
-                put_to_stack(item, scheduled_deletions);
+                put_to_stack<
+                    std::memory_order::relaxed,
+                    std::memory_order::relaxed,
+                    back_off
+                >(item, scheduled_deletions);
             }else{
+                scheduled_to_delete_count.fetch_sub(1, std::memory_order::relaxed);
                 item->deleter(item->data);
-                delete item;
             }
             item = prev_item;
         }
     }
+    template<Backoff back_off, typename T>
+    void async_delete(T* item){
+        auto ptr = (scheduled_deletion_data<T>*)item;
+        put_to_stack<
+            std::memory_order::release,
+            std::memory_order::relaxed,
+            back_off
+        >(&ptr->node, scheduled_deletions);
+        if (scheduled_to_delete_count.fetch_add(
+            1, std::memory_order::relaxed
+        ) > hazard_pointer_count){
+            hazard_pointers::flush<back_off>();
+        }
+        
+    }
+    template<typename T>
+    T* allocate_and_construct(auto&&...args){
+        auto ptr = new scheduled_deletion_data<T>(FORWARD(args)...);
+        ptr->node.deleter = delete_from_void_ptr<scheduled_deletion_data<T>>;
+        ptr->node.data = ptr;
+        assert((void*)ptr == (void*)&ptr->data);
+        return &ptr->data;
+    }
 };
 
-template<typename T_>
+template<Backoff back_off, typename T_, bool check = false>
 struct lock_free_stack{
     using T = size_t;
     struct Node{
         T data;
         std::atomic<Node*> prev = nullptr;
-        // std::atomic<bool> is_deleted = false;
-        Node(auto&&data):data(data){
+        Node(auto&&...args):data(FORWARD(args)...){
             prev = nullptr;
-            allocated_nodes.fetch_add(1, std::memory_order::seq_cst);
+            if constexpr(check){
+                allocated_nodes.fetch_add(1, std::memory_order::relaxed);
+            }
         }
         ~Node(){
-            allocated_nodes.fetch_sub(1, std::memory_order::seq_cst);
+            if constexpr(check){
+                allocated_nodes.fetch_sub(1, std::memory_order::relaxed);
+            }
         }
     };
     std::atomic<Node*> head = nullptr;
     void put(T data){
-        auto item = new Node(std::move(data));
-        put_to_stack(item, head);
+        auto item = hazard_pointers::allocate_and_construct<Node>(std::move(data));
+        put_to_stack<
+            std::memory_order::relaxed,
+            std::memory_order::release,
+            back_off
+        >(item, head);
     }
     std::optional<T> get(){
         auto& hazard_pointer = hazard_pointers::hazard_pointer_owner::get();
-        Node* item = head.load(std::memory_order::seq_cst);
+        Node* item = head.load(std::memory_order::relaxed);
+        back_off b;
         while (item){
             while (1){
-                hazard_pointer.store(item, std::memory_order::seq_cst);
-                auto actual_item = head.load(std::memory_order::seq_cst);
+                hazard_pointer.store(item, std::memory_order::relaxed);
+                auto actual_item = head.load(std::memory_order::relaxed);
                 if (actual_item == item){
                     break;
                 }else{
                     item = actual_item;
                 }
             }
-            // Print() << "thread " << thread_index << " has in hp " << hazard_pointer << std::endl;
-            // Print() << "thread " << thread_index << " has item " << item << std::endl;
-            // Print() << "hp at " << &hazard_pointer << " has " << hazard_pointer << " ++" << std::endl
-                    // << "item has " << item << std::endl;
             if (item == nullptr){
                 break;
             }
-            // assert(not item->is_deleted);
             CAS cas(head);
             cas.if_equals_to = item;
-            cas.then_assign = item->prev.load(std::memory_order::seq_cst);
+            cas.then_assign = item->prev.load(std::memory_order::acquire);
             cas.may_fail = true;
-            cas.success = std::memory_order::seq_cst;
-            cas.failure = std::memory_order::seq_cst;
+            cas.success = std::memory_order::relaxed;
+            cas.failure = std::memory_order::relaxed;
             if (cas()){
                 break;
             }else{
                 item = cas;
             }
+            b.yield();
         }
-        hazard_pointer.store(nullptr, std::memory_order::seq_cst);
+        hazard_pointer.store(nullptr, std::memory_order::relaxed);
         std::optional<T> result;
         if (item){
             result = std::move(item->data);
-            hazard_pointers::schedule_deletion(item);
-            hazard_pointers::flush();
+            hazard_pointers::async_delete<back_off>(item);
         }
         return result;
     }
@@ -469,7 +495,7 @@ struct lock_free_stack{
                 break;
             }
         }
-        hazard_pointers::flush();
+        hazard_pointers::flush<back_off>();
     }
 };
 
@@ -491,32 +517,16 @@ auto before_order(const stack_test_event& left, const stack_test_event& right){
     return 0<=>0;
 }
 
-struct more_puts{
+template<size_t fill, size_t puts, size_t gets>
+struct fill_then_random_puts_and_gets{
     std::mt19937 mt = std::mt19937(std::random_device()());
-    std::uniform_int_distribution<size_t> ud = std::uniform_int_distribution<size_t>(0, 9);
-    bool operator()(){
-        return ud(mt) < 2;
-    }
-};
-
-struct uniform{
-    std::mt19937 mt = std::mt19937(std::random_device()());
-    std::uniform_int_distribution<size_t> ud = std::uniform_int_distribution<size_t>(0, 9);
-    bool operator()(){
-        return ud(mt) < 5;
-    }
-};
-
-struct fill_and_uniform{
-    std::mt19937 mt = std::mt19937(std::random_device()());
-    std::uniform_int_distribution<size_t> ud = std::uniform_int_distribution<size_t>(0, 9);
-    size_t to_fill = 9;
+    std::uniform_int_distribution<size_t> ud = std::uniform_int_distribution<size_t>(1, gets + puts);
+    size_t to_fill = fill;
     bool operator()(){
         if (--to_fill){
             return false;
-        }else{
-            return ud(mt) < 5;
         }
+        return ud(mt) <= gets;
     }
 };
 
@@ -542,7 +552,7 @@ struct stack_test{
         for (stack_test::stack_test_thread& thread: threads){
             std::copy(thread.events.begin(), thread.events.end(), std::back_inserter(events));
         }
-        sort(events.begin(), events.end(), [](auto&&left, auto&&right){
+        auto order = [](auto&&left, auto&&right){
             if (left.type != right.type){
                 return left.type < right.type;
             }
@@ -553,17 +563,44 @@ struct stack_test{
                 return left.data > right.data;
             }
             assert(false);
-        });
+        };
+        sort(events.begin(), events.end(), order);
+        // Print() << "start checking..." << std::endl;
+        // for (size_t i = 0; i < events.size() ; ++i){
+        //     for (size_t j = 0; j < events.size() ; ++j){
+        //         if (i < j and events[i].data == events[j].data){
+        //             assert(events[i].type = stack_test_event::types::put);
+        //             assert(events[j].type = stack_test_event::types::get);
+        //             assert(before_order(events[i], events[j]) <= 0);
+        //         }
+        //     }
+        // }
+        assert(not stack.get().has_value());
         for (size_t i = 0; i < events.size() ; ++i){
-            for (size_t j = 0; j < events.size() ; ++j){
-                if (i < j and events[i].data == events[j].data){
-                    assert(events[i].type = stack_test_event::types::put);
-                    assert(events[j].type = stack_test_event::types::get);
-                    assert(before_order(events[i], events[j]) <= 0);
-                }
+            auto tmp = events[i];
+            if (tmp.type == stack_test_event::types::put){
+                tmp.type = stack_test_event::types::get;
+            }else{
+                tmp.type = stack_test_event::types::put;
+            }
+            auto b = std::lower_bound(events.begin(), events.end(), tmp, order) - events.begin();
+            auto e = std::upper_bound(events.begin(), events.end(), tmp, order) - events.begin();
+            // Print() << b << " " << e << std::endl;
+            assert(e - b == 1);
+            auto j = b;
+            if (tmp.type == stack_test_event::types::get){
+                assert(events[i].type = stack_test_event::types::put);
+                assert(events[j].type = stack_test_event::types::get);
+                assert(before_order(events[i], events[j]) <= 0);
+            }else{
+                // Print() << events[i].type << " " << events[i].data << " " << events[i].start_time.time_since_epoch() << " " << events[i].stop_time.time_since_epoch() << std::endl;
+                // Print() << events[j].type << " " << events[j].data << " " << events[j].start_time.time_since_epoch() << " " << events[j].stop_time.time_since_epoch() << std::endl;
+                assert(events[i].type = stack_test_event::types::get);
+                assert(events[j].type = stack_test_event::types::put);
+                assert(before_order(events[i], events[j]) >= 0);
             }
         }
-        assert(not stack.get().has_value());
+        // Print() << "start checking..." << std::endl;
     }
     void worker(size_t start, stack_test_thread& thread){
         auto& rand = thread.rand;
@@ -658,7 +695,7 @@ struct stack_test{
     }
 };
 
-template<typename should_get, typename stack, typename time = std::ratio<1, 4'00>>
+template<typename should_get, typename stack, typename time = std::ratio<1, 4'0>>
 void run_test_for_lock(std::function<void(record_type)> on_result){
     for (auto thread_count: thread_counts){
         stack_test<stack, time, should_get> t(thread_count);
@@ -676,7 +713,8 @@ struct run_test_case{
     #define add_test(...) {function(run_test_for_lock<should_get, __VA_ARGS__>), #__VA_ARGS__}
     std::vector<std::pair<function, std::string>> tests = {
         // add_test(mutex_stack<size_t>),
-        add_test(lock_free_stack<size_t>),
+        add_test(lock_free_stack<Emp, size_t>),
+        add_test(lock_free_stack<Yield, size_t>),
     };
     size_t tests_count(){
         return tests.size();
@@ -685,8 +723,9 @@ struct run_test_case{
 
 int main(){
     auto pre_tests = std::tuple<void*
-        , run_test_case<more_puts>*
-        , run_test_case<uniform>*
+        , run_test_case<fill_then_random_puts_and_gets<1024, 1, 1>>*
+        , run_test_case<fill_then_random_puts_and_gets<1024, 4, 1>>*
+        , run_test_case<fill_then_random_puts_and_gets<1024, 1, 4>>*
     >();
     auto tests = std::apply([&](auto&&, auto&&...args){
         return std::tuple<std::decay_t<decltype(*args)>...>();
@@ -764,7 +803,7 @@ struct plot{
     constexpr static inline size_t max_plot_colors = 10;
 
     constexpr static inline size_t tests_on_same_plot = [](){
-        run_test_case<more_puts, void (*)(std::function<void (record_type)>) > a;
+        run_test_case<fill_then_random_puts_and_gets<0, 0, 0>, void (*)(std::function<void (record_type)>) > a;
         return a.tests.size();
     }();
 
