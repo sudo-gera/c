@@ -39,28 +39,8 @@
 #include <random>
 #include <new>
 
-<<<<<<< HEAD
-=======
 #define assert_m(...) assert_f(__VA_ARGS__,#__VA_ARGS__)
 
-bool assert_f(bool q,std::string f){
-	bool*a=&q;
-	if (not q){
-		std::cerr<<"\x1b[91massertion failed: \x1b[0m"<<f<<std::endl;
-		while (a){
-			q=*++a;
-		}
-	}
-	return q;
-}
-
->>>>>>> c11568c79907e61dc94b0b8178f89a748affb548
-#if __cplusplus < 202000L
-#error "need c++20"
-#endif
-
-<<<<<<< HEAD
-=======
 std::mutex cout_mutex;
 struct Print: std::stringstream{
     ~Print(){
@@ -68,15 +48,29 @@ struct Print: std::stringstream{
         std::cerr << str();
     }
 };
+bool assert_f(bool q,std::string f){
+	bool*a=&q;
+	if (not q){
+		Print()<<"\x1b[91massertion failed: \x1b[0m"<<f<<std::endl;
+		while (a){
+			q=*++a;
+		}
+	}
+	return q;
+}
 
-<<<<<<< HEAD
+#if __cplusplus < 202000L
+#error "need c++20"
+#endif
+
+
 struct MakeZero{
     template<typename T>
-    operator T(){
+    operator T&&(){
         union {
             char data[sizeof(T)];
             T value;
-        } result;
+        } result = {0};
         memset(result.data, 0, sizeof(result.data));
         std::construct_at(&result.value);
         return result.value;
@@ -85,9 +79,6 @@ struct MakeZero{
 
 #define ZERO (MakeZero())
 
-=======
->>>>>>> c11568c79907e61dc94b0b8178f89a748affb548
->>>>>>> 341e3548aba84842628daa3f9a35f7d31074862b
 inline constexpr std::size_t hardware_destructive_interference_size = 128;
 
 using std::operator""s;
@@ -112,16 +103,11 @@ namespace thread_safe_time{
 };
 
 consteval auto thread_counts_vector(){
-<<<<<<< HEAD
-    std::vector<size_t> thread_counts(16);
-    for (size_t i = 0; i < thread_counts.size() ; ++i){
-        thread_counts[i] = i + 1;
-=======
     std::vector<size_t> thread_counts(1);
     for (size_t i = 0; i < thread_counts.size() ; ++i){
         // thread_counts[i] = i + 1;
         thread_counts[i] = 64;
->>>>>>> c11568c79907e61dc94b0b8178f89a748affb548
+        // thread_counts[i] = ;
     }
     std::sort(thread_counts.begin(), thread_counts.end());
     return thread_counts;
@@ -144,12 +130,7 @@ struct record_type{
     thread_safe_time::clock_t max_wait_time;
 };
 
-<<<<<<< HEAD
-static thread_local size_t thread_index = 0;
-using hazard_pointer_array = std::array<std::atomic<void*>,1>;
-=======
 static thread_local size_t thread_index = 0LLU-2;
->>>>>>> c11568c79907e61dc94b0b8178f89a748affb548
 
 template<typename T, bool check=true>
 struct CAS{
@@ -309,11 +290,6 @@ decltype(auto) tuple_for(auto&& tuple, auto&& f){
 
 template<typename T>
 struct mutex_stack{
-<<<<<<< HEAD
-    std::function<hazard_pointer_array&(size_t)> get_hazard_pointers;
-    size_t thread_count = 0;
-=======
->>>>>>> c11568c79907e61dc94b0b8178f89a748affb548
     std::mutex m;
     std::vector<T> data;
     void put(T item){
@@ -332,16 +308,6 @@ struct mutex_stack{
 };
 
 std::atomic<size_t> allocated_nodes = 0;
-<<<<<<< HEAD
-std::unique_ptr<char,
-    decltype([](auto&&...){assert(allocated_nodes == 0);})
-> check_allocated_nodes;
-
-template<typename T_>
-struct lock_free_stack{
-    std::function<hazard_pointer_array&(size_t)> get_hazard_pointers;
-    size_t thread_count = 0;
-=======
 auto check_allocated_nodes = std::unique_ptr<char,
     decltype([](auto&&...){
         assert(allocated_nodes == 0);
@@ -361,19 +327,19 @@ uintptr_t pack_ptr(void* ptr, uint16_t data){
 }
 
 template<typename T>
-std::pair<T*, uint16_t> unpack_ptr(uintptr_t data){
+std::pair<T, uint16_t> unpack_ptr(uintptr_t data){
     static_assert(sizeof(void*) == 8);
     static_assert(sizeof(uintptr_t) == 8);
     static_assert(CHAR_BIT == 8);
     uintptr_t udata = data & 0xffff'0000'0000'0000;
     udata >>= 16 * 3;
     data = data & 0x0000'ffff'ffff'ffff;
-    T* ptr = (T*)data;
+    T ptr = (T)data;
     return {ptr, udata};
 }
 
-template<std::memory_order put_to_head_order, std::memory_order put_to_prev_order, Backoff back_off, typename Node>
-void put_to_stack(Node* item, std::atomic<Node*>& place){
+template<std::memory_order put_to_head_order, std::memory_order put_to_prev_order, Backoff back_off, typename Node, typename ct=nullptr_t>
+void put_to_stack(Node* item, std::atomic<Node*>& place, ct&& callback = nullptr){
     auto prev_item = place.load(std::memory_order::relaxed);
     back_off b;
     while (true){
@@ -389,7 +355,13 @@ void put_to_stack(Node* item, std::atomic<Node*>& place){
         }else{
             prev_item = cas;
         }
-        b.yield();
+        if constexpr(not std::is_same_v<ct, nullptr_t>){
+            if (callback()){
+                return;
+            }
+        }else{
+            b.yield();
+        }
     }
 }
 
@@ -496,11 +468,23 @@ namespace hazard_pointers{
     }
 };
 
-template<Backoff back_off, typename T_, bool check = false>
+
+
+struct stack_test_event{
+    size_t data;
+    thread_safe_time::time_point_t start_time;
+    thread_safe_time::time_point_t stop_time;
+    struct types{enum type{put, get};};
+    types::type type;
+};
+
+template<Backoff back_off, typename T_, bool eliminate, bool check = true>
 struct lock_free_stack{
->>>>>>> c11568c79907e61dc94b0b8178f89a748affb548
     using T = size_t;
-    std::array<std::atomic<uintptr_t>, 16> elimination = ZERO;
+    std::array<std::atomic<uintptr_t>, 16> elimination;
+    lock_free_stack(){
+        memset(&elimination, 0, sizeof(elimination));
+    }
     struct task{
         std::optional<T> value;
         std::atomic<bool> is_done = false;
@@ -509,44 +493,6 @@ struct lock_free_stack{
     struct Node{
         T data;
         std::atomic<Node*> prev = nullptr;
-<<<<<<< HEAD
-        Node(auto&&data):data(data){
-            allocated_nodes.fetch_add(1, std::memory_order::seq_cst);
-        }
-        ~Node(){
-            allocated_nodes.fetch_sub(1, std::memory_order::seq_cst);
-        }
-    };
-    std::atomic<Node*> head = nullptr;
-    void put_to_stack(Node* item, std::atomic<Node*>& place){
-        auto prev_item = place.load(std::memory_order::seq_cst);
-        while (true){
-            item->prev.store(prev_item, std::memory_order::seq_cst);
-            CAS cas(place);
-            cas.if_equals_to = prev_item;
-            cas.then_assign = item;
-            cas.may_fail = true;
-            cas.success = std::memory_order::seq_cst;
-            cas.failure = std::memory_order::seq_cst;
-            if (cas()){
-                break;
-            }else{
-                prev_item = cas;
-            }
-        }
-    }
-    void put(T data){
-        auto item = new Node(std::move(data));
-        put_to_stack(item, head);
-    }
-    std::optional<T> get(){
-        auto& hazard_pointers = get_hazard_pointers(thread_index);
-        auto item = head.load(std::memory_order::seq_cst);
-        while (item){
-            while (1){
-                hazard_pointers[0].store(item, std::memory_order::seq_cst);
-                auto actual_item = head.load(std::memory_order::seq_cst);
-=======
         Node(auto&&...args):data(FORWARD(args)...){
             prev = nullptr;
             if constexpr(check){
@@ -563,11 +509,17 @@ struct lock_free_stack{
     thread_local static std::mt19937 rand;
     void put(T data){
         auto item = hazard_pointers::allocate_and_construct<Node>(std::move(data));
+        auto& elim = elimination[rand() % elimination.size()];
+        task t;
+        t.value = item->data;
+        back_off b;
         put_to_stack<
             std::memory_order::relaxed,
             std::memory_order::release,
             back_off
-        >(item, head);
+        >(item, head, [&](){
+            return elim_backoff<stack_test_event::types::put>(elim, t, b);
+        });
     }
     std::optional<T> get(){
         auto& hazard_pointer = hazard_pointers::hazard_pointer_owner::get();
@@ -575,12 +527,10 @@ struct lock_free_stack{
         back_off b;
         auto& elim = elimination[rand() % elimination.size()];
         task t;
-        std::tie(elim, t, b) elim_backoff_arg;
         while (item){
             while (1){
                 hazard_pointer.store(item, std::memory_order::relaxed);
                 auto actual_item = head.load(std::memory_order::relaxed);
->>>>>>> c11568c79907e61dc94b0b8178f89a748affb548
                 if (actual_item == item){
                     break;
                 }else{
@@ -592,81 +542,37 @@ struct lock_free_stack{
             }
             CAS cas(head);
             cas.if_equals_to = item;
-<<<<<<< HEAD
-            cas.then_assign = item->prev;
-            cas.may_fail = true;
-            cas.success = std::memory_order::seq_cst;
-            cas.failure = std::memory_order::seq_cst;
-=======
             cas.then_assign = item->prev.load(std::memory_order::acquire);
             cas.may_fail = true;
             cas.success = std::memory_order::relaxed;
             cas.failure = std::memory_order::relaxed;
->>>>>>> c11568c79907e61dc94b0b8178f89a748affb548
             if (cas()){
                 break;
             }else{
                 item = cas;
             }
-<<<<<<< HEAD
-            elim_backoff<stack_test_event::types::get>(&elim_backoff_arg);
-            if (t.value.has_value()){
+            if (elim_backoff<stack_test_event::types::get>(elim, t, b)){
                 break;
             }
-=======
-<<<<<<< HEAD
-        }
-        hazard_pointers[0].store(nullptr, std::memory_order::seq_cst);
-        std::optional<T> result;
-        if (item){
-            result = std::move(item->data);
-            delete_later(item);
-        }
-        return result;
-    }
-    std::atomic<Node*> to_delete = nullptr;
-    void delete_later(Node* item){
-        put_to_stack(item, to_delete);
-        item = to_delete.exchange(nullptr);
-        while (item){
-            auto prev_item = item->prev.load(std::memory_order::seq_cst);
-            if (is_present_among_hazard_pointers(item)){
-                put_to_stack(item, to_delete);
-            }else{
-                // delete item;
-            }
-            item = prev_item;
-        }
-    }
-    bool is_present_among_hazard_pointers(Node* item){
-        for (size_t i = 0; i < thread_count; ++i){
-            auto& hazard_pointers = get_hazard_pointers(i);
-            for (auto& hazard_pointer: hazard_pointers){
-                if (hazard_pointer.load(std::memory_order::seq_cst) == item){
-                    return true;
-                }
-            }
-        }
-        return false;
-=======
-            b.yield();
->>>>>>> 341e3548aba84842628daa3f9a35f7d31074862b
         }
         hazard_pointer.store(nullptr, std::memory_order::relaxed);
-        if (item and not result.has_value()){
-            result = std::move(item->data);
+        if (item and not t.value.has_value()){
+            t.value = std::move(item->data);
             hazard_pointers::async_delete<back_off>(item);
         }
-        return result;
+        return t.value;
     }
     template<stack_test_event::types::type type>
-    void elim_backoff(std::tuple<std::atomic<uintptr_t>&, task& , back_off&>* arg){
-        auto& elim = std::get<0>(*arg);
-        auto& t = std::get<1>(*arg);
-        auto& b = std::get<2>(*arg);
+    bool elim_backoff(std::atomic<uintptr_t>&elim, task&t , back_off&b){
+        if constexpr(not eliminate){
+            b.yield();
+            return false;
+        }
+        // Print() << thread_index << " eliming task " << &t << std::endl;
         CAS elim_cas(elim);
+        auto elim_first_task = pack_ptr(&t, type);
         elim_cas.if_equals_to = 0;
-        elim_cas.then_assign = pack_ptr(&t, stack_test_event::types::get);
+        elim_cas.then_assign = elim_first_task;
         elim_cas.may_fail = false;
         elim_cas.success = std::memory_order::seq_cst;
         elim_cas.failure = std::memory_order::seq_cst;
@@ -674,6 +580,7 @@ struct lock_free_stack{
             auto elim_task = elim_cas;
             auto [elim_ptr, elim_type] = unpack_ptr<elim_ptr_t>(elim_task);
             if (elim_type != type){
+                // Print() << thread_index << " eliming task " << &t << " failed, but i can help with " << elim_ptr << std::endl;
                 elim_cas.reset();
                 elim_cas.if_equals_to = elim_task;
                 elim_cas.then_assign = 0;
@@ -681,41 +588,48 @@ struct lock_free_stack{
                 elim_cas.success = std::memory_order::seq_cst;
                 elim_cas.failure = std::memory_order::seq_cst;
                 if (elim_cas()){
+                    // Print() << thread_index << " eliming task " << &t << " failed, but stole task " << elim_ptr << std::endl;
                     if constexpr(type == stack_test_event::types::get){
                         t.value = std::move(elim_ptr->value);
                     }else{
                         elim_ptr->value = std::move(t.value);
                     }
-                    t.is_done.store(std::memory_order::seq_cst);
-                    elim_ptr->is_done.store(std::memory_order::seq_cst);
-                    return;
+                    t.is_done.store(true, std::memory_order::seq_cst);
+                    elim_ptr->is_done.store(true, std::memory_order::seq_cst);
+                    // Print() << thread_index << " eliming task " << &t << " failed, but made task " << elim_ptr << std::endl;
+                    return true;
                 }else{
+                    // Print() << thread_index << " eliming task " << &t << " failed, but someone else helps " << elim_ptr << std::endl;
                     b.yield();
-                    return;
+                    return false;
                 }
             }else{
+                // Print() << thread_index << " eliming task " << &t << " failed. extining." << std::endl;
                 b.yield();
-                return;
+                return false;
             }
         }else{
+            // Print() << thread_index << " eliming task " << &t << " succed, waiting..." << std::endl;
             b.yield();
-            auto elim_task = elim_cas;
             elim_cas.reset();
-            elim_cas.if_equals_to = elim_task;
+            elim_cas.if_equals_to = elim_first_task;
             elim_cas.then_assign = 0;
             elim_cas.may_fail = false;
             elim_cas.success = std::memory_order::seq_cst;
             elim_cas.failure = std::memory_order::seq_cst;
             if (elim_cas()){
-                return;
+                // Print() << thread_index << " eliming task " << &t << " succed, no one helped me" << std::endl;
+                return false;
             }else{
+                // Print() << thread_index << " eliming task " << &t << " succed, someone helped me, waiting..." << std::endl;
                 while (not t.is_done.load(std::memory_order::seq_cst)){
                     b.yield();
                 }
-                return;
+                // Print() << thread_index << " eliming task " << &t << " succed, someone helped me, done" << std::endl;
+                return true;
             }
         }
-        return;
+        assert(false);
     }
     ~lock_free_stack(){
         while(1){
@@ -725,19 +639,10 @@ struct lock_free_stack{
             }
         }
         hazard_pointers::flush<back_off>();
->>>>>>> c11568c79907e61dc94b0b8178f89a748affb548
     }
 };
-template<Backoff back_off, typename T_, bool check>
-thread_local static std::mt19937 lock_free_stack<back_off, T_, check>::rand = std::mt19937(std::random_device()());
-
-struct stack_test_event{
-    size_t data;
-    thread_safe_time::time_point_t start_time;
-    thread_safe_time::time_point_t stop_time;
-    struct types{enum type{put, get};};
-    types::type type;
-};
+template<Backoff back_off, typename T_, bool eliminate, bool check>
+thread_local std::mt19937 lock_free_stack<back_off, T_, eliminate, check>::rand = std::mt19937(std::random_device()());
 
 auto before_order(const stack_test_event& left, const stack_test_event& right){
     if (left.start_time > right.stop_time){
@@ -749,34 +654,6 @@ auto before_order(const stack_test_event& left, const stack_test_event& right){
     return 0<=>0;
 }
 
-<<<<<<< HEAD
-struct more_puts{
-    std::mt19937 mt = std::mt19937(std::random_device()());
-    std::uniform_int_distribution<size_t> ud = std::uniform_int_distribution<size_t>(0, 9);
-    bool operator()(){
-        return ud(mt) < 2;
-    }
-};
-
-struct uniform{
-    std::mt19937 mt = std::mt19937(std::random_device()());
-    std::uniform_int_distribution<size_t> ud = std::uniform_int_distribution<size_t>(0, 9);
-    bool operator()(){
-        return ud(mt) < 5;
-    }
-};
-
-struct fill_and_uniform{
-    std::mt19937 mt = std::mt19937(std::random_device()());
-    std::uniform_int_distribution<size_t> ud = std::uniform_int_distribution<size_t>(0, 9);
-    size_t to_fill = 9;
-    bool operator()(){
-        if (--to_fill){
-            return false;
-        }else{
-            return ud(mt) < 5;
-        }
-=======
 template<size_t fill, size_t puts, size_t gets>
 struct fill_then_random_puts_and_gets{
     std::mt19937 mt = std::mt19937(std::random_device()());
@@ -787,7 +664,6 @@ struct fill_then_random_puts_and_gets{
             return false;
         }
         return ud(mt) <= gets;
->>>>>>> c11568c79907e61dc94b0b8178f89a748affb548
     }
 };
 
@@ -798,21 +674,12 @@ struct stack_test{
         std::thread thread;
         std::vector<stack_test_event> events;
         should_get rand;
-<<<<<<< HEAD
-        hazard_pointer_array hazard_pointers;
-=======
->>>>>>> c11568c79907e61dc94b0b8178f89a748affb548
     };
     std::vector<stack_test_event> events;
     stack_ stack;
     stack_test(size_t thread_count):thread_count(thread_count){
         std::vector<stack_test_thread> threads(thread_count);
         auto rand_dev = std::random_device();
-<<<<<<< HEAD
-        stack.get_hazard_pointers = std::function<hazard_pointer_array&(size_t)>([&](size_t i)->hazard_pointer_array&{return threads[i].hazard_pointers;});
-        stack.thread_count = thread_count;
-=======
->>>>>>> c11568c79907e61dc94b0b8178f89a748affb548
         for (stack_test::stack_test_thread& thread: threads){
             thread.thread = std::thread([&](){thread_index = &thread - &threads[0] ; worker(thread_index, thread);});
         }
@@ -822,11 +689,7 @@ struct stack_test{
         for (stack_test::stack_test_thread& thread: threads){
             std::copy(thread.events.begin(), thread.events.end(), std::back_inserter(events));
         }
-<<<<<<< HEAD
-        sort(events.begin(), events.end(), [](auto&&left, auto&&right){
-=======
         auto order = [](auto&&left, auto&&right){
->>>>>>> c11568c79907e61dc94b0b8178f89a748affb548
             if (left.type != right.type){
                 return left.type < right.type;
             }
@@ -837,24 +700,11 @@ struct stack_test{
                 return left.data > right.data;
             }
             assert(false);
-<<<<<<< HEAD
-        });
-        // for (auto& event: events){
-            // std::cerr << event.type << " " << event.data << " " << event.start_time.time_since_epoch() << " " << event.stop_time.time_since_epoch() << std::endl;
-        // }
-        for (size_t i = 0; i < events.size() ; ++i){
-            for (size_t j = 0; j < events.size() ; ++j){
-                if (i < j and events[i].data == events[j].data){
-                    assert(events[i].type = stack_test_event::types::put);
-                    assert(events[j].type = stack_test_event::types::get);
-                    assert(before_order(events[i], events[j]) <= 0);
-                }
-            }
-        }
-        assert(not stack.get().has_value());
-=======
         };
         sort(events.begin(), events.end(), order);
+        // for(auto&event: events){
+        //     Print() << event.type << " " << event.data << std::endl;
+        // }
         assert(not stack.get().has_value());
         for (size_t i = 0; i < events.size() ; ++i){
             auto tmp = events[i];
@@ -868,20 +718,15 @@ struct stack_test{
             assert(e - b == 1);
             auto j = b;
             if (tmp.type == stack_test_event::types::get){
-                assert(events[i].type = stack_test_event::types::put);
-                assert(events[j].type = stack_test_event::types::get);
+                assert(events[i].type == stack_test_event::types::put);
+                assert(events[j].type == stack_test_event::types::get);
                 assert(before_order(events[i], events[j]) <= 0);
             }else{
-                assert(events[i].type = stack_test_event::types::get);
-                assert(events[j].type = stack_test_event::types::put);
+                assert(events[i].type == stack_test_event::types::get);
+                assert(events[j].type == stack_test_event::types::put);
                 assert(before_order(events[i], events[j]) >= 0);
             }
         }
-<<<<<<< HEAD
-=======
-        // Print() << "start checking..." << std::endl;
->>>>>>> c11568c79907e61dc94b0b8178f89a748affb548
->>>>>>> 341e3548aba84842628daa3f9a35f7d31074862b
     }
     void worker(size_t start, stack_test_thread& thread){
         auto& rand = thread.rand;
@@ -904,10 +749,6 @@ struct stack_test{
                 stack.put(value.value());
                 stop_time = thread_safe_time::clock();
             }
-<<<<<<< HEAD
-            // std::cerr << value.has_value() << std::endl;
-=======
->>>>>>> c11568c79907e61dc94b0b8178f89a748affb548
             if (value.has_value()){
                 thread.events.push_back(stack_test_event{
                     .data = value.value(),
@@ -980,11 +821,8 @@ struct stack_test{
     }
 };
 
-<<<<<<< HEAD
-template<typename should_get, typename stack, typename time = std::ratio<1, 4'00>>
-=======
+// template<typename should_get, typename stack, typename time = std::ratio<1, 4'000'000>>
 template<typename should_get, typename stack, typename time = std::ratio<1, 4'0>>
->>>>>>> c11568c79907e61dc94b0b8178f89a748affb548
 void run_test_for_lock(std::function<void(record_type)> on_result){
     for (auto thread_count: thread_counts){
         stack_test<stack, time, should_get> t(thread_count);
@@ -1001,17 +839,8 @@ struct run_test_case{
     using should_get = should_get_;
     #define add_test(...) {function(run_test_for_lock<should_get, __VA_ARGS__>), #__VA_ARGS__}
     std::vector<std::pair<function, std::string>> tests = {
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-        add_test(mutex_stack<size_t>),
-        add_test(lock_free_stack<size_t>),
-=======
-        // add_test(mutex_stack<size_t>),
->>>>>>> 341e3548aba84842628daa3f9a35f7d31074862b
-        add_test(lock_free_stack<Emp, size_t>),
-        add_test(lock_free_stack<Yield, size_t>),
->>>>>>> c11568c79907e61dc94b0b8178f89a748affb548
+        add_test(lock_free_stack<Emp, size_t, false>),
+        add_test(lock_free_stack<Yield, size_t, false>),
     };
     size_t tests_count(){
         return tests.size();
@@ -1020,14 +849,9 @@ struct run_test_case{
 
 int main(){
     auto pre_tests = std::tuple<void*
-<<<<<<< HEAD
-        , run_test_case<more_puts>*
-        , run_test_case<uniform>*
-=======
         , run_test_case<fill_then_random_puts_and_gets<1024, 1, 1>>*
         , run_test_case<fill_then_random_puts_and_gets<1024, 4, 1>>*
         , run_test_case<fill_then_random_puts_and_gets<1024, 1, 4>>*
->>>>>>> c11568c79907e61dc94b0b8178f89a748affb548
     >();
     auto tests = std::apply([&](auto&&, auto&&...args){
         return std::tuple<std::decay_t<decltype(*args)>...>();
@@ -1071,7 +895,7 @@ int main(){
                         std::clog << "-";
                     }
                 }
-                std::cerr << " " << pos << "/" << total_iterations << "\r";
+                Print() << " " << pos << "/" << total_iterations << "\r";
             });
             std::cout << "plt_avg["<<i<<"].plot([";
             for (auto& record: output){
@@ -1096,7 +920,7 @@ int main(){
         std::cout << "plt_avg["<<i<<"].legend(loc='upper left')" << std::endl;
         std::cout << "plt_max["<<i<<"].legend(loc='upper left')" << std::endl;
     });
-    std::cerr << std::endl;
+    Print() << std::endl;
     std::cout << "plt.show()\n" << std::endl;
     return 0;    
 }
@@ -1105,11 +929,7 @@ struct plot{
     constexpr static inline size_t max_plot_colors = 10;
 
     constexpr static inline size_t tests_on_same_plot = [](){
-<<<<<<< HEAD
-        run_test_case<more_puts, void (*)(std::function<void (record_type)>) > a;
-=======
         run_test_case<fill_then_random_puts_and_gets<0, 0, 0>, void (*)(std::function<void (record_type)>) > a;
->>>>>>> c11568c79907e61dc94b0b8178f89a748affb548
         return a.tests.size();
     }();
 
