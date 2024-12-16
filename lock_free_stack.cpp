@@ -108,7 +108,7 @@ consteval auto thread_counts_vector(){
     for (size_t i = 0; i < thread_counts.size() ; ++i){
         // thread_counts[i] = i + 1;
         // thread_counts[i] = 64;
-        thread_counts[i] = 4;
+        // thread_counts[i] = 4;
     }
     std::sort(thread_counts.begin(), thread_counts.end());
     return thread_counts;
