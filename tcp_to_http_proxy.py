@@ -68,6 +68,7 @@ async def main():
     parser.add_argument('--connect', type=forwarding_parser.ColonSeparatedSocketSequence(1))
     parser.add_argument('--sleep', type=float, default=0)
     parser.add_argument('--hex', choices=['encode', 'decode', 'none'], default='none')
+    parser.add_argument('--print', action='store true')
     global args
     args = parser.parse_args()
 
