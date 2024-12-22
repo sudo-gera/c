@@ -104,10 +104,11 @@ namespace thread_safe_time{
 };
 
 consteval auto thread_counts_vector(){
-    std::vector<size_t> thread_counts(1);
+    std::vector<size_t> thread_counts(64);
     for (size_t i = 0; i < thread_counts.size() ; ++i){
-        // thread_counts[i] = i + 1;
+        thread_counts[i] = i + 1;
         // thread_counts[i] = 64;
+        // thread_counts[i] = 16;
         // thread_counts[i] = 4;
     }
     std::sort(thread_counts.begin(), thread_counts.end());
@@ -133,7 +134,7 @@ struct record_type{
 
 static thread_local size_t thread_index = 0LLU-2;
 
-template<typename T, bool check=true>
+template<typename T, bool check = true>
 struct CAS{
     std::atomic<T>& a;
     CAS(std::atomic<T>& a):a(a){}
@@ -255,12 +256,20 @@ struct Sleep{
 
 template <typename T>
 std::string strtype() {
+    std::string a=__PRETTY_FUNCTION__;
     #ifdef __clang__
-        std::string a=__PRETTY_FUNCTION__;
         assert(a.size() >= 28);
         return std::string(a.begin()+27,a.end()-1);
     #else
-	    return std::string("(unknown type)");
+        assert(a.size() >= 32);
+        a = std::string(a.begin() + 32, a.end());
+        for (size_t i = 0; i < a.size(); ++i){
+            if (a[i] == ';'){
+                a = std::string(a.begin(), a.begin() + i);
+                return a;
+            }
+        }
+        assert(false);
     #endif
 }
 
@@ -339,7 +348,7 @@ std::pair<T, uint16_t> unpack_ptr(uintptr_t data){
     return {ptr, udata};
 }
 
-template<std::memory_order put_to_head_order, std::memory_order put_to_prev_order, Backoff back_off, typename Node, typename ct=nullptr_t>
+template<std::memory_order put_to_head_order, std::memory_order put_to_prev_order, Backoff back_off, typename Node, typename ct=std::nullptr_t>
 void put_to_stack(Node* item, std::atomic<Node*>& place, ct&& callback = nullptr){
     auto prev_item = place.load(std::memory_order::relaxed);
     back_off b;
@@ -382,7 +391,7 @@ namespace hazard_pointers{
                 cas.if_equals_to = 0LLU-1;
                 cas.then_assign = thread_index;
                 cas.may_fail = false;
-                cas.success = std::memory_order::relaxed;
+                cas.success = std::memory_order::acquire;
                 cas.failure = std::memory_order::relaxed;
                 if (cas()){
                     owned_ptr = &ptr;
@@ -393,7 +402,7 @@ namespace hazard_pointers{
         }
         ~hazard_pointer_owner(){
             owned_ptr->data.store(nullptr, std::memory_order::relaxed);
-            owned_ptr->owner.store(0LLU-1, std::memory_order::relaxed);
+            owned_ptr->owner.store(0LLU-1, std::memory_order::release);
         }
         static std::atomic<void*>& get(){
             static thread_local hazard_pointer_owner owner;
@@ -420,7 +429,7 @@ namespace hazard_pointers{
     std::atomic<size_t> scheduled_to_delete_count = 0;
     bool is_present_among_hazard_pointers(void* item){
         for (auto& hazard_pointer: hazard_pointers){
-            if (hazard_pointer.data.load(std::memory_order::relaxed) == item){
+            if (hazard_pointer.data.load(std::memory_order::acquire) == item){
                 return true;
             }
         }
@@ -430,11 +439,11 @@ namespace hazard_pointers{
     void flush(){
         auto item = scheduled_deletions.exchange(nullptr);
         while (item){
-            auto prev_item = item->prev.load(std::memory_order::relaxed);
+            auto prev_item = item->prev.load(std::memory_order::acquire);
             if (is_present_among_hazard_pointers(item->data)){
                 put_to_stack<
                     std::memory_order::relaxed,
-                    std::memory_order::relaxed,
+                    std::memory_order::release,
                     back_off
                 >(item, scheduled_deletions);
             }else{
@@ -533,7 +542,7 @@ struct lock_free_stack{
         task t;
         while (item){
             while (1){
-                hazard_pointer.store(item, std::memory_order::relaxed);
+                hazard_pointer.store(item, std::memory_order::release);
                 auto actual_item = head.load(std::memory_order::relaxed);
                 if (actual_item == item){
                     break;
@@ -548,7 +557,7 @@ struct lock_free_stack{
             cas.if_equals_to = item;
             cas.then_assign = item->prev.load(std::memory_order::acquire);
             cas.may_fail = true;
-            cas.success = std::memory_order::relaxed;
+            cas.success = std::memory_order::acquire;
             cas.failure = std::memory_order::relaxed;
             if (cas()){
                 break;
@@ -559,7 +568,7 @@ struct lock_free_stack{
                 break;
             }
         }
-        hazard_pointer.store(nullptr, std::memory_order::relaxed);
+        hazard_pointer.store(nullptr, std::memory_order::release);
         if (item and not t.value.has_value()){
             t.value = std::move(item->data);
             t.item = item;
@@ -581,8 +590,8 @@ struct lock_free_stack{
         elim_cas.if_equals_to = 0;
         elim_cas.then_assign = elim_first_task;
         elim_cas.may_fail = false;
-        elim_cas.success = std::memory_order::seq_cst;
-        elim_cas.failure = std::memory_order::seq_cst;
+        elim_cas.success = std::memory_order::release;
+        elim_cas.failure = std::memory_order::relaxed;
         if (not elim_cas()){
             auto elim_task = elim_cas;
             auto [elim_ptr, elim_type] = unpack_ptr<elim_ptr_t>(elim_task);
@@ -848,8 +857,14 @@ struct run_test_case{
     using should_get = should_get_;
     #define add_test(...) {function(run_test_for_lock<should_get, __VA_ARGS__>), #__VA_ARGS__}
     std::vector<std::pair<function, std::string>> tests = {
+        add_test(lock_free_stack<Emp, size_t, true>),
         add_test(lock_free_stack<Emp, size_t, false>),
+        add_test(lock_free_stack<Yield, size_t, true>),
         add_test(lock_free_stack<Yield, size_t, false>),
+        add_test(lock_free_stack<LinYield, size_t, true>),
+        add_test(lock_free_stack<LinYield, size_t, false>),
+        add_test(lock_free_stack<ExpYield, size_t, true>),
+        add_test(lock_free_stack<ExpYield, size_t, false>),
     };
     size_t tests_count(){
         return tests.size();

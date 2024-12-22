@@ -13,10 +13,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-<<<<<<< HEAD
 #include <mutex>
-=======
->>>>>>> c11568c79907e61dc94b0b8178f89a748affb548
 #include <assert.h>
 #include <errno.h>
 #include <sys/stat.h>
@@ -132,7 +129,7 @@ struct lock_test{
                 break;
             }
         }
-        auto program_stop = thread_safe_time::clock();
+        // auto program_stop = thread_safe_time::clock();
         // std::cerr << (program_stop - program_start) << std::endl;
         // std::cerr << thread_safe_time::clock_from_diff(program_stop - program_start) << std::endl;
         // std::cerr << local_waits.size() << std::endl;
@@ -379,7 +376,7 @@ struct TicketWaitLock{
     std::atomic<size_t> first_unused_ticket;
     std::atomic<size_t> owner_ticket;
     void lock(){
-        backoff b;
+        // backoff b;
         auto my_ticket = first_unused_ticket.fetch_add(1, std::memory_order::relaxed);
         size_t owner_ticket_value = 0;
         while (((owner_ticket_value = owner_ticket.load(std::memory_order::relaxed)) != my_ticket))[[likely]]{
@@ -543,7 +540,7 @@ struct ArrayWaitLock{
     std::atomic<size_t> item_to_get = 0;
     queue_item* owner = nullptr;
     void lock(){
-        backoff b;
+        // backoff b;
         queue_item* item = nullptr;
         while (true){
             item = items.data() + item_to_get.fetch_add(1, std::memory_order::relaxed) % items.size();
@@ -660,12 +657,20 @@ struct SetCriticalSection{
 
 template <typename T>
 std::string strtype() {
+    std::string a=__PRETTY_FUNCTION__;
     #ifdef __clang__
-        std::string a=__PRETTY_FUNCTION__;
         assert(a.size() >= 28);
         return std::string(a.begin()+27,a.end()-1);
     #else
-	    return std::string("(unknown type)");
+        assert(a.size() >= 32);
+        a = std::string(a.begin() + 32, a.end());
+        for (size_t i = 0; i < a.size(); ++i){
+            if (a[i] == ';'){
+                a = std::string(a.begin(), a.begin() + i);
+                return a;
+            }
+        }
+        assert(false);
     #endif
 }
 
@@ -716,7 +721,7 @@ struct run_test_case{
 };
 
 
-struct plot{
+namespace plot{
     constexpr static inline size_t max_plot_colors = 10;
 
     constexpr static inline size_t tests_on_same_plot = [](){
@@ -775,7 +780,7 @@ int main(){
         // , run_test_case<FlushCriticalSection>*
         // , run_test_case<SetCriticalSection>*
     >();
-    auto tests = std::apply([&](auto&&arg, auto&&...args){
+    auto tests = std::apply([&](auto&&, auto&&...args){
         return std::tuple<std::decay_t<decltype(*args)>...>();
     }, pre_tests);
     auto& tests_ = tests;
