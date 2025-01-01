@@ -23,9 +23,17 @@ namespace type_to_name_impl{
 template<typename T>
 const char* type_to_name = type_to_name_impl::result<T>.data();
 
+template<typename T>
+const char* strtype = type_to_name<T>;
+
+template<typename T>
+const char* name_of_type = type_to_name<T>;
+
+#if __INCLUDE_LEVEL__ == 0
 int main(){
     printf("%s\n",type_to_name<void>);
     printf("%s\n",type_to_name<int>);
     printf("%s\n",type_to_name<char>);
     printf("%s\n",type_to_name<std::tuple<int>>);
 }
+#endif

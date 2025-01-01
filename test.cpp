@@ -1,38 +1,33 @@
-auto flag(int);     // E1
+#include <tuple>
+#include <type_traits>
+#include <cassert>
 
+#include "strtype.cpp"
 
-template<bool B> requires (!B)
-struct setter {
-    friend auto flag(int) {}        // E2
-
-    static constexpr bool b = B;
-};
-
-
-// E3
-template<bool FlagVal>
-[[nodiscard]]
-consteval auto nonconstant_constant_impl() {
-    if constexpr (FlagVal) {
-        return true;
-    }
-    else {
-        // E3.1
-        setter<FlagVal> s;
-        return s.b;
+constexpr auto f(){
+    if consteval{
+        return 2;
+    }else{
+        return 3;
     }
 }
 
+constexpr auto get_f(){
+    auto t = f;
+    return t;
+}
 
-// E4
-template<
-    auto Arg = 0,
-    bool FlagVal = requires { flag(Arg); },             // E4.1
-    auto Val = nonconstant_constant_impl<FlagVal>()     // E4.2
->
-constexpr auto nonconstant_constant = Val;
+constexpr auto r = get_f();
+static_assert(r() == 2);
 
-constexpr bool a = nonconstant_constant<>;      // First evaluation in this translation unit
-constexpr bool b = nonconstant_constant<>;
-// This assertion passes.
-static_assert(a != b);
+
+int main(){
+    const auto t = get_f();
+    assert(t() == 3);
+    assert(r() == 3);
+    
+    printf("%s\n", name_of_type<decltype(t)>);
+    printf("%s\n", name_of_type<decltype(r)>);
+    printf("%p\n", (void*)t);
+    printf("%p\n", (void*)r);
+}
