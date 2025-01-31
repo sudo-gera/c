@@ -31,7 +31,6 @@ async def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument('--listen', type=forwarding_parser.ColonSeparatedSocketSequence(1), required=True)
     parser.add_argument('--connect', type=forwarding_parser.ColonSeparatedSocketSequence(1))
-    parser.add_argument('--connections', type=int, default=1)
     global args
     args = parser.parse_args()
 
