@@ -13,6 +13,7 @@ import time
 import bisect
 import collections
 import timeout
+import traceback
 from collections import deque
 
 logger = logging.getLogger(__name__)
@@ -45,7 +46,7 @@ args = argparse.Namespace()
 
 con_id_len = 8
 
-wait_interval = 30 * 10**9
+wait_interval = 60 * 10**9
 
 def get_part(data: bytes) -> str:
     try:
@@ -93,7 +94,7 @@ class OuterConnection:
             self.inner_send_reached_EOF = False
             self.chunks : collections.deque[tuple[int, bytes]] = collections.deque()
             self.retry = Retry(wait_interval, self.con_id)
-            self.sock = stream.Stream(await asyncio.open_connection(*args.connect[0])) if sock is None else sock
+            self.sock = stream.Stream(await asyncio.open_connection(*args.connect[0][0])) if sock is None else sock
             self.read_task = asyncio.create_task(self.main_loop())
         self.gateway : tuple[InnerStream, asyncio.Queue[None]] | None
         if hasattr(self, 'gateway') and self.gateway is not None:
@@ -276,9 +277,15 @@ async def server_connection(sock_: stream.Stream) -> None:
     await gateway_queue.get()
 
 
-async def one_client_connection(con_id: bytes, outer_connection: OuterConnection, on_done: list[None]) -> None:
+async def one_client_connection(con_id: bytes, outer_connection: OuterConnection, on_done: list[None], connect: list[tuple[str, int]]) -> None:
     logger.debug(f'{con_id.hex()!r} opening internal connection...')
-    async with stream.Stream(timeout.run_with_timeout(asyncio.open_connection(*args.connect[0]), 2)) as sock_:
+    try:
+        con_pair = await timeout.run_with_timeout(asyncio.open_connection(*connect[0]), 2)
+    except Exception as e:
+        logger.debug(f'inner client failed {connect[0] = } {type(e) = } {e = }')
+        return
+    logger.debug(f'{con_id.hex()!r} created internal socket for {connect[0] = }')
+    async with stream.Stream(con_pair) as sock_:
         sock = InnerStream(sock_)
         0;                                          logger.debug(f'{con_id.hex()!r} internal connection made, sending hello')
         try:
@@ -286,7 +293,8 @@ async def one_client_connection(con_id: bytes, outer_connection: OuterConnection
             assert b'hello' == await sock.recv_msg(timeout_=2)
             0;                                          logger.debug(f'{con_id.hex()!r} hello recved.')
         except Exception as e:
-            logger.debug(f'outer client failed {type(e) = } {e = }')
+            logger.debug(f'inner client failed {connect[0] = } {type(e) = } {e = }')
+            return
 
         if on_done:
             0;                                          logger.debug(f'{con_id.hex()!r} another client connected.')
@@ -312,19 +320,21 @@ async def client_connection(r: asyncio.StreamReader, w: asyncio.StreamWriter) ->
     retry = Retry(wait_interval, con_id)
     while 1:
         try:
-            con_count = 4
+            con_count = 1
             await asyncio.gather(
                 *map(
                     one_client_connection,
                     [con_id]*con_count,
                     [outer_connection]*con_count,
                     [[]]*con_count,
+                    [random.choice(args.connect) for i in range(con_count)],
                 )
             )
             retry.success()
         except Exception as e:
             outer_connection.gateway = None
             logger.debug(f'{con_id.hex()!r} Inner socket is closed, retrying: {type(e) = }, {e = }')
+            # print(traceback.format_exc())
             if retry.fail():
                 logger.debug(f'{con_id.hex()!r} Too may attempts to reopen inner socket.')
                 return
@@ -356,9 +366,10 @@ async def main() -> None:
     global args
     parser = argparse.ArgumentParser()
     parser.add_argument('--listen', type=forwarding_parser.ColonSeparatedSocketSequence(1), required=True)
-    parser.add_argument('--connect', type=forwarding_parser.ColonSeparatedSocketSequence(1), required=True)
+    parser.add_argument('--connect', type=forwarding_parser.ColonSeparatedSocketSequence(1), required=True, nargs='*')
     parser.add_argument('--is-server', action='store_true')
     args = parser.parse_args()
+    print(args)
     asyncio.create_task(log())
     async with await asyncio.start_server(server_connection if args.is_server else client_connection, *args.listen[0]) as server:
         await server.serve_forever()
