@@ -33,7 +33,7 @@
 int unused=0;
 
 int check(const char*place){
-    // fprintf(stderr,"--> %s\n",place);
+    fprintf(stderr,"--> %s\n",place);
     if (errno){
         perror(place);//
         errno=0;//

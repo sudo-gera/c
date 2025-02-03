@@ -37,5 +37,8 @@ def receive_key_event():
 
 
 while True:
-    sys.stdout.buffer.write(receive_key_event())
+    if len(sys.argv) > 1:
+        sys.stdout.buffer.write(receive_key_event_unsafe())
+    else:
+        sys.stdout.buffer.write(receive_key_event())
     sys.stdout.flush()
