@@ -290,7 +290,7 @@ async def one_client_connection(con_id: bytes, outer_connection: OuterConnection
         0;                                          logger.debug(f'{con_id.hex()!r} internal connection made, sending hello')
         try:
             await sock.send_msg(b'hello')
-            assert b'hello' == await sock.recv_msg(timeout_=2)
+            assert b'hello' == await sock.recv_msg(timeout_=0.4)
             0;                                          logger.debug(f'{con_id.hex()!r} hello recved.')
         except Exception as e:
             logger.debug(f'inner client failed {connect[0] = } {type(e) = } {e = }')
