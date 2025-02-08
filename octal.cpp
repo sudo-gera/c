@@ -1190,30 +1190,18 @@ bn* bn_pow(bn*q , int w) {
 
 #include <stdio.h>
 
-int main(int argc, char**argv){
-    long double d;
-    scanf("%Lf", &d);
-
-	char data[1024];
-	scanf("%s", data);
+int main(){
+	char s[1024];
+	FILE* f = fopen("input.txt", "r");
+	fscanf(f, "%s", s);
+	fclose(f);
 	bn* a = bn_new();
-	bn_init_string_radix(a, data, 16);
-    char* res = bn_to_string(a, 10);
-
-    long long int aa;
-    sscanf(res, "%lld", &aa);
-    free(res);
-	d += aa;
-
-	bn_init_string_radix(a, argv[1], 27);
-    res = bn_to_string(a, 10);
-
-    sscanf(res, "%lld", &aa);
-    free(res);
-    d += aa;
-
-    printf("%Lf", d);
+	bn_init_string_radix(a, s, 10);
+	char* data = bn_to_string(a, 8);
+	f = fopen("output.txt", "w");
+	fprintf(f, "%s\n", data);
+	fclose(f);
+	free(data);
 	bn_delete(a);
-
 }
 
