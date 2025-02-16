@@ -135,10 +135,28 @@ constexpr auto append = [] { return State; };           // E10.1
 
 template<typename T, typename=decltype(append<std::decay_t<T>>())>
 auto to_any(T&& value){
+    // std::cout << strtype<T> << std::endl;
+    // std::cout << strtype<decltype(get_list<>())> << std::endl;
     return std::any(FORWARD(value));
 }
 
-void visit(std::any& a, auto&& f);
+auto _debug_0 = append<void>();
+auto _debug_1 = append<std::any>();
+auto _debug_2 = append<decltype(_debug_0)>();
+auto _debug_3 = append<decltype(_debug_1)>();
+
+void visit(auto&& f, std::any& a);
+
+template<typename T>
+struct deref_ptr_impl;
+
+template<typename T>
+struct deref_ptr_impl<T*>{
+    using type = T;
+};
+
+template<typename T>
+using deref_ptr = typename deref_ptr_impl<T>::type;
 
 template<typename...Ts, size_t...is>
 void visit_impl(std::any& a, auto&& f, type_list<Ts...>, std::index_sequence<is...> = std::make_index_sequence<0>()){
@@ -157,31 +175,108 @@ void visit_impl(std::any& a, auto&& f, type_list<Ts...>, std::index_sequence<is.
                 return 0;
             }
             if (auto val = std::any_cast<std::tuple_element_t<is, t>>(&a)){
-                std::invoke(FORWARD(f), *val);
-                done = true;
+                if constexpr (requires(decltype(f) f, decltype(*val) val){FORWARD(f)(FORWARD(val));}){
+                    FORWARD(f)(FORWARD(*val));
+                    done = true;
+                }else{
+                    std::string error_message;
+                    error_message += "Cannot apply '";
+                    error_message += strtype<decltype(f)>;
+                    error_message += "' to '";
+                    error_message += strtype<deref_ptr<decltype(val)>>;
+                    error_message += "'.";
+                    throw std::runtime_error{error_message};
+                }
             }
             return 0;
         }()...
     };
+    if (not done){
+        std::string error_message;
+        error_message += "visit failed: type $(c++filt -t '";
+        error_message += a.type().name();
+        error_message += "') not found in list '";
+        error_message += strtype<t>;
+        error_message += "'.";
+        throw std::runtime_error{error_message};
+    }
 }
+
+struct any{
+    std::any value;
+    any() = default;
+    template<typename T>
+    any(T&& val){
+        value = to_any(FORWARD(val));
+    }
+    template<typename T>
+    auto& operator=(T&&val){
+        value = to_any(FORWARD(val));
+        return *this;
+    }
+    operator std::any(){
+        return value;
+    }
+    operator std::any&(){
+        return value;
+    }
+    operator std::any&&(){
+        return std::move(value);
+    }
+};
+
+#define END_OF_CODE                               \
+void visit(auto&& f, std::any& a){                \
+    visit_impl(a, FORWARD(f), get_list<>());      \
+}                                                 \
+
+#define ONE_LINE_LAMBDA(...) ->decltype(auto)requires(requires{__VA_ARGS__;}){return __VA_ARGS__;}
+
+#define AS_LAMBDA(...) [&](auto&&...args)ONE_LINE_LAMBDA((__VA_ARGS__)(FORWARD(args)...))
+
+#define VISIT(f, a) (visit(AS_LAMBDA((f)), (a)))
+
+#define REF_PARTIAL(f, ...) ([&](auto&&...args)ONE_LINE_LAMBDA(f(__VA_ARGS__ __VA_OPT__(,) FORWARD((args))...)))
+
+any nv_visit(auto&& f, any& arg){
+    any res_;
+    visit([&](auto&& val)requires(requires{f(FORWARD(val));}){res_ = to_any(f(FORWARD(val)));}, FORWARD(arg));
+    return res_;
+}
+
+#define NV_VISIT(f, a) (nv_visit([&](auto&& val)ONE_LINE_LAMBDA(f(FORWARD(val))), (a)))
+
+#if defined(__INCLUDE_LEVEL__) and __INCLUDE_LEVEL__ == 0
+
+auto print = [](auto&& val)requires(
+    requires{
+        std::cout << FORWARD(val) << std::endl;
+    }
+){
+    std::cout << FORWARD(val) << std::endl;
+};
 
 int main(){
-    std::any a;
-    a = to_any(0);
-    visit(a, [](auto& v){std::cout<<v<<std::endl;});
+    any a;
+    a = 0;
+    visit(print, a);
     auto tmp="1";
-    a = to_any(tmp);
-    visit(a, [](auto& v){std::cout<<v<<std::endl;});
-    a = to_any("2");
-    visit(a, [](auto& v){std::cout<<v<<std::endl;});
+    a = tmp;
+    visit(print, a);
+    a = "2";
+    visit(print, a);
     std::string f="3";
     const auto& g=f;
-    a = to_any(g);
-    visit(a, [](auto& v){std::cout<<v<<std::endl;});
+    a = g;
+    visit(print, a);
+    a = print;
+    try{
+        visit(print, a);
+    }catch(std::exception& e){
+        std::cout << e.what() << std::endl;
+    }
 }
 
-static_assert(std::same_as<get_list<>, type_list< int, const char*, const char*, std::string >>);
+END_OF_CODE
 
-void visit(std::any& a, auto&& f){
-    visit_impl(a, FORWARD(f), get_list<>());
-}
+#endif
