@@ -45,7 +45,6 @@ async def main() -> None:
     global args
     parser = argparse.ArgumentParser()
     parser.add_argument('--listen', type=forwarding_parser.ColonSeparatedSocketSequence(1), required=True)
-    parser.add_argument('--connect', type=forwarding_parser.ColonSeparatedSocketSequence(1), required=True, nargs='*')
     parser.add_argument('--interface', type=str, required=True)
     args = parser.parse_args()
     async with await asyncio.start_server(connection, *args.listen[0]) as server:
