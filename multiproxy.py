@@ -113,6 +113,7 @@ import collections
 import timeout
 import traceback
 import pickle
+import operator
 from collections import deque
 
 args = argparse.Namespace()
@@ -121,21 +122,30 @@ logging.basicConfig(level=logging.DEBUG, format='%(levelname)8s %(asctime)s %(cr
 
 inside_q : asyncio.Queue[message] = asyncio.Queue(maxsize=0)
 
+class sleeper:
+    def __init__(self):
+        self.q : asyncio.Queue[None] = asyncio.Queue()
+    def __call__(self):
+        if self.q.empty():
+            self.q.put_nowait(None)
+    def __await__(self):
+        self.q = asyncio.Queue()
+        return self.q.get().__await__()
+
 class worker:
     def __init__(self):
-        self.wait_for_being_enabled : asyncio.Queue[None] = asyncio.Queue()
-        self.wait_for_being_disabled : asyncio.Queue[None] = asyncio.Queue()
+        self.wake_main = sleeper()
+        self.wake_disabler = sleeper()
         self.enabled = False
     async def accept(self, sock: stream.Stream):
-        self.wait_for_being_enabled.put_nowait(None)
+        self.wake_main()
         await self.step(sock)
     async def main(self):
         while 1:
-            await self.wait_for_being_enabled.get()
+            await self.wake_main
             try:
                 async with stream.Stream(asyncio.open_connection(*random.choice(args.connect)[0])) as sock:
                     await self.step(sock)
-                self.wait_for_being_enabled = asyncio.Queue()
             except Exception as e:
                 logger.debug(f'Worker failed: {type(e) = }, {e = }')
     async def step(self, sock):
@@ -161,15 +171,14 @@ class worker:
             data = msg.to_bytes()
             sock.send_msg(data)
     async def disable_waiter(self):
-        await self.wait_for_being_disabled.get()
+        await self.wake_disabler
         raise TabError('disabled.')
     def __await__(self):
         return self.main().__await__()
     def enable(self):
-        if self.wait_for_being_enabled.empty():
-            self.wait_for_being_enabled.put_nowait(None)
+        self.wake_main()
     async def disable(self):
-        self.wait_for_being_disabled.put_nowait(None)
+        self.wake_disabler()
         while self.enabled:
             await asyncio.sleep(0.01)
 
@@ -204,28 +213,109 @@ class connection:
         if con_id not in connections:
             connections[con_id] = connection(con_id)
         return connections[con_id]
-    def __init__(self, con_id: bytes, con: stream.Stream | None = None):
-        self.con = con
+    class inside:
+        def __init__(self, con: connection):
+            self.con = con
+            self.sock = con.sock
+            self.con_id = con.con_id
+            self.outer_recv_count = 0
+            self.tasks : list[tuple[float, message]] = []
+            self.wake_executor = sleeper()
+            self.wake_recver = sleeper()
+        
+        def put_task(self, at: float, msg: message):
+            self.tasks.append((at, msg))
+            self.wake_executor()
+        
+        async def main(self):
+            asyncio.gather(
+                self.inner_sender(),
+                self.outer_recver(),
+            )
+
+        async def inner_sender(self):
+            while 1:
+                self.tasks.sort(key=operator.getitem(0))
+                while self.tasks and self.tasks[0][0] < time.time():
+                    msg = self.tasks[0][1]
+                    await inside_q.put(msg)
+                    self.tasks[0] = time.monotonic() + args.resend_delay
+                    self.tasks.sort(key=operator.getitem(0))
+                await self.wake_executor
+        
+        async def outer_recver(self):
+            while 1:
+                while len(self.tasks) < args.max_buffer:
+                    data = self.sock.safe_read(2**16)
+                    msg = message(data=data, msg_id=self.outer_recv_count, con_id=self.con_id)
+                    self.put_task(time.monotonic(), msg)
+                await self.wake_recver
+        
+        async def on_msg(self, msg: message):
+            self.tasks = [t for t in self.tasks if t[1].msg_id != msg.msg_id]
+            self.wake_recver()
+
+        def __await__(self):
+            return self.main().__await__()
+
+    class outside:
+        def __init__(self, con: connection):
+            self.con = con
+            self.con_id = con.con_id
+            self.sock = con.sock
+            self.sent_outside_count = 0
+            self.chunks : dict[int, message] = {}
+            self.should_reply : list[int] = []
+            self.wake_sender = sleeper()
+            self.wake_replyer = sleeper()
+        async def on_msg(self, msg: message):
+            if msg.msg_id >= self.sent_outside_count:
+                self.chunks[msg.msg_id] = msg
+                self.wake_sender()
+            self.should_reply = [msg_id for msg_id in self.should_reply if msg_id != msg.msg_id] + [msg.msg_id]
+            self.wake_replyer()
+        async def outer_sender(self):
+            while 1:
+                while self.sent_outside_count in self.chunks:
+                    msg = self.chunks.pop(self.sent_outside_count)
+                    self.sock.safe_write(msg.data)
+                    self.sent_outside_count += 1
+                await self.wake_sender
+        async def inner_replyer(self):
+            while 1:
+                while self.should_reply:
+                    msg_id = self.should_reply[0]
+                    await inside_q.put(message(msg_id=msg_id))
+                    self.should_reply[:1] = []
+                await self.wake_replyer
+        async def main(self):
+            await asyncio.gather(
+                self.inner_replyer(),
+                self.outer_sender()
+            )
+
+    def __init__(self, con_id: bytes, sock: stream.Stream | None = None):
+        self.sock = sock
         self.con_id = con_id
-        self.outer_recv_count = 0
-        self.recved_messages_to_send : list[message] = []
+        self.inside_worker = self.inside(self)
+        self.outside_worker = self.outside(self)
     async def main(self):
         if self.con is None:
             assert False
             # self.con =
         assert self.con is not None
         await asyncio.gather(
-            self.reader_loop,
-            # self.writer_loop,
-        ) 
-    async def reader_loop(self):
-        assert isinstance(self.con, stream.Stream)
-        data = self.con.safe_read(2**16)
-        msg = message(data=data, msg_id=self.outer_recv_count, con_id=self.con_id)
-        self.outer_recv_count += 1
-
+            self.inside_sender_.main()
+            self.outside_sender_.main()
+        )
     def __await__(self):
         return self.main().__await__()
+
+    async def on_msg(self, msg: message):
+        if msg.data is None:
+            await self.outside_worker.on_msg(msg)
+        else:
+            await self.inside_worker.on_msg(msg)
 
 connections : dict[bytes, connection] = {}
 
@@ -242,7 +332,7 @@ async def inner_callback(inner_sock: stream.Stream):
 
 @stream.streamify
 async def outer_callback(outer_sock: stream.Stream):
-    con_id = random.randbytes(8)
+    con_id = random.randint(0, 2**64-1)
     con = connection(con_id, outer_sock)
     await con
 
@@ -255,6 +345,8 @@ async def main() -> None:
     parser.add_argument('--workers', type=int)
     parser.add_argument('--min-workers', type=int)
     parser.add_argument('--reload-period', type=int)
+    parser.add_argument('--resend-delay', type=float)
+    parser.add_argument('--max-chunks', type=int)
     args = parser.parse_args()
     is_server = not hasattr(args, 'workers')
     if not is_server:
