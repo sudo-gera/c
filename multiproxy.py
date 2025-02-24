@@ -208,7 +208,8 @@ class connection:
         self.con = con
         self.con_id = con_id
         self.outer_recv_count = 0
-    async def loop(self):
+        self.recved_messages_to_send : list[message] = []
+    async def main(self):
         if self.con is None:
             assert False
             # self.con =
@@ -220,7 +221,11 @@ class connection:
     async def reader_loop(self):
         assert isinstance(self.con, stream.Stream)
         data = self.con.safe_read(2**16)
-        message()
+        msg = message(data=data, msg_id=self.outer_recv_count, con_id=self.con_id)
+        self.outer_recv_count += 1
+
+    def __await__(self):
+        return self.main().__await__()
 
 connections : dict[bytes, connection] = {}
 
