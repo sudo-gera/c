@@ -17,29 +17,33 @@
 
 #define FORWARD(val) (std::forward<decltype(val)>(val))
 
-#define ONE_LINE_LAMBDA(...) ->decltype(auto)requires(requires{__VA_ARGS__;}){return __VA_ARGS__;}
-
-#define AS_LAMBDA(...) [&](auto&&...args)ONE_LINE_LAMBDA((__VA_ARGS__)(FORWARD(args)...))
-
-#define VISIT(f, a) (visit(AS_LAMBDA((f)), (a)))
-
-#define REF_PARTIAL(f, ...) ([&](auto&&...args)ONE_LINE_LAMBDA(f(__VA_ARGS__ __VA_OPT__(,) FORWARD((args))...)))
-
+std::unordered_map<
+    std::type_index,
+    const char*
+> type_names;
 
 struct var{
 private:
     template<typename T, typename=decltype(append<std::decay_t<T>>())>
-    auto append(){}
+    auto append(){
+        type_names[typeid(std::decay_t<T>)] = strtype<std::decay_t<T>>;
+    }
 public:
+    const char* type_name()const{
+        auto name_i = type_names.find(value.type());
+        if (name_i != type_names.end()){
+            return name_i->second;
+        }
+        return value.type().name();
+    }
     std::any value;
     var() = default;
+    // template<typename T>
+    // var(T&& val){
+    //     *this = FORWARD(val);
+    // }
     template<typename T>
-    var(T&& val):
-        value(FORWARD(val))
-    {
-        append<T>();
-    }
-    template<typename T>
+    requires(not std::is_same_v<std::decay_t<T>, var>)
     auto& operator=(T&&val){
         value = FORWARD(val);
         append<T>();
@@ -51,24 +55,6 @@ public:
     var& operator=(var&&) = default;
 };
 
-template<size_t b, size_t e>
-decltype(auto) make_const(size_t n, auto&&f){
-    static_assert(b < e);
-    assert(b <= n);
-    assert(n < e);
-    if constexpr(b + 1 == e){
-        assert(n == b);
-        return std::invoke(FORWARD(f), std::integral_constant<size_t, b>());
-    }else{
-        constexpr size_t c = (b+e)/2;
-        if (n < c){
-            return make_const<b, c>(n, FORWARD(f));
-        }else{
-            return make_const<c, e>(n, FORWARD(f));
-        }
-    }
-}
-
 namespace visit_implementation{
 
 
@@ -77,13 +63,46 @@ namespace visit_implementation{
         template<typename F, typename...A>
         static var work(F&&f, A&&...a){
             static_assert(sizeof...(a) == sizeof...(C));
-            (std::cout << ... << strtype<C>);
-            std::cout << std::endl;
-            (std::cout << ... << a.value.type().name()) << std::endl;
-            (std::cout << ... << std::any_cast<C*>(&a.value)) << std::endl;
-            return FORWARD(f)(
-                *std::any_cast<C*>(&a.value)...
-            );
+            if constexpr (requires(F&& f, C&...c){FORWARD(f)(FORWARD(c)...);}){
+                if constexpr (
+                    std::is_void_v<
+                        std::decay_t<
+                            decltype(
+                                FORWARD(f)(
+                                    *std::any_cast<C>(&a.value)...
+                                )
+                            )
+                        >
+                    >
+                ){
+                    FORWARD(f)(
+                        *std::any_cast<C>(&a.value)...
+                    );
+                    return {};
+                }else{
+                    return FORWARD(f)(
+                        *std::any_cast<C>(&a.value)...
+                    );
+                }
+            }else{
+                std::string message;
+                ([&](auto&s){
+                    message += s.type_name();
+                    message += "', '";
+                }(a),...);
+                if (not message.empty()){
+                    message.pop_back();
+                    message.pop_back();
+                    message.pop_back();
+                    message.pop_back();
+                }
+                message = 
+                    std::string() +
+                    "Cannot apply '" +
+                    strtype<F&&> +
+                    "' to argument list [" + message + "].";
+                throw std::runtime_error{message};
+            }
         }
     };
 
@@ -159,62 +178,75 @@ namespace visit_implementation{
                 sizeof...(args)
             >()
         );
-        var arg;
         using map_key = std::array<
             std::type_index,
             sizeof...(A)
         >;
-        return m[
+        auto&& func_i = m.find(
             map_key{
                 std::type_index(
                     args.value.type()
                 )...
             }
-        ](FORWARD(f), FORWARD(args)...);
+        );
+        if (func_i == m.end()){
+            size_t i = 0;
+            std::string message;
+            (void)([&](auto&& arg){
+                if (not arg.value.has_value()){
+                    message += std::to_string(i);
+                    message += ", ";
+                }
+                return ++i;
+            }(args)|...|0);
+            if (not message.empty()){
+                message.pop_back();
+                message.pop_back();
+                message = "Several arguments (" + message + ") have no value.";
+                throw std::runtime_error(message);
+            }
+            message = "";
+            (void)([&](auto&& arg){
+                message += arg.type_name();
+                message += "', '";
+                return 0;
+            }(args)|...|0);
+            if (not message.empty()){
+                message.pop_back();
+                message.pop_back();
+                message.pop_back();
+                message.pop_back();
+            }
+            message = "Cannot process types ['" + message + "'] with " + strtype<decltype(tl)> + ".";
+            throw std::runtime_error(message);
+        }
+        return func_i->second(FORWARD(f), FORWARD(args)...);
     }
 };
 
-var visit_i2(auto&&f, auto&&args, auto tl){
-    return visit_implementation::visit_impl(tl, FORWARD(f), FORWARD(args));
-}
-
-var visit_i1(auto&&...a);
-#define END_OF_CODE var visit_i1(auto&&...a){return visit_i2(FORWARD(a)..., get_list<>());}
-
-var visit(auto&&f, auto&&args){
-    return visit_i1(FORWARD(f), FORWARD(args));
-}
+var visit(auto&&f, auto&&...args);
+#define END_OF_CODE var visit(auto&&f, auto&&...args){return visit_implementation::visit_impl(get_list<>(), FORWARD(f), FORWARD(args)...);}
 
 #if defined(__INCLUDE_LEVEL__) and __INCLUDE_LEVEL__ == 0
 
 auto print = [](auto&&...a)
 requires(requires{((std::cout << a, 0) + ... + 0);})
 {
-    (std::cout << ... << a);
-    return 0;
+    (void)((std::cout << a << " ", 0)|...|0);
+    std::cout << std::endl;
 };
 
 int main(){
-    var a;
-    a = 0;
-    visit(print, a);
-    // auto tmp="1";
-    // a = tmp;
-    // // visit(print, a);
-    // a = "2";
-    // // visit(print, a);
-    // std::string f="3";
-    // const auto& g=f;
-    // a = g;
-    // visit(print, a);
-    // a = print;
-    // try{
-    //     visit(print, a);
-    // }catch(std::exception& e){
-    //     std::cout << e.what() << std::endl;
-    // }
+   var a;
+   a = std::vector<int>();
+   visit(print, a);
 }
 
 END_OF_CODE
+
+static_assert(std::is_same_v<
+    get_list<>,
+    type_list<>
+>);
 
 #endif
