@@ -17,43 +17,57 @@
 
 #define FORWARD(val) (std::forward<decltype(val)>(val))
 
-std::unordered_map<
-    std::type_index,
-    const char*
-> type_names;
+namespace var_implementation{
+    std::unordered_map<
+        std::type_index,
+        const char*
+    > type_names;
 
-struct var_impl{
-private:
     template<typename T, typename=decltype(append<std::decay_t<T>>())>
     auto append(){
         type_names[typeid(std::decay_t<T>)] = strtype<std::decay_t<T>>;
     }
-public:
-    const char* type_name()const{
-        auto name_i = type_names.find(value.type());
-        if (name_i != type_names.end()){
-            return name_i->second;
+
+    struct var{
+    public:
+        std::any value;
+        // template<typename T>
+        // var(T&& val){
+        //     append<T>();
+        //     *this = FORWARD(val);
+        // }
+        template<typename T>
+        requires(not std::is_same_v<std::decay_t<T>, var>)
+        auto& operator=(T&&val){
+            value = FORWARD(val);
+            append<T>();
+            return *this;
         }
-        return value.type().name();
-    }
-    std::any value;
-    var_impl() = default;
-    // template<typename T>
-    // var(T&& val){
-    //     *this = FORWARD(val);
-    // }
-    template<typename T>
-    requires(not std::is_same_v<std::decay_t<T>, var>)
-    auto& operator=(T&&val){
-        value = FORWARD(val);
-        append<T>();
-        return *this;
-    }
-    var(const var&) = default;
-    var(var&&) = default;
-    var& operator=(const var&) = default;
-    var& operator=(var&&) = default;
+        var() = default;
+        var(const var&) = default;
+        var(var&&) = default;
+        var& operator=(const var&) = default;
+        var& operator=(var&&) = default;
+        operator const std::any&(){
+            return value;
+        }
+        const std::any* operator->(){
+            return &value;
+        }
+        const char* type_name()const{
+            auto name_i = type_names.find(value.type());
+            if (name_i != type_names.end()){
+                return name_i->second;
+            }
+            return value.type().name();
+        }
+        const std::any& any(){
+            return value;
+        }
+    };
 };
+
+using var_implementation::var;
 
 namespace visit_implementation{
 
@@ -69,20 +83,22 @@ namespace visit_implementation{
                         std::decay_t<
                             decltype(
                                 FORWARD(f)(
-                                    *std::any_cast<C>(&a.value)...
+                                    *std::any_cast<C>(&a.any())...
                                 )
                             )
                         >
                     >
                 ){
                     FORWARD(f)(
-                        *std::any_cast<C>(&a.value)...
+                        *std::any_cast<C>(&a.any())...
                     );
                     return {};
                 }else{
-                    return FORWARD(f)(
-                        *std::any_cast<C>(&a.value)...
+                    var result;
+                    result = FORWARD(f)(
+                        *std::any_cast<C>(&a.any())...
                     );
+                    return result;
                 }
             }else{
                 std::string message;
@@ -185,7 +201,7 @@ namespace visit_implementation{
         auto&& func_i = m.find(
             map_key{
                 std::type_index(
-                    args.value.type()
+                    args->type()
                 )...
             }
         );
@@ -193,7 +209,7 @@ namespace visit_implementation{
             size_t i = 0;
             std::string message;
             (void)([&](auto&& arg){
-                if (not arg.value.has_value()){
+                if (not arg->has_value()){
                     message += std::to_string(i);
                     message += ", ";
                 }
@@ -224,8 +240,8 @@ namespace visit_implementation{
     }
 };
 
-var visit(auto&&f, auto&&...args);
-#define END_OF_CODE var visit(auto&&f, auto&&...args){return visit_implementation::visit_impl(get_list<>(), FORWARD(f), FORWARD(args)...);}
+var visit(auto&&...args);
+#define END_OF_CODE var visit(auto&&...args){return visit_implementation::visit_impl(get_list<>(), FORWARD(args)...);}
 
 #if defined(__INCLUDE_LEVEL__) and __INCLUDE_LEVEL__ == 0
 
@@ -236,17 +252,29 @@ requires(requires{((std::cout << a, 0) + ... + 0);})
     std::cout << std::endl;
 };
 
+auto add = [](auto&&left, auto&&right)
+requires(requires{FORWARD(left) + FORWARD(right);})
+{
+    return FORWARD(left) + FORWARD(right);
+};
+
+#include <thread>
+
 int main(){
-   var a;
-   a = std::vector<int>();
-   visit(print, a);
+    var a, s;
+    a = 7;
+    s = 8;
+    visit(print, visit(add, a, s));
+    a = std::string("7");
+    s = std::string("8");
+    visit(print, visit(add, a, s));
 }
 
 END_OF_CODE
 
-static_assert(std::is_same_v<
-    get_list<>,
-    type_list<>
->);
+// static_assert(std::is_same_v<
+//     get_list<>,
+//     type_list<>
+// >);
 
 #endif
