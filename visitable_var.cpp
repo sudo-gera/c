@@ -22,7 +22,7 @@ std::unordered_map<
     const char*
 > type_names;
 
-struct var{
+struct var_impl{
 private:
     template<typename T, typename=decltype(append<std::decay_t<T>>())>
     auto append(){
@@ -37,7 +37,7 @@ public:
         return value.type().name();
     }
     std::any value;
-    var() = default;
+    var_impl() = default;
     // template<typename T>
     // var(T&& val){
     //     *this = FORWARD(val);
