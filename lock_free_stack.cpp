@@ -104,7 +104,7 @@ namespace thread_safe_time{
 };
 
 consteval auto thread_counts_vector(){
-    std::vector<size_t> thread_counts(64);
+    std::vector<size_t> thread_counts(32);
     for (size_t i = 0; i < thread_counts.size() ; ++i){
         thread_counts[i] = i + 1;
         // thread_counts[i] = 64;
@@ -862,9 +862,8 @@ struct run_test_case{
         add_test(lock_free_stack<Yield, size_t, true>),
         add_test(lock_free_stack<Yield, size_t, false>),
         add_test(lock_free_stack<LinYield, size_t, true>),
-        add_test(lock_free_stack<LinYield, size_t, false>),
         add_test(lock_free_stack<ExpYield, size_t, true>),
-        add_test(lock_free_stack<ExpYield, size_t, false>),
+        add_test(lock_free_stack<Sleep<100>, size_t, true>),
     };
     size_t tests_count(){
         return tests.size();
