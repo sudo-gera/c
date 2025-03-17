@@ -785,8 +785,8 @@ void handle(int signal){
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main() {
-    sys.signal(SIGHUP, handle);
-    sys.signal(SIGINT, handle);
+    sys.signal(SIGHUP,  handle);
+    sys.signal(SIGINT,  handle);
     sys.signal(SIGTERM, handle);
 
     #ifdef use_kqueue
