@@ -17,6 +17,7 @@
 #include <cerrno>
 #include <cassert>
 #include <map>
+#include <set>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -251,6 +252,7 @@ struct sys_msg_printer : std::stringstream {
     add_syscall(signal)
     add_syscall(clock_gettime)
     add_syscall(pipe)
+    add_syscall(getsockopt)
 #ifdef use_kqueue
     add_syscall(kqueue)
     add_syscall(kevent)
@@ -306,14 +308,6 @@ auto operator-(timespec_pair left, timespec_pair right){
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool has_to_stop = false;
-
-template<typename T>
-concept selector =  requires(T selector){
-    static_cast < void(T::*const)(int,           Task) > ( &T::async_read  );
-    static_cast < void(T::*const)(int,           Task) > ( &T::async_write );
-    static_cast < void(T::*const)(timespec_pair, Task) > ( &T::async_wait  );
-    static_cast < void(T::*const)(                   ) > ( &T::loop        );
-};
 
 #ifdef use_kqueue
 
@@ -468,8 +462,6 @@ concept selector =  requires(T selector){
             std::cerr << "has to stop" << std::endl;
         }
     };
-
-    static_assert(selector<kqueue_selector>);
 #endif
 
 #ifdef use_epoll
@@ -524,6 +516,7 @@ concept selector =  requires(T selector){
             if (has_other){
                 new_event.events |= actions[not action_index];
             }
+            // new_event.events |= EPOLLRDHUP | EPOLLPRI | EPOLLERR | EPOLLHUP;
             std::cerr << "have 1 event to mod" << std::endl;
             std::cerr << "action_index = " << action_index << std::endl;
             std::cerr << "add = " << add << std::endl;
@@ -584,6 +577,7 @@ concept selector =  requires(T selector){
                     to_sleep /= timespec_base;
                     to_sleep += wake_at.first;
                     to_sleep *= 1000;
+                    to_sleep += 1;
                 }
 
                 if (to_sleep != timespec_base){
@@ -614,6 +608,7 @@ concept selector =  requires(T selector){
                     auto& event = events_to_process.first[i];
                     auto fd = event.data.fd;
                     auto events = event.events;
+                    std::cerr << "events bitmask = " << events << std::endl;
                     for (bool action_index: std::array<bool, 2>({0, 1})){
                         if (events & actions[action_index]){
                             std::cerr << "using fd=" << fd << ", action_index=" << action_index << std::endl;
@@ -650,9 +645,32 @@ concept selector =  requires(T selector){
             std::cerr << "has to stop" << std::endl;
         }
     };
-
-    static_assert(selector<epoll_selector>);
 #endif
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct selector{
+    #ifdef use_kqueue
+    kqueue_selector sel;
+    #endif
+
+    #ifdef use_epoll
+    epoll_selector sel;
+    #endif
+
+    void async_read(int s, Task t){
+        return sel.async_read(FORWARD(s), FORWARD(t));
+    }
+    void async_write(int s, Task t){
+        return sel.async_write(FORWARD(s), FORWARD(t));
+    }
+    void async_wait(timespec_pair s, Task t){
+        return sel.async_wait(FORWARD(s), FORWARD(t));
+    }
+    void loop(){
+        return sel.loop();
+    }
+};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -665,6 +683,8 @@ struct socket_closer{
     }
     ~socket_closer(){
         std::cerr << "stopped owning " << s << std::endl;
+        sys.ignore(ENOTCONN);
+        sys.shutdown(s, SHUT_RDWR);
         sys.close(s);
     }
 };
@@ -784,131 +804,357 @@ void handle(int signal){
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-int main() {
+void chunk_write(selector& sel, socket_ptr s, const void* data_, size_t size, Task callback){
+    auto data = (const char*)data_;
+    sel.async_write(s, [&sel, s, data, size, callback = std::move(callback), done_bytes = size_t(0)]()mutable{
+        done_bytes += sys.write(
+            s,
+            data + done_bytes,
+            size - done_bytes
+        );
+        if (done_bytes == size){
+            callback();
+        }else{
+            sel.async_write(s, std::move(*Task::current));
+        }
+    });
+}
+
+void chunk_read(selector& sel, socket_ptr s, void* data_, size_t size, Task callback){
+    auto data = (char*)data_;
+    sel.async_read(s, [&sel, s, data, size, callback = std::move(callback), done_bytes = size_t(0)]()mutable{
+        done_bytes += sys.read(
+            s,
+            data + done_bytes,
+            size - done_bytes
+        );
+        if (done_bytes == size){
+            callback();
+        }else{
+            sel.async_read(s, std::move(*Task::current));
+        }
+    });
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+double f(double x){
+    return x * 2 + 1;
+}
+
+const double smallest_point = 0;
+const double largest_point = 1;
+
+// const size_t points_per_task = 256;
+// const size_t tasks = 256;
+const size_t points_per_task = 2;
+const size_t tasks = 2;
+
+struct req{
+    size_t task_i;
+};
+
+struct res{
+    size_t task_i;
+    double sum;
+};
+
+struct connection_context{
+    req req;
+    res res;
+    bool has_result = false;
+};
+
+int main(int argc, char**argv) {
+    auto args = std::vector<std::string>(argv, argv+argc);
     sys.signal(SIGHUP,  handle);
     sys.signal(SIGINT,  handle);
     sys.signal(SIGTERM, handle);
 
-    #ifdef use_kqueue
-    kqueue_selector sel;
-    #endif
-
-    #ifdef use_epoll
-    epoll_selector sel;
-    #endif
+    selector sel;
 
     sel.async_read(signal_pipe[0], [&](){
         has_to_stop = true;
     });
 
-    start_server(sel, "0.0.0.0", 9999, [&](auto a, const char*addr, uint16_t port){
-        std::cerr << "connected " << addr << ":" << port << std::endl;
-        auto c = create_connecting_socket("127.0.0.1", 8888);
-        sel.async_write(c, [&sel, a, c]()mutable{
-            auto&& setup_mover = [&sel](socket_ptr r, socket_ptr w){
-                struct connection_ctx{
-                    socket_ptr r;
-                    socket_ptr w;
-                    std::array<char, 65536> data;
-                    size_t begin;
-                    size_t end;
-                    function<void()> reader;
-                    function<void()> writer;
-                    std::unique_ptr<connection_ctx>* reader_ctx;
-                    std::unique_ptr<connection_ctx>* writer_ctx;
-                    connection_ctx(const connection_ctx&) = delete;
-                    connection_ctx(connection_ctx&&) = delete;
-                    connection_ctx() = default;
-                    connection_ctx&operator=(const connection_ctx&) = delete;
-                    connection_ctx&operator=(connection_ctx&&) = delete;
-                };
-                auto ctx = std::make_unique<connection_ctx>();
-                std::memset(&ctx->data, 0, sizeof(ctx->data));
-                ctx->begin = 0;
-                ctx->end = 0;
-                ctx->r = r;
-                ctx->w = w;
-                ctx->reader = std::move([&sel, ctx_ = decltype(ctx)(), ctx_ptr = &ctx->reader_ctx]()mutable{
-                    *ctx_ptr = &ctx_;
-                    connection_ctx* ctx = ctx_.get();
-                    if (not ctx){
-                        std::cerr << "no ctx" << std::endl;
-                        return;
-                    }
-                    assert(ctx->writer);
-                    assert(not ctx->reader);
-                    ctx->reader = std::move(*Task::current);
-                    assert(ctx->begin == ctx->end);
-                    ctx->begin = 0;
-                    ctx->end = sys.read(ctx->r, ctx->data.data(), ctx->data.size());
-                    if (ctx->end == 0){
-                        sys.ignore(ENOTCONN);
-                        sys.shutdown(ctx->r, SHUT_RD);
-                        sys.ignore(ENOTCONN);
-                        sys.shutdown(ctx->w, SHUT_WR);
-                        std::cerr << "EOF " << ctx->r << std::endl;
-                        std::cerr << ctx->r << ".use_count = " << ctx->r.ptr.use_count() << std::endl;
-                        std::cerr << ctx->w << ".use_count = " << ctx->w.ptr.use_count() << std::endl;
-                        auto r = ctx->r;
-                        auto w = ctx->w;
-                        std::cerr << r << ".use_count = " << r.ptr.use_count() << std::endl;
-                        std::cerr << w << ".use_count = " << w.ptr.use_count() << std::endl;
-                        ctx_.reset();
-                        std::cerr << r << ".use_count = " << r.ptr.use_count() << std::endl;
-                        std::cerr << w << ".use_count = " << w.ptr.use_count() << std::endl;
-                        r.ptr.reset();
-                        w.ptr.reset();
-                        std::cerr << 0 << ".use_count = " << r.ptr.use_count() << std::endl;
-                        std::cerr << 0 << ".use_count = " << w.ptr.use_count() << std::endl;
-                        return;
-                    }
-                    assert(0 <= ctx->begin);
-                    assert(ctx->begin < ctx->end);
-                    assert(ctx->end <= ctx->data.size());
-                    *ctx->writer_ctx = std::move(ctx_);
-                    sel.async_write(ctx->w, std::move(ctx->writer));
-                });
-                ctx->reader();
-                ctx->writer = std::move([&sel, ctx_ = decltype(ctx)(), ctx_ptr = &ctx->writer_ctx]()mutable{
-                    *ctx_ptr = &ctx_;
-                    connection_ctx* ctx = ctx_.get();
-                    if (not ctx){
-                        std::cerr << "no ctx" << std::endl;
-                        return;
-                    }
-                    assert(ctx->reader);
-                    assert(not ctx->writer);
-                    ctx->writer = std::move(*Task::current);
-                    assert(0 <= ctx->begin);
-                    assert(ctx->begin < ctx->end);
-                    assert(ctx->end <= ctx->data.size());
-                    ctx->begin += sys.write(ctx->w, ctx->data.data() + ctx->begin, ctx->end - ctx->begin);
-                    assert(0 <= ctx->begin);
-                    assert(ctx->begin <= ctx->end);
-                    assert(ctx->end <= ctx->data.size());
-                    if (ctx->begin == ctx->end){
-                        *ctx->reader_ctx = std::move(ctx_);
-                        sel.async_read(ctx->r, std::move(ctx->reader));
-                    }else{
-                        sel.async_write(ctx->r, std::move(ctx->writer));
-                    }
-                });
-                ctx->writer();
-                assert(ctx->writer_ctx);
-                assert(ctx->reader_ctx);
-                auto ctx_ = ctx.get();
-                *ctx->reader_ctx = std::move(ctx);
-                sel.async_read(ctx_->r, std::move(ctx_->reader));
-            };
-            setup_mover(a,c);
-            setup_mover(c,a);
-        });
-    });
+    bool is_master = std::stol(args.at(1));
 
-    sel.async_wait({1, 0}, [&](){
-        std::cerr << "hello" << std::endl;
-        sel.async_wait({1, 0}, std::move(*Task::current));
-    });
+    if (is_master){
+        std::vector<double> results(tasks, 0);
+        std::set<size_t> uncomplete_tasks;
+        for (size_t i = 0; i < tasks; ++i){
+            uncomplete_tasks.insert(i);
+        }
+        struct host_ctx{
+            const char* addr;
+            uint16_t port;
+            size_t connections;
+        };
+        auto remote_hosts_begin = args.begin() + 2;
+        auto remote_hosts_end   = args.end();
+        sys.eassert((remote_hosts_end - remote_hosts_begin) % 2 == 0);
+        std::vector<host_ctx> hosts;
+        for (auto it = remote_hosts_begin; it != remote_hosts_end; ++it){
+            hosts.emplace_back(host_ctx{
+                .addr = it[0].data(),
+                .port = (uint16_t)std::stol(it[1]),
+                .connections = 0,
+            });
+        }
+        auto uncomplete_tasks_it = uncomplete_tasks.begin();
+
+        auto on_done = [&](){
+            double result = 0;
+            for (auto& res: results){
+                result += res;
+            }
+            result -= f(smallest_point) / 2;
+            result -= f(largest_point) / 2;
+            result *= 
+                (largest_point - smallest_point)
+                    /
+                (tasks * points_per_task);
+            std::cout << "\n\n\n\nresult = " << result << "\n\n\n\n" << std::endl;
+            std::exit(0);
+        };
+
+        sel.async_wait({0, 0}, [&](){
+            for (auto& host: hosts){
+                if (uncomplete_tasks.empty()){
+                    return;
+                }
+
+                auto c = create_connecting_socket(host.addr, host.port);
+                sel.async_write(c, [
+                    &sel,
+                    c,
+                    &host,
+                    connection_id = host.connections++,
+                    &results,
+                    &uncomplete_tasks,
+                    &uncomplete_tasks_it,
+                    state = 0,
+                    req = req(),
+                    res = res(),
+                    &on_done
+                ]()mutable{
+                    if (state == 2){
+                        results[res.task_i] = res.sum;
+                        if (uncomplete_tasks.count(res.task_i)){
+                            uncomplete_tasks.erase(res.task_i);
+                            if (uncomplete_tasks.empty()){
+                                on_done();
+                            }
+                        }
+                        state = 0;
+                        if (connection_id != host.connections){
+                            return;
+                        }
+                    }
+                    if (state == 0){
+                        if (uncomplete_tasks_it == uncomplete_tasks.end()){
+                            uncomplete_tasks_it = uncomplete_tasks.begin();
+                            if (uncomplete_tasks_it == uncomplete_tasks.end()){
+                                return;
+                            }
+                        }
+                        req = decltype(req){*++uncomplete_tasks_it};
+                        state = 1;
+                        chunk_write(sel, c, &req, sizeof(req), std::move(*Task::current));
+                        return;
+                    }
+                    if (state == 1){
+                        state = 2;
+                        chunk_read(sel, c, &res, sizeof(res), std::move(*Task::current));
+                        return;
+                    }
+                });
+            }
+            sel.async_wait({1, 0}, std::move(*Task::current));
+        });
+    }else{
+        start_server(sel, args.at(2).c_str(), std::stol(args.at(3)), [&](auto s, const char* addr, uint16_t port){
+            std::cerr << "connected from " << addr << ":" << port << std::endl;
+            std::unique_ptr<connection_context> ctx = std::make_unique<connection_context>();
+            chunk_read(sel, s, &ctx->req, sizeof(ctx->req), [&sel, ctx = std::move(ctx), s]()mutable{
+                if (ctx->has_result){
+                    ctx->has_result = false;
+                    chunk_read(sel, s, &ctx->req, sizeof(ctx->req), std::move(*Task::current));
+                }else{
+                    size_t task_i = ctx->req.task_i;
+                    size_t first_point_i = (task_i + 0) * points_per_task;
+                    size_t  last_point_i = (task_i + 1) * points_per_task;
+                    double result = 0;
+                    for (size_t point_i = first_point_i; point_i < last_point_i; ++point_i){
+                        double point = 
+                            (
+                                smallest_point * (tasks * points_per_task - point_i)
+                                    +
+                                largest_point * (point_i)
+                            ) / (
+                                tasks * points_per_task
+                            );
+                        result += f(point);
+                    }
+                    ctx->res.task_i = task_i;
+                    ctx->res.sum = result;
+                    ctx->has_result = true;
+                    chunk_write(sel, s, &ctx->res, sizeof(ctx->res), std::move(*Task::current));
+                }
+            });
+
+
+
+
+
+
+
+            // struct client_ctx{
+            //     std::pair<
+            //         std::array<char, 8>
+            //         size_t
+            //     > read_buf;
+            //     std::pair<
+            //         std::array<char, 8>
+            //         size_t
+            //     > write_buf;
+            // };
+            // auto ctx = std::make_shared<client_ctx>();
+            // sel.async_read(c, [&sel, ctx, c](){
+            //     //
+            //     sel.async_read(c, std::move(*Task::current));
+            // });
+            // sel.async_write(c, [&sel, ctx, c](){
+            //     //
+            //     sel.async_write(c, std::move(*Task::current));
+            // });
+        });
+    }
+
+
+
+
+
+
+    // auto c = create_connecting_socket("1.1.1.1", 53);
+    // sel.async_write(c, [&](){
+    //     int err = 0;
+    //     socklen_t err_len = sizeof(err);
+    //     sys.getsockopt(c, SOL_SOCKET, SO_ERROR, &err, &err_len);
+    //     assert(err_len == sizeof(err));
+    //     std::cerr << err << std::endl;
+    //     std::cerr << strerror(err) << std::endl;
+    // });
+
+
+    // start_server(sel, "0.0.0.0", 9999, [&](auto a, const char*addr, uint16_t port){
+    //     std::cerr << "connected " << addr << ":" << port << std::endl;
+    //     auto c = create_connecting_socket("127.0.0.1", 8888);
+    //     sel.async_write(c, [&sel, a, c]()mutable{
+    //         auto&& setup_mover = [&sel](socket_ptr r, socket_ptr w){
+    //             struct connection_ctx{
+    //                 socket_ptr r;
+    //                 socket_ptr w;
+    //                 std::array<char, 65536> data;
+    //                 size_t begin;
+    //                 size_t end;
+    //                 function<void()> reader;
+    //                 function<void()> writer;
+    //                 std::unique_ptr<connection_ctx>* reader_ctx;
+    //                 std::unique_ptr<connection_ctx>* writer_ctx;
+    //                 connection_ctx(const connection_ctx&) = delete;
+    //                 connection_ctx(connection_ctx&&) = delete;
+    //                 connection_ctx() = default;
+    //                 connection_ctx&operator=(const connection_ctx&) = delete;
+    //                 connection_ctx&operator=(connection_ctx&&) = delete;
+    //             };
+    //             auto ctx = std::make_unique<connection_ctx>();
+    //             std::memset(&ctx->data, 0, sizeof(ctx->data));
+    //             ctx->begin = 0;
+    //             ctx->end = 0;
+    //             ctx->r = r;
+    //             ctx->w = w;
+    //             ctx->reader = std::move([&sel, ctx_ = decltype(ctx)(), ctx_ptr = &ctx->reader_ctx]()mutable{
+    //                 *ctx_ptr = &ctx_;
+    //                 connection_ctx* ctx = ctx_.get();
+    //                 if (not ctx){
+    //                     std::cerr << "no ctx" << std::endl;
+    //                     return;
+    //                 }
+    //                 assert(ctx->writer);
+    //                 assert(not ctx->reader);
+    //                 ctx->reader = std::move(*Task::current);
+    //                 assert(ctx->begin == ctx->end);
+    //                 ctx->begin = 0;
+    //                 ctx->end = sys.read(ctx->r, ctx->data.data(), ctx->data.size());
+    //                 if (ctx->end == 0){
+    //                     sys.ignore(ENOTCONN);
+    //                     sys.shutdown(ctx->r, SHUT_RD);
+    //                     sys.ignore(ENOTCONN);
+    //                     sys.shutdown(ctx->w, SHUT_WR);
+    //                     std::cerr << "EOF " << ctx->r << std::endl;
+    //                     std::cerr << ctx->r << ".use_count = " << ctx->r.ptr.use_count() << std::endl;
+    //                     std::cerr << ctx->w << ".use_count = " << ctx->w.ptr.use_count() << std::endl;
+    //                     auto r = ctx->r;
+    //                     auto w = ctx->w;
+    //                     std::cerr << r << ".use_count = " << r.ptr.use_count() << std::endl;
+    //                     std::cerr << w << ".use_count = " << w.ptr.use_count() << std::endl;
+    //                     ctx_.reset();
+    //                     std::cerr << r << ".use_count = " << r.ptr.use_count() << std::endl;
+    //                     std::cerr << w << ".use_count = " << w.ptr.use_count() << std::endl;
+    //                     r.ptr.reset();
+    //                     w.ptr.reset();
+    //                     std::cerr << 0 << ".use_count = " << r.ptr.use_count() << std::endl;
+    //                     std::cerr << 0 << ".use_count = " << w.ptr.use_count() << std::endl;
+    //                     return;
+    //                 }
+    //                 assert(0 <= ctx->begin);
+    //                 assert(ctx->begin < ctx->end);
+    //                 assert(ctx->end <= ctx->data.size());
+    //                 *ctx->writer_ctx = std::move(ctx_);
+    //                 sel.async_write(ctx->w, std::move(ctx->writer));
+    //             });
+    //             ctx->reader();
+    //             ctx->writer = std::move([&sel, ctx_ = decltype(ctx)(), ctx_ptr = &ctx->writer_ctx]()mutable{
+    //                 *ctx_ptr = &ctx_;
+    //                 connection_ctx* ctx = ctx_.get();
+    //                 if (not ctx){
+    //                     std::cerr << "no ctx" << std::endl;
+    //                     return;
+    //                 }
+    //                 assert(ctx->reader);
+    //                 assert(not ctx->writer);
+    //                 ctx->writer = std::move(*Task::current);
+    //                 assert(0 <= ctx->begin);
+    //                 assert(ctx->begin < ctx->end);
+    //                 assert(ctx->end <= ctx->data.size());
+    //                 ctx->begin += sys.write(ctx->w, ctx->data.data() + ctx->begin, ctx->end - ctx->begin);
+    //                 assert(0 <= ctx->begin);
+    //                 assert(ctx->begin <= ctx->end);
+    //                 assert(ctx->end <= ctx->data.size());
+    //                 if (ctx->begin == ctx->end){
+    //                     *ctx->reader_ctx = std::move(ctx_);
+    //                     sel.async_read(ctx->r, std::move(ctx->reader));
+    //                 }else{
+    //                     sel.async_write(ctx->r, std::move(ctx->writer));
+    //                 }
+    //             });
+    //             ctx->writer();
+    //             assert(ctx->writer_ctx);
+    //             assert(ctx->reader_ctx);
+    //             auto ctx_ = ctx.get();
+    //             *ctx->reader_ctx = std::move(ctx);
+    //             sel.async_read(ctx_->r, std::move(ctx_->reader));
+    //         };
+    //         setup_mover(a,c);
+    //         setup_mover(c,a);
+    //     });
+    // });
+
+    // sel.async_wait({1, 0}, [&](){
+    //     std::cerr << "hello" << std::endl;
+    //     sel.async_wait({1, 0}, std::move(*Task::current));
+    // });
 
 
     sel.loop();
