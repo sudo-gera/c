@@ -192,6 +192,21 @@ struct repr_m<R(&)(A...)>{
 };
 
 template<typename T>
+requires(
+    std::is_same_v<
+        char,
+        std::decay_t<T>
+    >
+)
+struct repr_m<T*>{
+    static auto repr(auto&& val) {
+        std::stringstream a;
+        a << (void*)val;
+        return repr_s(a.str());
+    }
+};
+
+template<typename T>
 auto repr(T&& val){
     return repr_m<T>::repr(FORWARD(val));
 }
@@ -807,11 +822,16 @@ void handle(int signal){
 void chunk_write(selector& sel, socket_ptr s, const void* data_, size_t size, Task callback){
     auto data = (const char*)data_;
     sel.async_write(s, [&sel, s, data, size, callback = std::move(callback), done_bytes = size_t(0)]()mutable{
-        done_bytes += sys.write(
-            s,
-            data + done_bytes,
-            size - done_bytes
-        );
+        try{
+            done_bytes += sys.write(
+                s,
+                data + done_bytes,
+                size - done_bytes
+            );
+        }catch(...){
+            callback();
+            return;
+        }
         if (done_bytes == size){
             callback();
         }else{
@@ -823,11 +843,16 @@ void chunk_write(selector& sel, socket_ptr s, const void* data_, size_t size, Ta
 void chunk_read(selector& sel, socket_ptr s, void* data_, size_t size, Task callback){
     auto data = (char*)data_;
     sel.async_read(s, [&sel, s, data, size, callback = std::move(callback), done_bytes = size_t(0)]()mutable{
-        done_bytes += sys.read(
-            s,
-            data + done_bytes,
-            size - done_bytes
-        );
+        try{
+            done_bytes += sys.read(
+                s,
+                data + done_bytes,
+                size - done_bytes
+            );
+        }catch(...){
+            callback();
+            return;
+        }
         if (done_bytes == size){
             callback();
         }else{
@@ -870,6 +895,7 @@ int main(int argc, char**argv) {
     sys.signal(SIGHUP,  handle);
     sys.signal(SIGINT,  handle);
     sys.signal(SIGTERM, handle);
+    sys.signal(SIGPIPE, SIG_IGN);
 
     selector sel;
 
@@ -894,7 +920,7 @@ int main(int argc, char**argv) {
         auto remote_hosts_end   = args.end();
         sys.eassert((remote_hosts_end - remote_hosts_begin) % 2 == 0);
         std::vector<host_ctx> hosts;
-        for (auto it = remote_hosts_begin; it != remote_hosts_end; ++it){
+        for (auto it = remote_hosts_begin; it != remote_hosts_end; it+=2){
             hosts.emplace_back(host_ctx{
                 .addr = it[0].data(),
                 .port = (uint16_t)std::stol(it[1]),
@@ -972,6 +998,7 @@ int main(int argc, char**argv) {
             }
             sel.async_wait({1, 0}, std::move(*Task::current));
         });
+        sel.loop();
     }else{
         start_server(sel, args.at(2).c_str(), std::stol(args.at(3)), [&](auto s, const char* addr, uint16_t port){
             std::cerr << "connected from " << addr << ":" << port << std::endl;
@@ -1029,6 +1056,7 @@ int main(int argc, char**argv) {
             //     sel.async_write(c, std::move(*Task::current));
             // });
         });
+        sel.loop();
     }
 
 
@@ -1157,6 +1185,5 @@ int main(int argc, char**argv) {
     // });
 
 
-    sel.loop();
 
 }
