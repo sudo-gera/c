@@ -41,6 +41,33 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include <cstdio>
+#include <tuple>
+#include <array>
+
+namespace type_to_name_impl{
+
+    template<typename T>
+    consteval auto pret_func(){
+        return std::make_pair(sizeof(__PRETTY_FUNCTION__) - 5, __PRETTY_FUNCTION__);
+    }
+
+    template<typename T>
+    auto result = []()consteval{
+        std::array<char, pret_func<T>().first - pret_func<int>().first + 4> data;
+        const char* ptr = pret_func<T>().second + pret_func<int>().first;
+        for (size_t c = 0; c < data.size(); ++c){data[c] = ptr[c];}
+        data.back() = 0;
+        return data;
+    }();
+
+};
+
+template<typename T>
+const char* type_to_name = type_to_name_impl::result<T>.data();
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 template<typename T>
 struct function;
 
@@ -193,12 +220,20 @@ struct repr_m<R(&)(A...)>{
 
 template<typename T>
 requires(
+    requires(T&& val){
+        *val;
+    }
+    and
     std::is_same_v<
-        char,
-        std::decay_t<T>
+        std::decay_t<
+            decltype(
+                *std::declval<T>()
+            )
+        >,
+        char
     >
 )
-struct repr_m<T*>{
+struct repr_m<T>{
     static auto repr(auto&& val) {
         std::stringstream a;
         a << (void*)val;
@@ -208,7 +243,12 @@ struct repr_m<T*>{
 
 template<typename T>
 auto repr(T&& val){
-    return repr_m<T>::repr(FORWARD(val));
+    std::stringstream a;
+    a << type_to_name<decltype(val)>;
+    a << "(";
+    a << repr_m<T>::repr(FORWARD(val));
+    a << ")";
+    return a.str();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -230,14 +270,18 @@ struct sys_msg_printer : std::stringstream {
     auto name(auto&&... args) {                                          \
         errno = 0;                                                       \
         auto ret = ::name(FORWARD(args)...);                             \
-        int err = errno;                                             \
+        int err = errno;                                                 \
         if (err and not ignored.count(err)) {                            \
             std::cerr << "\n <<< ERROR >>>\n";                           \
             std::cerr << "    " #name " Failed\n";                       \
             std::cerr << "    code = " << err << "\n";                   \
             std::cerr << "    text = " << std::strerror(err) << "\n";    \
             std::cerr << "\n <<< ARGS >>> " << std::endl;                \
-            (void)((std::cerr << "    " << repr(args) << "\n"), ..., 0); \
+            (void)(                                                      \
+                (std::cerr << "    " << repr(FORWARD(args)) << "\n"),    \
+                ...,                                                     \
+                0                                                        \
+            );                                                           \
             if (str().size()) {                                          \
                 std::cerr << "\n <<< MESSAGE >>> " << std::endl;         \
                 std::cerr << str() << std::endl;                         \
@@ -322,6 +366,49 @@ auto operator-(timespec_pair left, timespec_pair right){
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+template<bool is_socket = true>
+struct fd_closer{
+    int s;
+    fd_closer(int s):
+        s(s)
+    {
+        std::cerr << "started owning " << s << std::endl;
+    }
+    ~fd_closer(){
+        std::cerr << "stopped owning " << s << std::endl;
+        if (is_socket){
+            sys.ignore(ENOTCONN);
+            sys.shutdown(s, SHUT_RDWR);
+        }
+        sys.close(s);
+    }
+    operator int(){
+        return s;
+    }
+};
+
+using socket_closer = fd_closer<true>;
+using simple_closer = fd_closer<false>;
+
+struct socket_ptr{
+    std::shared_ptr<socket_closer> ptr = nullptr;
+    socket_ptr(int s = -1){
+        if (s != -1){
+            ptr = std::make_shared<socket_closer>(s);
+        }
+    }
+    operator int(){
+        assert(ptr.get());
+        return ptr->s;
+    }
+    socket_ptr(const socket_ptr&) = default;
+    socket_ptr(socket_ptr&&o) = default;
+    socket_ptr& operator=(const socket_ptr&) = default;
+    socket_ptr& operator=(socket_ptr&&o) = default;
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 bool has_to_stop = false;
 
 #ifdef use_kqueue
@@ -339,7 +426,7 @@ bool has_to_stop = false;
 
     struct kqueue_selector{
     private:
-        int sd = 0;
+        simple_closer sd = sys.kqueue();
         std::pair<
             std::array<
                 struct kevent,
@@ -385,18 +472,17 @@ bool has_to_stop = false;
 
         ~kqueue_selector(){
             std::cerr << "exiting" << std::endl;
-            sys.close(sd);
+            // sys.close(sd);
         }
 
         kqueue_selector(){
-            sd = sys.kqueue();
-            if (sd < 0){
-                throw std::runtime_error{"error when creating selector"};
-            }
+            // sd = sys.kqueue();
         }
 
         void loop(){
             while(not has_to_stop){
+                static int aaa = 16;
+                if (not --aaa){throw std::runtime_error("aaaa");}
 
                 std::cerr << "have " << events_to_add.size() << " events to add." << std::endl;
                 for (auto& event : events_to_add){
@@ -489,7 +575,7 @@ bool has_to_stop = false;
 
     struct epoll_selector{
     private:
-        int sd = 0;
+        simple_closer sd = sys.epoll_create1(0);
         std::pair<
             std::array<
                 struct epoll_event,
@@ -566,14 +652,11 @@ bool has_to_stop = false;
 
         ~epoll_selector(){
             std::cerr << "exiting" << std::endl;
-            sys.close(sd);
+            // sys.close(sd);
         }
 
         epoll_selector(){
-            sd = sys.epoll_create1(0);
-            if (sd < 0){
-                throw std::runtime_error{"error when creating selector"};
-            }
+            // sd = sys.epoll_create1(0);
         }
 
         void loop(){
@@ -689,38 +772,6 @@ struct selector{
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct socket_closer{
-    int s;
-    socket_closer(int s):
-        s(s)
-    {
-        std::cerr << "started owning " << s << std::endl;
-    }
-    ~socket_closer(){
-        std::cerr << "stopped owning " << s << std::endl;
-        sys.ignore(ENOTCONN);
-        sys.shutdown(s, SHUT_RDWR);
-        sys.close(s);
-    }
-};
-
-struct socket_ptr{
-    std::shared_ptr<socket_closer> ptr = nullptr;
-    socket_ptr(int s = -1){
-        if (s != -1){
-            ptr = std::make_shared<socket_closer>(s);
-        }
-    }
-    operator int(){
-        assert(ptr.get());
-        return ptr->s;
-    }
-    socket_ptr(const socket_ptr&) = default;
-    socket_ptr(socket_ptr&&o) = default;
-    socket_ptr& operator=(const socket_ptr&) = default;
-    socket_ptr& operator=(socket_ptr&&o) = default;
-};
-
 auto create_non_blocking_socket(){
     socket_ptr s = sys.socket(AF_INET, SOCK_STREAM, 0);
     int flags = sys.fcntl(s, F_GETFL, 0);
@@ -779,10 +830,10 @@ auto start_server(auto& sel, const char* addr, uint16_t port, function<void(sock
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::array<int, 2> signal_pipe = [](){
+auto signal_pipe = [](){
     std::array<int, 2> p;
     sys.pipe(p.data());
-    return p;
+    return std::array<simple_closer, 2>{p[0], p[1]};
 }();
 
 size_t handle_calls = 0;
@@ -966,8 +1017,15 @@ int main(int argc, char**argv) {
                 ]()mutable{
                     if (state == 2){
                         results[res.task_i] = res.sum;
-                        if (uncomplete_tasks.count(res.task_i)){
-                            uncomplete_tasks.erase(res.task_i);
+                        auto task_it = uncomplete_tasks.find(res.task_i);
+                        if (task_it != uncomplete_tasks.end()){
+                            if (task_it == uncomplete_tasks_it){
+                                ++uncomplete_tasks_it;
+                                uncomplete_tasks.erase(task_it);
+                                if (uncomplete_tasks_it == uncomplete_tasks.end()){
+                                    uncomplete_tasks_it = uncomplete_tasks.begin();
+                                }
+                            }
                             if (uncomplete_tasks.empty()){
                                 on_done();
                             }
@@ -978,13 +1036,12 @@ int main(int argc, char**argv) {
                         }
                     }
                     if (state == 0){
+                        assert(not uncomplete_tasks.empty());
+                        req = decltype(req){*uncomplete_tasks_it};
+                        ++uncomplete_tasks_it;
                         if (uncomplete_tasks_it == uncomplete_tasks.end()){
                             uncomplete_tasks_it = uncomplete_tasks.begin();
-                            if (uncomplete_tasks_it == uncomplete_tasks.end()){
-                                return;
-                            }
                         }
-                        req = decltype(req){*++uncomplete_tasks_it};
                         state = 1;
                         chunk_write(sel, c, &req, sizeof(req), std::move(*Task::current));
                         return;
