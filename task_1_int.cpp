@@ -536,6 +536,9 @@ bool has_to_stop = false;
                     auto ptr = events_to_process.first[i].udata;
                     std::cerr << "using " << ptr << std::endl;
                     callbacks.get(ptr)();
+                    if (has_to_stop){
+                        return;
+                    }
                     std::cerr << "freeing " << ptr << std::endl;
                     callbacks.del(ptr);
                 }
@@ -549,6 +552,9 @@ bool has_to_stop = false;
                     if (wake_at <= ct){
                         std::cout << "found task to be executed at " << wake_at.first << "." << wake_at.second << std::endl;
                         task();
+                        if (has_to_stop){
+                            return;
+                        }
                         std::cout << "deleted task to be executed at " << wake_at.first << "." << wake_at.second << std::endl;
                         sleeping_tasks.erase(it);
                         std::cout << "sleeping tasks count " << sleeping_tasks.size() << std::endl;
@@ -714,6 +720,9 @@ bool has_to_stop = false;
                             epoll_mod(fd, action_index, 0);
                             auto func = std::move(callbacks[fd][action_index]);
                             func();
+                            if (has_to_stop){
+                                return;
+                            }
                         }
                     }
                 }
@@ -729,6 +738,9 @@ bool has_to_stop = false;
                     if (wake_at <= ct){
                         std::cout << "found task to be executed at " << wake_at.first << "." << wake_at.second << std::endl;
                         task();
+                        if (has_to_stop){
+                            return;
+                        }
                         std::cout << "deleted task to be executed at " << wake_at.first << "." << wake_at.second << std::endl;
                         sleeping_tasks.erase(it);
                         std::cout << sleeping_tasks.size() << std::endl;
@@ -935,7 +947,7 @@ const double smallest_point = 3;
 const double largest_point = 4;
 
 // const size_t points_per_task = 256;
-const size_t points_per_task = 65536;
+const size_t points_per_task = 256;
 const size_t tasks = 256;
 // const size_t points_per_task = 2;
 // const size_t points_per_task = 1;
@@ -1009,7 +1021,7 @@ int main(int argc, char**argv) {
                     /
                 (tasks * points_per_task);
             std::cout << "\n\n\n\nresult = " << result << "\n\n\n\n" << std::endl;
-            std::exit(0);
+            has_to_stop = true;
         };
 
         sel.async_wait({0, 0}, [&](){
@@ -1053,13 +1065,14 @@ int main(int argc, char**argv) {
                             if (task_it == uncomplete_tasks_it){
                                 ++uncomplete_tasks_it;
                             }
-                            std::cerr << "removing task" << res.task_i << std::endl;
+                            std::cerr << "removing task " << res.task_i << std::endl;
                             uncomplete_tasks.erase(task_it);
                             if (uncomplete_tasks_it == uncomplete_tasks.end()){
                                 uncomplete_tasks_it = uncomplete_tasks.begin();
                             }
                             if (uncomplete_tasks.empty()){
                                 on_done();
+                                return;
                             }
                         }
                         state = 0;
