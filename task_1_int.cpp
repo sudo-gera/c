@@ -481,8 +481,8 @@ bool has_to_stop = false;
 
         void loop(){
             while(not has_to_stop){
-                static int aaa = 16;
-                if (not --aaa){throw std::runtime_error("aaaa");}
+                // static int aaa = 64;
+                // if (not --aaa){throw std::runtime_error("aaaa");}
 
                 std::cerr << "have " << events_to_add.size() << " events to add." << std::endl;
                 for (auto& event : events_to_add){
@@ -551,7 +551,7 @@ bool has_to_stop = false;
                         task();
                         std::cout << "deleted task to be executed at " << wake_at.first << "." << wake_at.second << std::endl;
                         sleeping_tasks.erase(it);
-                        std::cout << sleeping_tasks.size() << std::endl;
+                        std::cout << "sleeping tasks count " << sleeping_tasks.size() << std::endl;
                     }
                     if (nx == sleeping_tasks.end()){
                         break;
@@ -772,6 +772,14 @@ struct selector{
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+auto get_errno(int fd){
+    int err = 0;
+    socklen_t err_len = sizeof(err);
+    sys.getsockopt(fd, SOL_SOCKET, SO_ERROR, &err, &err_len);
+    assert(err_len == sizeof(err));
+    return err;
+}
+
 auto create_non_blocking_socket(){
     socket_ptr s = sys.socket(AF_INET, SOCK_STREAM, 0);
     int flags = sys.fcntl(s, F_GETFL, 0);
@@ -895,11 +903,15 @@ void chunk_read(selector& sel, socket_ptr s, void* data_, size_t size, Task call
     auto data = (char*)data_;
     sel.async_read(s, [&sel, s, data, size, callback = std::move(callback), done_bytes = size_t(0)]()mutable{
         try{
-            done_bytes += sys.read(
+            auto this_part = sys.read(
                 s,
                 data + done_bytes,
                 size - done_bytes
             );
+            if (this_part == 0){
+                throw std::runtime_error("EOF");
+            }
+            done_bytes += this_part;
         }catch(...){
             callback();
             return;
@@ -915,16 +927,21 @@ void chunk_read(selector& sel, socket_ptr s, void* data_, size_t size, Task call
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 double f(double x){
-    return x * 2 + 1;
+    // return x * 2 + 1;
+    return x * x;
 }
 
-const double smallest_point = 0;
-const double largest_point = 1;
+const double smallest_point = 3;
+const double largest_point = 4;
 
 // const size_t points_per_task = 256;
-// const size_t tasks = 256;
-const size_t points_per_task = 2;
-const size_t tasks = 2;
+const size_t points_per_task = 65536;
+const size_t tasks = 256;
+// const size_t points_per_task = 2;
+// const size_t points_per_task = 1;
+// const size_t tasks = 2;
+
+auto tasks_check = [](){assert(tasks >= 2);return 0;}();
 
 struct req{
     size_t task_i;
@@ -935,11 +952,11 @@ struct res{
     double sum;
 };
 
-struct connection_context{
-    req req;
-    res res;
-    bool has_result = false;
-};
+// struct connection_context{
+//     req req;
+//     res res;
+//     bool has_result = false;
+// };
 
 int main(int argc, char**argv) {
     auto args = std::vector<std::string>(argv, argv+argc);
@@ -986,7 +1003,7 @@ int main(int argc, char**argv) {
                 result += res;
             }
             result -= f(smallest_point) / 2;
-            result -= f(largest_point) / 2;
+            result += f(largest_point) / 2;
             result *= 
                 (largest_point - smallest_point)
                     /
@@ -1006,7 +1023,7 @@ int main(int argc, char**argv) {
                     &sel,
                     c,
                     &host,
-                    connection_id = host.connections++,
+                    connection_id = ++host.connections,
                     &results,
                     &uncomplete_tasks,
                     &uncomplete_tasks_it,
@@ -1015,16 +1032,31 @@ int main(int argc, char**argv) {
                     res = res(),
                     &on_done
                 ]()mutable{
+                    auto err = get_errno(c);
+                    if (err){
+                        std::cerr << c << " has err " << strerror(err) << std::endl;
+                        return;
+                    }
+                    if (std::current_exception()){
+                        try{
+                            std::rethrow_exception(std::current_exception());
+                        }catch(std::exception& e){
+                            std::cerr << c << " has err " << e.what() << std::endl;
+                            return;
+                        }
+                    }
                     if (state == 2){
+                        std::cerr << "___ has res " << res.task_i << " " << res.sum << std::endl;
                         results[res.task_i] = res.sum;
                         auto task_it = uncomplete_tasks.find(res.task_i);
                         if (task_it != uncomplete_tasks.end()){
                             if (task_it == uncomplete_tasks_it){
                                 ++uncomplete_tasks_it;
-                                uncomplete_tasks.erase(task_it);
-                                if (uncomplete_tasks_it == uncomplete_tasks.end()){
-                                    uncomplete_tasks_it = uncomplete_tasks.begin();
-                                }
+                            }
+                            std::cerr << "removing task" << res.task_i << std::endl;
+                            uncomplete_tasks.erase(task_it);
+                            if (uncomplete_tasks_it == uncomplete_tasks.end()){
+                                uncomplete_tasks_it = uncomplete_tasks.begin();
                             }
                             if (uncomplete_tasks.empty()){
                                 on_done();
@@ -1043,6 +1075,7 @@ int main(int argc, char**argv) {
                             uncomplete_tasks_it = uncomplete_tasks.begin();
                         }
                         state = 1;
+                        std::cerr << "___ has req " << req.task_i << std::endl;
                         chunk_write(sel, c, &req, sizeof(req), std::move(*Task::current));
                         return;
                     }
@@ -1059,13 +1092,34 @@ int main(int argc, char**argv) {
     }else{
         start_server(sel, args.at(2).c_str(), std::stol(args.at(3)), [&](auto s, const char* addr, uint16_t port){
             std::cerr << "connected from " << addr << ":" << port << std::endl;
-            std::unique_ptr<connection_context> ctx = std::make_unique<connection_context>();
-            chunk_read(sel, s, &ctx->req, sizeof(ctx->req), [&sel, ctx = std::move(ctx), s]()mutable{
-                if (ctx->has_result){
-                    ctx->has_result = false;
-                    chunk_read(sel, s, &ctx->req, sizeof(ctx->req), std::move(*Task::current));
-                }else{
-                    size_t task_i = ctx->req.task_i;
+            sel.async_read(s, [
+                &sel,
+                s,
+                req = req(),
+                res = res(),
+                state = 0
+            ]()mutable{
+                auto err = get_errno(s);
+                if (err){
+                    std::cerr << s << " has err " << strerror(err) << std::endl;
+                    return;
+                }
+                if (std::current_exception()){
+                    try{
+                        std::rethrow_exception(std::current_exception());
+                    }catch(std::exception& e){
+                        std::cerr << s << " has err " << e.what() << std::endl;
+                        return;
+                    }
+                }
+                if (state == 0){
+                    state = 1;
+                    chunk_read(sel, s, &req, sizeof(req), std::move(*Task::current));
+                    return;
+                }
+                if (state == 1){
+                    std::cerr << "___ has req " << req.task_i << std::endl;
+                    size_t task_i = req.task_i;
                     size_t first_point_i = (task_i + 0) * points_per_task;
                     size_t  last_point_i = (task_i + 1) * points_per_task;
                     double result = 0;
@@ -1080,167 +1134,15 @@ int main(int argc, char**argv) {
                             );
                         result += f(point);
                     }
-                    ctx->res.task_i = task_i;
-                    ctx->res.sum = result;
-                    ctx->has_result = true;
-                    chunk_write(sel, s, &ctx->res, sizeof(ctx->res), std::move(*Task::current));
+                    res.task_i = task_i;
+                    res.sum = result;
+                    state = 0;
+                    std::cerr << "___ has res " << res.task_i << " " << res.sum << std::endl;
+                    chunk_write(sel, s, &res, sizeof(res), std::move(*Task::current));
+                    return;
                 }
             });
-
-
-
-
-
-
-
-            // struct client_ctx{
-            //     std::pair<
-            //         std::array<char, 8>
-            //         size_t
-            //     > read_buf;
-            //     std::pair<
-            //         std::array<char, 8>
-            //         size_t
-            //     > write_buf;
-            // };
-            // auto ctx = std::make_shared<client_ctx>();
-            // sel.async_read(c, [&sel, ctx, c](){
-            //     //
-            //     sel.async_read(c, std::move(*Task::current));
-            // });
-            // sel.async_write(c, [&sel, ctx, c](){
-            //     //
-            //     sel.async_write(c, std::move(*Task::current));
-            // });
         });
         sel.loop();
     }
-
-
-
-
-
-
-    // auto c = create_connecting_socket("1.1.1.1", 53);
-    // sel.async_write(c, [&](){
-    //     int err = 0;
-    //     socklen_t err_len = sizeof(err);
-    //     sys.getsockopt(c, SOL_SOCKET, SO_ERROR, &err, &err_len);
-    //     assert(err_len == sizeof(err));
-    //     std::cerr << err << std::endl;
-    //     std::cerr << strerror(err) << std::endl;
-    // });
-
-
-    // start_server(sel, "0.0.0.0", 9999, [&](auto a, const char*addr, uint16_t port){
-    //     std::cerr << "connected " << addr << ":" << port << std::endl;
-    //     auto c = create_connecting_socket("127.0.0.1", 8888);
-    //     sel.async_write(c, [&sel, a, c]()mutable{
-    //         auto&& setup_mover = [&sel](socket_ptr r, socket_ptr w){
-    //             struct connection_ctx{
-    //                 socket_ptr r;
-    //                 socket_ptr w;
-    //                 std::array<char, 65536> data;
-    //                 size_t begin;
-    //                 size_t end;
-    //                 function<void()> reader;
-    //                 function<void()> writer;
-    //                 std::unique_ptr<connection_ctx>* reader_ctx;
-    //                 std::unique_ptr<connection_ctx>* writer_ctx;
-    //                 connection_ctx(const connection_ctx&) = delete;
-    //                 connection_ctx(connection_ctx&&) = delete;
-    //                 connection_ctx() = default;
-    //                 connection_ctx&operator=(const connection_ctx&) = delete;
-    //                 connection_ctx&operator=(connection_ctx&&) = delete;
-    //             };
-    //             auto ctx = std::make_unique<connection_ctx>();
-    //             std::memset(&ctx->data, 0, sizeof(ctx->data));
-    //             ctx->begin = 0;
-    //             ctx->end = 0;
-    //             ctx->r = r;
-    //             ctx->w = w;
-    //             ctx->reader = std::move([&sel, ctx_ = decltype(ctx)(), ctx_ptr = &ctx->reader_ctx]()mutable{
-    //                 *ctx_ptr = &ctx_;
-    //                 connection_ctx* ctx = ctx_.get();
-    //                 if (not ctx){
-    //                     std::cerr << "no ctx" << std::endl;
-    //                     return;
-    //                 }
-    //                 assert(ctx->writer);
-    //                 assert(not ctx->reader);
-    //                 ctx->reader = std::move(*Task::current);
-    //                 assert(ctx->begin == ctx->end);
-    //                 ctx->begin = 0;
-    //                 ctx->end = sys.read(ctx->r, ctx->data.data(), ctx->data.size());
-    //                 if (ctx->end == 0){
-    //                     sys.ignore(ENOTCONN);
-    //                     sys.shutdown(ctx->r, SHUT_RD);
-    //                     sys.ignore(ENOTCONN);
-    //                     sys.shutdown(ctx->w, SHUT_WR);
-    //                     std::cerr << "EOF " << ctx->r << std::endl;
-    //                     std::cerr << ctx->r << ".use_count = " << ctx->r.ptr.use_count() << std::endl;
-    //                     std::cerr << ctx->w << ".use_count = " << ctx->w.ptr.use_count() << std::endl;
-    //                     auto r = ctx->r;
-    //                     auto w = ctx->w;
-    //                     std::cerr << r << ".use_count = " << r.ptr.use_count() << std::endl;
-    //                     std::cerr << w << ".use_count = " << w.ptr.use_count() << std::endl;
-    //                     ctx_.reset();
-    //                     std::cerr << r << ".use_count = " << r.ptr.use_count() << std::endl;
-    //                     std::cerr << w << ".use_count = " << w.ptr.use_count() << std::endl;
-    //                     r.ptr.reset();
-    //                     w.ptr.reset();
-    //                     std::cerr << 0 << ".use_count = " << r.ptr.use_count() << std::endl;
-    //                     std::cerr << 0 << ".use_count = " << w.ptr.use_count() << std::endl;
-    //                     return;
-    //                 }
-    //                 assert(0 <= ctx->begin);
-    //                 assert(ctx->begin < ctx->end);
-    //                 assert(ctx->end <= ctx->data.size());
-    //                 *ctx->writer_ctx = std::move(ctx_);
-    //                 sel.async_write(ctx->w, std::move(ctx->writer));
-    //             });
-    //             ctx->reader();
-    //             ctx->writer = std::move([&sel, ctx_ = decltype(ctx)(), ctx_ptr = &ctx->writer_ctx]()mutable{
-    //                 *ctx_ptr = &ctx_;
-    //                 connection_ctx* ctx = ctx_.get();
-    //                 if (not ctx){
-    //                     std::cerr << "no ctx" << std::endl;
-    //                     return;
-    //                 }
-    //                 assert(ctx->reader);
-    //                 assert(not ctx->writer);
-    //                 ctx->writer = std::move(*Task::current);
-    //                 assert(0 <= ctx->begin);
-    //                 assert(ctx->begin < ctx->end);
-    //                 assert(ctx->end <= ctx->data.size());
-    //                 ctx->begin += sys.write(ctx->w, ctx->data.data() + ctx->begin, ctx->end - ctx->begin);
-    //                 assert(0 <= ctx->begin);
-    //                 assert(ctx->begin <= ctx->end);
-    //                 assert(ctx->end <= ctx->data.size());
-    //                 if (ctx->begin == ctx->end){
-    //                     *ctx->reader_ctx = std::move(ctx_);
-    //                     sel.async_read(ctx->r, std::move(ctx->reader));
-    //                 }else{
-    //                     sel.async_write(ctx->r, std::move(ctx->writer));
-    //                 }
-    //             });
-    //             ctx->writer();
-    //             assert(ctx->writer_ctx);
-    //             assert(ctx->reader_ctx);
-    //             auto ctx_ = ctx.get();
-    //             *ctx->reader_ctx = std::move(ctx);
-    //             sel.async_read(ctx_->r, std::move(ctx_->reader));
-    //         };
-    //         setup_mover(a,c);
-    //         setup_mover(c,a);
-    //     });
-    // });
-
-    // sel.async_wait({1, 0}, [&](){
-    //     std::cerr << "hello" << std::endl;
-    //     sel.async_wait({1, 0}, std::move(*Task::current));
-    // });
-
-
-
 }
