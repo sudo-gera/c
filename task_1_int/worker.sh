@@ -97,12 +97,3 @@ then
 else
     /a.out "$is_master" 0.0.0.0 4444
 fi
-
-# tmux new -d
-# tmux send -l 'script -f >(nc 10.144.216.80 '$(( 9000 + $node_id ))' ) -c '"'"'tmux capturep -p ; /a.out '$is_master' 0.0.0.0 4444 172.17.0.1 4444 172.17.0.2 4444 172.17.0.3 4444 172.17.0.4 4444 172.17.0.5 4444'"'"' '$'\n'
-# tail -f /dev/null
-
-# nc 172.17.0.1 $(( 9000 + $node_id ))
-# tee /dev/stderr |
-
-# bash
