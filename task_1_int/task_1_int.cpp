@@ -372,13 +372,15 @@ struct fd_closer{
     fd_closer(int s):
         s(s)
     {
-        std::cerr << "started owning " << s << std::endl;
+        std::cerr << "created fd " << s << std::endl;
     }
     ~fd_closer(){
-        std::cerr << "stopped owning " << s << std::endl;
+        std::cerr << "closing fd " << s << std::endl;
         if (is_socket){
             sys.ignore(ENOTCONN);
-            sys.shutdown(s, SHUT_RDWR);
+            sys.shutdown(s, SHUT_RD);
+            sys.ignore(ENOTCONN);
+            sys.shutdown(s, SHUT_WR);
         }
         sys.close(s);
     }
@@ -945,15 +947,13 @@ double f(double x){
     return std::sin(x);
 }
 
-const double smallest_point = 0;
-const double largest_point = M_PI;
+volatile size_t vzero = 0;
 
-// const size_t points_per_task = 256;
-const size_t points_per_task = 98765432;
-const size_t tasks = 256;
-// const size_t points_per_task = 2;
-// const size_t points_per_task = 1;
-// const size_t tasks = 2;
+const double smallest_point = vzero + 0;
+const double largest_point = vzero + M_PI;
+
+const size_t points_per_task = vzero + 98765432;
+const size_t tasks = vzero + 64;
 
 auto tasks_check = [](){assert(tasks >= 2);return 0;}();
 
@@ -1050,11 +1050,12 @@ int main(int argc, char**argv) {
                     first = 1
                 ]()mutable{
                     if (first){
-                        std::cerr << "connected to " << host.addr << ":" << host.port << " fd = " << c << std::endl;
+                        std::cerr << "                                                                                                           connected to " << host.addr << ":" << host.port << " fd = " << c << std::endl;
+                        first = 0;
                     }
                     auto err = get_errno(c);
                     if (err){
-                        std::cerr << c << " has err " << strerror(err) << std::endl;
+                        std::cerr << c << "+++++++++++++++++++++++ has err " << strerror(err) << std::endl;
                         return;
                     }
                     if (std::current_exception()){
@@ -1066,7 +1067,8 @@ int main(int argc, char**argv) {
                         }
                     }
                     if (state == 2){
-                        std::cerr << "___ " << host.addr << ":" << host.port << " has res " << res.task_i << " " << res.sum << std::endl;
+                        std::cerr << "                                                                    " << host.addr << ":" << host.port << " has res " << res.task_i << " " << res.sum << std::endl;
+                        std::cerr << "                                                                    progress " << tasks - uncomplete_tasks.size() << " of " << tasks << std::endl;
                         results[res.task_i] = res.sum;
                         auto task_it = uncomplete_tasks.find(res.task_i);
                         if (task_it != uncomplete_tasks.end()){
@@ -1082,9 +1084,12 @@ int main(int argc, char**argv) {
                                 on_done();
                                 return;
                             }
+                        }else{
+                            std::cerr << "                                                                    " << host.addr << ":" << host.port << " double " << res.task_i << " " << res.sum << std::endl;
                         }
                         state = 0;
                         if (connection_id != host.connections){
+                            std::cerr << host.addr << ":" << host.port << " has another connection, exiting." << std::endl;
                             return;
                         }
                     }
@@ -1096,7 +1101,7 @@ int main(int argc, char**argv) {
                             uncomplete_tasks_it = uncomplete_tasks.begin();
                         }
                         state = 1;
-                        std::cerr << "___ " << host.addr << ":" << host.port << " has req " << req.task_i << std::endl;
+                        std::cerr << "                                      " << host.addr << ":" << host.port << " has req " << req.task_i << std::endl;
                         chunk_write(sel, c, &req, sizeof(req), std::move(*Task::current));
                         return;
                     }

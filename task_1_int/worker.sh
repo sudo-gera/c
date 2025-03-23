@@ -26,7 +26,6 @@ then
         (
             while :
             do
-                echo '@@@@@@@@@@@@@@'
                 echo "$system_hash" | nc -l 2001 |:
             done
         )&
@@ -41,7 +40,7 @@ then
     )
 else
     sleep 4
-    for last_ip_num in $(seq 0 10)
+    for last_ip_num in $(seq 1 8)
     do
         if  :|
             nc "${network_prefix}.${last_ip_num}" 2001 2>/dev/null|
@@ -71,29 +70,50 @@ mkfifo fifo
     )&
 )
 
+##############################################################################################################################
+# setup `network disabler`
+
 if [ $is_master -eq 1 ]
 then
     (
         (
-            while :
+            set +x
+            while sleep 0.1
             do
                 worker_ip="$(echo "$worker_nodes" | head -n "$(( 1 + $RANDOM % "$(echo "$worker_nodes" | wc -l)" ))" | tail -n 1)"
-                if [ $(( $RANDOM % 4 )) -eq 0 ]
+                filename="${worker_ip}_has_net"
+                if [ $(( $RANDOM % 24 )) -eq 0 ]
                 then
-                    command=': ; /disable_net.sh ; ifconfig | grep inet ; :'
+                    command=' : ; /enable_net.sh ; : '
+                    if ! [ -f "$filename" ]
+                    then
+                        echo ">>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> sending ${command@Q} to ${worker_ip@Q}"
+                    fi
+                    touch "/${worker_ip}_has_net"
                 else
-                    command=': ; /disable_net.sh ; ifconfig | grep inet ; :'
+                    command=' : ; /disable_net.sh ; : '
+                    if [ -f "$filename" ]
+                    then
+                        echo ">>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> sending ${command@Q} to ${worker_ip@Q}"
+                    fi
+                    rm -f "/${worker_ip}_has_net"
                 fi
-                echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> sending ${command@Q} to ${worker_ip@Q}"
                 echo "$command" | nc $worker_ip 9999 | :
             done
         )&
     )
+else
+    /disable_net.sh
 fi
+
+##############################################################################################################################
+# main code
 
 if [ $is_master -eq 1 ]
 then
+    # /a.out 0 172.17.0.2 4444 172.17.0.3 4444 172.17.0.4 4444 172.17.0.5 4444
     /a.out "$is_master" $(echo "$worker_nodes" | sed -E 's?(.*)?\1 4444 ?' | tr -d '\n')
 else
+    # /a.out 1 0.0.0.0 4444
     /a.out "$is_master" 0.0.0.0 4444
 fi
