@@ -14,6 +14,8 @@ system_hash="$(sum /a.out)" # to identify nodes of this system
 echo "system_hash=${system_hash@Q}"
 
 network_prefix=172.17.0
+min_last_ip_num=0
+max_last_ip_num=8
 
 this_ip="$(ifconfig | grep 'inet ' | grep "$network_prefix" | tr ' ' '\n' | grep "$network_prefix")"
 
@@ -40,7 +42,7 @@ then
     )
 else
     sleep 4
-    for last_ip_num in $(seq 1 8)
+    for last_ip_num in $(seq $min_last_ip_num $max_last_ip_num)
     do
         if  :|
             nc "${network_prefix}.${last_ip_num}" 2001 2>/dev/null|
@@ -89,14 +91,14 @@ then
                     then
                         echo ">>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> sending ${command@Q} to ${worker_ip@Q}"
                     fi
-                    touch "/${worker_ip}_has_net"
+                    touch "$filename"
                 else
                     command=' : ; /disable_net.sh ; : '
                     if [ -f "$filename" ]
                     then
                         echo ">>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> sending ${command@Q} to ${worker_ip@Q}"
                     fi
-                    rm -f "/${worker_ip}_has_net"
+                    rm -f "$filename"
                 fi
                 echo "$command" | nc $worker_ip 9999 | :
             done

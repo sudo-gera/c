@@ -46,6 +46,4 @@ do
     fi
 done
 
-# python3
-
 clean
