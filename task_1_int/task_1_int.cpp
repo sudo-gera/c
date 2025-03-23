@@ -1,4 +1,5 @@
 // #include <bits/stdc++.h>
+#include <optional>
 #include <utility>
 #include <memory>
 #include <type_traits>
@@ -132,6 +133,16 @@ function<R(A...)>* function<R(A...)>::current = nullptr;
 
 
 using Task = function<void()>;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+struct defer{
+    T val;
+    ~defer(){
+        val();
+    }
+};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -369,13 +380,24 @@ auto operator-(timespec_pair left, timespec_pair right){
 template<bool is_socket = true>
 struct fd_closer{
     int s;
+    bool is_closed = false;
     fd_closer(int s):
         s(s)
     {
         std::cerr << "created fd " << s << std::endl;
     }
     ~fd_closer(){
+        close();
+    }
+    operator int(){
+        return s;
+    }
+    void close(){
         std::cerr << "closing fd " << s << std::endl;
+        if (is_closed){
+            return;
+        }
+        is_closed = true;
         if (is_socket){
             sys.ignore(ENOTCONN);
             sys.shutdown(s, SHUT_RD);
@@ -383,9 +405,6 @@ struct fd_closer{
             sys.shutdown(s, SHUT_WR);
         }
         sys.close(s);
-    }
-    operator int(){
-        return s;
     }
 };
 
@@ -762,24 +781,33 @@ bool has_to_stop = false;
 
 struct selector{
     #ifdef use_kqueue
-    kqueue_selector sel;
+    std::optional<kqueue_selector> sel;
     #endif
 
     #ifdef use_epoll
-    epoll_selector sel;
+    std::optional<epoll_selector> sel;
     #endif
 
+    selector(){
+        sel.emplace();
+    }
+
     void async_read(int s, Task t){
-        return sel.async_read(FORWARD(s), FORWARD(t));
+        assert(sel);
+        return sel->async_read(FORWARD(s), FORWARD(t));
     }
     void async_write(int s, Task t){
-        return sel.async_write(FORWARD(s), FORWARD(t));
+        assert(sel);
+        return sel->async_write(FORWARD(s), FORWARD(t));
     }
     void async_wait(timespec_pair s, Task t){
-        return sel.async_wait(FORWARD(s), FORWARD(t));
+        assert(sel);
+        return sel->async_wait(FORWARD(s), FORWARD(t));
     }
     void loop(){
-        return sel.loop();
+        assert(sel);
+        auto tmp = defer([&](){sel.reset();});
+        return sel->loop();
     }
 };
 
@@ -966,12 +994,6 @@ struct res{
     double sum;
 };
 
-// struct connection_context{
-//     req req;
-//     res res;
-//     bool has_result = false;
-// };
-
 int main(int argc, char**argv) {
     auto args = std::vector<std::string>(argv, argv+argc);
     sys.signal(SIGHUP,  handle);
@@ -993,23 +1015,23 @@ int main(int argc, char**argv) {
         for (size_t i = 0; i < tasks; ++i){
             uncomplete_tasks.insert(i);
         }
-        struct host_ctx{
-            const char* addr;
-            uint16_t port;
-            size_t opened_connections;
-            size_t closed_connections;
-        };
         auto remote_hosts_begin = args.begin() + 2;
         auto remote_hosts_end   = args.end();
         sys << "wrong number of arguments." << std::endl;
         sys.eassert((remote_hosts_end - remote_hosts_begin) % 2 == 0);
+
+        struct host_ctx{
+            const char* addr;
+            uint16_t port;
+            size_t opened_connections;
+        };
+
         std::vector<host_ctx> hosts;
         for (auto it = remote_hosts_begin; it != remote_hosts_end; it+=2){
             hosts.emplace_back(host_ctx{
                 .addr = it[0].data(),
                 .port = (uint16_t)std::stol(it[1]),
                 .opened_connections = 0,
-                .closed_connections = 0,
             });
         }
         auto uncomplete_tasks_it = uncomplete_tasks.begin();
@@ -1035,11 +1057,8 @@ int main(int argc, char**argv) {
                     return;
                 }
 
-                if (host.opened_connections - host.closed_connections > 4){
-                    continue;
-                }
-
                 auto c = create_connecting_socket(host.addr, host.port);
+
                 std::cerr << "connecting to " << host.addr << ":" << host.port << " fd = " << c << std::endl;
                 sel.async_write(c, [
                     &sel,
@@ -1055,6 +1074,10 @@ int main(int argc, char**argv) {
                     &on_done,
                     first = 1
                 ]()mutable{
+                    if (c.ptr->is_closed){
+                        std::cerr << c << "+++++++++++++++++++++++ is closed " << std::endl;
+                        return;
+                    }
                     if (first){
                         std::cerr << "                                                                                                           connected to " << host.addr << ":" << host.port << " fd = " << c << std::endl;
                         first = 0;
@@ -1074,14 +1097,12 @@ int main(int argc, char**argv) {
                     }
                     if (state == 2){
                         std::cerr << "                                                                    " << host.addr << ":" << host.port << " has res " << res.task_i << " " << res.sum << std::endl;
-                        std::cerr << "                                                                    progress " << tasks - uncomplete_tasks.size() << " of " << tasks << std::endl;
                         results[res.task_i] = res.sum;
                         auto task_it = uncomplete_tasks.find(res.task_i);
                         if (task_it != uncomplete_tasks.end()){
                             if (task_it == uncomplete_tasks_it){
                                 ++uncomplete_tasks_it;
                             }
-                            // std::cerr << "removing task " << res.task_i << std::endl;
                             uncomplete_tasks.erase(task_it);
                             if (uncomplete_tasks_it == uncomplete_tasks.end()){
                                 uncomplete_tasks_it = uncomplete_tasks.begin();
@@ -1093,11 +1114,12 @@ int main(int argc, char**argv) {
                         }else{
                             std::cerr << "                                                                    " << host.addr << ":" << host.port << " double " << res.task_i << " " << res.sum << std::endl;
                         }
-                        state = 0;
+                        std::cerr << "                                                                    progress " << tasks - uncomplete_tasks.size() << " of " << tasks << std::endl;
                         if (connection_id != host.opened_connections){
                             std::cerr << host.addr << ":" << host.port << " has another connection, exiting." << std::endl;
                             return;
                         }
+                        state = 0;
                     }
                     if (state == 0){
                         assert(not uncomplete_tasks.empty());

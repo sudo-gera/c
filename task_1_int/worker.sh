@@ -84,7 +84,7 @@ then
             do
                 worker_ip="$(echo "$worker_nodes" | head -n "$(( 1 + $RANDOM % "$(echo "$worker_nodes" | wc -l)" ))" | tail -n 1)"
                 filename="${worker_ip}_has_net"
-                if [ $(( $RANDOM % 4 )) -eq 0 ]
+                if [ $(( $RANDOM % 6 )) -eq 0 ]
                 then
                     command=' : ; /enable_net.sh ; : '
                     if ! [ -f "$filename" ]
