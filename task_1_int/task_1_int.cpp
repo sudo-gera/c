@@ -996,7 +996,8 @@ int main(int argc, char**argv) {
         struct host_ctx{
             const char* addr;
             uint16_t port;
-            size_t connections;
+            size_t opened_connections;
+            size_t closed_connections;
         };
         auto remote_hosts_begin = args.begin() + 2;
         auto remote_hosts_end   = args.end();
@@ -1007,7 +1008,8 @@ int main(int argc, char**argv) {
             hosts.emplace_back(host_ctx{
                 .addr = it[0].data(),
                 .port = (uint16_t)std::stol(it[1]),
-                .connections = 0,
+                .opened_connections = 0,
+                .closed_connections = 0,
             });
         }
         auto uncomplete_tasks_it = uncomplete_tasks.begin();
@@ -1033,13 +1035,17 @@ int main(int argc, char**argv) {
                     return;
                 }
 
+                if (host.opened_connections - host.closed_connections > 4){
+                    continue;
+                }
+
                 auto c = create_connecting_socket(host.addr, host.port);
                 std::cerr << "connecting to " << host.addr << ":" << host.port << " fd = " << c << std::endl;
                 sel.async_write(c, [
                     &sel,
                     c,
                     &host,
-                    connection_id = ++host.connections,
+                    connection_id = ++host.opened_connections,
                     &results,
                     &uncomplete_tasks,
                     &uncomplete_tasks_it,
@@ -1088,7 +1094,7 @@ int main(int argc, char**argv) {
                             std::cerr << "                                                                    " << host.addr << ":" << host.port << " double " << res.task_i << " " << res.sum << std::endl;
                         }
                         state = 0;
-                        if (connection_id != host.connections){
+                        if (connection_id != host.opened_connections){
                             std::cerr << host.addr << ":" << host.port << " has another connection, exiting." << std::endl;
                             return;
                         }

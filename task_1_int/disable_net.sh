@@ -5,5 +5,6 @@ iptables-restore << EOF
 :FORWARD ACCEPT [0:0]
 :OUTPUT ACCEPT [4:424]
 -I INPUT -p tcp --dport 4444 -j DROP
+-I OUTPUT -p tcp --sport 4444 -j DROP
 COMMIT
 EOF
