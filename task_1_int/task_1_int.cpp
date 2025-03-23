@@ -413,15 +413,15 @@ bool has_to_stop = false;
 
 #ifdef use_kqueue
 
-    void print_event(struct kevent& value){
-        std::cerr << "event{" << std::endl
-        << "      " << VALUE_AS_STRING_AND_VALUE(value.ident) << std::endl
-        << "      " << VALUE_AS_STRING_AND_VALUE(value.filter) << std::endl
-        << "      " << VALUE_AS_STRING_AND_VALUE(value.flags) << std::endl
-        << "      " << VALUE_AS_STRING_AND_VALUE(value.fflags) << std::endl
-        << "      " << VALUE_AS_STRING_AND_VALUE(value.data) << std::endl
-        << "      " << VALUE_AS_STRING_AND_VALUE(value.udata) << std::endl
-        << "}" << std::endl;
+    void print_event([[maybe_unused]]struct kevent& value){
+        // std::cerr << "event{" << std::endl
+        // << "      " << VALUE_AS_STRING_AND_VALUE(value.ident) << std::endl
+        // << "      " << VALUE_AS_STRING_AND_VALUE(value.filter) << std::endl
+        // << "      " << VALUE_AS_STRING_AND_VALUE(value.flags) << std::endl
+        // << "      " << VALUE_AS_STRING_AND_VALUE(value.fflags) << std::endl
+        // << "      " << VALUE_AS_STRING_AND_VALUE(value.data) << std::endl
+        // << "      " << VALUE_AS_STRING_AND_VALUE(value.udata) << std::endl
+        // << "}" << std::endl;
     }
 
     struct kqueue_selector{
@@ -461,9 +461,9 @@ bool has_to_stop = false;
 
         void async_wait(timespec_pair seconds, Task callback){
             auto ct = monotonic();
-            std::cerr << "async wait called at " << ct.first << "." << ct.second << std::endl;
+            // std::cerr << "async wait called at " << ct.first << "." << ct.second << std::endl;
             ct = ct + seconds;
-            std::cerr << "async wait would sleep intil " << ct.first << "." << ct.second << std::endl;
+            // std::cerr << "async wait would sleep intil " << ct.first << "." << ct.second << std::endl;
             sleeping_tasks.insert({
                 seconds + monotonic(),
                 std::move(callback)
@@ -484,7 +484,7 @@ bool has_to_stop = false;
                 // static int aaa = 64;
                 // if (not --aaa){throw std::runtime_error("aaaa");}
 
-                std::cerr << "have " << events_to_add.size() << " events to add." << std::endl;
+                // std::cerr << "have " << events_to_add.size() << " events to add." << std::endl;
                 for (auto& event : events_to_add){
                     print_event(event);
                 }
@@ -505,9 +505,9 @@ bool has_to_stop = false;
                 }
 
                 if (to_sleep_ptr){
-                    std::cerr << "have to sleep " << to_sleep_ptr->tv_sec << "." << to_sleep_ptr->tv_nsec << std::endl;
+                    // std::cerr << "have to sleep " << to_sleep_ptr->tv_sec << "." << to_sleep_ptr->tv_nsec << std::endl;
                 }else{
-                    std::cerr << "dont have to sleep " << std::endl;
+                    // std::cerr << "dont have to sleep " << std::endl;
                 }
 
                 sys.ignore(EINTR);
@@ -526,19 +526,19 @@ bool has_to_stop = false;
                 }
                 assert(errno == 0);
                 assert(events_to_process.second < events_to_process.first.size());
-                std::cerr << "have " << events_to_process.second << " events to process." << std::endl;
+                // std::cerr << "have " << events_to_process.second << " events to process." << std::endl;
                 for (size_t q = 0; q < events_to_process.second; ++q){
                     auto& event = events_to_process.first[q];
                     print_event(event);
                 }
                 for (size_t i = 0; i < events_to_process.second; ++i){
                     auto ptr = events_to_process.first[i].udata;
-                    std::cerr << "using " << ptr << std::endl;
+                    // std::cerr << "using " << ptr << std::endl;
                     callbacks.get(ptr)();
                     if (has_to_stop){
                         return;
                     }
-                    std::cerr << "freeing " << ptr << std::endl;
+                    // std::cerr << "freeing " << ptr << std::endl;
                     callbacks.del(ptr);
                 }
                 events_to_process.second = 0;
@@ -549,14 +549,14 @@ bool has_to_stop = false;
                     auto nx = std::next(it);
                     auto& [wake_at, task] = *it;
                     if (wake_at <= ct){
-                        std::cout << "found task to be executed at " << wake_at.first << "." << wake_at.second << std::endl;
+                        // std::cerr << "found task to be executed at " << wake_at.first << "." << wake_at.second << std::endl;
                         task();
                         if (has_to_stop){
                             return;
                         }
-                        std::cout << "deleted task to be executed at " << wake_at.first << "." << wake_at.second << std::endl;
+                        // std::cerr << "deleted task to be executed at " << wake_at.first << "." << wake_at.second << std::endl;
                         sleeping_tasks.erase(it);
-                        std::cout << "sleeping tasks count " << sleeping_tasks.size() << std::endl;
+                        // std::cerr << "sleeping tasks count " << sleeping_tasks.size() << std::endl;
                     }
                     if (nx == sleeping_tasks.end()){
                         break;
@@ -571,11 +571,11 @@ bool has_to_stop = false;
 #endif
 
 #ifdef use_epoll
-    void print_event(struct epoll_event& value){
-        std::cerr << "event{" << std::endl
-        << "      " << VALUE_AS_STRING_AND_VALUE(value.events) << std::endl
-        << "      " << VALUE_AS_STRING_AND_VALUE(value.data.fd) << std::endl
-        << "}" << std::endl;
+    void print_event([[maybe_unused]]struct epoll_event& value){
+        // std::cerr << "event{" << std::endl
+        // << "      " << VALUE_AS_STRING_AND_VALUE(value.events) << std::endl
+        // << "      " << VALUE_AS_STRING_AND_VALUE(value.data.fd) << std::endl
+        // << "}" << std::endl;
     }
 
     struct epoll_selector{
@@ -623,9 +623,9 @@ bool has_to_stop = false;
                 new_event.events |= actions[not action_index];
             }
             // new_event.events |= EPOLLRDHUP | EPOLLPRI | EPOLLERR | EPOLLHUP;
-            std::cerr << "have 1 event to mod" << std::endl;
-            std::cerr << "action_index = " << action_index << std::endl;
-            std::cerr << "add = " << add << std::endl;
+            // std::cerr << "have 1 event to mod" << std::endl;
+            // std::cerr << "action_index = " << action_index << std::endl;
+            // std::cerr << "add = " << add << std::endl;
             print_event(new_event);
             sys.epoll_ctl(sd, op, fd, &new_event);
         }
@@ -646,9 +646,9 @@ bool has_to_stop = false;
 
         void async_wait(timespec_pair seconds, Task callback){
             auto ct = monotonic();
-            std::cerr << "async wait called at " << ct.first << "." << ct.second << std::endl;
+            // std::cerr << "async wait called at " << ct.first << "." << ct.second << std::endl;
             ct = ct + seconds;
-            std::cerr << "async wait would sleep intil " << ct.first << "." << ct.second << std::endl;
+            // std::cerr << "async wait would sleep intil " << ct.first << "." << ct.second << std::endl;
             sleeping_tasks.insert({
                 seconds + monotonic(),
                 std::move(callback)
@@ -684,9 +684,9 @@ bool has_to_stop = false;
                 }
 
                 if (to_sleep != timespec_base){
-                    std::cerr << "have to sleep " << to_sleep << std::endl;
+                    // std::cerr << "have to sleep " << to_sleep << std::endl;
                 }else{
-                    std::cerr << "dont have to sleep " << std::endl;
+                    // std::cerr << "dont have to sleep " << std::endl;
                 }
 
                 sys.ignore(EINTR);
@@ -702,7 +702,7 @@ bool has_to_stop = false;
                 }
                 assert(errno == 0);
                 assert(events_to_process.second < events_to_process.first.size());
-                std::cerr << "have " << events_to_process.second << " events to process." << std::endl;
+                // std::cerr << "have " << events_to_process.second << " events to process." << std::endl;
                 for (size_t q = 0; q < events_to_process.second; ++q){
                     auto& event = events_to_process.first[q];
                     print_event(event);
@@ -711,10 +711,10 @@ bool has_to_stop = false;
                     auto& event = events_to_process.first[i];
                     auto fd = event.data.fd;
                     auto events = event.events;
-                    std::cerr << "events bitmask = " << events << std::endl;
+                    // std::cerr << "events bitmask = " << events << std::endl;
                     for (bool action_index: std::array<bool, 2>({0, 1})){
                         if (events & actions[action_index]){
-                            std::cerr << "using fd=" << fd << ", action_index=" << action_index << std::endl;
+                            // std::cerr << "using fd=" << fd << ", action_index=" << action_index << std::endl;
                             assert(callbacks.size() > size_t(fd));
                             epoll_mod(fd, action_index, 0);
                             auto func = std::move(callbacks[fd][action_index]);
@@ -732,17 +732,17 @@ bool has_to_stop = false;
                 while(it != sleeping_tasks.end()){
                     auto nx = std::next(it);
                     auto& [wake_at, task] = *it;
-                    std::cout << "having task to be executed at " << wake_at.first << "." << wake_at.second << std::endl;
-                    std::cout << "now is " << ct.first << "." << ct.second << std::endl;
+                    // std::cerr << "having task to be executed at " << wake_at.first << "." << wake_at.second << std::endl;
+                    // std::cerr << "now is " << ct.first << "." << ct.second << std::endl;
                     if (wake_at <= ct){
-                        std::cout << "found task to be executed at " << wake_at.first << "." << wake_at.second << std::endl;
+                        // std::cerr << "found task to be executed at " << wake_at.first << "." << wake_at.second << std::endl;
                         task();
                         if (has_to_stop){
                             return;
                         }
-                        std::cout << "deleted task to be executed at " << wake_at.first << "." << wake_at.second << std::endl;
+                        // std::cerr << "deleted task to be executed at " << wake_at.first << "." << wake_at.second << std::endl;
                         sleeping_tasks.erase(it);
-                        std::cout << sleeping_tasks.size() << std::endl;
+                        // std::cerr << sleeping_tasks.size() << std::endl;
                     }
                     if (nx == sleeping_tasks.end()){
                         break;
@@ -807,6 +807,7 @@ auto host_port_to_sockaddr(const char* addr, uint16_t port){
     std::memset(&sau, 0, sizeof(sau));
     sau.sai.sin_family = AF_INET;
     sau.sai.sin_port = htons(port);
+    sys << "inet_pton(" << repr(std::string(addr)) << ") failed." << std::endl;
     sys.eassert(sys.inet_pton(AF_INET, addr, &sau.sai.sin_addr) == 1);
     return sau.sa;
 }
@@ -834,8 +835,8 @@ auto start_server(auto& sel, const char* addr, uint16_t port, function<void(sock
         std::memset(&client, 0, sizeof(client));
         socklen_t client_len = sizeof(client);
         socket_ptr c = sys.accept(s, (sockaddr*)&client, &client_len);
-        sys.eassert(client_len == sizeof(client));
-        sys.eassert(client.sin_family == AF_INET);
+        assert(client_len == sizeof(client));
+        assert(client.sin_family == AF_INET);
         char client_addr[INET_ADDRSTRLEN];
         sys.inet_ntop(AF_INET, &client.sin_addr, client_addr, sizeof(client_addr));
         auto client_port = ntohs(client.sin_port);
@@ -937,16 +938,18 @@ void chunk_read(selector& sel, socket_ptr s, void* data_, size_t size, Task call
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include <cmath>
 double f(double x){
     // return x * 2 + 1;
-    return x * x;
+    // return x * x;
+    return std::sin(x);
 }
 
-const double smallest_point = 3;
-const double largest_point = 4;
+const double smallest_point = 0;
+const double largest_point = M_PI;
 
 // const size_t points_per_task = 256;
-const size_t points_per_task = 256;
+const size_t points_per_task = 98765432;
 const size_t tasks = 256;
 // const size_t points_per_task = 2;
 // const size_t points_per_task = 1;
@@ -997,6 +1000,7 @@ int main(int argc, char**argv) {
         };
         auto remote_hosts_begin = args.begin() + 2;
         auto remote_hosts_end   = args.end();
+        sys << "wrong number of arguments." << std::endl;
         sys.eassert((remote_hosts_end - remote_hosts_begin) % 2 == 0);
         std::vector<host_ctx> hosts;
         for (auto it = remote_hosts_begin; it != remote_hosts_end; it+=2){
@@ -1019,7 +1023,7 @@ int main(int argc, char**argv) {
                 (largest_point - smallest_point)
                     /
                 (tasks * points_per_task);
-            std::cout << "\n\n\n\nresult = " << result << "\n\n\n\n" << std::endl;
+            std::cerr << "\n\n\n\nresult = " << result << "\n\n\n\n" << std::endl;
             has_to_stop = true;
         };
 
@@ -1030,6 +1034,7 @@ int main(int argc, char**argv) {
                 }
 
                 auto c = create_connecting_socket(host.addr, host.port);
+                std::cerr << "connecting to " << host.addr << ":" << host.port << " fd = " << c << std::endl;
                 sel.async_write(c, [
                     &sel,
                     c,
@@ -1041,8 +1046,12 @@ int main(int argc, char**argv) {
                     state = 0,
                     req = req(),
                     res = res(),
-                    &on_done
+                    &on_done,
+                    first = 1
                 ]()mutable{
+                    if (first){
+                        std::cerr << "connected to " << host.addr << ":" << host.port << " fd = " << c << std::endl;
+                    }
                     auto err = get_errno(c);
                     if (err){
                         std::cerr << c << " has err " << strerror(err) << std::endl;
@@ -1057,14 +1066,14 @@ int main(int argc, char**argv) {
                         }
                     }
                     if (state == 2){
-                        std::cerr << "___ has res " << res.task_i << " " << res.sum << std::endl;
+                        std::cerr << "___ " << host.addr << ":" << host.port << " has res " << res.task_i << " " << res.sum << std::endl;
                         results[res.task_i] = res.sum;
                         auto task_it = uncomplete_tasks.find(res.task_i);
                         if (task_it != uncomplete_tasks.end()){
                             if (task_it == uncomplete_tasks_it){
                                 ++uncomplete_tasks_it;
                             }
-                            std::cerr << "removing task " << res.task_i << std::endl;
+                            // std::cerr << "removing task " << res.task_i << std::endl;
                             uncomplete_tasks.erase(task_it);
                             if (uncomplete_tasks_it == uncomplete_tasks.end()){
                                 uncomplete_tasks_it = uncomplete_tasks.begin();
@@ -1087,7 +1096,7 @@ int main(int argc, char**argv) {
                             uncomplete_tasks_it = uncomplete_tasks.begin();
                         }
                         state = 1;
-                        std::cerr << "___ has req " << req.task_i << std::endl;
+                        std::cerr << "___ " << host.addr << ":" << host.port << " has req " << req.task_i << std::endl;
                         chunk_write(sel, c, &req, sizeof(req), std::move(*Task::current));
                         return;
                     }
@@ -1102,7 +1111,9 @@ int main(int argc, char**argv) {
         });
         sel.loop();
     }else{
-        start_server(sel, args.at(2).c_str(), std::stol(args.at(3)), [&](auto s, const char* addr, uint16_t port){
+        auto addr = args.at(2).c_str();
+        auto port = std::stol(args.at(3));
+        start_server(sel, addr, port, [&](auto s, const char* addr, uint16_t port){
             std::cerr << "connected from " << addr << ":" << port << std::endl;
             sel.async_read(s, [
                 &sel,
