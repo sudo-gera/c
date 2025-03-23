@@ -977,11 +977,11 @@ double f(double x){
 
 volatile size_t vzero = 0;
 
-const double smallest_point = vzero + 0;
-const double largest_point = vzero + M_PI;
+volatile double smallest_point = vzero + 0;
+volatile double largest_point = vzero + M_PI;
 
-const size_t points_per_task = vzero + 98765432;
-const size_t tasks = vzero + 64;
+volatile size_t points_per_task = vzero + 98765432;
+volatile size_t tasks = vzero + 64;
 
 auto tasks_check = [](){assert(tasks >= 2);return 0;}();
 
