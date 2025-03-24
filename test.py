@@ -1,67 +1,66 @@
+from h import *
 import asyncio
-<<<<<<< HEAD
-class test:
+import operator
+import inspect
+
+it = None
+
+async def put_it(coro):
+    coro = await coro
+    global it
+    it = coro
+    return it
+class post_await:
+    def __init__(self, f):
+        self.f = f
+        if inspect.isawaitable(f):
+            global it
+            it = put_it(f)
+    def __call__(self, *a, **s):
+        if self.f is None:
+            self.a=(a,s)
+            return self
+        if inspect.isawaitable(self.f):
+            return self.ofc(*a, **s)
+        else:
+            global it
+            res = self.f(*a, **s)
+            if inspect.isawaitable(res):
+                res = put_it(res)
+            it = res
+            return post_await(it)
+    async def __coro__(self):
+        return await self.f
     def __await__(self):
-        return asyncio.sleep(1).__await__()
+        return self.__coro__().__await__()
+    def ofc(self, v):
+        return v
+    def __mul__(self, oth):
+        if isinstance(oth, post_await):
+            return post_await(oth.a[0][0])
+        return oth
+    def __rmul__(self, oth):
+        if hasattr(self, 'a'):
+            return type(self)(oth)(*self.a[0], **self.a[1])
+        return type(self)(oth)
+
+btw = post_await(None)
+
+@post_await
+async def test(i):
+    asyncio.sleep*btw(random.random())*btw(await it)
+    return i
+
+
+async def get(i):
+    assert await test(i) == i
+    assert test(i).ofc(await it) == i
+    return i
     
+
+@asyncio.run
+@operator.methodcaller('__call__')
 async def main():
-    print(await test())
-
-asyncio.run(main())
-=======
-import stream
-import sys
-import timeout
-import time
-
-@stream.streamify
-async def connection(sock: stream.Stream):
-    print(sock.transport.get_write_buffer_limits())
-    l = 0
-    while 1:
-        c = await sock.read(1)
-        if not c:
-            break
-        l += 1
-        if l % 10000 == 0:
-            print('\x1b[s\x1b[999;80H'+f'{l:020_d}'+'\x1b[u', end='')
-        sys.stdout.flush()
-        await asyncio.sleep(0.0000001)
-
-async def loop_check():
-    ct = time.monotonic_ns()
-    while 1:
-        await asyncio.sleep(0.1)
-        a = ct
-        ct = time.monotonic_ns()
-        assert ct - a < 11 * 10**7
-        print('\x1b[s\x1b[999;160H'+f'loop_is_ok'+'\x1b[u', end='')
-        await asyncio.sleep(0.1)
-        print('\x1b[s\x1b[999;160H'+f'          '+'\x1b[u', end='')
-        sys.stdout.flush()
-        ct = time.monotonic_ns()
-
-async def client():
-    await asyncio.sleep(0.1)
-    async with stream.Stream(await asyncio.open_connection('127.0.0.1', 8888)) as sock:
-        for q in range(1000):
-            sock.write(b'-'*1_000_0)
-            print('\ndone writing', q)
-            print('\n1->', sock.transport.get_write_buffer_size())
-            try:
-                await timeout.run_with_timeout(sock.drain(), 0.1)
-                # await sock.drain()
-                print('\ndrained!')
-            except asyncio.TimeoutError:
-                print('\ntimeout')
-            print('\n2->', sock.transport.get_write_buffer_size())
-
-async def main():
-    asyncio.create_task(loop_check())
-    asyncio.create_task(client())
-    async with await asyncio.start_server(connection, None, 8888) as server:
-        await server.serve_forever()
-
-if __name__ == '__main__':
-    asyncio.run(main())
->>>>>>> 550e90b37f478fcee644803cf61b9cd43b7d7274
+    assert asyncio.gather(
+        *map(get, range(20))
+    )*btw*btw(await it)*it.__str__() == str([*range(20)])

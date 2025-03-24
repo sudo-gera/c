@@ -1,17 +1,35 @@
-#include <tuple>
-#include <array>
-#include <iostream>
-#include <fstream>
-#include <cassert>
-#include <vector>
-#include <string>
-using namespace std;
+#include "visitable_var.cpp"
 
-std::unique_ptr<int> test(){
-    std::unique_ptr<int> q;
-    return q;
+auto print = [](auto&&...a)
+requires(requires{((std::cout << a, 0) + ... + 0);})
+{
+    (void)((std::cout << a << " ", 0)|...|0);
+    std::cout << std::endl;
+};
+
+int main(){
+    var a, s, d;
+    a = 9;
+    s = a;
+    d = std::string("888");
+    visit(print, a, s, d);
+    auto tmp="1";
+    a = tmp;
+    visit(print, a);
+    a = "2";
+    visit(print, a);
+    std::string f="3";
+    const auto& g=f;
+    a = g;
+    const auto& ca = a;
+    visit(print, ca);
+    a = print;
+    try{
+        visit(print, a);
+    }catch(std::exception& e){
+        std::cout << e.what() << std::endl;
+    }
 }
 
-int main(int argc, char**argv){
-    auto tmp = test();
-}
+END_OF_CODE
+
