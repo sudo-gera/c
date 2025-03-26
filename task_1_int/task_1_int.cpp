@@ -351,7 +351,7 @@ using timespec_pair = std::pair<
 
 timespec_pair monotonic(){
     struct timespec tp;
-    sys.clock_gettime(CLOCK_MONOTONIC_RAW, &tp);
+    sys.clock_gettime(CLOCK_MONOTONIC, &tp);
     return {tp.tv_sec, tp.tv_nsec};
 }
 
