@@ -1,35 +1,14 @@
-#include "visitable_var.cpp"
+#include <iostream>
 
-auto print = [](auto&&...a)
-requires(requires{((std::cout << a, 0) + ... + 0);})
-{
-    (void)((std::cout << a << " ", 0)|...|0);
-    std::cout << std::endl;
+#include <functional>
+
+struct defer:std::function<void()>{
+    defer(auto&&...args):std::function<void()>(std::forward<decltype(args)>(args)...){}
+    ~defer(){(*this)();}
 };
 
 int main(){
-    var a, s, d;
-    a = 9;
-    s = a;
-    d = std::string("888");
-    visit(print, a, s, d);
-    auto tmp="1";
-    a = tmp;
-    visit(print, a);
-    a = "2";
-    visit(print, a);
-    std::string f="3";
-    const auto& g=f;
-    a = g;
-    const auto& ca = a;
-    visit(print, ca);
-    a = print;
-    try{
-        visit(print, a);
-    }catch(std::exception& e){
-        std::cout << e.what() << std::endl;
-    }
+    int e = 0;
+    defer a([&](){std::cout<<"123";});
+    return e;
 }
-
-END_OF_CODE
-
