@@ -12,6 +12,11 @@ class mitm:
         pprint(flow)
         pprint(flow.get_state())
         time.sleep(0.1)
+<<<<<<< HEAD
+        print()
+        print()
+=======
+>>>>>>> 4af092fe4429bddb023f075574e6c9ff28b9e788
     def request(self, flow):
         print(time.asctime())
         print(time.time())
@@ -19,6 +24,11 @@ class mitm:
         pprint(flow)
         pprint(flow.get_state())
         time.sleep(0.1)
+<<<<<<< HEAD
+        print()
+        print()
+=======
+>>>>>>> 4af092fe4429bddb023f075574e6c9ff28b9e788
     def responseheaders(self, flow):
         print(time.asctime())
         print(time.time())
@@ -26,6 +36,11 @@ class mitm:
         pprint(flow)
         pprint(flow.get_state())
         time.sleep(0.1)
+<<<<<<< HEAD
+        print()
+        print()
+=======
+>>>>>>> 4af092fe4429bddb023f075574e6c9ff28b9e788
     def response(self, flow):
         print(time.asctime())
         print(time.time())
@@ -33,6 +48,11 @@ class mitm:
         pprint(flow)
         pprint(flow.get_state())
         time.sleep(0.1)
+<<<<<<< HEAD
+        print()
+        print()
+=======
+>>>>>>> 4af092fe4429bddb023f075574e6c9ff28b9e788
     def error(self, flow):
         print(time.asctime())
         print(time.time())
@@ -40,6 +60,11 @@ class mitm:
         pprint(flow)
         pprint(flow.get_state())
         time.sleep(0.1)
+<<<<<<< HEAD
+        print()
+        print()
+=======
+>>>>>>> 4af092fe4429bddb023f075574e6c9ff28b9e788
 
 addons = [mitm()]
 
