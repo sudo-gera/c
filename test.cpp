@@ -1,25 +1,22 @@
-<<<<<<< HEAD
-#include <stdio.h>
-
-int main() {
-    puts("hello world");
-    [[gnu::assume(1.0000000000000001 > 1)]];
-}
-=======
+#include <memory>
+#include <functional>
 #include <iostream>
 
-auto f(auto a){
-    return 1-a;
-}
+// auto f = [](auto& f){f();};
+
+struct defer{
+    std::function<void()> f;
+    defer(std::function<void()> f):f(f){}
+    ~defer(){f();}
+};
+
+// std::unique_ptr<std::function<void()>, decltype([](auto&&a){})
+
 
 int main(){
-<<<<<<< HEAD
-    static_assert(requires{f("");});
+    auto a = std::unique_ptr<int>(new int(20));
+    // auto a = std::make_unique<int>(20);
+    defer d([&](){
+        std::cout << *a << std::endl;
+    });
 }
-=======
-    int e = 0;
-    defer a([&](){std::cout<<"123";});
-    return e;
-}
->>>>>>> 4c6b4fa7740a2b1a76fa11841a62e32d55433e2b
->>>>>>> c218422038c5dcd63768f5b421dd6406803a2f3d
