@@ -1,33 +1,22 @@
-#include <tuple>
-#include <type_traits>
-#include <cassert>
+#include <memory>
+#include <functional>
+#include <iostream>
 
-#include "strtype.cpp"
+// auto f = [](auto& f){f();};
 
-constexpr auto f(){
-    if consteval{
-        return 2;
-    }else{
-        return 3;
-    }
-}
+struct defer{
+    std::function<void()> f;
+    defer(std::function<void()> f):f(f){}
+    ~defer(){f();}
+};
 
-constexpr auto get_f(){
-    auto t = f;
-    return t;
-}
-
-constexpr auto r = get_f();
-static_assert(r() == 2);
+// std::unique_ptr<std::function<void()>, decltype([](auto&&a){})
 
 
 int main(){
-    const auto t = get_f();
-    assert(t() == 3);
-    assert(r() == 3);
-    
-    printf("%s\n", name_of_type<decltype(t)>);
-    printf("%s\n", name_of_type<decltype(r)>);
-    printf("%p\n", (void*)t);
-    printf("%p\n", (void*)r);
+    auto a = std::unique_ptr<int>(new int(20));
+    // auto a = std::make_unique<int>(20);
+    defer d([&](){
+        std::cout << *a << std::endl;
+    });
 }
