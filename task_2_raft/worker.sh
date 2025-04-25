@@ -10,11 +10,15 @@ else
     is_master=0
 fi
 
+network=172.17.0.0/24
+
 if [ "$is_master" -eq 1 ]
-    python3.12 network_and_log_manager.py 172.17.0.0/24
+    python3.12 log_server.py &
+    python3.12 network_manager.py "$(python3.12 print_hosts.py "$network" 2100 8)" &
 else
-    python3.12 command_executor_and_log_reader.py 172.17.0.0/24 &
-    sleep 2 ; ( python3.12 solution.py 172.17.0.0/24 2>&1 | nc 127.0.0.1 2101 )
+    python3.12 log_client.py "$(python3.12 print_hosts.py "$network" 2101 1)" &
+    python3.12 command_executor.py &
+    python3.12 solution.py "$(python3.12 print_hosts.py "$network" 2100 8)" 2>&1 | nc 127.0.0.1 2102
 fi
 
 
