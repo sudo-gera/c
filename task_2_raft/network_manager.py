@@ -5,10 +5,10 @@ import sys
 
 hosts = sys.argv[1:]
 
-async def change_network_config():
+async def change_network_config() -> None:
     ...
 
-async def main():
+async def main() -> None:
     while 1:
         await asyncio.sleep(1)
         await change_network_config()

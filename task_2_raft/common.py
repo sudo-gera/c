@@ -4,7 +4,7 @@ import psutil
 import asyncio
 from urllib.parse import quote, unquote
 
-async def safe_close_socket(writer: asyncio.StreamWriter):
+async def safe_socket_close(writer: asyncio.StreamWriter) -> None:
     try:
         writer.write_eof()
     except Exception:
@@ -18,23 +18,35 @@ async def safe_close_socket(writer: asyncio.StreamWriter):
     except Exception:
         pass
     try:
-        writer.wait_closed()
+        await writer.wait_closed()
     except Exception:
         pass
 
-def get_network() -> list[str]:
-    return [*map(str, ipaddress.ip_network(sys.argv[1]).hosts())]
+# def get_network(network_mask: str) -> list[str]:
+#     return [*map(str, ipaddress.ip_network(network_mask).hosts())]
 
-def get_my_ip() -> str:
-    network = get_network()
+# def get_my_ip(network_mask: str) -> str:
+#     network = get_network(network_mask)
+#     ifaces = psutil.net_if_addrs()
+#     for addresses_of_iface in ifaces.values():
+#         for address_info in addresses_of_iface:
+#             addr = address_info.address
+#             if addr in network:
+#                 return addr
+#     print(network, file=sys.stderr)
+#     print(ifaces, file=sys.stderr)
+#     assert False
+
+def select_my_ip(ips: list[str]) -> str:
     ifaces = psutil.net_if_addrs()
     for addresses_of_iface in ifaces.values():
         for address_info in addresses_of_iface:
             addr = address_info.address
-            if addr in network:
+            if addr in ips:
                 return addr
-
-
+    print(ips, file=sys.stderr)
+    print(ifaces, file=sys.stderr)
+    assert False
 
 
 

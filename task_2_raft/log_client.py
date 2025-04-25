@@ -5,9 +5,10 @@ import common
 import uuid
 import typing
 
-hosts = sys.argv[1:]
+log_server = sys.argv[1]
+# hosts = sys.argv[2:]
 
-my_ip = common.get_my_ip()
+# my_ip = common.select_my_ip(hosts)
 
 
 # colors = [
@@ -24,20 +25,20 @@ my_ip = common.get_my_ip()
 
 
 
-async def log_handler(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
+async def log_handler(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
     try:
         while 1:
             chunk = await reader.read(2**16)
-            r, w = await asyncio.open_connection(hosts[-1], 2101)
+            r, w = await asyncio.open_connection(log_server, 2101)
             try:
-                w.write(my_ip.encode() + b' ' + chunk)
+                w.write(chunk)
                 await w.drain()
             finally:
-                common.safe_close_socket(w)
+                await common.safe_socket_close(w)
     finally:
-        common.safe_close_socket(writer)
+        await common.safe_socket_close(writer)
     
-async def main():
+async def main() -> None:
     async with await asyncio.start_server(log_handler, '0.0.0.0', 2102) as server:
         await server.serve_forever()
 

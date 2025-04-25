@@ -2,23 +2,19 @@ import ipaddress
 import common
 import asyncio
 import sys
+import time
+import psutil
 
-hosts : list[str] = []
+hosts = sys.argv[1:]
 
-async def try_host(host: str):
-    try:
-        reader, writer = await asyncio.open_connection(host, 2100)
-        hosts.append(host)
-        await common.safe_socket_close(writer)
-    except Exception:
-        pass
+my_ip = common.select_my_ip(hosts)
 
-network = ipaddress.ip_network(sys.argv[1])
+async def main() -> None:
+    while 1:
+        await asyncio.sleep(1)
+        print(my_ip, time.asctime())
 
-async def find_hosts():
-    while len(hosts) != 8:
-        await asyncio.sleep(0.1)
-        for host in network:
-            asyncio.create_task(try_host(host))
-        await asyncio.sleep(0.1)
+if __name__ == '__main__':
+    asyncio.run(main())
+
 

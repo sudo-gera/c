@@ -13,14 +13,15 @@ fi
 network=172.17.0.0/24
 
 if [ "$is_master" -eq 1 ]
-    python3.12 log_server.py &
-    python3.12 network_manager.py "$(python3.12 print_hosts.py "$network" 2100 8)" &
+then
+    python3.11 log_server.py &
+    python3.11 network_manager.py $(python3.11 print_hosts.py "$network" 2100 8) &
 else
-    python3.12 log_client.py "$(python3.12 print_hosts.py "$network" 2101 1)" &
-    python3.12 command_executor.py &
-    python3.12 solution.py "$(python3.12 print_hosts.py "$network" 2100 8)" 2>&1 | nc 127.0.0.1 2102
+    python3.11 command_executor.py &
+    python3.11 log_client.py $(python3.11 print_hosts.py "$network" 2101 1) &
+    script -f >(while sleep 0.3 ; do nc 127.0.0.1 2102 ; done) -c 'python3.11 solution.py $(python3.11 print_hosts.py '"${network@Q}"' 2100 8)' &
 fi
-
+tail -f /dev/null
 
 # system_hash="$(sum /a.out)" # to identify nodes of this system
 # echo "system_hash=${system_hash@Q}"
