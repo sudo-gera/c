@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+# set -x
 
 node_id="$1"
 if [ "$node_id" -eq '0' ]
