@@ -4,6 +4,7 @@ import asyncio
 import sys
 import time
 import psutil
+import traceback
 
 hosts = sys.argv[1:]
 my_ip = common.select_my_ip(hosts)
@@ -17,8 +18,11 @@ async def on_connection(reader: asyncio.StreamReader, writer: asyncio.StreamWrit
         await common.safe_socket_close(writer)
 
 async def listening_server() -> None:
-    async with await asyncio.start_server(on_connection, '0.0.0.0', 4444) as server:
-        await server.serve_forever()
+    try:
+        async with await asyncio.start_server(on_connection, '0.0.0.0', 4444) as server:
+            await server.serve_forever()
+    except:
+        print(traceback.format_exc())
 
 async def ping_one_host(host:str) -> None:
     try:
