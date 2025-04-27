@@ -1,23 +1,22 @@
-<<<<<<< HEAD
-#include <stdio.h>
-
-int main() {
-    puts("hello world");
-    [[gnu::assume(1.0000000000000001 > 1)]];
-}
-=======
+#include <memory>
+#include <functional>
 #include <iostream>
 
-#include <functional>
+// auto f = [](auto& f){f();};
 
-struct defer:std::function<void()>{
-    defer(auto&&...args):std::function<void()>(std::forward<decltype(args)>(args)...){}
-    ~defer(){(*this)();}
+struct defer{
+    std::function<void()> f;
+    defer(std::function<void()> f):f(f){}
+    ~defer(){f();}
 };
 
+// std::unique_ptr<std::function<void()>, decltype([](auto&&a){})
+
+
 int main(){
-    int e = 0;
-    defer a([&](){std::cout<<"123";});
-    return e;
+    auto a = std::unique_ptr<int>(new int(20));
+    // auto a = std::make_unique<int>(20);
+    defer d([&](){
+        std::cout << *a << std::endl;
+    });
 }
->>>>>>> 4c6b4fa7740a2b1a76fa11841a62e32d55433e2b

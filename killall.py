@@ -52,6 +52,7 @@ while 1:
         g = parse_ps_and_get_popular_process(bytes(a))
         if len(g[1]) > 256:
             print(time.asctime(), f'found {g[0]!r} having {len(g[1])} processes')
+            print(g)
             for pid in map(int, g[1]):
                 try:
                  os.kill(pid, signal.SIGTERM)

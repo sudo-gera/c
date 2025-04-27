@@ -1,0 +1,21 @@
+pwd
+tree /host/task_01/
+rm -rf host/task_01/hello_world/
+cd host/task_01/
+ls la
+ls -la
+argo new hello_world
+cargo new hello_world
+cargo build
+cd hello_world/
+cargo build
+curl
+cc
+curl -sSL command-not-found.com/cc | grep apt
+cd hello_world/
+cd /host/task_01/hello_world/
+cargo build
+rm -rf .git
+rm .git
+./target/debug/hello_world
+cargo run
