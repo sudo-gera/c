@@ -28,13 +28,15 @@ def color_by_host(ip: str) -> str:
 async def log_handler(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
     peername = writer.transport.get_extra_info('peername')
     data = (await reader.read()).decode()
+    if data.endswith('\n'):
+        data = data[:-1]
     if not data:
         return
     ip = peername[0]
     # ip = data.split()[0]
     # data = data[(len(data.split()[0]) + 1):]
     color = color_by_host(ip)
-    print('\n'.join([color + line + clear_color for line in data.split('\n') if line.strip()]))
+    print('\n'.join([color + '[' + ip + '] ' + line + clear_color for line in data.split('\n')]))
 
 async def main() -> None:
     async with await asyncio.start_server(log_handler, '0.0.0.0', 2101) as server:

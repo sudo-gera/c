@@ -5,6 +5,10 @@ import sys
 import time
 import psutil
 import traceback
+import logging
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG, format='%(levelname)8s %(asctime)s %(filename)s:%(lineno)d %(funcName)s\t\t%(message)s')
 
 hosts = sys.argv[1:]
 my_ip = common.select_my_ip(hosts)
@@ -12,8 +16,8 @@ other_hosts = {*hosts} - {my_ip}
 
 async def on_connection(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
     try:
-        host = writer.get_extra_info('peername')
-        print('got connection from', host)
+        host = writer.get_extra_info('peername')[0]
+        logging.debug('got connection from', host)
     finally:
         await common.safe_socket_close(writer)
 
@@ -28,7 +32,7 @@ async def ping_one_host(host:str) -> None:
     try:
         reader, writer = await common.run_with_timeout(asyncio.open_connection(host, 4444), 1)
         try:
-            print('connected to', host)
+            logging.debug('connected to', host)
         finally:
             await common.safe_socket_close(writer)
     except Exception:
@@ -40,7 +44,7 @@ async def pinger() -> None:
         await asyncio.gather(*map(ping_one_host, other_hosts))
 
 async def main() -> None:
-    asyncio.gather(
+    await asyncio.gather(
         pinger(),
         listening_server(),
     )

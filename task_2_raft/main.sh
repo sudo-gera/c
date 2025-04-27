@@ -1,7 +1,7 @@
 docker_name='raft'
 
 min_id=0
-max_id=8
+max_id=9
 
 function clean(){
     echo
@@ -32,21 +32,23 @@ function main(){
 
     for id in $(seq $max_id $min_id)
     do
-        if [ $id -eq $min_id ]
-        then
-            docker container run --rm -i -t --cap-add=NET_ADMIN --name "${docker_name}_${id}" "$docker_name" bash -c "script -f >(nc 172.30.216.80 9999) -c '/worker.sh $id'"
-        else
-            docker container run --rm -d    --cap-add=NET_ADMIN --name "${docker_name}_${id}" "$docker_name" bash -c "script -f >(nc 172.30.216.80 9999) -c '/worker.sh $id'"
-        fi
+        # if [ $id -eq $min_id ]
+        # then
+        #     docker container run --rm -i -t --cap-add=NET_ADMIN --name "${docker_name}_${id}" "$docker_name" bash -c "script -f >(nc 172.30.216.80 9999) -c '/worker.sh $id'"
+        # else
+        #     docker container run --rm -d    --cap-add=NET_ADMIN --name "${docker_name}_${id}" "$docker_name" bash -c "script -f >(nc 172.30.216.80 9999) -c '/worker.sh $id'"
+        # fi
         # if [ $id -eq $min_id ]
         # then
         #     docker container run --rm -i -t --cap-add=NET_ADMIN --name "${docker_name}_${id}" "$docker_name" bash -c "/worker.sh $id"
         # else
         #     docker container run --rm -d    --cap-add=NET_ADMIN --name "${docker_name}_${id}" "$docker_name" bash -c "/worker.sh $id"
         # fi
+        docker container run --rm -t --cap-add=NET_ADMIN --name "${docker_name}_${id}" "$docker_name" bash -c "script -f >(nc 172.30.216.80 9999) -c '/worker.sh $id'" &
     done
+    tail -f /dev/null
 }
 
 clean
+trap clean EXIT
 main
-clean
