@@ -24,6 +24,7 @@ RUN mkfifo fifo && \
     (while sleep 0.3 ; do tmux send C-m ; done & ) && \
     cat fifo
 RUN apt install -y ncat
+RUN apt install -y coreutils
 # these commands would be cached and would not run again for each source change
 
 
