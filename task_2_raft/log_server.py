@@ -45,13 +45,27 @@ async def wait_for_exit() -> None:
     exit_queue.put_nowait(None)
     raise TabError
 
-async def log_handler(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
-    data = await reader.read()
+lock = asyncio.Lock()
+
+def print_data(data: bytes) -> None:
     if data.startswith(b'GET'):
         exit_queue.put_nowait(None)
     else:
         sys.stdout.buffer.write(data)
         sys.stdout.buffer.flush()
+
+async def log_handler(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+    data = await reader.read()
+    if data.startswith(b'\x00'):
+        if not lock.locked():
+            await lock.acquire()
+        print_data(data)
+        if b'\01' in data:
+            lock.release()
+    else:
+        async with lock:
+            print_data(data)
+
     # sys.stdout.flush()
     # peername = writer.transport.get_extra_info('peername')
     # data = (await reader.read()).decode()

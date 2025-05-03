@@ -81,20 +81,24 @@ async def send_command(c: str, host: str) -> None:
         w.write(c.encode())
         w.write_eof()
         await w.drain()
-        print(await r.read())
+        sys.stdout.buffer.write(await r.read())
+        sys.stdout.buffer.flush()
     finally:
         await common.safe_socket_close(w)
 
 async def change_network_config() -> None:
     net_map : dd[int, dict[int, bool]] = dd(dict)
-    for i in range(len(hosts)):
-        for o in range(i+1):
-            net_map[i][o] = net_map[o][i] = random.randint(0, 4) == 0
     for h in range(len(hosts)):
         if host_status[h][0]:
-            host_status[h][1] = random.randint(0, 8) == 0
+            host_status[h][1] = random.randint(0, 16) == 0
         else:
-            host_status[h][1] = random.randint(0, 8) != 0
+            host_status[h][1] = random.randint(0, 16) != 0
+    for i in range(len(hosts)):
+        for o in range(i+1):
+            if host_status[o][0]^host_status[o][1] and host_status[i][0]^host_status[i][1]:
+                net_map[i][o] = net_map[o][i] = random.randint(0, 5) == 0
+            else:
+                net_map[i][o] = net_map[o][i] = False
     tables = [''] * len(hosts)
     for h in range(len(hosts)):
         tables[h] += textwrap.dedent(f'''
@@ -140,10 +144,10 @@ async def change_network_config() -> None:
                     )
     for h in range(len(hosts)):
         for q in range(m):
-            for w in range(m//(2-(host_status[h][0]^host_status[h][1]))):
+            for w in range(m//(1+3*(1^host_status[h][0]^host_status[h][1]))):
                 dots.append(
                     (
-                        hosts_dots[h] + cmath.rect(1, cmath.pi*2/m*q)*w/m/20,
+                        hosts_dots[h] + cmath.rect(1, cmath.pi*2/m*q)*w/m/12,
                         colors[h],
                     )
                 )
@@ -159,7 +163,7 @@ async def change_network_config() -> None:
         for q in range(width//2+1)
     ]
     for dot, c in dots:
-        dot/=1.3
+        dot/=1.1
         dot/=2
         dot += 0.5 + 0.5j
         dot *= width
@@ -171,14 +175,14 @@ async def change_network_config() -> None:
         canvas[x//2][y][1][x%2] = c
     print(
         '\n'.join([
-            ''.join(
+            '\x00'+''.join(
                 [
                     get_colored_symbol(canvas[q][w][0][0], canvas[q][w][0][1], canvas[q][w][1][0], canvas[q][w][1][1])
                     for w in range(width)
                 ]
             )
             for q in range(len(canvas))
-        ])
+        ]) + '\x01'
     )
     async def send_tables(h: int) -> None:
         await send_command(f'echo {base64.b64encode(tables[h].encode()).decode()} | base64 -d | iptables-restore', hosts[h])
@@ -186,27 +190,45 @@ async def change_network_config() -> None:
         command = 'true'
         if host_status[h][1]:
             if host_status[h][0]:
-                command = "rm /work ; kill $(ps ax | grep -E 'solution.py|tail -f //dev/null' | awk '{print $1}')"
+                prefix = 'rm    '
                 host_status[h][0]=False
             else:
-                command = "touch /work ; kill $(ps ax | grep -E 'solution.py|tail -f //dev/null' | awk '{print $1}')"
-                # command = "python3.11 /solution.py $(cat /hosts.txt)"
+                prefix = 'touch '
                 host_status[h][0]=True
+            command = prefix + "/work ; kill -9 $(ps ax | grep -E 'solution|tail -f //dev/null' | grep -v grep | awk '{print $1}')"
         await send_command(command, hosts[h])
-    [*
-        map(
-            fire,
-            map(
-                send_status,
-                range(
-                    len(
-                        hosts
-                    )
+    # [*
+    #     map(
+    #         fire,
+    #         map(
+    #             send_status,
+    #             range(
+    #                 len(
+    #                     hosts
+    #                 )
+    #             )
+    #         )
+    #     )
+    # ]
+    # await asyncio.gather(
+    #     *map(
+    #         send_status,
+    #         range(
+    #             len(
+    #                 hosts
+    #             )
+    #         )
+    #     )
+    # )
+    await asyncio.gather(
+        *map(
+            send_status,
+            range(
+                len(
+                    hosts
                 )
             )
-        )
-    ]
-    await asyncio.gather(
+        ),
         *map(
             send_tables,
             range(
@@ -221,7 +243,10 @@ async def change_network_config() -> None:
 async def main() -> None:
     while 1:
         await change_network_config()
-        await asyncio.sleep(15)
+        await asyncio.sleep(4)
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        pass

@@ -42,6 +42,8 @@ import typing
 #     async with await asyncio.start_server(log_handler, '0.0.0.0', 2102) as server:
 #         await server.serve_forever()
 
+prefix = b''
+
 async def main() -> None:
     buffer = b''
     continue_working = True
@@ -61,13 +63,18 @@ async def main() -> None:
             except ConnectionRefusedError:
                 break
             data, buffer = buffer.split(b'\n', 1)
-            data += b'\n'
-            try:
-                w.write(data)
-                w.write_eof()
-                await w.drain()
-            finally:
-                await common.safe_socket_close(w)
+            global prefix
+            if b'\x02' in data:
+                prefix = data.split(b'\x02', 1)[0]
+            else:
+                data = prefix + data
+                data += b'\n'
+                try:
+                    w.write(data)
+                    w.write_eof()
+                    await w.drain()
+                finally:
+                    await common.safe_socket_close(w)
 
 
 if __name__ == '__main__':
