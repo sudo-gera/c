@@ -5,20 +5,21 @@
 node_id="$1"
 height="$2"
 width="$3"
+worker_count="$4"
 
 network=172.17.0.0/24
 
 if [ "$node_id" -eq 0 ]
 then
     sleep 8
-    python3.11 network_manager.py "$height" "$width" $(python3.11 print_hosts.py "$network" 2100 8) &
+    python3.11 network_manager.py "$height" "$width" $(python3.11 print_hosts.py "$network" 2100 "$worker_count") &
 else
     if [ "$node_id" -eq 1 ]
     then
-        python3.11 client.py $(python3.11 print_hosts.py "$network" 2100 8) &
+        python3.11 client.py $(python3.11 print_hosts.py "$network" 2100 "$worker_count") &
     else
         python3.11 command_executor.py &
-        python3.11 print_hosts.py "$network" 2100 8 > hosts.txt
+        python3.11 print_hosts.py "$network" 2100 "$worker_count" > hosts.txt
         echo "$(python3.11 print_colored_ip.py $(cat hosts.txt))" $'\x02'
         while sleep 0.1
         do

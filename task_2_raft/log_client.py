@@ -5,6 +5,18 @@ import common
 import uuid
 import typing
 
+##############################################################################################################################################
+
+tasks : set[asyncio.Task[None]] = set()
+
+def fire(coro: typing.Awaitable[typing.Any]) -> None:
+    async def wrapper() -> None:
+        await coro
+    task : asyncio.Task[None] = asyncio.create_task(wrapper())
+    tasks.add(task)
+    task.add_done_callback(tasks.discard)
+
+##############################################################################################################################################
 # log_server = sys.argv[1]
 # hosts = sys.argv[2:]
 
@@ -23,6 +35,7 @@ import typing
 #     '\x1b[96m',
 # ]
 
+clear_color = '\x1b[0m'
 
 
 # async def log_handler(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
@@ -64,10 +77,20 @@ async def main() -> None:
                 break
             data, buffer = buffer.split(b'\n', 1)
             global prefix
+            if b'\x03' in data:
+                async def stop_everything() -> None:
+                    await asyncio.sleep(4)
+                    try:
+                        r,w = await asyncio.open_connection('127.0.0.1', 2102)
+                    except ConnectionRefusedError:
+                        pass
+                    else:
+                        await common.safe_socket_close(w)
+                fire(stop_everything())
             if b'\x02' in data:
                 prefix = data.split(b'\x02', 1)[0]
             else:
-                data = prefix + data
+                data = prefix + data + clear_color.encode()
                 data += b'\n'
                 try:
                     w.write(data)

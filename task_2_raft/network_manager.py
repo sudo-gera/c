@@ -44,7 +44,7 @@ clear_color = '\x1b[0m'
 ##############################################################################################################################################
 
 term_size = [*map(int, sys.argv[1:3])]
-assert len(hosts) == 8
+# assert len(hosts) == 8
 
 '''
 *filter
@@ -76,6 +76,7 @@ def get_colored_symbol(ue: bool, le: bool, uc: str, lc: str) -> str:
 host_status = [[False, False] for q in range(len(hosts))]
 
 async def send_command(c: str, host: str) -> None:
+    # print(c, host)
     r,w = await asyncio.open_connection(host, 2100)
     try:
         w.write(c.encode())
@@ -96,7 +97,7 @@ async def change_network_config() -> None:
     for i in range(len(hosts)):
         for o in range(i+1):
             if host_status[o][0]^host_status[o][1] and host_status[i][0]^host_status[i][1]:
-                net_map[i][o] = net_map[o][i] = random.randint(0, 5) == 0
+                net_map[i][o] = net_map[o][i] = random.randint(0, 5) > 0
             else:
                 net_map[i][o] = net_map[o][i] = False
     tables = [''] * len(hosts)
