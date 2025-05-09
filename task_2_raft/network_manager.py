@@ -8,6 +8,9 @@ import base64
 import cmath
 import os
 import typing
+import math
+import logging
+import time
 from collections import defaultdict as dd
 
 ##############################################################################################################################################
@@ -41,7 +44,58 @@ colors = [
 # my_color = colors[hosts.index(my_ip)]
 clear_color = '\x1b[0m'
 
+
 ##############################################################################################################################################
+
+async def connect_stdin_stdout() -> tuple[asyncio.StreamReader, asyncio.StreamWriter]:
+    loop = asyncio.get_event_loop()
+    reader = asyncio.StreamReader()
+    protocol = asyncio.StreamReaderProtocol(reader)
+    # await loop.connect_read_pipe(lambda: protocol, sys.stdin)
+    w_transport, w_protocol = await loop.connect_write_pipe(asyncio.streams.FlowControlMixin, sys.stdout)
+    writer = asyncio.StreamWriter(w_transport, w_protocol, reader, loop)
+    return reader, writer
+
+out_queue : asyncio.Queue[str] = asyncio.Queue()
+
+async def out_printer() -> None:
+    stdin, stdout = await connect_stdin_stdout()
+    while 1:
+        data = await out_queue.get()
+        while not out_queue.empty():
+            data += out_queue.get_nowait()
+        stdout.write(data.encode())
+        await stdout.drain()
+
+class queue_stream:
+    def __init__(self, q: asyncio.Queue[str]) -> None:
+        self.q = q
+    
+    def write(self, data: str) -> None:
+        self.q.put_nowait(data)
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG, format='[ %(asctime)s ]: %(message)s', stream=queue_stream(out_queue))
+
+class log_stream:
+    def __init__(self, logger_func: typing.Callable[[str], None]):
+        self.logger_func = logger_func
+        self.buffer = ''
+    def write(self, data: str) -> None:
+        self.buffer += data
+        while '\n' in self.buffer:
+            data, self.buffer = self.buffer.split('\n', 1)
+            data = data + ' \x00 ' + f'{time.time_ns():024d}'
+            self.logger_func(data)
+            sys.stdout.flush()
+            sys.stderr.flush()
+
+debug_stream = log_stream(logging.debug)
+info_stream = log_stream(logging.info)
+error_stream = log_stream(logging.error)
+
+##############################################################################################################################################
+
 
 term_size = [*map(int, sys.argv[1:3])]
 # assert len(hosts) == 8
@@ -91,13 +145,13 @@ async def change_network_config() -> None:
     net_map : dd[int, dict[int, bool]] = dd(dict)
     for h in range(len(hosts)):
         if host_status[h][0]:
-            host_status[h][1] = random.randint(0, 16) == 0
+            host_status[h][1] = random.randint(0, 4) == 0
         else:
-            host_status[h][1] = random.randint(0, 16) != 0
+            host_status[h][1] = random.randint(0, 4) != 0
     for i in range(len(hosts)):
         for o in range(i+1):
             if host_status[o][0]^host_status[o][1] and host_status[i][0]^host_status[i][1]:
-                net_map[i][o] = net_map[o][i] = random.randint(0, 5) > 0
+                net_map[i][o] = net_map[o][i] = random.randint(0, 2) > 0
             else:
                 net_map[i][o] = net_map[o][i] = False
     tables = [''] * len(hosts)
@@ -164,26 +218,39 @@ async def change_network_config() -> None:
         for q in range(width//2+1)
     ]
     for dot, c in dots:
-        dot/=1.1
-        dot/=2
+        # dot += 0.001 + 0.001j
+        dot /= 1.1
+        dot /= 2
         dot += 0.5 + 0.5j
         dot *= width
-        x = max(min(int(dot.real), width-1), 0)
-        y = max(min(int(dot.imag), width-1), 0)
+        x = max(min(math.floor(dot.real), width-1), 0)
+        y = max(min(math.floor(dot.imag), width-1), 0)
         assert x in range(width)
         assert y in range(width)
         canvas[x//2][y][0][x%2] = True
         canvas[x//2][y][1][x%2] = c
+    # print(
+    #     '\n'.join([
+    #         '\x00'+''.join(
+    #             [
+    #                 get_colored_symbol(canvas[q][w][0][0], canvas[q][w][0][1], canvas[q][w][1][0], canvas[q][w][1][1])
+    #                 for w in range(width)
+    #             ]
+    #         )
+    #         for q in range(len(canvas))
+    #     ]) + '\x01'
+    # )
     print(
         '\n'.join([
-            '\x00'+''.join(
+            ''.join(
                 [
                     get_colored_symbol(canvas[q][w][0][0], canvas[q][w][0][1], canvas[q][w][1][0], canvas[q][w][1][1])
                     for w in range(width)
                 ]
             )
             for q in range(len(canvas))
-        ]) + '\x01'
+        ]),
+        file=info_stream
     )
     async def send_tables(h: int) -> None:
         await send_command(f'echo {base64.b64encode(tables[h].encode()).decode()} | base64 -d | iptables-restore', hosts[h])
@@ -242,6 +309,7 @@ async def change_network_config() -> None:
 
 
 async def main() -> None:
+    fire(out_printer())
     while 1:
         await change_network_config()
         await asyncio.sleep(4)

@@ -14,6 +14,7 @@ hosts = sys.argv[2:]
 msg = sys.argv[1]
 hosts.sort()
 my_ip = common.select_my_ip(hosts)
+assert isinstance(my_ip, str)
 other_hosts = {*hosts} - {my_ip}
 
 ##############################################################################################################################################

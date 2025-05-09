@@ -11,12 +11,22 @@ network=172.17.0.0/24
 
 if [ "$node_id" -eq 0 ]
 then
-    sleep 8
+    sleep 2
     python3.11 network_manager.py "$height" "$width" $(python3.11 print_hosts.py "$network" 2100 "$worker_count") &
 else
     if [ "$node_id" -eq 1 ]
     then
-        python3.11 client.py $(python3.11 print_hosts.py "$network" 2100 "$worker_count") &
+        echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+        echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+        echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+        echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+        echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+        echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+        echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+        echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+        python3.11 print_hosts.py "$network" 2100 "$worker_count" > hosts.txt
+        echo "$(python3.11 print_colored_ip.py $(cat hosts.txt))" $'\x02'
+        python3.11 solution.py $(cat hosts.txt) &
     else
         python3.11 command_executor.py &
         python3.11 print_hosts.py "$network" 2100 "$worker_count" > hosts.txt

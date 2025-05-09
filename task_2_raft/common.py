@@ -10,15 +10,7 @@ async def safe_socket_close(writer: asyncio.StreamWriter) -> None:
     except Exception:
         pass
     try:
-        await run_with_timeout(writer.drain(), 1)
-    except Exception:
-        pass
-    try:
         writer.close()
-    except Exception:
-        pass
-    try:
-        await run_with_timeout(writer.wait_closed(), 1)
     except Exception:
         pass
 
@@ -37,39 +29,39 @@ async def safe_socket_close(writer: asyncio.StreamWriter) -> None:
 #     print(ifaces, file=sys.stderr)
 #     assert False
 
-def select_my_ip(ips: list[str]) -> str:
+def select_my_ip(ips: list[str]) -> str | None:
     ifaces = psutil.net_if_addrs()
     for addresses_of_iface in ifaces.values():
         for address_info in addresses_of_iface:
             addr = address_info.address
             if addr in ips:
                 return addr
-    print(ips, file=sys.stderr)
-    print(ifaces, file=sys.stderr)
-    assert False
+    # print(ips, file=sys.stderr)
+    # print(ifaces, file=sys.stderr)
+    return None
 
 import asyncio
 import traceback
 import typing
 
-T = typing.TypeVar('T')
+# T = typing.TypeVar('T')
 
-async def run_with_timeout(coro: typing.Coroutine[typing.Any, typing.Any, T], timeout: float) -> T:
-    task = asyncio.create_task(coro)
-    e = None
-    try:
-        await asyncio.wait([task], timeout=timeout)
-    except BaseException as _e:
-        e=_e
-    finally:
-        if task.done():
-            if e is not None:
-                raise e
-            return task.result()
-        task.cancel()
-    if e is not None:
-        raise e
-    raise asyncio.TimeoutError
+# async def run_with_timeout(coro: typing.Coroutine[typing.Any, typing.Any, T], timeout: float) -> T:
+#     task = asyncio.create_task(coro)
+#     e = None
+#     try:
+#         await asyncio.wait([task], timeout=timeout)
+#     except BaseException as _e:
+#         e=_e
+#     finally:
+#         if task.done():
+#             if e is not None:
+#                 raise e
+#             return task.result()
+#         task.cancel()
+#     if e is not None:
+#         raise e
+#     raise asyncio.TimeoutError
 
 
 

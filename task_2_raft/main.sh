@@ -1,7 +1,7 @@
 docker_name='raft'
 
 min_id=0
-worker_count=2
+worker_count=3
 max_id=$((
     $worker_count
         +
@@ -18,24 +18,50 @@ function clean(){
     echo '                 ' cleaning containers and images
     echo
     echo
-    for q in $(seq 1 80)
-    do
-        printf $'\x1b[s\x1b[999B\x1b['"$q"$'C#\x1b[u'
-        sleep 0.1
-    done &
-    curl 127.0.0.1:2101 --max-time 1 >/dev/null 2>/dev/null &
-    curl 127.0.0.1:2102 --max-time 1 >/dev/null 2>/dev/null &
-    for id in $(seq $min_id $max_id)
-    do
+    local term_size=$(stty size | awk '{print $2}')
+    (
         (
+            for q in $(seq 1 80)
+            do
+                (
+                    printf $'\x1b[s\x1b[999B\r'
+                    for e in $(seq 1 $term_size)
+                    do
+                        local w=$(( e - 1 ))
+                        if [ $(( ($q + $w) % 4 )) -eq 0 ]
+                        then
+                            printf $'#'
+                        else
+                            printf $' '
+                        fi
+                    done
+                    printf $'\x1b[u'
+                ) | tail -n 99999
+                sleep 0.02
+            done
             (
-                docker container stop -t 1 "${docker_name}_${id}" ||:
-                docker container rm "${docker_name}_${id}"   ||:
-            )&
-        )
-    done | tee
+                printf $'\x1b[s\x1b[999B\r'
+                cat /dev/zero | tr '\000' ' ' | head -c $term_size
+                printf $'\x1b[u'
+            ) | tail -n 99999
+        )&
+        (
+            curl 127.0.0.1:2101 --max-time 1 >/dev/null 2>/dev/null &
+            curl 127.0.0.1:2102 --max-time 1 >/dev/null 2>/dev/null &
+            for id in $(seq $min_id $max_id)
+            do
+                (
+                    (
+                        docker container stop -t 1 "${docker_name}_${id}" ||:
+                        docker container rm "${docker_name}_${id}"   ||:
+                    )&
+                )
+            done | tee
 
-    docker image rm "$docker_name" ||:
+            docker image rm "$docker_name" ||:
+        ) &
+    ) | tee
+    echo
 }
 
 function main(){
