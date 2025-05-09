@@ -103,7 +103,7 @@ async def main() -> None:
     stop_waiter = [0]
     while continue_working:
         try:
-            data = await stdin.readline()
+            data = await stdin.read(2**16)
         except BrokenPipeError as e:
             data = b'broken pipe, exiting...'
             continue_working = False
@@ -122,7 +122,8 @@ async def main() -> None:
                 data = b'\r'.join(data.split(b' \x00 ')[::-1])
                 # stdout.write(repr(data).encode()+b'\n')
                 # await stdout.drain()
-            chunks_buffer.append(data)
+            if b'\x05' not in data:
+                chunks_buffer.append(data)
         # chunks_buffer = [b'\n'.join(chunks_buffer)]
         while chunks_buffer:
             # try:

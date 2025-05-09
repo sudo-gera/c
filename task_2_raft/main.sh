@@ -1,7 +1,7 @@
 docker_name='raft'
 
 min_id=0
-worker_count=3
+worker_count=5
 max_id=$((
     $worker_count
         +
@@ -93,9 +93,10 @@ function main(){
         #     docker container run --rm -d    --cap-add=NET_ADMIN --name "${docker_name}_${id}" "$docker_name" bash -c "/worker.sh $id"
         # fi
         # docker container run --rm -t --cap-add=NET_ADMIN --name "${docker_name}_${id}" "$docker_name" bash -c "script -f >(nc 172.30.216.80 9999) -c '/worker.sh $id'" &
-        docker container run --rm -t --cap-add=NET_ADMIN --name "${docker_name}_${id}" "$docker_name" bash -c "script -f >(nc 172.30.216.80 9999) -c '/worker.sh $id $(stty size) $worker_count'" | python3 log_client.py &
+        docker container run --rm -t --cap-add=NET_ADMIN --name "${docker_name}_${id}" "$docker_name" bash -c "script -f >(while sleep 1 ; do nc 172.30.216.80 9999 ; done) -c '/worker.sh $id $(stty size) $worker_count'" | python3 log_client.py &
         # docker container run --rm -t --cap-add=NET_ADMIN --name "${docker_name}_${id}" "$docker_name" bash -c "/worker.sh $id" | python3 log_client.py &
     done
+    # ( ( sleep 120 ; clean ) & )
     nc -l 2102
     # tail -f /dev/null
 }

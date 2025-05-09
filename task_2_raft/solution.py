@@ -90,7 +90,7 @@ tasks : set[asyncio.Task[None]] = set()
 class alert:
     def __del__(self) -> None:
         print('\x03\x03\x03')
-        print('FAIL FAIL FAIL FAIL FAIL FAIL FAIL FAIL', file=error_stream)
+        print('FAIL !FAIL!', file=error_stream)
 
 alerter = alert()
 
@@ -204,10 +204,12 @@ class log_stream:
         self.buffer += data
         while '\n' in self.buffer:
             data, self.buffer = self.buffer.split('\n', 1)
-            data = data + ' \x00 ' + f'{time.time_ns():024d}'
+            data = data + ' \x00 ' + f'{time.time_ns():024d}_{my_ip}'
+            assert not set(data) & set('\r\n')
+            out_queue.put_nowait('\x05' + data + '\n')
             self.logger_func(data)
-            sys.stdout.flush()
-            sys.stderr.flush()
+            # sys.stdout.flush()
+            # sys.stderr.flush()
 
 debug_stream = log_stream(logging.debug)
 info_stream = log_stream(logging.info)
@@ -221,14 +223,13 @@ class log_payload:
 
 @dataclasses.dataclass
 class log_message:
-    hidden: bool
     msg_id: int
     payload: log_payload
 
 @dataclasses.dataclass
 class log_entry:
     term: int
-    message: log_message
+    message: log_message | None
 
 @dataclasses.dataclass
 class append_entries_req:
@@ -238,11 +239,12 @@ class append_entries_req:
     commit_len: int
     entries: list[log_entry]
     msg_id: int
+    leader_id: int
 
 @dataclasses.dataclass
 class append_entries_res:
     term: int
-    success: bool
+    status: typing.Literal['good', 'wrong_last_log', 'wrong_term', 'wrong_msg_id']
 
 @dataclasses.dataclass
 class request_vote_req:
@@ -284,7 +286,6 @@ def loads(data: bytes, msg_type: typing.Type[T]) -> T:
     import pickle
     msg = pickle.loads(data)
     if not isinstance(msg, msg_type):
-        # print(f'{msg} is not an instance of {msg_type}')
         raise WrongTypeError
     return msg
 
@@ -491,6 +492,7 @@ class raft_storage:
     voted_for : object_descriptor[int, int] = object_descriptor()
     term : object_descriptor[int, int] = object_descriptor()
     commit_len : object_descriptor[int, int] = object_descriptor()
+    last_msg_id : object_descriptor[int, int] = object_descriptor()
 
     def __init__(self) -> None:
         self.storage = cached_persistent_storage(
@@ -500,10 +502,12 @@ class raft_storage:
         self.voted_for_object = int_storage('voted_for', nan, self.storage)
         self.term_object = int_storage('term', 1, self.storage)
         self.commit_len_object = int_storage('commit_len', 0, self.storage)
+        self.last_msg_id_object = int_storage('last_msg_id', 0, self.storage)
 
         self.voted_for_object.init(self, type(self).voted_for)
         self.term_object.init(self, type(self).term)
         self.commit_len_object.init(self, type(self).commit_len)
+        self.last_msg_id_object.init(self, type(self).last_msg_id)
 
         self.logs = list_storage(self.storage, 'logs', log_entry)
 
@@ -575,16 +579,20 @@ class ipc_client(typing.Generic[ipc_server_req, ipc_server_res]):
     role_when_started : role_info
 
     def send_all(self) -> None:
+        print(f'{other_hosts = }', file=debug_stream)
         for host in other_hosts:
+            # print(f'firing {host} for {self}', file=debug_stream)
             fire(self.send_one(host))
 
-    def get_req(self, host: host_info) -> ipc_server_req | None:
+    def get_req(self, host: host_info) -> ipc_server_req:
         assert False
 
     def handle_res(self, host: host_info, res: ipc_server_res, req: ipc_server_req) -> None:
         assert False
 
     async def send_one(self, host: host_info) -> None:
+        req = self.get_req(host)
+        # print(f'fired {host} for {self} and {req}', file=debug_stream)
         try:
             reader, writer = await asyncio.open_connection(host.ip, 4444)
         except Exception as e:
@@ -592,17 +600,16 @@ class ipc_client(typing.Generic[ipc_server_req, ipc_server_res]):
             return
         try:
             print(f'connected to {host.ip}', file=debug_stream)
-            if role is not self.role_when_started:
-                print(f'role changed, drop connection at {host.ip}', file=debug_stream)
-                return
-            req = self.get_req(host)
-            if req is None:
-                return
+            # if role is not self.role_when_started:
+            #     print(f'role changed, drop connection at {host.ip}', file=debug_stream)
+            #     return
+            print(f'send {req = } at {host.ip}', file=debug_stream)
+            await asyncio.sleep(random.random()**6) # FOR TESTING
             writer.write(dumps(req))
             writer.write_eof()
             await writer.drain()
-            print(f'send {req = } at {host.ip}', file=debug_stream)
             data = await reader.read()
+            await asyncio.sleep(random.random()**6) # FOR TESTING
             try:
                 res = loads(data, self.res_type)
             except (WrongTypeError):
@@ -617,8 +624,8 @@ class ipc_client(typing.Generic[ipc_server_req, ipc_server_res]):
                 return
             print(f'handle {res = } at {host.ip}', file=debug_stream)
             self.handle_res(host, res, req)
-        except ConnectionError:
-            pass
+        except OSError as e:
+            print(f'Got OSError: {type(e)}, {e}', file=debug_stream)
         finally:
             await common.safe_socket_close(writer)
 
@@ -631,15 +638,17 @@ class append_entries_server(ipc_server[append_entries_req, append_entries_res]):
     def handle_msg(self, req: append_entries_req) -> append_entries_res:
 
         if req.term < storage.term:
+            print(f'append_entries from {hosts[req.leader_id].ip} failed because it has old term', file=info_stream)
             print(f'{req = } is older than current term {storage.term}', file=debug_stream)
             return append_entries_res(
                 term = storage.term,
-                success = False,
+                status='wrong_term',
             )
 
         assert storage.term <= req.term
         if storage.term < req.term:
             print(f'{req = } is newer than current term {storage.term}, updating...', file=debug_stream)
+            storage.last_msg_id = 0
             storage.voted_for = nan
             storage.term = req.term
 
@@ -650,27 +659,52 @@ class append_entries_server(ipc_server[append_entries_req, append_entries_res]):
         global last_incoming_message_time
         last_incoming_message_time = time.time()
 
-        if req.log_len > len(storage.logs):
-            print(f'{req = } server has too long logs', file=debug_stream)
+        if req.msg_id < storage.last_msg_id:
+            print(f'append_entries from {hosts[req.leader_id].ip} failed because it has old msg_id', file=info_stream)
+            print(f'{req = } has older msg_id than my {storage.last_msg_id}', file=debug_stream)
             return append_entries_res(
                 term = storage.term,
-                success = False,
+                status='wrong_msg_id',
+            )
+        
+        assert req.msg_id > storage.last_msg_id
+        storage.last_msg_id = req.msg_id
+
+        if req.log_len > len(storage.logs):
+            print(f'append_entries from {hosts[req.leader_id].ip} failed because it has longer logs', file=info_stream)
+            print(f'{req = } server has longer logs than my {len(storage.logs) = }', file=debug_stream)
+            return append_entries_res(
+                term = storage.term,
+                status='wrong_last_log',
+            )
+
+        if storage.commit_len > req.log_len:
+            print(f'append_entries from {hosts[req.leader_id].ip} failed because its log_len shorter than my commit_len', file=info_stream)
+            print(f'{req = } log len is shorter than {storage.commit_len = }', file=debug_stream)
+            return append_entries_res(
+                term = storage.term,
+                status='wrong_last_log',
             )
 
         assert len(storage.logs) >= req.log_len
         print(f'{req = } resizing my log from {len(storage.logs)} to {req.log_len}', file=debug_stream)
+        print(f'{req = } while having committed {storage.commit_len} logs', file=debug_stream)
+        print(f'resizing my log from {len(storage.logs)} to {req.log_len}', file=info_stream)
+        print(f'while having committed {storage.commit_len} logs', file=info_stream)
         storage.logs.resize(req.log_len)
         assert storage.commit_len <= len(storage.logs)
 
         last_log_term = storage.logs[-1].term if len(storage.logs) else 0
         if req.last_log_term != last_log_term:
+            print(f'append_entries from {hosts[req.leader_id].ip} failed because last log is different', file=info_stream)
             print(f'{req = } i have another {last_log_term = }', file=debug_stream)
             return append_entries_res(
                 term = storage.term,
-                success = False,
+                status='wrong_last_log',
             )
 
         print(f'{req = } i have to add {req.entries = } to log', file=debug_stream)
+        print(f'i have to add {req.entries = } to log', file=info_stream)
         for entry in req.entries:
             storage.logs.append(entry)
 
@@ -680,10 +714,11 @@ class append_entries_server(ipc_server[append_entries_req, append_entries_res]):
         else:
             print(f'{req = } not updating commit_len from {storage.commit_len} to {req.commit_len}', file=debug_stream)
 
+        print(f'append_entries succeeded', file=info_stream)
         print(f'{req = } append_entries succeeded', file=debug_stream)
         return append_entries_res(
             term = storage.term,
-            success = True,
+            status='good',
         )
 
 ipc_clients.append(append_entries_server)
@@ -697,6 +732,7 @@ class request_vote_server(ipc_server[request_vote_req, request_vote_res]):
     def handle_msg(self, req: request_vote_req) -> request_vote_res:
 
         if req.term < storage.term:
+            print(f'not voting for {hosts[req.candidate_id].ip} because it has old term', file=info_stream)
             print(f'{req = } is older than current term {storage.term}', file=debug_stream)
             return request_vote_res(
                 term=storage.term,
@@ -707,8 +743,13 @@ class request_vote_server(ipc_server[request_vote_req, request_vote_res]):
 
         if storage.term < req.term:
             print(f'{req = } is newer than current term {storage.term}, updating...', file=debug_stream)
+            storage.last_msg_id = 0
             storage.voted_for = nan
             storage.term = req.term
+
+        if role.name == 'leader':
+            print(f'changing role from {role.name} to follower', file=debug_stream)
+            set_role('follower')
 
         assert storage.term == req.term
         assert storage.voted_for != req.candidate_id
@@ -717,6 +758,7 @@ class request_vote_server(ipc_server[request_vote_req, request_vote_res]):
         last_incoming_message_time = time.time()
 
         if storage.voted_for != nan:
+            print(f'not voting for {hosts[req.candidate_id].ip} because i have already voted', file=info_stream)
             print(f'{req = } is failed because i have already voted', file=debug_stream)
             return request_vote_res(
                 term=storage.term,
@@ -727,6 +769,7 @@ class request_vote_server(ipc_server[request_vote_req, request_vote_res]):
 
         print(f'{req = } my log is {(last_log_term, len(storage.logs))}', file=debug_stream)
         if (req.last_log_term, req.log_len) >= (last_log_term, len(storage.logs)):
+            print(f'voting for {hosts[req.candidate_id].ip}', file=info_stream)
             print(f'{req = } is succseeded', file=debug_stream)
             storage.voted_for = req.candidate_id
             return request_vote_res(
@@ -734,6 +777,7 @@ class request_vote_server(ipc_server[request_vote_req, request_vote_res]):
                 vote_granted=True,
             )
 
+        print(f'not voting for {hosts[req.candidate_id].ip} because log is too short', file=info_stream)
         print(f'{req = } is failed because its log is too short', file=debug_stream)
         return request_vote_res(
             term=storage.term,
@@ -749,9 +793,9 @@ class new_entry_server(ipc_server[new_entry_req, new_entry_res]):
     res_type = new_entry_res
 
     def get_logs(self) -> list[log_message]:
-        return [log.message for log in storage.logs[:storage.commit_len] if not log.message.hidden][-4:]
+        return [log.message for log in storage.logs[:storage.commit_len] if log.message is not None][-4:]
 
-    async def async_handle_msg(self, req: new_entry_req) -> new_entry_res:
+    async def async_handle_msg(self, req: new_entry_req | None) -> new_entry_res:
         role_when_started = role
 
         if role_when_started.name != 'leader':
@@ -761,20 +805,26 @@ class new_entry_server(ipc_server[new_entry_req, new_entry_res]):
                 logs=self.get_logs(),
             )
 
-        for i in range(len(storage.logs))[::-1]:
-            if storage.logs[i].message.msg_id == req.message.msg_id:
-                expected_commit_len = i + 1
-                print(f'{req = } new entry was found at {expected_commit_len - 1}: {storage.logs[i]}', file=debug_stream)
-                break
-        else:
+        expected_commit_len : int | None = None
+        if req is not None:
+            for i in range(len(storage.logs))[::-1]:
+                message = storage.logs[i].message
+                if message is not None:
+                    if message.msg_id == req.message.msg_id:
+                        expected_commit_len = i + 1
+                        print(f'{req = } new entry was found at {expected_commit_len - 1}: {storage.logs[i]}', file=debug_stream)
+                        break
+        if expected_commit_len is None:
             print(f'{req = } adding new entry to log', file=debug_stream)
             storage.logs.append(
                 log_entry(
                     term=storage.term,
-                    message=req.message,
+                    message=req.message if req else None,
                 )
             )
             expected_commit_len = len(storage.logs)
+
+        assert expected_commit_len is not None
 
         append_entries_heartbeat()
 
@@ -782,17 +832,7 @@ class new_entry_server(ipc_server[new_entry_req, new_entry_res]):
         while storage.commit_len < expected_commit_len:
             assert expected_commit_len
             if storage.logs[expected_commit_len-1].term != storage.term:
-                await new_entry_server().async_handle_msg(
-                    new_entry_req(
-                        message=log_message(
-                            hidden=True,
-                            msg_id=random.randint(0, 2**60-1),
-                            payload=log_payload(
-                                value=-1
-                            )
-                        )
-                    )
-                )
+                await new_entry_server().async_handle_msg(None)
             else:
                 await storage_changed
 
@@ -831,7 +871,7 @@ async def generate_heartbeats() -> None:
     while 1:
         print(f'append_entries_heartbeat', file=debug_stream)
         append_entries_heartbeat()
-        await asyncio.sleep(1.1)
+        await asyncio.sleep(0.101)
 
 server_at_start.append(generate_heartbeats())
 
@@ -854,12 +894,11 @@ class append_entries_client(ipc_client[append_entries_req, append_entries_res]):
             self.check_commit_len()
             await append_entries_heartbeat
 
-    def get_req(self, host: host_info) -> append_entries_req | None:
-        if role is not self.role_when_started:
-            return None
+    def get_req(self, host: host_info) -> append_entries_req:
         max_log_len = self.followers[host.id].log_len_upper_estimate
         self.followers[host.id].last_sent_msg_id += 1
         return append_entries_req(
+            leader_id=me.id,
             msg_id=self.followers[host.id].last_sent_msg_id,
             term=self.term,
             log_len=max_log_len,
@@ -883,28 +922,45 @@ class append_entries_client(ipc_client[append_entries_req, append_entries_res]):
         last_incoming_message_time = time.time()
 
         if res.term > storage.term:
+            print(f'{req = } {res = } has higher term than my {storage.term = }', file=debug_stream)
             storage.voted_for = nan
             storage.term = res.term
             set_role('follower')
             return
 
+        assert res.status != 'wrong_term'
+
         assert self.followers[host.id].last_recv_msg_id != req.msg_id
 
         if self.followers[host.id].last_recv_msg_id > req.msg_id:
+            print(f'{req = } {res = } has older msg_id than current {self.followers[host.id].last_recv_msg_id}', file=debug_stream)
             return
 
         assert self.followers[host.id].last_recv_msg_id < req.msg_id
         self.followers[host.id].last_recv_msg_id = req.msg_id
 
-        if res.success:
+        if res.status == 'good':
+            print(f'{req = } {res = } request succeeded, updating follower values', file=debug_stream)
             assert self.followers[host.id].commit_len <= req.commit_len <= storage.commit_len
+            print(f'{req = } {res = } changing commit_len from {self.followers[host.id].commit_len} to {req.commit_len}', file=debug_stream)
             self.followers[host.id].commit_len = req.commit_len
+            print(f'{req = } {res = } changing log_len_lower_estimate from {self.followers[host.id].log_len_lower_estimate} to {req.log_len + len(req.entries)}', file=debug_stream)
             self.followers[host.id].log_len_lower_estimate = req.log_len + len(req.entries)
+            print(f'{req = } {res = } changing log_len_upper_estimate from {self.followers[host.id].log_len_upper_estimate} to {req.log_len + len(req.entries)}', file=debug_stream)
             self.followers[host.id].log_len_upper_estimate = req.log_len + len(req.entries)
             self.check_commit_len()
+        elif res.status == 'wrong_last_log':
+            print(f'{req = } {res = } request failed with {res.status = }, updating follower values', file=debug_stream)
+            log_len_upper_estimate = min(
+                self.followers[host.id].log_len_upper_estimate,
+                req.log_len - 1,
+            )
+            print(f'{req = } {res = } changing log_len_upper_estimate from {self.followers[host.id].log_len_upper_estimate} to {log_len_upper_estimate}', file=debug_stream)
+            self.followers[host.id].log_len_upper_estimate = log_len_upper_estimate
         else:
-            assert self.followers[host.id].log_len_upper_estimate
-            self.followers[host.id].log_len_upper_estimate -= 1
+            assert res.status == 'wrong_msg_id'
+            print(f'{req = } {res = } request failed with {res.status = }', file=debug_stream)
+
 
     def check_commit_len(self) -> None:
         self.followers[me.id].log_len_lower_estimate = len(storage.logs)
@@ -936,8 +992,10 @@ class request_vote_client(ipc_client[request_vote_req, request_vote_res]):
         set_role('candidate')
         self.role_when_started = role
         self.voters : set[host_info] = set()
+        storage.last_msg_id = 0
         storage.voted_for = nan
         storage.term += 1
+        print(f'incrementing {storage.term = }', file=debug_stream)
         storage.voted_for = me.id
         self.voters.add(me)
         self.send_all()
@@ -959,6 +1017,7 @@ class request_vote_client(ipc_client[request_vote_req, request_vote_res]):
         last_incoming_message_time = time.time()
 
         if res.term > storage.term:
+            storage.last_msg_id = 0
             storage.voted_for = nan
             storage.term = res.term
             set_role('follower')
@@ -975,6 +1034,7 @@ class request_vote_client(ipc_client[request_vote_req, request_vote_res]):
     def check_leader(self) -> None:
         if len(self.voters) >= consensus_size:
             print(f'{self.voters = }, i am leader', file=debug_stream)
+            print(f'i am leader', file=info_stream)
             append_entries_client()
         else:
             print(f'{self.voters = }, waiting for more', file=debug_stream)
@@ -1001,8 +1061,7 @@ class new_entry_client(ipc_client[new_entry_req, new_entry_res]):
     req_type = new_entry_req
     res_type = new_entry_res
 
-    def __init__(self, one_hidden_entry: bool = False) -> None:
-        self.one_hidden_entry = one_hidden_entry
+    def __init__(self) -> None:
         self.role_when_started = role
         self.append_context : append_context | None = None
         fire(self.main())
@@ -1017,8 +1076,6 @@ class new_entry_client(ipc_client[new_entry_req, new_entry_res]):
                 value=value,
             )
             remote_logs = await self.append(payload)
-            if self.one_hidden_entry:
-                break
             local_logs.append(payload)
             print(f'{remote_logs      = }', file=debug_stream)
             print(f'{ local_logs[-4:] = }', file=debug_stream)
@@ -1029,21 +1086,20 @@ class new_entry_client(ipc_client[new_entry_req, new_entry_res]):
         while not context.has_success.done():
             print(f'send_all while appending {context.message.payload}', file=debug_stream)
             self.send_all()
-            await asyncio.sleep(1.1)
+            await asyncio.sleep(0.11)
 
     async def append(self, payload: log_payload) -> list[log_payload]:
-        print(f'starting to append {payload}', file=debug_stream)
+        print(f'starting to append {payload}', file=info_stream)
         self.append_context = append_context(
             message=log_message(
                 msg_id=random.randint(0, 2**60-1),
                 payload=payload,
-                hidden=self.one_hidden_entry,
             ),
             has_success=asyncio.Future(),
         )
         fire(self.message_sender(self.append_context))
         logs = await self.append_context.has_success
-        print(f'succeeded to append {payload}', file=debug_stream)
+        print(f'succeeded to append {payload}', file=info_stream)
         return [log.payload for log in logs]
 
     def get_req(self, host: host_info) -> new_entry_req:
@@ -1093,19 +1149,21 @@ async def on_connection(reader: asyncio.StreamReader, writer: asyncio.StreamWrit
         writer.write(dumps(res))
         writer.write_eof()
         await writer.drain()
+    except OSError as e:
+        print(f'Got OSError: {type(e)}, {e}', file=debug_stream)
     finally:
         await common.safe_socket_close(writer)
 
 ##############################################################################################################################################
 
 last_incoming_message_time = time.time()
-timeout = 4
+timeout = 0.4321
 
 async def timeout_checker() -> None:
     while 1:
         await asyncio.sleep(timeout * (1 + random.Random().random()))
         if last_incoming_message_time + timeout < time.time():
-            print(f'last message was {time.time() - last_incoming_message_time} seconds ago, sending request vote', file=debug_stream)
+            print(f'last message was {time.time() - last_incoming_message_time} seconds ago, sending request vote', file=info_stream)
             request_vote_client()
         else:
             print(f'last message was {time.time() - last_incoming_message_time} seconds ago, not a problem', file=debug_stream)

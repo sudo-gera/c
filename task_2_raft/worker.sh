@@ -11,7 +11,7 @@ network=172.17.0.0/24
 
 if [ "$node_id" -eq 0 ]
 then
-    sleep 2
+    sleep 8
     python3.11 network_manager.py "$height" "$width" $(python3.11 print_hosts.py "$network" 2100 "$worker_count") &
 else
     if [ "$node_id" -eq 1 ]

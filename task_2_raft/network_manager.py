@@ -145,13 +145,13 @@ async def change_network_config() -> None:
     net_map : dd[int, dict[int, bool]] = dd(dict)
     for h in range(len(hosts)):
         if host_status[h][0]:
-            host_status[h][1] = random.randint(0, 4) == 0
+            host_status[h][1] = random.randint(0, 2) == 0
         else:
             host_status[h][1] = random.randint(0, 4) != 0
     for i in range(len(hosts)):
         for o in range(i+1):
             if host_status[o][0]^host_status[o][1] and host_status[i][0]^host_status[i][1]:
-                net_map[i][o] = net_map[o][i] = random.randint(0, 2) > 0
+                net_map[i][o] = net_map[o][i] = random.randint(0, 5) > 0
             else:
                 net_map[i][o] = net_map[o][i] = False
     tables = [''] * len(hosts)
