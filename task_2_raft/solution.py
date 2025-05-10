@@ -840,8 +840,8 @@ class new_entry_server(ipc_server[new_entry_req, new_entry_res]):
     req_type = new_entry_req
     res_type = new_entry_res
 
-    def get_logs(self) -> list[log_message]:
-        return [log.message for log in storage.logs[:storage.commit_len] if log.message is not None][-4:]
+    def get_logs(self, len_after_adding: int) -> list[log_message]:
+        return [log.message for log in storage.logs[:len_after_adding] if log.message is not None][-4:]
 
     async def async_handle_msg(self, req: new_entry_req | None) -> new_entry_res:
         role_when_started = role
@@ -897,7 +897,7 @@ class new_entry_server(ipc_server[new_entry_req, new_entry_res]):
         print(f'{req = } adding new log entry succeeded', file=debug_stream)
 
         return new_entry_res(
-            logs=self.get_logs(),
+            logs=self.get_logs(expected_commit_len),
             success=True,
         )
 
