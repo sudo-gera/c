@@ -836,6 +836,8 @@ ipc_servers.append(request_vote_server)
 
 ##############################################################################################################################################
 
+new_entry_lock = asyncio.Lock()
+
 class new_entry_server(ipc_server[new_entry_req, new_entry_res]):
     req_type = new_entry_req
     res_type = new_entry_res
@@ -844,6 +846,13 @@ class new_entry_server(ipc_server[new_entry_req, new_entry_res]):
         return [log.message for log in storage.logs[:len_after_adding] if log.message is not None][-4:]
 
     async def async_handle_msg(self, req: new_entry_req | None) -> new_entry_res:
+        if req is None:
+            return await self.async_handle_msg_unlocked(req)
+        else:
+            async with new_entry_lock:
+                return await self.async_handle_msg_unlocked(req)
+    
+    async def async_handle_msg_unlocked(self, req: new_entry_req | None) -> new_entry_res:
         role_when_started = role
 
         if role_when_started.name != 'leader':
@@ -955,10 +964,10 @@ class append_entries_client(ipc_client[append_entries_req, append_entries_res]):
             entries=storage.logs[
                 max_log_len
                     :
-                min(
-                    max_log_len+1,
+                # min(
+                #     max_log_len+1,
                     len(storage.logs)
-                )
+                # )
             ]
         )
 
@@ -1100,6 +1109,42 @@ client_at_start.append(logs_size_printer())
 
 local_log : list[log_payload] = []
 
+async def raft_client() -> None:
+    while 1:
+        payload = log_payload(random.randint(0, 255))
+        remote_log = await new_entry_client(payload)
+        assert not local_log or len(remote_log) >= 2
+        local_log.append(payload)
+        assert local_log[-len(remote_log):] == remote_log
+        if len(remote_log) != len(local_log):
+            break
+    while 1:
+        remote_logs = await asyncio.gather(
+            *[
+                new_entry_client(payload)
+                for payload in [
+                    log_payload(random.randint(0, 255))
+                    for q in range(random.randint(1, 20))
+                ]
+            ]
+        )
+        remote_log_len = len(remote_logs[0])
+        assert remote_log_len >= 2
+        assert all([len(remote_log) == remote_log_len for remote_log in remote_logs])
+        sorted_remote_logs = [local_log[-remote_log_len:]]
+        while len(sorted_remote_logs) != len(remote_logs) + 1:
+            for remote_log in remote_logs:
+                if remote_log[:-1] == sorted_remote_logs[-1][1:]:
+                    sorted_remote_logs.append(remote_log)
+                    break
+            else:
+                assert False
+        for remote_log in sorted_remote_logs[1:]:
+            assert remote_log[:-1] == local_log[-remote_log_len+1:]
+            local_log.append(remote_log[-1])
+
+client_at_start.append(raft_client())
+
 @dataclasses.dataclass
 class append_context:
     message: log_message
@@ -1109,23 +1154,27 @@ class new_entry_client(ipc_client[new_entry_req, new_entry_res]):
     req_type = new_entry_req
     res_type = new_entry_res
 
-    def __init__(self) -> None:
+    def __init__(self, payload: log_payload) -> None:
+        self.payload = payload
         self.role_when_started = role
         self.append_context : append_context | None = None
-        fire(self.main())
 
-    async def main(self) -> None:
-        global local_log
+    def __await__(self) -> typing.Generator[typing.Any, None, list[log_payload]]:
+        return self.main().__await__()
+
+    async def main(self) -> list[log_payload]:
+        return await self.append(self.payload)
+        # global local_log
         
-        while 1:
-            value = random.randint(0, 2**20-1)
-            payload = log_payload(
-                value=value,
-            )
-            remote_log = await self.append(payload)
-            assert len(remote_log) >= 2 or not local_log
-            local_log.append(remote_log[-1])
-            assert local_log[-len(remote_log):] == remote_log
+        # while 1:
+        #     value = random.randint(0, 2**20-1)
+        #     payload = log_payload(
+        #         value=value,
+        #     )
+        #     remote_log = await self.append(payload)
+        #     assert len(remote_log) >= 2 or not local_log
+        #     local_log.append(remote_log[-1])
+        #     assert local_log[-len(remote_log):] == remote_log
 
 
     async def message_sender(self, context: append_context) -> None:
@@ -1238,7 +1287,6 @@ async def main() -> None:
     if my_ip is None:
         for coro in client_at_start:
             fire(coro)
-        new_entry_client()
     else:
         for coro in server_at_start:
             fire(coro)
