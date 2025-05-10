@@ -229,24 +229,35 @@ class kv_storage_state:
 kv_storage_states : dict[int, kv_storage_state] = {0: kv_storage_state()}
 
 def clear_old_states() -> None:
-    inv_keep_f : list[float] = [1]
-    while inv_keep_f[-1] < len(kv_storage_states):
-        inv_keep_f.append(inv_keep_f[-1] * 2**0.5)
-    storage_len = len(kv_storage_states)
-    keep_i = [storage_len - 1 - round(val) % storage_len for val in inv_keep_f]
-    keep_i.append(0)
-    to_del = {*kv_storage_states.keys()} - {*keep_i}
+    keys = [*kv_storage_states]
+    while len(keys) > 8 * storage.commit_len.bit_length():
+        keys.remove(random.choice(keys))
+    keys.append(0)
+    keys.append(max(kv_storage_states))
+    to_del = {*kv_storage_states} - {*keys}
     for val in to_del:
         del kv_storage_states[val]
 
-def apply_command_to_kv_state(old_state: kv_storage_state, committed_entry: log_entry) -> tuple[kv_storage_state, val_type|None]:
+    # inv_keep_f : list[float] = [1]
+    # while inv_keep_f[-1] < len(kv_storage_states):
+    #     inv_keep_f.append(inv_keep_f[-1] * 2**0.5)
+    # storage_len = len(kv_storage_states)
+    # keep_i = [storage_len - 1 - round(val) % storage_len for val in inv_keep_f]
+    # keep_i.append(0)
+    # to_del = {*kv_storage_states.keys()} - {*keep_i}
+    # for val in to_del:
+    #     del kv_storage_states[val]
+
+def apply_command_to_kv_state(old_state: kv_storage_state, committed_element: log_entry|log_payload) -> tuple[kv_storage_state, val_type|None]:
     new_state = copy.deepcopy(old_state)
-    message = committed_entry.message
-    if message is None:
-        return (new_state, None)
-    assert message is not None
-    payload = message.payload
-    command = payload.command
+    if isinstance(committed_element, log_entry):
+        message = committed_element.message
+        if message is None:
+            return (new_state, None)
+        assert message is not None
+        command = message.payload.command
+    else:
+        command = committed_element.command
     if isinstance(command, get_command):
         value = new_state.data.get(command.key, None)
         print(f'applying {command} with result {value}')
@@ -271,7 +282,7 @@ def apply_command_to_kv_state(old_state: kv_storage_state, committed_entry: log_
         return (new_state, old_value)
     assert False
 
-def get_result_for_command_by_index(command_index: int) -> command_result:
+def get_result_for_command_by_index(command_index: int) -> tuple[command_result, kv_storage_state]:
     assert command_index < storage.commit_len
     assert storage.commit_len <= len(storage.logs)
     key_command_index = command_index
@@ -293,8 +304,11 @@ def get_result_for_command_by_index(command_index: int) -> command_result:
     )
     kv_storage_states[command_index+1] = state_after_command
     clear_old_states()
-    return command_result(
-        value=result
+    return (
+        command_result(
+            value=result
+        ),
+        state_after_command
     )
 
 
@@ -366,14 +380,22 @@ class request_vote_res:
     vote_granted: bool
 
 @dataclasses.dataclass
+class read_req:
+    key: key_type
+    redirected_to_id: int | None
+
+@dataclasses.dataclass
 class new_entry_req:
     message: log_message
 
 @dataclasses.dataclass
-class new_entry_res:
-    # success: bool
+class raft_facade_req:
+    command: new_entry_req | read_req
+
+@dataclasses.dataclass
+class raft_facade_res:
+    redirected_to_id: int | None
     result: command_result | None
-    # logs: list[log_message]
 
 ##############################################################################################################################################
 
@@ -896,55 +918,183 @@ ipc_servers.append(request_vote_server)
 
 ##############################################################################################################################################
 
-new_entry_lock = asyncio.Lock()
+raft_facade_lock = asyncio.Lock()
 
-class new_entry_server(ipc_server[new_entry_req, new_entry_res]):
-    req_type = new_entry_req
-    res_type = new_entry_res
+class raft_facade_server(ipc_server[raft_facade_req, raft_facade_res]):
+    req_type = raft_facade_req
+    res_type = raft_facade_res
 
     # def get_logs(self, len_after_adding: int) -> list[log_message]:
     #     return [log.message for log in storage.logs[:len_after_adding] if log.message is not None][-4:]
 
     def get_result(self, len_after_adding: int) -> command_result:
         assert len_after_adding
-        return get_result_for_command_by_index(len_after_adding - 1)
+        return get_result_for_command_by_index(len_after_adding - 1)[0]
 
-    async def async_handle_msg(self, req: new_entry_req | None) -> new_entry_res:
+    async def async_handle_msg(self, req: raft_facade_req | None) -> raft_facade_res:
         if req is None:
             return await self.async_handle_msg_unlocked(req)
         else:
-            async with new_entry_lock:
+            command = req.command
+            if isinstance(command, read_req):
+                res = self.try_handle_read(req, command)
+                if res is not None:
+                    return res
+            async with raft_facade_lock:
                 return await self.async_handle_msg_unlocked(req)
     
-    async def async_handle_msg_unlocked(self, req: new_entry_req | None) -> new_entry_res:
+    def try_handle_read(self, req: raft_facade_req | None, command: read_req) -> raft_facade_res | None:
         role_when_started = role
 
-        if role_when_started.name != 'leader':
-            print(f'{req = } attempt to add new entry to {role.name}', file=debug_stream)
-            return new_entry_res(
-                # success=False,
-                # logs=[],
-                result=None,
-            )
-
         expected_commit_len : int | None = None
-        if req is not None:
-            for i in range(len(storage.logs))[::-1]:
-                message = storage.logs[i].message
-                if message is not None:
-                    if message.msg_id == req.message.msg_id:
-                        expected_commit_len = i + 1
-                        print(f'{req = } new entry was found at {expected_commit_len - 1}: {storage.logs[i]}', file=debug_stream)
-                        break
-        if expected_commit_len is None:
-            print(f'{req = } adding new entry to log', file=debug_stream)
-            storage.logs.append(
-                log_entry(
-                    term=storage.term,
-                    message=req.message if req else None,
+
+        if command.redirected_to_id is not None:
+            if command.redirected_to_id != me.id:
+                print(f'{req = } attempt to add new entry to {role.name}', file=debug_stream)
+                return raft_facade_res(
+                    redirected_to_id=None,
+                    # success=False,
+                    # logs=[],
+                    result=None,
+                )
+        else:
+            if role_when_started.name != 'leader':
+                print(f'{req = } attempt to add new entry to {role.name}', file=debug_stream)
+                return raft_facade_res(
+                    redirected_to_id=None,
+                    # success=False,
+                    # logs=[],
+                    result=None,
+                )
+
+        if role.name == 'leader':
+            expected_commit_len = len(storage.logs)
+            while 1:
+                if expected_commit_len == 0:
+                    break
+                log = storage.logs[expected_commit_len-1]
+                message = log.message
+                if message is None:
+                    expected_commit_len -= 1
+                    continue
+                if message.payload.command.key != command.key:
+                    expected_commit_len -= 1
+                    continue
+                else:
+                    break
+        else:
+            expected_commit_len = 0
+
+        assert expected_commit_len is not None
+
+        append_entries_heartbeat()
+
+        print(f'{req = } waiting {storage.commit_len = } to be {expected_commit_len}', file=debug_stream)
+
+        if storage.commit_len < expected_commit_len:
+            return None
+
+        assert storage.commit_len >= expected_commit_len
+
+        print(f'{req = } waited {storage.commit_len = } to be {expected_commit_len}', file=debug_stream)
+
+        if command.redirected_to_id is None:
+            shuffled_followers = followers[:]
+            random.shuffle(shuffled_followers)
+            for follower in shuffled_followers:
+                if follower.commit_len >= expected_commit_len:
+                    return raft_facade_res(
+                        redirected_to_id=follower.id,
+                        result=None,
+                    )
+        current_state = get_result_for_command_by_index(storage.commit_len-1)[1]
+        value = apply_command_to_kv_state(
+            current_state,
+            log_payload(
+                get_command(
+                    key=command.key,
                 )
             )
-            expected_commit_len = len(storage.logs)
+        )[1]
+        return raft_facade_res(
+            redirected_to_id=None,
+            result=command_result(value=value),
+        )
+
+    async def async_handle_msg_unlocked(self, req: raft_facade_req | None) -> raft_facade_res:
+        role_when_started = role
+
+        command = req.command if req else None
+
+        expected_commit_len : int | None = None
+
+        if not isinstance(command, read_req):
+
+            if role_when_started.name != 'leader':
+                print(f'{req = } attempt to add new entry to {role.name}', file=debug_stream)
+                return raft_facade_res(
+                    redirected_to_id=None,
+                    # success=False,
+                    # logs=[],
+                    result=None,
+                )
+
+            if command is not None:
+                for i in range(len(storage.logs))[::-1]:
+                    message = storage.logs[i].message
+                    if message is not None:
+                        if message.msg_id == command.message.msg_id:
+                            expected_commit_len = i + 1
+                            print(f'{req = } new entry was found at {expected_commit_len - 1}: {storage.logs[i]}', file=debug_stream)
+                            break
+            if expected_commit_len is None:
+                print(f'{req = } adding new entry to log', file=debug_stream)
+                storage.logs.append(
+                    log_entry(
+                        term=storage.term,
+                        message=command.message if command else None,
+                    )
+                )
+                expected_commit_len = len(storage.logs)
+
+        else:
+
+            if command.redirected_to_id is not None:
+                if command.redirected_to_id != me.id:
+                    print(f'{req = } attempt to add new entry to {role.name}', file=debug_stream)
+                    return raft_facade_res(
+                        redirected_to_id=None,
+                        # success=False,
+                        # logs=[],
+                        result=None,
+                    )
+            else:
+                if role_when_started.name != 'leader':
+                    print(f'{req = } attempt to add new entry to {role.name}', file=debug_stream)
+                    return raft_facade_res(
+                        redirected_to_id=None,
+                        # success=False,
+                        # logs=[],
+                        result=None,
+                    )
+
+            if role.name == 'leader':
+                expected_commit_len = len(storage.logs)
+                while 1:
+                    if expected_commit_len == 0:
+                        break
+                    log = storage.logs[expected_commit_len-1]
+                    message = log.message
+                    if message is None:
+                        expected_commit_len -= 1
+                        continue
+                    if message.payload.command.key != command.key:
+                        expected_commit_len -= 1
+                        continue
+                    else:
+                        break
+            else:
+                expected_commit_len = 0
 
         assert expected_commit_len is not None
 
@@ -954,14 +1104,15 @@ class new_entry_server(ipc_server[new_entry_req, new_entry_res]):
         while storage.commit_len < expected_commit_len:
             assert expected_commit_len
             if storage.logs[expected_commit_len-1].term != storage.term:
-                await new_entry_server().async_handle_msg(None)
+                await raft_facade_server().async_handle_msg(None)
             else:
                 await storage_changed
 
             if role_when_started != role:
                 print(f'{req = } role changed, not adding new log entry', file=debug_stream)
 
-                return new_entry_res(
+                return raft_facade_res(
+                    redirected_to_id=None,
                     # logs=[],
                     # success=False,
                     result=None,
@@ -969,22 +1120,53 @@ class new_entry_server(ipc_server[new_entry_req, new_entry_res]):
 
         assert storage.commit_len >= expected_commit_len
 
-        print(f'{req = } adding new log entry succeeded', file=debug_stream)
+        print(f'{req = } waited {storage.commit_len = } to be {expected_commit_len}', file=debug_stream)
 
-        return new_entry_res(
-            # logs=self.get_logs(expected_commit_len),
-            result=self.get_result(expected_commit_len),
-            # success=True,
-        )
+        if not isinstance(command, read_req):
 
-ipc_servers.append(new_entry_server)
+            print(f'{req = } adding new log entry succeeded', file=debug_stream)
+
+            return raft_facade_res(
+                redirected_to_id=None,
+                # logs=self.get_logs(expected_commit_len),
+                result=self.get_result(expected_commit_len),
+                # success=True,
+            )
+
+        else:
+            if command.redirected_to_id is None:
+                shuffled_followers = followers[:]
+                random.shuffle(shuffled_followers)
+                for follower in shuffled_followers:
+                    if follower.commit_len >= expected_commit_len:
+                        return raft_facade_res(
+                            redirected_to_id=follower.id,
+                            result=None,
+                        )
+            current_state = get_result_for_command_by_index(storage.commit_len-1)[1]
+            value = apply_command_to_kv_state(
+                current_state,
+                log_payload(
+                    get_command(
+                        key=command.key,
+                    )
+                )
+            )[1]
+            return raft_facade_res(
+                redirected_to_id=None,
+                result=command_result(value=value),
+            )
+
+
+ipc_servers.append(raft_facade_server)
 
 ##############################################################################################################################################
 
 @dataclasses.dataclass
 class context_about_follower:
+    log_len_upper_estimate : int
+    id: int
     log_len_lower_estimate : int = 0
-    log_len_upper_estimate : int = 0
     commit_len : int = 0
     last_sent_msg_id : int = 0
     last_recv_msg_id : int = 0
@@ -999,6 +1181,8 @@ async def generate_heartbeats() -> None:
 
 server_at_start.append(generate_heartbeats())
 
+followers: list[context_about_follower] = []
+
 class append_entries_client(ipc_client[append_entries_req, append_entries_res]):
     req_type = append_entries_req
     res_type = append_entries_res
@@ -1007,9 +1191,15 @@ class append_entries_client(ipc_client[append_entries_req, append_entries_res]):
         set_role('leader')
         self.role_when_started = role
         self.term = storage.term
-        self.followers = [context_about_follower() for host in hosts]
-        for follower in self.followers:
-            follower.log_len_upper_estimate = len(storage.logs)
+        self.followers = [
+            context_about_follower(
+                log_len_upper_estimate=len(storage.logs),
+                id=host.id,
+            )
+            for host in hosts
+        ]
+        global followers
+        followers = self.followers
         fire(self.main())
 
     async def main(self) -> None:
@@ -1181,7 +1371,7 @@ client_at_start.append(logs_size_printer())
 # async def raft_client() -> None:
 #     while 1:
 #         payload = log_payload(random.randint(0, 255))
-#         remote_log = await new_entry_client(payload)
+#         remote_log = await raft_facade_client(payload)
 #         assert not local_log or len(remote_log) >= 2
 #         local_log.append(payload)
 #         assert local_log[-len(remote_log):] == remote_log
@@ -1190,7 +1380,7 @@ client_at_start.append(logs_size_printer())
 #     while 1:
 #         remote_logs = await asyncio.gather(
 #             *[
-#                 new_entry_client(payload)
+#                 raft_facade_client(payload)
 #                 for payload in [
 #                     log_payload(random.randint(0, 255))
 #                     for q in range(random.randint(1, 20))
@@ -1223,7 +1413,7 @@ async def raft_client() -> None:
         for q in range(1):
             action = 'invent_new_key'
             actions.append(action)
-        for q in range(1):
+        for q in range(20):
             action = 'get'
             actions.append(action)
         for q in range(1):
@@ -1250,7 +1440,7 @@ async def raft_client() -> None:
             keys.append(random.randbytes(4).hex())
         elif action == 'get':
             key = random.choice(keys)
-            res = await new_entry_client(
+            res = await raft_facade_client(
                 payload=log_payload(
                     command=get_command(
                         key=key,
@@ -1261,7 +1451,7 @@ async def raft_client() -> None:
         elif action == 'set':
             key = random.choice(keys)
             value = random.randbytes(4).hex()
-            res = await new_entry_client(
+            res = await raft_facade_client(
                 payload=log_payload(
                     command=set_command(
                         key=key,
@@ -1273,7 +1463,7 @@ async def raft_client() -> None:
             local_storage[key] = value
         elif action == 'del':
             key = random.choice(keys)
-            res = await new_entry_client(
+            res = await raft_facade_client(
                 payload=log_payload(
                     command=del_command(
                         key=key,
@@ -1286,7 +1476,7 @@ async def raft_client() -> None:
             key = random.choice([*local_storage.keys()])
             old_value = local_storage[key]
             new_value = random.randbytes(4).hex()
-            res = await new_entry_client(
+            res = await raft_facade_client(
                 payload=log_payload(
                     command=cas_command(
                         key=key,
@@ -1304,7 +1494,7 @@ async def raft_client() -> None:
                 if old_value != local_storage.get(key, None):
                     break
             new_value = random.randbytes(4).hex()
-            res = await new_entry_client(
+            res = await raft_facade_client(
                 payload=log_payload(
                     command=cas_command(
                         key=key,
@@ -1326,15 +1516,23 @@ client_at_start.append(raft_client())
 class append_context:
     message: log_message
     has_success: asyncio.Future[command_result]
+    redirected_to_id: int | None
 
-class new_entry_client(ipc_client[new_entry_req, new_entry_res]):
-    req_type = new_entry_req
-    res_type = new_entry_res
+class raft_facade_client(ipc_client[raft_facade_req, raft_facade_res]):
+    req_type = raft_facade_req
+    res_type = raft_facade_res
 
     def __init__(self, payload: log_payload) -> None:
         self.payload = payload
         self.role_when_started = role
-        self.append_context : append_context | None = None
+        self.append_context = append_context(
+            message=log_message(
+                msg_id=random.randint(0, 2**60-1),
+                payload=payload,
+            ),
+            has_success=asyncio.Future(),
+            redirected_to_id=None,
+        )
 
     def __await__(self) -> typing.Generator[typing.Any, None, command_result]:
         return self.main().__await__()
@@ -1365,27 +1563,30 @@ class new_entry_client(ipc_client[new_entry_req, new_entry_res]):
 
     async def append(self, payload: log_payload) -> command_result:
         print(f'starting to append {payload}', file=info_stream)
-        self.append_context = append_context(
-            message=log_message(
-                msg_id=random.randint(0, 2**60-1),
-                payload=payload,
-            ),
-            has_success=asyncio.Future(),
-        )
         fire(self.message_sender(self.append_context))
         result = await self.append_context.has_success
         print(f'succeeded to append {payload}', file=info_stream)
         # return [log.payload for log in logs]
         return result
 
-    def get_req(self, host: host_info) -> new_entry_req:
+    def get_req(self, host: host_info) -> raft_facade_req:
         context = self.append_context
         assert isinstance(context, append_context)
-        return new_entry_req(
-            message=context.message,
-        )
+        if isinstance(context.message.payload.command, get_command):
+            return raft_facade_req(
+                command=read_req(
+                    redirected_to_id=context.redirected_to_id,
+                    key=context.message.payload.command.key,
+                )
+            )
+        else:
+            return raft_facade_req(
+                command=new_entry_req(
+                    message=context.message,
+                )
+            )
 
-    def handle_res(self, host: host_info, res: new_entry_res, req: new_entry_req) -> None:
+    def handle_res(self, host: host_info, res: raft_facade_res, req: raft_facade_req) -> None:
         context = self.append_context
 
         if not isinstance(context, append_context):
@@ -1393,11 +1594,18 @@ class new_entry_client(ipc_client[new_entry_req, new_entry_res]):
             return
         assert isinstance(context, append_context)
 
-        if req.message  is not context.message:
-            print(f'{res = } message is too old', file=debug_stream)
-            return
+        command = req.command
+        if isinstance(command, new_entry_req):
+            if command.message  is not context.message:
+                print(f'{res = } message is too old', file=debug_stream)
+                return
+        
+        if isinstance(command, read_req):
+            if res.redirected_to_id is not None:
+                print(f'{res = } was redirected to {res.redirected_to_id}', file=debug_stream)
+                context.redirected_to_id = res.redirected_to_id
 
-        if not res.result is not None:
+        if res.result is None:
             print(f'{res = } request has failure message', file=debug_stream)
             return
 
