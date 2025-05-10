@@ -218,56 +218,115 @@ error_stream = log_stream(logging.error)
 
 ##############################################################################################################################################
 
-# class kv_storage_state:
-#     def __init__(self):
-#         self.data : dict[str, str] = {}
+key_type = str
+val_type = str
+
+class kv_storage_state:
+    def __init__(self) -> None:
+        self.data : dict[key_type, val_type] = {}
 
 # kv_storage_states : list[kv_storage_state] = [kv_storage_state()]
+kv_storage_states : dict[int, kv_storage_state] = {0: kv_storage_state()}
 
-# def apply_command_to_kv_state(state: kv_storage_state, committed_entry: log_entry) -> tuple[kv_storage_state, bytes|None]:
-#     old_state = kv_storage_states[-1]
-#     new_state = copy.deepcopy(old_state)
-#     kv_storage_states.append(new_state)
-#     message = committed_entry.message
-#     if message is None:
-#         return
-#     assert message is not None
-#     payload = message.payload
-#     command = payload.command
-#     if isinstance(command, get_command):
-#         return (new_state, )
+def clear_old_states() -> None:
+    inv_keep_f : list[float] = [1]
+    while inv_keep_f[-1] < len(kv_storage_states):
+        inv_keep_f.append(inv_keep_f[-1] * 2**0.5)
+    storage_len = len(kv_storage_states)
+    keep_i = [storage_len - 1 - round(val) % storage_len for val in inv_keep_f]
+    keep_i.append(0)
+    to_del = {*kv_storage_states.keys()} - {*keep_i}
+    for val in to_del:
+        del kv_storage_states[val]
 
+def apply_command_to_kv_state(old_state: kv_storage_state, committed_entry: log_entry) -> tuple[kv_storage_state, val_type|None]:
+    new_state = copy.deepcopy(old_state)
+    message = committed_entry.message
+    if message is None:
+        return (new_state, None)
+    assert message is not None
+    payload = message.payload
+    command = payload.command
+    if isinstance(command, get_command):
+        value = new_state.data.get(command.key, None)
+        print(f'applying {command} with result {value}')
+        return (new_state, value)
+    if isinstance(command, set_command):
+        old_value = new_state.data.get(command.key, None)
+        new_state.data[command.key] = command.value
+        print(f'applying {command} replacing {old_value} with {command.value}')
+        return (new_state, None)
+    if isinstance(command, del_command):
+        old_value = new_state.data.get(command.key, None)
+        new_state.data.pop(command.key, None)
+        print(f'applying {command} removing {old_value}')
+        return (new_state, None)
+    if isinstance(command, cas_command):
+        old_value = new_state.data.get(command.key, None)
+        if old_value == command.old_value:
+            print(f'applying {command} replacing {old_value} with {command.new_value}')
+            new_state.data[command.key] = command.new_value
+        else:
+            print(f'applying {command} not replacing {old_value}')
+        return (new_state, old_value)
+    assert False
 
+def get_result_for_command_by_index(command_index: int) -> command_result:
+    assert command_index < storage.commit_len
+    assert storage.commit_len <= len(storage.logs)
+    key_command_index = command_index
+    while key_command_index not in kv_storage_states:
+        key_command_index -= 1
+        assert key_command_index >= 0
+    for i in range(key_command_index+1, command_index + 1):
+        assert i not in kv_storage_states
+        assert i-1 in kv_storage_states
+        kv_storage_states[i] = apply_command_to_kv_state(
+            kv_storage_states[i-1],
+            storage.logs[i-1],
+        )[0]
+    assert command_index in kv_storage_states
+    state_before_command = kv_storage_states[command_index]
+    state_after_command, result = apply_command_to_kv_state(
+        state_before_command,
+        storage.logs[command_index]
+    )
+    kv_storage_states[command_index+1] = state_after_command
+    clear_old_states()
+    return command_result(
+        value=result
+    )
 
-
-    # command : typing.Literal['cas', 'set', 'get'] = payload.command
-    # assert command in ['cas', 'set', 'get']
-    # if command == 'get':
-    #     assert payload.key is not None
-    #     return (new_state, new_state.data.get(payload.key))
-    #     return self.data.get(command.je)
 
 ##############################################################################################################################################
 
-# @dataclasses.dataclass
-# class get_command:
-#     key: str
+@dataclasses.dataclass
+class get_command:
+    key: key_type
 
-# @dataclasses.dataclass
-# class set_command:
-#     key: str
-#     value: bytes
+@dataclasses.dataclass
+class set_command:
+    key: key_type
+    value: val_type
 
-# @dataclasses.dataclass
-# class cas_command:
-#     key: str
-#     old_value: bytes
-#     new_value: bytes
+@dataclasses.dataclass
+class del_command:
+    key: key_type
+
+@dataclasses.dataclass
+class cas_command:
+    key: key_type
+    old_value: val_type
+    new_value: val_type
+
+@dataclasses.dataclass
+class command_result:
+    value: val_type|None
 
 @dataclasses.dataclass
 class log_payload:
-    value: int
-    # command: cas_command | set_command | get_command
+    # value: int
+    command: cas_command | set_command | get_command | del_command
 
 @dataclasses.dataclass
 class log_message:
@@ -312,8 +371,9 @@ class new_entry_req:
 
 @dataclasses.dataclass
 class new_entry_res:
-    success: bool
-    logs: list[log_message]
+    # success: bool
+    result: command_result | None
+    # logs: list[log_message]
 
 ##############################################################################################################################################
 
@@ -842,8 +902,12 @@ class new_entry_server(ipc_server[new_entry_req, new_entry_res]):
     req_type = new_entry_req
     res_type = new_entry_res
 
-    def get_logs(self, len_after_adding: int) -> list[log_message]:
-        return [log.message for log in storage.logs[:len_after_adding] if log.message is not None][-4:]
+    # def get_logs(self, len_after_adding: int) -> list[log_message]:
+    #     return [log.message for log in storage.logs[:len_after_adding] if log.message is not None][-4:]
+
+    def get_result(self, len_after_adding: int) -> command_result:
+        assert len_after_adding
+        return get_result_for_command_by_index(len_after_adding - 1)
 
     async def async_handle_msg(self, req: new_entry_req | None) -> new_entry_res:
         if req is None:
@@ -858,8 +922,9 @@ class new_entry_server(ipc_server[new_entry_req, new_entry_res]):
         if role_when_started.name != 'leader':
             print(f'{req = } attempt to add new entry to {role.name}', file=debug_stream)
             return new_entry_res(
-                success=False,
-                logs=[],
+                # success=False,
+                # logs=[],
+                result=None,
             )
 
         expected_commit_len : int | None = None
@@ -897,8 +962,9 @@ class new_entry_server(ipc_server[new_entry_req, new_entry_res]):
                 print(f'{req = } role changed, not adding new log entry', file=debug_stream)
 
                 return new_entry_res(
-                    logs=[],
-                    success=False,
+                    # logs=[],
+                    # success=False,
+                    result=None,
                 )
 
         assert storage.commit_len >= expected_commit_len
@@ -906,8 +972,9 @@ class new_entry_server(ipc_server[new_entry_req, new_entry_res]):
         print(f'{req = } adding new log entry succeeded', file=debug_stream)
 
         return new_entry_res(
-            logs=self.get_logs(expected_commit_len),
-            success=True,
+            # logs=self.get_logs(expected_commit_len),
+            result=self.get_result(expected_commit_len),
+            # success=True,
         )
 
 ipc_servers.append(new_entry_server)
@@ -1098,57 +1165,167 @@ class request_vote_client(ipc_client[request_vote_req, request_vote_res]):
 
 ##############################################################################################################################################
 
+successful_request_count = 0
+
 async def logs_size_printer() -> None:
     while 1:
-        old_len = len(local_log)
-        await asyncio.sleep(60)
-        new_len = len(local_log)
-        print(f'Last minute gave {new_len - old_len} new logs!', file=info_stream)
+        old_len = successful_request_count
+        await asyncio.sleep(5)
+        new_len = successful_request_count
+        print(f'Last five seconds gave {new_len - old_len} new ops!', file=info_stream)
 
 client_at_start.append(logs_size_printer())
 
-local_log : list[log_payload] = []
+# local_log : list[log_payload] = []
+
+# async def raft_client() -> None:
+#     while 1:
+#         payload = log_payload(random.randint(0, 255))
+#         remote_log = await new_entry_client(payload)
+#         assert not local_log or len(remote_log) >= 2
+#         local_log.append(payload)
+#         assert local_log[-len(remote_log):] == remote_log
+#         if len(remote_log) != len(local_log):
+#             break
+#     while 1:
+#         remote_logs = await asyncio.gather(
+#             *[
+#                 new_entry_client(payload)
+#                 for payload in [
+#                     log_payload(random.randint(0, 255))
+#                     for q in range(random.randint(1, 20))
+#                 ]
+#             ]
+#         )
+#         remote_log_len = len(remote_logs[0])
+#         assert remote_log_len >= 2
+#         assert all([len(remote_log) == remote_log_len for remote_log in remote_logs])
+#         sorted_remote_logs = [local_log[-remote_log_len:]]
+#         while len(sorted_remote_logs) != len(remote_logs) + 1:
+#             for remote_log in remote_logs:
+#                 if remote_log[:-1] == sorted_remote_logs[-1][1:]:
+#                     sorted_remote_logs.append(remote_log)
+#                     break
+#             else:
+#                 assert False
+#         for remote_log in sorted_remote_logs[1:]:
+#             assert remote_log[:-1] == local_log[-remote_log_len+1:]
+#             local_log.append(remote_log[-1])
+
+action_type = typing.Literal['invent_new_key',    'get',    'set',    'del',    'good_cas',       'bad_cas']
 
 async def raft_client() -> None:
+    keys : list[key_type] = []
+    local_storage : dict[key_type, val_type] = {}
     while 1:
-        payload = log_payload(random.randint(0, 255))
-        remote_log = await new_entry_client(payload)
-        assert not local_log or len(remote_log) >= 2
-        local_log.append(payload)
-        assert local_log[-len(remote_log):] == remote_log
-        if len(remote_log) != len(local_log):
-            break
-    while 1:
-        remote_logs = await asyncio.gather(
-            *[
-                new_entry_client(payload)
-                for payload in [
-                    log_payload(random.randint(0, 255))
-                    for q in range(random.randint(1, 20))
-                ]
-            ]
-        )
-        remote_log_len = len(remote_logs[0])
-        assert remote_log_len >= 2
-        assert all([len(remote_log) == remote_log_len for remote_log in remote_logs])
-        sorted_remote_logs = [local_log[-remote_log_len:]]
-        while len(sorted_remote_logs) != len(remote_logs) + 1:
-            for remote_log in remote_logs:
-                if remote_log[:-1] == sorted_remote_logs[-1][1:]:
-                    sorted_remote_logs.append(remote_log)
+        actions : list[action_type] = []
+        action: action_type
+        for q in range(1):
+            action = 'invent_new_key'
+            actions.append(action)
+        for q in range(1):
+            action = 'get'
+            actions.append(action)
+        for q in range(1):
+            action = 'set'
+            actions.append(action)
+        for q in range(1):
+            action = 'del'
+            actions.append(action)
+        for q in range(20):
+            action = 'good_cas'
+            actions.append(action)
+        for q in range(20):
+            action = 'bad_cas'
+            actions.append(action)
+
+        action = random.choice(actions)
+
+        if not keys:
+            action = 'invent_new_key'
+        if keys and not local_storage:
+            action = 'set'
+
+        if action == 'invent_new_key':
+            keys.append(random.randbytes(4).hex())
+        elif action == 'get':
+            key = random.choice(keys)
+            res = await new_entry_client(
+                payload=log_payload(
+                    command=get_command(
+                        key=key,
+                    ),
+                ),
+            )
+            assert res.value == local_storage.get(key, None)
+        elif action == 'set':
+            key = random.choice(keys)
+            value = random.randbytes(4).hex()
+            res = await new_entry_client(
+                payload=log_payload(
+                    command=set_command(
+                        key=key,
+                        value=value,
+                    ),
+                ),
+            )
+            assert res.value is None
+            local_storage[key] = value
+        elif action == 'del':
+            key = random.choice(keys)
+            res = await new_entry_client(
+                payload=log_payload(
+                    command=del_command(
+                        key=key,
+                    ),
+                ),
+            )
+            assert res.value is None
+            local_storage.pop(key, None)
+        elif action == 'good_cas':
+            key = random.choice([*local_storage.keys()])
+            old_value = local_storage[key]
+            new_value = random.randbytes(4).hex()
+            res = await new_entry_client(
+                payload=log_payload(
+                    command=cas_command(
+                        key=key,
+                        old_value=old_value,
+                        new_value=new_value,
+                    ),
+                ),
+            )
+            assert res.value == old_value
+            local_storage[key] = new_value
+        elif action == 'bad_cas':
+            key = random.choice(keys)
+            while 1:
+                old_value = random.randbytes(4).hex()
+                if old_value != local_storage.get(key, None):
                     break
-            else:
-                assert False
-        for remote_log in sorted_remote_logs[1:]:
-            assert remote_log[:-1] == local_log[-remote_log_len+1:]
-            local_log.append(remote_log[-1])
+            new_value = random.randbytes(4).hex()
+            res = await new_entry_client(
+                payload=log_payload(
+                    command=cas_command(
+                        key=key,
+                        old_value=old_value,
+                        new_value=new_value,
+                    ),
+                ),
+            )
+            assert res.value == local_storage.get(key, None)
+        else:
+            assert False
+        
+
+
 
 client_at_start.append(raft_client())
 
 @dataclasses.dataclass
 class append_context:
     message: log_message
-    has_success: asyncio.Future[list[log_message]]
+    has_success: asyncio.Future[command_result]
 
 class new_entry_client(ipc_client[new_entry_req, new_entry_res]):
     req_type = new_entry_req
@@ -1159,11 +1336,14 @@ class new_entry_client(ipc_client[new_entry_req, new_entry_res]):
         self.role_when_started = role
         self.append_context : append_context | None = None
 
-    def __await__(self) -> typing.Generator[typing.Any, None, list[log_payload]]:
+    def __await__(self) -> typing.Generator[typing.Any, None, command_result]:
         return self.main().__await__()
 
-    async def main(self) -> list[log_payload]:
-        return await self.append(self.payload)
+    async def main(self) -> command_result:
+        res = await self.append(self.payload)
+        global successful_request_count
+        successful_request_count += 1
+        return res
         # global local_log
         
         # while 1:
@@ -1183,7 +1363,7 @@ class new_entry_client(ipc_client[new_entry_req, new_entry_res]):
             self.send_all()
             await asyncio.sleep(0.11)
 
-    async def append(self, payload: log_payload) -> list[log_payload]:
+    async def append(self, payload: log_payload) -> command_result:
         print(f'starting to append {payload}', file=info_stream)
         self.append_context = append_context(
             message=log_message(
@@ -1193,9 +1373,10 @@ class new_entry_client(ipc_client[new_entry_req, new_entry_res]):
             has_success=asyncio.Future(),
         )
         fire(self.message_sender(self.append_context))
-        logs = await self.append_context.has_success
+        result = await self.append_context.has_success
         print(f'succeeded to append {payload}', file=info_stream)
-        return [log.payload for log in logs]
+        # return [log.payload for log in logs]
+        return result
 
     def get_req(self, host: host_info) -> new_entry_req:
         context = self.append_context
@@ -1216,13 +1397,13 @@ class new_entry_client(ipc_client[new_entry_req, new_entry_res]):
             print(f'{res = } message is too old', file=debug_stream)
             return
 
-        if not res.success:
+        if not res.result is not None:
             print(f'{res = } request has failure message', file=debug_stream)
             return
 
         print(f'{res = } request succeeded', file=debug_stream)
         if not context.has_success.done():
-            context.has_success.set_result(res.logs)
+            context.has_success.set_result(res.result)
 
 ##############################################################################################################################################
 

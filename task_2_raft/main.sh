@@ -58,6 +58,7 @@ function clean(){
                 )
             done | tee
 
+            sleep 4
             docker image rm "$docker_name" ||:
         ) &
     ) | tee
