@@ -242,7 +242,7 @@ async def change_network_config() -> None:
     # )
     print(
         '\n'.join([
-            ''.join(
+            '\x01'+''.join(
                 [
                     get_colored_symbol(canvas[q][w][0][0], canvas[q][w][0][1], canvas[q][w][1][0], canvas[q][w][1][1])
                     for w in range(width)

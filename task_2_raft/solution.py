@@ -15,6 +15,7 @@ import traceback
 import logging
 import typing
 import weakref
+import copy
 import dataclasses
 
 ''' # converted from https://ongardie.net/static/raft/userstudy/raft.pdf by ChatGPT
@@ -217,9 +218,56 @@ error_stream = log_stream(logging.error)
 
 ##############################################################################################################################################
 
+# class kv_storage_state:
+#     def __init__(self):
+#         self.data : dict[str, str] = {}
+
+# kv_storage_states : list[kv_storage_state] = [kv_storage_state()]
+
+# def apply_command_to_kv_state(state: kv_storage_state, committed_entry: log_entry) -> tuple[kv_storage_state, bytes|None]:
+#     old_state = kv_storage_states[-1]
+#     new_state = copy.deepcopy(old_state)
+#     kv_storage_states.append(new_state)
+#     message = committed_entry.message
+#     if message is None:
+#         return
+#     assert message is not None
+#     payload = message.payload
+#     command = payload.command
+#     if isinstance(command, get_command):
+#         return (new_state, )
+
+
+
+
+    # command : typing.Literal['cas', 'set', 'get'] = payload.command
+    # assert command in ['cas', 'set', 'get']
+    # if command == 'get':
+    #     assert payload.key is not None
+    #     return (new_state, new_state.data.get(payload.key))
+    #     return self.data.get(command.je)
+
+##############################################################################################################################################
+
+# @dataclasses.dataclass
+# class get_command:
+#     key: str
+
+# @dataclasses.dataclass
+# class set_command:
+#     key: str
+#     value: bytes
+
+# @dataclasses.dataclass
+# class cas_command:
+#     key: str
+#     old_value: bytes
+#     new_value: bytes
+
 @dataclasses.dataclass
 class log_payload:
     value: int
+    # command: cas_command | set_command | get_command
 
 @dataclasses.dataclass
 class log_message:
@@ -566,7 +614,7 @@ class ipc_server(base_ipc_server, typing.Generic[ipc_client_req, ipc_client_res]
         print(f'send {res = } at {writer.transport.get_extra_info("peername")[0]}', file=debug_stream)
         return res
 
-ipc_clients : list[typing.Type[base_ipc_server]] = []
+ipc_servers : list[typing.Type[base_ipc_server]] = []
 
 ##############################################################################################################################################
 
@@ -721,7 +769,7 @@ class append_entries_server(ipc_server[append_entries_req, append_entries_res]):
             status='good',
         )
 
-ipc_clients.append(append_entries_server)
+ipc_servers.append(append_entries_server)
 
 ##############################################################################################################################################
 
@@ -784,7 +832,7 @@ class request_vote_server(ipc_server[request_vote_req, request_vote_res]):
             vote_granted=False,
         )
 
-ipc_clients.append(request_vote_server)
+ipc_servers.append(request_vote_server)
 
 ##############################################################################################################################################
 
@@ -802,7 +850,7 @@ class new_entry_server(ipc_server[new_entry_req, new_entry_res]):
             print(f'{req = } attempt to add new entry to {role.name}', file=debug_stream)
             return new_entry_res(
                 success=False,
-                logs=self.get_logs(),
+                logs=[],
             )
 
         expected_commit_len : int | None = None
@@ -840,7 +888,7 @@ class new_entry_server(ipc_server[new_entry_req, new_entry_res]):
                 print(f'{req = } role changed, not adding new log entry', file=debug_stream)
 
                 return new_entry_res(
-                    logs=self.get_logs(),
+                    logs=[],
                     success=False,
                 )
 
@@ -853,7 +901,7 @@ class new_entry_server(ipc_server[new_entry_req, new_entry_res]):
             success=True,
         )
 
-ipc_clients.append(new_entry_server)
+ipc_servers.append(new_entry_server)
 
 ##############################################################################################################################################
 
@@ -1043,14 +1091,14 @@ class request_vote_client(ipc_client[request_vote_req, request_vote_res]):
 
 async def logs_size_printer() -> None:
     while 1:
-        old_len = len(local_logs)
+        old_len = len(local_log)
         await asyncio.sleep(60)
-        new_len = len(local_logs)
+        new_len = len(local_log)
         print(f'Last minute gave {new_len - old_len} new logs!', file=info_stream)
 
 client_at_start.append(logs_size_printer())
 
-local_logs : list[log_payload] = []
+local_log : list[log_payload] = []
 
 @dataclasses.dataclass
 class append_context:
@@ -1067,19 +1115,17 @@ class new_entry_client(ipc_client[new_entry_req, new_entry_res]):
         fire(self.main())
 
     async def main(self) -> None:
-        global local_logs
+        global local_log
         
         while 1:
-            # value = random.randint(-2**60, 2**60)
-            value = random.randint(0, 2**8-1)
+            value = random.randint(0, 2**20-1)
             payload = log_payload(
                 value=value,
             )
-            remote_logs = await self.append(payload)
-            local_logs.append(payload)
-            print(f'{remote_logs      = }', file=debug_stream)
-            print(f'{ local_logs[-4:] = }', file=debug_stream)
-            assert remote_logs == local_logs[-4:]
+            remote_log = await self.append(payload)
+            assert len(remote_log) >= 2 or not local_log
+            local_log.append(remote_log[-1])
+            assert local_log[-len(remote_log):] == remote_log
 
 
     async def message_sender(self, context: append_context) -> None:
@@ -1138,7 +1184,7 @@ async def on_connection(reader: asyncio.StreamReader, writer: asyncio.StreamWrit
     global last_incoming_message_time
     try:
         data = await reader.read()
-        for ipc_server in ipc_clients:
+        for ipc_server in ipc_servers:
             res = await ipc_server().try_process(data, writer)
             if res is not None:
                 break
@@ -1161,7 +1207,7 @@ timeout = 0.4321
 
 async def timeout_checker() -> None:
     while 1:
-        await asyncio.sleep(timeout * (1 + random.Random().random()))
+        await asyncio.sleep(timeout * (1 + 2 * random.Random().random()))
         if last_incoming_message_time + timeout < time.time():
             print(f'last message was {time.time() - last_incoming_message_time} seconds ago, sending request vote', file=info_stream)
             request_vote_client()

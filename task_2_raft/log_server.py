@@ -74,21 +74,24 @@ async def connect_stdin_stdout() -> tuple[asyncio.StreamReader, asyncio.StreamWr
     writer = asyncio.StreamWriter(w_transport, w_protocol, reader, loop)
     return reader, writer
 
-to_print : list[bytes] = []
+to_print : list[tuple[bytes, bytes]] = []
 
 async def printer() -> None:
     global to_print
+    t = f'{time.time_ns():024d}'.encode()
+    await asyncio.sleep(0.1)
     while 1:
+        old_t = t
         t = f'{time.time_ns():024d}'.encode()
         await asyncio.sleep(0.1)
         tpo = to_print[:0]
         tpn = to_print[:0]
-        for data in to_print:
-            if data < t:
-                tpo.append(data)
+        for data_time in to_print:
+            if data_time[0] < t or data_time[1] < old_t:
+                tpo.append(data_time)
             else:
-                tpn.append(data)
-        tp = tpo
+                tpn.append(data_time)
+        tp = [data for data, time in tpo]
         to_print = tpn
         tpe = [*enumerate(tp)]
 
@@ -102,7 +105,7 @@ async def printer() -> None:
         # tpb = b''.join(tp)
         async with lock:
             for data in tp:
-                stdout.write(data)
+                stdout.write(data.split(b'\r')[-1])
                 # stdout.write(repr(data).encode()+b'==\n')
             # stdout.write(tpb)
             # stdout.write(str([tpb]).encode()+b'\n\n\n\n')
@@ -115,7 +118,7 @@ async def put_data(data: bytes) -> None:
     else:
         # stdout.write(str(data).encode()+b'\n')
         # await stdout.drain()
-        to_print.append(data)
+        to_print.append((data, f'{time.time_ns():024d}'.encode()))
 
 async def print_data(data: bytes) -> None:
     if data.startswith(b'GET'):
@@ -127,13 +130,13 @@ async def print_data(data: bytes) -> None:
         # sys.stdout.buffer.flush()
 
 async def data_handler(data: bytes) -> None:
-    if data.startswith(b'\x00'):
-        if not lock.locked():
-            await lock.acquire()
-        await print_data(data)
-        if b'\01' in data:
-            lock.release()
-    else:
+    # if data.startswith(b'\x00'):
+    #     if not lock.locked():
+    #         await lock.acquire()
+    #     await print_data(data)
+    #     if b'\01' in data:
+    #         lock.release()
+    # else:
         # await print_data(data)
         await put_data(data)
 
