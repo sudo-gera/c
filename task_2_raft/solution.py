@@ -984,7 +984,8 @@ class ipc_client(typing.Generic[ipc_server_req, ipc_server_res]):
             #     return
             print(f'send {req = } at {host.ip}', file=debug_stream)
             await asyncio.sleep(random.random()**6) # FOR TESTING
-            writer.write(dumps(req))
+            data = dumps(req)
+            writer.write(data)
             writer.write_eof()
             await writer.drain()
             data = await reader.read()
