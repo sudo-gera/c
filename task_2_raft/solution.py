@@ -1,4 +1,5 @@
 from __future__ import annotations
+import hashlib
 import pathlib
 import shutil
 import os
@@ -219,7 +220,7 @@ error_stream = log_stream(logging.error)
 ##############################################################################################################################################
 
 key_type = str
-val_type = str
+val_type = bytes
 
 class kv_storage_state:
     def __init__(self) -> None:
@@ -260,25 +261,25 @@ def apply_command_to_kv_state(old_state: kv_storage_state, committed_element: lo
         command = committed_element.command
     if isinstance(command, get_command):
         value = new_state.data.get(command.key, None)
-        print(f'applying {command} with result {value}')
+        print(f'applying {command} with result {value!r}')
         return (new_state, value)
     if isinstance(command, set_command):
         old_value = new_state.data.get(command.key, None)
         new_state.data[command.key] = command.value
-        print(f'applying {command} replacing {old_value} with {command.value}')
+        print(f'applying {command} replacing {old_value!r} with {command.value!r}')
         return (new_state, None)
     if isinstance(command, del_command):
         old_value = new_state.data.get(command.key, None)
         new_state.data.pop(command.key, None)
-        print(f'applying {command} removing {old_value}')
+        print(f'applying {command} removing {old_value!r}')
         return (new_state, None)
     if isinstance(command, cas_command):
         old_value = new_state.data.get(command.key, None)
-        if old_value == command.old_value:
-            print(f'applying {command} replacing {old_value} with {command.new_value}')
+        if old_value and hashlib.sha256(old_value).digest() == command.old_value_sha256:
+            print(f'applying {command} replacing {old_value!r} with {command.new_value!r}')
             new_state.data[command.key] = command.new_value
         else:
-            print(f'applying {command} not replacing {old_value}')
+            print(f'applying {command} not replacing {old_value!r}')
         return (new_state, old_value)
     assert False
 
@@ -330,7 +331,7 @@ class del_command:
 @dataclasses.dataclass
 class cas_command:
     key: key_type
-    old_value: val_type
+    old_value_sha256: bytes
     new_value: val_type
 
 @dataclasses.dataclass
@@ -1450,7 +1451,7 @@ async def raft_client() -> None:
             assert res.value == local_storage.get(key, None)
         elif action == 'set':
             key = random.choice(keys)
-            value = random.randbytes(4).hex()
+            value = random.randbytes(4)
             res = await raft_facade_client(
                 payload=log_payload(
                     command=set_command(
@@ -1475,12 +1476,12 @@ async def raft_client() -> None:
         elif action == 'good_cas':
             key = random.choice([*local_storage.keys()])
             old_value = local_storage[key]
-            new_value = random.randbytes(4).hex()
+            new_value = random.randbytes(4)
             res = await raft_facade_client(
                 payload=log_payload(
                     command=cas_command(
                         key=key,
-                        old_value=old_value,
+                        old_value_sha256=hashlib.sha256(old_value).digest(),
                         new_value=new_value,
                     ),
                 ),
@@ -1490,15 +1491,15 @@ async def raft_client() -> None:
         elif action == 'bad_cas':
             key = random.choice(keys)
             while 1:
-                old_value = random.randbytes(4).hex()
+                old_value = random.randbytes(4)
                 if old_value != local_storage.get(key, None):
                     break
-            new_value = random.randbytes(4).hex()
+            new_value = random.randbytes(4)
             res = await raft_facade_client(
                 payload=log_payload(
                     command=cas_command(
                         key=key,
-                        old_value=old_value,
+                        old_value_sha256=hashlib.sha256(old_value).digest(),
                         new_value=new_value,
                     ),
                 ),

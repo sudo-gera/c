@@ -37,7 +37,7 @@ function clean(){
                     done
                     printf $'\x1b[u'
                 ) | tail -n 99999
-                sleep 0.02
+                sleep 0.03
             done
             (
                 printf $'\x1b[s\x1b[999B\r'
