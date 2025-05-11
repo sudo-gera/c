@@ -671,10 +671,14 @@ class raft_facade_res(json_serializable):
 
 ##############################################################################################################################################
 
-def static_hash(value: int | float | str | bytes | bytearray, size: int) -> bytes:
-    return random.Random(value).randbytes(size)
+def static_hash(value: bytes, size: int) -> bytes:
+    # return random.Random(value).randbytes(size)
+    return hashlib.sha1(
+        string=value,
+        usedforsecurity=False,
+    ).digest()[:size]
 
-hash_len = 8
+hash_len = 20
 
 class HashError(Exception):
     pass
