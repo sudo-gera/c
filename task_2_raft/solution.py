@@ -1853,6 +1853,7 @@ class raft_facade_client(ipc_client[raft_facade_req, raft_facade_res]):
             if res.redirected_to_id is not None:
                 print(f'{res = } was redirected to {res.redirected_to_id}', file=debug_stream)
                 context.redirected_to_id = res.redirected_to_id
+                fire(self.send_one(hosts[res.redirected_to_id]))
 
         if res.result is None:
             print(f'{res = } request has failure message', file=debug_stream)
