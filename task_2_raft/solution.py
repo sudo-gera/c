@@ -585,6 +585,7 @@ class append_entries_req(json_serializable):
 class append_entries_res(trivially_json_serializable):
     term: int
     status: typing.Literal['good', 'wrong_last_log', 'wrong_term', 'wrong_msg_id']
+    commit_len: int
 
 @dataclasses.dataclass
 class request_vote_req(trivially_json_serializable):
@@ -1023,6 +1024,7 @@ class append_entries_server(ipc_server[append_entries_req, append_entries_res]):
             return append_entries_res(
                 term = storage.term,
                 status='wrong_term',
+                commit_len=storage.commit_len,
             )
 
         assert storage.term <= req.term
@@ -1045,6 +1047,7 @@ class append_entries_server(ipc_server[append_entries_req, append_entries_res]):
             return append_entries_res(
                 term = storage.term,
                 status='wrong_msg_id',
+                commit_len=storage.commit_len,
             )
         
         assert req.msg_id > storage.last_msg_id
@@ -1056,6 +1059,7 @@ class append_entries_server(ipc_server[append_entries_req, append_entries_res]):
             return append_entries_res(
                 term = storage.term,
                 status='wrong_last_log',
+                commit_len=storage.commit_len,
             )
 
         if storage.commit_len > req.log_len:
@@ -1064,6 +1068,7 @@ class append_entries_server(ipc_server[append_entries_req, append_entries_res]):
             return append_entries_res(
                 term = storage.term,
                 status='wrong_last_log',
+                commit_len=storage.commit_len,
             )
 
         assert len(storage.logs) >= req.log_len
@@ -1081,6 +1086,7 @@ class append_entries_server(ipc_server[append_entries_req, append_entries_res]):
             return append_entries_res(
                 term = storage.term,
                 status='wrong_last_log',
+                commit_len=storage.commit_len,
             )
 
         print(f'{req = } i have to add {req.entries = } to log', file=debug_stream)
@@ -1099,6 +1105,7 @@ class append_entries_server(ipc_server[append_entries_req, append_entries_res]):
         return append_entries_res(
             term = storage.term,
             status='good',
+            commit_len=storage.commit_len,
         )
 
 ipc_servers.append(append_entries_server)
@@ -1237,8 +1244,6 @@ class raft_facade_server(ipc_server[raft_facade_req, raft_facade_res]):
 
         assert expected_commit_len is not None
 
-        append_entries_heartbeat()
-
         print(f'{req = } waiting {storage.commit_len = } to be {expected_commit_len}', file=debug_stream)
 
         if storage.commit_len < expected_commit_len:
@@ -1356,6 +1361,7 @@ class raft_facade_server(ipc_server[raft_facade_req, raft_facade_res]):
             if storage.logs[expected_commit_len-1].term != storage.term:
                 await raft_facade_server().async_handle_msg(None)
             else:
+                append_entries_heartbeat()
                 await storage_changed
 
             if role_when_started != role:
@@ -1515,12 +1521,16 @@ class append_entries_client(ipc_client[append_entries_req, append_entries_res]):
             self.check_commit_len()
         elif res.status == 'wrong_last_log':
             print(f'{req = } {res = } request failed with {res.status = }, updating follower values', file=debug_stream)
-            log_len_upper_estimate = min(
-                self.followers[host.id].log_len_upper_estimate,
-                req.log_len - 1,
-            )
-            print(f'{req = } {res = } changing log_len_upper_estimate from {self.followers[host.id].log_len_upper_estimate} to {log_len_upper_estimate}', file=debug_stream)
-            self.followers[host.id].log_len_upper_estimate = log_len_upper_estimate
+            # assert res.commit_len <= self.followers[host.id].log_len_upper_estimate
+            # log_len_upper_estimate = min(
+            #     self.followers[host.id].log_len_upper_estimate,
+            #     req.log_len - 1,
+            # )
+            # log_len_upper_estimate = req.commit_len
+            print(f'{req = } {res = } changing log_len_upper_estimate from {self.followers[host.id].log_len_upper_estimate} to {res.commit_len}', file=debug_stream)
+            self.followers[host.id].log_len_upper_estimate = res.commit_len
+            print(f'{req = } {res = } changing log_len_lower_estimate from {self.followers[host.id].log_len_lower_estimate} to {res.commit_len}', file=debug_stream)
+            self.followers[host.id].log_len_lower_estimate = res.commit_len
         else:
             assert res.status == 'wrong_msg_id'
             print(f'{req = } {res = } request failed with {res.status = }', file=debug_stream)
@@ -1762,11 +1772,11 @@ async def raft_client() -> None:
 
 client_at_start.append(raft_client())
 
-@dataclasses.dataclass
-class append_context:
-    message: log_message
-    has_success: asyncio.Future[command_result]
-    redirected_to_id: int | None
+# @dataclasses.dataclass
+# class append_context:
+#     message: log_message
+#     has_success: asyncio.Future[command_result]
+#     redirected_to_id: int | None
 
 class raft_facade_client(ipc_client[raft_facade_req, raft_facade_res]):
     req_type = raft_facade_req
@@ -1775,14 +1785,13 @@ class raft_facade_client(ipc_client[raft_facade_req, raft_facade_res]):
     def __init__(self, payload: log_payload) -> None:
         self.payload = payload
         self.role_when_started = role
-        self.append_context = append_context(
-            message=log_message(
+        self.message=log_message(
                 msg_id=random.randint(0, 2**60-1),
                 payload=payload,
-            ),
-            has_success=asyncio.Future(),
-            redirected_to_id=None,
-        )
+            )
+        self.has_success: asyncio.Future[command_result] = asyncio.Future()
+        self.redirected_to_id: int | None = None
+        self.redirect_ttl = 0
 
     def __await__(self) -> typing.Generator[typing.Any, None, command_result]:
         return self.main().__await__()
@@ -1805,55 +1814,53 @@ class raft_facade_client(ipc_client[raft_facade_req, raft_facade_res]):
         #     assert local_log[-len(remote_log):] == remote_log
 
 
-    async def message_sender(self, context: append_context) -> None:
-        while not context.has_success.done():
-            print(f'send_all while appending {context.message.payload}', file=debug_stream)
-            self.send_all()
+    async def message_sender(self) -> None:
+        while not self.has_success.done():
+            print(f'send_all while appending {self.message.payload}', file=debug_stream)
+            if self.redirect_ttl:
+                self.redirect_ttl -= 1
+                assert self.redirected_to_id is not None
+                fire(self.send_one(hosts[self.redirected_to_id]))
+            else:
+                self.redirected_to_id = None
+                self.send_all()
             await asyncio.sleep(0.11)
 
     async def append(self, payload: log_payload) -> command_result:
         print(f'starting to append {payload}', file=info_stream)
-        fire(self.message_sender(self.append_context))
-        result = await self.append_context.has_success
+        fire(self.message_sender())
+        result = await self.has_success
         print(f'succeeded to append {payload}', file=info_stream)
         # return [log.payload for log in logs]
         return result
 
     def get_req(self, host: host_info) -> raft_facade_req:
-        context = self.append_context
-        assert isinstance(context, append_context)
-        if isinstance(context.message.payload.command, get_command):
+        if isinstance(self.message.payload.command, get_command):
             return raft_facade_req(
                 command=read_req(
-                    redirected_to_id=context.redirected_to_id,
-                    key=context.message.payload.command.key,
+                    redirected_to_id=self.redirected_to_id,
+                    key=self.message.payload.command.key,
                 )
             )
         else:
             return raft_facade_req(
                 command=new_entry_req(
-                    message=context.message,
+                    message=self.message,
                 )
             )
 
     def handle_res(self, host: host_info, res: raft_facade_res, req: raft_facade_req) -> None:
-        context = self.append_context
-
-        if not isinstance(context, append_context):
-            print(f'{res = } context is None', file=debug_stream)
-            return
-        assert isinstance(context, append_context)
-
         command = req.command
         if isinstance(command, new_entry_req):
-            if command.message  is not context.message:
-                print(f'{res = } message is too old', file=debug_stream)
-                return
+            assert command.message is self.message
+                # print(f'{res = } message is too old', file=debug_stream)
+                # return
         
         if isinstance(command, read_req):
             if res.redirected_to_id is not None:
                 print(f'{res = } was redirected to {res.redirected_to_id}', file=debug_stream)
-                context.redirected_to_id = res.redirected_to_id
+                self.redirected_to_id = res.redirected_to_id
+                self.redirect_ttl = 4
                 fire(self.send_one(hosts[res.redirected_to_id]))
 
         if res.result is None:
@@ -1861,8 +1868,8 @@ class raft_facade_client(ipc_client[raft_facade_req, raft_facade_res]):
             return
 
         print(f'{res = } request succeeded', file=debug_stream)
-        if not context.has_success.done():
-            context.has_success.set_result(res.result)
+        if not self.has_success.done():
+            self.has_success.set_result(res.result)
 
 ##############################################################################################################################################
 
