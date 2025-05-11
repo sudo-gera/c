@@ -1,4 +1,7 @@
 from __future__ import annotations
+import pickle
+import base64
+import json
 import hashlib
 import pathlib
 import shutil
@@ -315,46 +318,245 @@ def get_result_for_command_by_index(command_index: int) -> tuple[command_result,
 
 ##############################################################################################################################################
 
+class WrongTypeError(Exception):
+    pass
+
+class serializable:
+    def dump(self) -> bytes:
+        assert False
+        # import pickle
+        # data = pickle.dumps(self)
+        # data = wrap(data)
+        # return data
+    
+    @classmethod
+    def load(cls: typing.Type[serializable_t], data: bytes) -> serializable_t:
+        assert False
+        # data = unwrap(data)
+        # import pickle
+        # msg = pickle.loads(data)
+        # if not isinstance(msg, cls):
+        #     raise WrongTypeError
+        # return msg
+
+serializable_t = typing.TypeVar('serializable_t', bound=serializable)
+
+def dumps(msg: serializable) -> bytes:
+    # custom_data = msg.dump()
+    # usual_data = wrap(pickle.dumps(msg))
+    # real_data = len(custom_data).to_bytes(8, 'big') + custom_data + usual_data
+    # return wrap(real_data)
+
+    return msg.dump()
+
+    # assert msg is not None
+    # data = pickle.dumps(msg)
+    # data = wrap(data)
+    # return data
+
+T = typing.TypeVar('T', bound=serializable)
+
+def loads(data: bytes, msg_type: typing.Type[T]) -> T:
+    # data = unwrap(data)
+    # custom_data_len = int.from_bytes(data[:8], 'big')
+    # custom_data = data[8:][:custom_data_len]
+    # usual_data = data[8+custom_data_len:]
+    # msg = msg_type.load(custom_data)
+    # print(msg, file=debug_stream)
+    # print(pickle.loads(unwrap(usual_data)), file=debug_stream)
+    # assert wrap(pickle.dumps(msg)) == usual_data
+    # return msg
+
+    return msg_type.load(data)
+
+    # data = unwrap(data)
+    # import pickle
+    # msg = pickle.loads(data)
+    # if not isinstance(msg, msg_type):
+    #     raise WrongTypeError
+    # return msg
+
+##############################################################################################################################################
+
+class json_serializable(serializable):
+    def json_dump_public(self) -> typing.Any:
+        obj = self.json_dump_private()
+        return {
+            'type': type(self).__name__,
+            'data': obj,
+        }
+    
+    def json_dump_private(self) -> typing.Any:
+        assert False
+    
+    @classmethod
+    def json_load_private(cls: typing.Type[json_serializable_t], obj: typing.Any) -> json_serializable_t:
+        assert False
+
+    @classmethod
+    def json_load_public(cls: typing.Type[json_serializable_t], obj: typing.Any) -> json_serializable_t:
+        assert isinstance(obj, dict)
+        assert {*obj.keys()} == {'type', 'data'}
+        if obj['type'] != cls.__name__:
+            raise WrongTypeError
+        return cls.json_load_private(obj['data'])
+
+    def dump(self) -> bytes:
+        return wrap(json.dumps(self.json_dump_public()).encode())
+
+    @classmethod 
+    def load(cls: typing.Type[json_serializable_t], data: bytes) -> json_serializable_t:
+        data = unwrap(data)
+        try:
+            obj = json.loads(data.decode())
+        except Exception:
+            raise WrongTypeError
+        return cls.json_load_public(obj)
+
+json_serializable_t = typing.TypeVar('json_serializable_t', bound=json_serializable)
+
+json_load_t = typing.TypeVar('json_load_t', bound=json_serializable)
+
+def json_load(cls: typing.Type[json_load_t], data: typing.Any) -> json_load_t:
+    return cls.json_load_public(data)
+
+class trivially_json_serializable(json_serializable):
+    def json_dump_private(self) -> typing.Any:
+        obj = copy.deepcopy(self.__dict__)
+        for k in obj:
+            if isinstance(obj[k], bytes):
+                obj[k] = {
+                    'type': 'bytes',
+                    'data': base64.b64encode(obj[k]).decode(),
+                }
+            else:
+                obj[k] = {
+                    'type': 'default',
+                    'data': obj[k],
+                }
+        return obj
+
+    @classmethod
+    def json_load_private(cls: typing.Type[trivially_json_serializable_t], obj: typing.Any) -> trivially_json_serializable_t:
+        obj = copy.deepcopy(obj)
+        for k in obj:
+            assert isinstance(obj[k], dict)
+            assert {*obj[k].keys()} == {'type', 'data'}
+            if obj[k]['type'] == 'bytes':
+                obj[k] = base64.b64decode(obj[k]['data'])
+            elif obj[k]['type'] == 'default':
+                obj[k] = obj[k]['data']
+            else:
+                assert False
+        return cls(**obj)
+
+trivially_json_serializable_t = typing.TypeVar('trivially_json_serializable_t', bound=json_serializable)
+
+##############################################################################################################################################
+
 @dataclasses.dataclass
-class get_command:
+class get_command(trivially_json_serializable):
     key: key_type
 
 @dataclasses.dataclass
-class set_command:
+class set_command(trivially_json_serializable):
     key: key_type
     value: val_type
 
 @dataclasses.dataclass
-class del_command:
+class del_command(trivially_json_serializable):
     key: key_type
 
 @dataclasses.dataclass
-class cas_command:
+class cas_command(trivially_json_serializable):
     key: key_type
     old_value_sha256: bytes
     new_value: val_type
 
 @dataclasses.dataclass
-class command_result:
+class command_result(trivially_json_serializable):
     value: val_type|None
 
 @dataclasses.dataclass
-class log_payload:
+class log_payload(json_serializable):
     # value: int
     command: cas_command | set_command | get_command | del_command
 
+    def json_dump_private(self) -> typing.Any:
+        command = self.command
+        obj = command.json_dump_public()
+        if isinstance(command, cas_command):
+            return {
+                'type': 'cas_command_',
+                'data': obj,
+            }
+        if isinstance(command, set_command):
+            return {
+                'type': 'set_command_',
+                'data': obj,
+            }
+        if isinstance(command, get_command):
+            return {
+                'type': 'get_command_',
+                'data': obj,
+            }
+        if isinstance(command, del_command):
+            return {
+                'type': 'del_command_',
+                'data': obj,
+            }
+
+    @classmethod
+    def json_load_private(cls, obj: typing.Any) -> log_payload:
+        return log_payload(
+            json_load(
+                dict(
+                    get_command_=get_command,
+                    set_command_=set_command,
+                    del_command_=del_command,
+                    cas_command_=cas_command,
+                )[obj['type']],
+                obj['data']
+            )
+        )
+
 @dataclasses.dataclass
-class log_message:
+class log_message(json_serializable):
     msg_id: int
     payload: log_payload
 
+    def json_dump_private(self) -> typing.Any:
+        obj = copy.deepcopy(self.__dict__)
+        obj['payload'] = self.payload.json_dump_public()
+        return obj
+
+    @classmethod
+    def json_load_private(cls, obj: typing.Any) -> log_message:
+        obj = copy.deepcopy(obj)
+        obj['payload']=log_payload.json_load_public(obj['payload'])
+        return log_message(**obj)
+
 @dataclasses.dataclass
-class log_entry:
+class log_entry(json_serializable):
     term: int
     message: log_message | None
 
+    def json_dump_private(self) -> typing.Any:
+        obj = copy.deepcopy(self.__dict__)
+        message = self.message
+        if message is not None:
+            obj['message'] = message.json_dump_public()
+        return obj
+
+    @classmethod
+    def json_load_private(cls, obj: typing.Any) -> log_entry:
+        obj = copy.deepcopy(obj)
+        if obj['message'] is not None:
+            obj['message']=log_message.json_load_public(obj['message'])
+        return log_entry(**obj)
+
 @dataclasses.dataclass
-class append_entries_req:
+class append_entries_req(json_serializable):
     term: int
     log_len: int
     last_log_term: int
@@ -363,62 +565,108 @@ class append_entries_req:
     msg_id: int
     leader_id: int
 
+    def json_dump_private(self) -> typing.Any:
+        obj = copy.deepcopy(self.__dict__)
+        obj['entries'] = []
+        for entry in self.entries:
+            obj['entries'].append(entry.json_dump_public())
+        return obj
+
+    @classmethod
+    def json_load_private(cls, obj: typing.Any) -> append_entries_req:
+        obj = copy.deepcopy(obj)
+        entries: list[log_entry] = []
+        for entry in obj['entries']:
+            entries.append(log_entry.json_load_public(entry))
+        obj['entries'] = entries
+        return append_entries_req(**obj)
+
 @dataclasses.dataclass
-class append_entries_res:
+class append_entries_res(trivially_json_serializable):
     term: int
     status: typing.Literal['good', 'wrong_last_log', 'wrong_term', 'wrong_msg_id']
 
 @dataclasses.dataclass
-class request_vote_req:
+class request_vote_req(trivially_json_serializable):
     candidate_id: int
     term: int
     log_len: int
     last_log_term: int
 
 @dataclasses.dataclass
-class request_vote_res:
+class request_vote_res(trivially_json_serializable):
     term: int
     vote_granted: bool
 
 @dataclasses.dataclass
-class read_req:
+class read_req(trivially_json_serializable):
     key: key_type
     redirected_to_id: int | None
 
 @dataclasses.dataclass
-class new_entry_req:
+class new_entry_req(json_serializable):
     message: log_message
 
-@dataclasses.dataclass
-class raft_facade_req:
-    command: new_entry_req | read_req
+    def json_dump_private(self) -> typing.Any:
+        obj = copy.deepcopy(self.__dict__)
+        obj['message'] = self.message.json_dump_public()
+        return obj
+
+    @classmethod
+    def json_load_private(cls, obj: typing.Any) -> new_entry_req:
+        obj = copy.deepcopy(obj)
+        obj['message']=log_message.json_load_public(obj['message'])
+        return new_entry_req(**obj)
 
 @dataclasses.dataclass
-class raft_facade_res:
+class raft_facade_req(json_serializable):
+    command: new_entry_req | read_req
+
+    def json_dump_private(self) -> typing.Any:
+        command = self.command
+        obj = command.json_dump_public()
+        if isinstance(command, new_entry_req):
+            return {
+                'type': 'new_entry_req_',
+                'data': obj,
+            }
+        if isinstance(command, read_req):
+            return {
+                'type': 'read_req_',
+                'data': obj,
+            }
+
+    @classmethod
+    def json_load_private(cls, obj: typing.Any) -> raft_facade_req:
+        return raft_facade_req(
+            json_load(
+                dict(
+                    new_entry_req_=new_entry_req,
+                    read_req_=read_req,
+                )[obj['type']],
+                obj['data']
+            )
+        )
+
+@dataclasses.dataclass
+class raft_facade_res(json_serializable):
     redirected_to_id: int | None
     result: command_result | None
 
-##############################################################################################################################################
+    def json_dump_private(self) -> typing.Any:
+        obj = copy.deepcopy(self.__dict__)
+        result = self.result
+        if result is not None:
+            obj['result'] = result.json_dump_public()
+        return obj
 
-class WrongTypeError(Exception):
-    pass
+    @classmethod
+    def json_load_private(cls, obj: typing.Any) -> raft_facade_res:
+        obj = copy.deepcopy(obj)
+        if obj['result'] is not None:
+            obj['result']=command_result.json_load_public(obj['result'])
+        return raft_facade_res(**obj)
 
-T = typing.TypeVar('T')
-
-def dumps(msg: T) -> bytes:
-    assert msg is not None
-    import pickle
-    data = pickle.dumps(msg)
-    data = wrap(data)
-    return data
-
-def loads(data: bytes, msg_type: typing.Type[T]) -> T:
-    data = unwrap(data)
-    import pickle
-    msg = pickle.loads(data)
-    if not isinstance(msg, msg_type):
-        raise WrongTypeError
-    return msg
 
 ##############################################################################################################################################
 
@@ -564,7 +812,7 @@ class int_storage(base_object_descriptor[int, int]):
             value.to_bytes(8, 'big')
         )
 
-list_storage_item = typing.TypeVar('list_storage_item')
+list_storage_item = typing.TypeVar('list_storage_item', bound=serializable)
 
 class list_storage(typing.Generic[list_storage_item]):
     size_storage : object_descriptor[int, int] = object_descriptor()
@@ -670,11 +918,11 @@ def set_role(name: role_type) -> None:
 
 class base_ipc_server():
 
-    async def try_process(self, data: bytes, writer: asyncio.StreamWriter) -> typing.Any:
+    async def try_process(self, data: bytes, writer: asyncio.StreamWriter) -> serializable | None:
         assert False
 
-ipc_client_req = typing.TypeVar('ipc_client_req')
-ipc_client_res = typing.TypeVar('ipc_client_res')
+ipc_client_req = typing.TypeVar('ipc_client_req', bound=serializable)
+ipc_client_res = typing.TypeVar('ipc_client_res', bound=serializable)
 
 class ipc_server(base_ipc_server, typing.Generic[ipc_client_req, ipc_client_res]):
     req_type : typing.Type[ipc_client_req]
@@ -701,8 +949,8 @@ ipc_servers : list[typing.Type[base_ipc_server]] = []
 
 ##############################################################################################################################################
 
-ipc_server_req = typing.TypeVar('ipc_server_req')
-ipc_server_res = typing.TypeVar('ipc_server_res')
+ipc_server_req = typing.TypeVar('ipc_server_req', bound=serializable)
+ipc_server_res = typing.TypeVar('ipc_server_res', bound=serializable)
 
 class ipc_client(typing.Generic[ipc_server_req, ipc_server_res]):
     req_type : typing.Type[ipc_server_req]
