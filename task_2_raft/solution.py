@@ -981,7 +981,7 @@ class ipc_client(typing.Generic[ipc_server_req, ipc_server_res]):
         print(f'send {req = } at {host.ip}', file=debug_stream)
         data_in = dumps(req)
         await asyncio.sleep(random.random()**6) # FOR TESTING
-        data_out = await server_send_and_recv(data_in, host.ip)
+        data_out = await client_send_and_recv(data_in, host.ip)
         if data_out is None:
             return
         await asyncio.sleep(random.random()**6) # FOR TESTING
@@ -996,23 +996,23 @@ class ipc_client(typing.Generic[ipc_server_req, ipc_server_res]):
         print(f'handle {res = } at {host.ip}', file=debug_stream)
         self.handle_res(host, res, req)
 
-async def server_send_and_recv(data: bytes, host_ip: str) -> bytes | None:
-    try:
-        reader, writer = await asyncio.open_connection(host_ip, 4444)
-    except Exception as e:
-        print(f'failed to connect to {host_ip} with {type(e)} {e}', file=debug_stream)
-        return None
-    try:
-        writer.write(data)
-        writer.write_eof()
-        await writer.drain()
-        data = await reader.read()
-    except OSError as e:
-        print(f'Got OSError: {type(e)}, {e}', file=debug_stream)
-        return None
-    finally:
-        await common.safe_socket_close(writer)
-    return data
+# async def client_send_and_recv(data: bytes, host_ip: str) -> bytes | None:
+#     try:
+#         reader, writer = await asyncio.open_connection(host_ip, 4444)
+#     except Exception as e:
+#         print(f'failed to connect to {host_ip} with {type(e)} {e}', file=debug_stream)
+#         return None
+#     try:
+#         writer.write(data)
+#         writer.write_eof()
+#         await writer.drain()
+#         data = await reader.read()
+#     except OSError as e:
+#         print(f'Got OSError: {type(e)}, {e}', file=debug_stream)
+#         return None
+#     finally:
+#         await common.safe_socket_close(writer)
+#     return data
 
 ##############################################################################################################################################
 
@@ -1885,7 +1885,7 @@ async def on_connection(reader: asyncio.StreamReader, writer: asyncio.StreamWrit
     try:
         data_in = await reader.read()
         host_ip = writer.transport.get_extra_info("peername")[0]
-        data_out = await client_handle_request(data_in, host_ip)
+        data_out = await server_handle_request(data_in, host_ip)
         if data_out is None:
             return
         writer.write(data_out)
@@ -1896,7 +1896,7 @@ async def on_connection(reader: asyncio.StreamReader, writer: asyncio.StreamWrit
     finally:
         await common.safe_socket_close(writer)
 
-async def client_handle_request(data: bytes, host_ip: str) -> bytes | None:
+async def server_handle_request(data: bytes, host_ip: str) -> bytes | None:
     for ipc_server in ipc_servers:
         res = await ipc_server().try_process(data, host_ip)
         if res is not None:
@@ -1907,7 +1907,6 @@ async def client_handle_request(data: bytes, host_ip: str) -> bytes | None:
     return dumps(res)
 
 ##############################################################################################################################################
-
 
 last_incoming_message_time = time.time()
 timeout = 0.4321
@@ -1926,6 +1925,49 @@ server_at_start.append(timeout_checker())
 
 ##############################################################################################################################################
 
+async def client_send_and_recv(data: bytes, host_ip: str) -> bytes | None:
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.post(f'http://{host_ip}:4444/api', data=data) as resp:
+                if resp.status == 200:
+                    data = await resp.read()
+                    return data
+    except Exception as e:
+        print(f'cannot connect to {host_ip} with {type(e)} {e}', file=debug_stream)
+    return None
+
+from aiohttp import web
+
+async def api(request: web.Request) -> web.Response:
+    data_in = await request.read()
+    host_ip = request.remote
+    assert isinstance(host_ip, str)
+    data_out = await server_handle_request(data_in, host_ip)
+    if data_out is None:
+        return web.Response(
+            status=400,
+            body=b'',
+        )
+    else:
+        return web.Response(
+            status=200,
+            body=data_out,
+        )
+
+app = web.Application()
+app.add_routes([web.post('/api', api)])
+# web.run_app(app, port=4444)
+
+async def run_server() -> None:
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, port=4444)    
+    await site.start()
+
+server_at_start.append(run_server())
+
+##############################################################################################################################################
+
 async def listening_client() -> None:
     try:
         async with await asyncio.start_server(on_connection_unhandled, '0.0.0.0', 4444) as server:
@@ -1936,7 +1978,7 @@ async def listening_client() -> None:
     except:
         print(traceback.format_exc(), file=error_stream)
 
-server_at_start.append(listening_client())
+# server_at_start.append(listening_client())
 
 
 ##############################################################################################################################################
@@ -1955,29 +1997,4 @@ if __name__ == '__main__':
         asyncio.run(main())
     except KeyboardInterrupt:
         pass
-
-
-##############################################################################################################################################
-
-# async def main():
-#     async with aiohttp.ClientSession() as session:
-#         async with session.get('http://httpbin.org/get') as resp:
-#             print(resp.status)
-#             print(await resp.text())
-
-# asyncio.run(main())
-
-# from aiohttp import web
-
-# async def api(request: aiohttp.web.BaseRequest):
-#     req = await request.json()
-#     res = handle_req(req)
-#     return web.Response(
-#         text="Hello, world",
-#         body=json.dumps(res),
-#     )
-
-# app = web.Application()
-# app.add_routes([web.port('/api', api)])
-# web.run_app(app)
 
