@@ -1,4 +1,5 @@
 from __future__ import annotations
+import aiohttp
 import pickle
 import base64
 import json
@@ -668,7 +669,6 @@ class raft_facade_res(json_serializable):
             obj['result']=command_result.json_load_public(obj['result'])
         return raft_facade_res(**obj)
 
-
 ##############################################################################################################################################
 
 def static_hash(value: bytes, size: int) -> bytes:
@@ -923,7 +923,7 @@ def set_role(name: role_type) -> None:
 
 class base_ipc_server():
 
-    async def try_process(self, data: bytes, writer: asyncio.StreamWriter) -> serializable | None:
+    async def try_process(self, data: bytes, host_ip: str) -> serializable | None:
         assert False
 
 ipc_client_req = typing.TypeVar('ipc_client_req', bound=serializable)
@@ -939,15 +939,16 @@ class ipc_server(base_ipc_server, typing.Generic[ipc_client_req, ipc_client_res]
     def handle_msg(self, msg: ipc_client_req) -> ipc_client_res:
         assert False
 
-    async def try_process(self, data: bytes, writer: asyncio.StreamWriter) -> ipc_client_res | None:
+    async def try_process(self, data: bytes, host_ip: str) -> ipc_client_res | None:
         try:
             req = loads(data, self.req_type)
         except (WrongTypeError, HashError):
             # print(f'>>>>>>>>> {self}', file=debug_stream)
             return None
-        print(f'recv {req = } at {writer.transport.get_extra_info("peername")[0]}', file=debug_stream)
+        # print(f'recv {req = } at {writer.transport.get_extra_info("peername")[0]}', file=debug_stream)
+        print(f'recv {req = } at {host_ip}', file=debug_stream)
         res = await self.async_handle_msg(req)
-        print(f'send {res = } at {writer.transport.get_extra_info("peername")[0]}', file=debug_stream)
+        print(f'send {res = } at {host_ip}', file=debug_stream)
         return res
 
 ipc_servers : list[typing.Type[base_ipc_server]] = []
@@ -976,43 +977,42 @@ class ipc_client(typing.Generic[ipc_server_req, ipc_server_res]):
 
     async def send_one(self, host: host_info) -> None:
         req = self.get_req(host)
-        # print(f'fired {host} for {self} and {req}', file=debug_stream)
-        try:
-            reader, writer = await asyncio.open_connection(host.ip, 4444)
-        except Exception as e:
-            print(f'failed to connect to {host.ip} with {type(e)} {e}', file=debug_stream)
+        print(f'connected to {host.ip}', file=debug_stream)
+        print(f'send {req = } at {host.ip}', file=debug_stream)
+        data_in = dumps(req)
+        await asyncio.sleep(random.random()**6) # FOR TESTING
+        data_out = await server_send_and_recv(data_in, host.ip)
+        if data_out is None:
             return
+        await asyncio.sleep(random.random()**6) # FOR TESTING
         try:
-            print(f'connected to {host.ip}', file=debug_stream)
-            # if role is not self.role_when_started:
-            #     print(f'role changed, drop connection at {host.ip}', file=debug_stream)
-            #     return
-            print(f'send {req = } at {host.ip}', file=debug_stream)
-            await asyncio.sleep(random.random()**6) # FOR TESTING
-            data = dumps(req)
-            writer.write(data)
-            writer.write_eof()
-            await writer.drain()
-            data = await reader.read()
-            await asyncio.sleep(random.random()**6) # FOR TESTING
-            try:
-                res = loads(data, self.res_type)
-            except (WrongTypeError):
-                # import pickle
-                # print('failed to load data:', pickle.loads(unwrap(data)), self.res_type, file=debug_stream)
-                raise
-            except (HashError):
-                return
-            print(f'recv {res = } at {host.ip}', file=debug_stream)
-            if role is not self.role_when_started:
-                print(f'role changed, drop {res = } at {host.ip}', file=debug_stream)
-                return
-            print(f'handle {res = } at {host.ip}', file=debug_stream)
-            self.handle_res(host, res, req)
-        except OSError as e:
-            print(f'Got OSError: {type(e)}, {e}', file=debug_stream)
-        finally:
-            await common.safe_socket_close(writer)
+            res = loads(data_out, self.res_type)
+        except (HashError):
+            return
+        print(f'recv {res = } at {host.ip}', file=debug_stream)
+        if role is not self.role_when_started:
+            print(f'role changed, drop {res = } at {host.ip}', file=debug_stream)
+            return
+        print(f'handle {res = } at {host.ip}', file=debug_stream)
+        self.handle_res(host, res, req)
+
+async def server_send_and_recv(data: bytes, host_ip: str) -> bytes | None:
+    try:
+        reader, writer = await asyncio.open_connection(host_ip, 4444)
+    except Exception as e:
+        print(f'failed to connect to {host_ip} with {type(e)} {e}', file=debug_stream)
+        return None
+    try:
+        writer.write(data)
+        writer.write_eof()
+        await writer.drain()
+        data = await reader.read()
+    except OSError as e:
+        print(f'Got OSError: {type(e)}, {e}', file=debug_stream)
+        return None
+    finally:
+        await common.safe_socket_close(writer)
+    return data
 
 ##############################################################################################################################################
 
@@ -1883,16 +1883,12 @@ async def on_connection_unhandled(reader: asyncio.StreamReader, writer: asyncio.
 async def on_connection(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
     global last_incoming_message_time
     try:
-        data = await reader.read()
-        for ipc_server in ipc_servers:
-            res = await ipc_server().try_process(data, writer)
-            if res is not None:
-                break
-        else:
-            # import pickle
-            # print('failed to parse data:', pickle.loads(unwrap(data)), file=debug_stream)
+        data_in = await reader.read()
+        host_ip = writer.transport.get_extra_info("peername")[0]
+        data_out = await client_handle_request(data_in, host_ip)
+        if data_out is None:
             return
-        writer.write(dumps(res))
+        writer.write(data_out)
         writer.write_eof()
         await writer.drain()
     except OSError as e:
@@ -1900,7 +1896,18 @@ async def on_connection(reader: asyncio.StreamReader, writer: asyncio.StreamWrit
     finally:
         await common.safe_socket_close(writer)
 
+async def client_handle_request(data: bytes, host_ip: str) -> bytes | None:
+    for ipc_server in ipc_servers:
+        res = await ipc_server().try_process(data, host_ip)
+        if res is not None:
+            break
+    if res is None:
+        return None
+    assert res is not None
+    return dumps(res)
+
 ##############################################################################################################################################
+
 
 last_incoming_message_time = time.time()
 timeout = 0.4321
@@ -1948,4 +1955,29 @@ if __name__ == '__main__':
         asyncio.run(main())
     except KeyboardInterrupt:
         pass
+
+
+##############################################################################################################################################
+
+# async def main():
+#     async with aiohttp.ClientSession() as session:
+#         async with session.get('http://httpbin.org/get') as resp:
+#             print(resp.status)
+#             print(await resp.text())
+
+# asyncio.run(main())
+
+# from aiohttp import web
+
+# async def api(request: aiohttp.web.BaseRequest):
+#     req = await request.json()
+#     res = handle_req(req)
+#     return web.Response(
+#         text="Hello, world",
+#         body=json.dumps(res),
+#     )
+
+# app = web.Application()
+# app.add_routes([web.port('/api', api)])
+# web.run_app(app)
 
