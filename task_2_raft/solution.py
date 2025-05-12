@@ -278,7 +278,7 @@ def apply_command_to_kv_state(old_state: kv_storage_state, committed_element: lo
         return (new_state, None)
     if isinstance(command, cas_command):
         old_value = new_state.data.get(command.key, None)
-        if old_value and hashlib.sha256(old_value).digest() == command.old_value_sha256:
+        if old_value and hashlib.sha256(old_value, usedforsecurity=False).digest() == command.old_value_sha256:
             print(f'applying {command} replacing {old_value!r} with {command.new_value!r}')
             new_state.data[command.key] = command.new_value
         else:
@@ -1744,7 +1744,7 @@ async def raft_client() -> None:
                 payload=log_payload(
                     command=cas_command(
                         key=key,
-                        old_value_sha256=hashlib.sha256(old_value).digest(),
+                        old_value_sha256=hashlib.sha256(old_value, usedforsecurity=False).digest(),
                         new_value=new_value,
                     ),
                 ),
@@ -1762,7 +1762,7 @@ async def raft_client() -> None:
                 payload=log_payload(
                     command=cas_command(
                         key=key,
-                        old_value_sha256=hashlib.sha256(old_value).digest(),
+                        old_value_sha256=hashlib.sha256(old_value, usedforsecurity=False).digest(),
                         new_value=new_value,
                     ),
                 ),
