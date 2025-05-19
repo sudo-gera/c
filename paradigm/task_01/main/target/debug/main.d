@@ -1,0 +1,1 @@
+/Users/gera/c/paradigm/task_01/main/target/debug/main: /Users/gera/c/paradigm/task_01/abstract_transport/src/lib.rs /Users/gera/c/paradigm/task_01/distance_attr/src/lib.rs /Users/gera/c/paradigm/task_01/main/src/main.rs /Users/gera/c/paradigm/task_01/object/src/lib.rs /Users/gera/c/paradigm/task_01/speed_attr/src/lib.rs /Users/gera/c/paradigm/task_01/types/src/lib.rs

@@ -1,0 +1,13 @@
+[package]
+name = "main"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+lazy_static = "1.5.0"
+# base = { path = "../base" }
+abstract_transport = { path = "../abstract_transport" }
+speed_attr = { path = "../speed_attr" }
+distance_attr = { path = "../distance_attr" }
+types = { path = "../types" }
+
