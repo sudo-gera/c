@@ -21,3 +21,4 @@ wagon_number_attr = { path = "../wagon_number_attr" }
 object = { path = "../object" }
 anyhow = "1.0.98"
 double_linked_list = { path = "../double_linked_list" }
+list_of_objects = { path = "../list_of_objects" }

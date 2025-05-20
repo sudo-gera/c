@@ -1,10 +1,6 @@
-use std::cell::RefCell;
 use std::collections::HashMap;
 use std::fmt::Debug;
 use std::any::Any;
-use std::io::repeat;
-use std::rc::Rc;
-use std::vec;
 
 
 #[derive(Debug)]
@@ -14,51 +10,51 @@ pub struct Object{
 
 impl Object{
     pub fn new() -> Self{
-        let mut this: Object = Self{
+        let this: Object = Self{
             attrs: HashMap::new(),
         };
         return this;
     }
 
     pub fn get_attr<T: 'static>(&self, key: &String) -> Option<&T>{
-        println!("started get_attr");
+        // println!("started get_attr");
         match self.attrs.get(key){
             Some(val) => {
                 match val.downcast_ref::<T>(){
                     Some(val) => {
-                        println!("final value");
+                        // println!("final value");
                         return Some(val);
                     }
                     None => {
-                        println!("any.downcast -> none");
+                        // println!("any.downcast -> none");
                         return None;
                     }
                 }
             }
             None => {
-                println!("hash_map.get_mut -> none");
+                // println!("hash_map.get_mut -> none");
                 return None;
             }
         }
     }
 
     pub fn get_attr_mut<T: 'static>(&mut self, key: &String) -> Option<&mut T>{
-        println!("started get_attr");
+        // println!("started get_attr");
         match self.attrs.get_mut(key){
             Some(val) => {
                 match val.downcast_mut::<T>(){
                     Some(val) => {
-                        println!("final value");
+                        // println!("final value");
                         return Some(val);
                     }
                     None => {
-                        println!("any.downcast -> none");
+                        // println!("any.downcast -> none");
                         return None;
                     }
                 }
             }
             None => {
-                println!("hash_map.get_mut -> none");
+                // println!("hash_map.get_mut -> none");
                 return None;
             }
         }
@@ -74,9 +70,10 @@ impl Object{
 
 #[cfg(test)]
 mod tests {
-    use std::{any::TypeId, mem::swap};
+    use std::{mem::swap};
 
     use super::*;
+    use std::rc::*;
 
     #[test]
     fn get_and_set_attr() {

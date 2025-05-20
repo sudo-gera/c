@@ -33,6 +33,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
 
 [[package]]
+name = "list_of_objects"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "double_linked_list",
+ "object",
+ "types",
+]
+
+[[package]]
 name = "load_capacity_attr"
 version = "0.1.0"
 dependencies = [
@@ -48,6 +58,7 @@ dependencies = [
  "double_linked_list",
  "flight_range_attr",
  "lazy_static",
+ "list_of_objects",
  "load_capacity_attr",
  "object",
  "plane_type",

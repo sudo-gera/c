@@ -22,7 +22,6 @@ version = "0.1.0"
 name = "speed_attr"
 version = "0.1.0"
 dependencies = [
- "lazy_static",
  "types",
 ]
 

@@ -1,5 +1,5 @@
 // types = { path = "../types" }
-use types::all_types_context;
-pub fn init(context: &mut all_types_context){
+use types::AllTypesContext;
+pub fn init(context: &mut AllTypesContext){
     context.new_attr::<i64>(String::from("wagon_number"), String::from("train"));
 }

@@ -4,42 +4,42 @@ use std::rc::Weak;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-struct list_node<T>{
-    next:   Option<Rc<RefCell<list_node<T>>>>,
-    prev: Option<Weak<RefCell<list_node<T>>>>,
+struct ListNode<T>{
+    next:   Option<Rc<RefCell<ListNode<T>>>>,
+    prev: Option<Weak<RefCell<ListNode<T>>>>,
     value: Rc<RefCell<T>>,
 }
 
 #[derive(Debug)]
-pub struct list_iter<T>{
-    node: Weak<RefCell<list_node<T>>>,
+pub struct ListIter<T>{
+    node: Weak<RefCell<ListNode<T>>>,
 }
 
-impl<T> list_iter<T>{
-    // pub fn next_mut(&mut self) -> list_iter<T>{
+impl<T> ListIter<T>{
+    // pub fn next_mut(&mut self) -> ListIter<T>{
     //     let node = self.node.upgrade().unwrap();
-    //     return list_iter::<T>{
-    //         node: Rc::<RefCell<list_node<T> > >::downgrade(&node.borrow_mut().next.as_ref().clone().unwrap()),
+    //     return ListIter::<T>{
+    //         node: Rc::<RefCell<ListNode<T> > >::downgrade(&node.borrow_mut().next.as_ref().clone().unwrap()),
     //     }
     // }
 
-    pub fn next(&self) -> list_iter<T>{
+    pub fn next(&self) -> ListIter<T>{
         let node = self.node.upgrade().unwrap();
-        return list_iter::<T>{
-            node: Rc::<RefCell<list_node<T> > >::downgrade(&node.borrow_mut().next.as_ref().clone().unwrap()),
+        return ListIter::<T>{
+            node: Rc::<RefCell<ListNode<T> > >::downgrade(&node.borrow_mut().next.as_ref().clone().unwrap()),
         }
     }
 
-    // pub fn prev_mut(&mut self) -> list_iter<T>{
+    // pub fn prev_mut(&mut self) -> ListIter<T>{
     //     let node = self.node.upgrade().unwrap();
-    //     return list_iter::<T>{
+    //     return ListIter::<T>{
     //         node: node.borrow_mut().prev.as_ref().clone().unwrap().clone(),
     //     }
     // }
 
-    pub fn prev(&self) -> list_iter<T>{
+    pub fn prev(&self) -> ListIter<T>{
         let node = self.node.upgrade().unwrap();
-        return list_iter::<T>{
+        return ListIter::<T>{
             node: node.borrow_mut().prev.as_ref().clone().unwrap().clone(),
         }
     }
@@ -50,15 +50,15 @@ impl<T> list_iter<T>{
     }
 }
 
-impl<T> PartialEq for list_iter<T>{
+impl<T> PartialEq for ListIter<T>{
     fn eq(&self, other: &Self) -> bool{
         return Weak::ptr_eq(&self.node, &other.node);
     }
 }
 
-impl<T> Eq for list_iter<T>{}
+impl<T> Eq for ListIter<T>{}
 
-impl<T> Clone for list_iter<T> {
+impl<T> Clone for ListIter<T> {
     fn clone(&self) -> Self {
         Self{
             node: self.node.clone(),
@@ -66,20 +66,20 @@ impl<T> Clone for list_iter<T> {
     }
 }
 
-pub struct double_linked_list<T>{
-    first:  Option<Rc<RefCell<list_node<T>>>>,
-    last: Option<Weak<RefCell<list_node<T>>>>,
+pub struct DoubleLinkedList<T>{
+    first:  Option<Rc<RefCell<ListNode<T>>>>,
+    last: Option<Weak<RefCell<ListNode<T>>>>,
     // size: usize,
 }
 
-impl<T> double_linked_list<T>{
-    pub fn first_iter(&mut self) -> list_iter<T>{
-        return list_iter::<T>{
-            node: Rc::<RefCell<list_node<T>>>::downgrade(&self.first.clone().unwrap())
+impl<T> DoubleLinkedList<T>{
+    pub fn first_iter(&mut self) -> ListIter<T>{
+        return ListIter::<T>{
+            node: Rc::<RefCell<ListNode<T>>>::downgrade(&self.first.clone().unwrap())
         }
     }
-    pub fn last_iter(&mut self) -> list_iter<T>{
-        return list_iter::<T>{
+    pub fn last_iter(&mut self) -> ListIter<T>{
+        return ListIter::<T>{
             node: self.last.clone().unwrap().clone()
         }
     }
@@ -93,7 +93,7 @@ impl<T> double_linked_list<T>{
     pub fn from_one_item(value: T) -> Self{
         let value_ptr = Rc::new(
             RefCell::new(
-                list_node::<T>{
+                ListNode::<T>{
                     value: Rc::new(
                         RefCell::new(
                             value
@@ -107,7 +107,7 @@ impl<T> double_linked_list<T>{
         return Self{
             // size: 1,
             first: Some(value_ptr.clone()),
-            last:  Some(Rc::<RefCell<list_node<T> > >::downgrade(&value_ptr)),
+            last:  Some(Rc::<RefCell<ListNode<T> > >::downgrade(&value_ptr)),
         }
     }
     pub fn empty(&self) -> bool{
@@ -130,7 +130,7 @@ impl<T> double_linked_list<T>{
         drop(self_last_binding);
 
         let mut other_first_binding = other_first.borrow_mut();
-        other_first_binding.prev = Some(std::rc::Rc::<RefCell<list_node<T>>>::downgrade(&self_last));
+        other_first_binding.prev = Some(std::rc::Rc::<RefCell<ListNode<T>>>::downgrade(&self_last));
         drop(other_first_binding);
 
         self.last = other.last.clone();
@@ -139,7 +139,7 @@ impl<T> double_linked_list<T>{
         other.last = None;
     }
 
-    pub fn cut_starting_at(&mut self, iter: list_iter<T>) -> Self{
+    pub fn cut_starting_at(&mut self, iter: ListIter<T>) -> Self{
         let mut new_list = Self::new();
         let new_start = iter.node.upgrade().unwrap();
         let new_start_binding = new_start.borrow_mut();
@@ -160,7 +160,7 @@ impl<T> double_linked_list<T>{
 mod tests {
     use super::*;
 
-    pub fn check<T: Debug>(list: &mut double_linked_list<T>, size: Option<usize>) -> (){
+    pub fn check<T: Debug>(list: &mut DoubleLinkedList<T>, size: Option<usize>) -> (){
         if list.empty(){
             assert!(list.first.is_none());
             assert!(list.last.is_none());
@@ -195,11 +195,11 @@ mod tests {
 
     #[test]
     fn it_works() {
-        let mut a = double_linked_list::<Vec<i32>>::new();
+        let mut a = DoubleLinkedList::<Vec<i32>>::new();
 
         check(&mut a, Some(0));
 
-        let mut s = double_linked_list::<Vec<i32>>::from_one_item(vec![0]);
+        let mut s = DoubleLinkedList::<Vec<i32>>::from_one_item(vec![0]);
 
         check(&mut s, Some(1));
 
@@ -208,7 +208,7 @@ mod tests {
         check(&mut s, Some(0));
         check(&mut a, Some(1));
 
-        let mut s = double_linked_list::<Vec<i32>>::from_one_item(vec![0]);
+        let mut s = DoubleLinkedList::<Vec<i32>>::from_one_item(vec![0]);
 
         check(&mut s, Some(1));
 
@@ -217,7 +217,7 @@ mod tests {
         check(&mut s, Some(0));
         check(&mut a, Some(2));
 
-        let mut s = double_linked_list::<Vec<i32>>::from_one_item(vec![0]);
+        let mut s = DoubleLinkedList::<Vec<i32>>::from_one_item(vec![0]);
 
         check(&mut s, Some(1));
 
@@ -226,11 +226,11 @@ mod tests {
         check(&mut s, Some(0));
         check(&mut a, Some(3));
 
-        let mut d = double_linked_list::<Vec<i32>>::from_one_item(vec![0]);
+        let mut d = DoubleLinkedList::<Vec<i32>>::from_one_item(vec![0]);
 
         check(&mut d, Some(1));
 
-        let mut s = double_linked_list::<Vec<i32>>::from_one_item(vec![0]);
+        let mut s = DoubleLinkedList::<Vec<i32>>::from_one_item(vec![0]);
 
         check(&mut s, Some(1));
 
