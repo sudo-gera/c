@@ -8,59 +8,57 @@ pub struct Object{
     attrs: HashMap<String, Box<dyn Any>>
 }
 
+impl Default for Object {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Object{
     pub fn new() -> Self{
         let this: Object = Self{
             attrs: HashMap::new(),
         };
-        return this;
+        this
     }
 
     pub fn get_attr<T: 'static>(&self, key: &String) -> Option<&T>{
-        // println!("started get_attr");
         match self.attrs.get(key){
             Some(val) => {
                 match val.downcast_ref::<T>(){
                     Some(val) => {
-                        // println!("final value");
-                        return Some(val);
+                        Some(val)
                     }
                     None => {
-                        // println!("any.downcast -> none");
-                        return None;
+                        None
                     }
                 }
             }
             None => {
-                // println!("hash_map.get_mut -> none");
-                return None;
+                None
             }
         }
     }
 
     pub fn get_attr_mut<T: 'static>(&mut self, key: &String) -> Option<&mut T>{
-        // println!("started get_attr");
         match self.attrs.get_mut(key){
             Some(val) => {
                 match val.downcast_mut::<T>(){
                     Some(val) => {
-                        // println!("final value");
-                        return Some(val);
+                        Some(val)
                     }
                     None => {
-                        // println!("any.downcast -> none");
-                        return None;
+                        None
                     }
                 }
             }
             None => {
-                // println!("hash_map.get_mut -> none");
-                return None;
+                None
             }
         }
     }
 
-    pub fn set_attr<T: 'static>(&mut self, key: &String, value: T) -> (){
+    pub fn set_attr<T: 'static>(&mut self, key: &String, value: T){
         self.attrs.insert(
             key.to_string(),
             Box::new(value) as Box<dyn Any>

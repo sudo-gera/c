@@ -16,43 +16,29 @@ pub struct ListIter<T>{
 }
 
 impl<T> ListIter<T>{
-    // pub fn next_mut(&mut self) -> ListIter<T>{
-    //     let node = self.node.upgrade().unwrap();
-    //     return ListIter::<T>{
-    //         node: Rc::<RefCell<ListNode<T> > >::downgrade(&node.borrow_mut().next.as_ref().clone().unwrap()),
-    //     }
-    // }
-
     pub fn next(&self) -> ListIter<T>{
         let node = self.node.upgrade().unwrap();
-        return ListIter::<T>{
-            node: Rc::<RefCell<ListNode<T> > >::downgrade(&node.borrow_mut().next.as_ref().clone().unwrap()),
+        ListIter::<T>{
+            node: Rc::<RefCell<ListNode<T> > >::downgrade(node.borrow_mut().next.as_ref().unwrap()),
         }
     }
 
-    // pub fn prev_mut(&mut self) -> ListIter<T>{
-    //     let node = self.node.upgrade().unwrap();
-    //     return ListIter::<T>{
-    //         node: node.borrow_mut().prev.as_ref().clone().unwrap().clone(),
-    //     }
-    // }
-
     pub fn prev(&self) -> ListIter<T>{
         let node = self.node.upgrade().unwrap();
-        return ListIter::<T>{
-            node: node.borrow_mut().prev.as_ref().clone().unwrap().clone(),
+        ListIter::<T>{
+            node: node.borrow_mut().prev.as_ref().unwrap().clone(),
         }
     }
 
     pub fn value_rcrc(&self) -> Rc<RefCell<T>>{
         let node = self.node.upgrade().unwrap();
-        return node.borrow_mut().value.clone();
+        node.borrow_mut().value.clone()
     }
 }
 
 impl<T> PartialEq for ListIter<T>{
     fn eq(&self, other: &Self) -> bool{
-        return Weak::ptr_eq(&self.node, &other.node);
+        Weak::ptr_eq(&self.node, &other.node)
     }
 }
 
@@ -69,23 +55,27 @@ impl<T> Clone for ListIter<T> {
 pub struct DoubleLinkedList<T>{
     first:  Option<Rc<RefCell<ListNode<T>>>>,
     last: Option<Weak<RefCell<ListNode<T>>>>,
-    // size: usize,
+}
+
+impl<T> Default for DoubleLinkedList<T> {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl<T> DoubleLinkedList<T>{
     pub fn first_iter(&mut self) -> ListIter<T>{
-        return ListIter::<T>{
+        ListIter::<T>{
             node: Rc::<RefCell<ListNode<T>>>::downgrade(&self.first.clone().unwrap())
         }
     }
     pub fn last_iter(&mut self) -> ListIter<T>{
-        return ListIter::<T>{
+        ListIter::<T>{
             node: self.last.clone().unwrap().clone()
         }
     }
     pub fn new() -> Self{
-        return Self{
-            // size: 0,
+        Self{
             first: None,
             last:  None,
         }
@@ -104,16 +94,16 @@ impl<T> DoubleLinkedList<T>{
                 }
             )
         );
-        return Self{
+        Self{
             // size: 1,
             first: Some(value_ptr.clone()),
             last:  Some(Rc::<RefCell<ListNode<T> > >::downgrade(&value_ptr)),
         }
     }
     pub fn empty(&self) -> bool{
-        return self.first.is_none();
+        self.first.is_none()
     }
-    pub fn concat_by_stealing_from(&mut self, other: &mut Self) -> (){
+    pub fn concat_by_stealing_from(&mut self, other: &mut Self){
         if self.empty(){
             swap(self, other);
             return
@@ -147,12 +137,12 @@ impl<T> DoubleLinkedList<T>{
             swap(&mut new_list, self);
             return new_list;
         }
-        let new_end = new_start_binding.prev.as_ref().clone().unwrap().clone();
+        let new_end = new_start_binding.prev.as_ref().unwrap().clone();
         drop(new_start_binding);
         new_list.first = Some(new_start);
         new_list.last = self.last.clone();
         self.last = Some(new_end);
-        return new_list;
+        new_list
     }
 }
 
@@ -160,7 +150,7 @@ impl<T> DoubleLinkedList<T>{
 mod tests {
     use super::*;
 
-    pub fn check<T: Debug>(list: &mut DoubleLinkedList<T>, size: Option<usize>) -> (){
+    pub fn check<T: Debug>(list: &mut DoubleLinkedList<T>, size: Option<usize>){
         if list.empty(){
             assert!(list.first.is_none());
             assert!(list.last.is_none());

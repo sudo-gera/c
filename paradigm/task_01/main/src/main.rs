@@ -14,7 +14,7 @@ fn create_context() -> AllTypesContext{
     flight_range_attr::init(&mut context);
     load_capacity_attr::init(&mut context);
     wagon_number_attr::init(&mut context);
-    return context;
+    context
 }
 
 fn main_with_streams(stdin: ReadStream, stdout: WriteStream){

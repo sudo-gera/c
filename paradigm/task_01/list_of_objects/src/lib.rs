@@ -14,7 +14,7 @@ pub fn read_all_objects_from_stream(stdin: ReadStream, context: &AllTypesContext
         );
         list.concat_by_stealing_from(&mut oilist);
     }
-    return Ok(list);
+    Ok(list)
 }
 
 pub fn write_all_objects_to_stream(list: &mut ListOfObjects, stdout: WriteStream, context: &AllTypesContext) -> Result<()>{
@@ -31,6 +31,6 @@ pub fn write_all_objects_to_stream(list: &mut ListOfObjects, stdout: WriteStream
             iter = iter.next();
         }
     }
-    return Ok(());
+    Ok(())
 }
 

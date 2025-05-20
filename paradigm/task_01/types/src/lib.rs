@@ -17,7 +17,7 @@ pub fn read_trimmed_line(input: ReadStream) -> Result<String, Error>{
     input_binding.read_line(&mut one_line)?;
     drop(input_binding);
     one_line = one_line.to_string().trim().to_string();
-    return Ok(one_line);
+    Ok(one_line)
 }
 
 trait CanCovertStrToPrintableType {
@@ -34,9 +34,9 @@ struct StrToPrintableConverter<T>{
 
 impl<T> StrToPrintableConverter<T>{
     pub fn new() -> Self{
-        return Self{
+        Self{
             _value: None
-        };
+        }
     }
 }
 
@@ -46,16 +46,17 @@ where
 {
     fn str_to_printable(&self, s: String) -> Result<Box<dyn ToString>>
     {
-        return Ok(
+        Ok(
             Box::new(
                 s.parse::<T>()?
             ) as Box<dyn ToString>
-        );
+        )
     }
 }
 
 pub struct TypeInfo{
     type_name: String,
+    bases: HashSet<String>,
     attrs: HashMap<
         String,
         Rc<
@@ -68,33 +69,33 @@ pub struct AllTypesContext{
     types: HashMap<String, TypeInfo>,
 }
 
+impl Default for AllTypesContext {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl AllTypesContext{
 
     pub fn new() -> Self{
-        return Self{
+        Self{
             types: HashMap::new(),
         }
     }
 
-    pub fn new_type(&mut self, type_name: String, bases: HashSet<String>) -> (){
-        let mut ti = TypeInfo{
+    pub fn new_type(&mut self, type_name: String, bases: HashSet<String>){
+        let ti = TypeInfo{
             type_name: type_name.clone(),
+            bases,
             attrs: HashMap::new(),
         };
-        for base in bases.iter() {
-            for (attr_name, attr_fn) in self.types.get(base).unwrap().attrs.iter(){
-                ti.attrs.insert(attr_name.clone(), attr_fn.clone());
-            }
-        }
-        // println!("inserting {:?}", type_name);
         self.types.insert(
             type_name.clone(),
             ti,
         );
-        return;
     }
 
-    pub fn new_attr<T: FromStr + ToString + 'static>(&mut self, attr_name: String, type_name: String) -> ()
+    pub fn new_attr<T: FromStr + ToString + 'static>(&mut self, attr_name: String, type_name: String)
     where <T as std::str::FromStr>::Err: std::error::Error, <T as std::str::FromStr>::Err: Send, <T as std::str::FromStr>::Err: Sync
     {
         self.types.get_mut(
@@ -107,13 +108,41 @@ impl AllTypesContext{
         );
     }
 
+    fn get_all_attrs(&self, type_name: String) -> Result<
+        HashMap<
+            String,
+            Rc<
+                dyn CanCovertStrToPrintableType
+            >
+        >
+    >{
+        let ti = self.types.get(&type_name).unwrap();
+        let mut attrs = ti.attrs.clone();
+        let mut types_watched : HashSet<String> = HashSet::from([]);
+        let mut types_not_watched : HashSet<String> = HashSet::from([type_name]);
+        while !types_not_watched.is_empty(){
+            let cur_type = types_not_watched.iter().next().unwrap().clone();
+            types_not_watched.remove(&cur_type);
+            types_watched.insert(cur_type.clone());
+            for cur_base in self.types.get(&cur_type).unwrap().bases.iter(){
+                if !types_watched.contains(cur_base){
+                    types_not_watched.insert(cur_base.clone());
+                }
+            }
+            for (attr_name, attr_fn) in self.types.get(&cur_type).unwrap().attrs.iter(){
+                attrs.insert(attr_name.to_string(), attr_fn.clone());
+            }
+        }
+        Ok(attrs)
+    }
+
     pub fn read_obj_from_stream(&self, stream: ReadStream) -> Result<Object>{
         let type_name = read_trimmed_line(stream.clone())?;
         let ti = self.types.get(&type_name).unwrap();
         let mut obj = Object::new();
         obj.set_attr(&String::from("__type_name__"), ti.type_name.clone());
-        let mut attrs = ti.attrs.clone();
-        while attrs.len() != 0{
+        let mut attrs = self.get_all_attrs(type_name.clone())?;
+        while !attrs.is_empty(){
             let attr_name = read_trimmed_line(stream.clone())?;
             obj.set_attr(
                 &attr_name,
@@ -125,16 +154,15 @@ impl AllTypesContext{
             );
             attrs.remove(&attr_name);
         }
-        return Ok(obj);
+        Ok(obj)
     }
 
     pub fn write_to_stream(&self, obj: Rc<RefCell<Object>>, stream: WriteStream) -> Result<(), Error>{
         let type_name : String = obj.borrow_mut().get_attr::<String>(&String::from("__type_name__")).unwrap().to_string();
         stream.borrow_mut().write_all(type_name.as_bytes()).unwrap();
         stream.borrow_mut().write_all(b"\n").unwrap();
-        let ti = self.types.get(&type_name).unwrap();
         let mut attr_names : Vec<String> = vec![];
-        for (attr_name, _attr_fn) in ti.attrs.iter(){
+        for (attr_name, _attr_fn) in self.get_all_attrs(type_name)?.iter(){
             attr_names.push(attr_name.clone());
         }
         attr_names.sort();
@@ -150,12 +178,12 @@ impl AllTypesContext{
                         dyn ToString
                     >
                 >(
-                    &attr_name
+                    attr_name
                 ).unwrap().to_string().as_bytes()
             )?;
             stream.borrow_mut().write_all(b"\n")?;
         }
-        return Ok(());
+        Ok(())
     }
 
 }
