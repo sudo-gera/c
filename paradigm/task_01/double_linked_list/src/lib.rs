@@ -7,21 +7,21 @@ use std::rc::Rc;
 struct list_node<T>{
     next:   Option<Rc<RefCell<list_node<T>>>>,
     prev: Option<Weak<RefCell<list_node<T>>>>,
-    value: T,
+    value: Rc<RefCell<T>>,
 }
 
 #[derive(Debug)]
-struct list_iter<T>{
+pub struct list_iter<T>{
     node: Weak<RefCell<list_node<T>>>,
 }
 
 impl<T> list_iter<T>{
-    pub fn next_mut(&mut self) -> list_iter<T>{
-        let node = self.node.upgrade().unwrap();
-        return list_iter::<T>{
-            node: Rc::<RefCell<list_node<T> > >::downgrade(&node.borrow_mut().next.as_ref().clone().unwrap()),
-        }
-    }
+    // pub fn next_mut(&mut self) -> list_iter<T>{
+    //     let node = self.node.upgrade().unwrap();
+    //     return list_iter::<T>{
+    //         node: Rc::<RefCell<list_node<T> > >::downgrade(&node.borrow_mut().next.as_ref().clone().unwrap()),
+    //     }
+    // }
 
     pub fn next(&self) -> list_iter<T>{
         let node = self.node.upgrade().unwrap();
@@ -30,18 +30,23 @@ impl<T> list_iter<T>{
         }
     }
 
-    pub fn prev_mut(&mut self) -> list_iter<T>{
-        let node = self.node.upgrade().unwrap();
-        return list_iter::<T>{
-            node: node.borrow_mut().prev.as_ref().clone().unwrap().clone(),
-        }
-    }
+    // pub fn prev_mut(&mut self) -> list_iter<T>{
+    //     let node = self.node.upgrade().unwrap();
+    //     return list_iter::<T>{
+    //         node: node.borrow_mut().prev.as_ref().clone().unwrap().clone(),
+    //     }
+    // }
 
     pub fn prev(&self) -> list_iter<T>{
         let node = self.node.upgrade().unwrap();
         return list_iter::<T>{
             node: node.borrow_mut().prev.as_ref().clone().unwrap().clone(),
         }
+    }
+
+    pub fn value_rcrc(&self) -> Rc<RefCell<T>>{
+        let node = self.node.upgrade().unwrap();
+        return node.borrow_mut().value.clone();
     }
 }
 
@@ -61,7 +66,7 @@ impl<T> Clone for list_iter<T> {
     }
 }
 
-struct double_linked_list<T>{
+pub struct double_linked_list<T>{
     first:  Option<Rc<RefCell<list_node<T>>>>,
     last: Option<Weak<RefCell<list_node<T>>>>,
     // size: usize,
@@ -89,7 +94,11 @@ impl<T> double_linked_list<T>{
         let value_ptr = Rc::new(
             RefCell::new(
                 list_node::<T>{
-                    value,
+                    value: Rc::new(
+                        RefCell::new(
+                            value
+                        )
+                    ),
                     next: None,
                     prev: None,
                 }
@@ -235,7 +244,7 @@ mod tests {
         check(&mut a, Some(5));
         check(&mut d, Some(0));
 
-        let a2i = a.first_iter().next_mut().next_mut();
+        let a2i = a.first_iter().next().next();
         let mut s = a.cut_starting_at(a2i);
 
         check(&mut a, Some(2));

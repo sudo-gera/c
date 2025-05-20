@@ -20,7 +20,29 @@ impl Object{
         return this;
     }
 
-    pub fn get_attr<T: 'static>(&mut self, key: &String) -> Option<&mut T>{
+    pub fn get_attr<T: 'static>(&self, key: &String) -> Option<&T>{
+        println!("started get_attr");
+        match self.attrs.get(key){
+            Some(val) => {
+                match val.downcast_ref::<T>(){
+                    Some(val) => {
+                        println!("final value");
+                        return Some(val);
+                    }
+                    None => {
+                        println!("any.downcast -> none");
+                        return None;
+                    }
+                }
+            }
+            None => {
+                println!("hash_map.get_mut -> none");
+                return None;
+            }
+        }
+    }
+
+    pub fn get_attr_mut<T: 'static>(&mut self, key: &String) -> Option<&mut T>{
         println!("started get_attr");
         match self.attrs.get_mut(key){
             Some(val) => {
@@ -63,7 +85,7 @@ mod tests {
             &String::from("k"),
             vec![1,2,3]
         );
-        let a: &mut Vec<i32> = obj.get_attr::<Vec<i32>>(
+        let a = obj.get_attr::<Vec<i32>>(
             &String::from("k")
         ).unwrap();
         assert_eq!(*a, [1,2,3]);
@@ -92,7 +114,7 @@ mod tests {
             &String::from("m"),
             Rc::new(
                 |obj: &mut Object, v: &mut Vec<i32>| {
-                    let a = obj.get_attr::<Vec<i32>>(
+                    let a = obj.get_attr_mut::<Vec<i32>>(
                         &String::from("k")
                     ).unwrap();
                     swap(a, v);
@@ -109,7 +131,7 @@ mod tests {
             &String::from("m")
         ).unwrap().clone()(&mut obj, &mut v);
 
-        let a: &mut Vec<i32> = obj.get_attr::<Vec<i32>>(
+        let a = obj.get_attr::<Vec<i32>>(
             &String::from("k")
         ).unwrap();
         assert_eq!(*a, [4,5,6]);

@@ -1,10 +1,16 @@
-// use std::cell::*;
-// use anyhow::*;
-// use std::collections::*;
-// use object::*;
-// use std::rc::*;
-// use std::sync::*;
-// use std::io::*;
+use std::str::*;
+use std::cell::*;
+use anyhow::*;
+use std::collections::*;
+use object::*;
+use std::rc::*;
+use std::sync::*;
+use std::io::*;
+use anyhow::Error;
+use anyhow::Result;
+
+pub type read_buf_type = Rc<RefCell<dyn BufRead>>;
+pub type write_buf_type = Rc<RefCell<dyn Write>>;
 
 // // pub fn add(left: u64, right: u64) -> u64 {
 // //     left + right
@@ -17,14 +23,14 @@
 
 // // type on_read_type = Rc<dyn Fn(read_buf_type)->Result<Object, Error>>;
 
-// // pub fn read_trimmed_line(read_buf_type) -> Result<String, Error>{
-// //     let mut one_line = String::new();
-// //     let mut input_binding = input.borrow_mut();
-// //     input_binding.read_line(&mut one_line)?;
-// //     drop(input_binding);
-// //     one_line = one_line.to_string().trim().to_string();
-// //     return Ok(one_line);
-// // }
+pub fn read_trimmed_line(input: read_buf_type) -> Result<String, Error>{
+    let mut one_line = String::new();
+    let mut input_binding = input.borrow_mut();
+    input_binding.read_line(&mut one_line)?;
+    drop(input_binding);
+    one_line = one_line.to_string().trim().to_string();
+    return Ok(one_line);
+}
 
 // // struct type_info{
 // //     name: String,
@@ -132,23 +138,159 @@
 
 // // static counter :Arc::<Mutex::<i32> >  = Arc::new(Mutex::new(0));
 
-// struct all_types_context{
+trait can_covert_str_to_printable_type {
+    fn str_to_printable(&self, s: String) -> Result<
+        Box<
+            dyn ToString
+        >
+    >;
+}
 
+struct str_to_printable_converter<T>{
+    value: Option<T>,
+}
+
+impl<T> str_to_printable_converter<T>{
+    pub fn new() -> Self{
+        return Self{
+            value: None
+        };
+    }
+}
+
+impl <T: FromStr + ToString + 'static> can_covert_str_to_printable_type for str_to_printable_converter<T>
+where
+    <T as std::str::FromStr>::Err: std::error::Error + Send + Sync,
+{
+    fn str_to_printable(&self, s: String) -> Result<Box<dyn ToString>>
+    {
+        return Ok(
+            Box::new(
+                s.parse::<T>()?
+            ) as Box<dyn ToString>
+        );
+    }
+}
+
+// fn str_to_printable<T: FromStr + ToString + 'static>(s: String) -> Result<Box<dyn ToString>, Error>
+// where <T as std::str::FromStr>::Err: std::error::Error, <T as std::str::FromStr>::Err: Send, <T as std::str::FromStr>::Err: Sync
+// {
+//     return Ok(
+//         Box::new(
+//             s.parse::<T>()?
+//         ) as Box<dyn ToString>
+//     );
 // }
 
-// impl all_types_context{
+pub struct type_info{
+    type_name: String,
+    bases: HashSet<String>,
+    attrs: HashMap<
+        String,
+        Rc<
+            dyn can_covert_str_to_printable_type
+        >
+    >,
+}
 
-//     pub fn create_type(&mut self, type_name: String, bases: Vec<String>) -> (){
-//     }
+pub struct all_types_context{
+    types: HashMap<String, type_info>,
+}
 
-//     // pub fn add_dynamic_attr(&mut self, type_name: String, attr_name: String, attr_type_name: String) -> (){
-        
-//     // }
+impl all_types_context{
 
-//     pub fn add_static_attr<T>(&mut self, type_name: String, attr_name: String) -> (){
-//     }
+    pub fn new() -> Self{
+        return Self{
+            types: HashMap::new(),
+        }
+    }
 
-// }
+    pub fn new_type(&mut self, type_name: String, bases: HashSet<String>) -> (){
+        let mut ti = type_info{
+            type_name: type_name.clone(),
+            bases: bases.clone(),
+            attrs: HashMap::new(),
+        };
+        for base in bases.iter() {
+            for (attr_name, attr_fn) in self.types.get(base).unwrap().attrs.iter(){
+                ti.attrs.insert(attr_name.clone(), attr_fn.clone());
+            }
+        }
+        // println!("inserting {:?}", type_name);
+        self.types.insert(
+            type_name.clone(),
+            ti,
+        );
+        return;
+    }
+
+    pub fn new_attr<T: FromStr + ToString + 'static>(&mut self, attr_name: String, type_name: String) -> ()
+    where <T as std::str::FromStr>::Err: std::error::Error, <T as std::str::FromStr>::Err: Send, <T as std::str::FromStr>::Err: Sync
+    {
+        // println!("updating {:?}", type_name);
+        self.types.get_mut(
+            &type_name.clone(),
+        ).unwrap().attrs.insert(
+            attr_name,
+            // Rc::new(|x: String|str_to_printable::<T>(x))
+            Rc::new(str_to_printable_converter::<T>::new())
+            as
+            Rc<dyn can_covert_str_to_printable_type>
+        );
+    }
+
+    pub fn read_obj_from_stream(&self, stream: read_buf_type) -> Result<Object>{
+        let type_name = read_trimmed_line(stream.clone())?;
+        let ti = self.types.get(&type_name).unwrap();
+        let mut obj = Object::new();
+        obj.set_attr(&String::from("__type_name__"), ti.type_name.clone());
+        let mut attrs = ti.attrs.clone();
+        while attrs.len() != 0{
+            let attr_name = read_trimmed_line(stream.clone())?;
+            obj.set_attr(
+                &attr_name,
+                attrs.get(&attr_name).unwrap().str_to_printable(
+                    read_trimmed_line(
+                        stream.clone()
+                    )?
+                )?
+            );
+            attrs.remove(&attr_name);
+        }
+        return Ok(obj);
+    }
+
+    pub fn write_to_stream(&self, obj: Rc<RefCell<Object>>, stream: write_buf_type) -> Result<(), Error>{
+        let type_name : String = obj.borrow_mut().get_attr::<String>(&String::from("__type_name__")).unwrap().to_string();
+        stream.borrow_mut().write_all(type_name.as_bytes()).unwrap();
+        stream.borrow_mut().write_all(b"\n").unwrap();
+        let ti = self.types.get(&type_name).unwrap();
+        let mut attr_names : Vec<String> = vec![];
+        for (attr_name, attr_fn) in ti.attrs.iter(){
+            attr_names.push(attr_name.clone());
+        }
+        attr_names.sort();
+        for attr_name in attr_names.iter(){
+            stream.borrow_mut().write_all(b"    ")?;
+            stream.borrow_mut().write_all(attr_name.as_bytes())?;
+            stream.borrow_mut().write_all(b"\n")?;
+            stream.borrow_mut().write_all(b"    ")?;
+            stream.borrow_mut().write_all(b"    ")?;
+            stream.borrow_mut().write_all(
+                obj.borrow_mut().get_attr::<
+                    Box<
+                        dyn ToString
+                    >
+                >(
+                    &attr_name
+                ).unwrap().to_string().as_bytes()
+            )?;
+            stream.borrow_mut().write_all(b"\n")?;
+        }
+        return Ok(());
+    }
+
+}
 
 // #[cfg(test)]
 // mod tests {
@@ -183,26 +325,26 @@
 
 //     }
 // }
-use std::sync::RwLock;
-#[macro_use]
-extern crate lazy_static;
+// use std::sync::RwLock;
+// #[macro_use]
+// extern crate lazy_static;
 
-lazy_static! {
-    static ref data: RwLock<Vec<i32>> = RwLock::new(vec![]);
-}
+// lazy_static! {
+//     static ref data: RwLock<Vec<i32>> = RwLock::new(vec![]);
+// }
 
-pub fn append(number: i32){
-    println!("You wanted me to update to {}", number);
+// pub fn append(number: i32){
+//     println!("You wanted me to update to {}", number);
 
-    let mut w = data.write().unwrap();
-    w.push(number);
-    println!("After, it is: {:?}", w);
-}
+//     let mut w = data.write().unwrap();
+//     w.push(number);
+//     println!("After, it is: {:?}", w);
+// }
 
-pub fn get_clone() -> Vec<i32> {
-    let r1 = data.read().unwrap();
-    return r1.clone();
-}
+// pub fn get_clone() -> Vec<i32> {
+//     let r1 = data.read().unwrap();
+//     return r1.clone();
+// }
 
 // fn main() {
 //     print!("r1: {:?}", get_number());
@@ -210,3 +352,4 @@ pub fn get_clone() -> Vec<i32> {
 //     update_it(22);
 //     print!("r2: {:?}", get_number());
 // }
+
