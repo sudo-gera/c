@@ -1,3 +1,5 @@
+use std::mem::swap;
+// use std::fmt;
 use std::str::*;
 use std::cell::*;
 use anyhow::*;
@@ -20,19 +22,70 @@ pub fn read_trimmed_line(input: ReadStream) -> Result<String, Error>{
     Ok(one_line)
 }
 
-trait CanCovertStrToPrintableType {
+pub trait CanBeAttr : ToString {}
+
+impl <T: ToString> CanBeAttr for T{}
+
+pub trait Method: Fn(
+    Rc<
+        RefCell<
+            Object
+        >
+    >
+){}
+
+impl <T: Fn(
+    Rc<
+        RefCell<
+            Object
+        >
+    >
+)> Method for T{}
+
+pub type InitStep = Rc<
+    dyn Fn(
+        &mut Object
+    )
+>;
+
+
+// pub struct AttrWrapper<T>{
+//     value: T
+// }
+
+// impl<T> AttrWrapper<T>{
+//     pub fn new(value: T) -> Self{
+//         Self{
+//             value
+//         }
+//     }
+// }
+
+// impl<T: ToString> fmt::Display for AttrWrapper<T>{
+
+//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+//         write!(f, "{}", self.value.to_string())
+//     }
+// }
+
+// impl<T: ToString> CanBeAttr for AttrWrapper<T>{}
+
+trait CanConvertStrToAttr {
     fn str_to_printable(&self, s: String) -> Result<
-        Box<
-            dyn ToString
+        Rc<
+            RefCell<
+                dyn CanBeAttr
+            >
         >
     >;
 }
 
-struct StrToPrintableConverter<T>{
+
+struct StrToAttrConverter<T>{
     _value: Option<T>,
 }
 
-impl<T> StrToPrintableConverter<T>{
+impl<T> StrToAttrConverter<T>{
     pub fn new() -> Self{
         Self{
             _value: None
@@ -40,16 +93,18 @@ impl<T> StrToPrintableConverter<T>{
     }
 }
 
-impl <T: FromStr + ToString + 'static> CanCovertStrToPrintableType for StrToPrintableConverter<T>
+impl <T: FromStr + CanBeAttr + 'static> CanConvertStrToAttr for StrToAttrConverter<T>
 where
     <T as std::str::FromStr>::Err: std::error::Error + Send + Sync,
 {
-    fn str_to_printable(&self, s: String) -> Result<Box<dyn ToString>>
+    fn str_to_printable(&self, s: String) -> Result<Rc<RefCell<dyn CanBeAttr>>>
     {
         Ok(
-            Box::new(
-                s.parse::<T>()?
-            ) as Box<dyn ToString>
+            Rc::new(
+                RefCell::new(
+                    s.parse::<T>()?
+                )
+            ) as Rc<RefCell<dyn CanBeAttr>>
         )
     }
 }
@@ -60,9 +115,10 @@ pub struct TypeInfo{
     attrs: HashMap<
         String,
         Rc<
-            dyn CanCovertStrToPrintableType
+            dyn CanConvertStrToAttr
         >
     >,
+    init_steps: Vec<InitStep>,
 }
 
 pub struct AllTypesContext{
@@ -88,6 +144,9 @@ impl AllTypesContext{
             type_name: type_name.clone(),
             bases,
             attrs: HashMap::new(),
+            // meths: HashMap::<String, Box<dyn any>>,
+            // meth_names: HashSet::new(),
+            init_steps: Vec::new(),
         };
         self.types.insert(
             type_name.clone(),
@@ -95,16 +154,39 @@ impl AllTypesContext{
         );
     }
 
-    pub fn new_attr<T: FromStr + ToString + 'static>(&mut self, attr_name: String, type_name: String)
+    pub fn new_attr<T: FromStr + CanBeAttr + 'static>(&mut self, attr_name: String, type_name: String)
     where <T as std::str::FromStr>::Err: std::error::Error, <T as std::str::FromStr>::Err: Send, <T as std::str::FromStr>::Err: Sync
     {
         self.types.get_mut(
             &type_name.clone(),
         ).unwrap().attrs.insert(
             attr_name,
-            Rc::new(StrToPrintableConverter::<T>::new())
+            Rc::new(
+                StrToAttrConverter::<
+                    T
+                >::new()
+            )
             as
-            Rc<dyn CanCovertStrToPrintableType>
+            Rc<dyn CanConvertStrToAttr>
+        );
+    }
+
+
+    pub fn new_attr_with_default_value<T: 'static>(&mut self, attr_name: String, value: T, type_name: String){
+        let value_wrapper = RefCell::new(
+            Some(value)
+        );
+        self.types.get_mut(&type_name).unwrap().init_steps.push(
+            Rc::new(
+                move |obj: &mut Object| {
+                    let mut binding = value_wrapper.borrow_mut();
+                    let mut ao : Option<T> = None;
+                    swap(&mut *binding, &mut ao);
+                    obj.set_attr(&attr_name, ao.unwrap());
+                }
+            )
+            as
+            InitStep
         );
     }
 
@@ -112,7 +194,7 @@ impl AllTypesContext{
         HashMap<
             String,
             Rc<
-                dyn CanCovertStrToPrintableType
+                dyn CanConvertStrToAttr
             >
         >
     >{
@@ -154,10 +236,13 @@ impl AllTypesContext{
             );
             attrs.remove(&attr_name);
         }
+        for init_step in ti.init_steps.iter(){
+            init_step.clone()(&mut obj);
+        }
         Ok(obj)
     }
 
-    pub fn write_to_stream(&self, obj: Rc<RefCell<Object>>, stream: WriteStream) -> Result<(), Error>{
+    pub fn write_to_stream(&self, obj: Rc<RefCell<Object>>, stream: WriteStream) -> Result<()>{
         let type_name : String = obj.borrow_mut().get_attr::<String>(&String::from("__type_name__")).unwrap().to_string();
         stream.borrow_mut().write_all(type_name.as_bytes()).unwrap();
         stream.borrow_mut().write_all(b"\n").unwrap();
@@ -174,16 +259,40 @@ impl AllTypesContext{
             stream.borrow_mut().write_all(b"    ")?;
             stream.borrow_mut().write_all(
                 obj.borrow_mut().get_attr::<
-                    Box<
-                        dyn ToString
+                    Rc<
+                        RefCell<
+                            dyn CanBeAttr
+                        >
                     >
                 >(
                     attr_name
-                ).unwrap().to_string().as_bytes()
+                ).unwrap().borrow_mut().to_string().as_bytes()
             )?;
             stream.borrow_mut().write_all(b"\n")?;
         }
         Ok(())
     }
 
+    // pub fn set_method<M>(&mut self, method: M, meth_name: String, type_name: String){
+    //     let obj = self.types
+    //     .get_mut(&type_name)
+    //     .unwrap()
+    //     .meths;
+    //     let meth_names = obj.get_attr_mut::<HashSet<String>>(String::from("__meth_names__")).unwrap();
+    //     meth_names.insert(meth_name.clone());
+    //     obj.set_sttr(
+    //         meth_name,
+    //         Rc::new(method)
+    //     );
+    // }
+
+    // pub fn get_method<M: Method>(&self, meth_name: String, type_name: String) -> Option<Rc<dyn Method>>{
+    //     Some(
+    //         self.types
+    //         .get(&type_name)?
+    //         .meths
+    //         .get(&meth_name)?
+    //         .clone()
+    //     )
+    // }
 }

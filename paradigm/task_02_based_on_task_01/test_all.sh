@@ -8,25 +8,58 @@ cd "$(
     )"
 )"
 
-export CARGO_TARGET_DIR="../target"
+CARGO_TARGET_DIR="$(pwd)/target"
+export CARGO_TARGET_DIR
 export RUST_BACKTRACE=full
 export RUSTFLAGS='-D warnings'
 
-find . -name 'Cargo.toml' -exec bash -c 'echo ; echo {} ; cd "$(dirname {})" && cargo build || touch ../tests_failed' \;
-find . -name 'Cargo.toml' -exec bash -c 'echo ; echo {} ; cd "$(dirname {})" && cargo clippy -- -D warnings || touch ../tests_failed' \;
-find . -name 'Cargo.toml' -exec bash -c 'echo ; echo {} ; cd "$(dirname {})" && cargo test || touch ../tests_failed' \;
+cargo_tomls_escaped_lf_joined="$(find . -name Cargo.toml -exec bash -c 'echo "${0@Q}"' {} \;)"
 
-find . -name 'Cargo.toml' -exec bash -c 'cd "$(dirname {})" && cargo clean' \;
+test_failed=0
 
-if [ -f tests_failed ]
+if ! (
+    echo "$cargo_tomls_escaped_lf_joined" | \
+    while read -r cargo_toml_escaped
+    do
+        cargo_toml="$(bash -c "printf '%s\n' $cargo_toml_escaped")"
+        dir_containing_cargo_toml="$(dirname "$cargo_toml")"
+        (
+            echo
+            echo
+            echo
+            echo
+            printf '%s\n' "${dir_containing_cargo_toml@Q}"
+            echo
+            echo
+            cd "$dir_containing_cargo_toml"
+            cargo clippy -- -D warnings
+            cargo build
+            cargo test
+        )
+    done
+) then
+    test_failed=1
+fi
+
+echo "$cargo_tomls_escaped_lf_joined" | \
+while read -r cargo_toml_escaped
+do
+    cargo_toml="$(bash -c "printf '%s\n' $cargo_toml_escaped")"
+    dir_containing_cargo_toml="$(dirname "$cargo_toml")"
+    (
+        cd "$dir_containing_cargo_toml"
+        cargo clean || :
+    )
+done
+
+echo
+echo
+echo
+echo
+
+if [ "$test_failed" -eq 1 ]
 then
-    rm tests_failed
     echo 'tests failed!'
-    exit 1
 else
-    echo
-    echo
-    echo
-    echo
     echo 'everything is ok!'
 fi
