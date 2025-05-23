@@ -1,0 +1,402 @@
+Script started on Sat May 24 02:25:38 2025
+Command: ./test_all.sh
+
+
+
+
+'./wagon_number_attr'
+
+
+[1m[32m   Compiling[0m anyhow v1.0.98
+[1m[32m    Checking[0m lazy_static v1.5.0
+[1m[32m    Checking[0m object v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/object)
+[1m[36m    Building[0m [                             ] 0/7: anyhow(build.rs), object, lazy_static                                                                                                       [1m[36m    Building[0m [=======>                     ] 2/7: anyhow(build.rs)                                                                                                                            [1m[36m    Building[0m [===========>                 ] 3/7: anyhow(build)                                                                                                                               [1m[36m    Building[0m [===============>             ] 4/7: anyhow                                                                                                                                      [K[1m[32m    Checking[0m types v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/types)
+[1m[36m    Building[0m [===================>         ] 5/7: types                                                                                                                                       [K[1m[32m    Checking[0m wagon_number_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/wagon_number_attr)
+[1m[36m    Building[0m [=======================>     ] 6/7: wagon_number_attr                                                                                                                           [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.77s
+[1m[32m   Compiling[0m lazy_static v1.5.0
+[1m[32m   Compiling[0m object v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/object)
+[1m[32m   Compiling[0m anyhow v1.0.98
+[1m[36m    Building[0m [=======>                     ] 2/7: lazy_static, anyhow, object                                                                                                                 [1m[36m    Building[0m [===========>                 ] 3/7: anyhow, object                                                                                                                              [1m[36m    Building[0m [===============>             ] 4/7: anyhow                                                                                                                                      [K[1m[32m   Compiling[0m types v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/types)
+[1m[36m    Building[0m [===============>             ] 4/7: anyhow, types                                                                                                                               [1m[36m    Building[0m [===================>         ] 5/7: types                                                                                                                                       [K[1m[32m   Compiling[0m wagon_number_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/wagon_number_attr)
+[1m[36m    Building[0m [===================>         ] 5/7: wagon_number_attr, types                                                                                                                    [1m[36m    Building[0m [=======================>     ] 6/7: types                                                                                                                                       [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.42s
+[1m[32m   Compiling[0m wagon_number_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/wagon_number_attr)
+[1m[36m    Building[0m [========================>    ] 8/9: wagon_number_attr(test)                                                                                                                     [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`test` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.08s
+[1m[32m     Running[0m unittests src/lib.rs (/Users/gera/c/paradigm/task_03_based_on_task_01/target/debug/deps/wagon_number_attr-fe29e31f28064b0e)
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[32m   Doc-tests[0m wagon_number_attr
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+
+
+
+'./speed_attr'
+
+
+[1m[32m    Checking[0m speed_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/speed_attr)
+[1m[36m    Building[0m [=======================>     ] 6/7: speed_attr                                                                                                                                  [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.05s
+[1m[32m   Compiling[0m speed_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/speed_attr)
+[1m[36m    Building[0m [=======================>     ] 6/7: speed_attr                                                                                                                                  [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.09s
+[1m[32m   Compiling[0m speed_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/speed_attr)
+[1m[36m    Building[0m [========================>    ] 8/9: speed_attr(test)                                                                                                                            [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`test` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.07s
+[1m[32m     Running[0m unittests src/lib.rs (/Users/gera/c/paradigm/task_03_based_on_task_01/target/debug/deps/speed_attr-50665444e799c313)
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[32m   Doc-tests[0m speed_attr
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+
+
+
+'./types'
+
+
+[1m[32m    Checking[0m types v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/types)
+[1m[36m    Building[0m [=======================>     ] 5/6: types                                                                                                                                       [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.11s
+[1m[32m   Compiling[0m types v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/types)
+[1m[36m    Building[0m [=======================>     ] 5/6: types                                                                                                                                       [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.24s
+[1m[32m   Compiling[0m types v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/types)
+[1m[36m    Building[0m [========================>    ] 7/8: types(test)                                                                                                                                 [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`test` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.11s
+[1m[32m     Running[0m unittests src/lib.rs (/Users/gera/c/paradigm/task_03_based_on_task_01/target/debug/deps/types-9f13fa038209da76)
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[32m   Doc-tests[0m types
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+
+
+
+'./plane_type'
+
+
+[1m[32m    Checking[0m plane_type v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/plane_type)
+[1m[36m    Building[0m [=======================>     ] 6/7: plane_type                                                                                                                                  [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.05s
+[1m[32m   Compiling[0m plane_type v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/plane_type)
+[1m[36m    Building[0m [=======================>     ] 6/7: plane_type                                                                                                                                  [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.06s
+[1m[32m   Compiling[0m plane_type v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/plane_type)
+[1m[36m    Building[0m [========================>    ] 8/9: plane_type(test)                                                                                                                            [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`test` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.08s
+[1m[32m     Running[0m unittests src/lib.rs (/Users/gera/c/paradigm/task_03_based_on_task_01/target/debug/deps/plane_type-5bf795cf6cbb3793)
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[32m   Doc-tests[0m plane_type
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+
+
+
+'./double_linked_list'
+
+
+[1m[32m    Checking[0m double_linked_list v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/double_linked_list)
+[1m[36m    Building[0m [                             ] 0/1: double_linked_list                                                                                                                          [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.07s
+[1m[32m   Compiling[0m double_linked_list v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/double_linked_list)
+[1m[36m    Building[0m [                             ] 0/1: double_linked_list                                                                                                                          [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.06s
+[1m[32m   Compiling[0m double_linked_list v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/double_linked_list)
+[1m[36m    Building[0m [==================>          ] 2/3: double_linked_list(test)                                                                                                                    [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`test` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.15s
+[1m[32m     Running[0m unittests src/lib.rs (/Users/gera/c/paradigm/task_03_based_on_task_01/target/debug/deps/double_linked_list-ab436aad9cd8531f)
+
+running 1 test
+test tests::it_works ... [32mok(B[m
+
+test result: [32mok(B[m. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[32m   Doc-tests[0m double_linked_list
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+
+
+
+'./ideal_time_meth'
+
+
+[1m[32m    Checking[0m ideal_time_meth v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/ideal_time_meth)
+[1m[36m    Building[0m [=======================>     ] 6/7: ideal_time_meth                                                                                                                             [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.08s
+[1m[32m   Compiling[0m ideal_time_meth v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/ideal_time_meth)
+[1m[36m    Building[0m [=======================>     ] 6/7: ideal_time_meth                                                                                                                             [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.15s
+[1m[32m   Compiling[0m ideal_time_meth v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/ideal_time_meth)
+[1m[36m    Building[0m [========================>    ] 8/9: ideal_time_meth(test)                                                                                                                       [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`test` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.09s
+[1m[32m     Running[0m unittests src/lib.rs (/Users/gera/c/paradigm/task_03_based_on_task_01/target/debug/deps/ideal_time_meth-eaced481766163b6)
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[32m   Doc-tests[0m ideal_time_meth
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+
+
+
+'./list_of_objects'
+
+
+[1m[32m    Checking[0m double_linked_list v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/double_linked_list)
+[1m[36m    Building[0m [====================>        ] 6/8: double_linked_list                                                                                                                          [K[1m[32m    Checking[0m list_of_objects v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/list_of_objects)
+[1m[36m    Building[0m [========================>    ] 7/8: list_of_objects                                                                                                                             [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.11s
+[1m[32m   Compiling[0m double_linked_list v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/double_linked_list)
+[1m[36m    Building[0m [====================>        ] 6/8: double_linked_list                                                                                                                          [K[1m[32m   Compiling[0m list_of_objects v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/list_of_objects)
+[1m[36m    Building[0m [====================>        ] 6/8: list_of_objects, double_linked_list                                                                                                         [1m[36m    Building[0m [========================>    ] 7/8: list_of_objects                                                                                                                             [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.19s
+[1m[32m   Compiling[0m list_of_objects v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/list_of_objects)
+[1m[36m    Building[0m [========================>   ] 9/10: list_of_objects(test)                                                                                                                       [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`test` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.09s
+[1m[32m     Running[0m unittests src/lib.rs (/Users/gera/c/paradigm/task_03_based_on_task_01/target/debug/deps/list_of_objects-3f2abea5b8485527)
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[32m   Doc-tests[0m list_of_objects
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+
+
+
+'./object'
+
+
+[1m[32m    Checking[0m object v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/object)
+[1m[36m    Building[0m [                             ] 0/1: object                                                                                                                                      [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.06s
+[1m[32m   Compiling[0m object v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/object)
+[1m[36m    Building[0m [                             ] 0/1: object                                                                                                                                      [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.07s
+[1m[32m   Compiling[0m object v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/object)
+[1m[36m    Building[0m [==================>          ] 2/3: object(test)                                                                                                                                [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`test` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.17s
+[1m[32m     Running[0m unittests src/lib.rs (/Users/gera/c/paradigm/task_03_based_on_task_01/target/debug/deps/object-1fcc556de358e507)
+
+running 2 tests
+test tests::get_and_set_attr ... [32mok(B[m
+test tests::get_and_set_method ... [32mok(B[m
+
+test result: [32mok(B[m. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[32m   Doc-tests[0m object
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+
+
+
+'./train_type'
+
+
+[1m[32m    Checking[0m train_type v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/train_type)
+[1m[36m    Building[0m [=======================>     ] 6/7: train_type                                                                                                                                  [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.05s
+[1m[32m   Compiling[0m train_type v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/train_type)
+[1m[36m    Building[0m [=======================>     ] 6/7: train_type                                                                                                                                  [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.06s
+[1m[32m   Compiling[0m train_type v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/train_type)
+[1m[36m    Building[0m [========================>    ] 8/9: train_type(test)                                                                                                                            [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`test` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.07s
+[1m[32m     Running[0m unittests src/lib.rs (/Users/gera/c/paradigm/task_03_based_on_task_01/target/debug/deps/train_type-21c2df5f2e1b86ad)
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[32m   Doc-tests[0m train_type
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+
+
+
+'./distance_attr'
+
+
+[1m[32m    Checking[0m distance_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/distance_attr)
+[1m[36m    Building[0m [=======================>     ] 6/7: distance_attr                                                                                                                               [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.05s
+[1m[32m   Compiling[0m distance_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/distance_attr)
+[1m[36m    Building[0m [=======================>     ] 6/7: distance_attr                                                                                                                               [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.09s
+[1m[32m   Compiling[0m distance_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/distance_attr)
+[1m[36m    Building[0m [========================>    ] 8/9: distance_attr(test)                                                                                                                         [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`test` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.07s
+[1m[32m     Running[0m unittests src/lib.rs (/Users/gera/c/paradigm/task_03_based_on_task_01/target/debug/deps/distance_attr-483047ee6a0239d5)
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[32m   Doc-tests[0m distance_attr
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+
+
+
+'./main'
+
+
+[1m[32m    Checking[0m ideal_time_meth v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/ideal_time_meth)
+[1m[32m    Checking[0m distance_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/distance_attr)
+[1m[32m    Checking[0m wagon_number_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/wagon_number_attr)
+[1m[32m    Checking[0m load_capacity_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/load_capacity_attr)
+[1m[32m    Checking[0m plane_type v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/plane_type)
+[1m[32m    Checking[0m transport_type v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/transport_type)
+[1m[32m    Checking[0m train_type v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/train_type)
+[1m[32m    Checking[0m list_of_objects v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/list_of_objects)
+[1m[36m    Building[0m [=========>                  ] 7/18: wagon_number_attr, ideal_time_meth, transport_type, load_capacity_attr, distance_attr, plane_type, train_type, list_of_objects              [K[1m[32m    Checking[0m flight_range_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/flight_range_attr)
+[1m[32m    Checking[0m speed_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/speed_attr)
+[1m[36m    Building[0m [=============>              ] 9/18: speed_attr, wagon_number_attr, ideal_time_meth, transport_type, load_capacity_attr, flight_range_attr, train_type, list_of_objects          [1m[36m    Building[0m [===============>           ] 11/18: speed_attr, wagon_number_attr, ideal_time_meth, flight_range_attr, train_type, list_of_objects                                              [1m[36m    Building[0m [=================>         ] 12/18: speed_attr, ideal_time_meth, flight_range_attr, train_type, list_of_objects                                                                 [1m[36m    Building[0m [==================>        ] 13/18: speed_attr, ideal_time_meth, flight_range_attr, list_of_objects                                                                             [1m[36m    Building[0m [====================>      ] 14/18: speed_attr, ideal_time_meth, flight_range_attr                                                                                              [1m[36m    Building[0m [=====================>     ] 15/18: ideal_time_meth, flight_range_attr                                                                                                          [1m[36m    Building[0m [=======================>   ] 16/18: flight_range_attr                                                                                                                           [K[1m[32m    Checking[0m main v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/main)
+[1m[36m    Building[0m [========================>  ] 17/18: main(bin)                                                                                                                                   [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.14s
+[1m[32m   Compiling[0m speed_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/speed_attr)
+[1m[32m   Compiling[0m ideal_time_meth v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/ideal_time_meth)
+[1m[32m   Compiling[0m flight_range_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/flight_range_attr)
+[1m[32m   Compiling[0m train_type v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/train_type)
+[1m[32m   Compiling[0m distance_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/distance_attr)
+[1m[32m   Compiling[0m transport_type v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/transport_type)
+[1m[32m   Compiling[0m list_of_objects v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/list_of_objects)
+[1m[32m   Compiling[0m load_capacity_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/load_capacity_attr)
+[1m[36m    Building[0m [=========>                  ] 7/18: flight_range_attr, speed_attr, list_of_objects, transport_type, ideal_time_meth, train_type, load_capacity_attr, distance_attr              [K[1m[32m   Compiling[0m wagon_number_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/wagon_number_attr)
+[1m[36m    Building[0m [===========>                ] 8/18: flight_range_attr, speed_attr, list_of_objects, wagon_number_attr, ideal_time_meth, train_type, load_capacity_attr, distance_attr           [K[1m[32m   Compiling[0m plane_type v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/plane_type)
+[1m[36m    Building[0m [=============>              ] 9/18: plane_type, flight_range_attr, speed_attr, list_of_objects, wagon_number_attr, ideal_time_meth, load_capacity_attr, distance_attr           [1m[36m    Building[0m [==============>            ] 10/18: flight_range_attr, speed_attr, list_of_objects, wagon_number_attr, ideal_time_meth, load_capacity_attr, distance_attr                       [1m[36m    Building[0m [===============>           ] 11/18: flight_range_attr, speed_attr, list_of_objects, wagon_number_attr, ideal_time_meth, distance_attr                                           [1m[36m    Building[0m [=================>         ] 12/18: speed_attr, list_of_objects, wagon_number_attr, ideal_time_meth, distance_attr                                                              [1m[36m    Building[0m [==================>        ] 13/18: speed_attr, list_of_objects, ideal_time_meth, distance_attr                                                                                 [1m[36m    Building[0m [====================>      ] 14/18: speed_attr, list_of_objects, ideal_time_meth                                                                                                [1m[36m    Building[0m [=====================>     ] 15/18: list_of_objects, ideal_time_meth                                                                                                            [1m[36m    Building[0m [=======================>   ] 16/18: ideal_time_meth                                                                                                                             [K[1m[32m   Compiling[0m main v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/main)
+[1m[36m    Building[0m [========================>  ] 17/18: main(bin)                                                                                                                                   [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.49s
+[1m[32m   Compiling[0m main v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/main)
+[1m[36m    Building[0m [========================>  ] 17/18: main(bin test)                                                                                                                              [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`test` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.15s
+[1m[32m     Running[0m unittests src/main.rs (/Users/gera/c/paradigm/task_03_based_on_task_01/target/debug/deps/main-f6723e31576d8352)
+
+running 1 test
+test tests::input_output_works ... [32mok(B[m
+
+test result: [32mok(B[m. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+
+
+
+'./transport_type'
+
+
+[1m[32m    Checking[0m transport_type v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/transport_type)
+[1m[36m    Building[0m [=======================>     ] 6/7: transport_type                                                                                                                              [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.06s
+[1m[32m   Compiling[0m transport_type v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/transport_type)
+[1m[36m    Building[0m [=======================>     ] 6/7: transport_type                                                                                                                              [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.06s
+[1m[32m   Compiling[0m transport_type v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/transport_type)
+[1m[36m    Building[0m [========================>    ] 8/9: transport_type(test)                                                                                                                        [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`test` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.07s
+[1m[32m     Running[0m unittests src/lib.rs (/Users/gera/c/paradigm/task_03_based_on_task_01/target/debug/deps/transport_type-58fcdfe439e56de7)
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[32m   Doc-tests[0m transport_type
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+
+
+
+'./load_capacity_attr'
+
+
+[1m[32m    Checking[0m load_capacity_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/load_capacity_attr)
+[1m[36m    Building[0m [=======================>     ] 6/7: load_capacity_attr                                                                                                                          [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.05s
+[1m[32m   Compiling[0m load_capacity_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/load_capacity_attr)
+[1m[36m    Building[0m [=======================>     ] 6/7: load_capacity_attr                                                                                                                          [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.10s
+[1m[32m   Compiling[0m load_capacity_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/load_capacity_attr)
+[1m[36m    Building[0m [========================>    ] 8/9: load_capacity_attr(test)                                                                                                                    [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`test` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.07s
+[1m[32m     Running[0m unittests src/lib.rs (/Users/gera/c/paradigm/task_03_based_on_task_01/target/debug/deps/load_capacity_attr-f286f2910cf91365)
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[32m   Doc-tests[0m load_capacity_attr
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+
+
+
+'./flight_range_attr'
+
+
+[1m[32m    Checking[0m flight_range_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/flight_range_attr)
+[1m[36m    Building[0m [=======================>     ] 6/7: flight_range_attr                                                                                                                           [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.05s
+[1m[32m   Compiling[0m flight_range_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/flight_range_attr)
+[1m[36m    Building[0m [=======================>     ] 6/7: flight_range_attr                                                                                                                           [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`dev` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.09s
+[1m[32m   Compiling[0m flight_range_attr v0.1.0 (/Users/gera/c/paradigm/task_03_based_on_task_01/flight_range_attr)
+[1m[36m    Building[0m [========================>    ] 8/9: flight_range_attr(test)                                                                                                                     [K[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`test` profile [unoptimized + debuginfo]]8;;\ target(s) in 0.08s
+[1m[32m     Running[0m unittests src/lib.rs (/Users/gera/c/paradigm/task_03_based_on_task_01/target/debug/deps/flight_range_attr-3d076ec17ec94446)
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[32m   Doc-tests[0m flight_range_attr
+
+running 0 tests
+
+test result: [32mok(B[m. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[36m    Cleaning[0m [                         ]   0.00%                                                                                                                                              [1m[36m    Cleaning[0m [==================>      ]  76.37%                                                                                                                                              [K[1m[32m     Removed[0m 2603 files, 110.9MiB total
+[1m[32m     Removed[0m 0 files
+[1m[32m     Removed[0m 0 files
+[1m[32m     Removed[0m 0 files
+[1m[32m     Removed[0m 0 files
+[1m[32m     Removed[0m 0 files
+[1m[32m     Removed[0m 0 files
+[1m[32m     Removed[0m 0 files
+[1m[32m     Removed[0m 0 files
+[1m[32m     Removed[0m 0 files
+[1m[32m     Removed[0m 0 files
+[1m[32m     Removed[0m 0 files
+[1m[32m     Removed[0m 0 files
+[1m[32m     Removed[0m 0 files
+
+
+
+
+everything is ok!
+
+Command exit status: 0
+Script done on Sat May 24 02:25:47 2025
