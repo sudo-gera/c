@@ -30,13 +30,14 @@ do
         then
             if printf '%s' "$path_2" | grep -- "$name_1" >/dev/null
             then
+                to_exec="diff --recursive -q ${path_1@Q} ${path_2@Q}"
                 echo
                 echo
                 echo
                 echo
-                echo "Comparing ${path_1@Q} and ${path_2@Q}"
+                printf '%s\n' "$to_exec"
                 echo
-                diff --recursive -q "$path_1" "$path_2" || :
+                bash -c "$to_exec"
             fi
         fi
     done
