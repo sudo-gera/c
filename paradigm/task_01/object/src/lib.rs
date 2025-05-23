@@ -65,7 +65,7 @@ impl Object{
     }
 
     pub fn set_attr<T: 'static>(&mut self, key: &String, value: T){
-        println!("set key={:?}, size={:?}", key, self.attrs.len());
+        // println!("set key={:?}, size={:?}", key, self.attrs.len());
         self.attrs.insert(
             key.to_string(),
             Box::new(value) as Box<dyn Any>

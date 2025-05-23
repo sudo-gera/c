@@ -76,16 +76,16 @@ mod tests {
         let data_in = b"3
 plane
     distance
-        2
+        3
     flight_range
         3
     load_capacity
         4
     speed
-        1
+        2
 train
     distance
-        2
+        3
     speed
         1
     wagon_number
@@ -94,7 +94,7 @@ sheep
     displacement
         3
     distance
-        2
+        3
     speed
         1
     vessel_type
@@ -102,16 +102,16 @@ sheep
 ";
         let data_out = b"plane
     distance
-        2
+        3
     flight_range
         3
     load_capacity
         4
     speed
-        1
+        2
 train
     distance
-        2
+        3
     speed
         1
     wagon_number
@@ -120,7 +120,7 @@ sheep
     displacement
         3
     distance
-        2
+        3
     speed
         1
     vessel_type
