@@ -6,6 +6,7 @@ use list_of_objects::*;
 
 fn create_context() -> AllTypesContext{
     let mut context = AllTypesContext::new();
+    types::init(&mut context);
     transport_type::init(&mut context);
     speed_attr::init(&mut context);
     distance_attr::init(&mut context);
@@ -14,6 +15,7 @@ fn create_context() -> AllTypesContext{
     flight_range_attr::init(&mut context);
     load_capacity_attr::init(&mut context);
     wagon_number_attr::init(&mut context);
+    list_of_objects::init(&mut context);
     sheep_type::init(&mut context);
     displacement_attr::init(&mut context);
     vessel_type_attr::init(&mut context);
@@ -22,11 +24,13 @@ fn create_context() -> AllTypesContext{
 
 fn main_with_streams(stdin: ReadStream, stdout: WriteStream){
     let context = create_context();
-    let mut list = read_all_objects_from_stream(
+    let mut list = ListOfObjects::read_all_objects_from_stream(
         stdin.clone(),
         &context
     ).unwrap();
-    write_all_objects_to_stream(
+    list.methods().borrow_mut().get_attr::<
+        WriteAllObjectsToStreamMethod
+    >(&String::from("write_all_objects_to_stream")).unwrap()(
         &mut list,
         stdout.clone(),
         &context

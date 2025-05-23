@@ -23,7 +23,8 @@ if ! (
     do
         cargo_toml="$(bash -c "printf '%s\n' $cargo_toml_escaped")"
         dir_containing_cargo_toml="$(dirname "$cargo_toml")"
-        (
+        if ! (
+            set -e
             echo
             echo
             echo
@@ -36,6 +37,9 @@ if ! (
             cargo build
             cargo test
         )
+        then
+            exit 1
+        fi
     done
 ) then
     test_failed=1

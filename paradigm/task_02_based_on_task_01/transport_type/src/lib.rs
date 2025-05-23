@@ -4,5 +4,5 @@ use std::collections::HashSet;
 // types = { path = "../types" }
 use types::AllTypesContext;
 pub fn init(context: &mut AllTypesContext){
-    context.new_type(String::from("transport"), HashSet::new());
+    context.new_type(String::from("transport"), HashSet::from([String::from("object")]));
 }
