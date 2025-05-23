@@ -1,4 +1,4 @@
-use std::mem::swap;
+// use std::mem::swap;
 // use std::fmt;
 use std::str::*;
 use std::cell::*;
@@ -7,13 +7,12 @@ use std::collections::*;
 use object::*;
 use std::rc::*;
 use std::io::*;
-use anyhow::Error;
 use anyhow::Result;
 
 pub type ReadStream = Rc<RefCell<dyn BufRead>>;
 pub type WriteStream = Rc<RefCell<dyn Write>>;
 
-pub fn read_trimmed_line(input: ReadStream) -> Result<String, Error>{
+pub fn read_trimmed_line(input: ReadStream) -> Result<String>{
     let mut one_line = String::new();
     let mut input_binding = input.borrow_mut();
     input_binding.read_line(&mut one_line)?;
@@ -172,17 +171,11 @@ impl AllTypesContext{
     }
 
 
-    pub fn new_attr_with_default_value<T: 'static>(&mut self, attr_name: String, value: T, type_name: String){
-        let value_wrapper = RefCell::new(
-            Some(value)
-        );
+    pub fn new_attr_with_default_value<T: Clone + 'static>(&mut self, attr_name: String, value: T, type_name: String){
         self.types.get_mut(&type_name).unwrap().init_steps.push(
             Rc::new(
                 move |obj: &mut Object| {
-                    let mut binding = value_wrapper.borrow_mut();
-                    let mut ao : Option<T> = None;
-                    swap(&mut *binding, &mut ao);
-                    obj.set_attr(&attr_name, ao.unwrap());
+                    obj.set_attr(&attr_name, value.clone());
                 }
             )
             as
@@ -200,6 +193,33 @@ impl AllTypesContext{
     >{
         let ti = self.types.get(&type_name).unwrap();
         let mut attrs = ti.attrs.clone();
+        // let mut types_watched : HashSet<String> = HashSet::from([]);
+        // let mut types_not_watched : HashSet<String> = HashSet::from([type_name]);
+        // while !types_not_watched.is_empty(){
+        //     let cur_type = types_not_watched.iter().next().unwrap().clone();
+        //     types_not_watched.remove(&cur_type);
+        //     types_watched.insert(cur_type.clone());
+        //     for cur_base in self.types.get(&cur_type).unwrap().bases.iter(){
+        //         if !types_watched.contains(cur_base){
+        //             types_not_watched.insert(cur_base.clone());
+        //         }
+        //     }
+        //     for (attr_name, attr_fn) in self.types.get(&cur_type).unwrap().attrs.iter(){
+        //         attrs.insert(attr_name.to_string(), attr_fn.clone());
+        //     }
+        // }
+        let type_names = self.get_all_base_type_names(type_name.clone())?;
+        for cur_type_ in type_names.iter(){
+            let cur_type : &String = cur_type_;
+            for (attr_name, attr_fn) in self.types.get(cur_type).unwrap().attrs.iter(){
+                attrs.insert(attr_name.to_string(), attr_fn.clone());
+            }
+        }
+        Ok(attrs)
+    }
+
+    fn get_all_base_type_names(&self, type_name: String) -> Result<HashSet<String>>{
+        // let ti = self.types.get(&type_name).unwrap();
         let mut types_watched : HashSet<String> = HashSet::from([]);
         let mut types_not_watched : HashSet<String> = HashSet::from([type_name]);
         while !types_not_watched.is_empty(){
@@ -211,11 +231,8 @@ impl AllTypesContext{
                     types_not_watched.insert(cur_base.clone());
                 }
             }
-            for (attr_name, attr_fn) in self.types.get(&cur_type).unwrap().attrs.iter(){
-                attrs.insert(attr_name.to_string(), attr_fn.clone());
-            }
         }
-        Ok(attrs)
+        Ok(types_watched)
     }
 
     pub fn read_obj_from_stream(&self, stream: ReadStream) -> Result<Object>{
@@ -236,41 +253,17 @@ impl AllTypesContext{
             );
             attrs.remove(&attr_name);
         }
-        for init_step in ti.init_steps.iter(){
-            init_step.clone()(&mut obj);
+        let type_names = self.get_all_base_type_names(type_name.clone())?;
+        for cur_type in type_names.iter(){
+            for init_step in self.types.get(cur_type).unwrap().init_steps.iter(){
+                // attrs.insert(attr_name.to_string(), attr_fn.clone());
+                init_step.clone()(&mut obj);
+            }
         }
+        // for init_step in ti.init_steps.iter(){
+        //     init_step.clone()(&mut obj);
+        // }
         Ok(obj)
-    }
-
-    pub fn write_to_stream(&self, obj: Rc<RefCell<Object>>, stream: WriteStream) -> Result<()>{
-        let type_name : String = obj.borrow_mut().get_attr::<String>(&String::from("__type_name__")).unwrap().to_string();
-        stream.borrow_mut().write_all(type_name.as_bytes()).unwrap();
-        stream.borrow_mut().write_all(b"\n").unwrap();
-        let mut attr_names : Vec<String> = vec![];
-        for (attr_name, _attr_fn) in self.get_all_attrs(type_name)?.iter(){
-            attr_names.push(attr_name.clone());
-        }
-        attr_names.sort();
-        for attr_name in attr_names.iter(){
-            stream.borrow_mut().write_all(b"    ")?;
-            stream.borrow_mut().write_all(attr_name.as_bytes())?;
-            stream.borrow_mut().write_all(b"\n")?;
-            stream.borrow_mut().write_all(b"    ")?;
-            stream.borrow_mut().write_all(b"    ")?;
-            stream.borrow_mut().write_all(
-                obj.borrow_mut().get_attr::<
-                    Rc<
-                        RefCell<
-                            dyn CanBeAttr
-                        >
-                    >
-                >(
-                    attr_name
-                ).unwrap().borrow_mut().to_string().as_bytes()
-            )?;
-            stream.borrow_mut().write_all(b"\n")?;
-        }
-        Ok(())
     }
 
     // pub fn set_method<M>(&mut self, method: M, meth_name: String, type_name: String){
@@ -295,4 +288,49 @@ impl AllTypesContext{
     //         .clone()
     //     )
     // }
+}
+
+pub type WriteToStreamMethod = Rc<dyn Fn(&AllTypesContext,Rc<RefCell<Object>>,WriteStream) -> Result<()>>;
+
+
+fn write_to_stream(context: &AllTypesContext, obj: Rc<RefCell<Object>>, stream: WriteStream) -> Result<()>{
+    let type_name : String = obj.borrow_mut().get_attr::<String>(&String::from("__type_name__")).unwrap().to_string();
+    stream.borrow_mut().write_all(type_name.as_bytes()).unwrap();
+    stream.borrow_mut().write_all(b"\n").unwrap();
+    let mut attr_names : Vec<String> = vec![];
+    for (attr_name, _attr_fn) in context.get_all_attrs(type_name)?.iter(){
+        attr_names.push(attr_name.clone());
+    }
+    attr_names.sort();
+    for attr_name in attr_names.iter(){
+        stream.borrow_mut().write_all(b"    ")?;
+        stream.borrow_mut().write_all(attr_name.as_bytes())?;
+        stream.borrow_mut().write_all(b"\n")?;
+        stream.borrow_mut().write_all(b"    ")?;
+        stream.borrow_mut().write_all(b"    ")?;
+        stream.borrow_mut().write_all(
+            obj.borrow_mut().get_attr::<
+                Rc<
+                    RefCell<
+                        dyn CanBeAttr
+                    >
+                >
+            >(
+                attr_name
+            ).unwrap().borrow_mut().to_string().as_bytes()
+        )?;
+        stream.borrow_mut().write_all(b"\n")?;
+    }
+    Ok(())
+}
+
+pub fn init(context: &mut AllTypesContext){
+    context.new_type(String::from("object"), HashSet::new());
+    context.new_attr_with_default_value(
+        String::from("write_to_stream"),
+        Rc::new(write_to_stream)
+        as
+        WriteToStreamMethod,
+        String::from("object")
+    );
 }
