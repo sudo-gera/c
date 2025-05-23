@@ -23,7 +23,7 @@ impl Object{
     }
 
     pub fn get_attr<T: 'static>(&self, key: &String) -> Option<&T>{
-        println!("get key={:?}, size={:?}", key, self.attrs.len());
+        // println!("get key={:?}, size={:?}", key, self.attrs.len());
         match self.attrs.get(key){
             Some(val) => {
                 match val.downcast_ref::<T>(){
@@ -31,13 +31,13 @@ impl Object{
                         Some(val)
                     }
                     None => {
-                        println!("wrong type");
+                        // println!("wrong type");
                         None
                     }
                 }
             }
             None => {
-                println!("no key");
+                // println!("no key");
                 None
             }
         }
