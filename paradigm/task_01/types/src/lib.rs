@@ -1,4 +1,3 @@
-// use std::mem::swap;
 use std::fmt;
 use std::str::*;
 use std::cell::*;
@@ -52,49 +51,11 @@ impl <T: ToString + 'static> CanBeAttr for AttrWrapper<T>{
     }
 }
 
-// pub trait Method: Fn(
-//     Rc<
-//         RefCell<
-//             Object
-//         >
-//     >
-// ){}
-
-// impl <T: Fn(
-//     Rc<
-//         RefCell<
-//             Object
-//         >
-//     >
-// )> Method for T{}
-
 pub type InitStep = Rc<
     dyn Fn(
         &mut Object
     )
 >;
-
-
-// pub struct AttrWrapper<T>{
-//     value: T
-// }
-
-// impl<T> AttrWrapper<T>{
-//     pub fn new(value: T) -> Self{
-//         Self{
-//             value
-//         }
-//     }
-// }
-
-// impl<T: ToString> fmt::Display for AttrWrapper<T>{
-
-//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-//         write!(f, "{}", self.value.to_string())
-//     }
-// }
-
-// impl<T: ToString> CanBeAttr for AttrWrapper<T>{}
 
 trait CanConvertStrToAttr {
     fn str_to_printable(&self, s: String) -> Result<

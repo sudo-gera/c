@@ -1,11 +1,8 @@
-// use std::cell::RefCell;
 use std::rc::Rc;
-// types = { path = "../types" }
+
 use types::*;
-// use object::*;
 use anyhow::*;
 use anyhow::Result;
-// use std::io::*;
 use list_of_objects::*;
 
 pub type WriteObjectPairsToStreamMethod = Rc<dyn Fn(&mut ListOfObjects, WriteStream) -> Result<()>>;

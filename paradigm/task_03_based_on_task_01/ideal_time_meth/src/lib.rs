@@ -1,7 +1,6 @@
-// use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
-// types = { path = "../types" }
+
 use types::*;
 use object::*;
 use anyhow::*;
@@ -42,10 +41,6 @@ fn ideal_time(obj_ptr: Rc<RefCell<Object>>) -> Result<f64>{
 
     Ok(distance / speed)
 }
-
-// fn write_to_stream(context: &AllTypesContext, obj: Rc<RefCell<Object>>, stream: WriteStream) -> Result<()>{
-
-// }
 
 pub fn init(context: &mut AllTypesContext){
     context.new_attr_with_default_value(

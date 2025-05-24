@@ -1,0 +1,74 @@
+
+
+
+
+diff --recursive -q './task_01' './task_02_based_on_task_01'
+
+Only in ./task_02_based_on_task_01: displacement_attr
+Files ./task_01/main/Cargo.lock and ./task_02_based_on_task_01/main/Cargo.lock differ
+Files ./task_01/main/Cargo.toml and ./task_02_based_on_task_01/main/Cargo.toml differ
+Files ./task_01/main/src/main.rs and ./task_02_based_on_task_01/main/src/main.rs differ
+Only in ./task_02_based_on_task_01: sheep_type
+Only in ./task_02_based_on_task_01: vessel_type_attr
+
+
+
+
+diff --recursive -q './task_01' './task_03_based_on_task_01'
+
+Only in ./task_03_based_on_task_01: ideal_time_meth
+Files ./task_01/main/Cargo.lock and ./task_03_based_on_task_01/main/Cargo.lock differ
+Files ./task_01/main/Cargo.toml and ./task_03_based_on_task_01/main/Cargo.toml differ
+Files ./task_01/main/src/main.rs and ./task_03_based_on_task_01/main/src/main.rs differ
+
+
+
+
+diff --recursive -q './task_01' './task_04_based_on_task_01'
+
+Files ./task_01/main/Cargo.lock and ./task_04_based_on_task_01/main/Cargo.lock differ
+Files ./task_01/main/Cargo.toml and ./task_04_based_on_task_01/main/Cargo.toml differ
+Files ./task_01/main/src/main.rs and ./task_04_based_on_task_01/main/src/main.rs differ
+Only in ./task_04_based_on_task_01: transported_mass_attr
+
+
+
+
+diff --recursive -q './task_01' './task_05_based_on_task_01'
+
+Files ./task_01/main/Cargo.lock and ./task_05_based_on_task_01/main/Cargo.lock differ
+Files ./task_01/main/Cargo.toml and ./task_05_based_on_task_01/main/Cargo.toml differ
+Files ./task_01/main/src/main.rs and ./task_05_based_on_task_01/main/src/main.rs differ
+Only in ./task_05_based_on_task_01: write_only_planes_to_stream
+
+
+
+
+diff --recursive -q './task_01' './task_06_based_on_task_01'
+
+Files ./task_01/main/Cargo.lock and ./task_06_based_on_task_01/main/Cargo.lock differ
+Files ./task_01/main/Cargo.toml and ./task_06_based_on_task_01/main/Cargo.toml differ
+Files ./task_01/main/src/main.rs and ./task_06_based_on_task_01/main/src/main.rs differ
+Only in ./task_06_based_on_task_01: write_object_pairs_to_stream
+
+
+
+
+diff --recursive -q './task_02_based_on_task_01' './task_07_based_on_task_06_and_task_02'
+
+Files ./task_02_based_on_task_01/main/Cargo.lock and ./task_07_based_on_task_06_and_task_02/main/Cargo.lock differ
+Files ./task_02_based_on_task_01/main/Cargo.toml and ./task_07_based_on_task_06_and_task_02/main/Cargo.toml differ
+Files ./task_02_based_on_task_01/main/src/main.rs and ./task_07_based_on_task_06_and_task_02/main/src/main.rs differ
+Only in ./task_07_based_on_task_06_and_task_02: write_object_pairs_to_stream
+
+
+
+
+diff --recursive -q './task_06_based_on_task_01' './task_07_based_on_task_06_and_task_02'
+
+Only in ./task_07_based_on_task_06_and_task_02: displacement_attr
+Files ./task_06_based_on_task_01/main/Cargo.lock and ./task_07_based_on_task_06_and_task_02/main/Cargo.lock differ
+Files ./task_06_based_on_task_01/main/Cargo.toml and ./task_07_based_on_task_06_and_task_02/main/Cargo.toml differ
+Files ./task_06_based_on_task_01/main/src/main.rs and ./task_07_based_on_task_06_and_task_02/main/src/main.rs differ
+Only in ./task_07_based_on_task_06_and_task_02: sheep_type
+Only in ./task_07_based_on_task_06_and_task_02: vessel_type_attr

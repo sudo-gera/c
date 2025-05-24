@@ -57,7 +57,6 @@ pub type InitStep = Rc<
     )
 >;
 
-
 trait CanConvertStrToAttr {
     fn str_to_printable(&self, s: String) -> Result<
         Rc<

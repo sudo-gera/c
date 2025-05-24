@@ -15,7 +15,7 @@ else
     gnu_sed='gsed'
 fi
 
-dirs_escaped_lf_joined="$(find . -mindepth 1 -maxdepth 1 -type d -exec bash -c 'echo "${0@Q}"' {} \;)"
+dirs_escaped_lf_joined="$(find . -mindepth 1 -maxdepth 1 -type d -exec bash -c 'echo "${0@Q}"' {} \; | sort)"
 
 printf '%s\n' "$dirs_escaped_lf_joined" | \
 while read -r path_1_escaped

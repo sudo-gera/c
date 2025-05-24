@@ -3,7 +3,6 @@ use std::rc::*;
 use std::io::*;
 use types::*;
 use list_of_objects::*;
-// use write_only_planes_to_stream::*;
 
 fn create_context() -> AllTypesContext{
     let mut context = AllTypesContext::new();
