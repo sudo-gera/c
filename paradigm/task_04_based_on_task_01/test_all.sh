@@ -24,7 +24,6 @@ if ! (
         cargo_toml="$(bash -c "printf '%s\n' $cargo_toml_escaped")"
         dir_containing_cargo_toml="$(dirname "$cargo_toml")"
         if ! (
-            set -e
             echo
             echo
             echo
@@ -33,9 +32,9 @@ if ! (
             echo
             echo
             cd "$dir_containing_cargo_toml"
-            cargo clippy -- -D warnings
-            cargo build
-            cargo test
+            cargo clippy -- -D warnings || exit 1
+            cargo build || exit 1
+            cargo test || exit 1
         )
         then
             exit 1

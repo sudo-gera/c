@@ -3,7 +3,7 @@ use std::rc::*;
 use std::io::*;
 use types::*;
 use list_of_objects::*;
-// use write_only_planes_to_stream::*;
+use write_object_pairs_to_stream::*;
 
 fn create_context() -> AllTypesContext{
     let mut context = AllTypesContext::new();
@@ -17,7 +17,7 @@ fn create_context() -> AllTypesContext{
     load_capacity_attr::init(&mut context);
     wagon_number_attr::init(&mut context);
     list_of_objects::init(&mut context);
-    write_only_planes_to_stream::init(&mut context);
+    write_object_pairs_to_stream::init(&mut context);
     context
 }
 
@@ -38,18 +38,17 @@ fn main_with_streams(stdin: ReadStream, stdout: WriteStream){
                 &context
             ).unwrap();
         }
-        "write_only_planes_to_stream" => {
+        "write_object_pairs_to_stream" => {
             let context = create_context();
             let mut list = ListOfObjects::read_all_objects_from_stream(
                 stdin.clone(),
                 &context
             ).unwrap();
             list.methods().borrow_mut().get_attr::<
-                WriteAllObjectsToStreamMethod
-            >(&String::from("write_only_planes_to_stream")).unwrap()(
+                WriteObjectPairsToStreamMethod
+            >(&String::from("write_object_pairs_to_stream")).unwrap()(
                 &mut list,
-                stdout.clone(),
-                &context
+                stdout.clone()
             ).unwrap();
         }
         _ => panic!()
@@ -141,7 +140,7 @@ train
     }
 
     #[test]
-    fn only_planes_works() {
+    fn object_pairs_works() {
         // in-memory streams to replace stdin and stdout
         let stdin = Rc::new(
             RefCell::new(
@@ -157,7 +156,7 @@ train
                 ),
             )
         );
-        let data_in = b"write_only_planes_to_stream
+        let data_in = b"write_object_pairs_to_stream
 2
 plane
     distance
@@ -176,15 +175,10 @@ train
     wagon_number
         3
 ";
-        let data_out = b"plane
-    distance
-        3
-    flight_range
-        3
-    load_capacity
-        4
-    speed
-        2
+        let data_out = b"plane and plane
+plane and train
+train and plane
+train and train
 ";
         stdin.borrow_mut().write_all(data_in).unwrap();
         stdin.borrow_mut().seek(SeekFrom::Start(0)).unwrap();
