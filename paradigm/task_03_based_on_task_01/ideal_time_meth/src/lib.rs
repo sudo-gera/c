@@ -1,3 +1,4 @@
+// use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
 // types = { path = "../types" }
@@ -11,30 +12,34 @@ pub type IdealTimeMethod = Rc<dyn Fn(Rc<RefCell<Object>>)->Result<f64>>;
 
 fn ideal_time(obj_ptr: Rc<RefCell<Object>>) -> Result<f64>{
     let obj = obj_ptr.borrow_mut();
-    let distance = obj.get_attr::<
-        Rc<
-            RefCell<
-                dyn CanBeAttr
+    let distance = *(
+        obj.get_attr::<
+            Rc<
+                RefCell<
+                    dyn CanBeAttr
+                >
             >
-        >
-    >(
-        &String::from("distance")
-    ).unwrap()
-    .borrow_mut()
-    .to_string()
-    .parse::<f64>()?;
-    let speed = obj.get_attr::<
-        Rc<
-            RefCell<
-                dyn CanBeAttr
+        >(
+            &String::from("distance")
+        ).unwrap()
+        .borrow_mut()
+        .to_rc_any()
+    ).downcast_ref::<i64>().unwrap() as f64;
+
+    let speed = *(
+        obj.get_attr::<
+            Rc<
+                RefCell<
+                    dyn CanBeAttr
+                >
             >
-        >
-    >(
-        &String::from("speed")
-    ).unwrap()
-    .borrow_mut()
-    .to_string()
-    .parse::<f64>()?;
+        >(
+            &String::from("speed")
+        ).unwrap()
+        .borrow_mut()
+        .to_rc_any()
+    ).downcast_ref::<i64>().unwrap() as f64;
+
     Ok(distance / speed)
 }
 

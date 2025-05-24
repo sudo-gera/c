@@ -9,6 +9,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e16d2d3311acee920a9eb8d33b8cbc1787ce4a264e85f964c2404b969bdcd487"
 
 [[package]]
+name = "displacement_attr"
+version = "0.1.0"
+dependencies = [
+ "types",
+]
+
+[[package]]
 name = "distance_attr"
 version = "0.1.0"
 dependencies = [
@@ -54,6 +61,7 @@ name = "main"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "displacement_attr",
  "distance_attr",
  "double_linked_list",
  "flight_range_attr",
@@ -62,11 +70,14 @@ dependencies = [
  "load_capacity_attr",
  "object",
  "plane_type",
+ "sheep_type",
  "speed_attr",
  "train_type",
  "transport_type",
  "types",
+ "vessel_type_attr",
  "wagon_number_attr",
+ "write_object_pairs_to_stream",
 ]
 
 [[package]]
@@ -75,6 +86,13 @@ version = "0.1.0"
 
 [[package]]
 name = "plane_type"
+version = "0.1.0"
+dependencies = [
+ "types",
+]
+
+[[package]]
+name = "sheep_type"
 version = "0.1.0"
 dependencies = [
  "types",
@@ -111,8 +129,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "vessel_type_attr"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "types",
+]
+
+[[package]]
 name = "wagon_number_attr"
 version = "0.1.0"
 dependencies = [
+ "types",
+]
+
+[[package]]
+name = "write_object_pairs_to_stream"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "list_of_objects",
  "types",
 ]

@@ -95,7 +95,6 @@ impl<T> DoubleLinkedList<T>{
             )
         );
         Self{
-            // size: 1,
             first: Some(value_ptr.clone()),
             last:  Some(Rc::<RefCell<ListNode<T> > >::downgrade(&value_ptr)),
         }

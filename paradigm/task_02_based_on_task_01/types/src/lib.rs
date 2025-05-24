@@ -1,10 +1,10 @@
-// use std::mem::swap;
-// use std::fmt;
+use std::fmt;
 use std::str::*;
 use std::cell::*;
 use anyhow::*;
 use std::collections::*;
 use object::*;
+use std::any::*;
 use std::rc::*;
 use std::io::*;
 use anyhow::Result;
@@ -21,25 +21,35 @@ pub fn read_trimmed_line(input: ReadStream) -> Result<String>{
     Ok(one_line)
 }
 
-pub trait CanBeAttr : ToString {}
+pub trait CanBeAttr : ToString{
+    fn to_rc_any(&self) -> Rc<dyn Any>;
+}
 
-impl <T: ToString> CanBeAttr for T{}
+struct AttrWrapper<T>{
+    value: Rc<T>
+}
 
-pub trait Method: Fn(
-    Rc<
-        RefCell<
-            Object
-        >
-    >
-){}
+impl<T> AttrWrapper<T>{
+    pub fn new(value: T) -> Self{
+        AttrWrapper{
+            value: Rc::new(
+                value
+            ),
+        }
+    }
+}
 
-impl <T: Fn(
-    Rc<
-        RefCell<
-            Object
-        >
-    >
-)> Method for T{}
+impl<T: ToString + 'static> fmt::Display for AttrWrapper<T>{
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.value.to_string())
+    }
+}
+
+impl <T: ToString + 'static> CanBeAttr for AttrWrapper<T>{
+    fn to_rc_any(&self) -> Rc<dyn Any>{
+        self.value.clone() as Rc<dyn Any>
+    }
+}
 
 pub type InitStep = Rc<
     dyn Fn(
@@ -47,27 +57,6 @@ pub type InitStep = Rc<
     )
 >;
 
-
-// pub struct AttrWrapper<T>{
-//     value: T
-// }
-
-// impl<T> AttrWrapper<T>{
-//     pub fn new(value: T) -> Self{
-//         Self{
-//             value
-//         }
-//     }
-// }
-
-// impl<T: ToString> fmt::Display for AttrWrapper<T>{
-
-//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-//         write!(f, "{}", self.value.to_string())
-//     }
-// }
-
-// impl<T: ToString> CanBeAttr for AttrWrapper<T>{}
 
 trait CanConvertStrToAttr {
     fn str_to_printable(&self, s: String) -> Result<
@@ -92,7 +81,7 @@ impl<T> StrToAttrConverter<T>{
     }
 }
 
-impl <T: FromStr + CanBeAttr + 'static> CanConvertStrToAttr for StrToAttrConverter<T>
+impl <T: FromStr + ToString + 'static> CanConvertStrToAttr for StrToAttrConverter<T>
 where
     <T as std::str::FromStr>::Err: std::error::Error + Send + Sync,
 {
@@ -101,7 +90,9 @@ where
         Ok(
             Rc::new(
                 RefCell::new(
-                    s.parse::<T>()?
+                    AttrWrapper::new(
+                        s.parse::<T>()?
+                    )
                 )
             ) as Rc<RefCell<dyn CanBeAttr>>
         )
@@ -143,8 +134,6 @@ impl AllTypesContext{
             type_name: type_name.clone(),
             bases,
             attrs: HashMap::new(),
-            // meths: HashMap::<String, Box<dyn any>>,
-            // meth_names: HashSet::new(),
             init_steps: Vec::new(),
         };
         self.types.insert(
@@ -153,7 +142,7 @@ impl AllTypesContext{
         );
     }
 
-    pub fn new_attr<T: FromStr + CanBeAttr + 'static>(&mut self, attr_name: String, type_name: String)
+    pub fn new_attr<T: FromStr + ToString + 'static>(&mut self, attr_name: String, type_name: String)
     where <T as std::str::FromStr>::Err: std::error::Error, <T as std::str::FromStr>::Err: Send, <T as std::str::FromStr>::Err: Sync
     {
         self.types.get_mut(
@@ -193,21 +182,6 @@ impl AllTypesContext{
     >{
         let ti = self.types.get(&type_name).unwrap();
         let mut attrs = ti.attrs.clone();
-        // let mut types_watched : HashSet<String> = HashSet::from([]);
-        // let mut types_not_watched : HashSet<String> = HashSet::from([type_name]);
-        // while !types_not_watched.is_empty(){
-        //     let cur_type = types_not_watched.iter().next().unwrap().clone();
-        //     types_not_watched.remove(&cur_type);
-        //     types_watched.insert(cur_type.clone());
-        //     for cur_base in self.types.get(&cur_type).unwrap().bases.iter(){
-        //         if !types_watched.contains(cur_base){
-        //             types_not_watched.insert(cur_base.clone());
-        //         }
-        //     }
-        //     for (attr_name, attr_fn) in self.types.get(&cur_type).unwrap().attrs.iter(){
-        //         attrs.insert(attr_name.to_string(), attr_fn.clone());
-        //     }
-        // }
         let type_names = self.get_all_base_type_names(type_name.clone())?;
         for cur_type_ in type_names.iter(){
             let cur_type : &String = cur_type_;
@@ -219,7 +193,6 @@ impl AllTypesContext{
     }
 
     fn get_all_base_type_names(&self, type_name: String) -> Result<HashSet<String>>{
-        // let ti = self.types.get(&type_name).unwrap();
         let mut types_watched : HashSet<String> = HashSet::from([]);
         let mut types_not_watched : HashSet<String> = HashSet::from([type_name]);
         while !types_not_watched.is_empty(){
@@ -256,38 +229,11 @@ impl AllTypesContext{
         let type_names = self.get_all_base_type_names(type_name.clone())?;
         for cur_type in type_names.iter(){
             for init_step in self.types.get(cur_type).unwrap().init_steps.iter(){
-                // attrs.insert(attr_name.to_string(), attr_fn.clone());
                 init_step.clone()(&mut obj);
             }
         }
-        // for init_step in ti.init_steps.iter(){
-        //     init_step.clone()(&mut obj);
-        // }
         Ok(obj)
     }
-
-    // pub fn set_method<M>(&mut self, method: M, meth_name: String, type_name: String){
-    //     let obj = self.types
-    //     .get_mut(&type_name)
-    //     .unwrap()
-    //     .meths;
-    //     let meth_names = obj.get_attr_mut::<HashSet<String>>(String::from("__meth_names__")).unwrap();
-    //     meth_names.insert(meth_name.clone());
-    //     obj.set_sttr(
-    //         meth_name,
-    //         Rc::new(method)
-    //     );
-    // }
-
-    // pub fn get_method<M: Method>(&self, meth_name: String, type_name: String) -> Option<Rc<dyn Method>>{
-    //     Some(
-    //         self.types
-    //         .get(&type_name)?
-    //         .meths
-    //         .get(&meth_name)?
-    //         .clone()
-    //     )
-    // }
 }
 
 pub type WriteToStreamMethod = Rc<dyn Fn(&AllTypesContext,Rc<RefCell<Object>>,WriteStream) -> Result<()>>;

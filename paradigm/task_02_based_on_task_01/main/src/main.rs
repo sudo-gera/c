@@ -64,7 +64,7 @@ mod tests {
 
     #[test]
     fn input_output_works() {
-        // in-memory streams to replace stdin and stdout
+        //| in-memory streams to replace stdin and stdout
         let stdin = Rc::new(
             RefCell::new(
                 Cursor::new(
