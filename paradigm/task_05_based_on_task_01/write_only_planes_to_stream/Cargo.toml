@@ -1,0 +1,10 @@
+[package]
+name = "write_only_planes_to_stream"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+types = { path = "../types" }
+object = { path = "../object" }
+list_of_objects = { path = "../list_of_objects" }
+anyhow = "1.0.98"
