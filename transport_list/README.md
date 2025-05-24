@@ -81,6 +81,7 @@
 1. Переходим в директорию, где лежит Dockerfile
 2. Собираем образ диска: `docker build -t transport_list .`
 3. Запускаем контейнер: `docker container run --rm -it --name transport_list transport_list bash`
+4. Удаляем образ диска после выполнения всех тестов: `docker image rm transport_list`
 
 Вся директория проекта скопируется в контейнер и Вы окажетесь в ней. Можно будет выполнять любые описанные здесь команды.
 
