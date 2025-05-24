@@ -63,6 +63,7 @@ echo
 if [ "$test_failed" -eq 1 ]
 then
     echo 'tests failed!'
+    exit 1
 else
     echo 'everything is ok!'
 fi

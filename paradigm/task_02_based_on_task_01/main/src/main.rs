@@ -23,18 +23,24 @@ fn create_context() -> AllTypesContext{
 }
 
 fn main_with_streams(stdin: ReadStream, stdout: WriteStream){
-    let context = create_context();
-    let mut list = ListOfObjects::read_all_objects_from_stream(
-        stdin.clone(),
-        &context
-    ).unwrap();
-    list.methods().borrow_mut().get_attr::<
-        WriteAllObjectsToStreamMethod
-    >(&String::from("write_all_objects_to_stream")).unwrap()(
-        &mut list,
-        stdout.clone(),
-        &context
-    ).unwrap();
+    let command = read_trimmed_line(stdin.clone()).unwrap();
+    match command.as_str(){
+        "write_all_objects_to_stream" => {
+            let context = create_context();
+            let mut list = ListOfObjects::read_all_objects_from_stream(
+                stdin.clone(),
+                &context
+            ).unwrap();
+            list.methods().borrow_mut().get_attr::<
+                WriteAllObjectsToStreamMethod
+            >(&String::from("write_all_objects_to_stream")).unwrap()(
+                &mut list,
+                stdout.clone(),
+                &context
+            ).unwrap();
+        }
+        _ => panic!()
+    }
 }
 
 fn main(){
@@ -73,7 +79,8 @@ mod tests {
                 ),
             )
         );
-        let data_in = b"3
+        let data_in = b"write_all_objects_to_stream
+3
 plane
     distance
         3
