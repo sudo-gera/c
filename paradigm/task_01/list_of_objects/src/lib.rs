@@ -9,7 +9,7 @@ use anyhow::*;
 use anyhow::Result;
 
 pub struct ListOfObjects{
-    data: DoubleLinkedList<Object>,
+    data: Rc<RefCell<DoubleLinkedList<Object>>>,
     methods: Rc<RefCell<Object>>,
 }
 
@@ -42,7 +42,7 @@ impl ListOfObjects{
         );
         Ok(
             Self{
-                data: list,
+                data: Rc::new(RefCell::new(list)),
                 methods: obj,
             }
         )
@@ -51,11 +51,15 @@ impl ListOfObjects{
     pub fn methods(&mut self) -> Rc<RefCell<Object>>{
         self.methods.clone()
     }
+
+    pub fn data(&mut self) -> Rc<RefCell<DoubleLinkedList<Object>>>{
+        self.data.clone()
+    }
 }
 
 fn write_all_objects_to_stream(list: &mut ListOfObjects, stdout: WriteStream, context: &AllTypesContext) -> Result<()>{
-    if !list.data.empty(){
-        let mut iter = list.data.first_iter();
+    if !list.data().borrow_mut().empty(){
+        let mut iter = list.data().borrow_mut().first_iter();
         loop {
             let write_to_stream = iter.value_rcrc()
             .borrow_mut()
@@ -69,7 +73,7 @@ fn write_all_objects_to_stream(list: &mut ListOfObjects, stdout: WriteStream, co
                 iter.value_rcrc(),
                 stdout.clone()
             )?;
-            if iter == list.data.last_iter(){
+            if iter == list.data().borrow_mut().last_iter(){
                 break;
             }
             iter = iter.next();
