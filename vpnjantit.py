@@ -9,7 +9,7 @@ async def exec_command(*command, input=None):
 
 async def run_ssh(date, server):
     start = time.monotonic()
-    await exec_command(*f'sshpass -p 1234567890 ssh {date}-vpnjantit.com@{server}.vpnjantit.com -ND 127.0.0.1:1081 -o ExitOnForwardFailure=yes'.split())
+    await exec_command(*f'sshpass -p 1234567890 ssh {date}-vpnjantit.com@{server}.vpnjantit.com -ND 127.0.0.1:1081 -o ExitOnForwardFailure=yes -oPasswordAuthentication=yes'.split())
     stop = time.monotonic()
     print(f'connection to {date}@{server} took {stop-start} seconds')
 
