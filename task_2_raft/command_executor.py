@@ -12,10 +12,13 @@ async def command_handler(reader: asyncio.StreamReader, writer: asyncio.StreamWr
         if not command:
             return
         process = await asyncio.create_subprocess_shell(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process_closed = False
         try:
             stdout, stderr = await process.communicate()
+            process_closed = True
         finally:
-            process.terminate()
+            if not process_closed:
+                process.terminate()
             await process.wait()
         writer.write(stdout)
         writer.write(stderr)

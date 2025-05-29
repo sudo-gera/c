@@ -22,6 +22,7 @@ colors = [
     '\x1b[96m',
     '\x1b[97m',
 ]
+assert isinstance(my_ip, str)
 my_color = colors[hosts.index(my_ip)]
 
 async def log_handler(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
