@@ -28,7 +28,8 @@ new = New()
 async def copy(reader: stream.Stream, writer: stream.Stream, _hex):
     if _hex not in ['encode', 'decode'] and args.sleep == 0:
         while (data := await reader.read(2**16)):
-            await writer.safe_write(data)
+            writer.write(data)
+            await writer.drain()
     else:
         buf = b''
         while (data := buf + await reader.read(2**16)):
