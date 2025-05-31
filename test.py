@@ -27,7 +27,8 @@ def child_process():
                 pass
         finally:
             # Just in case __exit__ isn't reached due to a signal
-            resources.clear()
+            # resources.clear()
+            pass
 
     exit(len(resources))
 
