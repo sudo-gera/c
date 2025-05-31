@@ -20,14 +20,14 @@ def child_process():
         exit(len(resources))
 
 def main_process(child_pid):
-    pid = child_pid
     time.sleep(0.1)
-    os.kill(pid, signal.SIGINT)
-    pid_, rc = os.waitpid(pid, 0)
-    assert pid_ == pid and rc == 0, f'{pid = }, {pid_ = }, {rc = }'
+    os.kill(child_pid, signal.SIGINT)
+    pid, rc = os.waitpid(child_pid, 0)
+    assert pid == child_pid and rc == 0, f'{child_pid = }, {pid = }, {rc = }'
 
 if __name__ == '__main__':
-    while True:
+    for i in range(999):
+        print('iteration', i)
         if (pid := os.fork()):
             main_process(pid)
         else:
