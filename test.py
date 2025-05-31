@@ -1,61 +1,34 @@
-from __future__ import annotations
-import typing
-import weakref
+import os
+import signal
+import time
 
-object_descriptor_get = typing.TypeVar('object_descriptor_get')
-object_descriptor_set = typing.TypeVar('object_descriptor_set')
+def child_process():
 
-class object_descriptor(typing.Generic[object_descriptor_get, object_descriptor_set]):
-    def __init__(self) -> None:
-        self.object_to_object_descriptor : weakref.WeakValueDictionary[int, base_object_descriptor[object_descriptor_get, object_descriptor_set]] = weakref.WeakValueDictionary()
+    resources = set()
 
-    @typing.overload
-    def __get__(self, instance: None, instance_class: typing.Type[object]) -> object_descriptor[object_descriptor_get, object_descriptor_set]:
-        ...
+    class resource:
+        def __enter__(self):
+            resources.add(id(self))
+        def __exit__(self, *_):
+            resources.remove(id(self))
 
-    @typing.overload
-    def __get__(self, instance: object, instance_class: typing.Type[object]) -> object_descriptor_get:
-        ...
+    try:
+        while 1:
+            with resource():
+                pass
+    except KeyboardInterrupt:
+        exit(len(resources))
 
-    def __get__(self, instance: object|None, instance_class: typing.Type[object]) -> object_descriptor_get|object_descriptor[object_descriptor_get, object_descriptor_set]:
-        if instance is None:
-            return self
+def main_process(child_pid):
+    pid = child_pid
+    time.sleep(0.1)
+    os.kill(pid, signal.SIGINT)
+    pid_, rc = os.waitpid(pid, 0)
+    assert pid_ == pid and rc == 0, f'{pid = }, {pid_ = }, {rc = }'
+
+if __name__ == '__main__':
+    while True:
+        if (pid := os.fork()):
+            main_process(pid)
         else:
-            return self.object_to_object_descriptor[id(instance)].object_get()
-    
-    def __set__(self, instance: object, value: object_descriptor_set) -> None:
-        return self.object_to_object_descriptor[id(instance)].object_set(value)
-
-class base_object_descriptor(typing.Generic[object_descriptor_get, object_descriptor_set]):
-    def object_get(self) -> object_descriptor_get:
-        assert False
-    
-    def object_set(self, value: object_descriptor_set) -> None:
-        assert False
-
-    def init(self, instance: object, desc: object_descriptor[object_descriptor_get, object_descriptor_set]) -> None:
-        desc.object_to_object_descriptor[id(instance)] = self
-
-class user_object_descriptor(base_object_descriptor[bytes, str]):
-    def __init__(self) -> None:
-        self.value = ''
-
-    def object_get(self) -> bytes:
-        return self.value.encode()
-    
-    def object_set(self, value: str) -> None:
-        self.value = value
-
-# user_object_attr : object_descriptor[bytes, str] = object_descriptor()
-
-class user_object:
-    attr : object_descriptor[bytes, str] = object_descriptor()
-
-    def __init__(self) -> None:
-        self.attr_object = user_object_descriptor()
-        self.attr_object.init(self, type(self).attr)
-        self.attr=''
-        print(self.attr+b'')
-
-a=user_object()
-
+            child_process()

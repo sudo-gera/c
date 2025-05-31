@@ -73,10 +73,24 @@ RUN rm -r /ssf_client/certs
 RUN cp -r /certs /ssf_client/certs
 RUN cp -r /certs /ssf_server/certs
 
+# RUN : && \
+#     (cd /ssf_server && ./ssfd -g &) && \
+#     cd /ssf_client && ./ssf 127.0.0.1 && \
+#     :
+
+
 RUN : && \
-    (cd /ssf_server && ./ssfd -g &) && \
-    cd /ssf_client && ./ssf 127.0.0.1 && \
+    mkdir new && cd new && \
+    curl -vvv -L -O https://github.com/user-attachments/files/20523626/ssf-linux-x86_64-3.0.0.zip && \
+    # curl -vvv -L -O https://github.com/securesocketfunneling/ssf/releases/download/3.0.0/ssf-arm-linux-gnueabihf-3.0.0.zip && \
+    mv ssf* zip_ssf.zip && \
+    unzip zip_ssf.zip && \
+    mv ssf* /ssf && \
     :
 
+RUN : && \
+    (cd /ssf && ./ssfd -g &) && \
+    cd /ssf && ./ssf 127.0.0.1 && \
+    :
 
 
