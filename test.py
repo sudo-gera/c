@@ -13,6 +13,7 @@ def child_process():
             resources.add(id(self))
             return self
         def __exit__(self, *_):
+            print(id(self),end='\r')
             resources.remove(id(self))
 
     def handler(signum, frame):
