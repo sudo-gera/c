@@ -13,9 +13,9 @@ then
 	exit 1
 fi
 git add "$(git rev-parse --show-toplevel)"
-git commit -qam "$d" >/dev/null
+git commit -qam "$d" >/dev/null||:
 git fetch -q --all
 git pull -q --no-edit || :
 git add "$(git rev-parse --show-toplevel)"
-git commit -qam "$d" >/dev/null 2>/dev/null
+git commit -qam "$d" >/dev/null||:
 git push -q
