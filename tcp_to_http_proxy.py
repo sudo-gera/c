@@ -41,6 +41,7 @@ async def copy(reader: stream.Stream, writer: stream.Stream, _hex):
             chunk_size = 256
             chunk = data[:chunk_size]
             data = data[chunk_size:]
+            #print(reader, writer, chunk)
             tasks << new << asyncio.create_task(writer.safe_write(chunk))
             await asyncio.sleep(args.sleep)
         await asyncio.gather(*tasks)
