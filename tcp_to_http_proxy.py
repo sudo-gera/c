@@ -26,6 +26,28 @@ class New:
 new = New()
 
 async def copy(reader: stream.Stream, writer: stream.Stream, _hex):
+<<<<<<< HEAD
+    buf = b''
+    while (data := buf + await reader.read(2**16)):
+        buf=b''
+        if _hex == 'encode':
+            data = b''.join([f'{c:02x}'.encode() for c in data])
+        if _hex == 'decode':
+            if len(data) % 2:
+                buf += data[-1:]
+                data = data[:-1]
+            data = int(data, 16).to_bytes(len(data)//2, 'big')
+        tasks = []
+        while data:
+            chunk_size = 256
+            chunk = data[:chunk_size]
+            data = data[chunk_size:]
+            #print(reader, writer, chunk)
+            tasks << new << asyncio.create_task(writer.safe_write(chunk))
+            await asyncio.sleep(args.sleep)
+        await asyncio.gather(*tasks)
+        await writer.drain()
+=======
     if _hex not in ['encode', 'decode'] and args.sleep == 0:
         while (data := await reader.read(2**16)):
             writer.write(data)
@@ -50,6 +72,7 @@ async def copy(reader: stream.Stream, writer: stream.Stream, _hex):
                 await asyncio.sleep(args.sleep)
             await asyncio.gather(*tasks)
             await writer.drain()
+>>>>>>> 0142dbb0aec52126c09d9ae6af839eecd851b013
 
 @stream.streamify
 async def connection(server_socket: stream.Stream):
