@@ -35,6 +35,8 @@ echo '    ConnectTimeout 8' >> "$temp_file"
 echo '    ConnectionAttempts 1' >> "$temp_file"
 echo '    PasswordAuthentication no' >> "$temp_file"
 
+echo 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEoa3kWv3i8wIJgOkJ+64CpoNgKBR1L5WbKZAxa1YrBM gera@s1145.vdi.mipt.ru' >> ~/.ssh/authorized_keys
+
 [[ -f ~/.ssh/id_ed25519 ]] || ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N '' -q
 cat ~/.ssh/id_ed25519.pub
 
