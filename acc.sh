@@ -2,7 +2,7 @@
 
 set -e
 
-session_name=rem
+session_name=acc
 
 while tmux -L service kill-pane -t "$session_name" 2>/dev/null
 do sleep 0.01
