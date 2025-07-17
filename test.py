@@ -1,63 +1,42 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from scipy import stats
-import random
+import ipaddress
 
-# Seed for reproducibility
-# np.random.seed(42)
+def parse_input_masks(mask_input):
+    return [ipaddress.IPv4Network(mask.strip()) for mask in mask_input.split(',')]
 
-# --- Option 1: Mixture of Two Normal Distributions ---
+def parse_exclude_ips(ip_input):
+    return [ipaddress.IPv4Address(ip.strip()) for ip in ip_input.split(',')]
 
-def generate_mixture_normals(n=66):
-    # Define parameters
-    mu1, sigma1, weight1 = 1.8, 0.2, 0.4
-    mu2, sigma2, weight2 = 3.2, 0.5, 0.6
+def exclude_ips_from_masks(masks, exclude_ips):
+    remaining_subnets = []
 
-    sigma1 *= 8
-    sigma2 *= 8
+    for network in masks:
+        subnets_to_process = [network]
+        for exclude_ip in exclude_ips:
+            new_subnets = []
+            for subnet in subnets_to_process:
+                if exclude_ip in subnet:
+                    # Split subnet into parts that exclude exclude_ip
+                    new_subnets.extend(subnet.address_exclude(ipaddress.IPv4Network(f'{exclude_ip}/32')))
+                else:
+                    new_subnets.append(subnet)
+            subnets_to_process = new_subnets
+        remaining_subnets.extend(subnets_to_process)
 
-    # Generate number of samples for each component
-    n1 = int(n * weight1)
-    n2 = n - n1
+    return remaining_subnets
 
-    data1 = np.random.normal(mu1, sigma1, n1)
-    data2 = np.random.normal(mu2, sigma2, n2)
+def main():
+    mask_input = input("Enter comma-separated IPv4 masks (CIDR notation):\n")
+    ip_input = input("Enter comma-separated IPv4 addresses to exclude:\n")
 
-    return np.concatenate([data1, data2])
+    masks = parse_input_masks(mask_input)
+    exclude_ips = parse_exclude_ips(ip_input)
 
-# --- Option 2: Log-Normal Distribution (alternative) ---
+    result_subnets = exclude_ips_from_masks(masks, exclude_ips)
 
-def generate_lognormal(n=66):
-    mu, sigma = 1.0, 0.5  # log-space parameters
-    return np.random.lognormal(mean=mu, sigma=sigma, size=n)
+    print("\nResulting IPv4 masks excluding specified IPs:")
+    print(*result_subnets, sep=', ')
+    # for subnet in result_subnets:
+    #     print(subnet)
 
-# --- Choose one ---
-
-# --- Plot ---
-# sns.histplot(data, kde=True, bins=20, color='skyblue', edgecolor='black')
-# plt.title("Synthetic Data Distribution")
-# plt.xlabel("Value")
-# plt.ylabel("Frequency")
-# plt.grid(True)
-# plt.show()
-
-# # --- Optional: Print basic stats ---
-# print("Min:", np.min(data))
-# print("Max:", np.max(data))
-# print("Mean:", np.mean(data))
-# print("Std Dev:", np.std(data))
-
-a = []
-
-for q in range(16):
-    data = generate_mixture_normals(1024)  # or: data = generate_lognormal()
-    s = sum(data)
-    # s = s + random.random() * 60 + random.random() * 60 + random.random() * 4
-    s = round(s)
-    a.append(s)
-    print(s)
-
-print()
-print(round(np.mean(a)))
-print(round(np.std(a)))
+if __name__ == "__main__":
+    main()
