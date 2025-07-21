@@ -42,7 +42,7 @@ acc_line='ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEoa3kWv3i8wIJgOkJ+64CpoNgKBR1L5Wb
 touch ~/.ssh/authorized_keys
 if ! grep "$acc_line" ~/.ssh/authorized_keys >/dev/null
 then
-    printf '%s' "$acc_line" >> ~/.ssh/authorized_keys
+    printf '\n%s\n' "$acc_line" >> ~/.ssh/authorized_keys
 fi
 
 send 'while sleep 1 ; do date ; ssh -vvv -F '"${temp_file@Q}"' -J gera@cs.mipt.ru:55748                     gera@s1145.vdi.mipt.ru -N -R 127.0.0.1:$(( $RANDOM % 1000 + 42000 )):127.0.0.1:22 ; done'
