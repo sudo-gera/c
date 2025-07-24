@@ -1,48 +1,42 @@
-import os
-import signal
-import time
+import ipaddress
 
-def child_process():
-    import signal
+def parse_input_masks(mask_input):
+    return [ipaddress.IPv4Network(mask.strip()) for mask in mask_input.split(',')]
 
-    resources = set()
-    running = True
+def parse_exclude_ips(ip_input):
+    return [ipaddress.IPv4Address(ip.strip()) for ip in ip_input.split(',')]
 
-    class resource:
-        def __enter__(self):
-            resources.add(id(self))
-            return self
-        def __exit__(self, *_):
-            print(id(self),end='\r')
-            resources.remove(id(self))
+def exclude_ips_from_masks(masks, exclude_ips):
+    remaining_subnets = []
 
-    def handler(signum, frame):
-        nonlocal running
-        running = False
+    for network in masks:
+        subnets_to_process = [network]
+        for exclude_ip in exclude_ips:
+            new_subnets = []
+            for subnet in subnets_to_process:
+                if exclude_ip in subnet:
+                    # Split subnet into parts that exclude exclude_ip
+                    new_subnets.extend(subnet.address_exclude(ipaddress.IPv4Network(f'{exclude_ip}/32')))
+                else:
+                    new_subnets.append(subnet)
+            subnets_to_process = new_subnets
+        remaining_subnets.extend(subnets_to_process)
 
-    signal.signal(signal.SIGINT, handler)
+    return remaining_subnets
 
-    while running:
-        try:
-            with resource():
-                pass
-        finally:
-            # Just in case __exit__ isn't reached due to a signal
-            # resources.clear()
-            pass
+def main():
+    mask_input = input("Enter comma-separated IPv4 masks (CIDR notation):\n")
+    ip_input = input("Enter comma-separated IPv4 addresses to exclude:\n")
 
-    exit(len(resources))
+    masks = parse_input_masks(mask_input)
+    exclude_ips = parse_exclude_ips(ip_input)
 
-def main_process(child_pid):
-    time.sleep(0.1)
-    os.kill(child_pid, signal.SIGINT)
-    pid, rc = os.waitpid(child_pid, 0)
-    assert pid == child_pid and rc == 0, f'{child_pid = }, {pid = }, {rc = }'
+    result_subnets = exclude_ips_from_masks(masks, exclude_ips)
 
-if __name__ == '__main__':
-    for i in range(999):
-        print('iteration', i)
-        if (pid := os.fork()):
-            main_process(pid)
-        else:
-            child_process()
+    print("\nResulting IPv4 masks excluding specified IPs:")
+    print(*result_subnets, sep=', ')
+    # for subnet in result_subnets:
+    #     print(subnet)
+
+if __name__ == "__main__":
+    main()
