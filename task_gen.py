@@ -34,6 +34,10 @@ def create_c_file():
         char password[1024];
 
         printf("Enter password:");
+<<<<<<< HEAD
+=======
+
+>>>>>>> da00d1a8985369a4375add8d5c2063d639b03b02
         scanf("%1023s", password);
 
         printf("No flag for this password, sorry.\\n");
@@ -76,10 +80,12 @@ import sys
 import os
 import shutil
 import uuid
+
 dirname = '___' + uuid.uuid4().hex + '___'
 print(f'creating new dir: {dirname}')
 os.mkdir(dirname)
 print('done!\n')
+
 print(f'creating program in "{dirname}/public_task.c" and "{dirname}/private_task.c".')
 public_data, private_data = create_c_file()
 with open(f'{dirname}/public_task.c', 'w') as file:
@@ -87,30 +93,18 @@ with open(f'{dirname}/public_task.c', 'w') as file:
 with open(f'{dirname}/private_task.c', 'w') as file:
     file.write(private_data)
 print('done!\n')
+
 print('compiling programs')
-<<<<<<< HEAD
 compile_command = f'gcc -static {dirname}/public_task.c -o {dirname}/ready_to_show_executable'
 print(compile_command)
 os.system(compile_command)
 compile_command = f'gcc -static {dirname}/private_task.c -o {dirname}/patched_executable'
-=======
-<<<<<<< HEAD
-compile_command = f'gcc -static {dirname}/public_task.c -o {dirname}/ready_to_show_executable'
-print(compile_command)
-os.system(compile_command)
-compile_command = f'gcc -static {dirname}/private_task.c -o {dirname}/patched_executable'
-=======
-compile_command = f'gcc {dirname}/public_task.c -o {dirname}/ready_to_show_executable'
-print(compile_command)
-os.system(compile_command)
-compile_command = f'gcc {dirname}/private_task.c -o {dirname}/patched_executable'
->>>>>>> a87d2fb9fe3890a1bddb07794c135ddad0685374
->>>>>>> 230ab61b7037a0787a12e7044c83c2ad95502196
 print(compile_command)
 os.system(compile_command)
 print('done!\n')
-print('Getting flag')
-command = f'{dirname}/patched_executable'
+
+print('Executting command to get flag')
+command = f'./{dirname}/patched_executable'
 print(command)
 flag = os.popen(command).read()
 print('done!\n')
