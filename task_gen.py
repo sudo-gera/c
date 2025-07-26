@@ -10,6 +10,16 @@ def create_c_file():
     #include <inttypes.h>
     #include <stdlib.h>
 
+<<<<<<< HEAD
+=======
+=======
+<<<<<<< HEAD
+
+=======
+        
+>>>>>>> a87d2fb9fe3890a1bddb07794c135ddad0685374
+>>>>>>> 230ab61b7037a0787a12e7044c83c2ad95502196
+>>>>>>> c6eb863bf79cfed6f685dc3d2583b88cd06a1fb5
     #define t uint32_t
     #define tp PRIu32
 
@@ -36,6 +46,16 @@ def create_c_file():
         printf("Enter password:");
 
         scanf("%1023s", password);
+<<<<<<< HEAD
+=======
+=======
+<<<<<<< HEAD
+        scanf("%1023s", password);
+=======
+        scanf("%1023s", password); 
+>>>>>>> a87d2fb9fe3890a1bddb07794c135ddad0685374
+>>>>>>> 230ab61b7037a0787a12e7044c83c2ad95502196
+>>>>>>> c6eb863bf79cfed6f685dc3d2583b88cd06a1fb5
 
         printf("No flag for this password, sorry.\\n");
     '''+'}'+f'''
@@ -93,6 +113,22 @@ compile_command = f'gcc -static {dirname}/public_task.c -o {dirname}/ready_to_sh
 print(compile_command)
 os.system(compile_command)
 compile_command = f'gcc -static {dirname}/private_task.c -o {dirname}/patched_executable'
+<<<<<<< HEAD
+=======
+=======
+<<<<<<< HEAD
+compile_command = f'gcc -static {dirname}/public_task.c -o {dirname}/ready_to_show_executable'
+print(compile_command)
+os.system(compile_command)
+compile_command = f'gcc -static {dirname}/private_task.c -o {dirname}/patched_executable'
+=======
+compile_command = f'gcc {dirname}/public_task.c -o {dirname}/ready_to_show_executable'
+print(compile_command)
+os.system(compile_command)
+compile_command = f'gcc {dirname}/private_task.c -o {dirname}/patched_executable'
+>>>>>>> a87d2fb9fe3890a1bddb07794c135ddad0685374
+>>>>>>> 230ab61b7037a0787a12e7044c83c2ad95502196
+>>>>>>> c6eb863bf79cfed6f685dc3d2583b88cd06a1fb5
 print(compile_command)
 os.system(compile_command)
 print('done!\n')
