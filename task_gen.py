@@ -100,8 +100,8 @@ print(compile_command)
 os.system(compile_command)
 print('done!\n')
 
-print('Getting flag')
-command = f'{dirname}/patched_executable'
+print('Executting command to get flag')
+command = f'./{dirname}/patched_executable'
 print(command)
 flag = os.popen(command).read()
 print('done!\n')
