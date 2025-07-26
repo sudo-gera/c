@@ -9,11 +9,7 @@ def create_c_file():
     #include <stdint.h>
     #include <inttypes.h>
     #include <stdlib.h>
-<<<<<<< HEAD
 
-=======
-        
->>>>>>> a87d2fb9fe3890a1bddb07794c135ddad0685374
     #define t uint32_t
     #define tp PRIu32
 
@@ -38,11 +34,8 @@ def create_c_file():
         char password[1024];
 
         printf("Enter password:");
-<<<<<<< HEAD
+
         scanf("%1023s", password);
-=======
-        scanf("%1023s", password); 
->>>>>>> a87d2fb9fe3890a1bddb07794c135ddad0685374
 
         printf("No flag for this password, sorry.\\n");
     '''+'}'+f'''
@@ -96,17 +89,10 @@ with open(f'{dirname}/private_task.c', 'w') as file:
     file.write(private_data)
 print('done!\n')
 print('compiling programs')
-<<<<<<< HEAD
 compile_command = f'gcc -static {dirname}/public_task.c -o {dirname}/ready_to_show_executable'
 print(compile_command)
 os.system(compile_command)
 compile_command = f'gcc -static {dirname}/private_task.c -o {dirname}/patched_executable'
-=======
-compile_command = f'gcc {dirname}/public_task.c -o {dirname}/ready_to_show_executable'
-print(compile_command)
-os.system(compile_command)
-compile_command = f'gcc {dirname}/private_task.c -o {dirname}/patched_executable'
->>>>>>> a87d2fb9fe3890a1bddb07794c135ddad0685374
 print(compile_command)
 os.system(compile_command)
 print('done!\n')
