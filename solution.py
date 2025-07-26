@@ -3,8 +3,8 @@ with open(sys.argv[1], 'rb') as file:
     data = file.read()
 
 data = data.replace(
-    bytes.fromhex('97ffffd2')[::-1],
-    bytes.fromhex('97ffff6e')[::-1],
+    bytes.fromhex('75 0c'),
+    bytes.fromhex('90 90'),
 )
 
 with open(sys.argv[2], 'wb') as file:
