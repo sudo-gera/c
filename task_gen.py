@@ -9,15 +9,7 @@ def create_c_file():
     #include <stdint.h>
     #include <inttypes.h>
     #include <stdlib.h>
-<<<<<<< HEAD
 
-=======
-<<<<<<< HEAD
-
-=======
-        
->>>>>>> a87d2fb9fe3890a1bddb07794c135ddad0685374
->>>>>>> 230ab61b7037a0787a12e7044c83c2ad95502196
     #define t uint32_t
     #define tp PRIu32
 
@@ -42,15 +34,7 @@ def create_c_file():
         char password[1024];
 
         printf("Enter password:");
-<<<<<<< HEAD
         scanf("%1023s", password);
-=======
-<<<<<<< HEAD
-        scanf("%1023s", password);
-=======
-        scanf("%1023s", password); 
->>>>>>> a87d2fb9fe3890a1bddb07794c135ddad0685374
->>>>>>> 230ab61b7037a0787a12e7044c83c2ad95502196
 
         printf("No flag for this password, sorry.\\n");
     '''+'}'+f'''
