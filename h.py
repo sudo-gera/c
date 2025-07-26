@@ -1,4 +1,5 @@
-HOME=1
+from pathlib import Path
+HOME=str(Path.home())+'/'
 try:
     from dataclasses import *
     import dataclasses
@@ -116,13 +117,14 @@ def rand(q=2**64,e=None):
 exec(open(str(Path.home())+'/.pythonrc').read())
 def urlread(*a,**s):
     return urlopen(*a,**s).read().decode()
-class Object(dict):
-    def __getattr__(s,n):
-        return s[n]
-    def __setattr__(s,n,v):
-        s[n]=v
-    def __delattr__(s,n):
-        del s[n]
+from object import *
+# class Object(dict):
+#     def __getattr__(s,n):
+#         return s[n]
+#     def __setattr__(s,n,v):
+#         s[n]=v
+#     def __delattr__(s,n):
+#         del s[n]
 false=False
 true=True
 def bisect_in(a,s):
@@ -235,20 +237,20 @@ def divizors(q):
         f.append(q//e)
     return f
 
-def from_radix_list(q,e):
+def from_radix_list(value : list[int], base: int) -> int:
     r=0
-    for w in q:
-        r*=e
+    for w in value:
+        r*=base
         r+=w
     return r
 
-def to_radix_list(q,e):
-    z=abs(q)
+def to_radix_list(value: int, base: int) -> list[int]:
+    z=abs(value)
     x=z
-    if bin(e).count('1')==1:
+    if bin(base).count('1')==1:
         s=list(bin(z)[2:][::-1])
         s=[int(w) for w in s]
-        l=len(bin(e))-3
+        l=len(bin(base))-3
         while len(s)%l:
             s.append(0)
         r=[]
@@ -261,20 +263,18 @@ def to_radix_list(q,e):
             r.append(a)
         if not r:
             r=[0]
-        assert x==from_radix_list(r,e)
-        if q<0:
-            r+=[-1]
-        return r
-    s=[]
-    while z:
-        s.append(z%e)
-        z//=e
-    if not s:
-        s=[0]
-    s=s[::-1]
-    assert x==from_radix_list(s,e)
-    if q<0:
-        s=[-1]+s
+        s=r
+    else:
+        s=[]
+        while z:
+            s.append(z%base)
+            z//=base
+        if not s:
+            s=[0]
+        s=s[::-1]
+    assert x==from_radix_list(s,base)
+    if value<0:
+        s = [-w for w in s]
     return s
 
 def to_radix(q,e):

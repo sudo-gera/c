@@ -25,21 +25,21 @@ typedef struct bn_s bn ;
 auto print_one(const bn*q) {
 	char b[99999] ;
 	b[0] = 0 ;
-	sprintf(b+strlen(b) , "\x1b[92m%s\x1b[0m" , q -> sign == 1 ? "+" : q -> sign == -1 ? "-" : q -> sign > 1 ? "++" : q -> sign < -1 ? "--" : "0") ;
+	snprintf(b+strlen(b), sizeof(b)-strlen(b) , "\x1b[92m%s\x1b[0m" , q -> sign == 1 ? "+" : q -> sign == -1 ? "-" : q -> sign > 1 ? "++" : q -> sign < -1 ? "--" : "0") ;
 	int c = 0 ;
 	if (q -> size) {
 		for (int t = q -> size-1 ; t > -1 ; --t) {
 			if (c % 2) {
-				sprintf(b+strlen(b) , "\x1b[92m") ;
+				snprintf(b+strlen(b) ,sizeof(b)-strlen(b), "\x1b[92m") ;
 			}
-			sprintf(b+strlen(b) , "%0*x" , 8 , q -> vect[t]) ;
+			snprintf(b+strlen(b) ,sizeof(b)-strlen(b), "%0*x" , 8 , q -> vect[t]) ;
 			if (c % 2) {
-				sprintf(b+strlen(b) , "\x1b[0m") ;
+				snprintf(b+strlen(b) ,sizeof(b)-strlen(b), "\x1b[0m") ;
 			}
 			++c ;
 		}
 	} else {
-		sprintf(b+strlen(b) , "\x1b[93m%0*llx\x1b[0m" , 16 , uint64_t(q -> vect)) ;
+		snprintf(b+strlen(b) ,sizeof(b)-strlen(b), "\x1b[93m%0*llx\x1b[0m" , 16 , uint64_t(q -> vect)) ;
 	}
 	return str(b) ;
 }

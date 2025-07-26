@@ -1,0 +1,8 @@
+start[ast.Module]: void* b=begin a=(statement)* end void* "$" {
+    ast.Module(
+        token=b,
+        body=[q for q in a if q is not ...],
+        type_ignores=[],
+    )
+}
+

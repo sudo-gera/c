@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+(
+
+date >> ~/test.txt
+exit
+
+)

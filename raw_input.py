@@ -7,9 +7,9 @@ def receive_key_event_unsafe():
     # if you will use it in while(1)
     # you will never stop
     # ctrl+C returns as 3
-    fd=sys.stdin.fileno()
-    mode=termios.tcgetattr(fd)
-    save=copy.copy(mode)
+    fd = sys.stdin.fileno()
+    mode = termios.tcgetattr(fd)
+    save = copy.copy(mode)
     mode[0] &= ~(termios.BRKINT | termios.ICRNL | termios.INPCK | termios.ISTRIP | termios.IXON)
     mode[1] &= ~(termios.OPOST)
     mode[2] &= ~(termios.CSIZE | termios.PARENB)
@@ -18,7 +18,7 @@ def receive_key_event_unsafe():
     mode[6][termios.VMIN] = 1
     mode[6][termios.VTIME] = 0
     termios.tcsetattr(fd, termios.TCSAFLUSH, mode)
-    c=sys.stdin.buffer.read(1)
+    c = sys.stdin.buffer.read(1)
     termios.tcsetattr(fd, termios.TCSADRAIN, save)
     return c
 
@@ -31,11 +31,14 @@ def receive_key_event():
     #   ctrl+B is 2
     #   ctrl+C is 3
     #   ctrl+D is 4
-    if k[0]<5:
+    if k[0] < 5:
         exit(0)
-    return k;
+    return k
 
 
-while(1):
-    sys.stdout.buffer.write(receive_key_event())
+while True:
+    if len(sys.argv) > 1:
+        sys.stdout.buffer.write(receive_key_event_unsafe())
+    else:
+        sys.stdout.buffer.write(receive_key_event())
     sys.stdout.flush()

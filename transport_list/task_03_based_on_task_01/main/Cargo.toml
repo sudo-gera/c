@@ -1,0 +1,25 @@
+[package]
+name = "main"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+lazy_static = "1.5.0"
+# base = { path = "../base" }
+# abstract_transport = { path = "../abstract_transport" }
+# speed_attr = { path = "../speed_attr" }
+# distance_attr = { path = "../distance_attr" }
+types = { path = "../types" }
+transport_type = { path = "../transport_type" }
+distance_attr = { path = "../distance_attr" }
+speed_attr = { path = "../speed_attr" }
+plane_type = { path = "../plane_type" }
+train_type = { path = "../train_type" }
+flight_range_attr = { path = "../flight_range_attr" }
+load_capacity_attr = { path = "../load_capacity_attr" }
+wagon_number_attr = { path = "../wagon_number_attr" }
+object = { path = "../object" }
+anyhow = "1.0.98"
+double_linked_list = { path = "../double_linked_list" }
+list_of_objects = { path = "../list_of_objects" }
+ideal_time_meth = { path = "../ideal_time_meth" }

@@ -37,7 +37,7 @@ knownServer = (remoteHost, remotePort)
 sys.stdout.write('All set, listening on '+str(localPort)+'.\n')
 while True:
 	data, addr = s.recvfrom(32768)
-	if knownClient is None or addr != knownServer:
+	if addr != knownServer:
 		if debug:
 			print("")
 		knownClient = addr
