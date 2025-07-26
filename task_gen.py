@@ -34,10 +34,7 @@ def create_c_file():
         char password[1024];
 
         printf("Enter password:");
-<<<<<<< HEAD
-=======
 
->>>>>>> da00d1a8985369a4375add8d5c2063d639b03b02
         scanf("%1023s", password);
 
         printf("No flag for this password, sorry.\\n");
