@@ -2,6 +2,7 @@ operations = 9999
 import random
 import io
 
+
 def create_c_file():
     output = io.StringIO()
     print(f'''
@@ -73,15 +74,18 @@ def create_c_file():
 
     return public_data, private_data
 
+
 import sys
 import os
 import shutil
 import uuid
 
+
 dirname = '___' + uuid.uuid4().hex + '___'
 print(f'creating new dir: {dirname}')
 os.mkdir(dirname)
 print('done!\n')
+
 
 print(f'creating program in "{dirname}/public_task.c" and "{dirname}/private_task.c".')
 public_data, private_data = create_c_file()
@@ -91,19 +95,22 @@ with open(f'{dirname}/private_task.c', 'w') as file:
     file.write(private_data)
 print('done!\n')
 
+
 print('compiling programs')
-compile_command = f'gcc -static {dirname}/public_task.c -o {dirname}/ready_to_show_executable'
+compile_command = f'gcc -O0 -static {dirname}/public_task.c -o {dirname}/ready_to_show_executable'
 print(compile_command)
-os.system(compile_command)
-compile_command = f'gcc -static {dirname}/private_task.c -o {dirname}/patched_executable'
+assert os.system(compile_command) == 0
+compile_command = f'gcc -O0 -static {dirname}/private_task.c -o {dirname}/patched_executable'
 print(compile_command)
-os.system(compile_command)
+assert os.system(compile_command) == 0
 print('done!\n')
+
 
 print('Executting command to get flag')
 command = f'./{dirname}/patched_executable'
 print(command)
 flag = os.popen(command).read()
 print('done!\n')
+
 
 print(f'All done! new variant of this task is created.\nYou can give "{dirname}/ready_to_show_executable" in contest and expect answer to be {flag}')
