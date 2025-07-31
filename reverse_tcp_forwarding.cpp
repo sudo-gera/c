@@ -38,17 +38,20 @@
 #define FORWARD(val) (std::forward<decltype(val)>(val))
 #define VALUE_AS_STRING_AND_VALUE(x) #x << "\t\t\t\t" << x
 
+#define BUFFER_SIZE 8192
+#define none 0x5555'5555'5555'5555
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // clang-format off
 std::array<const char*, 256> escape = {
     "\\x00", "\\x01", "\\x02", "\\x03", "\\x04", "\\x05", "\\x06", "\\x07", "\\x08", "\\t",   "\\n",   "\\x0b", "\\x0c", "\\r",   "\\x0e", "\\x0f",
     "\\x10", "\\x11", "\\x12", "\\x13", "\\x14", "\\x15", "\\x16", "\\x17", "\\x18", "\\x19", "\\x1a", "\\x1b", "\\x1c", "\\x1d", "\\x1e", "\\x1f",
-    " ",     "!",     "\"",    "#",     "$",     "%",     "&",     "\'",    "(",     ")",     "*",     "+",     ",",     "-",     ".",     "/",    
-    "0",     "1",     "2",     "3",     "4",     "5",     "6",     "7",     "8",     "9",     ":",     ";",     "<",     "=",     ">",     "?",    
-    "@",     "A",     "B",     "C",     "D",     "E",     "F",     "G",     "H",     "I",     "J",     "K",     "L",     "M",     "N",     "O",    
-    "P",     "Q",     "R",     "S",     "T",     "U",     "V",     "W",     "X",     "Y",     "Z",     "[",     "\\\\",  "]",     "^",     "_",    
-    "`",     "a",     "b",     "c",     "d",     "e",     "f",     "g",     "h",     "i",     "j",     "k",     "l",     "m",     "n",     "o",    
+    " ",     "!",     "\"",    "#",     "$",     "%",     "&",     "\'",    "(",     ")",     "*",     "+",     ",",     "-",     ".",     "/",
+    "0",     "1",     "2",     "3",     "4",     "5",     "6",     "7",     "8",     "9",     ":",     ";",     "<",     "=",     ">",     "?",
+    "@",     "A",     "B",     "C",     "D",     "E",     "F",     "G",     "H",     "I",     "J",     "K",     "L",     "M",     "N",     "O",
+    "P",     "Q",     "R",     "S",     "T",     "U",     "V",     "W",     "X",     "Y",     "Z",     "[",     "\\\\",  "]",     "^",     "_",
+    "`",     "a",     "b",     "c",     "d",     "e",     "f",     "g",     "h",     "i",     "j",     "k",     "l",     "m",     "n",     "o",
     "p",     "q",     "r",     "s",     "t",     "u",     "v",     "w",     "x",     "y",     "z",     "{",     "|",     "}",     "~",     "\\x7f",
     "\\x80", "\\x81", "\\x82", "\\x83", "\\x84", "\\x85", "\\x86", "\\x87", "\\x88", "\\x89", "\\x8a", "\\x8b", "\\x8c", "\\x8d", "\\x8e", "\\x8f",
     "\\x90", "\\x91", "\\x92", "\\x93", "\\x94", "\\x95", "\\x96", "\\x97", "\\x98", "\\x99", "\\x9a", "\\x9b", "\\x9c", "\\x9d", "\\x9e", "\\x9f",
@@ -149,6 +152,7 @@ struct sys_msg_printer : std::stringstream {
     add_syscall(signal)
     add_syscall(clock_gettime)
     add_syscall(pipe)
+    add_syscall(getsockopt)
 #ifdef use_kqueue
     add_syscall(kqueue)
     add_syscall(kevent)
@@ -177,7 +181,7 @@ using timespec_pair = std::pair<
 
 timespec_pair monotonic(){
     struct timespec tp;
-    sys.clock_gettime(CLOCK_MONOTONIC_RAW, &tp);
+    sys.clock_gettime(CLOCK_MONOTONIC, &tp);
     return {tp.tv_sec, tp.tv_nsec};
 }
 
@@ -248,8 +252,13 @@ public:
         return invoker_(callable_, std::forward<Args>(args)...);
     }
 
-    explicit operator bool() const noexcept {
+    operator bool() const noexcept {
         return invoker_ != nullptr;
+    }
+
+    void reset(){
+        std::destroy_at(this);
+        std::construct_at(this);
     }
 };
 
@@ -698,17 +707,27 @@ int ll_create_listening_socket(const sockaddr& addr){
 }
 
 std::pair<
-    sockaddr,
-    int
+    int,
+    sockaddr
 > ll_accept(int s){
     sockaddr addr;
     std::memset(&addr, 0, sizeof(addr));
     socklen_t addr_len = sizeof(addr);
     int c = sys.accept(s, &addr, &addr_len);
     return {
-        addr,
         c,
+        addr,
     };
+}
+
+using error_t = std::decay_t<decltype(errno)>;
+
+error_t get_errno(int fd){
+    error_t err = 0;
+    socklen_t err_len = sizeof(err);
+    sys.getsockopt(fd, SOL_SOCKET, SO_ERROR, &err, &err_len);
+    assert(err_len == sizeof(err));
+    return err;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -794,8 +813,14 @@ uint32_t mode = 0LLU-1;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+struct fd_owner;
+
+int get_fd(const fd_owner& s);
+
 struct fd_owner{
+private:
     int s;
+public:
     fd_owner(int s):
         s(s)
     {
@@ -807,39 +832,46 @@ struct fd_owner{
     }
     fd_owner(fd_owner&&) = delete;
     fd_owner(const fd_owner&) = delete;
-    operator int()const{
+    int get_fd_()const{
         return s;
     }
 };
+
+int get_fd(const fd_owner& s){
+    return s.get_fd_();
+}
+
+struct stream_socket_owner;
+struct server_socket_owner;
 
 struct socket_owner{
 private:
     fd_owner s;
     sockaddr addr;
-    socket_owner(int s, sockaddr addr):
-        s(s),
-        addr(addr)
+    socket_owner(std::pair<int, sockaddr> s):
+        s(s.first),
+        addr(s.second)
     {}
-    operator int()const{
-        return s.s;
+    operator fd_owner&(){
+        return s;
     }
-    host_port hp()const{
-        return sockaddr_to_host_port(addr);
+    operator sockaddr()const{
+        return addr;
     }
     friend stream_socket_owner;
     friend server_socket_owner;
 };
 
 struct stream_socket_owner{
+private:
     socket_owner s;
     bool shut_rd_ = false;
     bool shut_wr_ = false;
-private:
-    stream_socket_owner(int s, sockaddr addr):
-        s(s, addr)
-    {}
 public:
-    operator int()const{
+    operator fd_owner&(){
+        return s;
+    }
+    operator sockaddr()const{
         return s;
     }
     void shut_rd(){
@@ -858,56 +890,49 @@ public:
         shut_rd();
         shut_wr();
     }
-    static stream_socket_owner connect(const sockaddr& addr){
-        return {
-            ll_create_connecting_socket(addr), addr
-        };
-    }
-    friend server_socket_owner;
+    stream_socket_owner(const sockaddr& addr):
+        s({ll_create_connecting_socket(addr), addr})
+    {}
+    stream_socket_owner(fd_owner& server):
+        s(ll_accept(get_fd(server)))
+    {}
 };
 
 struct server_socket_owner{
-    socket_owner s;
 private:
-    server_socket_owner(int s, sockaddr addr):
-        s(s, addr)
-    {}
+    socket_owner s;
 public:
-    operator int()const{
+    operator sockaddr()const{
         return s;
     }
-    static server_socket_owner start_server(const sockaddr& addr){
-        return {
-            ll_create_listening_socket(addr),
-            addr,
-        };
-    }   
-    stream_socket_owner accept(){
-        auto [addr, c] = ll_accept(s);
-        return {c, addr};
-    }    
+    operator fd_owner&(){
+        return s;
+    }
+    server_socket_owner(const sockaddr& addr):
+        s({ll_create_listening_socket(addr), addr})
+    {}
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct one_socket{
-    char buf_to_sent_into_this_socket[8192];
-    std::optional<stream_socket_owner> socket;
-    size_t buf_begin = 0;
-    size_t buf_end = 0;
-    bool got_eof_from_this_socket = false;
-    bool got_error_from_this_socket = false;
-    // bool this_socket_has_data_to_read = false;
-    // bool this_socket_has_space_to_write = false;
-    bool socket_waits_to_write = false;
-    bool socket_waits_to_read = false;
-};
+// struct one_socket{
+//     char buf_to_sent_into_this_socket[8192];
+//     std::optional<stream_socket_owner> socket;
+//     size_t buf_begin = 0;
+//     size_t buf_end = 0;
+//     bool got_eof_from_this_socket = false;
+//     bool got_error_from_this_socket = false;
+//     // bool this_socket_has_data_to_read = false;
+//     // bool this_socket_has_space_to_write = false;
+//     bool socket_waits_to_write = false;
+//     bool socket_waits_to_read = false;
+// };
 
-struct two_sockets{
-    one_socket internal_socket;
-    one_socket external_socket;
-    time_t last_event = 0;
-};
+// struct two_sockets{
+//     one_socket internal_socket;
+//     one_socket external_socket;
+//     time_t last_event = 0;
+// };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -925,7 +950,7 @@ struct Selector{
         size_t
     > events_to_process;
 
-    void change_fd_in_pool(int fd, Callback* callback, bool old_read, bool old_write, bool new_read, bool new_write){
+    void change_fd_in_pool(fd_owner& fd, Callback* callback, bool old_read, bool old_write, bool new_read, bool new_write){
         if (old_read == new_read and old_write == new_write){
             return;
         }
@@ -952,12 +977,9 @@ struct Selector{
             new_event.events |= EPOLLOUT;
         }
 
-        sys.epoll_ctl(pool_fd, op, fd, &new_event);
+        sys.epoll_ctl(pool_fd, op, get_fd(fd), &new_event);
     }
 
-
-
-    template<typename Callback>
     void wait(std::optional<timespec_pair> timeout){
         double to_sleep = timespec_base;
         if (timeout){
@@ -970,7 +992,7 @@ struct Selector{
 
         sys.ignore(EINTR);
         events_to_process.second = sys.epoll_wait(
-            sd,
+            get_fd(s),
             events_to_process.first.data(),
             events_to_process.first.size(),
             to_sleep
@@ -1006,13 +1028,363 @@ struct Selector{
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct App{
-
-    Selector<
-        function_ref<void(bool)>
-    > selector;
+using selector_t = Selector<function_ref<void(bool)>>;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename s_owner>
+struct SplitCallbacks{
+    SplitCallbacks(selector_t& selector, s_owner& s):
+        selector(selector),
+        s(s)
+    {
+        handler.outer = this;
+    }
+
+private:
+    selector_t& selector;
+
+    s_owner& s;
+
+    using external_callback = function_ref<void(error_t)>;
+
+    bool has_err = false;
+
+    bool has_write_task = false;
+    external_callback write_callback;
+
+    bool has_read_task = false;
+    external_callback read_callback;
+
+    struct Handler{
+        SplitCallbacks* outer;
+        void operator()(bool to_write){
+            outer->handle(to_write);
+        }
+    } handler;
+
+    function_ref<void(bool)> handler_ref = handler;
+
+    void handle(bool to_write){
+        auto err = get_errno(s);
+        if (err != 0){
+            has_err = true;
+        }
+        if (to_write){
+            auto write_callback_local = write_callback;
+            write_callback.reset();
+            selector.change_fd_in_pool(s, &handler_ref, has_read_task, true, has_read_task, false);
+            has_write_task = false;
+            write_callback_local(err);
+        }else{
+            auto read_callback_local = read_callback;
+            read_callback.reset();
+            selector.change_fd_in_pool(s, &handler_ref, true, has_write_task, false, has_write_task);
+            has_read_task = false;
+            read_callback_local(err);
+        }
+    }
+
+public:
+    void wait_read(external_callback callback){
+        assert(not has_err);
+        assert(not read_callback);
+        assert(not has_read_task);
+        selector.change_fd_in_pool(s, &handler_ref, false, has_write_task, true, has_write_task);
+        read_callback = callback;
+        has_read_task = true;
+    }
+
+    void wait_write(external_callback callback){
+        assert(not has_err);
+        assert(not write_callback);
+        assert(not has_write_task);
+        selector.change_fd_in_pool(s, &handler_ref, has_read_task, false, has_read_task, true);
+        write_callback = callback;
+        has_write_task = true;
+    }
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct StreamSocketCompleter{
+
+    StreamSocketCompleter(selector_t& selector, const sockaddr& addr):
+        s(addr),
+        c(selector, s),
+        connected(false)
+    {
+        read_handler.outer = this;
+        write_handler.outer = this;
+    }
+
+    StreamSocketCompleter(selector_t& selector, fd_owner& server):
+        s(server),
+        c(selector, s),
+        connected(true)
+    {
+        read_handler.outer = this;
+        write_handler.outer = this;
+    }
+
+private:
+    stream_socket_owner s;
+    SplitCallbacks<stream_socket_owner> c;
+
+    using external_rw_callback = function_ref<void(const char*, size_t, error_t)>;
+    using external_connected_callback = function_ref<void(error_t)>;
+
+    bool connected = false;
+    external_connected_callback connected_callback;
+
+    std::array<char, 8192> write_buffer;
+    bool has_full_write_task = false;
+    size_t len_of_data_in_write_buffer = none;
+    size_t still_has_to_write = none;
+    external_rw_callback write_callback;
+
+    std::array<char, 8192> read_buffer;
+    bool has_full_read_task = false;
+    size_t len_of_data_in_read_buffer = none;
+    size_t still_has_to_read = none;
+    external_rw_callback read_callback;
+
+    struct ReadHandler{
+        StreamSocketCompleter* outer;
+        void operator()(error_t err){
+            outer->handle_read(err);
+        }
+    } read_handler;
+
+    function_ref<void(bool)> read_handler_ref = read_handler;
+
+    struct WriteHandler{
+        StreamSocketCompleter* outer;
+        void operator()(error_t err){
+            outer->handle_write(err);
+        }
+    } write_handler;
+
+    function_ref<void(bool)> write_handler_ref = write_handler;
+
+    void handle_read(error_t err){
+        if (err == 0){
+            if (has_full_read_task){
+                assert(0 < still_has_to_read);
+                assert(len_of_data_in_read_buffer + still_has_to_read <= read_buffer.size());
+                size_t readen = sys.read(get_fd(s), read_buffer.data() + len_of_data_in_read_buffer, still_has_to_read);
+                len_of_data_in_read_buffer += readen;
+                still_has_to_read -= readen;
+                if (readen != 0 and still_has_to_read != 0){
+                    return;
+                }
+            }else{
+                assert(len_of_data_in_read_buffer == 0);
+                assert(still_has_to_read == none);
+                size_t readen = sys.read(get_fd(s), read_buffer.data(), read_buffer.size());
+                len_of_data_in_read_buffer += readen;
+            }
+        }
+        auto read_callback_local = read_callback;
+        read_callback.reset();
+        auto len_of_data_in_read_buffer_local = len_of_data_in_read_buffer;
+        len_of_data_in_read_buffer = none;
+        still_has_to_read = none;
+        has_full_read_task = false;
+        read_callback_local(read_buffer.data(), len_of_data_in_read_buffer, err);
+    }
+
+    void handle_write(error_t err){
+        if (not connected){
+            if (err == 0){
+                connected = true;
+            }
+            auto connected_callback_local = connected_callback;
+            connected_callback.reset();
+            connected_callback(err);
+            return;
+        }
+        if (err == 0){
+            if (has_full_write_task){
+                assert(0 < still_has_to_write);
+                assert(still_has_to_write <= len_of_data_in_write_buffer);
+                assert(0 < len_of_data_in_write_buffer);
+                assert(len_of_data_in_write_buffer <= write_buffer.size());
+                size_t written = sys.write(get_fd(s), write_buffer.data() + len_of_data_in_write_buffer - still_has_to_write, still_has_to_write);
+                still_has_to_write -= written;
+                if (still_has_to_write != 0){
+                    return;
+                }
+            }else{
+                assert(still_has_to_write == len_of_data_in_write_buffer);
+                assert(0 < len_of_data_in_write_buffer);
+                assert(len_of_data_in_write_buffer <= write_buffer.size());
+                size_t written = sys.write(get_fd(s), write_buffer.data(), write_buffer.size());
+                still_has_to_write -= written;
+            }
+        }
+        auto write_callback_local = write_callback;
+        write_callback.reset();
+        auto len_of_data_in_write_buffer_local = len_of_data_in_write_buffer;
+        len_of_data_in_write_buffer = none;
+        auto still_has_to_write_local = still_has_to_write;
+        still_has_to_write = none;
+        has_full_write_task = false;
+        write_callback_local(write_buffer.data() + len_of_data_in_write_buffer_local - still_has_to_write_local, still_has_to_write_local, err);
+    }
+
+public:
+    void full_read(size_t len, external_rw_callback callback){
+        assert(connected);
+        assert(not read_callback);
+        assert(not has_full_read_task);
+        assert(still_has_to_read == none);
+        assert(len_of_data_in_read_buffer == none);
+        assert(len <= read_buffer.size());
+        c.wait_read(read_handler_ref);
+        read_callback = callback;
+        has_full_read_task = true;
+        still_has_to_read = len;
+    }
+
+    void partial_read(external_rw_callback callback){
+        assert(connected);
+        assert(not read_callback);
+        assert(not has_full_read_task);
+        assert(still_has_to_read == none);
+        assert(len_of_data_in_read_buffer == none);
+        c.wait_read(read_handler_ref);
+        read_callback = callback;
+    }
+
+    void full_write(const char* data, size_t len, external_rw_callback callback){
+        assert(connected);
+        assert(not write_callback);
+        assert(not has_full_write_task);
+        assert(still_has_to_write == none);
+        assert(len_of_data_in_write_buffer == none);
+        assert(len <= write_buffer.size());
+        c.wait_write(write_handler_ref);
+        memmove(write_buffer.data(), data, len);
+        write_callback = callback;
+        has_full_write_task = true;
+        still_has_to_write = len;
+    }
+
+    void partial_write(const char* data, size_t len, external_rw_callback callback){
+        assert(connected);
+        assert(not write_callback);
+        assert(not has_full_write_task);
+        assert(still_has_to_write == none);
+        assert(len_of_data_in_write_buffer == none);
+        assert(len <= write_buffer.size());
+        c.wait_write(write_handler_ref);
+        memmove(write_buffer.data(), data, len);
+        write_callback = callback;
+        still_has_to_write = len;
+    }
+
+    void write_eof(){
+        assert(connected);
+        assert(not write_callback);
+        assert(not has_full_write_task);
+        s.shut_wr();
+    }
+
+    void wait_connected(external_rw_callback callback){
+        assert(not connected);
+        c.wait_write(write_handler_ref);
+    }
+
+    operator fd_owner&(){
+        return s;
+    }
+
+    operator sockaddr()const{
+        return s;
+    }
+};
+
+struct ServerSocketCompleter{
+
+    ServerSocketCompleter(selector_t& selector, const sockaddr& addr):
+        s(addr),
+        c(selector, s)
+    {
+        read_handler.outer = this;
+    }
+
+private:
+    SplitCallbacks<server_socket_owner> c;
+    server_socket_owner s;
+
+    using external_callback = function_ref<void(error_t)>;
+    external_callback accept_callback;
+
+    struct ReadHandler{
+        ServerSocketCompleter* outer;
+        void operator()(error_t err){
+            outer->handle_read(err);
+        }
+    } read_handler;
+
+    function_ref<void(bool)> read_handler_ref = read_handler;
+
+    void handle_read(error_t err){
+        accept_callback(err);
+    }
+
+public:
+    void accept(external_callback callback){
+        accept_callback = callback;
+        c.wait_read(read_handler_ref);
+    }
+
+    operator fd_owner&(){
+        return s;
+    }
+
+    operator sockaddr()const{
+        return s;
+    }
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    struct CmdMainClientOneConnectionAttempt{
+        App& app;
+
+        stream_socket_owner connection;
+
+        struct Handler{
+            void operator()(bool to_write){
+
+            }
+        } handler;
+
+        function_ref<void(bool)> handler_ref = handler;
+
+        CmdMainClientOneConnectionAttempt(App& app, const sockaddr& addr):
+            app(app),
+            connection(stream_socket_owner::connect(addr))
+        {
+            app.selector.change_fd_in_pool(connection, &handler_ref, false, false, false, true);
+        }
+    };
+
+    struct CmdMainCleint{
+        App& app;
+
+        std::optional<stream_socket_owner> connection;
+
+        CmdMainClient(App& app, const sockaddr& addr):
+            app(app)
+        {}
+    };
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
     template<typename Callback>
     struct TcpServer{
@@ -1044,11 +1416,17 @@ struct App{
         App& app;
 
         CmdClient(App& app){
-            
+
         }
     };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct App{
+    App(App&&) = delete;
+    App(const App&) = delete;
+
+    selector_t selector;
 
     std::vector<
         std::optional<
@@ -1066,28 +1444,29 @@ struct App{
 
         assert(mode == modes::server or mode == modes::client);
 
-        std::optional<TcpServer> internal_server;
+        std::optional<CmdServer> internal_server;
+        std::optional<CmdServer> internal_client;
         std::optional<TcpServer> external_server;
 
         if (mode == modes::server){
             internal_server.emplace(*this, internal_sockaddr);
             external_server.emplace(*this, external_sockaddr);
         }else{
-
+            internal_client.emplace(*this, internal_sockaddr);
         }
 
         while (1)
         {
-            Selector.wait();
+            selector.wait();
         }
-        
+
 
     }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<std::string> args;
+std::vector<const char*> args;
 
 bool has_missing_flags = false;
 
@@ -1116,15 +1495,15 @@ int main(int argc, char**argv){
         throw std::runtime_error{"modes: client|server"};
     });
 
-    init_by_argv(max_connections, stoull);
-    init_by_argv(connection_timeout, stoull);
+    init_by_argv(max_connections, atoll);
+    init_by_argv(connection_timeout, atoll);
 
-    init_by_argv(internal_port, stoull);
-    init_by_argv(internal_host, [](auto&& s){return s.data();});
+    init_by_argv(internal_port, atoll);
+    init_by_argv(internal_host, [](const char* s){return s;});
     internal_sockaddr = host_port_to_sockaddr(internal_host, internal_port);
 
-    init_by_argv(external_port, stoull);
-    init_by_argv(external_host, [](auto&& s){return s.data();});
+    init_by_argv(external_port, atoll);
+    init_by_argv(external_host, [](const char* s){return s;});
     external_sockaddr = host_port_to_sockaddr(external_host, external_port);
 
     if (has_missing_flags){
