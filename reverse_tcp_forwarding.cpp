@@ -115,7 +115,7 @@ struct sys_msg_printer : std::stringstream {
     auto name(auto&&... args) {                                          \
         errno = 0;                                                       \
         auto ret = ::name(FORWARD(args)...);                             \
-        int err = errno;                                             \
+        int err = errno;                                                 \
         if (err and not ignored.count(err)) {                            \
             std::cerr << "\n <<< ERROR >>>\n";                           \
             std::cerr << "    " #name " Failed\n";                       \
@@ -1351,118 +1351,244 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    struct CmdMainClientOneConnectionAttempt{
-        App& app;
-
-        stream_socket_owner connection;
-
-        struct Handler{
-            void operator()(bool to_write){
-
-            }
-        } handler;
-
-        function_ref<void(bool)> handler_ref = handler;
-
-        CmdMainClientOneConnectionAttempt(App& app, const sockaddr& addr):
-            app(app),
-            connection(stream_socket_owner::connect(addr))
-        {
-            app.selector.change_fd_in_pool(connection, &handler_ref, false, false, false, true);
-        }
-    };
-
-    struct CmdMainCleint{
-        App& app;
-
-        std::optional<stream_socket_owner> connection;
-
-        CmdMainClient(App& app, const sockaddr& addr):
-            app(app)
-        {}
-    };
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    template<typename Callback>
-    struct TcpServer{
-        App& app;
-        server_socket_owner server;
-
-        Callback callback;
-
-        struct AcceptHandler{
-            TcpServer* server;
-            void operator()(bool){
-                callback(server);
-            }
-        } accept_handler;
-
-        function_ref<void(bool)> accept_handler_ref = accept_handler;
-
-        TcpServer(Callback callback, App& app, const sockaddr& addr):
-            app(app),
-            server(server_socket_owner::start_server(addr)),
-            callback(callback)
-        {
-            accept_handler.server = this;
-            app.selector.change_fd_in_pool(server, &accept_handler_ref, false, false, true, false);
-        }
-    };
-
-    struct CmdClient{
-        App& app;
-
-        CmdClient(App& app){
-
-        }
-    };
+struct connection_context{
+    StreamSocketCompleter* external_socket;
+    StreamSocketCompleter* internal_socket;
+};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct App{
-    App(App&&) = delete;
-    App(const App&) = delete;
-
+struct AppStorage{
     selector_t selector;
 
     std::vector<
         std::optional<
-            two_sockets
+            StreamSocketCompleter
         >
-    > socket_pairs;
+    > sockets;
 
-    App():
-        socket_pairs(max_connections)
-    {
-        sys.signal(SIGHUP,  handle);
-        sys.signal(SIGINT,  handle);
-        sys.signal(SIGTERM, handle);
-        sys.signal(SIGPIPE, SIG_IGN);
+    std::vector<
+        std::optional<
+            connection_context
+        >
+    > connections;
 
-        assert(mode == modes::server or mode == modes::client);
+    AppStorage():
+        sockets(max_connections*2+2),
+        connections(max_connections)
+    {}
+};
 
-        std::optional<CmdServer> internal_server;
-        std::optional<CmdServer> internal_client;
-        std::optional<TcpServer> external_server;
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        if (mode == modes::server){
-            internal_server.emplace(*this, internal_sockaddr);
-            external_server.emplace(*this, external_sockaddr);
-        }else{
-            internal_client.emplace(*this, internal_sockaddr);
+struct InternalServer{
+    AppStorage& app_storage;
+
+    ServerSocketCompleter s;
+    
+    std::optional<StreamSocketCompleter> c;
+
+    struct AcceptHandler{
+        InternalServer* outer;
+        void operator()(error_t err){
+            outer->handle_accept(err);
         }
+    } accept_handler;
 
-        while (1)
-        {
-            selector.wait();
-        }
+    function_ref<void(error_t)> accept_handler_ref = accept_handler;
 
+    void handle_accept(error_t err){
+        c.emplace(app_storage.selector, s);
 
     }
+
+    InternalServer(AppStorage& app_storage, const sockaddr& addr):
+        app_storage(app_storage),
+        s(app_storage.selector, addr)
+    {
+        accept_handler.outer = this;
+        s.accept(accept_handler_ref);
+    }
 };
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct ExternalServer{
+
+    ExternalServer(AppStorage& app_storage, const sockaddr& addr):
+        app_storage(app_storage),
+        s(app_storage.selector, addr)
+    {
+        accept_handler.outer = this;
+        s.accept(accept_handler_ref);
+    }
+
+private:
+    AppStorage& app_storage;
+
+    ServerSocketCompleter s;
+
+    struct AcceptHandler{
+        ExternalServer* outer;
+        void operator()(error_t err){
+            outer->handle_accept(err);
+        }
+    } accept_handler;
+
+    function_ref<void(error_t)> accept_handler_ref = accept_handler;
+
+    void handle_accept(error_t err){
+        std::optional<connection_context>* connection_ptr = nullptr;
+
+        for (std::optional<connection_context>& connection: app_storage.connections){
+            if (not connection.has_value()){
+                connection_ptr = &connection;
+            }
+        }
+
+        if (connection_ptr == nullptr){
+            StreamSocketCompleter client(app_storage.selector, *this);
+        }
+
+        connection_ptr->emplace();
+
+        connection_context& context = **connection_ptr;
+
+        context.external_socket.emplace(app_storage.selector, s);
+
+        // todo
+    }
+
+public:
+
+    operator fd_owner&(){
+        return s;
+    }
+
+    operator sockaddr()const{
+        return s;
+    }
+};
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+// Struct 
+
+// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//     struct CmdMainClientOneConnectionAttempt{
+//         App& app;
+
+//         stream_socket_owner connection;
+
+//         struct Handler{
+//             void operator()(bool to_write){
+
+//             }
+//         } handler;
+
+//         function_ref<void(bool)> handler_ref = handler;
+
+//         CmdMainClientOneConnectionAttempt(App& app, const sockaddr& addr):
+//             app(app),
+//             connection(stream_socket_owner(addr))
+//         {
+//             app.selector.change_fd_in_pool(connection, &handler_ref, false, false, false, true);
+//         }
+//     };
+
+//     struct CmdMainCleint{
+//         App& app;
+
+//         std::optional<stream_socket_owner> connection;
+
+//         CmdMainClient(App& app, const sockaddr& addr):
+//             app(app)
+//         {}
+//     };
+// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//     template<typename Callback>
+//     struct TcpServer{
+//         App& app;
+//         server_socket_owner server;
+
+//         Callback callback;
+
+//         struct AcceptHandler{
+//             TcpServer* server;
+//             void operator()(bool){
+//                 callback(server);
+//             }
+//         } accept_handler;
+
+//         function_ref<void(bool)> accept_handler_ref = accept_handler;
+
+//         TcpServer(Callback callback, App& app, const sockaddr& addr):
+//             app(app),
+//             server(server_socket_owner::start_server(addr)),
+//             callback(callback)
+//         {
+//             accept_handler.server = this;
+//             app.selector.change_fd_in_pool(server, &accept_handler_ref, false, false, true, false);
+//         }
+//     };
+
+//     struct CmdClient{
+//         App& app;
+
+//         CmdClient(App& app){
+
+//         }
+//     };
+
+// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// struct App{
+//     App(App&&) = delete;
+//     App(const App&) = delete;
+
+//     selector_t selector;
+
+//     std::vector<
+//         std::optional<
+//             two_sockets
+//         >
+//     > socket_pairs;
+
+//     App():
+//         socket_pairs(max_connections)
+//     {
+//         sys.signal(SIGHUP,  handle);
+//         sys.signal(SIGINT,  handle);
+//         sys.signal(SIGTERM, handle);
+//         sys.signal(SIGPIPE, SIG_IGN);
+
+//         assert(mode == modes::server or mode == modes::client);
+
+//         std::optional<CmdServer> internal_server;
+//         std::optional<CmdServer> internal_client;
+//         std::optional<TcpServer> external_server;
+
+//         if (mode == modes::server){
+//             internal_server.emplace(*this, internal_sockaddr);
+//             external_server.emplace(*this, external_sockaddr);
+//         }else{
+//             internal_client.emplace(*this, internal_sockaddr);
+//         }
+
+//         while (1)
+//         {
+//             selector.wait();
+//         }
+
+
+//     }
+// };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
