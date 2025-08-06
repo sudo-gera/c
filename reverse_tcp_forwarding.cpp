@@ -1,3 +1,8 @@
+#include <type_traits>
+#include <utility>
+#include <cassert>
+#include <limits.h>
+#include <random>
 #include <optional>
 #include <utility>
 #include <memory>
@@ -75,7 +80,7 @@ auto repr_s(std::string data) {
 
 template<typename T>
 struct repr_m{
-    static auto repr(auto&& val) {
+    static auto repr(T&& val) {
         std::stringstream a;
         a << FORWARD(val);
         return repr_s(a.str());
@@ -84,7 +89,8 @@ struct repr_m{
 
 template<typename R, typename...A>
 struct repr_m<R(&)(A...)>{
-    static auto repr(auto&& val) {
+    template<typename T>
+    static auto repr(T&& val) {
         std::stringstream a;
         a << FORWARD(&val);
         return repr_s(a.str());
@@ -112,7 +118,8 @@ struct sys_msg_printer : std::stringstream {
     }
 
 #define add_syscall(name)                                                \
-    auto name(auto&&... args) {                                          \
+    template<typename...ARGS>                                            \
+    auto name(ARGS&&... args) {                                          \
         errno = 0;                                                       \
         auto ret = ::name(FORWARD(args)...);                             \
         int err = errno;                                                 \
@@ -153,6 +160,7 @@ struct sys_msg_printer : std::stringstream {
     add_syscall(clock_gettime)
     add_syscall(pipe)
     add_syscall(getsockopt)
+    add_syscall(open)
 #ifdef use_kqueue
     add_syscall(kqueue)
     add_syscall(kevent)
@@ -165,6 +173,23 @@ struct sys_msg_printer : std::stringstream {
     add_syscall(epoll_create1)
 #endif
 } sys;
+
+#undef assert
+#define assert(x) assert_f(x, #x, __FILE__, __LINE__)
+void assert_f(bool cond, const char* s, const char* f, size_t l){
+    if (cond){
+        return;
+    }
+    std::cerr << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!Assertion failed" << std::endl;
+    std::cerr << s << std::endl;
+    std::cerr << f << ":" << l << std::endl;
+    char const volatile* p = "";
+    while (*p)
+    {
+        ++p;
+    }
+    
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -207,59 +232,81 @@ auto operator-(timespec_pair left, timespec_pair right){
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include <type_traits>
-#include <utility>
-#include <cassert>
-
 template <typename>
 class function_ref; // Primary template
 
 template <typename R, typename... Args>
 class function_ref<R(Args...)> {
+public:
     void* callable_ = nullptr;
     R (*invoker_)(void*, Args&&...) = nullptr;
 
-public:
     function_ref() = default;
 
-    // Handle function pointers
-    function_ref(R(*func)(Args...)) noexcept {
-        callable_ = reinterpret_cast<void*>(func);
-        invoker_ = [](void* ptr, Args&&... args) -> R {
-            auto f = reinterpret_cast<R(*)(Args...)>(ptr);
-            return f(std::forward<Args>(args)...);
-        };
-    }
+    // // Handle function pointers
+    // function_ref(R(*func)(Args...)) noexcept {
+    //     callable_ = reinterpret_cast<void*>(func);
+    //     invoker_ = [](void* ptr, Args&&... args) -> R {
+    //         auto f = reinterpret_cast<R(*)(Args...)>(ptr);
+    //         return f(std::forward<Args>(args)...);
+    //     };
+    // }
+
+    template<typename T>
+    static R invoker(void* ptr, Args&&... args) {
+        return (*reinterpret_cast<T*>(ptr))(std::forward<Args>(args)...);
+    };
+
 
     // Handle functors/lambdas (non-owning reference)
     template <typename Callable>
+    requires(
+        not std::is_same_v<
+            function_ref,
+            std::decay_t<Callable>
+        >
+    )
     function_ref(Callable& callable) noexcept {
         using T = std::remove_reference_t<Callable>;
         static_assert(std::is_invocable_r_v<R, T&, Args...>,
                       "Callable must be invocable with the correct signature");
 
         callable_ = static_cast<void*>(&callable);
-        invoker_ = [](void* ptr, Args&&... args) -> R {
-            return (*reinterpret_cast<T*>(ptr))(std::forward<Args>(args)...);
-        };
+        invoker_ = function_ref::invoker<T>;
+        // invoker_ = [](void* ptr, Args&&... args) -> R {
+        //     return (*reinterpret_cast<T*>(ptr))(std::forward<Args>(args)...);
+        // };
     }
 
     function_ref(const function_ref&) = default;
     function_ref& operator=(const function_ref&) = default;
+    function_ref(function_ref&&) = default;
+    function_ref& operator=(function_ref&&) = default;
 
     R operator()(Args... args) const {
+        // std::cerr << (void*)callable_ << " " << (void*)invoker_ << " " << (void*)this << std::endl;
         assert(invoker_ && "function_ref is empty");
         return invoker_(callable_, std::forward<Args>(args)...);
     }
 
     operator bool() const noexcept {
+        assert((invoker_ == nullptr) == (callable_ == nullptr));
         return invoker_ != nullptr;
     }
 
     void reset(){
-        std::destroy_at(this);
-        std::construct_at(this);
+        callable_ = nullptr;
+        invoker_ = nullptr;
     }
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+struct defer{
+    T val;
+    defer(T&& val):val(val){}
+    ~defer(){val();}
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -754,6 +801,8 @@ error_t get_errno(int fd){
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+bool should_exit = false;
+
 std::array<int, 2> signal_pipe = [](){
     std::array<int, 2> p;
     sys.pipe(p.data());
@@ -794,14 +843,21 @@ void handle(int signal){
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-size_t max_connections = 0LLU-1;
-size_t connection_timeout = 0LLU-1;
+// size_t max_connections = none;
+timespec_pair connection_timeout = {none, none};
+timespec_pair clock_interval = {none, none};
+size_t max_accepted_sockets_per_server = none;
+size_t max_connected_sockets = none;
 
-size_t internal_port = 0LLU-1;
+const char* first_bytes_filename = nullptr;
+char first_bytes_data[BUFFER_SIZE];
+size_t first_bytes_size = none;
+
+size_t internal_port = none;
 const char* internal_host = nullptr;
 sockaddr internal_sockaddr;
 
-size_t external_port = 0LLU-1;
+size_t external_port = none;
 const char* external_host = nullptr;
 sockaddr external_sockaddr;
 
@@ -809,7 +865,7 @@ namespace modes{
     enum modes{ server, client};
 };
 
-uint32_t mode = 0LLU-1;
+size_t mode = none;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -852,7 +908,7 @@ private:
         s(s.first),
         addr(s.second)
     {}
-    operator fd_owner&(){
+    operator const fd_owner&(){
         return s;
     }
     operator sockaddr()const{
@@ -868,7 +924,7 @@ private:
     bool shut_rd_ = false;
     bool shut_wr_ = false;
 public:
-    operator fd_owner&(){
+    operator const fd_owner&(){
         return s;
     }
     operator sockaddr()const{
@@ -876,13 +932,15 @@ public:
     }
     void shut_rd(){
         if (not shut_rd_){
-            sys.shutdown(s, SHUT_RD);
+            sys.ignore(ENOTCONN);
+            sys.shutdown(get_fd(s), SHUT_RD);
             shut_rd_ = true;
         }
     }
     void shut_wr(){
         if (not shut_rd_){
-            sys.shutdown(s, SHUT_WR);
+            sys.ignore(ENOTCONN);
+            sys.shutdown(get_fd(s), SHUT_WR);
             shut_wr_ = true;
         }
     }
@@ -893,7 +951,7 @@ public:
     stream_socket_owner(const sockaddr& addr):
         s({ll_create_connecting_socket(addr), addr})
     {}
-    stream_socket_owner(fd_owner& server):
+    stream_socket_owner(const fd_owner& server):
         s(ll_accept(get_fd(server)))
     {}
 };
@@ -905,7 +963,7 @@ public:
     operator sockaddr()const{
         return s;
     }
-    operator fd_owner&(){
+    operator const fd_owner&(){
         return s;
     }
     server_socket_owner(const sockaddr& addr):
@@ -950,7 +1008,7 @@ struct Selector{
         size_t
     > events_to_process;
 
-    void change_fd_in_pool(fd_owner& fd, Callback* callback, bool old_read, bool old_write, bool new_read, bool new_write){
+    void change_fd_in_pool(const fd_owner& fd, Callback* callback, bool old_read, bool old_write, bool new_read, bool new_write){
         if (old_read == new_read and old_write == new_write){
             return;
         }
@@ -967,7 +1025,7 @@ struct Selector{
 
         struct epoll_event new_event;
         std::memset(&new_event, 0, sizeof(new_event));
-        new_event.data.ptr = &callback;
+        new_event.data.ptr = callback;
 
         if (new_read){
             new_event.events |= EPOLLIN;
@@ -977,7 +1035,7 @@ struct Selector{
             new_event.events |= EPOLLOUT;
         }
 
-        sys.epoll_ctl(pool_fd, op, get_fd(fd), &new_event);
+        sys.epoll_ctl(get_fd(pool_fd), op, get_fd(fd), &new_event);
     }
 
     void wait(std::optional<timespec_pair> timeout){
@@ -992,7 +1050,7 @@ struct Selector{
 
         sys.ignore(EINTR);
         events_to_process.second = sys.epoll_wait(
-            get_fd(s),
+            get_fd(pool_fd),
             events_to_process.first.data(),
             events_to_process.first.size(),
             to_sleep
@@ -1007,10 +1065,10 @@ struct Selector{
         assert(events_to_process.second < events_to_process.first.size());
         std::cerr << "have " << events_to_process.second << " events to process." << std::endl;
 
-        for (size_t q = 0; q < events_to_process.second; ++q){
-            auto& event = events_to_process.first[q];
-            print_event(event);
-        }
+        // for (size_t q = 0; q < events_to_process.second; ++q){
+        //     auto& event = events_to_process.first[q];
+        //     // print_event(event);
+        // }
 
         for (size_t q = 0; q < events_to_process.second; ++q){
             auto& event = events_to_process.first[q];
@@ -1029,6 +1087,10 @@ struct Selector{
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 using selector_t = Selector<function_ref<void(bool)>>;
+
+using header_t = uint_least64_t;
+
+#define CMD_SOCKET_HEADER_SIZE (sizeof(header_t))
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1050,15 +1112,16 @@ private:
 
     bool has_err = false;
 
-    bool has_write_task = false;
+    bool has_write_task_ = false;
     external_callback write_callback;
 
-    bool has_read_task = false;
+    bool has_read_task_ = false;
     external_callback read_callback;
 
     struct Handler{
         SplitCallbacks* outer;
         void operator()(bool to_write){
+            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
             outer->handle(to_write);
         }
     } handler;
@@ -1066,42 +1129,59 @@ private:
     function_ref<void(bool)> handler_ref = handler;
 
     void handle(bool to_write){
-        auto err = get_errno(s);
+        auto err = get_errno(get_fd(s));
         if (err != 0){
             has_err = true;
         }
         if (to_write){
+            assert(write_callback);
             auto write_callback_local = write_callback;
             write_callback.reset();
-            selector.change_fd_in_pool(s, &handler_ref, has_read_task, true, has_read_task, false);
-            has_write_task = false;
+            selector.change_fd_in_pool(s, &handler_ref, has_read_task_, true, has_read_task_, false);
+            has_write_task_ = false;
+            assert(write_callback_local);
+            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+            // std::cerr << (void*)write_callback_local.callable_ << " " << (void*)write_callback_local.invoker_ << " " << (void*)&write_callback_local << std::endl;
             write_callback_local(err);
         }else{
+            assert(read_callback);
             auto read_callback_local = read_callback;
             read_callback.reset();
-            selector.change_fd_in_pool(s, &handler_ref, true, has_write_task, false, has_write_task);
-            has_read_task = false;
+            selector.change_fd_in_pool(s, &handler_ref, true, has_write_task_, false, has_write_task_);
+            has_read_task_ = false;
+            assert(read_callback_local);
+            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
             read_callback_local(err);
         }
     }
 
 public:
+    bool has_read_task(){
+        return has_read_task_;
+    }
+
+    bool has_write_task(){
+        return has_write_task_;
+    }
+
     void wait_read(external_callback callback){
         assert(not has_err);
         assert(not read_callback);
-        assert(not has_read_task);
-        selector.change_fd_in_pool(s, &handler_ref, false, has_write_task, true, has_write_task);
+        assert(not has_read_task_);
+        assert(callback);
+        selector.change_fd_in_pool(s, &handler_ref, false, has_write_task_, true, has_write_task_);
         read_callback = callback;
-        has_read_task = true;
+        has_read_task_ = true;
     }
 
     void wait_write(external_callback callback){
         assert(not has_err);
         assert(not write_callback);
-        assert(not has_write_task);
-        selector.change_fd_in_pool(s, &handler_ref, has_read_task, false, has_read_task, true);
+        assert(not has_write_task_);
+        assert(callback);
+        selector.change_fd_in_pool(s, &handler_ref, has_read_task_, false, has_read_task_, true);
         write_callback = callback;
-        has_write_task = true;
+        has_write_task_ = true;
     }
 };
 
@@ -1110,6 +1190,7 @@ public:
 struct StreamSocketCompleter{
 
     StreamSocketCompleter(selector_t& selector, const sockaddr& addr):
+        last_event(monotonic()),
         s(addr),
         c(selector, s),
         connected(false)
@@ -1118,7 +1199,8 @@ struct StreamSocketCompleter{
         write_handler.outer = this;
     }
 
-    StreamSocketCompleter(selector_t& selector, fd_owner& server):
+    StreamSocketCompleter(selector_t& selector, const fd_owner& server):
+        last_event(monotonic()),
         s(server),
         c(selector, s),
         connected(true)
@@ -1128,14 +1210,17 @@ struct StreamSocketCompleter{
     }
 
 private:
+    timespec_pair last_event;
+
     stream_socket_owner s;
     SplitCallbacks<stream_socket_owner> c;
 
     using external_rw_callback = function_ref<void(const char*, size_t, error_t)>;
-    using external_connected_callback = function_ref<void(error_t)>;
+    // using external_connected_callback = function_ref<void(error_t)>;
 
+    bool eof_is_written_ = false;
     bool connected = false;
-    external_connected_callback connected_callback;
+    external_rw_callback connected_callback;
 
     std::array<char, 8192> write_buffer;
     bool has_full_write_task = false;
@@ -1152,6 +1237,8 @@ private:
     struct ReadHandler{
         StreamSocketCompleter* outer;
         void operator()(error_t err){
+            outer->last_event = monotonic();
+            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
             outer->handle_read(err);
         }
     } read_handler;
@@ -1161,6 +1248,8 @@ private:
     struct WriteHandler{
         StreamSocketCompleter* outer;
         void operator()(error_t err){
+            outer->last_event = monotonic();
+            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
             outer->handle_write(err);
         }
     } write_handler;
@@ -1191,7 +1280,8 @@ private:
         len_of_data_in_read_buffer = none;
         still_has_to_read = none;
         has_full_read_task = false;
-        read_callback_local(read_buffer.data(), len_of_data_in_read_buffer, err);
+        // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+        read_callback_local(read_buffer.data(), len_of_data_in_read_buffer_local, err);
     }
 
     void handle_write(error_t err){
@@ -1201,7 +1291,8 @@ private:
             }
             auto connected_callback_local = connected_callback;
             connected_callback.reset();
-            connected_callback(err);
+            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+            connected_callback_local(nullptr, 0, err);
             return;
         }
         if (err == 0){
@@ -1230,78 +1321,118 @@ private:
         auto still_has_to_write_local = still_has_to_write;
         still_has_to_write = none;
         has_full_write_task = false;
+        // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
         write_callback_local(write_buffer.data() + len_of_data_in_write_buffer_local - still_has_to_write_local, still_has_to_write_local, err);
     }
 
 public:
+    bool has_read_task(){
+        return c.has_read_task();
+    }
+
+    bool has_write_task(){
+        return c.has_write_task();
+    }
+
     void full_read(size_t len, external_rw_callback callback){
+        // std::cerr << "Registering user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
         assert(connected);
         assert(not read_callback);
         assert(not has_full_read_task);
         assert(still_has_to_read == none);
         assert(len_of_data_in_read_buffer == none);
         assert(len <= read_buffer.size());
+        assert(callback);
         c.wait_read(read_handler_ref);
         read_callback = callback;
         has_full_read_task = true;
         still_has_to_read = len;
+        len_of_data_in_read_buffer = len;
     }
 
     void partial_read(external_rw_callback callback){
+        // std::cerr << "Registering user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
         assert(connected);
         assert(not read_callback);
         assert(not has_full_read_task);
         assert(still_has_to_read == none);
         assert(len_of_data_in_read_buffer == none);
+        assert(callback);
         c.wait_read(read_handler_ref);
         read_callback = callback;
     }
 
     void full_write(const char* data, size_t len, external_rw_callback callback){
+        // std::cerr << "Registering user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
         assert(connected);
         assert(not write_callback);
         assert(not has_full_write_task);
         assert(still_has_to_write == none);
         assert(len_of_data_in_write_buffer == none);
         assert(len <= write_buffer.size());
+        assert(not eof_is_written_);
+        assert(callback);
         c.wait_write(write_handler_ref);
         memmove(write_buffer.data(), data, len);
         write_callback = callback;
         has_full_write_task = true;
         still_has_to_write = len;
+        len_of_data_in_write_buffer = len;
     }
 
     void partial_write(const char* data, size_t len, external_rw_callback callback){
+        // std::cerr << "Registering user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
         assert(connected);
         assert(not write_callback);
         assert(not has_full_write_task);
         assert(still_has_to_write == none);
         assert(len_of_data_in_write_buffer == none);
         assert(len <= write_buffer.size());
+        assert(not eof_is_written_);
+        assert(callback);
         c.wait_write(write_handler_ref);
         memmove(write_buffer.data(), data, len);
         write_callback = callback;
         still_has_to_write = len;
+        len_of_data_in_write_buffer = len;
     }
 
     void write_eof(){
         assert(connected);
         assert(not write_callback);
         assert(not has_full_write_task);
+        assert(not eof_is_written_);
         s.shut_wr();
+        eof_is_written_ = true;
+    }
+
+    bool eof_is_written()const{
+        return eof_is_written_;
     }
 
     void wait_connected(external_rw_callback callback){
+        // std::cerr << "Registering user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+        // std::cerr << (void*)callback.callable_ << " " << (void*)callback.invoker_ << " " << (void*)&callback << std::endl;
         assert(not connected);
+        assert(callback);
         c.wait_write(write_handler_ref);
+        connected_callback = callback;
     }
 
-    operator fd_owner&(){
+    bool is_connected()const{
+        return connected;
+    }
+
+    operator const fd_owner&(){
         return s;
     }
 
     operator sockaddr()const{
         return s;
+    }
+
+    timespec_pair get_last_event(){
+        return last_event;
     }
 };
 
@@ -1315,8 +1446,8 @@ struct ServerSocketCompleter{
     }
 
 private:
-    SplitCallbacks<server_socket_owner> c;
     server_socket_owner s;
+    SplitCallbacks<server_socket_owner> c;
 
     using external_callback = function_ref<void(error_t)>;
     external_callback accept_callback;
@@ -1324,6 +1455,7 @@ private:
     struct ReadHandler{
         ServerSocketCompleter* outer;
         void operator()(error_t err){
+            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
             outer->handle_read(err);
         }
     } read_handler;
@@ -1331,16 +1463,18 @@ private:
     function_ref<void(bool)> read_handler_ref = read_handler;
 
     void handle_read(error_t err){
+        // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
         accept_callback(err);
     }
 
 public:
     void accept(external_callback callback){
-        accept_callback = callback;
+        assert(callback);
         c.wait_read(read_handler_ref);
+        accept_callback = callback;
     }
 
-    operator fd_owner&(){
+    operator const fd_owner&(){
         return s;
     }
 
@@ -1351,124 +1485,1420 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct connection_context{
-    StreamSocketCompleter* external_socket;
-    StreamSocketCompleter* internal_socket;
-};
+template<typename stream_context>
+struct ServerManager;
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+struct AcceptedSocketCMD;
 
-struct AppStorage{
-    selector_t selector;
+struct AcceptedSocketTCP;
 
-    std::vector<
-        std::optional<
-            StreamSocketCompleter
-        >
-    > sockets;
+struct AppServer;
 
-    std::vector<
-        std::optional<
-            connection_context
-        >
-    > connections;
+uint_least64_t get_rand64(AppServer& app_server);
 
-    AppStorage():
-        sockets(max_connections*2+2),
-        connections(max_connections)
-    {}
-};
+ServerManager<AcceptedSocketCMD>& get_cmd_server_manager(AppServer& app_server);
+ServerManager<AcceptedSocketTCP>& get_tcp_server_manager(AppServer& app_server);
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void handle_accept_ctl(AppServer& app, size_t index, header_t header);
+void handle_accept_cmd(AppServer& app, size_t index, header_t header);
+void handle_accept_tcp(AppServer& app, size_t index, header_t header);
 
-struct InternalServer{
-    AppStorage& app_storage;
+void handle_read_ctl(AppServer& app, const char* data, size_t size, error_t err, size_t index, header_t header);
+void handle_read_cmd(AppServer& app, const char* data, size_t size, error_t err, size_t index, header_t header);
+void handle_read_tcp(AppServer& app, const char* data, size_t size, error_t err, size_t index, header_t header);
 
-    ServerSocketCompleter s;
-    
-    std::optional<StreamSocketCompleter> c;
+void handle_write_ctl(AppServer& app, const char* data, size_t size, error_t err, size_t index, header_t header);
+void handle_write_cmd(AppServer& app, const char* data, size_t size, error_t err, size_t index, header_t header);
+void handle_write_tcp(AppServer& app, const char* data, size_t size, error_t err, size_t index, header_t header);
 
-    struct AcceptHandler{
-        InternalServer* outer;
-        void operator()(error_t err){
-            outer->handle_accept(err);
-        }
-    } accept_handler;
-
-    function_ref<void(error_t)> accept_handler_ref = accept_handler;
-
-    void handle_accept(error_t err){
-        c.emplace(app_storage.selector, s);
-
-    }
-
-    InternalServer(AppStorage& app_storage, const sockaddr& addr):
-        app_storage(app_storage),
-        s(app_storage.selector, addr)
+template<typename stream_context>
+struct ServerManager{
+    ServerManager(AppServer& app_server, selector_t& selector, const sockaddr& addr):
+        app_server(app_server),
+        selector(selector),
+        server(selector, addr),
+        streams(max_accepted_sockets_per_server)
     {
         accept_handler.outer = this;
-        s.accept(accept_handler_ref);
-    }
-};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-struct ExternalServer{
-
-    ExternalServer(AppStorage& app_storage, const sockaddr& addr):
-        app_storage(app_storage),
-        s(app_storage.selector, addr)
-    {
-        accept_handler.outer = this;
-        s.accept(accept_handler_ref);
+        start_waiting_for_accept();
     }
 
 private:
-    AppStorage& app_storage;
+    AppServer& app_server;
 
-    ServerSocketCompleter s;
+    selector_t& selector;
+
+    ServerSocketCompleter server;
+
+    std::vector<
+        std::optional<
+            stream_context
+        >
+    > streams;
 
     struct AcceptHandler{
-        ExternalServer* outer;
+        ServerManager* outer;
         void operator()(error_t err){
+            assert(outer->is_waiting_for_accept);
+            outer->is_waiting_for_accept = false;
+            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
             outer->handle_accept(err);
         }
     } accept_handler;
 
     function_ref<void(error_t)> accept_handler_ref = accept_handler;
 
-    void handle_accept(error_t err){
-        std::optional<connection_context>* connection_ptr = nullptr;
+    bool is_waiting_for_accept = false;
 
-        for (std::optional<connection_context>& connection: app_storage.connections){
-            if (not connection.has_value()){
-                connection_ptr = &connection;
+    void start_waiting_for_accept(){
+        if (not is_waiting_for_accept){
+            server.accept(accept_handler_ref);
+            is_waiting_for_accept = true;
+        }
+    }
+
+    void handle_accept(error_t err){
+        assert(err == 0);
+
+        for (size_t i = 0; i < streams.size(); ++i){
+            if (not streams[i].has_value()){
+                auto& stream = streams[i];
+                stream.emplace(selector, server, i, app_server);
+                start_waiting_for_accept();
+                return;
             }
         }
-
-        if (connection_ptr == nullptr){
-            StreamSocketCompleter client(app_storage.selector, *this);
-        }
-
-        connection_ptr->emplace();
-
-        connection_context& context = **connection_ptr;
-
-        context.external_socket.emplace(app_storage.selector, s);
-
-        // todo
     }
 
 public:
+    size_t get_streams_size(){
+        return streams.size();
+    }
 
-    operator fd_owner&(){
+    stream_context* get_stream(size_t i){
+        assert(i < streams.size());
+        auto& stream = streams[i];
+        return stream.has_value() ? &*stream : nullptr;
+    }
+
+    void close_stream(size_t i){
+        auto& stream = streams[i];
+        if (stream.has_value()){
+            stream.reset();
+            start_waiting_for_accept();
+        }
+    }
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+namespace accepted_cmd_socket_states{
+    enum accepted_cmd_socket_states{
+        fresh, readen_first_bytes, main, worker
+    };
+};
+
+struct AcceptedSocketCMD{
+
+    AcceptedSocketCMD(selector_t& selector, const fd_owner& server, size_t index, AppServer& app_server):
+        index(index),
+        selector(selector),
+        s(selector, server),
+        app_server(app_server),
+        accepted_cmd_socket_state(accepted_cmd_socket_states::fresh)
+    {
+        read_handler.outer = this;
+        write_handler.outer = this;
+        s.full_read(first_bytes_size, read_handler_ref);
+    }
+
+    size_t index = none;
+    size_t other_index = none;
+    header_t header = 0;
+private:
+    selector_t& selector;
+    StreamSocketCompleter s;
+    AppServer& app_server;
+    size_t accepted_cmd_socket_state = none;
+
+    struct ReadHandler{
+        AcceptedSocketCMD* outer;
+        void operator()(const char* data, size_t size, error_t err){
+            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+            outer->handle_read(data, size, err);
+        }
+    } read_handler;
+
+    function_ref<void(const char*, size_t, error_t)> read_handler_ref = read_handler;
+
+    struct WriteHandler{
+        AcceptedSocketCMD* outer;
+        void operator()(const char* data, size_t size, error_t err){
+            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+            outer->handle_write(data, size, err);
+        }
+    } write_handler;
+
+    function_ref<void(const char*, size_t, error_t)> write_handler_ref = write_handler;
+
+    void close(){
+        get_cmd_server_manager(app_server).close_stream(index);
+    }
+
+    void handle_read(const char* data, size_t size, error_t err){
+        switch (accepted_cmd_socket_state){
+            case accepted_cmd_socket_states::fresh:{
+                if (err != 0){
+                    close();
+                    return;
+                }
+                assert(size <= first_bytes_size);
+                if (size != first_bytes_size){
+                    close();
+                    return;
+                }
+                accepted_cmd_socket_state = accepted_cmd_socket_states::readen_first_bytes;
+                s.full_read(CMD_SOCKET_HEADER_SIZE, read_handler_ref);
+            }
+            break;
+            case accepted_cmd_socket_states::readen_first_bytes:{
+                if (err != 0){
+                    close();
+                    return;
+                }
+                assert(size <= CMD_SOCKET_HEADER_SIZE);
+                if (size != CMD_SOCKET_HEADER_SIZE){
+                    close();
+                    return;
+                }
+                header_t header = 0;
+                static_assert(CHAR_BIT == 8);
+                static_assert(CMD_SOCKET_HEADER_SIZE <= sizeof(header));
+                assert(size <= sizeof(header));
+                memcpy(&header, data, size);
+                if (header == 0){
+                    accepted_cmd_socket_state = accepted_cmd_socket_states::main;
+                    handle_accept_ctl(app_server, index, header);
+                }else{
+                    accepted_cmd_socket_state = accepted_cmd_socket_states::worker;
+                    handle_accept_cmd(app_server, index, header);
+                }
+            }
+            break;
+            case accepted_cmd_socket_states::main:{
+                handle_read_ctl(app_server, data, size, err, index, header);
+                assert(false);
+            }
+            break;
+            case accepted_cmd_socket_states::worker:{
+                handle_read_cmd(app_server, data, size, err, index, header);
+            }
+            break;
+            default:
+                assert(false);
+        }
+    }
+
+    void handle_write(const char* data, size_t size, error_t err){
+        if (header == 0){
+            handle_write_ctl(app_server, data, size, err, index, header);
+        }else{
+            handle_write_cmd(app_server, data, size, err, index, header);
+        }
+    }
+
+public:
+    bool has_read_task(){
+        return s.has_read_task();
+    }
+
+    bool has_write_task(){
+        return s.has_write_task();
+    }
+
+    void full_read(size_t len){
+        s.full_read(len, read_handler_ref);
+    }
+
+    void partial_read(){
+        s.partial_read(read_handler_ref);
+    }
+
+    void full_write(const char* data, size_t len){
+        s.full_write(data, len, write_handler_ref);
+    }
+
+    void partial_write(const char* data, size_t len){
+        s.partial_write(data, len, write_handler_ref);
+    }
+
+    void write_eof(){
+        s.write_eof();
+    }
+
+    bool eof_is_written(){
+        return s.eof_is_written();
+    }
+
+    operator const fd_owner&(){
         return s;
     }
 
     operator sockaddr()const{
         return s;
     }
+
+    timespec_pair get_last_event(){
+        return s.get_last_event();
+    }
 };
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct AcceptedSocketTCP{
+
+    AcceptedSocketTCP(selector_t& selector, const fd_owner& server, size_t index, AppServer& app_server):
+        header(get_rand64(app_server) | 1),
+        index(index),
+        selector(selector),
+        s(selector, server),
+        app_server(app_server)
+    {
+        read_handler.outer = this;
+        write_handler.outer = this;
+        handle_accept_tcp(app_server, index, header);
+    }
+
+    bool request_for_cmd_socket_is_sent = false;
+    header_t header;
+    size_t index = none;
+    size_t other_index = none;
+private:
+    selector_t& selector;
+    StreamSocketCompleter s;
+    AppServer& app_server;
+
+    struct ReadHandler{
+        AcceptedSocketTCP* outer;
+        void operator()(const char* data, size_t size, error_t err){
+            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+            outer->handle_read(data, size, err);
+        }
+    } read_handler;
+
+    function_ref<void(const char*, size_t, error_t)> read_handler_ref = read_handler;
+
+    struct WriteHandler{
+        AcceptedSocketTCP* outer;
+        void operator()(const char* data, size_t size, error_t err){
+            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+            outer->handle_write(data, size, err);
+        }
+    } write_handler;
+
+    function_ref<void(const char*, size_t, error_t)> write_handler_ref = write_handler;
+
+    void close(){
+        get_tcp_server_manager(app_server).close_stream(index);
+    }
+
+    void handle_read(const char* data, size_t size, error_t err){
+        handle_read_tcp(app_server, data, size, err, index, header);
+    }
+
+    void handle_write(const char* data, size_t size, error_t err){
+        handle_write_tcp(app_server, data, size, err, index, header);
+    }
+
+public:
+    bool has_read_task(){
+        return s.has_read_task();
+    }
+
+    bool has_write_task(){
+        return s.has_write_task();
+    }
+
+    void full_read(size_t len){
+        s.full_read(len, read_handler_ref);
+    }
+
+    void partial_read(){
+        s.partial_read(read_handler_ref);
+    }
+
+    void full_write(const char* data, size_t len){
+        s.full_write(data, len, write_handler_ref);
+    }
+
+    void partial_write(const char* data, size_t len){
+        s.partial_write(data, len, write_handler_ref);
+    }
+
+    void write_eof(){
+        s.write_eof();
+    }
+
+    bool eof_is_written(){
+        return s.eof_is_written();
+    }
+
+    operator const fd_owner&(){
+        return s;
+    }
+
+    operator sockaddr()const{
+        return s;
+    }
+
+    timespec_pair get_last_event(){
+        return s.get_last_event();
+    }
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct AppServer{
+    AppServer(selector_t& selector, const sockaddr& cmd_addr, const sockaddr& tcp_addr):
+        PRNG(std::random_device{}()),
+        selector(selector),
+        cmd_server(*this, selector, cmd_addr),
+        tcp_server(*this, selector, tcp_addr)
+    {}
+
+    std::mt19937_64 PRNG;
+
+    selector_t& selector;
+
+    ServerManager<AcceptedSocketCMD> cmd_server;
+    ServerManager<AcceptedSocketTCP> tcp_server;
+
+    size_t main_index = none;
+
+    AcceptedSocketCMD& get_main(){
+        AcceptedSocketCMD* main_ptr = cmd_server.get_stream(main_index);
+        assert(main_ptr);
+        return *main_ptr;
+    }
+
+    void ctl_maybe_send_some_request(){
+        auto& main = get_main();
+        if (main.has_write_task()){
+            return;
+        }
+        for (size_t i = 0; i < tcp_server.get_streams_size(); ++i){
+            auto stream_ptr = tcp_server.get_stream(i);
+            if (not stream_ptr){
+                continue;
+            }
+            auto& stream = *stream_ptr;
+            if (not stream.request_for_cmd_socket_is_sent){
+                char message[CMD_SOCKET_HEADER_SIZE];
+                memset(message, 0, sizeof(message));
+                static_assert(sizeof(stream.header) <= CMD_SOCKET_HEADER_SIZE);
+                memcpy(message, &stream.header, sizeof(stream.header));
+                main.full_write(message, sizeof(message));
+                break;
+            }
+        }
+    }
+
+    void cleanup(){
+        auto current_time = monotonic();
+        for (size_t i = 0; i < cmd_server.get_streams_size(); ++i){
+            auto cmd_stream_ptr = cmd_server.get_stream(i);
+            if (not cmd_stream_ptr){
+                continue;
+            }
+            auto& cmd_stream = *cmd_stream_ptr;
+            if ( current_time - cmd_stream.get_last_event() < connection_timeout ){
+                continue;
+            }
+            if (cmd_stream.other_index == none){
+                cmd_server.close_stream(cmd_stream.index);
+            }
+            auto tcp_stream_ptr = tcp_server.get_stream(cmd_stream.other_index);
+            assert(tcp_stream_ptr);
+            auto& tcp_stream = *tcp_stream_ptr;
+            assert(tcp_stream.other_index == cmd_stream.index);
+            assert(cmd_stream.other_index == tcp_stream.index);
+            cmd_server.close_stream(cmd_stream.index);
+            tcp_server.close_stream(tcp_stream.index);
+        }
+        for (size_t i = 0; i < tcp_server.get_streams_size(); ++i){
+            auto tcp_stream_ptr = tcp_server.get_stream(i);
+            if (not tcp_stream_ptr){
+                continue;
+            }
+            auto& tcp_stream = *tcp_stream_ptr;
+            if ( current_time - tcp_stream.get_last_event() < connection_timeout ){
+                continue;
+            }
+            if (tcp_stream.other_index == none){
+                tcp_server.close_stream(tcp_stream.index);
+            }
+            auto cmd_stream_ptr = cmd_server.get_stream(tcp_stream.other_index);
+            assert(cmd_stream_ptr);
+            auto& cmd_stream = *cmd_stream_ptr;
+            assert(tcp_stream.other_index == cmd_stream.index);
+            assert(cmd_stream.other_index == tcp_stream.index);
+            cmd_server.close_stream(cmd_stream.index);
+            tcp_server.close_stream(tcp_stream.index);
+        }
+    }
+};
+
+ServerManager<AcceptedSocketCMD>& get_cmd_server_manager(AppServer& app_server){
+    return app_server.cmd_server;
+}
+ServerManager<AcceptedSocketTCP>& get_tcp_server_manager(AppServer& app_server){
+    return app_server.tcp_server;
+}
+
+void handle_accept_ctl(AppServer& app_server, size_t index, header_t header){
+    assert(header == 0);
+    if (app_server.main_index != none){
+        app_server.cmd_server.close_stream(app_server.main_index);
+    }
+    app_server.main_index = index;
+}
+
+void handle_read_ctl(AppServer& app_server, const char* data, size_t size, error_t err, size_t index, header_t header){
+    assert(header == 0);
+    assert(app_server.main_index == index);
+    if (err != 0){
+        app_server.main_index = none;
+        app_server.cmd_server.close_stream(index);
+        return;
+    }
+}
+
+void handle_write_ctl(AppServer& app_server, const char* data, size_t size, error_t err, size_t index, header_t header){
+    assert(header == 0);
+    assert(app_server.main_index == index);
+    if (err != 0){
+        app_server.main_index = none;
+        app_server.cmd_server.close_stream(index);
+        return;
+    }
+    assert(size == 0);
+    app_server.ctl_maybe_send_some_request();
+}
+
+void handle_accept_tcp(AppServer& app_server, size_t index, header_t header){    
+    app_server.ctl_maybe_send_some_request();
+}
+
+void handle_accept_cmd(AppServer& app_server, size_t index, header_t header){
+    auto cmd_stream_ptr = app_server.cmd_server.get_stream(index);
+    assert(cmd_stream_ptr);
+    auto& cmd_stream = *cmd_stream_ptr;
+    assert(cmd_stream.other_index == none);
+    for (size_t i = 0; i < app_server.tcp_server.get_streams_size(); ++i){
+        auto stream_ptr = app_server.tcp_server.get_stream(i);
+        if (not stream_ptr){
+            continue;
+        }
+        auto& stream = *stream_ptr;
+        if (stream.header == header){
+            assert(stream.index == i);
+            if (stream.other_index != none){
+                app_server.cmd_server.close_stream(index);
+                return;
+            }
+            stream.other_index = index;
+            cmd_stream.other_index = i;
+            break;
+        }
+    }
+    if (cmd_stream.other_index == none){
+        app_server.cmd_server.close_stream(index);
+    }
+    auto tcp_stream_ptr = app_server.tcp_server.get_stream(cmd_stream.other_index);
+    assert(tcp_stream_ptr);
+    auto& tcp_stream = *tcp_stream_ptr;
+    assert(tcp_stream.index == cmd_stream.other_index);
+    assert(cmd_stream.index == tcp_stream.other_index);
+    tcp_stream.partial_read();
+    cmd_stream.partial_read();
+}
+
+void handle_read_tcp(AppServer& app_server, const char* data, size_t size, error_t err, size_t index, header_t header){
+    auto tcp_stream_ptr = app_server.tcp_server.get_stream(index);
+    assert(tcp_stream_ptr);
+    auto& tcp_stream = *tcp_stream_ptr;
+    assert(tcp_stream.other_index != none);
+    auto cmd_stream_ptr = app_server.cmd_server.get_stream(tcp_stream.other_index);
+    assert(cmd_stream_ptr);
+    auto& cmd_stream = *cmd_stream_ptr;
+    assert(cmd_stream.other_index == index);
+
+    if (err != 0){
+        app_server.cmd_server.close_stream(cmd_stream.index);
+        app_server.tcp_server.close_stream(tcp_stream.index);
+        return;
+    }
+
+    if (size != 0){
+        cmd_stream.full_write(data, size);
+        return;
+    }
+    
+    assert(not cmd_stream.eof_is_written());
+    cmd_stream.write_eof();
+    if (tcp_stream.eof_is_written()){
+        app_server.cmd_server.close_stream(cmd_stream.index);
+        app_server.tcp_server.close_stream(tcp_stream.index);
+    }
+}
+
+void handle_read_cmd(AppServer& app_server, const char* data, size_t size, error_t err, size_t index, header_t header){
+    auto cmd_stream_ptr = app_server.cmd_server.get_stream(index);
+    assert(cmd_stream_ptr);
+    auto& cmd_stream = *cmd_stream_ptr;
+    assert(cmd_stream.other_index != none);
+    auto tcp_stream_ptr = app_server.tcp_server.get_stream(cmd_stream.other_index);
+    assert(tcp_stream_ptr);
+    auto& tcp_stream = *tcp_stream_ptr;
+    assert(tcp_stream.other_index == index);
+
+    if (err != 0){
+        app_server.tcp_server.close_stream(tcp_stream.index);
+        app_server.cmd_server.close_stream(cmd_stream.index);
+        return;
+    }
+
+    if (size != 0){
+        tcp_stream.full_write(data, size);
+        return;
+    }
+    
+    assert(not tcp_stream.eof_is_written());
+    tcp_stream.write_eof();
+    if (cmd_stream.eof_is_written()){
+        app_server.tcp_server.close_stream(tcp_stream.index);
+        app_server.cmd_server.close_stream(cmd_stream.index);
+    }
+}
+
+void handle_write_tcp(AppServer& app_server, const char* data, size_t size, error_t err, size_t index, header_t header){
+    auto cmd_stream_ptr = app_server.cmd_server.get_stream(index);
+    assert(cmd_stream_ptr);
+    auto& cmd_stream = *cmd_stream_ptr;
+    assert(cmd_stream.other_index != none);
+    auto tcp_stream_ptr = app_server.tcp_server.get_stream(cmd_stream.other_index);
+    assert(tcp_stream_ptr);
+    auto& tcp_stream = *tcp_stream_ptr;
+    assert(tcp_stream.other_index == index);
+
+    if (err != 0){
+        app_server.tcp_server.close_stream(tcp_stream.index);
+        app_server.cmd_server.close_stream(cmd_stream.index);
+        return;
+    }
+
+    cmd_stream.partial_read();
+}
+
+void handle_write_cmd(AppServer& app_server, const char* data, size_t size, error_t err, size_t index, header_t header){
+    auto cmd_stream_ptr = app_server.cmd_server.get_stream(index);
+    assert(cmd_stream_ptr);
+    auto& cmd_stream = *cmd_stream_ptr;
+    assert(cmd_stream.other_index != none);
+    auto tcp_stream_ptr = app_server.tcp_server.get_stream(cmd_stream.other_index);
+    assert(tcp_stream_ptr);
+    auto& tcp_stream = *tcp_stream_ptr;
+    assert(tcp_stream.other_index == index);
+
+    if (err != 0){
+        app_server.tcp_server.close_stream(tcp_stream.index);
+        app_server.cmd_server.close_stream(cmd_stream.index);
+        return;
+    }
+
+    tcp_stream.partial_read();
+}
+
+uint_least64_t get_rand64(AppServer& app_server){
+    return app_server.PRNG();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct AppClient;
+
+struct ConnectedSocketCMD;
+struct ConnectedSocketTCP;
+
+struct ClientManager;
+
+ClientManager& get_client_manager(AppClient& app_client);
+const sockaddr& get_cmd_addr(AppClient& app_client);
+const sockaddr& get_tcp_addr(AppClient& app_client);
+
+void handle_connect_ctl(AppClient& app_server, size_t index, header_t header);
+void handle_connect_cmd(AppClient& app_server, size_t index, header_t header);
+void handle_connect_tcp(AppClient& app_server, size_t index, header_t header);
+void handle_read_ctl(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header);
+void handle_read_cmd(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header);
+void handle_read_tcp(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header);
+void handle_write_ctl(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header);
+void handle_write_cmd(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header);
+void handle_write_tcp(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header);
+
+namespace connected_socket_states{
+    enum connected_socket_states{
+        fresh, connected, header_written, 
+    };
+};
+
+struct ClientManager{
+
+    ClientManager(selector_t& selector, AppClient& app_client):
+        app_client(app_client),
+        stream_pairs(max_connected_sockets),
+        selector(selector)
+    {
+        enable_main();
+    }
+
+    std::unique_ptr<
+        std::optional<
+            ConnectedSocketCMD
+        >
+    > main_client = std::make_unique<
+        std::optional<
+            ConnectedSocketCMD
+        >
+    >();
+
+private:
+    AppClient& app_client;
+
+    std::vector<
+        std::optional<
+            std::pair<
+                ConnectedSocketCMD,
+                ConnectedSocketTCP
+            >
+        >
+    > stream_pairs;
+
+    selector_t& selector;
+
+public:
+    void maybe_open_pair(header_t header);
+
+    void close_pair(size_t index);
+
+    void disable_main();
+
+    void enable_main();
+
+    size_t get_stream_pairs_size(){
+        return stream_pairs.size();
+    }
+
+    std::pair<
+        ConnectedSocketCMD,
+        ConnectedSocketTCP
+    >* get_stream_pair(size_t i);
+
+};
+
+struct ConnectedSocketCMD{
+    ConnectedSocketCMD(selector_t& selector, const sockaddr& addr, size_t index, header_t header, AppClient& app_client):
+        selector(selector),
+        index(index),
+        header(header),
+        app_client(app_client),
+        s(selector, addr),
+        state(connected_socket_states::fresh)
+    {
+        s.wait_connected(write_handler_ref);
+        read_handler.outer = this;
+        write_handler.outer = this;
+    }
+
+    selector_t& selector;
+    size_t index = none;
+    header_t header = none;
+    AppClient& app_client;
+    StreamSocketCompleter s;
+    size_t state = none;
+
+    struct ReadHandler{
+        ConnectedSocketCMD* outer;
+        void operator()(const char* data, size_t size, error_t err){
+            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+            outer->handle_read(data, size, err);
+        }
+    } read_handler;
+
+    function_ref<void(const char*, size_t, error_t)> read_handler_ref = read_handler;
+
+    struct WriteHandler{
+        ConnectedSocketCMD* outer;
+        void operator()(const char* data, size_t size, error_t err){
+            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+            outer->handle_write(data, size, err);
+        }
+    } write_handler;
+
+    function_ref<void(const char*, size_t, error_t)> write_handler_ref = write_handler;
+
+    void handle_read(const char* data, size_t size, error_t err){
+        if (header == 0){
+            handle_read_ctl(app_client, data, size, err, index, header);
+        }else{
+            handle_read_cmd(app_client, data, size, err, index, header);
+        }
+    }
+
+    void close_pair(){
+        if (header == 0){
+            get_client_manager(app_client).disable_main();
+        }else{
+            get_client_manager(app_client).close_pair(index);
+        }
+    }
+
+    void handle_write(const char* data, size_t size, error_t err){
+        switch (state){
+            case connected_socket_states::fresh:
+                if (err != 0){
+                    close_pair();
+                    return;
+                }
+                assert(s.is_connected());
+                state = connected_socket_states::connected;
+                char message[CMD_SOCKET_HEADER_SIZE];
+                memset(message, 0, sizeof(message));
+                static_assert(sizeof(header) <= CMD_SOCKET_HEADER_SIZE);
+                memcpy(message, &header, sizeof(header));
+                s.full_write(message, sizeof(message), write_handler_ref);
+            break;
+            case connected_socket_states::connected:
+                if (err != 0){
+                    close_pair();
+                    return;
+                }
+                assert(size == 0);
+                state = connected_socket_states::header_written;
+                if (header == 0){
+                    handle_connect_ctl(app_client, index, header);
+                }else{
+                    handle_connect_cmd(app_client, index, header);
+                }
+            break;
+            case connected_socket_states::header_written:
+                if (header == 0){
+                    handle_write_ctl(app_client, data,size, err, index, header);
+                }else{
+                    handle_write_cmd(app_client, data,size, err, index, header);
+                }
+            break;
+            default:
+                assert(false);
+        }
+    }
+
+    bool has_read_task(){
+        return s.has_read_task();
+    }
+
+    bool has_write_task(){
+        return s.has_write_task();
+    }
+
+    void full_read(size_t len){
+        s.full_read(len, read_handler_ref);
+    }
+
+    void partial_read(){
+        s.partial_read(read_handler_ref);
+    }
+
+    void full_write(const char* data, size_t len){
+        s.full_write(data, len, write_handler_ref);
+    }
+
+    void partial_write(const char* data, size_t len){
+        s.partial_write(data, len, write_handler_ref);
+    }
+
+    void write_eof(){
+        s.write_eof();
+    }
+
+    bool eof_is_written(){
+        return s.eof_is_written();
+    }
+
+    bool is_connected()const{
+        return s.is_connected();
+    }
+
+    operator const fd_owner&(){
+        return s;
+    }
+
+    operator sockaddr()const{
+        return s;
+    }
+
+    timespec_pair get_last_event(){
+        return s.get_last_event();
+    }
+};
+
+struct ConnectedSocketTCP{
+    ConnectedSocketTCP(selector_t& selector, const sockaddr& addr, size_t index, header_t header, AppClient& app_client):
+        selector(selector),
+        index(index),
+        header(header),
+        app_client(app_client),
+        s(selector, addr),
+        state(connected_socket_states::fresh)
+    {
+        s.wait_connected(write_handler_ref);
+        read_handler.outer = this;
+        write_handler.outer = this;
+    }
+
+    selector_t& selector;
+    size_t index;
+    header_t header;
+    AppClient& app_client;
+    StreamSocketCompleter s;
+    size_t state = none;
+
+    struct ReadHandler{
+        ConnectedSocketTCP* outer;
+        void operator()(const char* data, size_t size, error_t err){
+            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+            outer->handle_read(data, size, err);
+        }
+    } read_handler;
+
+    function_ref<void(const char*, size_t, error_t)> read_handler_ref = read_handler;
+
+    struct WriteHandler{
+        ConnectedSocketTCP* outer;
+        void operator()(const char* data, size_t size, error_t err){
+            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+            outer->handle_write(data, size, err);
+        }
+    } write_handler;
+
+    function_ref<void(const char*, size_t, error_t)> write_handler_ref = write_handler;
+
+    void handle_read(const char* data, size_t size, error_t err){
+        handle_read_cmd(app_client, data, size, err, index, header);
+    }
+
+    void handle_write(const char* data, size_t size, error_t err){
+        handle_write_cmd(app_client, data, size, err, index, header);
+    }
+
+    void close_pair(){
+        get_client_manager(app_client).close_pair(index);
+    }
+
+    bool has_read_task(){
+        return s.has_read_task();
+    }
+
+    bool has_write_task(){
+        return s.has_write_task();
+    }
+
+    void full_read(size_t len){
+        s.full_read(len, read_handler_ref);
+    }
+
+    void partial_read(){
+        s.partial_read(read_handler_ref);
+    }
+
+    void full_write(const char* data, size_t len){
+        s.full_write(data, len, write_handler_ref);
+    }
+
+    void partial_write(const char* data, size_t len){
+        s.partial_write(data, len, write_handler_ref);
+    }
+
+    void write_eof(){
+        s.write_eof();
+    }
+
+    bool eof_is_written(){
+        return s.eof_is_written();
+    }
+
+    bool is_connected()const{
+        return s.is_connected();
+    }
+
+    operator const fd_owner&(){
+        return s;
+    }
+
+    operator sockaddr()const{
+        return s;
+    }
+
+    timespec_pair get_last_event(){
+        return s.get_last_event();
+    }
+};
+
+void ClientManager::maybe_open_pair(header_t header){
+    for (size_t i = 0; i < stream_pairs.size(); ++i){
+        if (stream_pairs[i].has_value()){
+            continue;
+        }
+        stream_pairs[i].emplace(
+            std::piecewise_construct,
+            std::forward_as_tuple(
+                    selector,
+                    get_cmd_addr(app_client),
+                    i,
+                    header,
+                    app_client
+            ),
+            std::forward_as_tuple(
+                    selector,
+                    get_tcp_addr(app_client),
+                    i,
+                    header,
+                    app_client
+            )
+        );
+        break;
+    }
+}
+
+void ClientManager::close_pair(size_t index){
+    // std::cerr << index << " " << stream_pairs.size() << std::endl;
+    assert(index < stream_pairs.size());
+    stream_pairs[index].reset();
+}
+
+void ClientManager::disable_main(){
+    main_client->reset();
+}
+
+void ClientManager::enable_main(){
+    if (not main_client->has_value()){
+        main_client->emplace(selector, get_cmd_addr(app_client), none, 0, app_client);
+    }
+}
+
+std::pair<
+    ConnectedSocketCMD,
+    ConnectedSocketTCP
+>* ClientManager::get_stream_pair(size_t i){
+    assert(i < stream_pairs.size());
+    auto& stream_pair = stream_pairs[i];
+    return stream_pair.has_value() ? &*stream_pair : nullptr;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct AppClient{
+    selector_t& selector;
+    const sockaddr& cmd_addr;
+    const sockaddr& tcp_addr;
+
+    ClientManager client;
+
+    AppClient(selector_t& selector, const sockaddr& cmd_addr, const sockaddr& tcp_addr):
+        selector(selector),
+        cmd_addr(cmd_addr),
+        tcp_addr(tcp_addr),
+        client(selector, *this)
+    {}
+
+    void cleanup(){
+        auto current_time = monotonic();
+        for (size_t i = 0; i < client.get_stream_pairs_size(); ++i){
+            auto stream_pair_ptr = client.get_stream_pair(i);
+            if (not stream_pair_ptr){
+                continue;
+            }
+            auto& stream_pair = *stream_pair_ptr;
+            if (current_time - stream_pair.first.get_last_event() > connection_timeout){
+                client.close_pair(i);
+                continue;
+            }
+            if (current_time - stream_pair.second.get_last_event() > connection_timeout){
+                client.close_pair(i);
+                continue;
+            }
+        }
+        if (current_time - (*client.main_client)->get_last_event() > connection_timeout){
+            client.disable_main();
+        }
+        client.enable_main();
+    }
+};
+
+ClientManager& get_client_manager(AppClient& app_client){
+    return app_client.client;
+}
+
+const sockaddr& get_cmd_addr(AppClient& app_client){
+    return app_client.cmd_addr;
+}
+
+const sockaddr& get_tcp_addr(AppClient& app_client){
+    return app_client.tcp_addr;
+}
+
+void handle_connect_ctl(AppClient& app_server, size_t index, header_t header){
+    assert(index == none);
+    assert(header == 0);
+    assert(app_server.client.main_client->has_value());
+    auto& main = **app_server.client.main_client;
+    main.full_read(CMD_SOCKET_HEADER_SIZE);
+}
+
+void handle_read_ctl(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header){
+    if (err != 0){
+        app_server.client.disable_main();
+        return;
+    }
+    assert(size == CMD_SOCKET_HEADER_SIZE);
+    assert(index == none);
+    assert(header == 0);
+    assert(app_server.client.main_client->has_value());
+    auto& main = **app_server.client.main_client;
+    static_assert(CMD_SOCKET_HEADER_SIZE <= sizeof(header));
+    header = 0;
+    assert(size <= sizeof(header));
+    memcpy(&header, data, size);
+    app_server.client.maybe_open_pair(header);
+    main.full_read(CMD_SOCKET_HEADER_SIZE);
+}
+
+void handle_write_ctl(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header){
+    assert(false);
+}
+
+void handle_connect_cmd(AppClient& app_server, size_t index, header_t header){
+    assert(index < app_server.client.get_stream_pairs_size());
+    auto stream_pair_ptr = app_server.client.get_stream_pair(index);
+    assert(stream_pair_ptr);
+    auto& stream_pair = *stream_pair_ptr;
+    assert(stream_pair.first.is_connected());
+    if (not stream_pair.second.is_connected()){
+        return;
+    }
+    stream_pair.first.partial_read();
+    stream_pair.second.partial_read();
+}
+
+void handle_connect_tcp(AppClient& app_server, size_t index,  header_t header){
+    assert(index < app_server.client.get_stream_pairs_size());
+    auto stream_pair_ptr = app_server.client.get_stream_pair(index);
+    assert(stream_pair_ptr);
+    auto& stream_pair = *stream_pair_ptr;
+    assert(stream_pair.second.is_connected());
+    if (not stream_pair.first.is_connected()){
+        return;
+    }
+    stream_pair.second.partial_read();
+    stream_pair.first.partial_read();
+}
+
+void handle_read_cmd(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header){
+    assert(index < app_server.client.get_stream_pairs_size());
+    auto stream_pair_ptr = app_server.client.get_stream_pair(index);
+    assert(stream_pair_ptr);
+    auto& stream_pair = *stream_pair_ptr;
+    assert(stream_pair.first.is_connected());
+    assert(stream_pair.second.is_connected());
+
+    if (err != 0){
+        app_server.client.close_pair(index);
+        return;
+    }
+
+    if (size != 0){
+        stream_pair.second.full_write(data, size);
+        return;
+    }
+
+    assert(not stream_pair.second.eof_is_written());
+    stream_pair.second.write_eof();
+    if (stream_pair.first.eof_is_written()){
+        app_server.client.close_pair(index);
+    }
+}
+
+void handle_read_tcp(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header){
+    assert(index < app_server.client.get_stream_pairs_size());
+    auto stream_pair_ptr = app_server.client.get_stream_pair(index);
+    assert(stream_pair_ptr);
+    auto& stream_pair = *stream_pair_ptr;
+    assert(stream_pair.first.is_connected());
+    assert(stream_pair.second.is_connected());
+
+    if (err != 0){
+        app_server.client.close_pair(index);
+        return;
+    }
+
+    if (size != 0){
+        stream_pair.first.full_write(data, size);
+        return;
+    }
+
+    assert(not stream_pair.first.eof_is_written());
+    stream_pair.first.write_eof();
+    if (stream_pair.second.eof_is_written()){
+        app_server.client.close_pair(index);
+    }
+}
+
+void handle_write_cmd(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header){
+    assert(index < app_server.client.get_stream_pairs_size());
+    auto stream_pair_ptr = app_server.client.get_stream_pair(index);
+    assert(stream_pair_ptr);
+    auto& stream_pair = *stream_pair_ptr;
+    assert(stream_pair.first.is_connected());
+    assert(stream_pair.second.is_connected());
+
+    if (err != 0){
+        app_server.client.close_pair(index);
+        return;
+    }
+
+    assert(size == 0);
+    stream_pair.second.partial_read();
+}
+
+void handle_write_tcp(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header){
+    assert(index < app_server.client.get_stream_pairs_size());
+    auto stream_pair_ptr = app_server.client.get_stream_pair(index);
+    assert(stream_pair_ptr);
+    auto& stream_pair = *stream_pair_ptr;
+    assert(stream_pair.first.is_connected());
+    assert(stream_pair.second.is_connected());
+
+    if (err != 0){
+        app_server.client.close_pair(index);
+        return;
+    }
+
+    assert(size == 0);
+    stream_pair.first.partial_read();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+fd_owner signal_pipe_owners[] = {signal_pipe[0], signal_pipe[1]};
+
+struct App{
+    selector_t selector;
+
+    std::optional<AppServer> app_server;
+    std::optional<AppClient> app_client;
+
+    struct Handler{
+        void operator()(bool to_write){
+            should_exit = true;
+        }
+    } handler;
+
+    function_ref<void(bool)> handler_ref = handler;
+
+    App(){
+        sys.signal(SIGHUP,  handle);
+        sys.signal(SIGINT,  handle);
+        sys.signal(SIGTERM, handle);
+        sys.signal(SIGPIPE, SIG_IGN);
+
+        selector.change_fd_in_pool(signal_pipe_owners[0], &handler_ref, false, false, true, false);
+
+        switch (mode){
+            case modes::client:
+                app_client.emplace(selector, internal_sockaddr, external_sockaddr);
+            break;
+            case modes::server:
+                app_server.emplace(selector, internal_sockaddr, external_sockaddr);
+            break;
+            default:
+                assert(false);
+        }
+
+        timespec_pair last_cleanup = monotonic();
+        while (not should_exit){
+            timespec_pair current_time = monotonic();
+            if (current_time - last_cleanup > clock_interval){
+                if (app_client.has_value()){
+                    app_client->cleanup();
+                }
+                if (app_server.has_value()){
+                    app_server->cleanup();
+                }
+                last_cleanup = current_time;
+            }
+            selector.wait(clock_interval);
+        }
+    }
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+// void register_main_stream(AppServer& app_server, size_t index){
+//     app_server.main_index = index;
+// }
+
+// void handle_accept_tcp(AppServer& app_server, size_t index){
+
+// }
+
+// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// struct Server{
+    
+// };
+
+
+// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// struct connection_context{
+//     uint32_t external_socket;
+//     uint32_t internal_socket;
+// };
+
+// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// struct AppStorage{
+//     selector_t selector;
+
+//     std::vector<
+//         std::optional<
+//             StreamSocketCompleter
+//         >
+//     > sockets;
+
+//     std::vector<
+//         std::optional<
+//             connection_context
+//         >
+//     > connections;
+
+//     AppStorage():
+//         sockets(max_connections*2+2),
+//         connections(max_connections)
+//     {}
+// };
+
+// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// struct InternalServer{
+//     AppStorage& app_storage;
+
+//     ServerSocketCompleter server;
+    
+//     uint32_t client;
+
+//     struct AcceptHandler{
+//         InternalServer* outer;
+//         void operator()(error_t err){
+//             outer->handle_accept(err);
+//         }
+//     } accept_handler;
+
+//     function_ref<void(error_t)> accept_handler_ref = accept_handler;
+
+//     void handle_accept(error_t err){
+//         auto socket_ptr = app_storage.sockets.end();
+//         for (auto sock_ptr = app_storage.sockets.begin(); sock_ptr != app_storage.sockets.end(); ++sock_ptr){
+//             if (not sock_ptr->has_value()){
+//                 socket_ptr = sock_ptr;
+//                 break;
+//             }
+//         }
+//         assert(socket_ptr != app_storage.sockets.end());
+//         socket_ptr->emplace(app_storage.selector, server);
+//         auto& client = **socket_ptr;
+//         client
+//     }
+
+//     InternalServer(AppStorage& app_storage, const sockaddr& addr):
+//         app_storage(app_storage),
+//         server(app_storage.selector, addr)
+//     {
+//         accept_handler.outer = this;
+//         server.accept(accept_handler_ref);
+//     }
+// };
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// struct ExternalServer{
+
+//     ExternalServer(AppStorage& app_storage, const sockaddr& addr):
+//         app_storage(app_storage),
+//         s(app_storage.selector, addr)
+//     {
+//         accept_handler.outer = this;
+//         s.accept(accept_handler_ref);
+//     }
+
+// private:
+//     AppStorage& app_storage;
+
+//     ServerSocketCompleter s;
+
+//     struct AcceptHandler{
+//         ExternalServer* outer;
+//         void operator()(error_t err){
+//             outer->handle_accept(err);
+//         }
+//     } accept_handler;
+
+//     function_ref<void(error_t)> accept_handler_ref = accept_handler;
+
+//     void handle_accept(error_t err){
+//         std::optional<connection_context>* connection_ptr = nullptr;
+
+//         for (std::optional<connection_context>& connection: app_storage.connections){
+//             if (not connection.has_value()){
+//                 connection_ptr = &connection;
+//             }
+//         }
+
+//         if (connection_ptr == nullptr){
+//             StreamSocketCompleter client(app_storage.selector, *this);
+//         }
+
+//         connection_ptr->emplace();
+
+//         connection_context& context = **connection_ptr;
+
+//         context.external_socket.emplace(app_storage.selector, s);
+
+//         // todo
+//     }
+
+// public:
+
+//     operator const fd_owner&(){
+//         return s;
+//     }
+
+//     operator sockaddr()const{
+//         return s;
+//     }
+// };
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1613,28 +3043,61 @@ void argv_initializer(T& value, const char* name, F f){
 
 #define init_by_argv(name, f) argv_initializer(name, #name, f)
 
+size_t read_file(const char* filename, char* data, size_t size){
+    int fd = sys.open(filename, O_RDONLY);
+    defer closer([&](){
+        sys.close(fd);
+    });
+    size_t still_has_to_read = size;
+    size_t readen = none;
+    while (still_has_to_read != 0 and readen != 0){
+        readen = sys.read(fd, data + size - still_has_to_read, still_has_to_read);
+        still_has_to_read -= readen;
+    }
+    return size - still_has_to_read;
+}
+
 int main(int argc, char**argv){
     args = decltype(args)(argv, argv + argc);
     init_by_argv(mode, [](auto&& s){
-        if (s=="server"){return modes::server;}
-        if (s=="client"){return modes::client;}
+        if (strcmp(s, "server") == 0){return modes::server;}
+        if (strcmp(s, "client") == 0){return modes::client;}
         throw std::runtime_error{"modes: client|server"};
     });
 
-    init_by_argv(max_connections, atoll);
-    init_by_argv(connection_timeout, atoll);
+    // init_by_argv(max_connections, atoll);
+    init_by_argv(connection_timeout, ([](const char* s){
+        auto v = strtold(s, nullptr);
+        timespec_pair res = {none, none};
+        res.first = v;
+        res.second = (v - res.first) * timespec_base;
+        return res;
+    }));
+    init_by_argv(clock_interval, ([](const char* s){
+        auto v = strtold(s, nullptr);
+        timespec_pair res = {none, none};
+        res.first = v;
+        res.second = (v - res.first) * timespec_base;
+        return res;
+    }));
+    init_by_argv(max_accepted_sockets_per_server, atoll);
+    init_by_argv(max_connected_sockets, atoll);
+
+    init_by_argv(first_bytes_filename, [](const char* s){return s;});
 
     init_by_argv(internal_port, atoll);
     init_by_argv(internal_host, [](const char* s){return s;});
-    internal_sockaddr = host_port_to_sockaddr(internal_host, internal_port);
 
     init_by_argv(external_port, atoll);
     init_by_argv(external_host, [](const char* s){return s;});
-    external_sockaddr = host_port_to_sockaddr(external_host, external_port);
 
     if (has_missing_flags){
         exit(1);
     }
+
+    first_bytes_size = read_file(first_bytes_filename, first_bytes_data, sizeof(first_bytes_data));
+    internal_sockaddr = host_port_to_sockaddr(internal_host, internal_port);
+    external_sockaddr = host_port_to_sockaddr(external_host, external_port);
 
     App app;
 }
@@ -1800,30 +3263,6 @@ int main(int argc, char**argv){
 // //         ignored.insert(err);
 // //     }
 
-// // #define add_syscall(name)                                                \
-// //     auto name(auto&&... args) {                                          \
-// //         errno = 0;                                                       \
-// //         auto ret = ::name(FORWARD(args)...);                             \
-// //         int err = errno;                                             \
-// //         if (err and not ignored.count(err)) {                            \
-// //             std::cerr << "\n <<< ERROR >>>\n";                           \
-// //             std::cerr << "    " #name " Failed\n";                       \
-// //             std::cerr << "    code = " << err << "\n";                   \
-// //             std::cerr << "    text = " << std::strerror(err) << "\n";    \
-// //             std::cerr << "\n <<< ARGS >>> " << std::endl;                \
-// //             (void)((std::cerr << "    " << repr(args) << "\n"), ..., 0); \
-// //             if (str().size()) {                                          \
-// //                 std::cerr << "\n <<< MESSAGE >>> " << std::endl;         \
-// //                 std::cerr << str() << std::endl;                         \
-// //             }                                                            \
-// //             std::cerr << std::endl;                                      \
-// //             throw std::runtime_error("syscall failed");                  \
-// //         }                                                                \
-// //         std::stringstream tmp;                                           \
-// //         swap(tmp);                                                       \
-// //         ignored.clear();                                                 \
-// //         return ret;                                                      \
-// //     }
 
 // //     add_syscall(shutdown)
 // //     add_syscall(write)
