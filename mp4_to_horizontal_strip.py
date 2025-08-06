@@ -1,30 +1,24 @@
 import cv2
-import os
-import sys
 from PIL import Image
 import argparse
 
-MAX_WIDTH = 65500  # Max width allowed for stitched image
+MAX_WIDTH = 65500  # Max allowed width for stitched image
 
-def extract_frames(video_path, fps, width, height, prefix_seconds):
+def extract_frames(video_path, fps, width, height, num_frames):
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
         raise IOError(f"Could not open video: {video_path}")
 
     video_fps = cap.get(cv2.CAP_PROP_FPS)
-    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    duration = total_frames / video_fps
-
     frame_interval = int(video_fps / fps)
     if frame_interval <= 0:
         raise ValueError("Requested FPS is too high for this video.")
 
-    max_frame = int(min(prefix_seconds, duration) * video_fps)
-
     frames = []
     frame_idx = 0
+    extracted = 0
 
-    while frame_idx < max_frame:
+    while extracted < num_frames:
         ret, frame = cap.read()
         if not ret:
             break
@@ -34,6 +28,7 @@ def extract_frames(video_path, fps, width, height, prefix_seconds):
             rgb = cv2.cvtColor(resized, cv2.COLOR_BGR2RGB)
             pil_img = Image.fromarray(rgb)
             frames.append(pil_img)
+            extracted += 1
 
         frame_idx += 1
 
@@ -59,21 +54,21 @@ def stitch_frames_horizontally(frames):
     return result
 
 def main():
-    parser = argparse.ArgumentParser(description="Convert MP4 prefix to horizontal JPG strip.")
+    parser = argparse.ArgumentParser(description="Convert MP4 prefix frames to horizontal JPG strip.")
     parser.add_argument('--video', required=True, help="Path to input video (MP4)")
     parser.add_argument('--fps', type=float, default=1.0, help="Frames per second to extract")
     parser.add_argument('--width', type=int, default=160, help="Width of each frame")
     parser.add_argument('--height', type=int, default=90, help="Height of each frame")
-    parser.add_argument('--prefix-seconds', type=float, default=10.0, help="Seconds to extract from the beginning")
+    parser.add_argument('--num-frames', type=int, required=True, help="Number of frames to extract from start")
     parser.add_argument('--output', default='output.jpg', help="Output JPG file name")
 
     args = parser.parse_args()
 
     print(f"Video: {args.video}")
-    print(f"Extracting first {args.prefix_seconds} seconds at {args.fps} fps")
+    print(f"Extracting {args.num_frames} frames at {args.fps} fps")
     print(f"Frame resolution: {args.width}x{args.height}")
 
-    frames = extract_frames(args.video, args.fps, args.width, args.height, args.prefix_seconds)
+    frames = extract_frames(args.video, args.fps, args.width, args.height, args.num_frames)
 
     print(f"Frames extracted: {len(frames)}")
 
