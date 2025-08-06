@@ -188,6 +188,10 @@ void assert_f(bool cond, const char* s, const char* f, size_t l){
     {
         ++p;
     }
+    while (not *p)
+    {
+        ++p;
+    }
     
 }
 
@@ -1347,7 +1351,7 @@ public:
         read_callback = callback;
         has_full_read_task = true;
         still_has_to_read = len;
-        len_of_data_in_read_buffer = len;
+        len_of_data_in_read_buffer = 0;
     }
 
     void partial_read(external_rw_callback callback){
@@ -1360,6 +1364,7 @@ public:
         assert(callback);
         c.wait_read(read_handler_ref);
         read_callback = callback;
+        len_of_data_in_read_buffer = 0;
     }
 
     void full_write(const char* data, size_t len, external_rw_callback callback){
@@ -1576,6 +1581,7 @@ public:
     }
 
     stream_context* get_stream(size_t i){
+        std::cerr << i << " " << streams.size() << std::endl;
         assert(i < streams.size());
         auto& stream = streams[i];
         return stream.has_value() ? &*stream : nullptr;
@@ -1882,6 +1888,9 @@ struct AppServer{
     }
 
     void ctl_maybe_send_some_request(){
+        if (main_index == none){
+            return;
+        }
         auto& main = get_main();
         if (main.has_write_task()){
             return;
