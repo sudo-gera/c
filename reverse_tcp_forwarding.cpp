@@ -40,15 +40,16 @@
     #include <sys/epoll.h>
 #endif
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #define FORWARD(val) (std::forward<decltype(val)>(val))
 #define VALUE_AS_STRING_AND_VALUE(x) #x << "\t\t\t\t" << x
 
 #define BUFFER_SIZE 8192
 #define none 0x5555'5555'5555'5555
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// clang-format off
 std::array<const char*, 256> escape = {
     "\\x00", "\\x01", "\\x02", "\\x03", "\\x04", "\\x05", "\\x06", "\\x07", "\\x08", "\\t",   "\\n",   "\\x0b", "\\x0c", "\\r",   "\\x0e", "\\x0f",
     "\\x10", "\\x11", "\\x12", "\\x13", "\\x14", "\\x15", "\\x16", "\\x17", "\\x18", "\\x19", "\\x1a", "\\x1b", "\\x1c", "\\x1d", "\\x1e", "\\x1f",
@@ -67,7 +68,6 @@ std::array<const char*, 256> escape = {
     "\\xe0", "\\xe1", "\\xe2", "\\xe3", "\\xe4", "\\xe5", "\\xe6", "\\xe7", "\\xe8", "\\xe9", "\\xea", "\\xeb", "\\xec", "\\xed", "\\xee", "\\xef",
     "\\xf0", "\\xf1", "\\xf2", "\\xf3", "\\xf4", "\\xf5", "\\xf6", "\\xf7", "\\xf8", "\\xf9", "\\xfa", "\\xfb", "\\xfc", "\\xfd", "\\xfe", "\\xff",
 };
-// clang-format on
 
 auto repr_s(std::string data) {
     std::string result = "'";
@@ -102,14 +102,7 @@ auto repr(T&& val){
     return repr_m<T>::repr(FORWARD(val));
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-auto eassert(bool cond){
-    if (not cond){
-        errno = 255;
-    }
-    return cond;
-}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 struct sys_msg_printer : std::stringstream {
     std::unordered_set<int> ignored;
@@ -151,7 +144,6 @@ struct sys_msg_printer : std::stringstream {
     add_syscall(fcntl)
     add_syscall(inet_pton)
     add_syscall(inet_ntop)
-    add_syscall(eassert)
     add_syscall(connect)
     add_syscall(bind)
     add_syscall(listen)
@@ -174,6 +166,8 @@ struct sys_msg_printer : std::stringstream {
 #endif
 } sys;
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #undef assert
 #define assert(x) assert_f(x, #x, __FILE__, __LINE__)
 void assert_f(bool cond, const char* s, const char* f, size_t l){
@@ -192,52 +186,235 @@ void assert_f(bool cond, const char* s, const char* f, size_t l){
     {
         ++p;
     }
-    
+
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define timespec_base (1'000'000'000)
+using timespec_first_t = decltype(std::declval<struct timespec>().tv_sec);
+using timespec_second_t = decltype(std::declval<struct timespec>().tv_nsec);
 
-using timespec_pair = std::pair<
-    decltype(
-        ((struct timespec*)(0))->tv_sec
-    ),
-    decltype(
-        ((struct timespec*)(0))->tv_nsec
-    )
->;
+static_assert(std::is_integral_v<timespec_first_t>);
+static_assert(std::is_integral_v<timespec_second_t>);
 
-timespec_pair monotonic(){
-    struct timespec tp;
-    sys.clock_gettime(CLOCK_MONOTONIC, &tp);
-    return {tp.tv_sec, tp.tv_nsec};
-}
+static_assert(sizeof(timespec_first_t) <= sizeof(size_t));
+static_assert(sizeof(timespec_second_t) <= sizeof(size_t));
 
-auto operator+(timespec_pair left, timespec_pair right){
-    left.first  += right.first;
-    left.second += right.second;
-    left.first  += left.second / timespec_base;
-    left.second  = left.second % timespec_base;
-    return left;
-}
+#define timespec_base (size_t(1'000'000'000))
 
-auto operator-(timespec_pair left, timespec_pair right){
-    assert(left >= right);
-    while (left.second < right.second){
-        left.second += timespec_base;
-        left.first -= 1;
+struct time_storage;
+
+bool operator<(const time_storage&, const time_storage&);
+bool operator>(const time_storage&, const time_storage&);
+bool operator==(const time_storage&, const time_storage&);
+bool operator<=(const time_storage&, const time_storage&);
+bool operator>=(const time_storage&, const time_storage&);
+bool operator!=(const time_storage&, const time_storage&);
+
+#if defined(__cpp_impl_three_way_comparison) and __cpp_impl_three_way_comparison >=	201907L
+std::strong_ordering operator<=>(const time_storage& left, const time_storage& right);
+#endif
+
+struct time_storage{
+    size_t first = none;
+    size_t second = none;
+
+    time_storage() = default;
+    time_storage(time_storage&&) = default;
+    time_storage(const time_storage&) = default;
+    time_storage& operator=(time_storage&&) = default;
+    time_storage& operator=(const time_storage&) = default;
+
+    time_storage(timespec_first_t f, timespec_second_t s){
+        assert(f >= 0);
+        assert(s >= 0);
+        assert(s < decltype(s)timespec_base);
+        first = f;
+        second = s;
+        assert(second < decltype(second)timespec_base);
     }
-    assert(left >= right);
-    left.first  -= right.first;
-    left.second -= right.second;
-    return left;
+
+    time_storage(timespec ts):
+        time_storage(ts.tv_sec, ts.tv_nsec)
+    {}
+
+    time_storage(double time){
+        assert(time > 0);
+        first = time;
+        time -= first;
+        time *= timespec_base;
+        second = time;
+    }
+
+    operator double()const{
+        return (double)first + (double)second / timespec_base;
+    }
+
+    auto& operator+=(const time_storage& right){
+        auto& left = *this;
+        left.first  += right.first;
+        left.second += right.second;
+        left.first  += left.second / timespec_base;
+        left.second  = left.second % timespec_base;
+        return left;
+    }
+
+    auto& operator-=(const time_storage& right){
+        auto& left = *this;
+        assert(left >= right);
+        while (left.second < right.second){
+            left.second += timespec_base;
+            left.first -= 1;
+            assert(left >= right);
+        }
+        assert(left >= right);
+        assert(left.first >= right.first);
+        assert(left.second >= right.second);
+        left.first  -= right.first;
+        left.second -= right.second;
+        return left;
+    }
+
+    static time_storage monotonic(){
+        struct timespec tp;
+        memset(&tp, 0, sizeof(tp));
+        sys.clock_gettime(CLOCK_MONOTONIC, &tp);
+        return tp;
+    }
+
+    static time_storage realtime(){
+        struct timespec tp;
+        memset(&tp, 0, sizeof(tp));
+        sys.clock_gettime(CLOCK_REALTIME, &tp);
+        return tp;
+    }
+};
+
+char cmp(const time_storage& left, const time_storage& right){
+    if (left.first < right.first){
+        return '<';
+    }
+    if (left.first > right.first){
+        return '>';
+    }
+    if (left.second < right.second){
+        return '<';
+    }
+    if (left.second > right.second){
+        return '>';
+    }
+    return '=';
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool operator<(const time_storage& left, const time_storage& right){
+    return cmp(left, right) == '<';
+}
+
+bool operator==(const time_storage& left, const time_storage& right){
+    return cmp(left, right) == '=';
+}
+
+bool operator>(const time_storage& left, const time_storage& right){
+    return cmp(left, right) == '>';
+}
+
+bool operator>=(const time_storage& left, const time_storage& right){
+    return cmp(left, right) != '<';
+}
+
+bool operator!=(const time_storage& left, const time_storage& right){
+    return cmp(left, right) != '=';
+}
+
+bool operator<=(const time_storage& left, const time_storage& right){
+    return cmp(left, right) != '>';
+}
+
+#if defined(__cpp_impl_three_way_comparison) and __cpp_impl_three_way_comparison >=	201907L
+std::strong_ordering operator<=>(const time_storage& left, const time_storage& right){
+    static_assert('<' < '=');
+    static_assert('=' < '>');
+    return cmp(left, right) <=> '=';
+}
+#endif
+
+time_storage operator+(const time_storage& left, const time_storage& right){
+    time_storage tmp = left;
+    tmp += right;
+    return tmp;
+}
+
+time_storage operator-(const time_storage& left, const time_storage& right){
+    time_storage tmp = left;
+    tmp -= right;
+    return tmp;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const char* bg_br_colors[] = {
+    "\x1b[91m",
+    "\x1b[92m",
+    "\x1b[93m",
+    "\x1b[94m",
+    "\x1b[95m",
+    "\x1b[96m",
+};
+
+const char* solid_block = "\xe2\x96\x88";
+
+const char* uncolor = "\x1b[0m";
+
+auto end_of_msg = [](){
+    std::array<char, 64> data;
+    sprintf(data.data(), "%s%s%s", solid_block, solid_block, uncolor);
+    return data;
+}();
+
+#define log(...)                                            \
+    do {                                                    \
+        auto current_time = time_storage::realtime();       \
+        fprintf(stderr, "\r");                              \
+        fprintf(                                            \
+            stderr,                                         \
+            "%s%s"                                          \
+            "%s%s"                                          \
+            "%s%s"                                          \
+            "%s%s"                                          \
+            "%s%s"                                          \
+            "%s%s"                                          \
+            "%s%s"                                          \
+            "%s%s"                                          \
+            " [%02d:%02d:%02d.%04d] ",                      \
+            bg_br_colors[current_time.first / 279936 % 6],  \
+            end_of_msg.data(),                              \
+            bg_br_colors[current_time.first / 46656 % 6],   \
+            end_of_msg.data(),                              \
+            bg_br_colors[current_time.first / 7776 % 6],    \
+            end_of_msg.data(),                              \
+            bg_br_colors[current_time.first / 1296 % 6],    \
+            end_of_msg.data(),                              \
+            bg_br_colors[current_time.first / 216 % 6],     \
+            end_of_msg.data(),                              \
+            bg_br_colors[current_time.first / 36 % 6],      \
+            end_of_msg.data(),                              \
+            bg_br_colors[current_time.first / 6 % 6],       \
+            end_of_msg.data(),                              \
+            bg_br_colors[current_time.first / 1 % 6],       \
+            end_of_msg.data(),                              \
+            int(current_time.first / 3600 % 24),            \
+            int(current_time.first / 60 % 60),              \
+            int(current_time.first % 60),                   \
+            int(current_time.second / 1'000'00 % 10000)     \
+        );                                                  \
+        fprintf(stderr, __VA_ARGS__);                       \
+        fprintf(stderr, "\n");                              \
+    } while(false)                                          \
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template <typename>
-class function_ref; // Primary template
+class function_ref;
 
 template <typename R, typename... Args>
 class function_ref<R(Args...)> {
@@ -247,29 +424,12 @@ public:
 
     function_ref() = default;
 
-    // // Handle function pointers
-    // function_ref(R(*func)(Args...)) noexcept {
-    //     callable_ = reinterpret_cast<void*>(func);
-    //     invoker_ = [](void* ptr, Args&&... args) -> R {
-    //         auto f = reinterpret_cast<R(*)(Args...)>(ptr);
-    //         return f(std::forward<Args>(args)...);
-    //     };
-    // }
-
     template<typename T>
     static R invoker(void* ptr, Args&&... args) {
         return (*reinterpret_cast<T*>(ptr))(std::forward<Args>(args)...);
     };
 
-
-    // Handle functors/lambdas (non-owning reference)
     template <typename Callable>
-    requires(
-        not std::is_same_v<
-            function_ref,
-            std::decay_t<Callable>
-        >
-    )
     function_ref(Callable& callable) noexcept {
         using T = std::remove_reference_t<Callable>;
         static_assert(std::is_invocable_r_v<R, T&, Args...>,
@@ -277,18 +437,18 @@ public:
 
         callable_ = static_cast<void*>(&callable);
         invoker_ = function_ref::invoker<T>;
-        // invoker_ = [](void* ptr, Args&&... args) -> R {
-        //     return (*reinterpret_cast<T*>(ptr))(std::forward<Args>(args)...);
-        // };
+
     }
 
+    function_ref(function_ref&) = default;
     function_ref(const function_ref&) = default;
-    function_ref& operator=(const function_ref&) = default;
     function_ref(function_ref&&) = default;
+    function_ref& operator=(function_ref&) = default;
+    function_ref& operator=(const function_ref&) = default;
     function_ref& operator=(function_ref&&) = default;
 
     R operator()(Args... args) const {
-        // std::cerr << (void*)callable_ << " " << (void*)invoker_ << " " << (void*)this << std::endl;
+
         assert(invoker_ && "function_ref is empty");
         return invoker_(callable_, std::forward<Args>(args)...);
     }
@@ -304,7 +464,7 @@ public:
     }
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
 struct defer{
@@ -313,389 +473,7 @@ struct defer{
     ~defer(){val();}
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// // struct one_connection_context{
-// //     char incoming_buffer[8192];
-// //     char outgoing_buffer[8192];
-// //     int internal_fd = -1;
-// //     int external_fd = -1;
-// //     uint32_t buf_len = 0;
-// //     uint32_t buf_sent = 0;
-// //     bool eof_on_external_socket = false;
-// //     bool eof_on_internal_socket = false;
-
-// //     bool selector_told_us_that_we_can_read_on_internal_socket = false;
-// //     bool selector_told_us_that_we_can_read_on_external_socket = false;
-// //     bool selector_told_us_that_we_can_write_on_internal_socket = false;
-// //     bool selector_told_us_that_we_can_write_on_external_socket = false;
-
-// //     void called_by_selector(){
-// //         if (incoming_buffer
-// //     }
-// // };
-
-
-
-// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// bool has_to_stop = false;
-
-// #ifdef use_kqueue
-
-//     void print_event(struct kevent& value){
-//         std::cerr << "event{" << std::endl
-//         << "      " << VALUE_AS_STRING_AND_VALUE(value.ident) << std::endl
-//         << "      " << VALUE_AS_STRING_AND_VALUE(value.filter) << std::endl
-//         << "      " << VALUE_AS_STRING_AND_VALUE(value.flags) << std::endl
-//         << "      " << VALUE_AS_STRING_AND_VALUE(value.fflags) << std::endl
-//         << "      " << VALUE_AS_STRING_AND_VALUE(value.data) << std::endl
-//         << "      " << VALUE_AS_STRING_AND_VALUE(value.udata) << std::endl
-//         << "}" << std::endl;
-//     }
-
-//     struct kqueue_selector{
-//     private:
-//         int sd = 0;
-//         std::pair<
-//             std::array<
-//                 struct kevent,
-//                 256
-//             >,
-//             size_t
-//         > events_to_process = {{}, 0};
-//         std::vector<
-//             struct kevent
-//         > events_to_add;
-//         void_ptr_storage<Task> callbacks;
-//         std::multimap<timespec_pair, Task> sleeping_tasks;
-
-//         void add_descriptor(int fd, Task callback, short filter){
-//             auto& new_event = events_to_add.emplace_back();
-//             std::memset(&new_event, 0, sizeof(new_event));
-
-//             new_event.ident = fd;
-//             new_event.filter = filter;
-//             new_event.flags = EV_ADD | EV_ENABLE | EV_ONESHOT;
-//             new_event.udata = callbacks.put(std::move(callback));
-//         }
-
-//     public:
-//         void async_read(auto fd, Task callback){
-//             add_descriptor(fd, std::move(callback), EVFILT_READ);
-//         }
-
-//         void async_write(auto fd, Task callback){
-//             add_descriptor(fd, std::move(callback), EVFILT_WRITE);
-//         }
-
-//         void async_wait(timespec_pair seconds, Task callback){
-//             auto ct = monotonic();
-//             std::cerr << "async wait called at " << ct.first << "." << ct.second << std::endl;
-//             ct = ct + seconds;
-//             std::cerr << "async wait would sleep intil " << ct.first << "." << ct.second << std::endl;
-//             sleeping_tasks.insert({
-//                 seconds + monotonic(),
-//                 std::move(callback)
-//             });
-//         }
-
-//         ~kqueue_selector(){
-//             std::cerr << "exiting" << std::endl;
-//             sys.close(sd);
-//         }
-
-//         kqueue_selector(){
-//             sd = sys.kqueue();
-//             if (sd < 0){
-//                 throw std::runtime_error{"error when creating selector"};
-//             }
-//         }
-
-//         void loop(){
-//             while(not has_to_stop){
-
-//                 std::cerr << "have " << events_to_add.size() << " events to add." << std::endl;
-//                 for (auto& event : events_to_add){
-//                     print_event(event);
-//                 }
-
-//                 struct timespec to_sleep;
-//                 struct timespec* to_sleep_ptr = nullptr;
-//                 if (not sleeping_tasks.empty()){
-//                     auto  wake_at = sleeping_tasks.begin()->first;
-//                     auto current_time = monotonic();
-//                     if (wake_at < current_time){
-//                         wake_at = current_time;
-//                     }
-//                     wake_at = wake_at - current_time;
-
-//                     to_sleep.tv_sec = wake_at.first;
-//                     to_sleep.tv_nsec = wake_at.second;
-//                     to_sleep_ptr = &to_sleep;
-//                 }
-
-//                 if (to_sleep_ptr){
-//                     std::cerr << "have to sleep " << to_sleep_ptr->tv_sec << "." << to_sleep_ptr->tv_nsec << std::endl;
-//                 }else{
-//                     std::cerr << "dont have to sleep " << std::endl;
-//                 }
-
-//                 sys.ignore(EINTR);
-//                 events_to_process.second = sys.kevent(
-//                     sd,
-//                     events_to_add.data(),
-//                     events_to_add.size(),
-//                     events_to_process.first.data(),
-//                     events_to_process.first.size(),
-//                     to_sleep_ptr
-//                 );
-//                 events_to_add.clear();
-//                 if (errno == EINTR){
-//                     std::cerr << "interrupted" << std::endl;
-//                     return;
-//                 }
-//                 assert(errno == 0);
-//                 assert(events_to_process.second < events_to_process.first.size());
-//                 std::cerr << "have " << events_to_process.second << " events to process." << std::endl;
-//                 for (size_t q = 0; q < events_to_process.second; ++q){
-//                     auto& event = events_to_process.first[q];
-//                     print_event(event);
-//                 }
-//                 // sys.eassert(events_to_process.second != 0);
-//                 for (size_t i = 0; i < events_to_process.second; ++i){
-//                     auto ptr = events_to_process.first[i].udata;
-//                     std::cerr << "using " << ptr << std::endl;
-//                     callbacks.get(ptr)();
-//                     std::cerr << "freeing " << ptr << std::endl;
-//                     callbacks.del(ptr);
-//                 }
-//                 events_to_process.second = 0;
-
-//                 auto it = sleeping_tasks.begin();
-//                 auto ct = monotonic();
-//                 while(it != sleeping_tasks.end()){
-//                     auto nx = std::next(it);
-//                     auto& [wake_at, task] = *it;
-//                     if (wake_at <= ct){
-//                         std::cout << "found task to be executed at " << wake_at.first << "." << wake_at.second << std::endl;
-//                         task();
-//                         std::cout << "deleted task to be executed at " << wake_at.first << "." << wake_at.second << std::endl;
-//                         sleeping_tasks.erase(it);
-//                         std::cout << sleeping_tasks.size() << std::endl;
-//                     }
-//                     if (nx == sleeping_tasks.end()){
-//                         break;
-//                     }
-//                     it = nx;
-//                     ++nx;
-//                 }
-//             }
-//             std::cerr << "has to stop" << std::endl;
-//         }
-//     };
-
-//     static_assert(selector<kqueue_selector>);
-// #endif
-
-// #ifdef use_epoll
-//     void print_event(struct epoll_event& value){
-//         std::cerr << "event{" << std::endl
-//         << "      " << VALUE_AS_STRING_AND_VALUE(value.events) << std::endl
-//         << "      " << VALUE_AS_STRING_AND_VALUE(value.data.fd) << std::endl
-//         << "}" << std::endl;
-//     }
-
-//     struct epoll_selector{
-//     private:
-//         int sd = 0;
-//         std::pair<
-//             std::array<
-//                 struct epoll_event,
-//                 256
-//             >,
-//             size_t
-//         > events_to_process = {{}, 0};
-//         std::deque<
-//             std::array<
-//                 Task, 2
-//             >
-//         > callbacks;
-//         std::multimap<timespec_pair, Task> sleeping_tasks;
-
-//         void prepare_callbacks(int fd){
-//             callbacks.resize(
-//                 std::max(
-//                     callbacks.size(),
-//                     size_t(fd+1)
-//                 )
-//             );
-//         }
-
-//         constexpr static uint32_t actions[2] = {
-//             EPOLLIN,
-//             EPOLLOUT,
-//         };
-
-//         void epoll_mod(int fd, bool action_index, bool add){
-//             prepare_callbacks(fd);
-//             bool has_other = callbacks[fd][not action_index];
-//             auto op = has_other ? EPOLL_CTL_MOD : (add ? EPOLL_CTL_ADD : EPOLL_CTL_DEL);
-//             struct epoll_event new_event;
-//             std::memset(&new_event, 0, sizeof(new_event));
-//             new_event.data.fd = fd;
-//             if (add){
-//                 new_event.events |= actions[action_index];
-//             }
-//             if (has_other){
-//                 new_event.events |= actions[not action_index];
-//             }
-//             std::cerr << "have 1 event to mod" << std::endl;
-//             std::cerr << "action_index = " << action_index << std::endl;
-//             std::cerr << "add = " << add << std::endl;
-//             print_event(new_event);
-//             sys.epoll_ctl(sd, op, fd, &new_event);
-//         }
-
-//         void add_descriptor(int fd, Task callback, bool action_index){
-//             epoll_mod(fd, action_index, 1);
-//             callbacks[fd][action_index] = std::move(callback);
-//         }
-
-//     public:
-//         void async_read(auto fd, Task callback){
-//             add_descriptor(fd, std::move(callback), 0);
-//         }
-
-//         void async_write(auto fd, Task callback){
-//             add_descriptor(fd, std::move(callback), 1);
-//         }
-
-//         void async_wait(timespec_pair seconds, Task callback){
-//             auto ct = monotonic();
-//             std::cerr << "async wait called at " << ct.first << "." << ct.second << std::endl;
-//             ct = ct + seconds;
-//             std::cerr << "async wait would sleep intil " << ct.first << "." << ct.second << std::endl;
-//             sleeping_tasks.insert({
-//                 seconds + monotonic(),
-//                 std::move(callback)
-//             });
-//         }
-
-//         ~epoll_selector(){
-//             std::cerr << "exiting" << std::endl;
-//             sys.close(sd);
-//         }
-
-//         epoll_selector(){
-//             sd = sys.epoll_create1(0);
-//             if (sd < 0){
-//                 throw std::runtime_error{"error when creating selector"};
-//             }
-//         }
-
-//         void loop(){
-//             while(not has_to_stop){
-//                 double to_sleep = timespec_base;
-//                 if (not sleeping_tasks.empty()){
-//                     auto  wake_at = sleeping_tasks.begin()->first;
-//                     auto current_time = monotonic();
-//                     if (wake_at < current_time){
-//                         wake_at = current_time;
-//                     }
-//                     wake_at = wake_at - current_time;
-
-//                     to_sleep = 0;
-//                     to_sleep += wake_at.second;
-//                     to_sleep /= timespec_base;
-//                     to_sleep += wake_at.first;
-//                     to_sleep *= 1000;
-//                 }
-
-//                 if (to_sleep != timespec_base){
-//                     std::cerr << "have to sleep " << to_sleep << std::endl;
-//                 }else{
-//                     std::cerr << "dont have to sleep " << std::endl;
-//                 }
-
-//                 sys.ignore(EINTR);
-//                 events_to_process.second = sys.epoll_wait(
-//                     sd,
-//                     events_to_process.first.data(),
-//                     events_to_process.first.size(),
-//                     to_sleep
-//                 );
-//                 if (errno == EINTR){
-//                     std::cerr << "interrupted" << std::endl;
-//                     return;
-//                 }
-//                 assert(errno == 0);
-//                 assert(events_to_process.second < events_to_process.first.size());
-//                 std::cerr << "have " << events_to_process.second << " events to process." << std::endl;
-//                 for (size_t q = 0; q < events_to_process.second; ++q){
-//                     auto& event = events_to_process.first[q];
-//                     print_event(event);
-//                 }
-//                 for (size_t i = 0; i < events_to_process.second; ++i){
-//                     auto& event = events_to_process.first[i];
-//                     auto fd = event.data.fd;
-//                     auto events = event.events;
-//                     for (bool action_index: std::array<bool, 2>({0, 1})){
-//                         if (events & actions[action_index]){
-//                             std::cerr << "using fd=" << fd << ", action_index=" << action_index << std::endl;
-//                             assert(callbacks.size() > size_t(fd));
-//                             epoll_mod(fd, action_index, 0);
-//                             auto func = std::move(callbacks[fd][action_index]);
-//                             func();
-//                         }
-//                     }
-//                 }
-//                 events_to_process.second = 0;
-
-//                 auto it = sleeping_tasks.begin();
-//                 auto ct = monotonic();
-//                 while(it != sleeping_tasks.end()){
-//                     auto nx = std::next(it);
-//                     auto& [wake_at, task] = *it;
-//                     std::cout << "having task to be executed at " << wake_at.first << "." << wake_at.second << std::endl;
-//                     std::cout << "now is " << ct.first << "." << ct.second << std::endl;
-//                     if (wake_at <= ct){
-//                         std::cout << "found task to be executed at " << wake_at.first << "." << wake_at.second << std::endl;
-//                         task();
-//                         std::cout << "deleted task to be executed at " << wake_at.first << "." << wake_at.second << std::endl;
-//                         sleeping_tasks.erase(it);
-//                         std::cout << sleeping_tasks.size() << std::endl;
-//                     }
-//                     if (nx == sleeping_tasks.end()){
-//                         break;
-//                     }
-//                     it = nx;
-//                     ++nx;
-//                 }
-//             }
-//             std::cerr << "has to stop" << std::endl;
-//         }
-//     };
-
-//     static_assert(selector<epoll_selector>);
-// #endif
-
-// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// struct socket_closer{
-//     int s;
-//     socket_closer(int s):
-//         s(s)
-//     {
-//         std::cerr << "started owning " << s << std::endl;
-//     }
-//     ~socket_closer(){
-//         std::cerr << "stopped owning " << s << std::endl;
-//         sys.close(s);
-//     }
-// };
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 using host_port = std::pair<
                     std::array<
@@ -725,15 +503,13 @@ sockaddr host_port_to_sockaddr(const char* addr, uint16_t port){
     std::memset(&sau, 0, sizeof(sau));
     sau.sai.sin_family = AF_INET;
     sau.sai.sin_port = htons(port);
-    sys.eassert(sys.inet_pton(AF_INET, addr, &sau.sai.sin_addr) == 1);
+    assert(sys.inet_pton(AF_INET, addr, &sau.sai.sin_addr) == 1);
     return sau.sa;
 }
 
 sockaddr host_port_to_sockaddr(const host_port& hp){
     return host_port_to_sockaddr(hp.first.data(), hp.second);
 }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int ll_create_non_blocking_socket(){
     int s = sys.socket(AF_INET, SOCK_STREAM, 0);
@@ -781,29 +557,7 @@ error_t get_errno(int fd){
     return err;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// auto start_server(auto& sel, const char* addr, uint16_t port, function<void(socket_ptr, const char*, uint16_t)> callback){
-//     auto s = create_listening_socket(addr, port);
-//     function<void()> func = [&sel, s, callback=std::move(callback)]()mutable{
-//         sockaddr_in client;
-//         std::memset(&client, 0, sizeof(client));
-//         socklen_t client_len = sizeof(client);
-//         socket_ptr c = sys.accept(s, (sockaddr*)&client, &client_len);
-//         sys.eassert(client_len == sizeof(client));
-//         sys.eassert(client.sin_family == AF_INET);
-//         char client_addr[INET_ADDRSTRLEN];
-//         sys.inet_ntop(AF_INET, &client.sin_addr, client_addr, sizeof(client_addr));
-//         auto client_port = ntohs(client.sin_port);
-//         callback(c, client_addr, client_port);
-//         int s_ = s;
-//         auto& sel_ = sel;
-//         sel_.async_read(s_, std::move(*Task::current));
-//     };
-//     sel.async_read(s, std::move(func));
-// }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool should_exit = false;
 
@@ -836,7 +590,7 @@ void handle(int signal){
         *--last = msg[i];
     }
     *--last = '\n';
-    int rc = write(1, last, data + sizeof(data) - last);
+    int rc = write(2, last, data + sizeof(data) - last);
     (void)rc;
     rc = write(signal_pipe[1], "", 1);
     (void)rc;
@@ -845,11 +599,10 @@ void handle(int signal){
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// size_t max_connections = none;
-timespec_pair connection_timeout = {none, none};
-timespec_pair clock_interval = {none, none};
+time_storage connection_timeout;
+time_storage clock_interval;
 size_t max_accepted_sockets_per_server = none;
 size_t max_connected_sockets = none;
 
@@ -871,7 +624,7 @@ namespace modes{
 
 size_t mode = none;
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 struct fd_owner;
 
@@ -884,10 +637,10 @@ public:
     fd_owner(int s):
         s(s)
     {
-        std::cerr << "started owning fd=" << s << std::endl;
+        log("[%4d] ++++++++ started owning", s);
     }
     ~fd_owner(){
-        std::cerr << "stopped owning fd=" << s << std::endl;
+        log("[%4d] -------- stopped owning", s);
         sys.close(s);
     }
     fd_owner(fd_owner&&) = delete;
@@ -975,28 +728,7 @@ public:
     {}
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// struct one_socket{
-//     char buf_to_sent_into_this_socket[8192];
-//     std::optional<stream_socket_owner> socket;
-//     size_t buf_begin = 0;
-//     size_t buf_end = 0;
-//     bool got_eof_from_this_socket = false;
-//     bool got_error_from_this_socket = false;
-//     // bool this_socket_has_data_to_read = false;
-//     // bool this_socket_has_space_to_write = false;
-//     bool socket_waits_to_write = false;
-//     bool socket_waits_to_read = false;
-// };
-
-// struct two_sockets{
-//     one_socket internal_socket;
-//     one_socket external_socket;
-//     time_t last_event = 0;
-// };
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifdef use_epoll
 
@@ -1042,13 +774,10 @@ struct Selector{
         sys.epoll_ctl(get_fd(pool_fd), op, get_fd(fd), &new_event);
     }
 
-    void wait(std::optional<timespec_pair> timeout){
+    void wait(std::optional<time_storage> timeout = std::nullopt){
         double to_sleep = timespec_base;
         if (timeout){
-            to_sleep = 0;
-            to_sleep += timeout->second;
-            to_sleep /= timespec_base;
-            to_sleep += timeout->first;
+            to_sleep = *timeout;
             to_sleep *= 1000;
         }
 
@@ -1061,18 +790,13 @@ struct Selector{
         );
 
         if (errno == EINTR){
-            std::cerr << "interrupted" << std::endl;
+            log("epoll_wait() was interrupted by signal.");
             return;
         }
 
         assert(errno == 0);
         assert(events_to_process.second < events_to_process.first.size());
-        std::cerr << "have " << events_to_process.second << " events to process." << std::endl;
-
-        // for (size_t q = 0; q < events_to_process.second; ++q){
-        //     auto& event = events_to_process.first[q];
-        //     // print_event(event);
-        // }
+        // std::cerr << "have " << events_to_process.second << " events to process." << std::endl;
 
         for (size_t q = 0; q < events_to_process.second; ++q){
             auto& event = events_to_process.first[q];
@@ -1088,15 +812,11 @@ struct Selector{
 
 #endif
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 using selector_t = Selector<function_ref<void(bool)>>;
 
 using header_t = uint_least64_t;
 
 #define CMD_SOCKET_HEADER_SIZE (sizeof(header_t))
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename s_owner>
 struct SplitCallbacks{
@@ -1125,7 +845,6 @@ private:
     struct Handler{
         SplitCallbacks* outer;
         void operator()(bool to_write){
-            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
             outer->handle(to_write);
         }
     } handler;
@@ -1135,6 +854,7 @@ private:
     void handle(bool to_write){
         auto err = get_errno(get_fd(s));
         if (err != 0){
+            // std::cerr << __PRETTY_FUNCTION__ << " fd=" << get_fd(s) << " " << strerror(err) << std::endl;
             has_err = true;
         }
         if (to_write){
@@ -1144,8 +864,7 @@ private:
             selector.change_fd_in_pool(s, &handler_ref, has_read_task_, true, has_read_task_, false);
             has_write_task_ = false;
             assert(write_callback_local);
-            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
-            // std::cerr << (void*)write_callback_local.callable_ << " " << (void*)write_callback_local.invoker_ << " " << (void*)&write_callback_local << std::endl;
+
             write_callback_local(err);
         }else{
             assert(read_callback);
@@ -1154,7 +873,7 @@ private:
             selector.change_fd_in_pool(s, &handler_ref, true, has_write_task_, false, has_write_task_);
             has_read_task_ = false;
             assert(read_callback_local);
-            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+
             read_callback_local(err);
         }
     }
@@ -1189,12 +908,12 @@ public:
     }
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 struct StreamSocketCompleter{
 
     StreamSocketCompleter(selector_t& selector, const sockaddr& addr):
-        last_event(monotonic()),
+        last_event(time_storage::monotonic()),
         s(addr),
         c(selector, s),
         connected(false)
@@ -1204,7 +923,7 @@ struct StreamSocketCompleter{
     }
 
     StreamSocketCompleter(selector_t& selector, const fd_owner& server):
-        last_event(monotonic()),
+        last_event(time_storage::monotonic()),
         s(server),
         c(selector, s),
         connected(true)
@@ -1214,13 +933,12 @@ struct StreamSocketCompleter{
     }
 
 private:
-    timespec_pair last_event;
+    time_storage last_event;
 
     stream_socket_owner s;
     SplitCallbacks<stream_socket_owner> c;
 
     using external_rw_callback = function_ref<void(const char*, size_t, error_t)>;
-    // using external_connected_callback = function_ref<void(error_t)>;
 
     bool eof_is_written_ = false;
     bool connected = false;
@@ -1241,8 +959,8 @@ private:
     struct ReadHandler{
         StreamSocketCompleter* outer;
         void operator()(error_t err){
-            outer->last_event = monotonic();
-            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+            outer->last_event = time_storage::monotonic();
+
             outer->handle_read(err);
         }
     } read_handler;
@@ -1252,8 +970,8 @@ private:
     struct WriteHandler{
         StreamSocketCompleter* outer;
         void operator()(error_t err){
-            outer->last_event = monotonic();
-            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+            outer->last_event = time_storage::monotonic();
+
             outer->handle_write(err);
         }
     } write_handler;
@@ -1282,9 +1000,14 @@ private:
         read_callback.reset();
         auto len_of_data_in_read_buffer_local = len_of_data_in_read_buffer;
         len_of_data_in_read_buffer = none;
+        auto still_has_to_read_local = still_has_to_read;
         still_has_to_read = none;
         has_full_read_task = false;
-        // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+        if (still_has_to_read_local == none){
+            log("[%4d] (%d:%s) after reading %zu bytes: %s", get_fd(s), err, strerror(err), len_of_data_in_read_buffer_local, repr(std::string(read_buffer.data(), read_buffer.data()+len_of_data_in_read_buffer_local)).data());
+        }else{
+            log("[%4d] (%d:%s) after reading %zu of %zu bytes: %s", get_fd(s), err, strerror(err), len_of_data_in_read_buffer_local, len_of_data_in_read_buffer_local + still_has_to_read_local, repr(std::string(read_buffer.data(), read_buffer.data()+len_of_data_in_read_buffer_local)).data());
+        }
         read_callback_local(read_buffer.data(), len_of_data_in_read_buffer_local, err);
     }
 
@@ -1295,7 +1018,7 @@ private:
             }
             auto connected_callback_local = connected_callback;
             connected_callback.reset();
-            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+            log("[%4d] (%d:%s) after waiting for connect", get_fd(s), err, strerror(err));
             connected_callback_local(nullptr, 0, err);
             return;
         }
@@ -1325,7 +1048,7 @@ private:
         auto still_has_to_write_local = still_has_to_write;
         still_has_to_write = none;
         has_full_write_task = false;
-        // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+        log("[%4d] (%d:%s) after writing %zu bytes and not writing %zu bytes: %s and %s", get_fd(s), err, strerror(err), len_of_data_in_write_buffer_local - still_has_to_write_local, still_has_to_write_local, repr(std::string(write_buffer.data(), write_buffer.data()+len_of_data_in_write_buffer_local - still_has_to_write_local)).data(), repr(std::string(write_buffer.data()+len_of_data_in_write_buffer_local - still_has_to_write_local, write_buffer.data()+len_of_data_in_write_buffer_local)).data());
         write_callback_local(write_buffer.data() + len_of_data_in_write_buffer_local - still_has_to_write_local, still_has_to_write_local, err);
     }
 
@@ -1339,7 +1062,6 @@ public:
     }
 
     void full_read(size_t len, external_rw_callback callback){
-        // std::cerr << "Registering user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
         assert(connected);
         assert(not read_callback);
         assert(not has_full_read_task);
@@ -1347,6 +1069,7 @@ public:
         assert(len_of_data_in_read_buffer == none);
         assert(len <= read_buffer.size());
         assert(callback);
+        log("[%4d] before full read of %zu bytes", get_fd(s), len);
         c.wait_read(read_handler_ref);
         read_callback = callback;
         has_full_read_task = true;
@@ -1355,20 +1078,19 @@ public:
     }
 
     void partial_read(external_rw_callback callback){
-        // std::cerr << "Registering user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
         assert(connected);
         assert(not read_callback);
         assert(not has_full_read_task);
         assert(still_has_to_read == none);
         assert(len_of_data_in_read_buffer == none);
         assert(callback);
+        log("[%4d] before partial read", get_fd(s));
         c.wait_read(read_handler_ref);
         read_callback = callback;
         len_of_data_in_read_buffer = 0;
     }
 
     void full_write(const char* data, size_t len, external_rw_callback callback){
-        // std::cerr << "Registering user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
         assert(connected);
         assert(not write_callback);
         assert(not has_full_write_task);
@@ -1377,6 +1099,7 @@ public:
         assert(len <= write_buffer.size());
         assert(not eof_is_written_);
         assert(callback);
+        log("[%4d] before full write of %zu bytes: %s", get_fd(s), len, repr(std::string(data, data+len)).data());
         c.wait_write(write_handler_ref);
         memmove(write_buffer.data(), data, len);
         write_callback = callback;
@@ -1386,7 +1109,6 @@ public:
     }
 
     void partial_write(const char* data, size_t len, external_rw_callback callback){
-        // std::cerr << "Registering user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
         assert(connected);
         assert(not write_callback);
         assert(not has_full_write_task);
@@ -1395,6 +1117,7 @@ public:
         assert(len <= write_buffer.size());
         assert(not eof_is_written_);
         assert(callback);
+        log("[%4d] before partial write of %zu bytes: %s", get_fd(s), len, repr(std::string(data, data+len)).data());
         c.wait_write(write_handler_ref);
         memmove(write_buffer.data(), data, len);
         write_callback = callback;
@@ -1407,6 +1130,7 @@ public:
         assert(not write_callback);
         assert(not has_full_write_task);
         assert(not eof_is_written_);
+        log("[%4d] write EOF", get_fd(s));
         s.shut_wr();
         eof_is_written_ = true;
     }
@@ -1415,11 +1139,10 @@ public:
         return eof_is_written_;
     }
 
-    void wait_connected(external_rw_callback callback){
-        // std::cerr << "Registering user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
-        // std::cerr << (void*)callback.callable_ << " " << (void*)callback.invoker_ << " " << (void*)&callback << std::endl;
+    void wait_for_connect(external_rw_callback callback){
         assert(not connected);
         assert(callback);
+        log("[%4d] before waiting for connect", get_fd(s));
         c.wait_write(write_handler_ref);
         connected_callback = callback;
     }
@@ -1436,7 +1159,7 @@ public:
         return s;
     }
 
-    timespec_pair get_last_event(){
+    time_storage get_last_event(){
         return last_event;
     }
 };
@@ -1460,7 +1183,7 @@ private:
     struct ReadHandler{
         ServerSocketCompleter* outer;
         void operator()(error_t err){
-            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+
             outer->handle_read(err);
         }
     } read_handler;
@@ -1468,13 +1191,14 @@ private:
     function_ref<void(bool)> read_handler_ref = read_handler;
 
     void handle_read(error_t err){
-        // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+        log("[%4d] (%d:%s) after waiting for accept", get_fd(s), err, strerror(err));
         accept_callback(err);
     }
 
 public:
-    void accept(external_callback callback){
+    void wait_for_accept(external_callback callback){
         assert(callback);
+        log("[%4d] before waiting for accept", get_fd(s));
         c.wait_read(read_handler_ref);
         accept_callback = callback;
     }
@@ -1488,7 +1212,7 @@ public:
     }
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename stream_context>
 struct ServerManager;
@@ -1500,6 +1224,11 @@ struct AcceptedSocketTCP;
 struct AppServer;
 
 uint_least64_t get_rand64(AppServer& app_server);
+
+void ctl_maybe_send_some_request(AppServer& app_server);
+
+void notify_closing_stream(AppServer& app_server, AcceptedSocketCMD& stream);
+void notify_closing_stream(AppServer& app_server, AcceptedSocketTCP& stream);
 
 ServerManager<AcceptedSocketCMD>& get_cmd_server_manager(AppServer& app_server);
 ServerManager<AcceptedSocketTCP>& get_tcp_server_manager(AppServer& app_server);
@@ -1546,7 +1275,7 @@ private:
         void operator()(error_t err){
             assert(outer->is_waiting_for_accept);
             outer->is_waiting_for_accept = false;
-            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+
             outer->handle_accept(err);
         }
     } accept_handler;
@@ -1557,7 +1286,7 @@ private:
 
     void start_waiting_for_accept(){
         if (not is_waiting_for_accept){
-            server.accept(accept_handler_ref);
+            server.wait_for_accept(accept_handler_ref);
             is_waiting_for_accept = true;
         }
     }
@@ -1569,6 +1298,7 @@ private:
             if (not streams[i].has_value()){
                 auto& stream = streams[i];
                 stream.emplace(selector, server, i, app_server);
+                ctl_maybe_send_some_request(app_server);
                 start_waiting_for_accept();
                 return;
             }
@@ -1581,7 +1311,7 @@ public:
     }
 
     stream_context* get_stream(size_t i){
-        std::cerr << i << " " << streams.size() << std::endl;
+        assert(i != none);
         assert(i < streams.size());
         auto& stream = streams[i];
         return stream.has_value() ? &*stream : nullptr;
@@ -1590,13 +1320,12 @@ public:
     void close_stream(size_t i){
         auto& stream = streams[i];
         if (stream.has_value()){
+            notify_closing_stream(app_server, *stream);
             stream.reset();
             start_waiting_for_accept();
         }
     }
 };
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace accepted_cmd_socket_states{
     enum accepted_cmd_socket_states{
@@ -1613,14 +1342,15 @@ struct AcceptedSocketCMD{
         app_server(app_server),
         accepted_cmd_socket_state(accepted_cmd_socket_states::fresh)
     {
+        assert(index != none);
         read_handler.outer = this;
         write_handler.outer = this;
         s.full_read(first_bytes_size, read_handler_ref);
     }
 
-    size_t index = none;
+    const size_t index = none;
     size_t other_index = none;
-    header_t header = 0;
+    header_t header = none;
 private:
     selector_t& selector;
     StreamSocketCompleter s;
@@ -1630,7 +1360,7 @@ private:
     struct ReadHandler{
         AcceptedSocketCMD* outer;
         void operator()(const char* data, size_t size, error_t err){
-            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+
             outer->handle_read(data, size, err);
         }
     } read_handler;
@@ -1640,7 +1370,7 @@ private:
     struct WriteHandler{
         AcceptedSocketCMD* outer;
         void operator()(const char* data, size_t size, error_t err){
-            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+
             outer->handle_write(data, size, err);
         }
     } write_handler;
@@ -1655,38 +1385,49 @@ private:
         switch (accepted_cmd_socket_state){
             case accepted_cmd_socket_states::fresh:{
                 if (err != 0){
+                    log("[%4d] closing by err during reading first bytes", get_fd(s));
                     close();
                     return;
                 }
                 assert(size <= first_bytes_size);
                 if (size != first_bytes_size){
+                    log("[%4d] closing by EOF during reading first bytes", get_fd(s));
                     close();
                     return;
                 }
+
                 accepted_cmd_socket_state = accepted_cmd_socket_states::readen_first_bytes;
+
                 s.full_read(CMD_SOCKET_HEADER_SIZE, read_handler_ref);
             }
             break;
             case accepted_cmd_socket_states::readen_first_bytes:{
                 if (err != 0){
+                    log("[%4d] closing by err during reading header", get_fd(s));
                     close();
                     return;
                 }
                 assert(size <= CMD_SOCKET_HEADER_SIZE);
                 if (size != CMD_SOCKET_HEADER_SIZE){
+                    log("[%4d] closing by EOF during reading header", get_fd(s));
                     close();
                     return;
                 }
-                header_t header = 0;
+                header_t header_ = 0;
                 static_assert(CHAR_BIT == 8);
-                static_assert(CMD_SOCKET_HEADER_SIZE <= sizeof(header));
-                assert(size <= sizeof(header));
-                memcpy(&header, data, size);
+                static_assert(CMD_SOCKET_HEADER_SIZE <= sizeof(header_));
+                assert(size <= sizeof(header_));
+                memcpy(&header_, data, size);
+                header = header_;
                 if (header == 0){
+
                     accepted_cmd_socket_state = accepted_cmd_socket_states::main;
+
                     handle_accept_ctl(app_server, index, header);
                 }else{
+
                     accepted_cmd_socket_state = accepted_cmd_socket_states::worker;
+
                     handle_accept_cmd(app_server, index, header);
                 }
             }
@@ -1754,12 +1495,10 @@ public:
         return s;
     }
 
-    timespec_pair get_last_event(){
+    time_storage get_last_event(){
         return s.get_last_event();
     }
 };
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 struct AcceptedSocketTCP{
 
@@ -1787,7 +1526,7 @@ private:
     struct ReadHandler{
         AcceptedSocketTCP* outer;
         void operator()(const char* data, size_t size, error_t err){
-            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+
             outer->handle_read(data, size, err);
         }
     } read_handler;
@@ -1797,7 +1536,6 @@ private:
     struct WriteHandler{
         AcceptedSocketTCP* outer;
         void operator()(const char* data, size_t size, error_t err){
-            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
             outer->handle_write(data, size, err);
         }
     } write_handler;
@@ -1857,12 +1595,10 @@ public:
         return s;
     }
 
-    timespec_pair get_last_event(){
+    time_storage get_last_event(){
         return s.get_last_event();
     }
 };
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 struct AppServer{
     AppServer(selector_t& selector, const sockaddr& cmd_addr, const sockaddr& tcp_addr):
@@ -1889,31 +1625,41 @@ struct AppServer{
 
     void ctl_maybe_send_some_request(){
         if (main_index == none){
+            log("not sending new connection request without main connection");
             return;
         }
         auto& main = get_main();
         if (main.has_write_task()){
+            log("not sending new connection request as main connection is busy");
             return;
         }
         for (size_t i = 0; i < tcp_server.get_streams_size(); ++i){
+            log("checking if stream with index=%zu needs new connection request", i);
             auto stream_ptr = tcp_server.get_stream(i);
             if (not stream_ptr){
+                log("there is no stream with index=%zu", i);
                 continue;
             }
             auto& stream = *stream_ptr;
-            if (not stream.request_for_cmd_socket_is_sent){
-                char message[CMD_SOCKET_HEADER_SIZE];
-                memset(message, 0, sizeof(message));
-                static_assert(sizeof(stream.header) <= CMD_SOCKET_HEADER_SIZE);
-                memcpy(message, &stream.header, sizeof(stream.header));
-                main.full_write(message, sizeof(message));
-                break;
+            if (stream.request_for_cmd_socket_is_sent){
+                log("stream with index=%zu is already processed", i);
+                continue;
             }
+            log("sending new connection request for stream with index=%zu", i);
+            char message[CMD_SOCKET_HEADER_SIZE];
+            memset(message, 0, sizeof(message));
+            static_assert(sizeof(stream.header) <= CMD_SOCKET_HEADER_SIZE);
+            memcpy(message, &stream.header, sizeof(stream.header));
+            log("[%4d] sending new conneciton request", get_fd(stream));
+            main.full_write(message, sizeof(message));
+            stream.request_for_cmd_socket_is_sent = true;
+            return;
         }
+        log("not sending new connection request as there is no pending requests.");
     }
 
     void cleanup(){
-        auto current_time = monotonic();
+        auto current_time = time_storage::monotonic();
         for (size_t i = 0; i < cmd_server.get_streams_size(); ++i){
             auto cmd_stream_ptr = cmd_server.get_stream(i);
             if (not cmd_stream_ptr){
@@ -1924,14 +1670,18 @@ struct AppServer{
                 continue;
             }
             if (cmd_stream.other_index == none){
+                log("[%4d] closing by timeout", get_fd(cmd_stream));
                 cmd_server.close_stream(cmd_stream.index);
+                continue;
             }
             auto tcp_stream_ptr = tcp_server.get_stream(cmd_stream.other_index);
             assert(tcp_stream_ptr);
             auto& tcp_stream = *tcp_stream_ptr;
             assert(tcp_stream.other_index == cmd_stream.index);
             assert(cmd_stream.other_index == tcp_stream.index);
+            log("[%4d] closing by timeout", get_fd(cmd_stream));
             cmd_server.close_stream(cmd_stream.index);
+            log("[%4d] closing by timeout", get_fd(tcp_stream));
             tcp_server.close_stream(tcp_stream.index);
         }
         for (size_t i = 0; i < tcp_server.get_streams_size(); ++i){
@@ -1944,14 +1694,18 @@ struct AppServer{
                 continue;
             }
             if (tcp_stream.other_index == none){
+                log("[%4d] closing by timeout", get_fd(tcp_stream));
                 tcp_server.close_stream(tcp_stream.index);
+                continue;
             }
             auto cmd_stream_ptr = cmd_server.get_stream(tcp_stream.other_index);
             assert(cmd_stream_ptr);
             auto& cmd_stream = *cmd_stream_ptr;
             assert(tcp_stream.other_index == cmd_stream.index);
             assert(cmd_stream.other_index == tcp_stream.index);
+            log("[%4d] closing by timeout", get_fd(cmd_stream));
             cmd_server.close_stream(cmd_stream.index);
+            log("[%4d] closing by timeout", get_fd(tcp_stream));
             tcp_server.close_stream(tcp_stream.index);
         }
     }
@@ -1966,37 +1720,37 @@ ServerManager<AcceptedSocketTCP>& get_tcp_server_manager(AppServer& app_server){
 
 void handle_accept_ctl(AppServer& app_server, size_t index, header_t header){
     assert(header == 0);
+    log("[%4d] accepted new main stream with index=%zu", get_fd(*app_server.cmd_server.get_stream(index)), index);
     if (app_server.main_index != none){
+        log("[%4d] closing old main stream with index=%zu", get_fd(*app_server.cmd_server.get_stream(app_server.main_index)), app_server.main_index);
+        assert(app_server.main_index != index);
         app_server.cmd_server.close_stream(app_server.main_index);
     }
     app_server.main_index = index;
+    log("checking for new connection requests after accepting main stream");
+    app_server.ctl_maybe_send_some_request();
 }
 
 void handle_read_ctl(AppServer& app_server, const char* data, size_t size, error_t err, size_t index, header_t header){
-    assert(header == 0);
-    assert(app_server.main_index == index);
-    if (err != 0){
-        app_server.main_index = none;
-        app_server.cmd_server.close_stream(index);
-        return;
-    }
+    assert(false);
 }
 
 void handle_write_ctl(AppServer& app_server, const char* data, size_t size, error_t err, size_t index, header_t header){
     assert(header == 0);
+    log("%zu %zu", app_server.main_index, index);
     assert(app_server.main_index == index);
     if (err != 0){
+        log("[%4d] closing by err during writing new connection header", get_fd(*app_server.cmd_server.get_stream(app_server.main_index)));
         app_server.main_index = none;
         app_server.cmd_server.close_stream(index);
         return;
     }
     assert(size == 0);
+    log("checking for new connection requests after sending one");
     app_server.ctl_maybe_send_some_request();
 }
 
-void handle_accept_tcp(AppServer& app_server, size_t index, header_t header){    
-    app_server.ctl_maybe_send_some_request();
-}
+void handle_accept_tcp(AppServer& app_server, size_t index, header_t header){}
 
 void handle_accept_cmd(AppServer& app_server, size_t index, header_t header){
     auto cmd_stream_ptr = app_server.cmd_server.get_stream(index);
@@ -2012,6 +1766,7 @@ void handle_accept_cmd(AppServer& app_server, size_t index, header_t header){
         if (stream.header == header){
             assert(stream.index == i);
             if (stream.other_index != none){
+                log("[%4d] TCP stream with this header already has CMD stream", get_fd(cmd_stream));
                 app_server.cmd_server.close_stream(index);
                 return;
             }
@@ -2021,7 +1776,9 @@ void handle_accept_cmd(AppServer& app_server, size_t index, header_t header){
         }
     }
     if (cmd_stream.other_index == none){
+        log("[%4d] cannot find TCP stream for this header", get_fd(cmd_stream));
         app_server.cmd_server.close_stream(index);
+        return;
     }
     auto tcp_stream_ptr = app_server.tcp_server.get_stream(cmd_stream.other_index);
     assert(tcp_stream_ptr);
@@ -2043,6 +1800,7 @@ void handle_read_tcp(AppServer& app_server, const char* data, size_t size, error
     assert(cmd_stream.other_index == index);
 
     if (err != 0){
+        log("[%4d] closing by err during reading data", get_fd(tcp_stream));
         app_server.cmd_server.close_stream(cmd_stream.index);
         app_server.tcp_server.close_stream(tcp_stream.index);
         return;
@@ -2052,10 +1810,12 @@ void handle_read_tcp(AppServer& app_server, const char* data, size_t size, error
         cmd_stream.full_write(data, size);
         return;
     }
-    
+
     assert(not cmd_stream.eof_is_written());
+    log("[%4d] sending EOF", get_fd(cmd_stream));
     cmd_stream.write_eof();
     if (tcp_stream.eof_is_written()){
+        log("[%4d] [%4d] closing by mutual EOF", get_fd(tcp_stream), get_fd(cmd_stream));
         app_server.cmd_server.close_stream(cmd_stream.index);
         app_server.tcp_server.close_stream(tcp_stream.index);
     }
@@ -2072,6 +1832,7 @@ void handle_read_cmd(AppServer& app_server, const char* data, size_t size, error
     assert(tcp_stream.other_index == index);
 
     if (err != 0){
+        log("[%4d] closing by err during reading data", get_fd(cmd_stream));
         app_server.tcp_server.close_stream(tcp_stream.index);
         app_server.cmd_server.close_stream(cmd_stream.index);
         return;
@@ -2081,24 +1842,26 @@ void handle_read_cmd(AppServer& app_server, const char* data, size_t size, error
         tcp_stream.full_write(data, size);
         return;
     }
-    
+
     assert(not tcp_stream.eof_is_written());
+    log("[%4d] sending EOF", get_fd(tcp_stream));
     tcp_stream.write_eof();
     if (cmd_stream.eof_is_written()){
+        log("[%4d] [%4d] closing by mutual EOF", get_fd(tcp_stream), get_fd(cmd_stream));
         app_server.tcp_server.close_stream(tcp_stream.index);
         app_server.cmd_server.close_stream(cmd_stream.index);
     }
 }
 
 void handle_write_tcp(AppServer& app_server, const char* data, size_t size, error_t err, size_t index, header_t header){
-    auto cmd_stream_ptr = app_server.cmd_server.get_stream(index);
-    assert(cmd_stream_ptr);
-    auto& cmd_stream = *cmd_stream_ptr;
-    assert(cmd_stream.other_index != none);
-    auto tcp_stream_ptr = app_server.tcp_server.get_stream(cmd_stream.other_index);
+    auto tcp_stream_ptr = app_server.tcp_server.get_stream(index);
     assert(tcp_stream_ptr);
     auto& tcp_stream = *tcp_stream_ptr;
-    assert(tcp_stream.other_index == index);
+    assert(tcp_stream.other_index != none);
+    auto cmd_stream_ptr = app_server.cmd_server.get_stream(tcp_stream.other_index);
+    assert(cmd_stream_ptr);
+    auto& cmd_stream = *cmd_stream_ptr;
+    assert(cmd_stream.other_index == index);
 
     if (err != 0){
         app_server.tcp_server.close_stream(tcp_stream.index);
@@ -2132,7 +1895,20 @@ uint_least64_t get_rand64(AppServer& app_server){
     return app_server.PRNG();
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void notify_closing_stream(AppServer& app_server, AcceptedSocketCMD& stream){
+    if (stream.index == app_server.main_index){
+        app_server.main_index = none;
+    }
+}
+
+void notify_closing_stream(AppServer& app_server, AcceptedSocketTCP& stream){}
+
+void ctl_maybe_send_some_request(AppServer& app_server){
+    log("checking for new connection requests after accepting tcp stream");
+    app_server.ctl_maybe_send_some_request();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 struct AppClient;
 
@@ -2157,7 +1933,7 @@ void handle_write_tcp(AppClient& app_server, const char* data, size_t size, erro
 
 namespace connected_socket_states{
     enum connected_socket_states{
-        fresh, connected, header_written, 
+        fresh, connected, first_bytes_written, header_written,
     };
 };
 
@@ -2224,7 +2000,7 @@ struct ConnectedSocketCMD{
         s(selector, addr),
         state(connected_socket_states::fresh)
     {
-        s.wait_connected(write_handler_ref);
+        s.wait_for_connect(write_handler_ref);
         read_handler.outer = this;
         write_handler.outer = this;
     }
@@ -2233,13 +2009,15 @@ struct ConnectedSocketCMD{
     size_t index = none;
     header_t header = none;
     AppClient& app_client;
+private:
     StreamSocketCompleter s;
+public:
     size_t state = none;
 
     struct ReadHandler{
         ConnectedSocketCMD* outer;
         void operator()(const char* data, size_t size, error_t err){
-            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+
             outer->handle_read(data, size, err);
         }
     } read_handler;
@@ -2249,7 +2027,7 @@ struct ConnectedSocketCMD{
     struct WriteHandler{
         ConnectedSocketCMD* outer;
         void operator()(const char* data, size_t size, error_t err){
-            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+
             outer->handle_write(data, size, err);
         }
     } write_handler;
@@ -2274,39 +2052,61 @@ struct ConnectedSocketCMD{
 
     void handle_write(const char* data, size_t size, error_t err){
         switch (state){
-            case connected_socket_states::fresh:
+            case connected_socket_states::fresh:{
                 if (err != 0){
+                    log("[%4d] closing by err during connecting", get_fd(s));
                     close_pair();
                     return;
                 }
                 assert(s.is_connected());
+
                 state = connected_socket_states::connected;
-                char message[CMD_SOCKET_HEADER_SIZE];
+
+                char message[BUFFER_SIZE];
                 memset(message, 0, sizeof(message));
-                static_assert(sizeof(header) <= CMD_SOCKET_HEADER_SIZE);
-                memcpy(message, &header, sizeof(header));
-                s.full_write(message, sizeof(message), write_handler_ref);
-            break;
-            case connected_socket_states::connected:
+                assert(first_bytes_size <= sizeof(message));
+                memcpy(message, first_bytes_data, first_bytes_size);
+                full_write(message, first_bytes_size);
+            break;}
+            case connected_socket_states::connected:{
                 if (err != 0){
+                    log("[%4d] closing by EOF during writting first bytes", get_fd(s));
                     close_pair();
                     return;
                 }
                 assert(size == 0);
+
+                state = connected_socket_states::first_bytes_written;
+
+                char message[CMD_SOCKET_HEADER_SIZE];
+                memset(message, 0, sizeof(message));
+                static_assert(sizeof(header) <= CMD_SOCKET_HEADER_SIZE);
+                memcpy(message, &header, sizeof(header));
+                full_write(message, sizeof(message));
+            break;}
+            case connected_socket_states::first_bytes_written:{
+                if (err != 0){
+                    log("[%4d] closing by err during writting header", get_fd(s));
+                    close_pair();
+                    return;
+                }
+                assert(size == 0);
+
                 state = connected_socket_states::header_written;
+
                 if (header == 0){
                     handle_connect_ctl(app_client, index, header);
                 }else{
                     handle_connect_cmd(app_client, index, header);
                 }
-            break;
-            case connected_socket_states::header_written:
+            break;}
+            case connected_socket_states::header_written:{
                 if (header == 0){
-                    handle_write_ctl(app_client, data,size, err, index, header);
+                    handle_write_ctl(app_client, data, size, err, index, header);
                 }else{
-                    handle_write_cmd(app_client, data,size, err, index, header);
+                    handle_write_cmd(app_client, data, size, err, index, header);
                 }
-            break;
+            break;}
             default:
                 assert(false);
         }
@@ -2356,7 +2156,7 @@ struct ConnectedSocketCMD{
         return s;
     }
 
-    timespec_pair get_last_event(){
+    time_storage get_last_event(){
         return s.get_last_event();
     }
 };
@@ -2370,7 +2170,7 @@ struct ConnectedSocketTCP{
         s(selector, addr),
         state(connected_socket_states::fresh)
     {
-        s.wait_connected(write_handler_ref);
+        s.wait_for_connect(write_handler_ref);
         read_handler.outer = this;
         write_handler.outer = this;
     }
@@ -2379,13 +2179,15 @@ struct ConnectedSocketTCP{
     size_t index;
     header_t header;
     AppClient& app_client;
+private:
     StreamSocketCompleter s;
+public:
     size_t state = none;
 
     struct ReadHandler{
         ConnectedSocketTCP* outer;
         void operator()(const char* data, size_t size, error_t err){
-            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
+
             outer->handle_read(data, size, err);
         }
     } read_handler;
@@ -2395,7 +2197,6 @@ struct ConnectedSocketTCP{
     struct WriteHandler{
         ConnectedSocketTCP* outer;
         void operator()(const char* data, size_t size, error_t err){
-            // std::cerr << "Calling user-defined callback from " << __PRETTY_FUNCTION__ << std::endl;
             outer->handle_write(data, size, err);
         }
     } write_handler;
@@ -2403,11 +2204,30 @@ struct ConnectedSocketTCP{
     function_ref<void(const char*, size_t, error_t)> write_handler_ref = write_handler;
 
     void handle_read(const char* data, size_t size, error_t err){
-        handle_read_cmd(app_client, data, size, err, index, header);
+        handle_read_tcp(app_client, data, size, err, index, header);
     }
 
     void handle_write(const char* data, size_t size, error_t err){
-        handle_write_cmd(app_client, data, size, err, index, header);
+        switch (state){
+            case connected_socket_states::fresh:{
+                if (err != 0){
+                    log("[%4d] closing by err during connecting", get_fd(s));
+                    close_pair();
+                    return;
+                }
+                assert(s.is_connected());
+
+                state = connected_socket_states::connected;
+
+                assert(header != 0);
+                handle_connect_tcp(app_client, index, header);
+            break;}
+            case connected_socket_states::connected:{
+                handle_write_tcp(app_client, data, size, err, index, header);
+            break;}
+            default:
+                assert(false);
+        }
     }
 
     void close_pair(){
@@ -2458,7 +2278,7 @@ struct ConnectedSocketTCP{
         return s;
     }
 
-    timespec_pair get_last_event(){
+    time_storage get_last_event(){
         return s.get_last_event();
     }
 };
@@ -2471,18 +2291,18 @@ void ClientManager::maybe_open_pair(header_t header){
         stream_pairs[i].emplace(
             std::piecewise_construct,
             std::forward_as_tuple(
-                    selector,
-                    get_cmd_addr(app_client),
-                    i,
-                    header,
-                    app_client
+                selector,
+                get_cmd_addr(app_client),
+                i,
+                header,
+                app_client
             ),
             std::forward_as_tuple(
-                    selector,
-                    get_tcp_addr(app_client),
-                    i,
-                    header,
-                    app_client
+                selector,
+                get_tcp_addr(app_client),
+                i,
+                header,
+                app_client
             )
         );
         break;
@@ -2490,7 +2310,7 @@ void ClientManager::maybe_open_pair(header_t header){
 }
 
 void ClientManager::close_pair(size_t index){
-    // std::cerr << index << " " << stream_pairs.size() << std::endl;
+
     assert(index < stream_pairs.size());
     stream_pairs[index].reset();
 }
@@ -2514,8 +2334,6 @@ std::pair<
     return stream_pair.has_value() ? &*stream_pair : nullptr;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 struct AppClient{
     selector_t& selector;
     const sockaddr& cmd_addr;
@@ -2531,7 +2349,7 @@ struct AppClient{
     {}
 
     void cleanup(){
-        auto current_time = monotonic();
+        auto current_time = time_storage::monotonic();
         for (size_t i = 0; i < client.get_stream_pairs_size(); ++i){
             auto stream_pair_ptr = client.get_stream_pair(i);
             if (not stream_pair_ptr){
@@ -2539,15 +2357,20 @@ struct AppClient{
             }
             auto& stream_pair = *stream_pair_ptr;
             if (current_time - stream_pair.first.get_last_event() > connection_timeout){
+                log("[%4d] closing by timeout", get_fd(stream_pair.first));
+                log("[%4d] closing by timeout", get_fd(stream_pair.second));
                 client.close_pair(i);
                 continue;
             }
             if (current_time - stream_pair.second.get_last_event() > connection_timeout){
+                log("[%4d] closing by timeout", get_fd(stream_pair.first));
+                log("[%4d] closing by timeout", get_fd(stream_pair.second));
                 client.close_pair(i);
                 continue;
             }
         }
         if (current_time - (*client.main_client)->get_last_event() > connection_timeout){
+            log("[%4d] closing by timeout", get_fd(**client.main_client));
             client.disable_main();
         }
         client.enable_main();
@@ -2576,6 +2399,12 @@ void handle_connect_ctl(AppClient& app_server, size_t index, header_t header){
 
 void handle_read_ctl(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header){
     if (err != 0){
+        log("[%4d] closing by err during reading new connection header", get_fd(**app_server.client.main_client));
+        app_server.client.disable_main();
+        return;
+    }
+    if (size < CMD_SOCKET_HEADER_SIZE){
+        log("[%4d] closing by EOF during reading new connection header", get_fd(**app_server.client.main_client));
         app_server.client.disable_main();
         return;
     }
@@ -2602,6 +2431,7 @@ void handle_connect_cmd(AppClient& app_server, size_t index, header_t header){
     assert(stream_pair_ptr);
     auto& stream_pair = *stream_pair_ptr;
     assert(stream_pair.first.is_connected());
+    assert(stream_pair.first.state == connected_socket_states::header_written);
     if (not stream_pair.second.is_connected()){
         return;
     }
@@ -2615,7 +2445,7 @@ void handle_connect_tcp(AppClient& app_server, size_t index,  header_t header){
     assert(stream_pair_ptr);
     auto& stream_pair = *stream_pair_ptr;
     assert(stream_pair.second.is_connected());
-    if (not stream_pair.first.is_connected()){
+    if (stream_pair.first.state != connected_socket_states::header_written){
         return;
     }
     stream_pair.second.partial_read();
@@ -2629,8 +2459,10 @@ void handle_read_cmd(AppClient& app_server, const char* data, size_t size, error
     auto& stream_pair = *stream_pair_ptr;
     assert(stream_pair.first.is_connected());
     assert(stream_pair.second.is_connected());
+    assert(stream_pair.first.state == connected_socket_states::header_written);
 
     if (err != 0){
+        log("[%4d] closing by err during reading data", get_fd(stream_pair.first));
         app_server.client.close_pair(index);
         return;
     }
@@ -2641,8 +2473,10 @@ void handle_read_cmd(AppClient& app_server, const char* data, size_t size, error
     }
 
     assert(not stream_pair.second.eof_is_written());
+    log("[%4d] sending EOF", get_fd(stream_pair.second));
     stream_pair.second.write_eof();
     if (stream_pair.first.eof_is_written()){
+        log("[%4d] [%4d] closing by mutual EOF", get_fd(stream_pair.first), get_fd(stream_pair.second));
         app_server.client.close_pair(index);
     }
 }
@@ -2654,8 +2488,10 @@ void handle_read_tcp(AppClient& app_server, const char* data, size_t size, error
     auto& stream_pair = *stream_pair_ptr;
     assert(stream_pair.first.is_connected());
     assert(stream_pair.second.is_connected());
+    assert(stream_pair.first.state == connected_socket_states::header_written);
 
     if (err != 0){
+        log("[%4d] closing by err during reading data", get_fd(stream_pair.second));
         app_server.client.close_pair(index);
         return;
     }
@@ -2666,8 +2502,10 @@ void handle_read_tcp(AppClient& app_server, const char* data, size_t size, error
     }
 
     assert(not stream_pair.first.eof_is_written());
+    log("[%4d] sending EOF", get_fd(stream_pair.first));
     stream_pair.first.write_eof();
     if (stream_pair.second.eof_is_written()){
+        log("[%4d] [%4d] closing by mutual EOF", get_fd(stream_pair.first), get_fd(stream_pair.second));
         app_server.client.close_pair(index);
     }
 }
@@ -2679,8 +2517,10 @@ void handle_write_cmd(AppClient& app_server, const char* data, size_t size, erro
     auto& stream_pair = *stream_pair_ptr;
     assert(stream_pair.first.is_connected());
     assert(stream_pair.second.is_connected());
+    assert(stream_pair.first.state == connected_socket_states::header_written);
 
     if (err != 0){
+        log("[%4d] closing by err during sending data", get_fd(stream_pair.first));
         app_server.client.close_pair(index);
         return;
     }
@@ -2696,8 +2536,10 @@ void handle_write_tcp(AppClient& app_server, const char* data, size_t size, erro
     auto& stream_pair = *stream_pair_ptr;
     assert(stream_pair.first.is_connected());
     assert(stream_pair.second.is_connected());
+    assert(stream_pair.first.state == connected_socket_states::header_written);
 
     if (err != 0){
+        log("[%4d] closing by err during sending data", get_fd(stream_pair.second));
         app_server.client.close_pair(index);
         return;
     }
@@ -2706,7 +2548,7 @@ void handle_write_tcp(AppClient& app_server, const char* data, size_t size, erro
     stream_pair.first.partial_read();
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 fd_owner signal_pipe_owners[] = {signal_pipe[0], signal_pipe[1]};
 
@@ -2743,9 +2585,9 @@ struct App{
                 assert(false);
         }
 
-        timespec_pair last_cleanup = monotonic();
+        time_storage last_cleanup = time_storage::monotonic();
         while (not should_exit){
-            timespec_pair current_time = monotonic();
+            time_storage current_time = time_storage::monotonic();
             if (current_time - last_cleanup > clock_interval){
                 if (app_client.has_value()){
                     app_client->cleanup();
@@ -2760,276 +2602,7 @@ struct App{
     }
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-// void register_main_stream(AppServer& app_server, size_t index){
-//     app_server.main_index = index;
-// }
-
-// void handle_accept_tcp(AppServer& app_server, size_t index){
-
-// }
-
-// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// struct Server{
-    
-// };
-
-
-// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// struct connection_context{
-//     uint32_t external_socket;
-//     uint32_t internal_socket;
-// };
-
-// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// struct AppStorage{
-//     selector_t selector;
-
-//     std::vector<
-//         std::optional<
-//             StreamSocketCompleter
-//         >
-//     > sockets;
-
-//     std::vector<
-//         std::optional<
-//             connection_context
-//         >
-//     > connections;
-
-//     AppStorage():
-//         sockets(max_connections*2+2),
-//         connections(max_connections)
-//     {}
-// };
-
-// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// struct InternalServer{
-//     AppStorage& app_storage;
-
-//     ServerSocketCompleter server;
-    
-//     uint32_t client;
-
-//     struct AcceptHandler{
-//         InternalServer* outer;
-//         void operator()(error_t err){
-//             outer->handle_accept(err);
-//         }
-//     } accept_handler;
-
-//     function_ref<void(error_t)> accept_handler_ref = accept_handler;
-
-//     void handle_accept(error_t err){
-//         auto socket_ptr = app_storage.sockets.end();
-//         for (auto sock_ptr = app_storage.sockets.begin(); sock_ptr != app_storage.sockets.end(); ++sock_ptr){
-//             if (not sock_ptr->has_value()){
-//                 socket_ptr = sock_ptr;
-//                 break;
-//             }
-//         }
-//         assert(socket_ptr != app_storage.sockets.end());
-//         socket_ptr->emplace(app_storage.selector, server);
-//         auto& client = **socket_ptr;
-//         client
-//     }
-
-//     InternalServer(AppStorage& app_storage, const sockaddr& addr):
-//         app_storage(app_storage),
-//         server(app_storage.selector, addr)
-//     {
-//         accept_handler.outer = this;
-//         server.accept(accept_handler_ref);
-//     }
-// };
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// struct ExternalServer{
-
-//     ExternalServer(AppStorage& app_storage, const sockaddr& addr):
-//         app_storage(app_storage),
-//         s(app_storage.selector, addr)
-//     {
-//         accept_handler.outer = this;
-//         s.accept(accept_handler_ref);
-//     }
-
-// private:
-//     AppStorage& app_storage;
-
-//     ServerSocketCompleter s;
-
-//     struct AcceptHandler{
-//         ExternalServer* outer;
-//         void operator()(error_t err){
-//             outer->handle_accept(err);
-//         }
-//     } accept_handler;
-
-//     function_ref<void(error_t)> accept_handler_ref = accept_handler;
-
-//     void handle_accept(error_t err){
-//         std::optional<connection_context>* connection_ptr = nullptr;
-
-//         for (std::optional<connection_context>& connection: app_storage.connections){
-//             if (not connection.has_value()){
-//                 connection_ptr = &connection;
-//             }
-//         }
-
-//         if (connection_ptr == nullptr){
-//             StreamSocketCompleter client(app_storage.selector, *this);
-//         }
-
-//         connection_ptr->emplace();
-
-//         connection_context& context = **connection_ptr;
-
-//         context.external_socket.emplace(app_storage.selector, s);
-
-//         // todo
-//     }
-
-// public:
-
-//     operator const fd_owner&(){
-//         return s;
-//     }
-
-//     operator sockaddr()const{
-//         return s;
-//     }
-// };
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-// Struct 
-
-// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//     struct CmdMainClientOneConnectionAttempt{
-//         App& app;
-
-//         stream_socket_owner connection;
-
-//         struct Handler{
-//             void operator()(bool to_write){
-
-//             }
-//         } handler;
-
-//         function_ref<void(bool)> handler_ref = handler;
-
-//         CmdMainClientOneConnectionAttempt(App& app, const sockaddr& addr):
-//             app(app),
-//             connection(stream_socket_owner(addr))
-//         {
-//             app.selector.change_fd_in_pool(connection, &handler_ref, false, false, false, true);
-//         }
-//     };
-
-//     struct CmdMainCleint{
-//         App& app;
-
-//         std::optional<stream_socket_owner> connection;
-
-//         CmdMainClient(App& app, const sockaddr& addr):
-//             app(app)
-//         {}
-//     };
-// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-//     template<typename Callback>
-//     struct TcpServer{
-//         App& app;
-//         server_socket_owner server;
-
-//         Callback callback;
-
-//         struct AcceptHandler{
-//             TcpServer* server;
-//             void operator()(bool){
-//                 callback(server);
-//             }
-//         } accept_handler;
-
-//         function_ref<void(bool)> accept_handler_ref = accept_handler;
-
-//         TcpServer(Callback callback, App& app, const sockaddr& addr):
-//             app(app),
-//             server(server_socket_owner::start_server(addr)),
-//             callback(callback)
-//         {
-//             accept_handler.server = this;
-//             app.selector.change_fd_in_pool(server, &accept_handler_ref, false, false, true, false);
-//         }
-//     };
-
-//     struct CmdClient{
-//         App& app;
-
-//         CmdClient(App& app){
-
-//         }
-//     };
-
-// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// struct App{
-//     App(App&&) = delete;
-//     App(const App&) = delete;
-
-//     selector_t selector;
-
-//     std::vector<
-//         std::optional<
-//             two_sockets
-//         >
-//     > socket_pairs;
-
-//     App():
-//         socket_pairs(max_connections)
-//     {
-//         sys.signal(SIGHUP,  handle);
-//         sys.signal(SIGINT,  handle);
-//         sys.signal(SIGTERM, handle);
-//         sys.signal(SIGPIPE, SIG_IGN);
-
-//         assert(mode == modes::server or mode == modes::client);
-
-//         std::optional<CmdServer> internal_server;
-//         std::optional<CmdServer> internal_client;
-//         std::optional<TcpServer> external_server;
-
-//         if (mode == modes::server){
-//             internal_server.emplace(*this, internal_sockaddr);
-//             external_server.emplace(*this, external_sockaddr);
-//         }else{
-//             internal_client.emplace(*this, internal_sockaddr);
-//         }
-
-//         while (1)
-//         {
-//             selector.wait();
-//         }
-
-
-//     }
-// };
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 std::vector<const char*> args;
 
@@ -3048,7 +2621,6 @@ void argv_initializer(T& value, const char* name, F f){
     std::cerr << "Missing flag: " << flag << std::endl;
     has_missing_flags = true;
 }
-
 
 #define init_by_argv(name, f) argv_initializer(name, #name, f)
 
@@ -3074,20 +2646,11 @@ int main(int argc, char**argv){
         throw std::runtime_error{"modes: client|server"};
     });
 
-    // init_by_argv(max_connections, atoll);
     init_by_argv(connection_timeout, ([](const char* s){
-        auto v = strtold(s, nullptr);
-        timespec_pair res = {none, none};
-        res.first = v;
-        res.second = (v - res.first) * timespec_base;
-        return res;
+        return time_storage(strtold(s, nullptr));
     }));
     init_by_argv(clock_interval, ([](const char* s){
-        auto v = strtold(s, nullptr);
-        timespec_pair res = {none, none};
-        res.first = v;
-        res.second = (v - res.first) * timespec_base;
-        return res;
+        return time_storage(strtold(s, nullptr));
     }));
     init_by_argv(max_accepted_sockets_per_server, atoll);
     init_by_argv(max_connected_sockets, atoll);
@@ -3111,521 +2674,3 @@ int main(int argc, char**argv){
     App app;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-// int main() {
-//     sys.signal(SIGHUP,  handle);
-//     sys.signal(SIGINT,  handle);
-//     sys.signal(SIGTERM, handle);
-
-//     #ifdef use_kqueue
-//     kqueue_selector sel;
-//     #endif
-
-//     #ifdef use_epoll
-//     epoll_selector sel;
-//     #endif
-
-//     sel.async_read(signal_pipe[0], [&](){
-//         has_to_stop = true;
-//     });
-
-//     start_server(sel, "0.0.0.0", 9999, [&](auto a, const char*addr, uint16_t port){
-//         std::cerr << "connected " << addr << ":" << port << std::endl;
-//         auto c = create_connecting_socket("127.0.0.1", 8888);
-//         sel.async_write(c, [&sel, a, c]()mutable{
-//             auto&& setup_mover = [&sel](socket_ptr r, socket_ptr w){
-//                 struct connection_ctx{
-//                     socket_ptr r;
-//                     socket_ptr w;
-//                     std::array<char, 65536> data;
-//                     size_t begin;
-//                     size_t end;
-//                     function<void()> reader;
-//                     function<void()> writer;
-//                     std::unique_ptr<connection_ctx>* reader_ctx;
-//                     std::unique_ptr<connection_ctx>* writer_ctx;
-//                     connection_ctx(const connection_ctx&) = delete;
-//                     connection_ctx(connection_ctx&&) = delete;
-//                     connection_ctx() = default;
-//                     connection_ctx&operator=(const connection_ctx&) = delete;
-//                     connection_ctx&operator=(connection_ctx&&) = delete;
-//                 };
-//                 auto ctx = std::make_unique<connection_ctx>();
-//                 std::memset(&ctx->data, 0, sizeof(ctx->data));
-//                 ctx->begin = 0;
-//                 ctx->end = 0;
-//                 ctx->r = r;
-//                 ctx->w = w;
-//                 ctx->reader = std::move([&sel, ctx_ = decltype(ctx)(), ctx_ptr = &ctx->reader_ctx]()mutable{
-//                     *ctx_ptr = &ctx_;
-//                     connection_ctx* ctx = ctx_.get();
-//                     if (not ctx){
-//                         std::cerr << "no ctx" << std::endl;
-//                         return;
-//                     }
-//                     assert(ctx->writer);
-//                     assert(not ctx->reader);
-//                     ctx->reader = std::move(*Task::current);
-//                     assert(ctx->begin == ctx->end);
-//                     ctx->begin = 0;
-//                     ctx->end = sys.read(ctx->r, ctx->data.data(), ctx->data.size());
-//                     if (ctx->end == 0){
-//                         sys.ignore(ENOTCONN);
-//                         sys.shutdown(ctx->r, SHUT_RD);
-//                         sys.ignore(ENOTCONN);
-//                         sys.shutdown(ctx->w, SHUT_WR);
-//                         std::cerr << "EOF " << ctx->r << std::endl;
-//                         std::cerr << ctx->r << ".use_count = " << ctx->r.ptr.use_count() << std::endl;
-//                         std::cerr << ctx->w << ".use_count = " << ctx->w.ptr.use_count() << std::endl;
-//                         auto r = ctx->r;
-//                         auto w = ctx->w;
-//                         std::cerr << r << ".use_count = " << r.ptr.use_count() << std::endl;
-//                         std::cerr << w << ".use_count = " << w.ptr.use_count() << std::endl;
-//                         ctx_.reset();
-//                         std::cerr << r << ".use_count = " << r.ptr.use_count() << std::endl;
-//                         std::cerr << w << ".use_count = " << w.ptr.use_count() << std::endl;
-//                         r.ptr.reset();
-//                         w.ptr.reset();
-//                         std::cerr << 0 << ".use_count = " << r.ptr.use_count() << std::endl;
-//                         std::cerr << 0 << ".use_count = " << w.ptr.use_count() << std::endl;
-//                         return;
-//                     }
-//                     assert(0 <= ctx->begin);
-//                     assert(ctx->begin < ctx->end);
-//                     assert(ctx->end <= ctx->data.size());
-//                     *ctx->writer_ctx = std::move(ctx_);
-//                     sel.async_write(ctx->w, std::move(ctx->writer));
-//                 });
-//                 ctx->reader();
-//                 ctx->writer = std::move([&sel, ctx_ = decltype(ctx)(), ctx_ptr = &ctx->writer_ctx]()mutable{
-//                     *ctx_ptr = &ctx_;
-//                     connection_ctx* ctx = ctx_.get();
-//                     if (not ctx){
-//                         std::cerr << "no ctx" << std::endl;
-//                         return;
-//                     }
-//                     assert(ctx->reader);
-//                     assert(not ctx->writer);
-//                     ctx->writer = std::move(*Task::current);
-//                     assert(0 <= ctx->begin);
-//                     assert(ctx->begin < ctx->end);
-//                     assert(ctx->end <= ctx->data.size());
-//                     ctx->begin += sys.write(ctx->w, ctx->data.data() + ctx->begin, ctx->end - ctx->begin);
-//                     assert(0 <= ctx->begin);
-//                     assert(ctx->begin <= ctx->end);
-//                     assert(ctx->end <= ctx->data.size());
-//                     if (ctx->begin == ctx->end){
-//                         *ctx->reader_ctx = std::move(ctx_);
-//                         sel.async_read(ctx->r, std::move(ctx->reader));
-//                     }else{
-//                         sel.async_write(ctx->r, std::move(ctx->writer));
-//                     }
-//                 });
-//                 ctx->writer();
-//                 assert(ctx->writer_ctx);
-//                 assert(ctx->reader_ctx);
-//                 auto ctx_ = ctx.get();
-//                 *ctx->reader_ctx = std::move(ctx);
-//                 sel.async_read(ctx_->r, std::move(ctx_->reader));
-//             };
-//             setup_mover(a,c);
-//             setup_mover(c,a);
-//         });
-//     });
-
-//     sel.async_wait({1, 0}, [&](){
-//         std::cerr << "hello" << std::endl;
-//         sel.async_wait({1, 0}, std::move(*Task::current));
-//     });
-
-
-//     sel.loop();
-
-// }
-
-
-
-
-// // #include <iostream>
-// // #include <vector>
-// // #include <map>
-// // #include <unordered_map>
-// // #include <algorithm>
-// // #include <cstring>
-// // #include <cstdlib>
-// // #include <csignal>
-// // #include <cerrno>
-// // #include <unistd.h>
-// // #include <fcntl.h>
-// // #include <netinet/in.h>
-// // #include <sys/socket.h>
-// // #include <sys/types.h>
-// // #include <sys/epoll.h>
-// // #include <arpa/inet.h>
-// // #include <ctime>
-
-// // struct sys_msg_printer : std::stringstream {
-// //     std::unordered_set<int> ignored;
-// //     void ignore(int err){
-// //         ignored.insert(err);
-// //     }
-
-
-// //     add_syscall(shutdown)
-// //     add_syscall(write)
-// //     add_syscall(read)
-// //     add_syscall(close)
-// //     add_syscall(socket)
-// //     add_syscall(fcntl)
-// //     add_syscall(inet_pton)
-// //     add_syscall(inet_ntop)
-// //     add_syscall(eassert)
-// //     add_syscall(connect)
-// //     add_syscall(bind)
-// //     add_syscall(listen)
-// //     add_syscall(accept)
-// //     add_syscall(signal)
-// //     add_syscall(clock_gettime)
-// //     add_syscall(pipe)
-// // #ifdef use_kqueue
-// //     add_syscall(kqueue)
-// //     add_syscall(kevent)
-// // #endif
-// // #ifdef use_epoll
-// //     add_syscall(epoll_ctl)
-// //     add_syscall(epoll_wait)
-// //     add_syscall(epoll_pwait)
-// //     add_syscall(epoll_create)
-// //     add_syscall(epoll_create1)
-// // #endif
-// // } sys;
-
-
-// // #define MAX_EVENTS 1024
-// // #define BUFFER_SIZE 8192
-
-// // enum Mode {
-// //     MODE_SERVER,
-// //     MODE_CLIENT
-// // };
-
-// // struct Conn {
-// //     int internal_fd = -1;
-// //     int external_fd = -1;
-// //     char buffer[BUFFER_SIZE];
-// //     size_t buf_len = 0;
-// //     size_t buf_sent = 0;
-// //     bool has_internal_eof = false;
-// //     bool has_external_eof = false;
-// //     time_t last_activity = 0;
-// // };
-
-// // struct Config {
-// //     Mode mode;
-// //     const char* internal_host;
-// //     const char* internal_port;
-// //     const char* external_host;
-// //     const char* external_port;
-// //     size_t max_connections;
-// //     size_t timeout_seconds;
-// // };
-
-// // int set_nonblocking(int fd) {
-// //     int flags = fcntl(fd, F_GETFL, 0);
-// //     if (flags == -1) return -1;
-// //     return fcntl(fd, F_SETFL, flags | O_NONBLOCK);
-// // }
-
-// // void log(const std::string& msg) {
-// //     std::cerr << "[" << time(nullptr) << "] " << msg << std::endl;
-// // }
-
-// // int create_and_bind(const std::string& host, uint16_t port) {
-// //     int fd = socket(AF_INET, SOCK_STREAM, 0);
-// //     if (fd < 0) return -1;
-// //     sockaddr_in addr{};
-// //     addr.sin_family = AF_INET;
-// //     addr.sin_port = htons(port);
-// //     if (inet_pton(AF_INET, host.c_str(), &addr.sin_addr) <= 0) return -1;
-// //     int reuse = 1;
-// //     setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
-// //     if (bind(fd, (sockaddr*)&addr, sizeof(addr)) < 0) return -1;
-// //     return fd;
-// // }
-
-// // int create_and_connect(const std::string& host, uint16_t port) {
-// //     int fd = socket(AF_INET, SOCK_STREAM, 0);
-// //     if (fd < 0) return -1;
-// //     set_nonblocking(fd);
-// //     sockaddr_in addr{};
-// //     addr.sin_family = AF_INET;
-// //     addr.sin_port = htons(port);
-// //     if (inet_pton(AF_INET, host.c_str(), &addr.sin_addr) <= 0) return -1;
-// //     connect(fd, (sockaddr*)&addr, sizeof(addr)); // non-blocking connect
-// //     return fd;
-// // }
-
-// // class Forwarder {
-// // public:
-// //     Forwarder(const Config& config): config(config) {
-// //         epoll_fd = epoll_create1(0);
-// //         if (epoll_fd < 0) {
-// //             perror("epoll_create1");
-// //             exit(1);
-// //         }
-// //     }
-
-// //     void run();
-
-// // private:
-// //     Config config;
-// //     int epoll_fd;
-// //     std::unordered_map<int, Conn> connections;
-// //     std::vector<epoll_event> events;
-
-// //     void add_epoll_fd(int fd, uint32_t events);
-// //     void modify_epoll_fd(int fd, uint32_t events);
-// //     void delete_epoll_fd(int fd);
-// //     void close_connection(int fd);
-// //     void accept_connection(int listen_fd);
-// //     void handle_read(int fd);
-// //     void handle_write(int fd);
-// //     void transfer_data(int from_fd);
-// //     void update_timeout(int fd);
-// //     void check_timeouts();
-// // };
-
-// // void Forwarder::add_epoll_fd(int fd, uint32_t ev) {
-// //     epoll_event e{};
-// //     e.events = ev;
-// //     e.data.fd = fd;
-// //     if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, &e) < 0) {
-// //         perror("epoll_ctl add");
-// //         exit(1);
-// //     }
-// // }
-
-// // void Forwarder::modify_epoll_fd(int fd, uint32_t ev) {
-// //     epoll_event e{};
-// //     e.events = ev;
-// //     e.data.fd = fd;
-// //     if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &e) < 0) {
-// //         perror("epoll_ctl mod");
-// //         exit(1);
-// //     }
-// // }
-
-// // void Forwarder::delete_epoll_fd(int fd) {
-// //     epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, nullptr);
-// // }
-
-// // void Forwarder::close_connection(int fd) {
-// //     auto it = connections.find(fd);
-// //     if (it == connections.end()) return;
-// //     int peer = it->second.peer_fd;
-// //     log("Closing connection: " + std::to_string(fd) + " <-> " + std::to_string(peer));
-// //     delete_epoll_fd(fd);
-// //     close(fd);
-// //     connections.erase(it);
-// //     if (connections.find(peer) != connections.end()) {
-// //         delete_epoll_fd(peer);
-// //         close(peer);
-// //         connections.erase(peer);
-// //     }
-// // }
-
-// // void Forwarder::run() {
-// //     events.resize(MAX_EVENTS);
-// //     log("Forwarder running in mode: " + std::string(config.mode == MODE_SERVER ? "server" : "client"));
-
-// //     int listen_fd = create_and_bind(config.listen_host, config.listen_port);
-// //     if (listen_fd < 0) {
-// //         perror("bind failed");
-// //         exit(1);
-// //     }
-// //     set_nonblocking(listen_fd);
-// //     listen(listen_fd, SOMAXCONN);
-// //     add_epoll_fd(listen_fd, EPOLLIN);
-
-// //     while (true) {
-// //         int nfds = epoll_wait(epoll_fd, events.data(), MAX_EVENTS, 1000);
-// //         if (nfds < 0) {
-// //             if (errno == EINTR) continue;
-// //             perror("epoll_wait");
-// //             break;
-// //         }
-// //         for (int i = 0; i < nfds; ++i) {
-// //             int fd = events[i].data.fd;
-// //             uint32_t ev = events[i].events;
-// //             if (fd == listen_fd) {
-// //                 accept_connection(listen_fd);
-// //             } else {
-// //                 if (ev & EPOLLIN) handle_read(fd);
-// //                 if (ev & EPOLLOUT) handle_write(fd);
-// //                 if (ev & (EPOLLHUP | EPOLLERR)) close_connection(fd);
-// //             }
-// //         }
-// //         check_timeouts();
-// //     }
-// //     close(listen_fd);
-// // }
-
-// // void Forwarder::accept_connection(int listen_fd) {
-// //     sockaddr_in client_addr;
-// //     socklen_t client_len = sizeof(client_addr);
-// //     int client_fd = accept(listen_fd, (sockaddr*)&client_addr, &client_len);
-// //     if (client_fd < 0) {
-// //         perror("accept");
-// //         return;
-// //     }
-// //     set_nonblocking(client_fd);
-
-// //     int target_fd = create_and_connect(config.remote_host, config.remote_port);
-// //     if (target_fd < 0) {
-// //         log("Failed to connect to remote");
-// //         close(client_fd);
-// //         return;
-// //     }
-
-// //     Conn c1 = {client_fd, target_fd, {}, 0, 0, false, false, time(nullptr)};
-// //     Conn c2 = {target_fd, client_fd, {}, 0, 0, false, false, time(nullptr)};
-
-// //     connections[client_fd] = c1;
-// //     connections[target_fd] = c2;
-
-// //     add_epoll_fd(client_fd, EPOLLIN);
-// //     add_epoll_fd(target_fd, EPOLLIN);
-
-// //     log("Accepted and connected: " + std::to_string(client_fd) + " <-> " + std::to_string(target_fd));
-// // }
-
-// // // CONTINUE IN NEXT CHUNK
-// // // This part of code stays the same
-
-// // void Forwarder::handle_read(int fd) {
-// //     auto& conn = connections[fd];
-// //     ssize_t n = read(fd, conn.buffer, BUFFER_SIZE);
-// //     if (n < 0) {
-// //         if (errno != EAGAIN && errno != EWOULDBLOCK) {
-// //             perror("read");
-// //             close_connection(fd);
-// //         }
-// //         return;
-// //     } else if (n == 0) {
-// //         log("EOF received on fd " + std::to_string(fd));
-// //         conn.eof_received = true;
-// //         shutdown(conn.peer_fd, SHUT_WR);
-// //         if (conn.buf_len == conn.buf_sent) {
-// //             close_connection(fd);
-// //         }
-// //         return;
-// //     }
-
-// //     conn.buf_len = n;
-// //     conn.buf_sent = 0;
-// //     modify_epoll_fd(conn.peer_fd, EPOLLOUT | EPOLLIN);
-// //     update_timeout(fd);
-// //     update_timeout(conn.peer_fd);
-// // }
-
-// // void Forwarder::handle_write(int fd) {
-// //     auto& conn = connections[fd];
-// //     auto& peer = connections[conn.peer_fd];
-
-// //     while (peer.buf_sent < peer.buf_len) {
-// //         ssize_t n = write(fd, peer.buffer + peer.buf_sent, peer.buf_len - peer.buf_sent);
-// //         if (n < 0) {
-// //             if (errno != EAGAIN && errno != EWOULDBLOCK) {
-// //                 perror("write");
-// //                 close_connection(fd);
-// //             }
-// //             return;
-// //         }
-// //         peer.buf_sent += n;
-// //     }
-
-// //     if (peer.buf_sent == peer.buf_len) {
-// //         peer.buf_len = 0;
-// //         peer.buf_sent = 0;
-// //         if (peer.eof_received) {
-// //             log("EOF fully forwarded, closing " + std::to_string(peer.fd));
-// //             close_connection(peer.fd);
-// //             return;
-// //         }
-// //         modify_epoll_fd(fd, EPOLLIN);
-// //     }
-
-// //     update_timeout(fd);
-// //     update_timeout(peer.fd);
-// // }
-
-// // void Forwarder::update_timeout(int fd) {
-// //     if (connections.find(fd) != connections.end()) {
-// //         connections[fd].last_activity = time(nullptr);
-// //     }
-// // }
-
-// // void Forwarder::check_timeouts() {
-// //     time_t now = time(nullptr);
-// //     std::vector<int> to_close;
-// //     for (auto& [fd, conn] : connections) {
-// //         if (now - conn.last_activity >= config.timeout_seconds) {
-// //             log("Timeout on fd " + std::to_string(fd));
-// //             to_close.push_back(fd);
-// //         }
-// //     }
-// //     for (int fd : to_close) close_connection(fd);
-// // }
-
-// // // CONTINUE IN NEXT CHUNK
-
-// // // This part of code stays the same
-
-// // int parse_port(const char* str) {
-// //     int port = std::atoi(str);
-// //     if (port < 1 || port > 65535) {
-// //         std::cerr << "Invalid port: " << str << std::endl;
-// //         exit(1);
-// //     }
-// //     return port;
-// // }
-
-// // void print_usage(const char* prog) {
-// //     std::cerr << "Usage:\n"
-// //               << prog << " server <listen_host> <listen_port> <remote_host> <remote_port> <max_conn> <timeout>\n"
-// //               << prog << " client <connect_host> <connect_port> <forward_host> <forward_port> <max_conn> <timeout>\n";
-// //     exit(1);
-// // }
-
-// // int main(int argc, char* argv[]) {
-// //     if (argc < 8) print_usage(argv[0]);
-
-// //     Config config{};
-// //     std::string mode = argv[1];
-// //     if (mode == "server") {
-// //         config.mode = MODE_SERVER;
-// //         config.listen_host = argv[2];
-// //         config.listen_port = parse_port(argv[3]);
-// //         config.remote_host = argv[4];
-// //         config.remote_port = parse_port(argv[5]);
-// //         config.max_connections = std::atoi(argv[6]);
-// //         config.timeout_seconds = std::atoi(argv[7]);
-// //     } else if (mode == "client") {
-// //         config.mode = MODE_CLIENT;
-// //         config.listen_host = argv[4];
-// //         config.listen_port = parse_port(argv[5]);
-// //         config.remote_host = argv[2];
-// //         config.remote_port = parse_port(argv[3]);
-// //         config.max_connections = std::atoi(argv[6]);
-// //         config.timeout_seconds = std::atoi(argv[7]);
-// //     } else {
-// //         print_usage(argv[0]);
-// //     }
-
-// //     log("Starting reverse TCP forwarder");
-// //     Forwarder fwd(config);
-// //     fwd.run();
-// //     return 0;
-// // }
