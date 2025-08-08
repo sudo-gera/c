@@ -168,6 +168,7 @@ struct sys_msg_printer : std::stringstream {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#ifndef NDEBUG
 #undef assert
 #define assert(x) assert_f(x, #x, __FILE__, __LINE__)
 void assert_f(bool cond, const char* s, const char* f, size_t l){
@@ -188,6 +189,7 @@ void assert_f(bool cond, const char* s, const char* f, size_t l){
     }
 
 }
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -371,7 +373,13 @@ auto end_of_msg = [](){
     return data;
 }();
 
-#define log(...)                                            \
+#ifdef NDEBUG
+#define log(...)
+#else
+#define log log_
+#endif
+
+#define log_(...)                                           \
     do {                                                    \
         auto current_time = time_storage::realtime();       \
         fprintf(stderr, "\r");                              \
