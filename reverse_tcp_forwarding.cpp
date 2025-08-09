@@ -752,6 +752,11 @@ struct Selector{
         size_t
     > events_to_process;
 
+    Selector(){
+        memset(events_to_process.first.data(), 0, sizeof(events_to_process.first));
+        events_to_process.second = 0;
+    }
+
     void change_fd_in_pool(const fd_owner& fd, Callback* callback, bool old_read, bool old_write, bool new_read, bool new_write){
         if (old_read == new_read and old_write == new_write){
             return;
@@ -815,6 +820,15 @@ struct Selector{
                 (*(Callback*)event.data.ptr)(true);
             }
         }
+        events_to_process.second = 0;
+    }
+
+    void notify_closed(void* ctx){
+        for (auto& event_to_process: events_to_process.first){
+            if (event_to_process.data.ptr == ctx){
+                event_to_process.events = 0;
+            }
+        }
     }
 };
 
@@ -835,6 +849,9 @@ struct SplitCallbacks{
         handler.outer = this;
     }
 
+    ~SplitCallbacks(){
+        selector.notify_closed(this);
+    }
 private:
     selector_t& selector;
 
