@@ -42,6 +42,9 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#define TO_STR_INTERNAL(x) #x
+#define TO_STR(x) TO_STR_INTERNAL(x)
+
 #define FORWARD(val) (std::forward<decltype(val)>(val))
 #define VALUE_AS_STRING_AND_VALUE(x) #x << "\t\t\t\t" << x
 
@@ -152,6 +155,7 @@ struct sys_msg_printer : std::stringstream {
     add_syscall(clock_gettime)
     add_syscall(pipe)
     add_syscall(getsockopt)
+    add_syscall(setsockopt)
     add_syscall(open)
 #ifdef use_kqueue
     add_syscall(kqueue)
@@ -419,15 +423,18 @@ auto end_of_msg = [](){
         fprintf(stderr, "\n");                              \
     } while(false)                                          \
 
-#define PART_SIZE 64
+#define PART_SIZE 16
 
 std::string part_repr_impl(const char* data, size_t size){
     auto s = repr(std::string(data, data+size));
+    std::string res;
     if (s.size() > PART_SIZE * 2){
-        return std::string(s.begin(), s.begin() + PART_SIZE) + "..." + std::string(s.end() - PART_SIZE, s.end());
+        res = std::string(s.begin(), s.begin() + PART_SIZE) + "..." + std::string(s.end() - PART_SIZE, s.end());
     }else{
-        return s;
+        res = s;
     }
+    assert(res.size() < PART_SIZE * 2 + 4);
+    return res;
 }
 
 #define part_repr(...) (part_repr_impl(__VA_ARGS__).data())
@@ -549,6 +556,8 @@ int ll_create_connecting_socket(const sockaddr& addr){
 
 int ll_create_listening_socket(const sockaddr& addr){
     auto s = ll_create_non_blocking_socket();
+    int enable = 1;
+    sys.setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable));
     sys.bind(s, &addr, sizeof(addr));
     sys.listen(s, 65536);
     return s;
@@ -1101,7 +1110,14 @@ private:
         auto still_has_to_write_local = still_has_to_write;
         still_has_to_write = none;
         has_full_write_task = false;
-        log("[%4d] (%d:%s) after writing %zu bytes and not writing %zu bytes: %s and %s", get_fd(s), err, strerror(err), len_of_data_in_write_buffer_local - still_has_to_write_local, still_has_to_write_local, part_repr(write_buffer.data(), len_of_data_in_write_buffer_local - still_has_to_write_local), part_repr(write_buffer.data()+len_of_data_in_write_buffer_local - still_has_to_write_local, len_of_data_in_write_buffer_local));
+        log("[%4d] (%d:%s) after writing %zu bytes and not writing %zu bytes: %s and %s",
+            get_fd(s),
+            err,
+            strerror(err),
+            len_of_data_in_write_buffer_local - still_has_to_write_local, still_has_to_write_local,
+            part_repr(write_buffer.data(), len_of_data_in_write_buffer_local - still_has_to_write_local),
+            part_repr(write_buffer.data()+len_of_data_in_write_buffer_local - still_has_to_write_local, len_of_data_in_write_buffer_local)
+        );
         write_callback_local(write_buffer.data() + len_of_data_in_write_buffer_local - still_has_to_write_local, still_has_to_write_local, err);
     }
 
@@ -2692,6 +2708,10 @@ size_t read_file(const char* filename, char* data, size_t size){
 }
 
 int main(int argc, char**argv){
+    if (strlen(argv[0])==0){
+        printf("%s", TO_STR(SOURCE_CODE));
+        return 0;
+    }
     args = decltype(args)(argv, argv + argc);
     init_by_argv(mode, [](auto&& s){
         if (strcmp(s, "server") == 0){return modes::server;}
