@@ -419,6 +419,18 @@ auto end_of_msg = [](){
         fprintf(stderr, "\n");                              \
     } while(false)                                          \
 
+#define PART_SIZE 64
+
+std::string part_repr_impl(const char* data, size_t size){
+    if (size > PART_SIZE * 2){
+        return repr(std::string(data, data+PART_SIZE)) + "..." + repr(std::string(data, data+PART_SIZE));
+    }else{
+        return repr(std::string(data, data+size));
+    }
+}
+
+#define part_repr(...) (part_repr_impl(__VA_ARGS__).data())
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template <typename>
@@ -753,6 +765,10 @@ struct Selector{
     > events_to_process;
 
     Selector(){
+        clear_events();
+    }
+
+    void clear_events(){
         memset(events_to_process.first.data(), 0, sizeof(events_to_process.first));
         events_to_process.second = 0;
     }
@@ -809,26 +825,37 @@ struct Selector{
 
         assert(errno == 0);
         assert(events_to_process.second < events_to_process.first.size());
-        // std::cerr << "have " << events_to_process.second << " events to process." << std::endl;
 
         for (size_t q = 0; q < events_to_process.second; ++q){
             auto& event = events_to_process.first[q];
+            log("[%20p] [%20p] before checking for rw events", event.data.ptr, &event);
             if (event.events & EPOLLIN){
+                log("[%20p] [%20p] before handling read event", event.data.ptr, &event);
                 (*(Callback*)event.data.ptr)(false);
+                log("[%20p] [%20p] after handling read event", event.data.ptr, &event);
             }
             if (event.events & EPOLLOUT){
+                log("[%20p] [%20p] before handling write event", event.data.ptr, &event);
                 (*(Callback*)event.data.ptr)(true);
+                log("[%20p] [%20p] after handling write event", event.data.ptr, &event);
             }
+            log("[%20p] [%20p] after checking for rw events", event.data.ptr, &event);
         }
-        events_to_process.second = 0;
+        clear_events();
     }
 
     void notify_closed(void* ctx){
+        log("[%20p] before notifying about closed socket", ctx);
         for (auto& event_to_process: events_to_process.first){
             if (event_to_process.data.ptr == ctx){
+                log("[%20p] [%20p] this event has requested context, removing handler", ctx, &event_to_process);
                 event_to_process.events = 0;
+                event_to_process.data.ptr = nullptr;
+            }else{
+                log("[%20p] [%20p] this event does not have requested context", ctx, &event_to_process);
             }
         }
+        log("[%20p] after notifying about closed socket", ctx);
     }
 };
 
@@ -1029,9 +1056,9 @@ private:
         still_has_to_read = none;
         has_full_read_task = false;
         if (still_has_to_read_local == none){
-            log("[%4d] (%d:%s) after reading %zu bytes: %s", get_fd(s), err, strerror(err), len_of_data_in_read_buffer_local, repr(std::string(read_buffer.data(), read_buffer.data()+len_of_data_in_read_buffer_local)).data());
+            log("[%4d] (%d:%s) after reading %zu bytes: %s", get_fd(s), err, strerror(err), len_of_data_in_read_buffer_local, part_repr(read_buffer.data(), len_of_data_in_read_buffer_local));
         }else{
-            log("[%4d] (%d:%s) after reading %zu of %zu bytes: %s", get_fd(s), err, strerror(err), len_of_data_in_read_buffer_local, len_of_data_in_read_buffer_local + still_has_to_read_local, repr(std::string(read_buffer.data(), read_buffer.data()+len_of_data_in_read_buffer_local)).data());
+            log("[%4d] (%d:%s) after reading %zu of %zu bytes: %s", get_fd(s), err, strerror(err), len_of_data_in_read_buffer_local, len_of_data_in_read_buffer_local + still_has_to_read_local, part_repr(read_buffer.data(), len_of_data_in_read_buffer_local));
         }
         read_callback_local(read_buffer.data(), len_of_data_in_read_buffer_local, err);
     }
@@ -1073,7 +1100,7 @@ private:
         auto still_has_to_write_local = still_has_to_write;
         still_has_to_write = none;
         has_full_write_task = false;
-        log("[%4d] (%d:%s) after writing %zu bytes and not writing %zu bytes: %s and %s", get_fd(s), err, strerror(err), len_of_data_in_write_buffer_local - still_has_to_write_local, still_has_to_write_local, repr(std::string(write_buffer.data(), write_buffer.data()+len_of_data_in_write_buffer_local - still_has_to_write_local)).data(), repr(std::string(write_buffer.data()+len_of_data_in_write_buffer_local - still_has_to_write_local, write_buffer.data()+len_of_data_in_write_buffer_local)).data());
+        log("[%4d] (%d:%s) after writing %zu bytes and not writing %zu bytes: %s and %s", get_fd(s), err, strerror(err), len_of_data_in_write_buffer_local - still_has_to_write_local, still_has_to_write_local, part_repr(write_buffer.data(), len_of_data_in_write_buffer_local - still_has_to_write_local), part_repr(write_buffer.data()+len_of_data_in_write_buffer_local - still_has_to_write_local, len_of_data_in_write_buffer_local));
         write_callback_local(write_buffer.data() + len_of_data_in_write_buffer_local - still_has_to_write_local, still_has_to_write_local, err);
     }
 
@@ -1124,7 +1151,7 @@ public:
         assert(len <= write_buffer.size());
         assert(not eof_is_written_);
         assert(callback);
-        log("[%4d] before full write of %zu bytes: %s", get_fd(s), len, repr(std::string(data, data+len)).data());
+        log("[%4d] before full write of %zu bytes: %s", get_fd(s), len, part_repr(data, len));
         c.wait_write(write_handler_ref);
         memmove(write_buffer.data(), data, len);
         write_callback = callback;
@@ -1142,7 +1169,7 @@ public:
         assert(len <= write_buffer.size());
         assert(not eof_is_written_);
         assert(callback);
-        log("[%4d] before partial write of %zu bytes: %s", get_fd(s), len, repr(std::string(data, data+len)).data());
+        log("[%4d] before partial write of %zu bytes: %s", get_fd(s), len, part_repr(data, len));
         c.wait_write(write_handler_ref);
         memmove(write_buffer.data(), data, len);
         write_callback = callback;
