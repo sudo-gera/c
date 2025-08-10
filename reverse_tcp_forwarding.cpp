@@ -423,12 +423,15 @@ auto end_of_msg = [](){
         fprintf(stderr, "\n");                              \
     } while(false)                                          \
 
-#define PART_SIZE 16
+#define PART_SIZE 64
 
 std::string part_repr_impl(const char* data, size_t size){
     auto s = repr(std::string(data, data+size));
     std::string res;
     if (s.size() > PART_SIZE * 2){
+        assert(s.begin()                <=    s.begin() + PART_SIZE);
+        assert(s.begin() + PART_SIZE    <=      s.end() - PART_SIZE);
+        assert(s.end() - PART_SIZE      <=                  s.end());
         res = std::string(s.begin(), s.begin() + PART_SIZE) + "..." + std::string(s.end() - PART_SIZE, s.end());
     }else{
         res = s;
@@ -547,19 +550,20 @@ int ll_create_non_blocking_socket(){
     return s;
 }
 
-int ll_create_connecting_socket(const sockaddr& addr){
-    auto s = ll_create_non_blocking_socket();
-    sys.ignore(EINPROGRESS);
-    sys.connect(s, &addr, sizeof(addr));
-    return s;
-}
-
 int ll_create_listening_socket(const sockaddr& addr){
     auto s = ll_create_non_blocking_socket();
     int enable = 1;
     sys.setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable));
+    assert(((struct sockaddr_in&)addr).sin_addr.s_addr == htonl(INADDR_ANY));
     sys.bind(s, &addr, sizeof(addr));
     sys.listen(s, 65536);
+    return s;
+}
+
+int ll_create_connecting_socket(const sockaddr& addr){
+    auto s = ll_create_non_blocking_socket();
+    sys.ignore(EINPROGRESS);
+    sys.connect(s, &addr, sizeof(addr));
     return s;
 }
 
@@ -887,7 +891,7 @@ struct SplitCallbacks{
     }
 
     ~SplitCallbacks(){
-        selector.notify_closed(this);
+        selector.notify_closed(&handler_ref);
     }
 private:
     selector_t& selector;
@@ -1114,9 +1118,10 @@ private:
             get_fd(s),
             err,
             strerror(err),
-            len_of_data_in_write_buffer_local - still_has_to_write_local, still_has_to_write_local,
-            part_repr(write_buffer.data(), len_of_data_in_write_buffer_local - still_has_to_write_local),
-            part_repr(write_buffer.data()+len_of_data_in_write_buffer_local - still_has_to_write_local, len_of_data_in_write_buffer_local)
+                                                                    len_of_data_in_write_buffer_local - still_has_to_write_local,
+                                                                                                        still_has_to_write_local,
+            part_repr(write_buffer.data(),                          len_of_data_in_write_buffer_local - still_has_to_write_local),
+            part_repr(write_buffer.data()+len_of_data_in_write_buffer_local - still_has_to_write_local, still_has_to_write_local)
         );
         write_callback_local(write_buffer.data() + len_of_data_in_write_buffer_local - still_has_to_write_local, still_has_to_write_local, err);
     }
