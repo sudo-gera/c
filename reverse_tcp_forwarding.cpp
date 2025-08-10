@@ -422,10 +422,11 @@ auto end_of_msg = [](){
 #define PART_SIZE 64
 
 std::string part_repr_impl(const char* data, size_t size){
-    if (size > PART_SIZE * 2){
-        return repr(std::string(data, data+PART_SIZE)) + "..." + repr(std::string(data, data+PART_SIZE));
+    auto s = repr(std::string(data, data+size));
+    if (s.size() > PART_SIZE * 2){
+        return std::string(s.begin(), s.begin() + PART_SIZE) + "..." + std::string(s.end() - PART_SIZE, s.end());
     }else{
-        return repr(std::string(data, data+size));
+        return s;
     }
 }
 
