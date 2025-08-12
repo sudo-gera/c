@@ -107,8 +107,36 @@ auto repr(T&& val){
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+template<typename T, size_t len_>
+struct static_trivial_multiset{
+    static_assert(std::is_trivial_v<T>);
+    void insert(T value){
+        assert(size_ < len_);
+        data[size_] = value;
+        size_ += 1;
+    }
+    void clear(){
+        size_ = 0;
+    }
+    size_t count(T value){
+        size_t n = 0;
+        for (size_t i = 0; i < size_; ++i){
+            if (data[i] == value){
+                n += 1;
+            }
+        }
+        return n;
+    }
+private:
+    std::array<T, len_> data;
+    size_t size_ = 0;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 struct sys_msg_printer : std::stringstream {
-    std::unordered_set<int> ignored;
+    static_trivial_multiset<int, 64> ignored;
+    // std::unordered_set<int> ignored;
     void ignore(int err){
         ignored.insert(err);
     }
@@ -1995,15 +2023,15 @@ ClientManager& get_client_manager(AppClient& app_client);
 const sockaddr& get_cmd_addr(AppClient& app_client);
 const sockaddr& get_tcp_addr(AppClient& app_client);
 
-void handle_connect_ctl(AppClient& app_server, size_t index, header_t header);
-void handle_connect_cmd(AppClient& app_server, size_t index, header_t header);
-void handle_connect_tcp(AppClient& app_server, size_t index, header_t header);
-void handle_read_ctl(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header);
-void handle_read_cmd(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header);
-void handle_read_tcp(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header);
-void handle_write_ctl(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header);
-void handle_write_cmd(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header);
-void handle_write_tcp(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header);
+void handle_connect_ctl(AppClient& app_client, size_t index, header_t header);
+void handle_connect_cmd(AppClient& app_client, size_t index, header_t header);
+void handle_connect_tcp(AppClient& app_client, size_t index, header_t header);
+void handle_read_ctl(AppClient& app_client, const char* data, size_t size, error_t err, size_t index, header_t header);
+void handle_read_cmd(AppClient& app_client, const char* data, size_t size, error_t err, size_t index, header_t header);
+void handle_read_tcp(AppClient& app_client, const char* data, size_t size, error_t err, size_t index, header_t header);
+void handle_write_ctl(AppClient& app_client, const char* data, size_t size, error_t err, size_t index, header_t header);
+void handle_write_cmd(AppClient& app_client, const char* data, size_t size, error_t err, size_t index, header_t header);
+void handle_write_tcp(AppClient& app_client, const char* data, size_t size, error_t err, size_t index, header_t header);
 
 namespace connected_socket_states{
     enum connected_socket_states{
@@ -2463,45 +2491,45 @@ const sockaddr& get_tcp_addr(AppClient& app_client){
     return app_client.tcp_addr;
 }
 
-void handle_connect_ctl(AppClient& app_server, size_t index, header_t header){
+void handle_connect_ctl(AppClient& app_client, size_t index, header_t header){
     assert(index == none);
     assert(header == 0);
-    assert(app_server.client.main_client->has_value());
-    auto& main = **app_server.client.main_client;
+    assert(app_client.client.main_client->has_value());
+    auto& main = **app_client.client.main_client;
     main.full_read(CMD_SOCKET_HEADER_SIZE);
 }
 
-void handle_read_ctl(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header){
+void handle_read_ctl(AppClient& app_client, const char* data, size_t size, error_t err, size_t index, header_t header){
     if (err != 0){
-        log("[%4d] closing by err during reading new connection header", get_fd(**app_server.client.main_client));
-        app_server.client.disable_main();
+        log("[%4d] closing by err during reading new connection header", get_fd(**app_client.client.main_client));
+        app_client.client.disable_main();
         return;
     }
     if (size < CMD_SOCKET_HEADER_SIZE){
-        log("[%4d] closing by EOF during reading new connection header", get_fd(**app_server.client.main_client));
-        app_server.client.disable_main();
+        log("[%4d] closing by EOF during reading new connection header", get_fd(**app_client.client.main_client));
+        app_client.client.disable_main();
         return;
     }
     assert(size == CMD_SOCKET_HEADER_SIZE);
     assert(index == none);
     assert(header == 0);
-    assert(app_server.client.main_client->has_value());
-    auto& main = **app_server.client.main_client;
+    assert(app_client.client.main_client->has_value());
+    auto& main = **app_client.client.main_client;
     static_assert(CMD_SOCKET_HEADER_SIZE <= sizeof(header));
     header = 0;
     assert(size <= sizeof(header));
     memcpy(&header, data, size);
-    app_server.client.maybe_open_pair(header);
+    app_client.client.maybe_open_pair(header);
     main.full_read(CMD_SOCKET_HEADER_SIZE);
 }
 
-void handle_write_ctl(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header){
+void handle_write_ctl(AppClient& app_client, const char* data, size_t size, error_t err, size_t index, header_t header){
     assert(false);
 }
 
-void handle_connect_cmd(AppClient& app_server, size_t index, header_t header){
-    assert(index < app_server.client.get_stream_pairs_size());
-    auto stream_pair_ptr = app_server.client.get_stream_pair(index);
+void handle_connect_cmd(AppClient& app_client, size_t index, header_t header){
+    assert(index < app_client.client.get_stream_pairs_size());
+    auto stream_pair_ptr = app_client.client.get_stream_pair(index);
     assert(stream_pair_ptr);
     auto& stream_pair = *stream_pair_ptr;
     assert(stream_pair.first.is_connected());
@@ -2513,9 +2541,9 @@ void handle_connect_cmd(AppClient& app_server, size_t index, header_t header){
     stream_pair.second.partial_read();
 }
 
-void handle_connect_tcp(AppClient& app_server, size_t index,  header_t header){
-    assert(index < app_server.client.get_stream_pairs_size());
-    auto stream_pair_ptr = app_server.client.get_stream_pair(index);
+void handle_connect_tcp(AppClient& app_client, size_t index,  header_t header){
+    assert(index < app_client.client.get_stream_pairs_size());
+    auto stream_pair_ptr = app_client.client.get_stream_pair(index);
     assert(stream_pair_ptr);
     auto& stream_pair = *stream_pair_ptr;
     assert(stream_pair.second.is_connected());
@@ -2526,9 +2554,9 @@ void handle_connect_tcp(AppClient& app_server, size_t index,  header_t header){
     stream_pair.first.partial_read();
 }
 
-void handle_read_cmd(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header){
-    assert(index < app_server.client.get_stream_pairs_size());
-    auto stream_pair_ptr = app_server.client.get_stream_pair(index);
+void handle_read_cmd(AppClient& app_client, const char* data, size_t size, error_t err, size_t index, header_t header){
+    assert(index < app_client.client.get_stream_pairs_size());
+    auto stream_pair_ptr = app_client.client.get_stream_pair(index);
     assert(stream_pair_ptr);
     auto& stream_pair = *stream_pair_ptr;
     assert(stream_pair.first.is_connected());
@@ -2537,7 +2565,7 @@ void handle_read_cmd(AppClient& app_server, const char* data, size_t size, error
 
     if (err != 0){
         log("[%4d] closing by err during reading data", get_fd(stream_pair.first));
-        app_server.client.close_pair(index);
+        app_client.client.close_pair(index);
         return;
     }
 
@@ -2551,13 +2579,13 @@ void handle_read_cmd(AppClient& app_server, const char* data, size_t size, error
     stream_pair.second.write_eof();
     if (stream_pair.first.eof_is_written()){
         log("[%4d] [%4d] closing by mutual EOF", get_fd(stream_pair.first), get_fd(stream_pair.second));
-        app_server.client.close_pair(index);
+        app_client.client.close_pair(index);
     }
 }
 
-void handle_read_tcp(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header){
-    assert(index < app_server.client.get_stream_pairs_size());
-    auto stream_pair_ptr = app_server.client.get_stream_pair(index);
+void handle_read_tcp(AppClient& app_client, const char* data, size_t size, error_t err, size_t index, header_t header){
+    assert(index < app_client.client.get_stream_pairs_size());
+    auto stream_pair_ptr = app_client.client.get_stream_pair(index);
     assert(stream_pair_ptr);
     auto& stream_pair = *stream_pair_ptr;
     assert(stream_pair.first.is_connected());
@@ -2566,7 +2594,7 @@ void handle_read_tcp(AppClient& app_server, const char* data, size_t size, error
 
     if (err != 0){
         log("[%4d] closing by err during reading data", get_fd(stream_pair.second));
-        app_server.client.close_pair(index);
+        app_client.client.close_pair(index);
         return;
     }
 
@@ -2580,13 +2608,13 @@ void handle_read_tcp(AppClient& app_server, const char* data, size_t size, error
     stream_pair.first.write_eof();
     if (stream_pair.second.eof_is_written()){
         log("[%4d] [%4d] closing by mutual EOF", get_fd(stream_pair.first), get_fd(stream_pair.second));
-        app_server.client.close_pair(index);
+        app_client.client.close_pair(index);
     }
 }
 
-void handle_write_cmd(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header){
-    assert(index < app_server.client.get_stream_pairs_size());
-    auto stream_pair_ptr = app_server.client.get_stream_pair(index);
+void handle_write_cmd(AppClient& app_client, const char* data, size_t size, error_t err, size_t index, header_t header){
+    assert(index < app_client.client.get_stream_pairs_size());
+    auto stream_pair_ptr = app_client.client.get_stream_pair(index);
     assert(stream_pair_ptr);
     auto& stream_pair = *stream_pair_ptr;
     assert(stream_pair.first.is_connected());
@@ -2595,7 +2623,7 @@ void handle_write_cmd(AppClient& app_server, const char* data, size_t size, erro
 
     if (err != 0){
         log("[%4d] closing by err during sending data", get_fd(stream_pair.first));
-        app_server.client.close_pair(index);
+        app_client.client.close_pair(index);
         return;
     }
 
@@ -2603,9 +2631,9 @@ void handle_write_cmd(AppClient& app_server, const char* data, size_t size, erro
     stream_pair.second.partial_read();
 }
 
-void handle_write_tcp(AppClient& app_server, const char* data, size_t size, error_t err, size_t index, header_t header){
-    assert(index < app_server.client.get_stream_pairs_size());
-    auto stream_pair_ptr = app_server.client.get_stream_pair(index);
+void handle_write_tcp(AppClient& app_client, const char* data, size_t size, error_t err, size_t index, header_t header){
+    assert(index < app_client.client.get_stream_pairs_size());
+    auto stream_pair_ptr = app_client.client.get_stream_pair(index);
     assert(stream_pair_ptr);
     auto& stream_pair = *stream_pair_ptr;
     assert(stream_pair.first.is_connected());
@@ -2614,7 +2642,7 @@ void handle_write_tcp(AppClient& app_server, const char* data, size_t size, erro
 
     if (err != 0){
         log("[%4d] closing by err during sending data", get_fd(stream_pair.second));
-        app_server.client.close_pair(index);
+        app_client.client.close_pair(index);
         return;
     }
 
@@ -2678,17 +2706,17 @@ struct App{
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<const char*> args;
-
 bool has_missing_flags = false;
 
-template<typename T, typename F>
-void argv_initializer(T& value, const char* name, F f){
+auto same = [](auto&&val)->decltype(auto){return FORWARD(val);};
+
+template<typename T, typename F = decltype(same)>
+void argv_initializer(int argc, char** argv, T& value, const char* name, F f = same){
     std::string flag = "--";
     flag += name;
-    for (size_t i = 2 ; i < args.size(); ++i){
-        if (args[i-1] == flag){
-            value = f(args[i]);
+    for (int i = 2 ; i < argc; ++i){
+        if (argv[i-1] == flag){
+            value = f(argv[i]);
             return;
         }
     }
@@ -2696,7 +2724,7 @@ void argv_initializer(T& value, const char* name, F f){
     has_missing_flags = true;
 }
 
-#define init_by_argv(name, f) argv_initializer(name, #name, f)
+#define init_by_argv(name, ...) argv_initializer(argc, argv, name, #name __VA_OPT__(,) __VA_ARGS__)
 
 size_t read_file(const char* filename, char* data, size_t size){
     int fd = sys.open(filename, O_RDONLY);
@@ -2717,7 +2745,6 @@ int main(int argc, char**argv){
         printf("%s", TO_STR(SOURCE_CODE));
         return 0;
     }
-    args = decltype(args)(argv, argv + argc);
     init_by_argv(mode, [](auto&& s){
         if (strcmp(s, "server") == 0){return modes::server;}
         if (strcmp(s, "client") == 0){return modes::client;}
@@ -2733,13 +2760,13 @@ int main(int argc, char**argv){
     init_by_argv(max_accepted_sockets_per_server, atoll);
     init_by_argv(max_connected_sockets, atoll);
 
-    init_by_argv(first_bytes_filename, [](const char* s){return s;});
+    init_by_argv(first_bytes_filename);
 
     init_by_argv(internal_port, atoll);
-    init_by_argv(internal_host, [](const char* s){return s;});
+    init_by_argv(internal_host);
 
     init_by_argv(external_port, atoll);
-    init_by_argv(external_host, [](const char* s){return s;});
+    init_by_argv(external_host);
 
     if (has_missing_flags){
         exit(1);
