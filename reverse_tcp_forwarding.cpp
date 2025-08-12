@@ -136,6 +136,7 @@ private:
 
 struct sys_msg_printer : std::stringstream {
     static_trivial_multiset<int, 64> ignored;
+    int last_err = 0;
     // std::unordered_set<int> ignored;
     void ignore(int err){
         ignored.insert(err);
@@ -146,6 +147,7 @@ struct sys_msg_printer : std::stringstream {
     auto name(ARGS&&... args) {                                          \
         errno = 0;                                                       \
         auto ret = ::name(FORWARD(args)...);                             \
+        last_err = errno;                                                \
         int err = errno;                                                 \
         if (err and not ignored.count(err)) {                            \
             std::cerr << "\n <<< ERROR >>>\n";                           \
@@ -846,7 +848,7 @@ struct Selector{
     }
 
     void wait(std::optional<time_storage> timeout = std::nullopt){
-        double to_sleep = timespec_base;
+        double to_sleep = -1;
         if (timeout){
             to_sleep = *timeout;
             to_sleep *= 1000;
@@ -860,12 +862,12 @@ struct Selector{
             to_sleep
         );
 
-        if (errno == EINTR){
+        if (sys.last_err == EINTR){
             log("epoll_wait() was interrupted by signal.");
             return;
         }
 
-        assert(errno == 0);
+        assert(sys.last_err == 0);
         assert(events_to_process.second < events_to_process.first.size());
 
         for (size_t q = 0; q < events_to_process.second; ++q){
