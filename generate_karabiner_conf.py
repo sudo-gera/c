@@ -214,7 +214,7 @@ def all_buttons() -> list[AllButtonsButtonDescription]:
     for button in all_buttons:
         assert set(button.keys()) == set(AllButtonsButtonDescription.__annotations__.keys())
 
-    assert all(*[
+    assert all([
         isinstance(button['data'], list)
         and (
             button['not_from']
