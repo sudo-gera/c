@@ -1,12 +1,12 @@
-# from __future__ import annotations
+from __future__ import annotations
 
-# import pathlib
-# import dataclasses
-# import typing
+import pathlib
+import dataclasses
+import typing
 
-# home = pathlib.Path.home()
+home = pathlib.Path.home()
 
-# conf_path = home / '.config' / 'karabiner' / 'assets' / 'complex_modifications' / 'auto_generated_conf.json'
+conf_file_path = home / '.config' / 'karabiner' / 'assets' / 'complex_modifications' / 'auto_generated_conf.json'
 
 # # @dataclasses.dataclass
 # # class whole_file_t:
@@ -168,7 +168,8 @@ Category = typing.Literal['Letter keys', 'Generic desktop keys', 'Mouse keys', '
 Modifiers = typing.Literal['caps_lock', 'left_control', 'left_shift', 'left_option', 'left_command', 'right_control', 'right_shift', 'right_option', 'right_command', 'keyboard_fn']
 Layout = typing.Literal['^en$', '^ru$']
 ButtonTypes = typing.Literal['key_code', 'consumer_key_code', 'pointing_button', 'generic_desktop', 'apple_vendor_top_case_key_code']
-PossibleFingerCountValues = typing.Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+# PossibleFingerCountValues = typing.Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+PossibleFingerCountValues = typing.Literal[0, 1]
 AllButtonsButtonDescriptionData = typing.TypedDict('AllButtonsButtonDescriptionData', {'key_code': str})
 AllButtonsButtonDescription = typing.TypedDict('AllButtonsButtonDescription', {'label': str, 'category': Category, 'not_from': bool, 'unsafe_from': bool, 'not_to': bool, 'data': list[AllButtonsButtonDescriptionData]})
 
@@ -224,13 +225,8 @@ def all_buttons() -> list[AllButtonsButtonDescription]:
             isinstance(button['data'][0], dict)
             and
             frozenset(button['data'][0].keys()) in {
-                # frozenset(['key_code']),
-                # frozenset(['consumer_key_code']),
-                # frozenset(['pointing_button']),
-                # frozenset(['generic_desktop']),
-                # frozenset(['apple_vendor_top_case_key_code']),
                 frozenset([button_type])
-                for button_type in ButtonTypes.__args__
+                for button_type in typing.cast(typing.Any, ButtonTypes).__args__
             }
             and
             len(button['data'][0].values()) == 1
@@ -242,23 +238,43 @@ def all_buttons() -> list[AllButtonsButtonDescription]:
 
     return all_buttons
 
+ButtonCode = typing.Annotated[
+    str,
+    list(
+        set(
+            [
+                [
+                    *button['data'][0].values()
+                ][0]
+                for button in all_buttons if not button['not_from']
+            ]
+        )
+    )
+]
+
 categories = {
     button['category']
     for button in all_buttons
 }
 
 def all_values_impl(x: typing.Any) -> typing.Any:
+    if isinstance(x, str):
+        x = eval(x)
     tx = x
     if tx is bool:
         return (False, True)
+        return (False, )
     if isinstance(tx, type(typing.Literal[None])):
         return x.__args__
+    if isinstance(tx, type(typing.Annotated[type, None])):
+        return x.__metadata__[0]
+    print(repr(x))
     assert False
-
 def all_values(x: typing.Any) -> tuple[typing.Any]:
-    return typing.cast(tuple[typing.Any], all_values_impl(x))
 
-@dataclasses.dataclass
+    return tuple([*all_values_impl(x)])
+
+@dataclasses.dataclass(frozen=True)
 class event_t:
     caps_lock: bool
     left_control: bool
@@ -272,18 +288,110 @@ class event_t:
     keyboard_fn: bool
     layout: Layout
     multitouch_extension_finger_count_total: PossibleFingerCountValues
-    # key_type: 
-    # key: 
+    button_type: ButtonTypes
+    button_code: ButtonCode
+
+class product_with_len:
+    def __init__(self, *args_: typing.Any) -> None:
+        args = [list(arg) for arg in args_]
+        self.len = reduce(mul, [len(arg) for arg in args], 1)
+        self.generator = product(*args)
+    def __iter__(self) -> product_with_len:
+        return self
+    def __next__(self) -> tuple[typing.Any, ...]:
+        return self.generator.__next__()
+    def __len__(self) -> int:
+        return self.len
+    def __length_hint__(self) -> int:
+        return self.len
 
 
+all_events_generator = product_with_len(*[
+    all_values(eval(attr_type))
+    for attr_type in event_t.__annotations__.values()
+])
 
-# for from_event_params in product(*[
-#         all_values(attr_type)
-#         for attr_name, attr_type in from_event_t.__annotations__.items()
-#     ]):
-#     from_event = from_event_t(*from_event_params)
-    
+T = typing.TypeVar('T')
 
+def identity(arg: T) -> T:
+    return arg
+
+tqdm : typing.Callable[[typing.Any], typing.Any] = identity
+try:
+    from tqdm import tqdm
+except Exception as e:
+    print(f'failed to import tqdm. {type(e).__name__}:{e}')
+
+import copy
+from typing import *
+
+def decide_what_to_do(event: event_t) -> event_t:
+    if event.button_code == 'q':
+        o = event
+        event = event_t(**(vars(event)|dict(button_code='w')))
+        assert event != o
+    return event
+
+manipulators : list[tuple[event_t, event_t]] = []
+for from_event_params in tqdm(product_with_len(*[
+        all_values(attr_type)
+        for attr_type in event_t.__annotations__.values()
+    ])):
+    from_event = event_t(*from_event_params)
+    to_event = decide_what_to_do(from_event)
+    if from_event != to_event:
+        manipulators.append((from_event, to_event))
+
+whole_file = dict(
+    title='auto generated',
+    rules=[
+        dict(
+            description='auto generated',
+            manipulators=[
+                {
+                    'from':{
+                        manipulator[0].button_type: manipulator[0].button_code,
+                        'modifiers': {
+                            'mandatory': [
+                                modifier
+                                for modifier in cast(tuple[str,...], cast(Any, Modifiers).__args__)
+                                if getattr(manipulator[0], modifier)
+                            ]
+                        },
+                    },
+                    'to': [
+                        {
+                            manipulator[1].button_type: manipulator[1].button_code,
+                            'modifiers': {
+                                'mandatory': [
+                                    modifier
+                                    for modifier in cast(tuple[str,...], cast(Any, Modifiers).__args__)
+                                    if getattr(manipulator[1], modifier)
+                                ]
+                            },
+                        }
+                    ],
+                    'conditions': [
+                        {
+                            "name": "multitouch_extension_finger_count_total",
+                            "type": "variable_if",
+                            "value": manipulator[0].multitouch_extension_finger_count_total
+                        },
+                        {
+                            "input_sources": [{ "language": manipulator[0].layout }],
+                            "type": "input_source_if"
+                        }
+                    ]
+                }
+                for manipulator in tqdm(manipulators)
+            ],
+        )
+    ]
+)
+
+print(f'saving to {conf_file_path!r}')
+with conf_file_path.open('w') as file:
+    json.dump(whole_file, file, indent=4)
 
 # print(
 # [
