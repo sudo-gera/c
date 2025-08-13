@@ -340,9 +340,24 @@ def decide_what_to_do(event: event_t) -> event_t:
         new_event_args[a], new_event_args[s] = new_event_args[s], new_event_args[a]
     @call
     def process_modifiers() -> None:
-        swap('left_command', 'fn')
-        swap('left_option', 'fn')
-        swap('right_option', 'right_command')
+        ...
+        # swap('left_command', 'fn')
+        # swap('left_option', 'fn')
+        # swap('right_option', 'right_command')
+    @call
+    def process_self_modifiers() -> None:
+        if category_by_button_pair[event.button_pair] != 'Modifier keys':
+            return
+        if event.button_pair[1] == 'left_command':
+            new_event_args['button_pair'] = ('key_code', 'left_option')
+        if event.button_pair[1] == 'keyboard_fn':
+            new_event_args['button_pair'] = ('key_code', 'left_command')
+        if event.button_pair[1] == 'left_option':
+            new_event_args['button_pair'] = ('apple_vendor_top_case_key_code', 'keyboard_fn')
+        if event.button_pair[1] == 'right_command':
+            new_event_args['button_pair'] = ('key_code', 'right_option')
+        if event.button_pair[1] == 'right_option':
+            new_event_args['button_pair'] = ('key_code', 'right_command')
     @call
     def process_arrow_mods() -> None:
         if event.button_pair[1] != 'delete_or_backspace':
@@ -381,6 +396,26 @@ def decide_what_to_do(event: event_t) -> event_t:
         if event.button_pair[1] != 'spacebar':
             return
         swap('fn', 'left_option')
+    @call
+    def process_punct() -> None:
+        if event.layout != 'ru':
+            return
+        if event.button_pair[1] == '6' and (event.left_shift or event.right_shift):
+            new_event_args['button_pair'] = ('key_code', 'slash')
+            new_event_args['left_shift'] = False
+            new_event_args['right_shift'] = False
+        if event.button_pair[1] == '7' and (event.left_shift or event.right_shift):
+            new_event_args['button_pair'] = ('key_code', 'slash')
+            new_event_args['left_shift'] = event.left_shift
+            new_event_args['right_shift'] = event.right_shift
+        if event.button_pair[1] == 'slash':
+            if event.left_shift or event.right_shift:
+                new_event_args['button_pair'] = ('key_code', '6')
+                new_event_args['left_shift'] = event.left_shift
+                new_event_args['right_shift'] = event.right_shift
+            else:
+                new_event_args['button_pair'] = ('key_code', '7')
+                new_event_args['right_shift'] = True
     event = event_t(**new_event_args)
     return event
 
