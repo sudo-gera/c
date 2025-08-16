@@ -1,177 +1,61 @@
 from __future__ import annotations
-
 import pathlib
 import dataclasses
 import typing
-
-home = pathlib.Path.home()
-
-conf_file_path = home / '.config' / 'karabiner' / 'assets' / 'complex_modifications' / 'auto_generated_conf.json'
-
-# # @dataclasses.dataclass
-# # class whole_file_t:
-# #     title: str
-# #     rules: list[rule_t]
-
-# # @dataclasses.dataclass
-# # class rule_t:
-# #     description: str
-# #     manipulators: list[manipulator_t]
-
-# # @dataclasses.dataclass
-# # class manipulator_t:
-# #     # Type: typing.Literal['basic'] = 'basic'
-# #     From: manipulator_from_t
-# #     To: manipulator_to_t
-# #     Conditions: manipulator_conditions_t
-
-# # @dataclasses.dataclass
-# # class manipulator_from_t:
-# #     key_code: key_code_t
-# #     modifiers: modifiers_t
-
-# # @dataclasses.dataclass
-# # class manipulator_to_t:
-# #     key_code: key_code_t
-# #     modifiers: modifiers_t
-
-# # @dataclasses.dataclass
-# # class manipulator_conditions_t:
-# #     ...
-
-# # @dataclasses.dataclass
-# # class key_code_t:
-# #     ...
-
-# # @dataclasses.dataclass
-# # class modifiers_t:
-# #     ...
-
-# #################################################################################################################
-
-# @dataclasses.dataclass
-# class physical_button_t:
-#     name: str
-#     is_mod: bool = False
-
-# #     1|      2|      3|      4|      5|      6|      7|      8|      9|     10|     11|     12|     13|     14|
-# #234567|1234567|1234567|1234567|1234567|1234567|1234567|1234567|1234567|1234567|1234567|1234567|1234567|1234567|
-
-# all_buttons = '''
-
-# ESC     F1      F2      F3      F4      F5      F6      F7      F8      F9      F10     F11     F12     POWER
-
-# PAR     1       2       3       4       5       6       7       8       9       0       -       =       BSPACE
-
-# TAB     Q       W       E       R       T       Y       U       I       O       P       [       ]       ENTER
-
-# CAPS    A       S       D       F       G       H       J       K       L       ;       '       \\      
-
-# LSHIFT  GRAVE   Z       X       C       V       B       N       M       ,       .       /       RSHIFT
-
-# FN      LCTRL   LOPT    LCOM    SPACE   RCOM    ROPT    LEFT    UP      DOWN    RIGHT
-
-# '''
-
-# from itertools import *
-# from operator import *
-# from functools import *
-
-# physical_button_table = [
-#     [
-#         physical_button_t(
-#             name=''.join(
-#                 map(
-#                     itemgetter(1),
-#                     g
-#                 )
-#             ).strip()
-#         )
-#         for k, g in groupby(
-#             enumerate(line),
-#             lambda ic: ic[0]//8,
-#         )
-#     ]
-#     for line in filter(bool, all_buttons.splitlines())
-# ]
-
-# all_names = [
-#     x.name
-#     for x in chain(*physical_button_table)
-# ]
-
-# assert len(set(all_names)) == len(all_names)
-
-# def physical_button_by_name(name: str) -> physical_button_t:
-#     matching_buttons = [
-#         x
-#         for x in chain(*physical_button_table)
-#         if x.name == name
-#     ]
-#     assert len(matching_buttons) == 1
-#     return matching_buttons[0]
-
-# physical_button_by_name('CAPS').is_mod = True
-# physical_button_by_name('LCOM').is_mod = True
-# physical_button_by_name('LCTRL').is_mod = True
-# physical_button_by_name('LOPT').is_mod = True
-# physical_button_by_name('LSHIFT').is_mod = True
-# physical_button_by_name('RCOM').is_mod = True
-# # physical_button_by_name('RCTRL').is_mod = True
-# physical_button_by_name('ROPT').is_mod = True
-# physical_button_by_name('RSHIFT').is_mod = True
-# physical_button_by_name('FN').is_mod = True
-
 import pathlib
 from urllib.request import urlopen
 import json
 from operator import *
 from itertools import *
 from functools import *
-
-dir_with_this_file = pathlib.Path(__file__).resolve().parent
-all_possible_keys_file_path = dir_with_this_file / 'simple_modifications.json'
-
-# try:
-#     call
-# except NameError:
-#     call = lambda
-
-# @call
-# def all_keys():
-#     try:
-#         data = urlopen('https://raw.githubusercontent.com/pqrs-org/Karabiner-Elements/refs/heads/main/src/apps/SettingsWindow/Resources/simple_modifications.json').read()
-#         json.loads(data)
-#     except Exception:
-#         with all_possible_keys_file_path.open('rb') as file:
-#             data = file.read()
-
-# def call(obj, /, *args, **kwargs):
-#     """Same as obj(*args, **kwargs)."""
-#     return obj(*args, **kwargs)
-
+from typing import *
 import dataclasses
 import typing
 import sys
 import random
+
 if sys.version_info < (3, 11):
-    from collections.abc import Callable
-    from operator import attrgetter as attrgetter, itemgetter as itemgetter, methodcaller as methodcaller
-    from typing import TypeVar
-    from typing import ParamSpec
-    _R = TypeVar("_R")
-    _P = ParamSpec("_P")
-    def call(obj: Callable[_P, _R], /, *args: _P.args, **kwargs: _P.kwargs) -> _R:
+    from collections.abc import Callable as caCallable
+    call_R = TypeVar("call_R")
+    call_P = ParamSpec("call_P")
+    def call(obj: caCallable[call_P, call_R], /, *args: call_P.args, **kwargs: call_P.kwargs) -> call_R:
         return obj(*args, **kwargs)
 
-Category = typing.Literal['Letter keys', 'Generic desktop keys', 'Mouse keys', 'Arrow keys', 'Mouse buttons', 'Media controls', 'International keys', 'Generic GUI application control keys', 'Japanese', 'Others', 'Keys in pc keyboards', 'Controls and symbols', 'Software function', 'D-pad', 'Function keys', 'Modifier keys', 'Sticky modifier keys', 'Keypad keys', 'Application launch keys', 'Remote control buttons', 'Disable this key', 'Number keys']
-Modifiers = typing.Literal['caps_lock', 'left_control', 'left_shift', 'left_option', 'left_command', 'right_control', 'right_shift', 'right_option', 'right_command', 'fn']
+home = pathlib.Path.home()
+conf_file_path = home / '.config' / 'karabiner' / 'assets' / 'complex_modifications' / 'auto_generated_conf.json'
+dir_with_this_file = pathlib.Path(__file__).resolve().parent
+all_possible_keys_file_path = dir_with_this_file / 'simple_modifications.json'
+
+Category = typing.Literal[
+    'Letter keys', 'Generic desktop keys', 'Mouse keys',
+    'Arrow keys', 'Mouse buttons', 'Media controls',
+    'International keys', 'Generic GUI application control keys',
+    'Japanese', 'Others', 'Keys in pc keyboards',
+    'Controls and symbols', 'Software function',
+    'D-pad', 'Function keys', 'Modifier keys',
+    'Sticky modifier keys', 'Keypad keys',
+    'Application launch keys', 'Remote control buttons',
+    'Disable this key', 'Number keys'
+]
+Modifiers = typing.Literal[
+    'caps_lock', 'left_control',
+    'left_shift', 'left_option',
+    'left_command', 'right_control',
+    'right_shift', 'right_option',
+    'right_command', 'fn'
+]
 Layouts = typing.Literal['en', 'ru']
 ButtonTypes = typing.Literal['key_code', 'consumer_key_code', 'pointing_button', 'generic_desktop', 'apple_vendor_top_case_key_code']
 PossibleFingerCountValues = typing.Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-# PossibleFingerCountValues = typing.Literal[0, 1]
 AllButtonsButtonDescriptionData = typing.TypedDict('AllButtonsButtonDescriptionData', {'key_code': str})
-AllButtonsButtonDescription = typing.TypedDict('AllButtonsButtonDescription', {'label': str, 'category': Category, 'not_from': bool, 'unsafe_from': bool, 'not_to': bool, 'data': list[AllButtonsButtonDescriptionData]})
+AllButtonsButtonDescription = typing.TypedDict(
+    'AllButtonsButtonDescription',
+    {'label': str, 'category': Category, 'not_from': bool, 'unsafe_from': bool, 'not_to': bool, 'data': list[AllButtonsButtonDescriptionData]}
+)
+
+@dataclasses.dataclass
+class AllButtonsButtonDescriptionData:
+    key_code: str
 
 @call
 def all_buttons() -> list[AllButtonsButtonDescription]:
