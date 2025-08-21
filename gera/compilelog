@@ -1,4 +1,0 @@
-103bn.cpp: In constructor ‘BigInteger::BigInteger(std::__cxx11::string, std::istream&)’:
-103bn.cpp:314:39: warning: unused parameter ‘f’ [-Wunused-parameter]
-  BigInteger(const string orig,istream&f){
-                               ~~~~~~~~^

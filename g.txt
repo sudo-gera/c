@@ -1,5 +1,0 @@
-aaa qqq 12 www 43 
-sss eee 32 rrr 78
-ddd ttt 65 qqq 86
-fff eee 12 rrr 43
-ggg ttt 32 www 78

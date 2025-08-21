@@ -1,9 +1,0 @@
-[package]
-name = "ideal_time_meth"
-version = "0.1.0"
-edition = "2024"
-
-[dependencies]
-types = { path = "../types" }
-object = { path = "../object" }
-anyhow = "1.0.98"

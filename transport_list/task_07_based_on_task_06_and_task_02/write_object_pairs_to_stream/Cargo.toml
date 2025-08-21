@@ -1,9 +1,0 @@
-[package]
-name = "write_object_pairs_to_stream"
-version = "0.1.0"
-edition = "2024"
-
-[dependencies]
-types = { path = "../types" }
-list_of_objects = { path = "../list_of_objects" }
-anyhow = "1.0.98"

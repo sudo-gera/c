@@ -1,5 +1,0 @@
-#!/usr/bin/python3
-from sys import argv
-argv=['wind',"/mnt/c/Program Files/Sublime Text/subl.exe",]+argv[1:]
-from subprocess import run
-run(argv)

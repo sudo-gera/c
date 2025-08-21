@@ -1,1 +1,0 @@
-tmux att -t "$@" || tmux new -s "$@"

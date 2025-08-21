@@ -1,1 +1,0 @@
-cat compile.conf | sed "/ *#/d" | tr '\n' '|'
