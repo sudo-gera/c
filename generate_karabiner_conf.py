@@ -496,8 +496,8 @@ def remove_duplicates(attr_name: str, possible_values: list[Any]) -> None:
         if not dict_changed:
             break
 
-remove_duplicates('multitouch_extension_finger_count', all_values(PossibleFingerCountValues))
-remove_duplicates('layout', all_values(Layouts))
+remove_duplicates('multitouch_extension_finger_count', [*all_values(PossibleFingerCountValues)])
+remove_duplicates('layout', [*all_values(Layouts)])
 for modifier in [button.label for button in buttons.values() if button.category == 'Modifier keys']:
     remove_duplicates(modifier, [False, True])
 
