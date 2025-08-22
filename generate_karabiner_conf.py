@@ -334,7 +334,7 @@ def decide_what_to_do(input_event: event_t) -> tuple[event_t]:
         ]
         if output_event.button_pair[1] == 'delete_or_backspace' or buttons[tuple(output_event.button_pair)[1]].category == 'Arrow keys' else
         [
-            output_events
+            output_event
         ]
         for output_event in output_events
     ]))
@@ -376,7 +376,7 @@ def decide_what_to_do(input_event: event_t) -> tuple[event_t]:
         ]
         if event.multitouch_extension_finger_count_total >= 1 and input_event.button_pair[1] == 'delete_forward' else
         [
-            output_events
+            output_event
         ]
         for output_event in output_events
     ]))
@@ -385,73 +385,64 @@ def decide_what_to_do(input_event: event_t) -> tuple[event_t]:
         [
             replace(
                 output_event,
-                left_command=output_event.left_option,
-                left_option=output_event.left_command,
-                right_command=output_event.right_option,
-                right_option=output_event.right_command,
+                left_option=True,
+                left_shift=True,
+                fn=True,
             ),
         ]
-        if buttons[tuple(input_event.button_pair)[1]].category == 'Function keys'     output_event.button_pair[1] == 'delete_or_backspace' or buttons[tuple(output_event.button_pair)[1]].category == 'Arrow keys' else
+        if buttons[tuple(input_event.button_pair)[1]].category == 'Function keys' and input_event.button_pair[1] in 'f1 f2 f11 f12'.split() else
         [
-            output_events
+            replace(
+                output_event,
+                fn=True,
+            ),
+        ]
+        if buttons[tuple(input_event.button_pair)[1]].category == 'Function keys' else
+        [
+            output_event
         ]
         for output_event in output_events
     ]))
 
+    output_events = tuple(chain(*[
+        [
+            replace(
+                output_event,
+                button_pair = ('key_code', 'slash'),
+                left_shift = False,
+                right_shift = False,
+            ),
+        ]
+        if input_event.layout == 'ru' and input_event.button_pair[1] == '6' and (input_event.left_shift or input_event.right_shift) else
+        [
+            replace(
+                output_event,
+                button_pair = ('key_code', 'slash'),
+            ),
+        ]
+        if input_event.layout == 'ru' and input_event.button_pair[1] == '7' and (input_event.left_shift or input_event.right_shift) else
+        [
+            replace(
+                output_event,
+                button_pair = ('key_code', '6'),
+            ),
+        ]
+        if input_event.layout == 'ru' and input_event.button_pair[1] == 'slash' and (input_event.left_shift or input_event.right_shift) else
+        [
+            replace(
+                output_event,
+                button_pair = ('key_code', '7'),
+                left_shift = True,
+            ),
+        ]
+        if input_event.layout == 'ru' and input_event.button_pair[1] == 'slash' else
+        [
+            output_event
+        ]
+        for output_event in output_events
+    ]))
 
-            
-    if buttons[tuple(input_event.button_pair)[1]].category == 'Function keys':
-        if event.multitouch_extension_finger_count_total >= 1:
-            output_events = tuple(chain(*[
-                [
-                    replace(
-                        output_event,
-                        fn=True,
-                    ),
-                ]
-                for output_event in output_events    
-            ]))
-            if input_event.button_pair[1] in 'f1 f2 f11 f12'.split():
-                output_events = tuple(chain(*[
-                    [
-                        replace(
-                            output_event,
-                            left_option=True,
-                            left_shift=True,
-                        ),
-                    ]
-                    for output_event in output_events    
-                ]))
-                
-
-
-    @call
-    def process_space() -> None:
-        if event.button_pair[1] != 'spacebar':
-            return
-        swap('fn', 'left_option')
-    @call
-    def process_punct() -> None:
-        if event.layout != 'ru':
-            return
-        if event.button_pair[1] == '6' and (event.left_shift or event.right_shift):
-            new_event_args['button_pair'] = ('key_code', 'slash')
-            new_event_args['left_shift'] = False
-            new_event_args['right_shift'] = False
-        if event.button_pair[1] == '7' and (event.left_shift or event.right_shift):
-            new_event_args['button_pair'] = ('key_code', 'slash')
-            new_event_args['left_shift'] = event.left_shift
-            new_event_args['right_shift'] = event.right_shift
-        if event.button_pair[1] == 'slash':
-            if event.left_shift or event.right_shift:
-                new_event_args['button_pair'] = ('key_code', '6')
-                new_event_args['left_shift'] = event.left_shift
-                new_event_args['right_shift'] = event.right_shift
-            else:
-                new_event_args['button_pair'] = ('key_code', '7')
-                new_event_args['right_shift'] = True
-    event = event_t(**new_event_args)
-    return event
+    return output_events
 
 #######################################################################################################################################
 
