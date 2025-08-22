@@ -27,10 +27,10 @@ def get_tqdm() -> Callable[[get_tqdm_T], get_tqdm_T]:
 
     try:
         from tqdm import tqdm
-        return tqdm
+        return cast(Callable[[get_tqdm_T], get_tqdm_T], tqdm)
     except Exception as e:
         print(f'failed to import tqdm. {type(e).__name__}:{e}', file=sys.stderr)
-        return identity_T
+        return identity
 tqdm = get_tqdm()
 
 
@@ -88,6 +88,7 @@ buttons_list_file_path = dir_with_this_file / 'simple_modifications.json'
 #     pair: ButtonPair
 
 def get_buttons_list_bin_data() -> bytes:
+    buttons_list_bin_data = b''
     try:
         buttons_list_bin_data = urlopen('https://raw.githubusercontent.com/pqrs-org/Karabiner-Elements/refs/heads/main/src/apps/SettingsWindow/Resources/simple_modifications.json').read()
         assert isinstance(buttons_list_bin_data, bytes)
@@ -112,13 +113,14 @@ buttons_list_json_data = get_buttons_list_json_data()
 
 # true_or_missing_keys : Final = ('not_from', 'not_to', 'unsafe_from')
 
+label_t = NewType('label_t', str)
 button_key_t = NewType('button_key_t', str)
 button_value_t = NewType('button_value_t', str)
 category_t = NewType('category_t', str)
 
 @dataclass(frozen=True)
 class Button:
-    label: bool
+    label: str
     not_from: bool
     not_to: bool
     unsafe_from: bool
@@ -128,6 +130,9 @@ class Button:
 
 def get_buttons() -> dict[str, Button]:
     buttons: dict[str, Button] = {}
+
+    true_or_missing_keys : Final = {'not_from', 'not_to', 'unsafe_from'}
+    must_present_keys : Final = {'label', 'data'}
 
     current_category : str|None = None
     for button_json in buttons_list_json_data:
@@ -140,8 +145,6 @@ def get_buttons() -> dict[str, Button]:
         else:
             category = current_category
             assert category is not None
-            true_or_missing_keys : Final = {'not_from', 'not_to', 'unsafe_from'}
-            must_present_keys : Final = {'label', 'data'}
             assert must_present_keys <= button_json.keys() <= must_present_keys | true_or_missing_keys
             for key in true_or_missing_keys:
                 assert button_json.get(key, True) is True
@@ -162,13 +165,13 @@ def get_buttons() -> dict[str, Button]:
             assert isinstance(value, str)
             assert key not in buttons
             buttons[value]=Button(
-                label=label,
+                label=label_t(label),
                 not_from=not_from,
                 not_to=not_to,
                 unsafe_from=unsafe_from,
                 button_key=button_key_t(key),
                 button_value=button_value_t(value),
-                category=category_t(current_category),
+                category=category_t(category),
             )
     
     return buttons
@@ -177,7 +180,7 @@ buttons = get_buttons()
 ButtonPair = Annotated[
     tuple[str, str],
     [
-        (button.button_key, buttons.button_values)
+        (button.button_key, button.button_value)
         for button in buttons.values()
     ]
 ]
@@ -195,7 +198,7 @@ class input_event_t:
     fn: bool
     layout: Layouts
     exact_finger_count: PossibleFingerCountValues
-    button_pair: button_pair_t
+    button_pair: ButtonPair
 
 def all_values_impl(x: Any) -> Any:
     if isinstance(x, str):
@@ -246,7 +249,7 @@ class event_t:
     right_command: bool
     fn: bool
     layout: Layouts
-    multitouch_extension_finger_count_total: PossibleFingerCountValues
+    multitouch_extension_finger_count: PossibleFingerCountValues
     button_pair: ButtonPair
 
 # @dataclass(frozen=True)
@@ -267,52 +270,47 @@ class event_t:
 
 #######################################################################################################################################
 
-def decide_what_to_do(input_event: event_t) -> tuple[event_t]:
-    output_events : tuple[event_t] = (input_event,)
+def decide_what_to_do(input_event: event_t) -> tuple[event_t, ...]:
+    output_events : tuple[event_t, ...] = (input_event,)
 
     output_events = tuple(chain(*[
         [
             replace(
                 output_event,
-                button_key='key_code',
-                button_value='left_command',
+                button_pair=('key_code','left_command'),
             )
         ]
         if output_event.button_pair[1] == 'left_fn' else
         [
             replace(
                 output_event,
-                button_key='key_code',
-                button_value='left_command',
+                button_pair=('key_code','left_command'),
+                left_control=True,
             ),
-            replace(
-                output_event,
-                button_key='key_code',
-                button_value='left_control',
-            ),
+            # replace(
+            #     output_event,
+            #     button_pair=('key_code','left_control'),
+            # ),
         ]
         if output_event.button_pair[1] == 'left_option' else
         [
             replace(
                 output_event,
-                button_key='key_code',
-                button_value='left_option',
+                button_pair=('key_code','left_option'),
             ),
         ]
         if output_event.button_pair[1] == 'left_command' else
         [
             replace(
                 output_event,
-                button_key='key_code',
-                button_value='right_option',
+                button_pair=('key_code','right_option'),
             ),
         ]
         if output_event.button_pair[1] == 'right_command' else
         [
             replace(
                 output_event,
-                button_key='key_code',
-                button_value='right_command',
+                button_pair=('key_code','right_command'),
             ),
         ]
         if output_event.button_pair[1] == 'right_option' else
@@ -343,38 +341,38 @@ def decide_what_to_do(input_event: event_t) -> tuple[event_t]:
         [
             replace(
                 output_event,
-                button_key = 'page_up',
+                button_pair = ('key_code', 'page_up'),
             ),
         ]
-        if input_event.multitouch_extension_finger_count_total >= 1 and input_event.button_pair[1] == 'up_arrow' else
+        if input_event.multitouch_extension_finger_count >= 1 and input_event.button_pair[1] == 'up_arrow' else
         [
             replace(
                 output_event,
-                button_key = 'page_down',
+                button_pair = ('key_code', 'page_down'),
             ),
         ]
-        if input_event.multitouch_extension_finger_count_total >= 1 and input_event.button_pair[1] == 'down_arrow' else
+        if input_event.multitouch_extension_finger_count >= 1 and input_event.button_pair[1] == 'down_arrow' else
         [
             replace(
                 output_event,
-                button_key = 'page_left',
+                button_pair = ('key_code', 'home'),
             ),
         ]
-        if input_event.multitouch_extension_finger_count_total >= 1 and input_event.button_pair[1] == 'home' else
+        if input_event.multitouch_extension_finger_count >= 1 and input_event.button_pair[1] == 'left_arrow' else
         [
             replace(
                 output_event,
-                button_key = 'page_right',
+                button_pair = ('key_code', 'end'),
             ),
         ]
-        if input_event.multitouch_extension_finger_count_total >= 1 and input_event.button_pair[1] == 'end' else
+        if input_event.multitouch_extension_finger_count >= 1 and input_event.button_pair[1] == 'right_arrow' else
         [
             replace(
                 output_event,
-                button_key = 'delete_or_backspace',
+                button_pair = ('key_code', 'delete_forward'),
             ),
         ]
-        if input_event.multitouch_extension_finger_count_total >= 1 and input_event.button_pair[1] == 'delete_forward' else
+        if input_event.multitouch_extension_finger_count >= 1 and input_event.button_pair[1] == 'delete_or_backspace' else
         [
             output_event
         ]
@@ -442,6 +440,9 @@ def decide_what_to_do(input_event: event_t) -> tuple[event_t]:
         for output_event in output_events
     ]))
 
+    for output_event in output_events:
+        assert output_event.button_pair in all_values(ButtonPair)
+
     return output_events
 
 #######################################################################################################################################
@@ -476,374 +477,374 @@ class optimized_event_v:
     fn: bool
     button_pair: ButtonPair
 
+def optimize_input_event(event: event_t) -> optimized_event_k:
+    v : Any = {k:(False, (v,)) for k,v in vars(event).items()}
+    v['button_pair'] = v['button_pair'][1][0]
+    return optimized_event_k(**v)
+
+def optimize_output_event(event: event_t) -> optimized_event_v:
+    v : Any = {k:v for k,v in vars(event).items()}
+    del v['multitouch_extension_finger_count']
+    del v['layout']
+    return optimized_event_v(**v)
+
+print( sorted(set(event_t.__annotations__.keys())) , sorted(set(optimized_event_k.__annotations__.keys())) , sep='\n')
+assert set(event_t.__annotations__.keys()) == set(optimized_event_k.__annotations__.keys())
+
 print('making decicions...')
 
-optimized_manipulators = dict[event_t, tuple[event_t, ...]]
+optimized_manipulators : dict[optimized_event_k, optimized_event_v] = {}
 
 for from_event_params in tqdm(product_with_len(*[
         all_values(attr_type)
         for attr_type in event_t.__annotations__.values()
     ])):
     from_event = event_t(*from_event_params)
+    to_events = decide_what_to_do(from_event)
+    assert len(to_events) == 1
+    to_event = to_events[0]
+    optimized_manipulators[optimize_input_event(from_event)]=optimize_output_event(to_event)
+0
 
 
 
+# @call
+# def all_buttons() -> list[AllButtonsButtonDescription]:
+#     @call
+#     def data() -> tuple[Any, bytes]:
+#         try:
+#             bin_data = urlopen('https://raw.githubusercontent.com/pqrs-org/Karabiner-Elements/refs/heads/main/src/apps/SettingsWindow/Resources/simple_modifications.json').read()
+#             return json.loads(bin_data), bin_data
+#         except Exception as e:
+#             print(f'failed to load keys. {type(e).__name__}:{e}')
+#             with all_possible_keys_file_path.open('rb') as file:
+#                 bin_data = file.read()
+#                 return json.loads(bin_data), bin_data
+#     j_data, bin_data = data
+
+#     with all_possible_keys_file_path.open('wb') as file:
+#         file.write(bin_data)
+
+#     all_buttons : list[ButtonDescription] = []
+#     category = j_data[0]
+#     assert 'category' in category
+#     for button in j_data:
+#         if 'category' in button:
+#             category = button
+#         else:
+#             all_buttons.append(category | button)
+
+#     true_or_missing_keys : Final = ('not_from', 'not_to', 'unsafe_from')
+
+#     for true_or_missing_key in true_or_missing_keys:
+#         assert all([
+#             isinstance(button.get(true_or_missing_key, True), bool)
+#             and
+#             button.get(true_or_missing_key, True) == True
+#             for button in all_buttons
+#         ])
+
+#         for button in all_buttons:
+#             button[true_or_missing_key] = button.get(true_or_missing_key, False)
+
+#     for button in all_buttons:
+#         assert set(button.keys()) == set(AllButtonsButtonDescription.__annotations__.keys())
+
+#     assert all([
+#         isinstance(button['data'], list)
+#         and (
+#             button['not_from']
+#             or
+#             len(button['data']) == 1
+#             and
+#             isinstance(button['data'][0], dict)
+#             and
+#             frozenset(button['data'][0].keys()) in {
+#                 frozenset([button_type])
+#                 for button_type in typing.cast(typing.Any, ButtonTypes).__args__
+#             }
+#             and
+#             len(button['data'][0].values()) == 1
+#             and
+#             isinstance([*button['data'][0].values()][0], str)
+#         )
+#         for button in all_buttons
+#     ])
+
+#     return all_buttons
+
+# category_by_button_pair : dict[ButtonPair, Category] = {
+#     cast(
+#         tuple[str, str],
+#         tuple([
+#             *button['data'][0].keys()
+#         ] + [
+#             *button['data'][0].values()
+#         ])
+#     ):button['category']
+#     for button in all_buttons if not button['not_from']
+# }
+
+# ButtonPair = Annotated[
+#     tuple[str, str],
+#     list(category_by_button_pair)
+# ]
+
+# assert sorted(typing.cast(typing.Any, ButtonPair).__metadata__[0]) == sorted(category_by_button_pair)
+
+# categories = {
+#     button['category']
+#     for button in all_buttons
+# }
+
+# def all_values_impl(x: typing.Any) -> typing.Any:
+#     if isinstance(x, str):
+#         x = eval(x)
+#     tx = x
+#     if tx is bool:
+#         # if random.random() < 0.1:
+#             # return (False, True)
+#         # return (False, )
+#         return (False, True)
+#     if isinstance(tx, type(typing.Literal[None])):
+#         return x.__args__
+#     if isinstance(tx, type(typing.Annotated[type, None])):
+#         return x.__metadata__[0]
+#     print(repr(x))
+#     assert False
+# def all_values(x: typing.Any) -> tuple[typing.Any, ...]:
+
+#     return tuple([*all_values_impl(x)])
+
+# @dataclasses.dataclass(frozen=True)
+# class event_t:
+#     caps_lock: bool
+#     left_control: bool
+#     left_shift: bool
+#     left_option: bool
+#     left_command: bool
+#     right_control: bool
+#     right_shift: bool
+#     right_option: bool
+#     right_command: bool
+#     fn: bool
+#     layout: Layouts
+#     multitouch_extension_finger_count: PossibleFingerCountValues
+#     button_pair: ButtonPair
+
+# class product_with_len:
+#     def __init__(self, *args_: Any) -> None:
+#         args = [list(arg) for arg in args_]
+#         self.len = reduce(mul, [len(arg) for arg in args], 1)
+#         self.generator = product(*args)
+#     def __iter__(self) -> product_with_len:
+#         return self
+#     def __next__(self) -> Any:
+#         return self.generator.__next__()
+#     def __len__(self) -> int:
+#         return self.len
+#     def __length_hint__(self) -> int:
+#         return self.len
 
 
+# all_events_generator = product_with_len(*[
+#     all_values(eval(attr_type))
+#     for attr_type in event_t.__annotations__.values()
+# ])
 
+# T = typing.TypeVar('T')
 
+# def identity(arg: T) -> T:
+#     return arg
 
+# tqdm : typing.Callable[[typing.Any], typing.Any] = identity
+# try:
+#     from tqdm import tqdm as _tqdm
+#     tqdm = _tqdm
+# except Exception as e:
+#     print(f'failed to import tqdm. {type(e).__name__}:{e}')
 
+# import copy
+# from typing import *
 
+# #######################################################################################################################################
 
+# def decide_what_to_do(event: event_t) -> event_t:
+#     new_event_args = copy.deepcopy(vars(event))
+#     def swap(a: str,s: str) -> None:
+#         nonlocal new_event_args
+#         new_event_args[a], new_event_args[s] = new_event_args[s], new_event_args[a]
+#     @call
+#     def process_modifiers() -> None:
+#         ...
+#         # swap('left_command', 'fn')
+#         # swap('left_option', 'fn')
+#         # swap('right_option', 'right_command')
+#     @call
+#     def process_self_modifiers() -> None:
+#         if category_by_button_pair[event.button_pair] != 'Modifier keys':
+#             return
+#         if event.button_pair[1] == 'left_command':
+#             new_event_args['button_pair'] = ('key_code', 'left_option')
+#         if event.button_pair[1] == 'keyboard_fn':
+#             new_event_args['button_pair'] = ('key_code', 'left_command')
+#         if event.button_pair[1] == 'left_option':
+#             new_event_args['button_pair'] = ('apple_vendor_top_case_key_code', 'keyboard_fn')
+#         if event.button_pair[1] == 'right_command':
+#             new_event_args['button_pair'] = ('key_code', 'right_option')
+#         if event.button_pair[1] == 'right_option':
+#             new_event_args['button_pair'] = ('key_code', 'right_command')
+#     @call
+#     def process_arrow_mods() -> None:
+#         if event.button_pair[1] != 'delete_or_backspace':
+#             if category_by_button_pair[event.button_pair] != 'Arrow keys':
+#                 return
+#         swap('left_command', 'left_option')
+#         swap('right_command', 'right_option')
+#     @call
+#     def process_touchpad() -> None:
+#         if event.multitouch_extension_finger_count == 0:
+#             return
+#         button_pair = [*event.button_pair]
+#         if button_pair[1] == 'up_arrow':
+#             button_pair[1] = 'page_up'
+#         if button_pair[1] == 'down_arrow':
+#             button_pair[1] = 'page_down'
+#         if button_pair[1] == 'left_arrow':
+#             button_pair[1] = 'home'
+#         if button_pair[1] == 'right_arrow':
+#             button_pair[1] = 'end'
+#         if button_pair[1] == 'delete_or_backspace':
+#             button_pair[1] = 'delete_forward'
+#         new_event_args['button_pair'] = tuple(button_pair)
+#     @call
+#     def process_functions() -> None:
+#         if category_by_button_pair[event.button_pair] != 'Function keys':
+#             return
+#         if event.multitouch_extension_finger_count == 0:
+#             return
+#         new_event_args['fn'] = True
+#         if event.button_pair[1] in 'f1 f2 f11 f12'.split():
+#             new_event_args['right_option'] = True
+#             new_event_args['right_shift'] = True
+#     @call
+#     def process_space() -> None:
+#         if event.button_pair[1] != 'spacebar':
+#             return
+#         swap('fn', 'left_option')
+#     @call
+#     def process_punct() -> None:
+#         if event.layout != 'ru':
+#             return
+#         if event.button_pair[1] == '6' and (event.left_shift or event.right_shift):
+#             new_event_args['button_pair'] = ('key_code', 'slash')
+#             new_event_args['left_shift'] = False
+#             new_event_args['right_shift'] = False
+#         if event.button_pair[1] == '7' and (event.left_shift or event.right_shift):
+#             new_event_args['button_pair'] = ('key_code', 'slash')
+#             new_event_args['left_shift'] = event.left_shift
+#             new_event_args['right_shift'] = event.right_shift
+#         if event.button_pair[1] == 'slash':
+#             if event.left_shift or event.right_shift:
+#                 new_event_args['button_pair'] = ('key_code', '6')
+#                 new_event_args['left_shift'] = event.left_shift
+#                 new_event_args['right_shift'] = event.right_shift
+#             else:
+#                 new_event_args['button_pair'] = ('key_code', '7')
+#                 new_event_args['right_shift'] = True
+#     event = event_t(**new_event_args)
+#     return event
 
+# #######################################################################################################################################
 
+# @dataclass(frozen=True)
+# class optimized_event_k:
+#     caps_lock: tuple[bool, tuple[bool, ...]]
+#     left_control: tuple[bool, tuple[bool, ...]]
+#     left_shift: tuple[bool, tuple[bool, ...]]
+#     left_option: tuple[bool, tuple[bool, ...]]
+#     left_command: tuple[bool, tuple[bool, ...]]
+#     right_control: tuple[bool, tuple[bool, ...]]
+#     right_shift: tuple[bool, tuple[bool, ...]]
+#     right_option: tuple[bool, tuple[bool, ...]]
+#     right_command: tuple[bool, tuple[bool, ...]]
+#     fn: tuple[bool, tuple[bool, ...]]
+#     layout: tuple[bool, tuple[Layouts, ...]]
+#     multitouch_extension_finger_count: tuple[bool,tuple[PossibleFingerCountValues, ...]]
+#     button_pair: ButtonPair
 
+# @dataclass(frozen=True)
+# class optimized_event_v:
+#     caps_lock: bool
+#     left_control: bool
+#     left_shift: bool
+#     left_option: bool
+#     left_command: bool
+#     right_control: bool
+#     right_shift: bool
+#     right_option: bool
+#     right_command: bool
+#     fn: bool
+#     button_pair: ButtonPair
 
+# print('making decicions...')
+
+# optimized_manipulators = dict[event_t, tuple[event_t, ...]]
+
+# manipulators : list[tuple[event_t, event_t]] = []
+
+# for from_event_params in tqdm(product_with_len(*[
+#         all_values(attr_type)
+#         for attr_type in event_t.__annotations__.values()
+#     ])):
 #     from_event = event_t(*from_event_params)
 #     to_events = decide_what_to_do(from_event)
 #     if from_event != to_event:
 #         manipulators.append((from_event, to_event))
 #     # manipulators.append((from_event, to_event))
 
+# print('making decicions...')
 
-# # @call
-# # def all_buttons() -> list[AllButtonsButtonDescription]:
-# #     @call
-# #     def data() -> tuple[Any, bytes]:
-# #         try:
-# #             bin_data = urlopen('https://raw.githubusercontent.com/pqrs-org/Karabiner-Elements/refs/heads/main/src/apps/SettingsWindow/Resources/simple_modifications.json').read()
-# #             return json.loads(bin_data), bin_data
-# #         except Exception as e:
-# #             print(f'failed to load keys. {type(e).__name__}:{e}')
-# #             with all_possible_keys_file_path.open('rb') as file:
-# #                 bin_data = file.read()
-# #                 return json.loads(bin_data), bin_data
-# #     j_data, bin_data = data
+# manipulators : list[tuple[event_t, event_t]] = []
+# for from_event_params in tqdm(product_with_len(*[
+#         all_values(attr_type)
+#         for attr_type in event_t.__annotations__.values()
+#     ])):
+#     from_event = event_t(*from_event_params)
+#     to_event = decide_what_to_do(from_event)
+#     if from_event != to_event:
+#         manipulators.append((from_event, to_event))
+#     # manipulators.append((from_event, to_event))
 
-# #     with all_possible_keys_file_path.open('wb') as file:
-# #         file.write(bin_data)
+# @dataclasses.dataclass(frozen=True)
+# class optimized_event_k:
+#     caps_lock: tuple[bool, tuple[bool, ...]]
+#     left_control: tuple[bool, tuple[bool, ...]]
+#     left_shift: tuple[bool, tuple[bool, ...]]
+#     left_option: tuple[bool, tuple[bool, ...]]
+#     left_command: tuple[bool, tuple[bool, ...]]
+#     right_control: tuple[bool, tuple[bool, ...]]
+#     right_shift: tuple[bool, tuple[bool, ...]]
+#     right_option: tuple[bool, tuple[bool, ...]]
+#     right_command: tuple[bool, tuple[bool, ...]]
+#     fn: tuple[bool, tuple[bool, ...]]
+#     layout: tuple[bool, tuple[Layouts, ...]]
+#     multitouch_extension_finger_count: tuple[bool,tuple[PossibleFingerCountValues, ...]]
+#     button_pair: ButtonPair
 
-# #     all_buttons : list[ButtonDescription] = []
-# #     category = j_data[0]
-# #     assert 'category' in category
-# #     for button in j_data:
-# #         if 'category' in button:
-# #             category = button
-# #         else:
-# #             all_buttons.append(category | button)
-
-# #     true_or_missing_keys : Final = ('not_from', 'not_to', 'unsafe_from')
-
-# #     for true_or_missing_key in true_or_missing_keys:
-# #         assert all([
-# #             isinstance(button.get(true_or_missing_key, True), bool)
-# #             and
-# #             button.get(true_or_missing_key, True) == True
-# #             for button in all_buttons
-# #         ])
-
-# #         for button in all_buttons:
-# #             button[true_or_missing_key] = button.get(true_or_missing_key, False)
-
-# #     for button in all_buttons:
-# #         assert set(button.keys()) == set(AllButtonsButtonDescription.__annotations__.keys())
-
-# #     assert all([
-# #         isinstance(button['data'], list)
-# #         and (
-# #             button['not_from']
-# #             or
-# #             len(button['data']) == 1
-# #             and
-# #             isinstance(button['data'][0], dict)
-# #             and
-# #             frozenset(button['data'][0].keys()) in {
-# #                 frozenset([button_type])
-# #                 for button_type in typing.cast(typing.Any, ButtonTypes).__args__
-# #             }
-# #             and
-# #             len(button['data'][0].values()) == 1
-# #             and
-# #             isinstance([*button['data'][0].values()][0], str)
-# #         )
-# #         for button in all_buttons
-# #     ])
-
-# #     return all_buttons
-
-# # category_by_button_pair : dict[ButtonPair, Category] = {
-# #     cast(
-# #         tuple[str, str],
-# #         tuple([
-# #             *button['data'][0].keys()
-# #         ] + [
-# #             *button['data'][0].values()
-# #         ])
-# #     ):button['category']
-# #     for button in all_buttons if not button['not_from']
-# # }
-
-# # ButtonPair = Annotated[
-# #     tuple[str, str],
-# #     list(category_by_button_pair)
-# # ]
-
-# # assert sorted(typing.cast(typing.Any, ButtonPair).__metadata__[0]) == sorted(category_by_button_pair)
-
-# # categories = {
-# #     button['category']
-# #     for button in all_buttons
-# # }
-
-# # def all_values_impl(x: typing.Any) -> typing.Any:
-# #     if isinstance(x, str):
-# #         x = eval(x)
-# #     tx = x
-# #     if tx is bool:
-# #         # if random.random() < 0.1:
-# #             # return (False, True)
-# #         # return (False, )
-# #         return (False, True)
-# #     if isinstance(tx, type(typing.Literal[None])):
-# #         return x.__args__
-# #     if isinstance(tx, type(typing.Annotated[type, None])):
-# #         return x.__metadata__[0]
-# #     print(repr(x))
-# #     assert False
-# # def all_values(x: typing.Any) -> tuple[typing.Any, ...]:
-
-# #     return tuple([*all_values_impl(x)])
-
-# # @dataclasses.dataclass(frozen=True)
-# # class event_t:
-# #     caps_lock: bool
-# #     left_control: bool
-# #     left_shift: bool
-# #     left_option: bool
-# #     left_command: bool
-# #     right_control: bool
-# #     right_shift: bool
-# #     right_option: bool
-# #     right_command: bool
-# #     fn: bool
-# #     layout: Layouts
-# #     multitouch_extension_finger_count_total: PossibleFingerCountValues
-# #     button_pair: ButtonPair
-
-# # class product_with_len:
-# #     def __init__(self, *args_: Any) -> None:
-# #         args = [list(arg) for arg in args_]
-# #         self.len = reduce(mul, [len(arg) for arg in args], 1)
-# #         self.generator = product(*args)
-# #     def __iter__(self) -> product_with_len:
-# #         return self
-# #     def __next__(self) -> Any:
-# #         return self.generator.__next__()
-# #     def __len__(self) -> int:
-# #         return self.len
-# #     def __length_hint__(self) -> int:
-# #         return self.len
-
-
-# # all_events_generator = product_with_len(*[
-# #     all_values(eval(attr_type))
-# #     for attr_type in event_t.__annotations__.values()
-# # ])
-
-# # T = typing.TypeVar('T')
-
-# # def identity(arg: T) -> T:
-# #     return arg
-
-# # tqdm : typing.Callable[[typing.Any], typing.Any] = identity
-# # try:
-# #     from tqdm import tqdm as _tqdm
-# #     tqdm = _tqdm
-# # except Exception as e:
-# #     print(f'failed to import tqdm. {type(e).__name__}:{e}')
-
-# # import copy
-# # from typing import *
-
-# # #######################################################################################################################################
-
-# # def decide_what_to_do(event: event_t) -> event_t:
-# #     new_event_args = copy.deepcopy(vars(event))
-# #     def swap(a: str,s: str) -> None:
-# #         nonlocal new_event_args
-# #         new_event_args[a], new_event_args[s] = new_event_args[s], new_event_args[a]
-# #     @call
-# #     def process_modifiers() -> None:
-# #         ...
-# #         # swap('left_command', 'fn')
-# #         # swap('left_option', 'fn')
-# #         # swap('right_option', 'right_command')
-# #     @call
-# #     def process_self_modifiers() -> None:
-# #         if category_by_button_pair[event.button_pair] != 'Modifier keys':
-# #             return
-# #         if event.button_pair[1] == 'left_command':
-# #             new_event_args['button_pair'] = ('key_code', 'left_option')
-# #         if event.button_pair[1] == 'keyboard_fn':
-# #             new_event_args['button_pair'] = ('key_code', 'left_command')
-# #         if event.button_pair[1] == 'left_option':
-# #             new_event_args['button_pair'] = ('apple_vendor_top_case_key_code', 'keyboard_fn')
-# #         if event.button_pair[1] == 'right_command':
-# #             new_event_args['button_pair'] = ('key_code', 'right_option')
-# #         if event.button_pair[1] == 'right_option':
-# #             new_event_args['button_pair'] = ('key_code', 'right_command')
-# #     @call
-# #     def process_arrow_mods() -> None:
-# #         if event.button_pair[1] != 'delete_or_backspace':
-# #             if category_by_button_pair[event.button_pair] != 'Arrow keys':
-# #                 return
-# #         swap('left_command', 'left_option')
-# #         swap('right_command', 'right_option')
-# #     @call
-# #     def process_touchpad() -> None:
-# #         if event.multitouch_extension_finger_count_total == 0:
-# #             return
-# #         button_pair = [*event.button_pair]
-# #         if button_pair[1] == 'up_arrow':
-# #             button_pair[1] = 'page_up'
-# #         if button_pair[1] == 'down_arrow':
-# #             button_pair[1] = 'page_down'
-# #         if button_pair[1] == 'left_arrow':
-# #             button_pair[1] = 'home'
-# #         if button_pair[1] == 'right_arrow':
-# #             button_pair[1] = 'end'
-# #         if button_pair[1] == 'delete_or_backspace':
-# #             button_pair[1] = 'delete_forward'
-# #         new_event_args['button_pair'] = tuple(button_pair)
-# #     @call
-# #     def process_functions() -> None:
-# #         if category_by_button_pair[event.button_pair] != 'Function keys':
-# #             return
-# #         if event.multitouch_extension_finger_count_total == 0:
-# #             return
-# #         new_event_args['fn'] = True
-# #         if event.button_pair[1] in 'f1 f2 f11 f12'.split():
-# #             new_event_args['right_option'] = True
-# #             new_event_args['right_shift'] = True
-# #     @call
-# #     def process_space() -> None:
-# #         if event.button_pair[1] != 'spacebar':
-# #             return
-# #         swap('fn', 'left_option')
-# #     @call
-# #     def process_punct() -> None:
-# #         if event.layout != 'ru':
-# #             return
-# #         if event.button_pair[1] == '6' and (event.left_shift or event.right_shift):
-# #             new_event_args['button_pair'] = ('key_code', 'slash')
-# #             new_event_args['left_shift'] = False
-# #             new_event_args['right_shift'] = False
-# #         if event.button_pair[1] == '7' and (event.left_shift or event.right_shift):
-# #             new_event_args['button_pair'] = ('key_code', 'slash')
-# #             new_event_args['left_shift'] = event.left_shift
-# #             new_event_args['right_shift'] = event.right_shift
-# #         if event.button_pair[1] == 'slash':
-# #             if event.left_shift or event.right_shift:
-# #                 new_event_args['button_pair'] = ('key_code', '6')
-# #                 new_event_args['left_shift'] = event.left_shift
-# #                 new_event_args['right_shift'] = event.right_shift
-# #             else:
-# #                 new_event_args['button_pair'] = ('key_code', '7')
-# #                 new_event_args['right_shift'] = True
-# #     event = event_t(**new_event_args)
-# #     return event
-
-# # #######################################################################################################################################
-
-# # @dataclass(frozen=True)
-# # class optimized_event_k:
-# #     caps_lock: tuple[bool, tuple[bool, ...]]
-# #     left_control: tuple[bool, tuple[bool, ...]]
-# #     left_shift: tuple[bool, tuple[bool, ...]]
-# #     left_option: tuple[bool, tuple[bool, ...]]
-# #     left_command: tuple[bool, tuple[bool, ...]]
-# #     right_control: tuple[bool, tuple[bool, ...]]
-# #     right_shift: tuple[bool, tuple[bool, ...]]
-# #     right_option: tuple[bool, tuple[bool, ...]]
-# #     right_command: tuple[bool, tuple[bool, ...]]
-# #     fn: tuple[bool, tuple[bool, ...]]
-# #     layout: tuple[bool, tuple[Layouts, ...]]
-# #     multitouch_extension_finger_count: tuple[bool,tuple[PossibleFingerCountValues, ...]]
-# #     button_pair: ButtonPair
-
-# # @dataclass(frozen=True)
-# # class optimized_event_v:
-# #     caps_lock: bool
-# #     left_control: bool
-# #     left_shift: bool
-# #     left_option: bool
-# #     left_command: bool
-# #     right_control: bool
-# #     right_shift: bool
-# #     right_option: bool
-# #     right_command: bool
-# #     fn: bool
-# #     button_pair: ButtonPair
-
-# # print('making decicions...')
-
-# # optimized_manipulators = dict[event_t, tuple[event_t, ...]]
-
-# # manipulators : list[tuple[event_t, event_t]] = []
-
-# # for from_event_params in tqdm(product_with_len(*[
-# #         all_values(attr_type)
-# #         for attr_type in event_t.__annotations__.values()
-# #     ])):
-# #     from_event = event_t(*from_event_params)
-# #     to_events = decide_what_to_do(from_event)
-# #     if from_event != to_event:
-# #         manipulators.append((from_event, to_event))
-# #     # manipulators.append((from_event, to_event))
-
-# # print('making decicions...')
-
-# # manipulators : list[tuple[event_t, event_t]] = []
-# # for from_event_params in tqdm(product_with_len(*[
-# #         all_values(attr_type)
-# #         for attr_type in event_t.__annotations__.values()
-# #     ])):
-# #     from_event = event_t(*from_event_params)
-# #     to_event = decide_what_to_do(from_event)
-# #     if from_event != to_event:
-# #         manipulators.append((from_event, to_event))
-# #     # manipulators.append((from_event, to_event))
-
-# # @dataclasses.dataclass(frozen=True)
-# # class optimized_event_k:
-# #     caps_lock: tuple[bool, tuple[bool, ...]]
-# #     left_control: tuple[bool, tuple[bool, ...]]
-# #     left_shift: tuple[bool, tuple[bool, ...]]
-# #     left_option: tuple[bool, tuple[bool, ...]]
-# #     left_command: tuple[bool, tuple[bool, ...]]
-# #     right_control: tuple[bool, tuple[bool, ...]]
-# #     right_shift: tuple[bool, tuple[bool, ...]]
-# #     right_option: tuple[bool, tuple[bool, ...]]
-# #     right_command: tuple[bool, tuple[bool, ...]]
-# #     fn: tuple[bool, tuple[bool, ...]]
-# #     layout: tuple[bool, tuple[Layouts, ...]]
-# #     multitouch_extension_finger_count: tuple[bool,tuple[PossibleFingerCountValues, ...]]
-# #     button_pair: ButtonPair
-
-# # @dataclasses.dataclass(frozen=True)
-# # class optimized_event_v:
-# #     caps_lock: bool
-# #     left_control: bool
-# #     left_shift: bool
-# #     left_option: bool
-# #     left_command: bool
-# #     right_control: bool
-# #     right_shift: bool
-# #     right_option: bool
-# #     right_command: bool
-# #     fn: bool
-# #     button_pair: ButtonPair
+# @dataclasses.dataclass(frozen=True)
+# class optimized_event_v:
+#     caps_lock: bool
+#     left_control: bool
+#     left_shift: bool
+#     left_option: bool
+#     left_command: bool
+#     right_control: bool
+#     right_shift: bool
+#     right_option: bool
+#     right_command: bool
+#     fn: bool
+#     button_pair: ButtonPair
 
 # print('checking data...')
 
@@ -864,7 +865,7 @@ for from_event_params in tqdm(product_with_len(*[
 #         right_command=(False, (f.right_command, )),
 #         fn=(False, (f.fn, )),
 #         layout=(False, (f.layout, )),
-#         multitouch_extension_finger_count=(False, (f.multitouch_extension_finger_count_total, )),
+#         multitouch_extension_finger_count=(False, (f.multitouch_extension_finger_count, )),
 #         button_pair=f.button_pair,
 #     ):optimized_event_v(
 #         caps_lock=t.caps_lock,
@@ -884,384 +885,384 @@ for from_event_params in tqdm(product_with_len(*[
 
 
 
-# # while 1:
-# #     dict_changed = False
-# #     for manipulator_from, manipulator_to in tqdm([*optimized_manipulators.items()]):
-# #         if manipulator_from not in optimized_manipulators:
-# #             continue
-# #         if len(manipulator_from.multitouch_extension_finger_count[1])>1:
-# #             continue
-# #         alternatives = [
-# #             optimized_event_k(**(vars(manipulator_from) | dict(multitouch_extension_finger_count=(False, (finger_count,)))))
-# #             for finger_count in sorted([*cast(Any, PossibleFingerCountValues).__args__])
-# #         ]
-# #         alternatives = [
-# #             alternative
-# #             for alternative in alternatives
-# #             if optimized_manipulators.get(alternative, None) == manipulator_to
-# #         ]
-# #         if len(alternatives) < 2:
-# #             continue
-# #         dict_changed = True
-# #         optimized_manipulators[
-# #             optimized_event_k(
-# #                 **(
-# #                     vars(manipulator_from) | dict(
-# #                         multitouch_extension_finger_count=(
-# #                             True,
-# #                             tuple(
-# #                                 sorted(
-# #                                     {*cast(Any, PossibleFingerCountValues).__args__}
-# #                                     -
-# #                                     {
-# #                                         *chain(
-# #                                             *[
-# #                                                 alternative.multitouch_extension_finger_count[1]
-# #                                                 for alternative in alternatives
-# #                                             ]
-# #                                         )
-# #                                     }
-# #                                 ),
-# #                             )
-# #                         ),
-# #                     )
-# #                 ),
-# #             )
-# #         ] = manipulator_to
-# #         for alternative in alternatives:
-# #             del optimized_manipulators[alternative]
-# #     if not dict_changed:
-# #         break
-
-# # while 1:
-# #     dict_changed = False
-# #     for manipulator_from, manipulator_to in tqdm([*optimized_manipulators.items()]):
-# #         if manipulator_from not in optimized_manipulators:
-# #             continue
-# #         if len(manipulator_from.layout[1])>1:
-# #             continue
-# #         alternatives = [
-# #             optimized_event_k(**(vars(manipulator_from) | dict(layout=(False, (layout,)))))
-# #             for layout in sorted([*cast(Any, Layouts).__args__])
-# #         ]
-# #         alternatives = [
-# #             alternative
-# #             for alternative in alternatives
-# #             if optimized_manipulators.get(alternative, None) == manipulator_to
-# #         ]
-# #         if len(alternatives) < 2:
-# #             continue
-
-# #         straight_alternatives = {
-# #             *chain(
-# #                 *[
-# #                     alternative.layout[1]
-# #                     for alternative in alternatives
-# #                 ]
-# #             )
-# #         }
-# #         reverse_alternatives = {*cast(Any, Layouts).__args__} - straight_alternatives
-
-# #         dict_changed = True
-# #         optimized_manipulators[
-# #             optimized_event_k(
-# #                 **(
-# #                     vars(manipulator_from) | dict(
-# #                         layout=(
-# #                             True,
-# #                             tuple(sorted(reverse_alternatives),),
-# #                         ) if len(reverse_alternatives) < len(straight_alternatives) else (
-# #                             False,
-# #                             tuple(sorted(straight_alternatives),),
-# #                         ),
-# #                     )
-# #                 ),
-# #             )
-# #         ] = manipulator_to
-# #         for alternative in alternatives:
-# #             del optimized_manipulators[alternative]
-# #     if not dict_changed:
-# #         break
-
-# # for modifier in sorted([*cast(Any, Layouts).__args__]):
-
-# def remove_duplicates(attr_name: str, possible_values: list[typing.Any]) -> None:
-#     for c in count():
-#         dict_changed = False
-#         print(f'preparing for optimizing {attr_name} parameter, iteration={c}')
-#         copied_keys = [*tqdm(optimized_manipulators.items())]
-#         print(f'optimizing {attr_name} parameter, iteration={c}')
-#         for manipulator_from, manipulator_to in tqdm(copied_keys):
-#             if manipulator_from not in optimized_manipulators:
-#                 continue
-#             if len(getattr(manipulator_from, attr_name)[1])>1:
-#                 continue
-#             alternatives = [
-#                 optimized_event_k(**(vars(manipulator_from) | {attr_name: (False, (possible_value,))}))
-#                 for possible_value in possible_values
-#             ]
-#             alternatives = [
-#                 alternative
-#                 for alternative in alternatives
-#                 if optimized_manipulators.get(alternative, None) == (
-#                     manipulator_to
-#                     if attr_name not in dir(manipulator_to) else
-#                     optimized_event_v(
-#                         **(
-#                             vars(manipulator_to) | {
-#                                 attr_name: getattr(alternative, attr_name)[1][0]
-#                             }
-#                         )
+# while 1:
+#     dict_changed = False
+#     for manipulator_from, manipulator_to in tqdm([*optimized_manipulators.items()]):
+#         if manipulator_from not in optimized_manipulators:
+#             continue
+#         if len(manipulator_from.multitouch_extension_finger_count[1])>1:
+#             continue
+#         alternatives = [
+#             optimized_event_k(**(vars(manipulator_from) | dict(multitouch_extension_finger_count=(False, (finger_count,)))))
+#             for finger_count in sorted([*cast(Any, PossibleFingerCountValues).__args__])
+#         ]
+#         alternatives = [
+#             alternative
+#             for alternative in alternatives
+#             if optimized_manipulators.get(alternative, None) == manipulator_to
+#         ]
+#         if len(alternatives) < 2:
+#             continue
+#         dict_changed = True
+#         optimized_manipulators[
+#             optimized_event_k(
+#                 **(
+#                     vars(manipulator_from) | dict(
+#                         multitouch_extension_finger_count=(
+#                             True,
+#                             tuple(
+#                                 sorted(
+#                                     {*cast(Any, PossibleFingerCountValues).__args__}
+#                                     -
+#                                     {
+#                                         *chain(
+#                                             *[
+#                                                 alternative.multitouch_extension_finger_count[1]
+#                                                 for alternative in alternatives
+#                                             ]
+#                                         )
+#                                     }
+#                                 ),
+#                             )
+#                         ),
 #                     )
-#                 )
-#             ]
-#             if len(alternatives) < 2:
-#                 continue
+#                 ),
+#             )
+#         ] = manipulator_to
+#         for alternative in alternatives:
+#             del optimized_manipulators[alternative]
+#     if not dict_changed:
+#         break
 
-#             straight_alternatives = {
-#                 *chain(
-#                     *[
-#                         getattr(alternative, attr_name)[1]
-#                         for alternative in alternatives
-#                     ]
-#                 )
-#             }
-#             reverse_alternatives = set(possible_values) - straight_alternatives
+# while 1:
+#     dict_changed = False
+#     for manipulator_from, manipulator_to in tqdm([*optimized_manipulators.items()]):
+#         if manipulator_from not in optimized_manipulators:
+#             continue
+#         if len(manipulator_from.layout[1])>1:
+#             continue
+#         alternatives = [
+#             optimized_event_k(**(vars(manipulator_from) | dict(layout=(False, (layout,)))))
+#             for layout in sorted([*cast(Any, Layouts).__args__])
+#         ]
+#         alternatives = [
+#             alternative
+#             for alternative in alternatives
+#             if optimized_manipulators.get(alternative, None) == manipulator_to
+#         ]
+#         if len(alternatives) < 2:
+#             continue
 
-#             dict_changed = True
-#             optimized_manipulators[
-#                 optimized_event_k(
-#                     **(
-#                         vars(manipulator_from) | {
-#                             attr_name: (
-#                                 True,
-#                                 tuple(sorted(reverse_alternatives)),
-#                             ) if len(reverse_alternatives) < len(straight_alternatives) else (
-#                                 False,
-#                                 tuple(sorted(straight_alternatives)),
-#                             ),
-#                         }
-#                     ),
-#                 )
-#             ] = manipulator_to
-#             for alternative in alternatives:
-#                 del optimized_manipulators[alternative]
-#         if not dict_changed:
-#             break
+#         straight_alternatives = {
+#             *chain(
+#                 *[
+#                     alternative.layout[1]
+#                     for alternative in alternatives
+#                 ]
+#             )
+#         }
+#         reverse_alternatives = {*cast(Any, Layouts).__args__} - straight_alternatives
 
-# remove_duplicates('multitouch_extension_finger_count', sorted(cast(Any, PossibleFingerCountValues).__args__))
-# remove_duplicates('layout', sorted(cast(Any, Layouts).__args__))
-# for modifier in sorted([*cast(Any, Modifiers).__args__]):
-#     remove_duplicates(modifier, [False, True])
+#         dict_changed = True
+#         optimized_manipulators[
+#             optimized_event_k(
+#                 **(
+#                     vars(manipulator_from) | dict(
+#                         layout=(
+#                             True,
+#                             tuple(sorted(reverse_alternatives),),
+#                         ) if len(reverse_alternatives) < len(straight_alternatives) else (
+#                             False,
+#                             tuple(sorted(straight_alternatives),),
+#                         ),
+#                     )
+#                 ),
+#             )
+#         ] = manipulator_to
+#         for alternative in alternatives:
+#             del optimized_manipulators[alternative]
+#     if not dict_changed:
+#         break
+
+# for modifier in sorted([*cast(Any, Layouts).__args__]):
+
+def remove_duplicates(attr_name: str, possible_values: list[Any]) -> None:
+    for c in count():
+        dict_changed = False
+        print(f'preparing for optimizing {attr_name} parameter, iteration={c}')
+        copied_keys = [*tqdm(optimized_manipulators.items())]
+        print(f'optimizing {attr_name} parameter, iteration={c}')
+        for manipulator_from, manipulator_to in tqdm(copied_keys):
+            if manipulator_from not in optimized_manipulators:
+                continue
+            if len(getattr(manipulator_from, attr_name)[1])>1:
+                continue
+            alternatives = [
+                optimized_event_k(**(vars(manipulator_from) | {attr_name: (False, (possible_value,))}))
+                for possible_value in possible_values
+            ]
+            alternatives = [
+                alternative
+                for alternative in alternatives
+                if optimized_manipulators.get(alternative, None) == (
+                    manipulator_to
+                    if attr_name not in dir(manipulator_to) else
+                    optimized_event_v(
+                        **(
+                            vars(manipulator_to) | {
+                                attr_name: getattr(alternative, attr_name)[1][0]
+                            }
+                        )
+                    )
+                )
+            ]
+            if len(alternatives) < 2:
+                continue
+
+            straight_alternatives = {
+                *chain(
+                    *[
+                        getattr(alternative, attr_name)[1]
+                        for alternative in alternatives
+                    ]
+                )
+            }
+            reverse_alternatives = set(possible_values) - straight_alternatives
+
+            dict_changed = True
+            optimized_manipulators[
+                optimized_event_k(
+                    **(
+                        vars(manipulator_from) | {
+                            attr_name: (
+                                True,
+                                tuple(sorted(reverse_alternatives)),
+                            ) if len(reverse_alternatives) < len(straight_alternatives) else (
+                                False,
+                                tuple(sorted(straight_alternatives)),
+                            ),
+                        }
+                    ),
+                )
+            ] = manipulator_to
+            for alternative in alternatives:
+                del optimized_manipulators[alternative]
+        if not dict_changed:
+            break
+
+remove_duplicates('multitouch_extension_finger_count', sorted(cast(Any, PossibleFingerCountValues).__args__))
+remove_duplicates('layout', sorted(cast(Any, Layouts).__args__))
+for modifier in sorted([*cast(Any, Modifiers).__args__]):
+    remove_duplicates(modifier, [False, True])
 
 
 
-# # while 1:
-# #     for manipulator_from, manipulator_to in optimized_manipulators.items():
-# #         if manipulator_from.multitouch_extension_finger_count_is_unless:
-# #             continue
-# #         alternatives = [
-# #             optimized_event_k(**(vars(manipulator_from) | dict(multitouch_extension_finger_count=finger_count)))
-# #             for finger_count in sorted([*cast(Any, PossibleFingerCountValues).__args__])
-# #         ]
-# #         result_count : dict[optimized_event_v, int] = {}
-# #         for alternative in alternatives:
-# #             result_count[optimized_manipulators[alternative]] = 0
-# #         for alternative in alternatives:
-# #             result_count[optimized_manipulators[alternative]] += 1
-# #         popular_alternative = max(alternatives, key=lambda alternative: result_count[optimized_manipulators[alternative]])
+# while 1:
+#     for manipulator_from, manipulator_to in optimized_manipulators.items():
+#         if manipulator_from.multitouch_extension_finger_count_is_unless:
+#             continue
+#         alternatives = [
+#             optimized_event_k(**(vars(manipulator_from) | dict(multitouch_extension_finger_count=finger_count)))
+#             for finger_count in sorted([*cast(Any, PossibleFingerCountValues).__args__])
+#         ]
+#         result_count : dict[optimized_event_v, int] = {}
+#         for alternative in alternatives:
+#             result_count[optimized_manipulators[alternative]] = 0
+#         for alternative in alternatives:
+#             result_count[optimized_manipulators[alternative]] += 1
+#         popular_alternative = max(alternatives, key=lambda alternative: result_count[optimized_manipulators[alternative]])
 
 
 
 
 
-# #         if optimized_manipulators.get(alternatives[-1], None) != manipulator_to:
-# #             continue
-# #         while alternatives and alternatives[0] not in optimized_manipulators:
-# #             alternatives[:1] = []
-# #         if not alternatives:
-# #             continue
-# #         if any([
-# #             alternative not in optimized_manipulators
-# #             for alternative in alternatives
-# #         ]):
-# #             continue
-# #         min_i = min([
-# #             min_i
-# #             for min_i in range(len(alternatives))
-# #             if all([
-# #                 optimized_manipulators[alternatives[i]] == manipulator_to
-# #                 for i in range(min_i, len(alternatives))
-# #             ])
-# #         ])
-# #         if min_i == len(alternatives)-1:
-# #             continue
-# #         optimized_manipulators[
-# #             optimized_event_k(
-# #                 **(
-# #                     vars(manipulator_from) | dict(
-# #                         multitouch_extension_finger_count=alternatives[min_i].multitouch_extension_finger_count,
-# #                         multitouch_extension_finger_count_is_unless=True,
-# #                     )
-# #                 ),
-# #             )
-# #         ] = manipulator_to
-# #         for alternative in alternatives[min_i:]:
-# #             del optimized_manipulators[alternative]
-# #         break
-# #     else:
-# #         break
+#         if optimized_manipulators.get(alternatives[-1], None) != manipulator_to:
+#             continue
+#         while alternatives and alternatives[0] not in optimized_manipulators:
+#             alternatives[:1] = []
+#         if not alternatives:
+#             continue
+#         if any([
+#             alternative not in optimized_manipulators
+#             for alternative in alternatives
+#         ]):
+#             continue
+#         min_i = min([
+#             min_i
+#             for min_i in range(len(alternatives))
+#             if all([
+#                 optimized_manipulators[alternatives[i]] == manipulator_to
+#                 for i in range(min_i, len(alternatives))
+#             ])
+#         ])
+#         if min_i == len(alternatives)-1:
+#             continue
+#         optimized_manipulators[
+#             optimized_event_k(
+#                 **(
+#                     vars(manipulator_from) | dict(
+#                         multitouch_extension_finger_count=alternatives[min_i].multitouch_extension_finger_count,
+#                         multitouch_extension_finger_count_is_unless=True,
+#                     )
+#                 ),
+#             )
+#         ] = manipulator_to
+#         for alternative in alternatives[min_i:]:
+#             del optimized_manipulators[alternative]
+#         break
+#     else:
+#         break
 
 
-# # while 1:
-# #     for manipulator_from, manipulator_to in optimized_manipulators.items():
-# #         if manipulator_from.multitouch_extension_finger_count_is_unless:
-# #             continue
-# #         alternatives = [
-# #             optimized_event_k(**(vars(manipulator_from) | dict(multitouch_extension_finger_count=finger_count)))
-# #             for finger_count in sorted([*cast(Any, PossibleFingerCountValues).__args__])
-# #         ]
-# #         if optimized_manipulators.get(alternatives[-1], None) != manipulator_to:
-# #             continue
-# #         while alternatives and alternatives[0] not in optimized_manipulators:
-# #             alternatives[:1] = []
-# #         if not alternatives:
-# #             continue
-# #         if any([
-# #             alternative not in optimized_manipulators
-# #             for alternative in alternatives
-# #         ]):
-# #             continue
-# #         min_i = min([
-# #             min_i
-# #             for min_i in range(len(alternatives))
-# #             if all([
-# #                 optimized_manipulators[alternatives[i]] == manipulator_to
-# #                 for i in range(min_i, len(alternatives))
-# #             ])
-# #         ])
-# #         if min_i == len(alternatives)-1:
-# #             continue
-# #         optimized_manipulators[
-# #             optimized_event_k(
-# #                 **(
-# #                     vars(manipulator_from) | dict(
-# #                         multitouch_extension_finger_count=alternatives[min_i].multitouch_extension_finger_count,
-# #                         multitouch_extension_finger_count_is_unless=True,
-# #                     )
-# #                 ),
-# #             )
-# #         ] = manipulator_to
-# #         for alternative in alternatives[min_i:]:
-# #             del optimized_manipulators[alternative]
-# #         break
-# #     else:
-# #         break
+# while 1:
+#     for manipulator_from, manipulator_to in optimized_manipulators.items():
+#         if manipulator_from.multitouch_extension_finger_count_is_unless:
+#             continue
+#         alternatives = [
+#             optimized_event_k(**(vars(manipulator_from) | dict(multitouch_extension_finger_count=finger_count)))
+#             for finger_count in sorted([*cast(Any, PossibleFingerCountValues).__args__])
+#         ]
+#         if optimized_manipulators.get(alternatives[-1], None) != manipulator_to:
+#             continue
+#         while alternatives and alternatives[0] not in optimized_manipulators:
+#             alternatives[:1] = []
+#         if not alternatives:
+#             continue
+#         if any([
+#             alternative not in optimized_manipulators
+#             for alternative in alternatives
+#         ]):
+#             continue
+#         min_i = min([
+#             min_i
+#             for min_i in range(len(alternatives))
+#             if all([
+#                 optimized_manipulators[alternatives[i]] == manipulator_to
+#                 for i in range(min_i, len(alternatives))
+#             ])
+#         ])
+#         if min_i == len(alternatives)-1:
+#             continue
+#         optimized_manipulators[
+#             optimized_event_k(
+#                 **(
+#                     vars(manipulator_from) | dict(
+#                         multitouch_extension_finger_count=alternatives[min_i].multitouch_extension_finger_count,
+#                         multitouch_extension_finger_count_is_unless=True,
+#                     )
+#                 ),
+#             )
+#         ] = manipulator_to
+#         for alternative in alternatives[min_i:]:
+#             del optimized_manipulators[alternative]
+#         break
+#     else:
+#         break
 
-# print(f'converting to json format')
+print(f'converting to json format')
 
-# whole_file = dict(
-#     title='auto generated',
-#     rules=[
-#         dict(
-#             description='auto generated',
-#             manipulators=[
-#                 {
-#                     'type': 'basic',
-#                     'from':{
-#                         manipulator_from.button_pair[0]: manipulator_from.button_pair[1],
-#                         'modifiers': {
-#                             'mandatory': [
-#                                 modifier
-#                                 for modifier in cast(tuple[str,...], cast(Any, Modifiers).__args__)
-#                                 if
-#                                 not getattr(manipulator_from, modifier)[0]
-#                                 and getattr(manipulator_from, modifier)[1][0]
-#                             ],
-#                             'optional': [
-#                                 modifier
-#                                 for modifier in cast(tuple[str,...], cast(Any, Modifiers).__args__)
-#                                 if getattr(manipulator_from, modifier)[0]
-#                             ],
-#                         },
-#                     },
-#                     'to': [
-#                         {
-#                             manipulator_to.button_pair[0]: manipulator_to.button_pair[1],
-#                             'modifiers': [
-#                                 modifier
-#                                 for modifier in cast(tuple[str,...], cast(Any, Modifiers).__args__)
-#                                 if getattr(manipulator_to, modifier)
-#                             ],
-#                         }
-#                     ],
-#                     'conditions': [
-#                         *[
-#                             {
-#                                 "name": "multitouch_extension_finger_count_total",
-#                                 "type": "variable_unless" if manipulator_from.multitouch_extension_finger_count[0] else "variable_if",
-#                                 "value": multitouch_extension_finger_count,
-#                             }
-#                             for multitouch_extension_finger_count in manipulator_from.multitouch_extension_finger_count[1]
-#                         ],
-#                         *(
-#                             [
-#                                 {
-#                                     "input_sources": [
-#                                         { "language": '^' + layout + '$' }
-#                                         for layout in manipulator_from.layout[1]
-#                                     ],
-#                                     "type": "input_source_unless" if manipulator_from.layout[0] else "input_source_if"
-#                                 }
-#                             ] if manipulator_from.layout[1] else []
-#                         )
-#                     ]
-#                 }
-#                 for manipulator_from, manipulator_to in tqdm(optimized_manipulators.items())
-#             ],
-#         )
-#     ]
+whole_file = dict(
+    title='auto generated',
+    rules=[
+        dict(
+            description='auto generated',
+            manipulators=[
+                {
+                    'type': 'basic',
+                    'from':{
+                        manipulator_from.button_pair[0]: manipulator_from.button_pair[1],
+                        'modifiers': {
+                            'mandatory': [
+                                modifier
+                                for modifier in cast(tuple[str,...], cast(Any, Modifiers).__args__)
+                                if
+                                not getattr(manipulator_from, modifier)[0]
+                                and getattr(manipulator_from, modifier)[1][0]
+                            ],
+                            'optional': [
+                                modifier
+                                for modifier in cast(tuple[str,...], cast(Any, Modifiers).__args__)
+                                if getattr(manipulator_from, modifier)[0]
+                            ],
+                        },
+                    },
+                    'to': [
+                        {
+                            manipulator_to.button_pair[0]: manipulator_to.button_pair[1],
+                            'modifiers': [
+                                modifier
+                                for modifier in cast(tuple[str,...], cast(Any, Modifiers).__args__)
+                                if getattr(manipulator_to, modifier)
+                            ],
+                        }
+                    ],
+                    'conditions': [
+                        *[
+                            {
+                                "name": "multitouch_extension_finger_count",
+                                "type": "variable_unless" if manipulator_from.multitouch_extension_finger_count[0] else "variable_if",
+                                "value": multitouch_extension_finger_count,
+                            }
+                            for multitouch_extension_finger_count in manipulator_from.multitouch_extension_finger_count[1]
+                        ],
+                        *(
+                            [
+                                {
+                                    "input_sources": [
+                                        { "language": '^' + layout + '$' }
+                                        for layout in manipulator_from.layout[1]
+                                    ],
+                                    "type": "input_source_unless" if manipulator_from.layout[0] else "input_source_if"
+                                }
+                            ] if manipulator_from.layout[1] else []
+                        )
+                    ]
+                }
+                for manipulator_from, manipulator_to in tqdm(optimized_manipulators.items())
+            ],
+        )
+    ]
+)
+
+print(f'saving to {conf_file_path!r}')
+with conf_file_path.open('w') as file:
+    json.dump(whole_file, file, indent=4)
+
+# print(
+# [
+# [*button['data'][0].values()][0]
+# for button in all_buttons
+#     if button['category'] == 'Modifier keys'
+# ]
 # )
 
-# print(f'saving to {conf_file_path!r}')
-# with conf_file_path.open('w') as file:
-#     json.dump(whole_file, file, indent=4)
+# print(categories)
 
-# # print(
-# # [
-# # [*button['data'][0].values()][0]
-# # for button in all_buttons
-# #     if button['category'] == 'Modifier keys'
-# # ]
-# # )
+# for button in all_buttons:
+#     if not button['not_from']:
+#         print(f"{button['category']:40s} {button['label']}")
+    # if button['category'] == 'Modifier keys':
+    #     print(button)
+        # print(f"{button['category']:40s} {button['label']}")
 
-# # print(categories)
+# for category in categories:
+#     print(
+#         category,
+#         random.choice([
+#             button['label']
+#             for button in all_buttons
+#             if button['category'] == category
+#         ]),
+#         random.choice([
+#             button['label']
+#             for button in all_buttons
+#             if button['category'] == category
+#         ]),
+#         random.choice([
+#             button['label']
+#             for button in all_buttons
+#             if button['category'] == category
+#         ]),
 
-# # for button in all_buttons:
-# #     if not button['not_from']:
-# #         print(f"{button['category']:40s} {button['label']}")
-#     # if button['category'] == 'Modifier keys':
-#     #     print(button)
-#         # print(f"{button['category']:40s} {button['label']}")
-
-# # for category in categories:
-# #     print(
-# #         category,
-# #         random.choice([
-# #             button['label']
-# #             for button in all_buttons
-# #             if button['category'] == category
-# #         ]),
-# #         random.choice([
-# #             button['label']
-# #             for button in all_buttons
-# #             if button['category'] == category
-# #         ]),
-# #         random.choice([
-# #             button['label']
-# #             for button in all_buttons
-# #             if button['category'] == category
-# #         ]),
-
-# #         sep='\t'
-# #     )
+#         sep='\t'
+#     )
