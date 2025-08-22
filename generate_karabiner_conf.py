@@ -174,7 +174,7 @@ def get_buttons() -> dict[str, Button]:
     return buttons
 buttons = get_buttons()
         
-button_pair_t = Annotated[
+ButtonPair = Annotated[
     tuple[str, str],
     [
         (button.button_key, buttons.button_values)
@@ -246,8 +246,8 @@ class event_t:
     right_command: bool
     fn: bool
     layout: Layouts
-    exact_finger_count: PossibleFingerCountValues
-    button_pair: button_pair_t
+    multitouch_extension_finger_count_total: PossibleFingerCountValues
+    button_pair: ButtonPair
 
 # @dataclass(frozen=True)
 # class output_event_t:
@@ -346,35 +346,35 @@ def decide_what_to_do(input_event: event_t) -> tuple[event_t]:
                 button_key = 'page_up',
             ),
         ]
-        if event.multitouch_extension_finger_count_total >= 1 and input_event.button_pair[1] == 'up_arrow' else
+        if input_event.multitouch_extension_finger_count_total >= 1 and input_event.button_pair[1] == 'up_arrow' else
         [
             replace(
                 output_event,
                 button_key = 'page_down',
             ),
         ]
-        if event.multitouch_extension_finger_count_total >= 1 and input_event.button_pair[1] == 'down_arrow' else
+        if input_event.multitouch_extension_finger_count_total >= 1 and input_event.button_pair[1] == 'down_arrow' else
         [
             replace(
                 output_event,
                 button_key = 'page_left',
             ),
         ]
-        if event.multitouch_extension_finger_count_total >= 1 and input_event.button_pair[1] == 'home' else
+        if input_event.multitouch_extension_finger_count_total >= 1 and input_event.button_pair[1] == 'home' else
         [
             replace(
                 output_event,
                 button_key = 'page_right',
             ),
         ]
-        if event.multitouch_extension_finger_count_total >= 1 and input_event.button_pair[1] == 'end' else
+        if input_event.multitouch_extension_finger_count_total >= 1 and input_event.button_pair[1] == 'end' else
         [
             replace(
                 output_event,
                 button_key = 'delete_or_backspace',
             ),
         ]
-        if event.multitouch_extension_finger_count_total >= 1 and input_event.button_pair[1] == 'delete_forward' else
+        if input_event.multitouch_extension_finger_count_total >= 1 and input_event.button_pair[1] == 'delete_forward' else
         [
             output_event
         ]
@@ -695,20 +695,7 @@ def decide_what_to_do(input_event: event_t) -> tuple[event_t]:
 
 # #######################################################################################################################################
 
-print('making decicions...')
-
-manipulators : list[tuple[event_t, event_t]] = []
-for from_event_params in tqdm(product_with_len(*[
-        all_values(attr_type)
-        for attr_type in event_t.__annotations__.values()
-    ])):
-    from_event = event_t(*from_event_params)
-    to_event = decide_what_to_do(from_event)
-    if from_event != to_event:
-        manipulators.append((from_event, to_event))
-    # manipulators.append((from_event, to_event))
-
-@dataclasses.dataclass(frozen=True)
+@dataclass(frozen=True)
 class optimized_event_k:
     caps_lock: tuple[bool, tuple[bool, ...]]
     left_control: tuple[bool, tuple[bool, ...]]
@@ -724,7 +711,7 @@ class optimized_event_k:
     multitouch_extension_finger_count: tuple[bool,tuple[PossibleFingerCountValues, ...]]
     button_pair: ButtonPair
 
-@dataclasses.dataclass(frozen=True)
+@dataclass(frozen=True)
 class optimized_event_v:
     caps_lock: bool
     left_control: bool
@@ -737,6 +724,65 @@ class optimized_event_v:
     right_command: bool
     fn: bool
     button_pair: ButtonPair
+
+print('making decicions...')
+
+optimized_manipulators = dict[event_t, tuple[event_t, ...]]
+
+manipulators : list[tuple[event_t, event_t]] = []
+
+for from_event_params in tqdm(product_with_len(*[
+        all_values(attr_type)
+        for attr_type in event_t.__annotations__.values()
+    ])):
+    from_event = event_t(*from_event_params)
+    to_events = decide_what_to_do(from_event)
+    if from_event != to_event:
+        manipulators.append((from_event, to_event))
+    # manipulators.append((from_event, to_event))
+
+# print('making decicions...')
+
+# manipulators : list[tuple[event_t, event_t]] = []
+# for from_event_params in tqdm(product_with_len(*[
+#         all_values(attr_type)
+#         for attr_type in event_t.__annotations__.values()
+#     ])):
+#     from_event = event_t(*from_event_params)
+#     to_event = decide_what_to_do(from_event)
+#     if from_event != to_event:
+#         manipulators.append((from_event, to_event))
+#     # manipulators.append((from_event, to_event))
+
+# @dataclasses.dataclass(frozen=True)
+# class optimized_event_k:
+#     caps_lock: tuple[bool, tuple[bool, ...]]
+#     left_control: tuple[bool, tuple[bool, ...]]
+#     left_shift: tuple[bool, tuple[bool, ...]]
+#     left_option: tuple[bool, tuple[bool, ...]]
+#     left_command: tuple[bool, tuple[bool, ...]]
+#     right_control: tuple[bool, tuple[bool, ...]]
+#     right_shift: tuple[bool, tuple[bool, ...]]
+#     right_option: tuple[bool, tuple[bool, ...]]
+#     right_command: tuple[bool, tuple[bool, ...]]
+#     fn: tuple[bool, tuple[bool, ...]]
+#     layout: tuple[bool, tuple[Layouts, ...]]
+#     multitouch_extension_finger_count: tuple[bool,tuple[PossibleFingerCountValues, ...]]
+#     button_pair: ButtonPair
+
+# @dataclasses.dataclass(frozen=True)
+# class optimized_event_v:
+#     caps_lock: bool
+#     left_control: bool
+#     left_shift: bool
+#     left_option: bool
+#     left_command: bool
+#     right_control: bool
+#     right_shift: bool
+#     right_option: bool
+#     right_command: bool
+#     fn: bool
+#     button_pair: ButtonPair
 
 print('checking data...')
 
