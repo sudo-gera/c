@@ -173,7 +173,7 @@ def decide_what_to_do(input_event: event_t) -> tuple[event_t, ...]:
                 button_pair=ButtonPair(('key_code','left_command')),
             )
         ]
-        if output_event.button_pair[1] == 'left_fn' else
+        if output_event.button_pair[1] == 'fn' else
         [
             replace(
                 output_event,
@@ -277,14 +277,14 @@ def decide_what_to_do(input_event: event_t) -> tuple[event_t, ...]:
                 fn=True,
             ),
         ]
-        if buttons[tuple(input_event.button_pair)[1]].category == 'Function keys' and input_event.button_pair[1] in 'f1 f2 f11 f12'.split() else
+        if input_event.multitouch_extension_finger_count >= 1 and buttons[tuple(input_event.button_pair)[1]].category == 'Function keys' and input_event.button_pair[1] in 'f1 f2 f11 f12'.split() else
         [
             replace(
                 output_event,
                 fn=True,
             ),
         ]
-        if buttons[tuple(input_event.button_pair)[1]].category == 'Function keys' else
+        if input_event.multitouch_extension_finger_count >= 1 and buttons[tuple(input_event.button_pair)[1]].category == 'Function keys' else
         [
             output_event
         ]
@@ -331,10 +331,12 @@ def decide_what_to_do(input_event: event_t) -> tuple[event_t, ...]:
 
     return output_events
 
-def process_one_event(from_event: event_t) -> tuple[optimized_event_k, optimized_event_v]:
+def process_one_event(from_event: event_t) -> tuple[optimized_event_k, optimized_event_v] | tuple[None, None]:
     to_events = decide_what_to_do(from_event)
     assert len(to_events) == 1
     to_event = to_events[0]
+    if to_event == from_event:
+        return (None, None)
     return (optimize_input_event(from_event), optimize_output_event(to_event))
 
 def get_buttons_list_bin_data() -> bytes:
@@ -410,6 +412,15 @@ def get_buttons() -> dict[str, Button]:
     return buttons
 buttons = get_buttons()
 
+modifiers = [
+    'fn' if value == 'keyboard_fn' else value
+    for value in [
+        button.button_value
+        for button in buttons.values()
+        if button.category == 'Modifier keys'
+    ]
+]
+
 AnnotatedButtonPair = Annotated[
     tuple[str, str],
     [
@@ -437,51 +448,21 @@ class annotated_event_t:
 if __name__ == '__main__':
     print('making decicions...')
 
+    optimized_manipulators : dict[optimized_event_k, optimized_event_v] = {}
 
-    optimized_manipulators : dict[optimized_event_k, optimized_event_v] = pprint(
-        multiprocessing.Pool().map(
-            process_one_event,
-            [*tqdm(
-                map_with_len(
-                    lambda x:event_t(*x),
-                    product_with_len(
-                        *[
-                            all_values(attr_type)
-                            for attr_type in annotated_event_t.__annotations__.values()
-                        ]
-                    )
-                )
-            )]
+    for input_event_args in tqdm(
+        product_with_len(
+            *[
+                all_values(attr_type)
+                for attr_type in annotated_event_t.__annotations__.values()
+            ]
         )
-    )
-
-    optimized_manipulators : dict[optimized_event_k, optimized_event_v] = dict(
-        multiprocessing.Pool().map(
-            process_one_event,
-            tqdm(
-                map_with_len(
-                    lambda x:event_t(*x),
-                    product_with_len(
-                        *[
-                            all_values(attr_type)
-                            for attr_type in annotated_event_t.__annotations__.values()
-                        ]
-                    )
-                )
-            )
-        )
-    )
-
-    print(len(optimized_manipulators))
-    print(len(optimized_manipulators))
-    print(len(optimized_manipulators))
-    print(len(optimized_manipulators))
-    print(len(optimized_manipulators))
-    print(len(optimized_manipulators))
-    exit()
-
-    for output_event in optimized_manipulators.values():
-        assert output_event.button_pair in all_values(AnnotatedButtonPair)
+    ):
+        input_event = event_t(*input_event_args)
+        k, v = process_one_event(input_event)
+        if k is not None and v is not None:
+            optimized_manipulators[k] = v
+            assert v.button_pair in all_values(AnnotatedButtonPair)
 
     def remove_duplicates(attr_name: str, possible_values: list[Any]) -> None:
         for c in count():
@@ -547,10 +528,15 @@ if __name__ == '__main__':
             if not dict_changed:
                 break
 
-    remove_duplicates('multitouch_extension_finger_count', [*all_values(PossibleFingerCountValues)])
-    remove_duplicates('layout', [*all_values(Layouts)])
-    for modifier in [button.label for button in buttons.values() if button.category == 'Modifier keys']:
-        remove_duplicates(modifier, [False, True])
+    for attr_name, attr_type in event_t.__annotations__.items():
+        if attr_name != 'button_pair':
+            remove_duplicates(attr_name, [*all_values(attr_type)])
+
+
+    # remove_duplicates('multitouch_extension_finger_count', [*all_values(PossibleFingerCountValues)])
+    # remove_duplicates('layout', [*all_values(Layouts)])
+    # for modifier in modifiers:
+    #     remove_duplicates(modifier, [False, True])
 
     print(f'converting to json format')
 
@@ -567,14 +553,14 @@ if __name__ == '__main__':
                             'modifiers': {
                                 'mandatory': [
                                     modifier
-                                    for modifier in [button.label for button in buttons.values() if button.category == 'Modifier keys']
+                                    for modifier in modifiers
                                     if
                                     not getattr(manipulator_from, modifier)[0]
                                     and getattr(manipulator_from, modifier)[1][0]
                                 ],
                                 'optional': [
                                     modifier
-                                    for modifier in [button.label for button in buttons.values() if button.category == 'Modifier keys']
+                                    for modifier in modifiers
                                     if getattr(manipulator_from, modifier)[0]
                                 ],
                             },
@@ -584,7 +570,7 @@ if __name__ == '__main__':
                                 manipulator_to.button_pair[0]: manipulator_to.button_pair[1],
                                 'modifiers': [
                                     modifier
-                                    for modifier in [button.label for button in buttons.values() if button.category == 'Modifier keys']
+                                    for modifier in modifiers
                                     if getattr(manipulator_to, modifier)
                                 ],
                             }
@@ -592,7 +578,7 @@ if __name__ == '__main__':
                         'conditions': [
                             *[
                                 {
-                                    "name": "multitouch_extension_finger_count",
+                                    "name": "multitouch_extension_finger_count_total",
                                     "type": "variable_unless" if manipulator_from.multitouch_extension_finger_count[0] else "variable_if",
                                     "value": multitouch_extension_finger_count,
                                 }
