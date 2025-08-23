@@ -206,6 +206,13 @@ def decide_what_to_do(input_event: event_t) -> tuple[event_t, ...]:
         [
             replace(
                 output_event,
+                button_pair=ButtonPair(('key_code','right_control')),
+            ),
+        ]
+        if output_event.button_pair[1] == 'right_option' and input_event.left_command and input_event.left_control else
+        [
+            replace(
+                output_event,
                 button_pair=ButtonPair(('key_code','right_command')),
             ),
         ]
@@ -330,6 +337,27 @@ def decide_what_to_do(input_event: event_t) -> tuple[event_t, ...]:
             ),
         ]
         if input_event.layout == 'ru' and input_event.button_pair[1] == 'slash' else
+        [
+            output_event
+        ]
+        for output_event in output_events
+    ]))
+
+    output_events = tuple(chain(*[
+        [
+            replace(
+                output_event,
+                button_pair = ButtonPair(('key_code', 'd')),
+            ),
+        ]
+        if input_event.button_pair[1] == 's' and input_event.left_command and input_event.left_control else
+        [
+            replace(
+                output_event,
+                button_pair = ButtonPair(('key_code', 's')),
+            ),
+        ]
+        if input_event.button_pair[1] == 'd' and input_event.left_command and input_event.left_control else
         [
             output_event
         ]
