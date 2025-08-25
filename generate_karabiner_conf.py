@@ -350,14 +350,32 @@ def decide_what_to_do(input_event: event_t) -> tuple[event_t, ...]:
                 button_pair = ButtonPair(('key_code', 'd')),
             ),
         ]
-        if input_event.button_pair[1] == 's' and input_event.left_command and input_event.left_control else
+        if input_event.button_pair[1] == 's' and input_event.left_command and input_event.left_control and (
+            not input_event.caps_lock and
+            not input_event.fn and
+            not input_event.left_shift and
+            not input_event.left_option and
+            not input_event.right_control and
+            not input_event.right_command and
+            not input_event.right_option and
+            not input_event.right_shift
+        ) else
         [
             replace(
                 output_event,
                 button_pair = ButtonPair(('key_code', 's')),
             ),
         ]
-        if input_event.button_pair[1] == 'd' and input_event.left_command and input_event.left_control else
+        if input_event.button_pair[1] == 'd' and input_event.left_command and input_event.left_control and (
+            not input_event.caps_lock and
+            not input_event.fn and
+            not input_event.left_shift and
+            not input_event.left_option and
+            not input_event.right_control and
+            not input_event.right_command and
+            not input_event.right_option and
+            not input_event.right_shift
+        ) else
         [
             output_event
         ]
