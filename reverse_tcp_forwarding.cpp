@@ -584,7 +584,6 @@ int ll_create_listening_socket(const sockaddr& addr){
     auto s = ll_create_non_blocking_socket();
     int enable = 1;
     sys.setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable));
-    assert(((struct sockaddr_in&)addr).sin_addr.s_addr == htonl(INADDR_ANY));
     sys.bind(s, &addr, sizeof(addr));
     sys.listen(s, 65536);
     return s;
@@ -896,7 +895,7 @@ struct Selector{
                 event_to_process.events = 0;
                 event_to_process.data.ptr = nullptr;
             }else{
-                log("[%20p] [%20p] this event does not have requested context", ctx, &event_to_process);
+                // log("[%20p] [%20p] this event does not have requested context", ctx, &event_to_process);
             }
         }
         log("[%20p] after notifying about closed socket", ctx);
@@ -1329,6 +1328,7 @@ struct AppServer;
 
 uint_least64_t get_rand64(AppServer& app_server);
 
+bool has_main_connection(AppServer& app_server);
 void ctl_maybe_send_some_request(AppServer& app_server);
 
 void notify_closing_stream(AppServer& app_server, AcceptedSocketCMD& stream);
@@ -1398,15 +1398,20 @@ private:
     void handle_accept(error_t err){
         assert(err == 0);
 
+        log("before accept loop");
+
         for (size_t i = 0; i < streams.size(); ++i){
             if (not streams[i].has_value()){
                 auto& stream = streams[i];
+                log("accepting %4d at %zu", get_fd(*stream), i);
                 stream.emplace(selector, server, i, app_server);
                 ctl_maybe_send_some_request(app_server);
                 start_waiting_for_accept();
                 return;
             }
         }
+
+        log("not accepting socket");
     }
 
 public:
@@ -1531,6 +1536,12 @@ private:
                 }else{
 
                     accepted_cmd_socket_state = accepted_cmd_socket_states::worker;
+
+                    if (not has_main_connection(app_server)){
+                        log("[%4d] closing new worker by not having main connection", get_fd(s));
+                        close();
+                        return;
+                    }
 
                     handle_accept_cmd(app_server, index, header);
                 }
@@ -1720,6 +1731,7 @@ struct AppServer{
     ServerManager<AcceptedSocketTCP> tcp_server;
 
     size_t main_index = none;
+    size_t cleanups_without_main = 0;
 
     AcceptedSocketCMD& get_main(){
         AcceptedSocketCMD* main_ptr = cmd_server.get_stream(main_index);
@@ -1727,8 +1739,12 @@ struct AppServer{
         return *main_ptr;
     }
 
+    bool has_main_connection(){
+        return main_index != none;
+    }
+
     void ctl_maybe_send_some_request(){
-        if (main_index == none){
+        if (not has_main_connection()){
             log("not sending new connection request without main connection");
             return;
         }
@@ -1764,13 +1780,20 @@ struct AppServer{
 
     void cleanup(){
         auto current_time = time_storage::monotonic();
+        bool allow_to_survive = true;
+        if (has_main_connection()){
+            cleanups_without_main = 0;
+        }else{
+            allow_to_survive = cleanups_without_main < 4;
+            cleanups_without_main += 1;
+        }
         for (size_t i = 0; i < cmd_server.get_streams_size(); ++i){
             auto cmd_stream_ptr = cmd_server.get_stream(i);
             if (not cmd_stream_ptr){
                 continue;
             }
             auto& cmd_stream = *cmd_stream_ptr;
-            if ( current_time - cmd_stream.get_last_event() < connection_timeout ){
+            if (allow_to_survive and current_time - cmd_stream.get_last_event() < connection_timeout){
                 continue;
             }
             if (cmd_stream.other_index == none){
@@ -1794,7 +1817,7 @@ struct AppServer{
                 continue;
             }
             auto& tcp_stream = *tcp_stream_ptr;
-            if ( current_time - tcp_stream.get_last_event() < connection_timeout ){
+            if (allow_to_survive and current_time - tcp_stream.get_last_event() < connection_timeout){
                 continue;
             }
             if (tcp_stream.other_index == none){
@@ -2009,7 +2032,11 @@ void notify_closing_stream(AppServer& app_server, AcceptedSocketTCP& stream){}
 
 void ctl_maybe_send_some_request(AppServer& app_server){
     log("checking for new connection requests after accepting tcp stream");
-    app_server.ctl_maybe_send_some_request();
+    return app_server.ctl_maybe_send_some_request();
+}
+
+bool has_main_connection(AppServer& app_server){
+    return app_server.has_main_connection();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
