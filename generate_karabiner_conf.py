@@ -10,6 +10,7 @@ import json
 import typing as typing_basic
 import typing_extensions
 import sys
+import hashlib
 import random
 from dataclasses import dataclass, replace
 from urllib.request import urlopen
@@ -593,11 +594,16 @@ if __name__ == '__main__':
 
     print(f'converting to json format')
 
+    with open(__file__, 'rb') as this_file_file:
+        this_file_data = this_file_file.read()
+    
+    this_file_hash = hashlib.sha256(this_file_data).digest().hex()
+
     whole_file = dict(
         title='auto generated',
         rules=[
             dict(
-                description='auto generated',
+                description=this_file_hash,
                 manipulators=[
                     {
                         'type': 'basic',
