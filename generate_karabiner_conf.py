@@ -383,6 +383,27 @@ def decide_what_to_do(input_event: event_t) -> tuple[event_t, ...]:
         for output_event in output_events
     ]))
 
+    output_events = tuple(chain(*[
+        [
+            replace(
+                output_event,
+                button_pair = ButtonPair(('key_code', 'backslash')),
+            ),
+        ]
+        if input_event.layout == 'ru' and input_event.button_pair[1] == 'non_us_backslash' else
+        [
+            replace(
+                output_event,
+                button_pair = ButtonPair(('key_code', 'non_us_backslash')),
+            ),
+        ]
+        if input_event.layout == 'ru' and input_event.button_pair[1] == 'backslash' else
+        [
+            output_event
+        ]
+        for output_event in output_events
+    ]))
+
     return output_events
 
 def process_one_event(from_event: event_t) -> tuple[optimized_event_k, optimized_event_v] | tuple[None, None]:
