@@ -1,21 +1,16 @@
 #include <stdio.h>
 #include <stdint.h>
 
-void save_bmp32(const char *fn, const unsigned char *img, int w, int h) {
-    int fs = 54 + 4*w*h;
-    unsigned char hdr[54] = {
-        'B','M', fs,fs>>8,fs>>16,fs>>24, 0,0,0,0, 54,0,0,0,
-        40,0,0,0, w,w>>8,w>>16,w>>24, h,h>>8,h>>16,h>>24,
-        1,0, 32,0
-    };
-    FILE *f = fopen(fn,"wb");
-    fwrite(hdr,1,54,f);
-    for (int y=h-1;y>=0;y--)
-        for (int x=0;x<w;x++) {
-            const unsigned char *p = img + (y*w+x)*3;
-            unsigned char bgra[4]={p[2],p[1],p[0],255};
-            fwrite(bgra,1,4,f);
-        }
+void save_bmp32(const char*fn,unsigned char*img,int w,int h){
+    int fs=54+4*w*h,z=0,o=54,d=40;short p=1,bpp=32;
+    FILE*f=fopen(fn,"wb");
+    fwrite("BM",1,2,f);fwrite(&fs,4,1,f);fwrite(&z,4,1,f);
+    fwrite(&o,4,1,f);fwrite(&d,4,1,f);fwrite(&w,4,1,f);fwrite(&h,4,1,f);
+    fwrite(&p,2,1,f);fwrite(&bpp,2,1,f);fwrite(&z,4,1,f);
+    for(int y=h-1;y>=0;y--)for(int x=0;x<w;x++){
+        unsigned char*p=img+(y*w+x)*3,b[4]={p[2],p[1],p[0],255};
+        fwrite(b,4,1,f);
+    }
     fclose(f);
 }
 int main() {
