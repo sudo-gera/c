@@ -14,7 +14,7 @@ then
 fi
 git add "$(git rev-parse --show-toplevel)"
 git commit -qam "$d" >/dev/null||:
-git fetch -q --all
+git fetch -q
 git pull -q --no-edit || :
 git add "$(git rev-parse --show-toplevel)"
 git commit -qam "$d" >/dev/null||:
