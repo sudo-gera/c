@@ -1,76 +1,85 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="ISO-8859-1">
-<style type="text/css">
-pre {
-  font-family:Courier New;
-  font-size:10pt;
-}
-
-.af_line {
-  color: gray;
-  text-decoration: none;
-}
-
-</style>
-<title>test.txt</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Open SMB Share (ms-search & file fallback)</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial; padding: 2rem; }
+    button { padding: .6rem 1rem; margin: .5rem 0; }
+    .note { color: #555; font-size: .9rem; margin-top: 1rem; }
+  </style>
 </head>
 <body>
-<pre>Script started on Fri Dec  1 22:53:34 2023
-<span style="color:#0000ee;">22:53:34</span>:<span style="color:#cdcd00;">arm64</span>:<span style="color:#00cd00;">~</span>$ curl -s &apos;https://api.vk.com/method/docs.getMessagesUploadServer&apos; \
-&gt; -F &quot;access_token=${token}&quot; \
-&gt; -F &quot;v=5.199&quot; \
-&gt; -F &quot;peer_id=${peer_id}&quot; \
-&gt; | python3 -m json.tool
-{
-    &quot;response&quot;: {
-        &quot;upload_url&quot;: &quot;https://pu.vk.com/c909328/upload.php?act=add_doc_new&amp;mid=-218708263&amp;aid=-1&amp;gid=0&amp;type=0&amp;peer_id=-218708263&amp;rhash=0398c5f5d2941114f0b4b792fd3dac18&amp;api=1&amp;server=909328&amp;_origin=https%3A%2F%2Fapi.vk.com&amp;_sig=b1408d610d5a1e812c0db831dd4fd050&quot;
-    }
-}
-<span style="color:#0000ee;">22:54:18</span>:<span style="color:#cdcd00;">arm64</span>:<span style="color:#00cd00;">~</span>$ curl -s \
-&gt; -F &apos;file=&#64;/Users/gera/c/test1.txt&apos; \
-0&quot; \t;https://pu.vk.com/c909328/upload.php?act=add_doc_new&amp;mid=-218708263&amp;aid=-1&amp;gid=0&amp;type=0&amp;peer_id=-218708263&amp;rhash=0398c5f5d2941114f0b4b792fd3dac18&amp;api=1&amp;server=909328&amp;_origin=https%3A%2F%2Fapi.vk.com&amp;_sig=b1408d610d5a1e812c0db831dd4fd05 
-&gt; | python3 -m json.tool
-{
-    &quot;file&quot;: &quot;-218708263|0|-1|909328|cd83e38dff|txt|22698|test1.txt|72cf6a70502728d9627ab224919327c7|32a80589d56035732173f3eb852c268a||||eyJkaXNrIjoiMzciLCJwZWVyX3NlbmRlciI6Ii0yMTg3MDgyNjMifQ==&quot;
-}
-<span style="color:#0000ee;">22:54:51</span>:<span style="color:#cdcd00;">arm64</span>:<span style="color:#00cd00;">~</span>$ curl -s &apos;https://api.vk.com/method/docs.save&apos; \
-&gt; -F &quot;access_token=${token}&quot; \
-&gt; -F &quot;v=5.199&quot; \
-&gt; -F &quot;file=-218708263|0|-1|909328|cd83e38dff|txt|22698|test1.txt|72cf6a70502728d9627ab224919327c7|32a80589d56035732173f3eb852c268a||||eyJkaXNrIjoiMzciLCJwZWVyX3NlbmRlciI6Ii0yMTg3MDgyNjMifQ==&quot; \
-&gt; | python3 -m json.tool
-{
-    &quot;response&quot;: {
-        &quot;type&quot;: &quot;doc&quot;,
-        &quot;doc&quot;: {
-            &quot;id&quot;: 670381440,
-            &quot;owner_id&quot;: -218708263,
-            &quot;title&quot;: &quot;test1.txt&quot;,
-            &quot;size&quot;: 22698,
-            &quot;ext&quot;: &quot;txt&quot;,
-            &quot;date&quot;: 1701460518,
-            &quot;type&quot;: 1,
-            &quot;url&quot;: &quot;https://vk.com/doc-218708263_670381440?hash=IuiCro8xKuAQGY4xyEA1ZDpcDHJyroTzwJjc0SIlwn4&amp;dl=RWc3FFRGoTeX0lfyxJFJZwXGsvBxjzzp6MzW0vQYJk8&amp;api=1&amp;no_preview=1&quot;,
-            &quot;is_unsafe&quot;: 0,
-            &quot;can_manage&quot;: true
-        }
-    }
-}
-<span style="color:#0000ee;">22:55:18</span>:<span style="color:#cdcd00;">arm64</span>:<span style="color:#00cd00;">~</span>$ curl -s &apos;https://api.vk.com/method/messages.send&apos; \
-&gt; -F &quot;access_token=${token}&quot; \
-&gt; -F &quot;v=5.199&quot; \
-&gt; -F &quot;random_id=0&quot; \
-&gt; -F &quot;peer_id=${peer_id}&quot; \
-&gt; -F &quot;attachment=doc-${group_id}_670381440&quot; \
-&gt; | python3 -m json.tool
-{
-    &quot;response&quot;: 0
-}
-<span style="color:#0000ee;">22:55:46</span>:<span style="color:#cdcd00;">arm64</span>:<span style="color:#00cd00;">~</span>$ exit
+  <h1>Open SMB Share</h1>
+  <p>Target UNC path: <code>\\192.168.50.193\public</code></p>
 
-Script done on Fri Dec  1 23:06:38 2023
-</pre>
+  <button id="open-ms-search">Open using <code>search-ms:</code> (Windows)</button>
+  <button id="open-file">Open using <code>file:</code> URI (fallback)</button>
+
+  <div class="note">
+    <strong>Reminder:</strong> This depends on OS/browser support for these URIs. If nothing happens, try opening this file locally (double-click the HTML) or run the code from a trusted environment.
+  </div>
+
+  <script>
+    // The UNC path we want to open
+    const uncPath = "\\\\192.168.50.193\\public"; // note: backslashes
+
+    // Build a search-ms: URI similar to how Windows Explorer search URIs look.
+    // We URL-encode the location parameter (backslashes become %5C).
+    function buildSearchMsUri(unc) {
+      // crumb=location:<encoded UNC>
+      const encodedLocation = encodeURIComponent(unc);
+      // Add a displayname so Explorer shows something
+      const displayName = encodeURIComponent("Open SMB Share");
+      // Basic search-ms format: search-ms:displayname=...&crumb=location:<encoded>
+      return `search-ms:displayname=${displayName}&crumb=location:${encodedLocation}&query=.`;
+    }
+
+    // Build a file: URI for a UNC path.
+    // Many clients expect file:////host/share  (4 slashes: scheme + two leading slashes of UNC --> results in 4)
+    function buildFileUriFromUnc(unc) {
+      // remove leading backslashes if present, then prefix with file:////
+      const trimmed = unc.replace(/^\\\\+/, ""); // "192.168.50.193\public"
+      // Replace backslashes with forward slashes for URL
+      const slashPath = trimmed.replace(/\\/g, "/");
+      return `file:////${slashPath}`; // e.g. file:////192.168.50.193/public
+    }
+
+    document.getElementById("open-ms-search").addEventListener("click", () => {
+      const uri = buildSearchMsUri(uncPath);
+      console.log(uri);
+      // Attempt navigation via assignment (some browsers will prompt or block)
+      // Also create a temporary anchor and click it as an alternate approach.
+      try {
+        // First try direct navigation
+        window.location.href = uri;
+      } catch (e) {
+        // If direct assignment fails, try creating and clicking an anchor
+        const a = document.createElement("a");
+        a.href = uri;
+        a.rel = "noopener";
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
+    });
+
+    document.getElementById("open-file").addEventListener("click", () => {
+      const uri = buildFileUriFromUnc(uncPath);
+      // Try opening the file URI (often blocked by browsers from http(s) pages)
+      try {
+        window.location.href = uri;
+      } catch (e) {
+        const a = document.createElement("a");
+        a.href = uri;
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
+    });
+  </script>
 </body>
 </html>
-<!--HTML generated by ansifilter 2.20, http://www.andre-simon.de/-->

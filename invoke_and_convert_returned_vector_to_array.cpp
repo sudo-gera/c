@@ -18,12 +18,16 @@ constexpr auto get_all_primes_less_than(size_t val){
             }
         }
     }
-    return primes;
+    return primes.size();
+//    return primes;
 }
 
+static_assert( (get_all_primes_less_than(20)) > 2);
+
 int main(){
-    auto p = get_all_primes_less_than(20);
+    std::vector<size_t> p(get_all_primes_less_than(20));
     for (auto s:p){
         std::cout << s << std::endl;
     }
+}
 #endif

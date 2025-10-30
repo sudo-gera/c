@@ -404,6 +404,23 @@ def decide_what_to_do(input_event: event_t) -> tuple[event_t, ...]:
         for output_event in output_events
     ]))
 
+    output_events = tuple(chain(*[
+        [
+            replace(
+                output_event,
+                left_command = input_event.left_control,
+                left_control = input_event.left_command,
+                right_command = input_event.right_control,
+                right_control = input_event.right_command,
+            ),
+        ]
+        if input_event.button_pair[1] == 'tab' else
+        [
+            output_event
+        ]
+        for output_event in output_events
+    ]))
+
     return output_events
 
 def process_one_event(from_event: event_t) -> tuple[optimized_event_k, optimized_event_v] | tuple[None, None]:

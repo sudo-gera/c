@@ -1,42 +1,26 @@
-import ipaddress
+import numpy as np
 
-def parse_input_masks(mask_input):
-    return [ipaddress.IPv4Network(mask.strip()) for mask in mask_input.split(',')]
+def save_as_bmp32(filename, img: np.ndarray):
+    h, w, _ = img.shape
+    filesize = 54 + w * h * 4  # header + 4 bytes per pixel
 
-def parse_exclude_ips(ip_input):
-    return [ipaddress.IPv4Address(ip.strip()) for ip in ip_input.split(',')]
+    # BMP Header (14 bytes) + DIB Header (40 bytes)
+    header = bytearray(54)
+    header[0:2] = b'BM'
+    header[2:6] = filesize.to_bytes(4, 'little')
+    header[10:14] = (54).to_bytes(4, 'little')   # pixel data offset
+    header[14:18] = (40).to_bytes(4, 'little')   # DIB header size
+    header[18:22] = w.to_bytes(4, 'little')
+    header[22:26] = h.to_bytes(4, 'little')
+    header[26:28] = (1).to_bytes(2, 'little')    # color planes
+    header[28:30] = (32).to_bytes(2, 'little')   # bits per pixel
 
-def exclude_ips_from_masks(masks, exclude_ips):
-    remaining_subnets = []
-
-    for network in masks:
-        subnets_to_process = [network]
-        for exclude_ip in exclude_ips:
-            new_subnets = []
-            for subnet in subnets_to_process:
-                if exclude_ip in subnet:
-                    # Split subnet into parts that exclude exclude_ip
-                    new_subnets.extend(subnet.address_exclude(ipaddress.IPv4Network(f'{exclude_ip}/32')))
-                else:
-                    new_subnets.append(subnet)
-            subnets_to_process = new_subnets
-        remaining_subnets.extend(subnets_to_process)
-
-    return remaining_subnets
-
-def main():
-    mask_input = input("Enter comma-separated IPv4 masks (CIDR notation):\n")
-    ip_input = input("Enter comma-separated IPv4 addresses to exclude:\n")
-
-    masks = parse_input_masks(mask_input)
-    exclude_ips = parse_exclude_ips(ip_input)
-
-    result_subnets = exclude_ips_from_masks(masks, exclude_ips)
-
-    print("\nResulting IPv4 masks excluding specified IPs:")
-    print(*result_subnets, sep=', ')
-    # for subnet in result_subnets:
-    #     print(subnet)
-
-if __name__ == "__main__":
-    main()
+    with open(filename, 'wb') as f:
+        f.write(header)
+        for row in img[::-1]:  # bottom-to-top
+            bgrx = np.zeros((w, 4), dtype=np.uint8)
+            bgrx[:, 0:3] = row[:, ::-1]  # BGR
+            bgrx[:, 3] = 255             # Alpha = 255 (opaque)
+            f.write(bgrx.tobytes())
+img = (np.random.rand(100, 150, 3) * 255).astype(np.uint8)
+save_as_bmp32("test32.bmp", img)
