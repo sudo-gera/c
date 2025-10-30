@@ -1123,17 +1123,27 @@ private:
                 assert(still_has_to_write <= len_of_data_in_write_buffer);
                 assert(0 < len_of_data_in_write_buffer);
                 assert(len_of_data_in_write_buffer <= write_buffer.size());
+                sys.ignore(EPIPE);
                 size_t written = sys.write(get_fd(s), write_buffer.data() + len_of_data_in_write_buffer - still_has_to_write, still_has_to_write);
-                still_has_to_write -= written;
-                if (still_has_to_write != 0){
-                    return;
+                if (errno){
+                    err = errno;
+                }else{
+                    still_has_to_write -= written;
+                    if (still_has_to_write != 0){
+                        return;
+                    }
                 }
             }else{
                 assert(still_has_to_write == len_of_data_in_write_buffer);
                 assert(0 < len_of_data_in_write_buffer);
                 assert(len_of_data_in_write_buffer <= write_buffer.size());
+                sys.ignore(EPIPE);
                 size_t written = sys.write(get_fd(s), write_buffer.data(), write_buffer.size());
-                still_has_to_write -= written;
+                if (errno){
+                    err = errno;
+                }else{
+                    still_has_to_write -= written;
+                }
             }
         }
         auto write_callback_local = write_callback;
