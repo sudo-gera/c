@@ -1,25 +1,20 @@
 #include <bits/stdc++.h>
 
-// #include <assert.h>
-// #include <tuple>
-// #define FORWARD(val) (std::forward<decltype(val)>(val))
+#include <assert.h>
+#include <tuple>
+#define FORWARD(val) (std::forward<decltype(val)>(val))
 
-// template<std::size_t b, std::size_t e>
-// void make_constexpr(std::size_t n, auto&&f){
-//     static_assert(b <= e);
-//     assert(b <= n);
-//     assert(n <= e);
-//     assert(b < e); // this edge case is sometimes helpful
-//     if constexpr(b + 1 == e){
-//         return FORWARD(f)(std::integral_constant<std::size_t, b>());
-//     }
-//     std::integral_constant<size_t, (b + e) / 2> c;
-//     if (n < c){
-//         return make_constexpr<b, c>(n, FORWARD(f));
-//     }else{
-//         return make_constexpr<c, e>(n, FORWARD(f));
-//     }
-// }
+#include "make_constexpr.cpp"
+
+
+
+int main(){
+    if (1)
+        printf("");
+    else
+        printf("");
+}
+
 
 
 
@@ -70,18 +65,18 @@
 //     lock(a.begin(), a.end());
 // }
 
-template<typename tuple_1, typename tuple_2>
-using tuple_cat = decltype(
-    std::tuple_cat(
-        std::declval<tuple_1>(),
-        std::declval<tuple_2>()
-    )
-);
+// template<typename tuple_1, typename tuple_2>
+// using tuple_cat = decltype(
+//     std::tuple_cat(
+//         std::declval<tuple_1>(),
+//         std::declval<tuple_2>()
+//     )
+// );
 
-template<size_t start, size_t len>
-struct make_tuple_of_integral_constants_impl{
-    using type = tuple_cat<
-        make_tuple_of_integral_constants_impl<start + len
-    >;
-};
+// template<size_t start, size_t len>
+// struct make_tuple_of_integral_constants_impl{
+//     using type = tuple_cat<
+//         make_tuple_of_integral_constants_impl<start + len
+//     >;
+// };
 
