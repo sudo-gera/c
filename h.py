@@ -8,8 +8,30 @@ except:
 try:
     from numpy import *
     import numpy
+    import numpy as np
 except:
     pass
+try:
+    import cv2
+except:
+    pass
+try:
+    from PIL import *
+    import PIL
+except:
+    pass
+try:
+    from skimage import *
+    import skimage
+    import skimage as ski
+except:
+    pass
+# try:
+#     from matplotlib.pyplot import *
+#     import matplotlib.pyplot as plt
+#     import matplotlib.pyplot
+# except:
+#     pass
 from asyncio import *
 import asyncio
 from time import *
