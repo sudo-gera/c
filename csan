@@ -2,6 +2,8 @@
 
 set -e -u -o pipefail
 
+echo
+
 # if [ $# -le 1 ]
 # then
 #     echo '[ ERROR ] Hey! You forgot to give a name of your program!'
@@ -13,63 +15,116 @@ set -e -u -o pipefail
 #     exit 1
 # fi
 
-if [ $# -le 1 ]
+if [ $# -lt 1 ]
 then
 
+    echo '[ INFO ] Hey! Please enter file name with your program'
+    echo
     IFS= read -r regex_pattern
+    echo
     visible_name="$regex_pattern"
     find_flag=-name
+    regex_dot='.'
 
 else
 
-    regex_pattern='\.\*'
-    visible_name=''
+    regex_pattern=".*${1}"
+    visible_name="${1}"
+    shift
     find_flag=-regex
 
     while [ $# -ne 0 ]
     do
-        regex_pattern="${regex_pattern}\s\*${1}"
+        regex_pattern="${regex_pattern}\s+${1}"
         visible_name="${visible_name} ${1}"
         shift
     done
+
+    regex_dot='\.'
 
 fi
 
 echo '[ INFO ] User asked me to use '"$visible_name"
 echo '[ INFO ] Searching for this file...'
 
-found_files="$(
+found_files_with__="$(
 
-    find .                              \
-        -type f                         \
-        -regextype posix-basic          \
-        "$find_flag" "$regex_pattern"   \
+    find .                                                                                              \
+        -type f                                                                                         \
+        -regextype emacs                                                                                \
+        '('                                                                                             \
+            "$find_flag" "$regex_pattern"                                                               \
+        -or                                                                                             \
+            "$find_flag" "${regex_pattern}${regex_dot}c"                                                \
+        -or                                                                                             \
+            "$find_flag" "${regex_pattern}${regex_dot}cpp"                                              \
+        ')'                                                                                             \
+
+    echo _______________
 
 )"
 
-found_files_count=$(echo "$found_files" | wc -l)
+found_files="$(
 
-if [ $found_files_count -eq 0 ]
+    find .                                                                                              \
+        -type f                                                                                         \
+        -regextype emacs                                                                                \
+        '('                                                                                             \
+            "$find_flag" "$regex_pattern"                                                               \
+        -or                                                                                             \
+            "$find_flag" "${regex_pattern}${regex_dot}c"                                                \
+        -or                                                                                             \
+            "$find_flag" "${regex_pattern}${regex_dot}cpp"                                              \
+        ')'                                                                                             \
+
+)"
+
+found_files_count=$(( $(echo "$found_files_with__" | wc -l) - 1 ))
+
+if [ "$found_files_count" -eq 1 ]
 then
+    if [ -f "${found_files}" ]
+    then
+        :
+    else
+        if [ -f "${found_files}.c" ]
+        then
+            found_files="${found_files}.c"
+        else
+            if [ -f "${found_files}.cpp" ]
+            then
+                found_files="${found_files}.cpp"
+            else
+                found_files_count=0
+            fi
+        fi
+    fi
+fi
+
+if [ "$found_files_count" -eq 0 ]
+then
+    echo '[ ERROR ]'
     echo '[ ERROR ] Hey! You wrote the filename with a typo!'
     echo '[ ERROR ]'
     echo '[ ERROR ] Fix a typo and run this command again with a correct name:'
     echo '[ ERROR ]'
-    echo '[ ERROR ]     bash '"$0"' correct name of program.cpp'
+    echo '[ ERROR ]     bash '"$0"'  correct name of program.cpp'
     echo '[ ERROR ]'
     exit 1
 fi
 
-if [ $found_files_count -lt 1 ]
+if [ "$found_files_count" -gt 1 ]
 then
+    echo '[ ERROR ]'
     echo '[ ERROR ] Hey! Which of them do you need?'
     echo '[ ERROR ]'
     echo '[ ERROR ] Select and run one of the following:'
     echo '[ ERROR ]'
-    for i in $(seq 1 $found_files_count)
+    for i in $(seq 1 "$found_files_count")
     do
-        filepath="$(echo "$found_files" | head -n $i | tail -n 1)"
+        filepath="$(echo "$found_files_with__" | head -n "$i" | tail -n 1)"
         echo "[ ERROR ]     bash $0 '$filepath'"
+    done
     echo '[ ERROR ]'
     exit 1
 fi
@@ -83,10 +138,11 @@ extension_without_dot="$(
 )"
 
 if [ "$extension_without_dot" = 'c' ]
-    echo '[ INFO ] This file ends with '"$extension"' so I think it is written in C'
+then
+    echo '[ INFO ] This file ends with .'"$extension_without_dot"' so I think it is written in C'
     L='C'
 else
-    echo '[ INFO ] This file ends with '"$extension"' so I think it is written in C++'
+    echo '[ INFO ] This file ends with .'"$extension_without_dot"' so I think it is written in C++'
     L='C++'
 fi
 
@@ -97,9 +153,9 @@ export TSAN_OPTIONS=halt_on_error=1
 
 if [ "$L" = 'C' ]
 then
-    gcc -std=c11 -g -fsanitize-address,undefined -fno-sanitize-recover=all -Ofast "$found_files" -o ./a.out
+    gcc -std=c11 -g -fsanitize=address,undefined -fno-sanitize-recover=all -Ofast "$found_files" -o ./a.out
 else    
-    g++ -std=c++11 -g -fsanitize-address,undefined -fno-sanitize-recover=all -Ofast "$found_files" -o ./a.out
+    g++ -std=c++11 -g -fsanitize=address,undefined -fno-sanitize-recover=all -Ofast "$found_files" -o ./a.out
 fi
 
 ./a.out
