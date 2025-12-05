@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+
+set -e -u -o pipefail
+
+# if [ $# -le 1 ]
+# then
+#     echo '[ ERROR ] Hey! You forgot to give a name of your program!'
+#     echo '[ ERROR ]'
+#     echo '[ ERROR ] Run this command again but do it like this:'
+#     echo '[ ERROR ]'
+#     echo '[ ERROR ]     bash '"$0"' name of program.cpp'
+#     echo '[ ERROR ]'
+#     exit 1
+# fi
+
+if [ $# -le 1 ]
+then
+
+    IFS= read -r regex_pattern
+    visible_name="$regex_pattern"
+    find_flag=-name
+
+else
+
+    regex_pattern='\.\*'
+    visible_name=''
+    find_flag=-regex
+
+    while [ $# -ne 0 ]
+    do
+        regex_pattern="${regex_pattern}\s\*${1}"
+        visible_name="${visible_name} ${1}"
+        shift
+    done
+
+fi
+
+echo '[ INFO ] User asked me to use '"$visible_name"
+echo '[ INFO ] Searching for this file...'
+
+found_files="$(
+
+    find .                              \
+        -type f                         \
+        -regextype posix-basic          \
+        "$find_flag" "$regex_pattern"   \
+
+)"
+
+found_files_count=$(echo "$found_files" | wc -l)
+
+if [ $found_files_count -eq 0 ]
+then
+    echo '[ ERROR ] Hey! You wrote the filename with a typo!'
+    echo '[ ERROR ]'
+    echo '[ ERROR ] Fix a typo and run this command again with a correct name:'
+    echo '[ ERROR ]'
+    echo '[ ERROR ]     bash '"$0"' correct name of program.cpp'
+    echo '[ ERROR ]'
+    exit 1
+fi
+
+if [ $found_files_count -lt 1 ]
+then
+    echo '[ ERROR ] Hey! Which of them do you need?'
+    echo '[ ERROR ]'
+    echo '[ ERROR ] Select and run one of the following:'
+    echo '[ ERROR ]'
+    for i in $(seq 1 $found_files_count)
+    do
+        filepath="$(echo "$found_files" | head -n $i | tail -n 1)"
+        echo "[ ERROR ]     bash $0 '$filepath'"
+    echo '[ ERROR ]'
+    exit 1
+fi
+
+echo '[ INFO ] I found it at '"$found_files"
+
+extension_without_dot="$(
+    
+    echo "$found_files" | rev | tr '.' '\n' | head -n 1
+
+)"
+
+if [ "$extension_without_dot" = 'c' ]
+    echo '[ INFO ] This file ends with '"$extension"' so I think it is written in C'
+    L='C'
+else
+    echo '[ INFO ] This file ends with '"$extension"' so I think it is written in C++'
+    L='C++'
+fi
+
+echo '[ INFO ] Let me try to compile this file...'
+
+export UBSAN_OPTIONS=print_stacktrace=1
+export TSAN_OPTIONS=halt_on_error=1
+
+if [ "$L" = 'C' ]
+then
+    gcc -std=c11 -g -fsanitize-address,undefined -fno-sanitize-recover=all -Ofast "$found_files" -o ./a.out
+else    
+    g++ -std=c++11 -g -fsanitize-address,undefined -fno-sanitize-recover=all -Ofast "$found_files" -o ./a.out
+fi
+
+./a.out
