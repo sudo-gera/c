@@ -1,67 +1,82 @@
+from __future__ import annotations
 import asyncio
-from asyncio import transports
-import inspect
 import argparse
-import ipaddress
-import urllib.parse
-import sys
-# class connection(asyncio.DatagramProtocol, asyncio.Protocol):
-#     def __init__(self, channel):
-#         self.__channel = channel
+from typing import *
+import types
+from functools import *
+from itertools import *
+from operator import *
+from dataclasses import dataclass, fields
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from _typeshed import DataclassInstance
 
-#     def connection_made(self, transport: asyncio.DatagramTransport | asyncio.Transport) -> None:
-#         self.__transport = transport
+@dataclass
+class server_args:
+    tcp_listen_host: str
+    tcp_listen_port: int
 
-#     def connection_lost(self, exc: Exception | None) -> None:
-#         self.__channel.send(id(self), inspect.stack()[0][3])
+@dataclass
+class client_args:
+    tcp_listen_host: str
+    tcp_listen_port: int
+
+    udp_listen_host: str
+    udp_listen_port: int
+
+    udp_connect_host: str
+    udp_connect_port: int
+
+    connection_name: str | None
+
+async def server_main():
+    ...
+
+async def client_main():
+    ...
+
+def add_subparser_from_dataclass(subparsers: argparse._SubParsersAction, parser_name: str, args_dataclass: type[DataclassInstance]):
+    parser = subparsers.add_parser(parser_name)
+    for field in fields(args_dataclass):
+        optional : bool|None = None
+        arg_type : type[Any]|None = None
+        if isinstance(field.type, type):
+            arg_type = field.type
+            optional = False
+        if isinstance(fields.type, types.UnionType):
+            union_args = field.type.__args__
+            if len(union_args) == 2:
+                if None in union_args:
+                    not_none = union_args[union_args[0] == None]
+                    if isinstance(not_none, type):
+                        arg_type = not_none
+                        optional = True
+        assert arg_type is not None
+        assert optional is not None
+        parser.add
 
 
-
-#     def data_ (self, exc: Exception | None) -> None:
-#         self.__channel.send(id(self), inspect.stack()[0][3])
-
-# c = connection()
-# c.
-
-def channel(reader, writer):
-    try:
-        ...
-    finally:
-        writer.close()
-
-class columned:
-    def __init__(self, s):
-        s = s.split(':')
-        a = []
-        while s:
-            for q in range(len(s)):#, 0, -1):
-                try:
-                    d = '//'+':'.join(s[q:])
-                    print(d)
-                    f = urllib.parse.urlsplit(d)
-                    f.hostname
-                    f.port
-                    a.append(f)
-                    s[q:]=[]
-                    break
-                except Exception:
-                    pass
-        a = a[::-1]
-        self.hosts = [q.hostname for q in a]
-        self.ports = [q.port for q in a]
-
-    def __repr__(self) -> str:
-        return repr(list(zip(self.hosts, self.ports)))
+if __name__ == '__main__':
 
 
-async def main():
     parser = argparse.ArgumentParser()
-    # parser.add_argument('--tcp', type=host_port, action='append')
-    # parser.add_argument('--udp', type=host_port, action='append')
-    # parser.add_argument('--udp', type=host_port)
-    args = parser.parse_args()
-    print(args)
 
-# asyncio.run(main())
-print(columned(sys.argv[1]))
+    subparsers = parser.add_subparsers(dest='mode', required=True)
+
+    for field in fields(subparsers.add_parser('server')):
+        types : list[type] = []
+        if isinstance(field.type, types.UnionType):
+            field.ty
+
+
+        subparsers.add_parser(
+            name='--' + field.name.replace('-','_'),
+            required=
+        )
+
+    client_parser = subparsers.add_parser('client')
+
+
+    args = parser.parse_args()
+
 
