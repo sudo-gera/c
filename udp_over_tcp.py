@@ -38,44 +38,11 @@ class subparsers_as_dataclass_parser_ctx(Generic[subparsers_as_dataclass_handler
     dataclass: type[DataclassInstance]
     handler: subparsers_as_dataclass_handler_type
 
-# @dataclass
 class subparsers_as_dataclass(Generic[subparsers_as_dataclass_handler_type]):
-
-
-    # def __init__(
-    #     self,
-    #     *, 
-    #     # parser: argparse.ArgumentParser,
-    #     # title: str = "subcommands",
-    #     # dest: str,
-    #     # description: str | None = None,
-    #     # prog: str | None = None,
-    #     # action: type[argparse.Action] = ...,
-    #     # option_string: str = ...,
-    #     # required: bool = False,
-    #     # help: str | None = None,
-    #     # metavar: str | None = None
-    # ):
-        # self.subparsers : argparse._SubParsersAction[argparse.ArgumentParser] = parser.add_subparsers(
-        #     title=title,
-        #     description=description,
-        #     prog=prog,
-        #     action=action,
-        #     option_string=option_string,
-        #     dest=dest,
-        #     required=required,
-        #     help=help,
-        #     metavar=metavar,
-        # )
-        # self.dest = dest
-        # self.dataclasses : dict[str, subparsers_as_dataclass.parser_ctx] = {}
-        # self.parser = parser
 
     def __init__(self, subparsers : argparse._SubParsersAction[argparse.ArgumentParser]):
         self.subparsers = subparsers
         self.dataclasses : dict[str, subparsers_as_dataclass_parser_ctx[subparsers_as_dataclass_handler_type]] = {}
-
-    # subparsers : argparse._SubParsersAction[argparse.ArgumentParser]
 
     def add_subparser_from_dataclass(self, parser_name: str, args_dataclass: type[DataclassInstance], handler: subparsers_as_dataclass_handler_type) -> None:
         parser = self.subparsers.add_parser(parser_name)
@@ -83,8 +50,8 @@ class subparsers_as_dataclass(Generic[subparsers_as_dataclass_handler_type]):
             arg_name = field.name
             arg_required : bool|None = None
             arg_type : type[Any]|None = None
+            assert isinstance(field.type, str)
             field_type = eval(field.type)
-            # print(f'{field_type = } {type(field_type) = } {id(type(field_type)) = } {id(types.UnionType) = } {isinstance(field_type, types.UnionType) = }')
             if isinstance(field_type, type):
                 arg_type = field_type
                 arg_required = True
@@ -116,10 +83,10 @@ class subparsers_as_dataclass(Generic[subparsers_as_dataclass_handler_type]):
 
 
 async def server_main(args: server_args) -> None:
-    ...
+    print(args)
 
 async def client_main(args: client_args) -> None:
-    ...
+    print(args)
 
 if __name__ == '__main__':
 
