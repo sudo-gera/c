@@ -41,7 +41,7 @@ elif sys.version_info < (3, 11):
 logger = logging.getLogger(__name__)
 
 class always_upper_str(str):
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, *args: Any, **kwargs: Any) -> always_upper_str:
         value = str(*args, **kwargs).upper()
         return super().__new__(cls, value)
 
@@ -430,6 +430,11 @@ async def server_main(args: server_args) -> None:
         transport_future: asyncio.Future[asyncio.DatagramTransport] = field(default_factory=asyncio.Future)
 
         def connection_made(self, transport: asyncio.BaseTransport) -> None:
+
+            connection_id = self.connection.connection_id
+
+            logger.info(f'UDP client for {connection_id = } connected.')
+
             self.transport_future.set_result(
                 cast(
                     asyncio.DatagramTransport,
@@ -449,12 +454,18 @@ async def server_main(args: server_args) -> None:
                 data=data,
             )
 
+            logger.debug(f'External datagram: {len(msg.data)} bytes from {msg.connection}.')
+
             client_context = get_tcp_client_context(client_id=connection.client_id)
 
             put_rotate(client_context.server_to_client_queue, msg)
 
         async def send_datagram(self, msg: datagram) -> None:
+
+            logger.debug(f'Internal datagram: {len(msg.data)} bytes from {msg.connection}.')
+
             transport = await self.transport_future
+
             transport.sendto(
                 data = msg.data,
                 addr = (
@@ -481,34 +492,42 @@ async def server_main(args: server_args) -> None:
                 remote_addr=(msg.connection.dst_host, msg.connection.dst_port),
             )
 
-            udp_clients[msg.connection.connection_id] = udp_client_protocol(
-                connection=msg.connection,
-            )
+            udp_clients[msg.connection.connection_id] = protocol
         return udp_clients[msg.connection.connection_id]
 
     async def on_tcp_connection(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
         with contextlib.closing(writer):
-            
-            client_hello = await read_from_stream_reader(reader, tcp_client_hello)
+            try:
 
-            context = get_tcp_client_context(client_hello.client_id)
+                client_hello = await read_from_stream_reader(reader, tcp_client_hello)
 
-            async def recv_while_can() -> None:
-                while 1:
-                    msg = await read_from_stream_reader(reader, datagram)
-                    udp_client = await get_udp_client(msg)
-                    await udp_client.send_datagram(msg)
-            
-            async def send_while_can() -> None:
-                while 1:
-                    msg = await context.server_to_client_queue.get()
-                    await write_to_stream_writer(writer, msg)
-            
-            await asyncio.gather(
-                recv_while_can(),
-                send_while_can(),
-            )
+                context = get_tcp_client_context(client_hello.client_id)
 
+                client_id = context.client_id
+                logger.info(f'TCP client {client_id = } connected.')
+
+                async def recv_while_can() -> None:
+                    while 1:
+                        msg = await read_from_stream_reader(reader, datagram)
+                        udp_client = await get_udp_client(msg)
+                        await udp_client.send_datagram(msg)
+                
+                async def send_while_can() -> None:
+                    while 1:
+                        msg = await context.server_to_client_queue.get()
+                        await write_to_stream_writer(writer, msg)
+                
+                await asyncio.gather(
+                    recv_while_can(),
+                    send_while_can(),
+                )
+            
+            except Exception as exc:
+                try:
+                    client_id_str = str(context.client_id)
+                except Exception:
+                    client_id_str = '(unknown)'
+                logger.warning(f'TCP client #{client_id_str} stopped with an error: {exc!r}')
 
     async with await asyncio.start_server(on_tcp_connection, args.tcp_listen_host, args.tcp_listen_port) as server:
         await server.serve_forever()
@@ -539,13 +558,14 @@ async def client_main(args: client_args) -> None:
 
     client_id = uuid.uuid4()
 
-
     @dataclass(frozen=True)
     class udp_server_protocol(asyncio.DatagramProtocol):
         transport_future: asyncio.Future[asyncio.DatagramTransport] = field(default_factory=asyncio.Future)
 
         def connection_made(self, transport: asyncio.BaseTransport) -> None:
-            logger.info(f'UDP server started, assigning id={client_id}')
+
+            logger.info(f'UDP server started, assigning {client_id = }')
+
             self.transport_future.set_result(
                 cast(
                     asyncio.DatagramTransport,
@@ -561,7 +581,7 @@ async def client_main(args: client_args) -> None:
             if addr not in addr_to_id:
                 connection_id = uuid.uuid4()
                 addr_to_id[addr] = connection_id
-                logger.info(f'new UDP connection from [{src_host}]:{src_port}, assigning id={connection_id}')
+                logger.info(f'new UDP connection from [{src_host}]:{src_port}, assigning {connection_id = }')
             
             connection_id = addr_to_id[addr]
 
@@ -574,17 +594,21 @@ async def client_main(args: client_args) -> None:
                 client_id=client_id,
             )
 
-            logger.debug(f'External datagram {len(data)} bytes from {connection}.')
-
             msg = datagram(
                 connection=connection,
                 data=data,
             )
 
+            logger.debug(f'External datagram: {len(msg.data)} bytes from {msg.connection}.')
+
             put_rotate(udp_to_tcp_queue, msg)
 
         async def send_datagram(self, msg: datagram) -> None:
+
+            logger.debug(f'Internal datagram: {len(msg.data)} bytes from {msg.connection}.')
+
             transport = await self.transport_future
+
             transport.sendto(
                 data = msg.data,
                 addr = (
@@ -606,10 +630,12 @@ async def client_main(args: client_args) -> None:
         local_addr=(args.udp_listen_host, args.udp_listen_port)
     )
 
-    async def one_tcp_attempt() -> None:
+    async def one_tcp_attempt(worker_num: int) -> None:
         reader, writer = await asyncio.open_connection(args.tcp_connect_host, args.tcp_connect_port)
 
         await write_to_stream_writer(writer, tcp_client_hello(client_id))
+
+        logger.info(f'TCP worker #{worker_num} started.')
 
         async def recv_while_can() -> None:
             while 1:
@@ -626,19 +652,18 @@ async def client_main(args: client_args) -> None:
             send_while_can(),
         )
 
-    async def one_worker() -> None:
+    async def one_worker(worker_num: int) -> None:
         while 1:
             try:
-                await one_tcp_attempt()
-            except Exception:
-                err_text = traceback.format_exc()
-                # print(err_text, file=sys.stderr)
+                await one_tcp_attempt(worker_num)
+            except Exception as exc:
+                logger.warning(f'TCP worker #{worker_num} stopped with an error: {exc!r}')
             await asyncio.sleep(args.reconnect_interval)
     
     async def run_workers() -> None:
         await asyncio.gather(
             *[
-                one_worker()
+                one_worker(i)
                 for i in range(args.workers)
             ]
         )
