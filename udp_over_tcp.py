@@ -553,7 +553,7 @@ async def server_main(args: server_args) -> None:
 
             connection_id = self.connection_server_to_client.connection_id
 
-            logger.info(f'UDP client for {connection_id = } connected.')
+            logger.info('UDP client for connection_id = %s connected.', connection_id)
 
             self.transport_future.set_result(
                 cast(
@@ -575,7 +575,7 @@ async def server_main(args: server_args) -> None:
                 data=data,
             )
 
-            logger.debug(f'External datagram: {len(msg.data)} bytes from {msg.connection}.')
+            logger.debug('External datagram: %d bytes from %s.', len(msg.data), msg.connection)
 
             client_context = get_tcp_client_context(client_id=connection.client_id)
 
@@ -583,7 +583,7 @@ async def server_main(args: server_args) -> None:
 
         async def send_datagram(self, msg: datagram) -> None:
 
-            logger.debug(f'Internal datagram: {len(msg.data)} bytes from {msg.connection}.')
+            logger.debug('Internal datagram: %d bytes from %s.', len(msg.data), msg.connection)
 
             transport = await self.transport_future
 
@@ -592,10 +592,10 @@ async def server_main(args: server_args) -> None:
             )
 
         def error_received(self, exc: Exception) -> None:
-            logger.warning(f'UDP server received an error: {exc!r}')
+            logger.warning('UDP server received an error: %r.', exc)
 
         def connection_lost(self, exc: Exception | None) -> None:
-            logger.warning(f'UDP server stopped with an error: {exc!r}')
+            logger.warning('UDP server stopped with an error: %r.', exc)
 
     udp_clients : dict[uuid.UUID, udp_client_protocol] = {}
 
@@ -605,14 +605,14 @@ async def server_main(args: server_args) -> None:
             dst_hosts = [msg.connection.dst_host]
 
             if not is_ip(dst_hosts[0]):
-                logger.debug(f'Resolving domain {dst_hosts[0]!r}...')
+                logger.debug('Resolving domain %r...', dst_hosts[0])
                 dst_hosts = await resolve_domain(dst_hosts[0])
-                logger.debug(f'Resolved into {dst_hosts}')
+                logger.debug('Resolved into %r.', dst_hosts)
 
             dst_host = random.choice(dst_hosts)
 
             if len(dst_hosts) > 1:
-                logger.debug(f'DNS returned mulitple IPs, randomly selecting {dst_host!r}.')
+                logger.debug('DNS returned mulitple IPs, randomly selecting %r.', dst_host)
 
             msg = replace(
                 msg,
@@ -642,7 +642,7 @@ async def server_main(args: server_args) -> None:
                 context = get_tcp_client_context(client_hello.client_id)
 
                 client_id = context.client_id
-                logger.info(f'TCP client {client_id = } connected.')
+                logger.info('TCP client client_id = %s connected.', client_id)
 
                 async def recv_while_can() -> None:
                     while 1:
@@ -667,7 +667,7 @@ async def server_main(args: server_args) -> None:
                 except Exception:
                     client_id_str = '(unknown)'
                 print(traceback.format_exc())
-                logger.warning(f'TCP client {client_id_str} stopped with an error: {exc!r}')
+                logger.warning('TCP client %s stopped with an error: %r.', client_id_str, exc)
 
     async with await asyncio.start_server(on_tcp_connection, args.tcp_listen_host, args.tcp_listen_port) as server:
         await server.serve_forever()
@@ -703,11 +703,11 @@ async def client_main(args: client_args) -> None:
     dst_hosts = [args.udp_connect_host]
     if not is_ip(dst_hosts[0]):
         if args.resolve_dns_on_client:
-            logger.debug(f'Resolving {dst_hosts[0]!r}...')
+            logger.debug('Resolving %r...', dst_hosts[0])
             dst_hosts = await resolve_domain(dst_hosts[0])
-            logger.debug(f'Resolved into {dst_hosts}')
+            logger.debug('Resolved into %r.', dst_hosts)
         else:
-            logger.debug(f'Domain {dst_hosts[0]!r} will be resolved on server.')
+            logger.debug('Domain %r will be resolved on server.', dst_hosts[0])
     assert dst_hosts
 
     dst_port = args.udp_connect_port
@@ -718,7 +718,7 @@ async def client_main(args: client_args) -> None:
 
         def connection_made(self, transport: asyncio.BaseTransport) -> None:
 
-            logger.info(f'UDP server started, assigning {client_id = }')
+            logger.info('UDP server started, assigning client_id = %s.', client_id)
 
             self.transport_future.set_result(
                 cast(
@@ -735,14 +735,14 @@ async def client_main(args: client_args) -> None:
             if addr not in addr_to_id:
                 connection_id = uuid.uuid4()
                 addr_to_id[addr] = connection_id
-                logger.info(f'new UDP connection from [{src_host}]:{src_port}, assigning {connection_id = }')
+                logger.info('new UDP connection from [%s]:%d, assigning connection_id = %s.', src_host, src_port, connection_id)
             
             connection_id = addr_to_id[addr]
 
             dst_host = random.choice(dst_hosts)
 
             if len(dst_hosts) > 1:
-                logger.debug(f'DNS returned mulitple IPs, randomly selecting {dst_host!r}.')
+                logger.debug('DNS returned mulitple IPs, randomly selecting %r.', dst_host)
 
             connection = connection_info(
                 src_host=src_host,
@@ -758,13 +758,13 @@ async def client_main(args: client_args) -> None:
                 data=data,
             )
 
-            logger.debug(f'External datagram: {len(msg.data)} bytes from {msg.connection}.')
+            logger.debug('External datagram: %d bytes from %s.', len(msg.data), msg.connection)
 
             put_rotate(udp_to_tcp_queue, msg)
 
         async def send_datagram(self, msg: datagram) -> None:
 
-            logger.debug(f'Internal datagram: {len(msg.data)} bytes from {msg.connection}.')
+            logger.debug('Internal datagram: %d bytes from %s.', len(msg.data), msg.connection)
 
             transport = await self.transport_future
 
@@ -777,10 +777,10 @@ async def client_main(args: client_args) -> None:
             )
 
         def error_received(self, exc: Exception) -> None:
-            logger.warning(f'UDP server received an error: {exc!r}')
+            logger.warning('UDP server received an error: %r.', exc)
 
         def connection_lost(self, exc: Exception | None) -> None:
-            logger.warning(f'UDP server stopped with an error: {exc!r}')
+            logger.warning('UDP server stopped with an error: %r.', exc)
 
     loop = asyncio.get_running_loop()
 
@@ -794,7 +794,7 @@ async def client_main(args: client_args) -> None:
 
         await write_large_chunk_to_stream_writer(writer, tcp_client_hello(client_id))
 
-        logger.info(f'TCP worker #{worker_num} started.')
+        logger.info('TCP worker #%d started.', worker_num)
 
         async def recv_while_can() -> None:
             while 1:
@@ -816,7 +816,7 @@ async def client_main(args: client_args) -> None:
             try:
                 await one_tcp_attempt(worker_num)
             except Exception as exc:
-                logger.warning(f'TCP worker #{worker_num} stopped with an error: {exc!r}')
+                logger.warning('TCP worker #%d stopped with an error: %r.', worker_num, exc)
             await asyncio.sleep(args.reconnect_interval)
     
     async def run_workers() -> None:
