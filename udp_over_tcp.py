@@ -610,6 +610,7 @@ async def server_main(args: server_args) -> None:
             while 1:
                 ct = time.monotonic()
                 if ct - self.last_event_time[0] > args.timeout:
+                    logger.info('Disconnecting UDP client with connection_id = %s by timeout.', self.connection_server_to_client.connection_id)
                     transport = await self.transport_future
                     transport.abort()
                     self.closed = True
