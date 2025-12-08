@@ -588,6 +588,7 @@ async def server_main(args: server_args) -> None:
                     client_id_str = str(context.client_id)
                 except Exception:
                     client_id_str = '(unknown)'
+                print(traceback.format_exc())
                 logger.warning(f'TCP client #{client_id_str} stopped with an error: {exc!r}')
 
     async with await asyncio.start_server(on_tcp_connection, args.tcp_listen_host, args.tcp_listen_port) as server:
