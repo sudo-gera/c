@@ -15,6 +15,7 @@ import os
 import uuid
 import socket
 import ipaddress
+import io
 from typing import *
 from functools import *
 from itertools import *
@@ -473,6 +474,10 @@ def is_ip(host: str) -> bool:
 
 ############################################################################################################################
 
+uuid_bytes_len: Final = len(uuid.uuid4().bytes)
+
+############################################################################################################################
+
 tasks : set[asyncio.Task[None]] = set()
 
 def fire(coro: Awaitable[Any]) -> None:
@@ -493,6 +498,14 @@ class connection_info:
     connection_id: uuid.UUID
     client_id: uuid.UUID
 
+    def __post_init__(self) -> None:
+        assert len(self.src_host.encode()) < 256
+        assert len(self.dst_host.encode()) < 256
+        assert self.src_port in range(2**16)
+        assert self.dst_port in range(2**16)
+        assert len(self.client_id.bytes) == uuid_bytes_len
+        assert len(self.connection_id.bytes) == uuid_bytes_len
+
     def reverse(self) -> connection_info:
         return replace(
             self,
@@ -502,7 +515,56 @@ class connection_info:
             dst_port=self.src_port,
         )
 
-setup_reader_and_writer_for_dataclass(connection_info)
+    @cached_property
+    def to_bytes(self) -> bytes:
+        data = (
+            len(self.src_host).to_bytes(1, 'little')
+            +
+            len(self.dst_host).to_bytes(1, 'little')
+            +
+            self.src_host.encode()
+            +
+            self.dst_host.encode()
+            +
+            self.src_port.to_bytes(2, 'little')
+            +
+            self.dst_port.to_bytes(2, 'little')
+            +
+            self.client_id.bytes
+            +
+            self.connection_id.bytes
+        )
+        return data
+
+    @staticmethod
+    def from_bytes(data: bytes) -> connection_info:
+        stream = io.BytesIO(data)
+        src_host_len = int.from_bytes(stream.read(1), 'little')
+        dst_host_len = int.from_bytes(stream.read(1), 'little')
+        try:
+            return connection_info(
+                src_host=stream.read(src_host_len).decode(),
+                dst_host=stream.read(src_host_len).decode(),
+                src_port=int.from_bytes(stream.read(2), 'little'),
+                dst_port=int.from_bytes(stream.read(2), 'little'),
+                client_id=uuid.UUID(stream.read(uuid_bytes_len).decode()),
+                connection_id=uuid.UUID(stream.read(uuid_bytes_len).decode()),
+            )
+        finally:
+            assert not stream.read()
+
+# setup_reader_and_writer_for_dataclass(connection_info)
+
+@reads_from_stream_reader(connection_info)
+async def read_connection_info_from_stream_reader(reader: asyncio.StreamReader) -> connection_info:
+    data = await read_from_stream_reader(reader, bytes)
+    return connection_info.from_bytes(data)
+
+@writes_to_stream_writer(connection_info)
+async def write_connection_info_to_stream_writer(writer: asyncio.StreamWriter, value: connection_info) -> None:
+    data = value.to_bytes
+    await write_to_stream_writer(writer, data)
+
 
 @dataclass(frozen=True)
 class datagram:
