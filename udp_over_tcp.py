@@ -40,6 +40,29 @@ elif sys.version_info < (3, 11):
 
 ############################################################################################################################
 
+@dataclass(frozen=True)
+class dataclass_field:
+    field: Field[Any]
+    type: Any
+
+@cache
+def get_fields(dclass: DataclassInstance) -> list[dataclass_field]:
+
+    def process_one_filed(field: Field[Any]) -> dataclass_field:
+        assert isinstance(field.type, str)
+        field_type = eval(field.type)
+        return dataclass_field(
+            field=field,
+            type=field_type,
+        )
+
+    return [
+        process_one_filed(field)
+        for field in fields(dclass)
+    ]
+
+############################################################################################################################
+
 logger = logging.getLogger(__name__)
 
 class always_upper_str(str):
@@ -61,30 +84,27 @@ class subparsers_as_dataclass_parser_ctx(Generic[subparsers_as_dataclass_handler
     handler: subparsers_as_dataclass_handler_type
 
 def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass: type[DataclassInstance]) -> None:
-    for field in fields(args_dataclass):
+    for field in get_fields(args_dataclass):
 
-        arg_name = field.name
+        arg_name = field.field.name
         arg_required = True
         arg_type : type[Any]|None = None
         arg_default : Any = None
 
-        assert isinstance(field.type, str)
-        field_type = eval(field.type)
-
-        if field.default is not MISSING:
-            arg_default = field.default
+        if field.field.default is not MISSING:
+            arg_default = field.field.default
             arg_required = False
         
-        if field.default_factory is not MISSING:
-            arg_default = field.default_factory()
+        if field.field.default_factory is not MISSING:
+            arg_default = field.field.default_factory()
             arg_required = False
 
-        if isinstance(field_type, type):
-            arg_type = field_type
+        if isinstance(field.type, type):
+            arg_type = field.type
 
         if sys.version_info >= (3, 9):
-            if isinstance(field_type, types.UnionType):
-                union_args = field_type.__args__
+            if isinstance(field.type, types.UnionType):
+                union_args = field.type.__args__
                 assert len(union_args) == 2
                 assert not arg_required
                 assert type(arg_default) in union_args
@@ -92,8 +112,8 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
                 assert isinstance(non_default_type, type)
                 arg_type = non_default_type
 
-        if get_origin(field_type) is Union:
-            union_args = field_type.__args__
+        if get_origin(field.type) is Union:
+            union_args = field.type.__args__
             assert len(union_args) == 2
             assert not arg_required
             assert type(arg_default) in union_args
@@ -129,7 +149,7 @@ class subparsers_as_dataclass(Generic[subparsers_as_dataclass_handler_type]):
 
     def get_handler(self, args: argparse.Namespace) -> tuple[subparsers_as_dataclass_handler_type, DataclassInstance]:
         ctx = self.dataclasses[vars(args)[self.subparsers.dest]]
-        dataclass_attrs = {field.name for field in fields(ctx.dataclass)}
+        dataclass_attrs = {field.field.name for field in get_fields(ctx.dataclass)}
         return ctx.handler, ctx.dataclass(**{k:v for k,v in vars(args).items() if k in dataclass_attrs})
 
 ############################################################################################################################
@@ -196,36 +216,25 @@ def inherit_stream_reader_and_writer(
 
 def setup_reader_and_writer_for_dataclass(cls: type[DataclassInstance]) -> None:
 
-    for field in fields(cls):
-        assert isinstance(field.type, str)
-        field_type = eval(field.type)
-        assert isinstance(field_type, type)
-
     @reads_from_stream_reader(cls)
     async def read_something_from_stream_reader(reader: asyncio.StreamReader) -> Any:
 
-        async def read_one_field(field: Field[Any]) -> Any:
-            assert isinstance(field.type, str)
-            field_type = eval(field.type)
-            assert isinstance(field_type, type)
-            value: Any = await read_from_stream_reader(reader, field_type)
+        async def read_one_field(field: dataclass_field) -> Any:
+            value: Any = await read_from_stream_reader(reader, field.type)
             return value
         
         return cls(
             **{
-                field.name: await read_one_field(field)
-                for field in fields(cls)
+                field.field.name: await read_one_field(field)
+                for field in get_fields(cls)
             }
         )
 
     @writes_to_stream_writer(cls)
     async def write_something_to_stream_writer(writer: asyncio.StreamWriter, value: Any) -> None:
-        for field in fields(cls):
-            assert isinstance(field.type, str)
-            field_type = eval(field.type)
-            assert isinstance(field_type, type)
-            field_value = getattr(value, field.name)
-            assert type(field_value) == field_type
+        for field in get_fields(cls):
+            field_value = getattr(value, field.field.name)
+            assert type(field_value) == field.type
             await write_to_stream_writer(writer, field_value)
     
 @call
