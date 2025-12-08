@@ -534,7 +534,7 @@ class connection_info:
             +
             self.connection_id.bytes
         )
-        print(data, len(self.src_host), len(self.dst_host))
+        # print(data, len(self.src_host), len(self.dst_host))
         assert len(data) == len(self.src_host) + len(self.dst_host) + 2 + 2 + 16 + 16 + 2
         return data
 
@@ -543,7 +543,7 @@ class connection_info:
         stream = io.BytesIO(data)
         src_host_len = int.from_bytes(stream.read(1), 'little')
         dst_host_len = int.from_bytes(stream.read(1), 'little')
-        print(data, src_host_len, dst_host_len)
+        # print(data, src_host_len, dst_host_len)
         assert len(data) == src_host_len + dst_host_len + 2 + 2 + 16 + 16 + 2
         assert uuid_bytes_len == 16
         try:
