@@ -894,6 +894,7 @@ async def client_main(args: client_args) -> None:
             try:
                 await one_tcp_attempt(worker_num)
             except Exception as exc:
+                print(traceback.format_exc())
                 logger.warning('TCP worker #%d stopped with an error: %r.', worker_num, exc)
             await asyncio.sleep(args.reconnect_interval)
     
