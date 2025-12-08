@@ -8,16 +8,26 @@ import random
 import math
 import fractions
 import sys
+import traceback
+import contextlib
 from typing import *
 from functools import *
 from itertools import *
 from operator import *
 from dataclasses import *
+from collections import *
 from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from _typeshed import DataclassInstance
 
-if sys.version_info < (3, 11):
+if sys.version_info >= (3, 10) and TYPE_CHECKING:
+    from _typeshed import DataclassInstance
+else:
+    DataclassInstance = Any
+
+if sys.version_info < (3, 10):
+    def call(obj: Any, /, *args: Any, **kwargs: Any) -> Any:
+        return obj(*args, **kwargs)
+
+elif sys.version_info < (3, 11):
     from collections.abc import Callable as caCallable
     call_R = TypeVar("call_R")
     call_P = ParamSpec("call_P")
@@ -28,7 +38,7 @@ if sys.version_info < (3, 11):
 
 subparsers_as_dataclass_handler_type = TypeVar('subparsers_as_dataclass_handler_type')
 
-@dataclass
+@dataclass(frozen=True)
 class subparsers_as_dataclass_parser_ctx(Generic[subparsers_as_dataclass_handler_type]):
     dataclass: type[DataclassInstance]
     handler: subparsers_as_dataclass_handler_type
@@ -63,6 +73,18 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
             non_default_type = union_args[union_args[0] == type(arg_default)]
             assert isinstance(non_default_type, type)
             arg_type = non_default_type
+
+        if arg_type is None:
+            z=[type(field_type)]
+            for t in z:
+                z+=t.__bases__
+                print(t)
+            print()
+            z=[type(Union)]
+            for t in z:
+                z+=t.__bases__
+                print(t)
+            print()
 
         assert arg_type is not None
         assert arg_required is not None
@@ -101,7 +123,7 @@ reader_from_stream_reader_signature = Callable[[asyncio.StreamReader], Awaitable
 
 readers_from_stream_reader : dict[type[Any], reader_from_stream_reader_signature] = {}
 
-@dataclass
+@dataclass(frozen=True)
 class reads_from_stream_reader:
     type_to_read: type[Any]
 
@@ -120,7 +142,7 @@ writer_to_stream_writer_signature = Callable[[asyncio.StreamWriter, Any], Awaita
 
 writers_to_stream_writer : dict[type[Any], writer_to_stream_writer_signature] = {}
 
-@dataclass
+@dataclass(frozen=True)
 class writes_to_stream_writer:
     type_to_write: type[Any]
 
@@ -147,41 +169,78 @@ def inherit_stream_reader_and_writer(
     @writes_to_stream_writer(new_type)
     async def write_something_to_stream_writer(writer: asyncio.StreamWriter, value: inherit_stream_reader_and_writer_new_type) -> None:
         await write_to_stream_writer(writer, converter_from_new_to_old(value))
+
+def setup_reader_and_writer_for_dataclass(cls: type[DataclassInstance]) -> None:
+
+    for field in fields(cls):
+        assert isinstance(field.type, str)
+        field_type = eval(field.type)
+        assert isinstance(field_type, type)
+
+    @reads_from_stream_reader(cls)
+    async def read_something_from_stream_reader(reader: asyncio.StreamReader) -> Any:
+
+        async def read_one_field(field: Field[Any]) -> Any:
+            assert isinstance(field.type, str)
+            field_type = eval(field.type)
+            assert isinstance(field_type, type)
+            value: Any = await read_from_stream_reader(reader, field_type)
+            return value
+        
+        return cls(
+            **{
+                field.name: await read_one_field(field)
+                for field in fields(cls)
+            }
+        )
+
+    @writes_to_stream_writer(cls)
+    async def write_something_to_stream_writer(writer: asyncio.StreamWriter, value: Any) -> None:
+        for field in fields(cls):
+            assert isinstance(field.type, str)
+            field_type = eval(field.type)
+            assert isinstance(field_type, type)
+            field_value = getattr(value, field.name)
+            assert type(field_value) == field_type
+            await write_to_stream_writer(writer, field_value)
     
+@call
+def setup_default_types() -> None:
+    # bytes
 
-# bytes
+    @reads_from_stream_reader(bytes)
+    async def read_bytes_from_stream_reader(reader: asyncio.StreamReader) -> bytes:
+        data_len = int.from_bytes(await reader.readexactly(8), 'little')
+        data = await reader.readexactly(data_len)
+        return data
 
-@reads_from_stream_reader(bytes)
-async def read_bytes_from_stream_reader(reader: asyncio.StreamReader) -> bytes:
-    data_len = int.from_bytes(await reader.readexactly(8), 'little')
-    data = await reader.readexactly(data_len)
-    return data
+    @writes_to_stream_writer(bytes)
+    async def write_bytes_to_stream_writer(writer: asyncio.StreamWriter, value: bytes) -> None:
+        writer.write(len(value).to_bytes(8, 'little'))
+        writer.write(value)
+        await writer.drain()
 
-@writes_to_stream_writer(bytes)
-async def write_bytes_to_stream_writer(writer: asyncio.StreamWriter, value: bytes) -> None:
-    writer.write(len(value).to_bytes(8, 'little'))
-    writer.write(value)
-    await writer.drain()
+    # bytearray
 
-# bytearray
+    inherit_stream_reader_and_writer(bytearray, bytes, bytearray, bytes)
 
-inherit_stream_reader_and_writer(bytearray, bytes, bytearray, bytes)
+    # str
 
-# str
+    inherit_stream_reader_and_writer(str, bytes, methodcaller('decode'), methodcaller('encode'))
 
-inherit_stream_reader_and_writer(str, bytes, methodcaller('decode'), methodcaller('encode'))
+    # int
 
-# int
+    inherit_stream_reader_and_writer(int, str, int, str)
 
-inherit_stream_reader_and_writer(int, str, int, str)
+    # fractions.Fraction
 
-# fractions.Fraction
+    inherit_stream_reader_and_writer(fractions.Fraction, str, fractions.Fraction, str)
 
-inherit_stream_reader_and_writer(fractions.Fraction, str, fractions.Fraction, str)
+    # float
 
-# float
+    inherit_stream_reader_and_writer(float, fractions.Fraction, float, fractions.Fraction)
 
-inherit_stream_reader_and_writer(float, fractions.Fraction, float, fractions.Fraction)
+############################################################################################################################
 
 @call
 def reader_and_writer_test() -> None:
@@ -208,7 +267,7 @@ def reader_and_writer_test() -> None:
         def get_extra_info(self, name: str, default: Any = None) -> Any:
             return self._extra.get(name, default)
 
-        def write(self, data: bytes) -> None:
+        def write(self, data: bytes | bytearray | memoryview) -> None:
             if self._closed:
                 raise RuntimeError("Transport is closed")
 
@@ -217,9 +276,9 @@ def reader_and_writer_test() -> None:
             # Schedule delivery to mimic real async transports
             loop.call_soon(self._deliver, data)
 
-        def _deliver(self, data: bytes) -> None:
+        def _deliver(self, data: bytes | bytearray | memoryview) -> None:
             try:
-                self._protocol.data_received(data)
+                self._protocol.data_received(bytes(data))
             finally:
                 self._write_buffer_size -= len(data)
 
@@ -286,28 +345,33 @@ def reader_and_writer_test() -> None:
 
 ############################################################################################################################
 
-
-
-@dataclass
-class datagram:
+@dataclass(frozen=True)
+class connection_info:
     src_host: str
     src_port: int
     dst_host: str
     dst_port: int
-    data: bytes
+    connection_id: bytes
     client_id: bytes
 
-    # @classmethod
-    # def from_async_streamreader(cls, reader: asyncio.StreamReader):
-    #     ...
-    
-    # def to_async_streamwriter(cls, writer: asyncio.StreamWriter):
-        
+setup_reader_and_writer_for_dataclass(connection_info)
+
+@dataclass(frozen=True)
+class datagram:
+    connection: connection_info
+    data: bytes
+
+setup_reader_and_writer_for_dataclass(datagram)
+
+@dataclass(frozen=True)
+class tcp_client_hello:
+    client_id: bytes
+
+setup_reader_and_writer_for_dataclass(tcp_client_hello)
 
 ############################################################################################################################
 
-
-@dataclass
+@dataclass(frozen=True)
 class server_args:
     tcp_listen_host: str
     tcp_listen_port: int
@@ -315,13 +379,124 @@ class server_args:
     timeout: float
 
     datagram_buffer_len: int
+    z_: int | None = None
+    x_: str | int = ''
+    c_: Union[int, None] = None
+    v_: Union[str, int] = ''
 
 async def server_main(args: server_args) -> None:
-    print(args)
+    
+    @dataclass(frozen=True)
+    class tcp_client_context:
+        client_id: bytes
+        server_to_client_queue: asyncio.Queue[datagram] = field(
+            default_factory=lambda: asyncio.Queue(
+                maxsize=args.datagram_buffer_len
+            )
+        )
+
+    tcp_client_contexts : dict[bytes, tcp_client_context] = {}
+
+    def get_tcp_client_context(client_id: bytes) -> tcp_client_context:
+        if client_id not in tcp_client_contexts:
+            tcp_client_contexts[client_id] = tcp_client_context(client_id)
+        return tcp_client_contexts[client_id]
+
+    @dataclass(frozen=True)
+    class udp_client_protocol(asyncio.DatagramProtocol):
+        connection: connection_info
+        transport_future: asyncio.Future[asyncio.DatagramTransport] = field(default_factory=asyncio.Future)
+
+        def connection_made(self, transport: asyncio.BaseTransport) -> None:
+            self.transport_future.set_result(
+                cast(
+                    asyncio.DatagramTransport,
+                    transport
+                )
+            )
+
+        def datagram_received(self, data: bytes, weird_src_addr: tuple[str | Any, int]) -> None:
+            src_host, src_port = weird_src_addr
+            assert isinstance(src_host, str)
+            addr = src_host, src_port
+
+            connection = self.connection
+
+            msg = datagram(
+                connection=connection,
+                data=data,
+            )
+
+            client_context = get_tcp_client_context(client_id=connection.client_id)
+
+            if client_context.server_to_client_queue.full():
+                client_context.server_to_client_queue.get_nowait()
+            
+            client_context.server_to_client_queue.put_nowait(msg)
+
+        async def send_datagram(self, msg: datagram) -> None:
+            transport = await self.transport_future
+            transport.sendto(
+                data = msg.data,
+                addr = (
+                    msg.connection.dst_host,
+                    msg.connection.dst_port,
+                ),
+            )
+
+        def error_received(self, exc: Exception) -> None:
+            print('Error received:', exc, type(exc))
+
+        def connection_lost(self, exc: Exception | None) -> None:
+            print('Connection lost:', exc, type(exc))
+
+    udp_clients : dict[bytes, udp_client_protocol] = {}
+
+    async def get_udp_client(msg: datagram) -> udp_client_protocol:
+        if msg.connection.connection_id not in udp_clients:
+
+            loop = asyncio.get_running_loop()
+
+            transport, protocol = await loop.create_datagram_endpoint(
+                lambda: udp_client_protocol(msg.connection),
+                remote_addr=(msg.connection.dst_host, msg.connection.dst_port),
+            )
+
+            udp_clients[msg.connection.connection_id] = udp_client_protocol(
+                connection=msg.connection,
+            )
+        return udp_clients[msg.connection.connection_id]
+
+    async def on_tcp_connection(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+        with contextlib.closing(writer):
+            
+            client_hello = await read_from_stream_reader(reader, tcp_client_hello)
+
+            context = get_tcp_client_context(client_hello.client_id)
+
+            async def recv_while_can() -> None:
+                while 1:
+                    msg = await read_from_stream_reader(reader, datagram)
+                    udp_client = await get_udp_client(msg)
+                    await udp_client.send_datagram(msg)
+            
+            async def send_while_can() -> None:
+                while 1:
+                    msg = await context.server_to_client_queue.get()
+                    await write_to_stream_writer(writer, msg)
+            
+            await asyncio.gather(
+                recv_while_can(),
+                send_while_can(),
+            )
+
+
+    async with await asyncio.start_server(on_tcp_connection, args.tcp_listen_host, args.tcp_listen_port) as server:
+        await server.serve_forever()
 
 ############################################################################################################################
 
-@dataclass
+@dataclass(frozen=True)
 class client_args:
     tcp_connect_host: str
     tcp_connect_port: int
@@ -334,42 +509,74 @@ class client_args:
 
     datagram_buffer_len: int
 
+    reconnect_interval: float
+    workers: int
+
 async def client_main(args: client_args) -> None:
 
-    client_id = random.randbytes(16)
+    addr_to_id : dict[tuple[str, int], bytes] = {}
 
     udp_to_tcp_queue: asyncio.Queue[datagram] = asyncio.Queue(maxsize=args.datagram_buffer_len)
 
+    client_id = random.randbytes(16)
+
+    @dataclass(frozen=True)
     class udp_server_protocol(asyncio.DatagramProtocol):
+        transport_future: asyncio.Future[asyncio.DatagramTransport] = field(default_factory=asyncio.Future)
 
         def connection_made(self, transport: asyncio.BaseTransport) -> None:
-            self.transport = cast(asyncio.DatagramTransport, transport)
+            self.transport_future.set_result(
+                cast(
+                    asyncio.DatagramTransport,
+                    transport
+                )
+            )
 
         def datagram_received(self, data: bytes, weird_src_addr: tuple[str | Any, int]) -> None:
             src_host, src_port = weird_src_addr
             assert isinstance(src_host, str)
-            src_addr = src_host, src_port
+            addr = src_host, src_port
 
-            msg = datagram(
+            if addr not in addr_to_id:
+                connection_id = random.randbytes(16)
+                addr_to_id[addr] = connection_id
+            
+            connection_id = addr_to_id[addr]
+
+            connection = connection_info(
                 src_host=src_host,
                 src_port=src_port,
                 dst_host=args.udp_connect_host,
                 dst_port=args.udp_connect_port,
-                data=data,
+                connection_id=connection_id,
                 client_id=client_id,
             )
 
-            if not udp_to_tcp_queue.full():
-                udp_to_tcp_queue.put_nowait(msg)
+            msg = datagram(
+                connection=connection,
+                data=data,
+            )
+
+            if udp_to_tcp_queue.full():
+                udp_to_tcp_queue.get_nowait()
+
+            udp_to_tcp_queue.put_nowait(msg)
         
-        def send_datagramm(self, msg: datagram) -> None:
-            self.transport.sendto(
+        async def send_datagram(self, msg: datagram) -> None:
+            transport = await self.transport_future
+            transport.sendto(
                 data = msg.data,
                 addr = (
-                    msg.dst_host,
-                    msg.dst_port,
+                    msg.connection.dst_host,
+                    msg.connection.dst_port,
                 ),
             )
+
+        def error_received(self, exc: Exception) -> None:
+            print('Error received:', exc, type(exc))
+
+        def connection_lost(self, exc: Exception | None) -> None:
+            print('Connection lost:', exc, type(exc))
 
     loop = asyncio.get_running_loop()
 
@@ -378,14 +585,45 @@ async def client_main(args: client_args) -> None:
         local_addr=(args.udp_listen_host, args.udp_listen_port)
     )
 
-    # class one_tcp_attempt:
-        
-    #     async def main():
-    #         reader, writer = await asyncio.open_connection(args.tcp_connect_host, args.tcp_connect_port)
+    async def one_tcp_attempt() -> None:
+        reader, writer = await asyncio.open_connection(args.tcp_connect_host, args.tcp_connect_port)
 
+        await write_to_stream_writer(writer, tcp_client_hello(client_id))
+
+        async def recv_while_can() -> None:
+            while 1:
+                msg = await read_from_stream_reader(reader, datagram)
+                await protocol.send_datagram(msg)
+        
+        async def send_while_can() -> None:
+            while 1:
+                msg = await udp_to_tcp_queue.get()
+                await write_to_stream_writer(writer, msg)
+        
+        await asyncio.gather(
+            recv_while_can(),
+            send_while_can(),
+        )
+
+    async def one_worker() -> None:
+        while 1:
+            try:
+                await one_tcp_attempt()
+            except Exception:
+                err_text = traceback.format_exc()
+                print(err_text, file=sys.stderr)
+            await asyncio.sleep(args.reconnect_interval)
+    
+    async def run_workers() -> None:
+        await asyncio.gather(
+            *[
+                one_worker()
+                for i in range(args.workers)
+            ]
+        )
 
     try:
-        await asyncio.Future()
+        await run_workers()
     finally:
         transport.close()
 
