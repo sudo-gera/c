@@ -74,17 +74,14 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
             assert isinstance(non_default_type, type)
             arg_type = non_default_type
 
-        if arg_type is None:
-            z=[type(field_type)]
-            for t in z:
-                z+=t.__bases__
-                print(t)
-            print()
-            z=[type(Union)]
-            for t in z:
-                z+=t.__bases__
-                print(t)
-            print()
+        if get_origin(field_type) is Union:
+            union_args = field_type.__args__
+            assert len(union_args) == 2
+            assert not arg_required
+            assert type(arg_default) in union_args
+            non_default_type = union_args[union_args[0] == type(arg_default)]
+            assert isinstance(non_default_type, type)
+            arg_type = non_default_type
 
         assert arg_type is not None
         assert arg_required is not None
@@ -379,10 +376,6 @@ class server_args:
     timeout: float
 
     datagram_buffer_len: int
-    z_: int | None = None
-    x_: str | int = ''
-    c_: Union[int, None] = None
-    v_: Union[str, int] = ''
 
 async def server_main(args: server_args) -> None:
     
