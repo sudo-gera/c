@@ -204,14 +204,7 @@ class writes_to_stream_writer:
 write_to_stream_writer_ongoing_requests = 0
 
 async def write_to_stream_writer(writer: asyncio.StreamWriter, value: Any) -> None:
-    global write_to_stream_writer_ongoing_requests
-    write_to_stream_writer_ongoing_requests += 1
-    try:
-        await writers_to_stream_writer[type(value)](writer, value)
-        if write_to_stream_writer_ongoing_requests == 1:
-            await writer.drain()
-    finally:
-        write_to_stream_writer_ongoing_requests -= 1
+    await writers_to_stream_writer[type(value)](writer, value)
 
 inherit_stream_reader_and_writer_new_type = TypeVar('inherit_stream_reader_and_writer_new_type')
 inherit_stream_reader_and_writer_old_type = TypeVar('inherit_stream_reader_and_writer_old_type')
@@ -261,12 +254,12 @@ def setup_default_types() -> None:
     async def read_bytes_from_stream_reader(reader: asyncio.StreamReader) -> bytes:
         data_len = int.from_bytes(await reader.readexactly(8), 'little')
         value = await reader.readexactly(data_len)
-        tcp_bytes_recv_count.add(8 + len(value))
+        # tcp_bytes_recv_count.add(8 + len(value))
         return value
 
     @writes_to_stream_writer(bytes)
     async def write_bytes_to_stream_writer(writer: asyncio.StreamWriter, value: bytes) -> None:
-        tcp_bytes_send_count.add(8 + len(value))
+        # tcp_bytes_send_count.add(8 + len(value))
         writer.write(len(value).to_bytes(8, 'little'))
         writer.write(value)
         # await writer.drain()
@@ -441,6 +434,15 @@ def put_rotate(q: asyncio.Queue[put_rotate_type], v: put_rotate_type) -> None:
         q.get_nowait()
     q.put_nowait(v)
 
+get_all_type = TypeVar('get_all_type')
+
+async def get_all(q: asyncio.Queue[get_all_type]) -> list[get_all_type]:
+    item = await q.get()
+    result = [item] * (q.qsize() + 1)
+    for i in range(q.qsize()):
+        result[i+1] = q.get_nowait()
+    return result
+
 ############################################################################################################################
 
 async def resolve_domain(domain: str) -> list[str]:
@@ -514,6 +516,10 @@ class tcp_client_hello:
     client_id: uuid.UUID
 
 setup_reader_and_writer_for_dataclass(tcp_client_hello)
+
+@dataclass(frozen=True)
+class datagram_batch:
+    items: tuple[datagram, ...]
 
 ############################################################################################################################
 
@@ -646,15 +652,16 @@ async def server_main(args: server_args) -> None:
 
                 async def recv_while_can() -> None:
                     while 1:
-                        msg = await read_large_chunk_from_stream_reader(reader, datagram)
+                        msg_batch = await read_large_chunk_from_stream_reader(reader, datagram_batch)
 
-                        udp_client = await get_udp_client(msg)
-                        await udp_client.send_datagram(msg)
+                        for msg in msg_batch.items:
+                            udp_client = await get_udp_client(msg)
+                            await udp_client.send_datagram(msg)
                 
                 async def send_while_can() -> None:
                     while 1:
-                        msg = await context.server_to_client_queue.get()
-                        await write_large_chunk_to_stream_writer(writer, msg)
+                        msg_list = await get_all(context.server_to_client_queue)
+                        await write_large_chunk_to_stream_writer(writer, datagram_batch(tuple(msg_list)))
                 
                 await asyncio.gather(
                     recv_while_can(),
@@ -798,14 +805,16 @@ async def client_main(args: client_args) -> None:
 
         async def recv_while_can() -> None:
             while 1:
-                msg = await read_large_chunk_from_stream_reader(reader, datagram)
-                await protocol.send_datagram(msg)
+                msg_batch = await read_large_chunk_from_stream_reader(reader, datagram_batch)
+
+                for msg in msg_batch.items:
+                    await protocol.send_datagram(msg)
         
         async def send_while_can() -> None:
             while 1:
-                msg = await udp_to_tcp_queue.get()
-                await write_large_chunk_to_stream_writer(writer, msg)
-        
+                msg_list = await get_all(udp_to_tcp_queue)
+                await write_large_chunk_to_stream_writer(writer, datagram_batch(tuple(msg_list)))
+
         await asyncio.gather(
             recv_while_can(),
             send_while_can(),
