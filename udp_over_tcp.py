@@ -526,24 +526,10 @@ async def server_main(args: server_args) -> None:
     async def get_udp_client(msg: datagram) -> udp_client_protocol:
         if msg.connection.connection_id not in udp_clients:
 
-            dst_hosts = [msg.connection.dst_host]
-
-            if not is_ip(dst_hosts[0]):
-                logger.debug(f'Resolving domain {dst_hosts[0]!r}...')
-                dst_hosts = await resolve_domain(dst_hosts[0])
-                logger.debug(f'Resolved into {dst_hosts}')
-
-            dst_host = random.choice(dst_hosts)
-
-            if len(dst_hosts) > 1:
-                logger.debug(f'DNS returned mulitple IPs, randomly selecting {dst_host!r}.')
-
-            dst_port = msg.connection.dst_port
-
             loop = asyncio.get_running_loop()
             transport, protocol = await loop.create_datagram_endpoint(
                 lambda: udp_client_protocol(msg.connection),
-                remote_addr=(dst_host, dst_port),
+                remote_addr=(msg.connection.dst_host, msg.connection.dst_port),
             )
 
             udp_clients[msg.connection.connection_id] = protocol
@@ -563,6 +549,27 @@ async def server_main(args: server_args) -> None:
                 async def recv_while_can() -> None:
                     while 1:
                         msg = await read_from_stream_reader(reader, datagram)
+
+                        dst_hosts = [msg.connection.dst_host]
+
+                        if not is_ip(dst_hosts[0]):
+                            logger.debug(f'Resolving domain {dst_hosts[0]!r}...')
+                            dst_hosts = await resolve_domain(dst_hosts[0])
+                            logger.debug(f'Resolved into {dst_hosts}')
+
+                        dst_host = random.choice(dst_hosts)
+
+                        if len(dst_hosts) > 1:
+                            logger.debug(f'DNS returned mulitple IPs, randomly selecting {dst_host!r}.')
+
+                        msg = replace(
+                            msg,
+                            connection=replace(
+                                msg.connection,
+                                dst_host=dst_host,
+                            )
+                        )
+
                         udp_client = await get_udp_client(msg)
                         await udp_client.send_datagram(msg)
                 
