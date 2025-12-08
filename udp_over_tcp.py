@@ -10,13 +10,15 @@ import fractions
 import sys
 import traceback
 import contextlib
+import logging
+import os
+import uuid
 from typing import *
 from functools import *
 from itertools import *
 from operator import *
 from dataclasses import *
 from collections import *
-from typing import TYPE_CHECKING
 
 if sys.version_info >= (3, 10) and TYPE_CHECKING:
     from _typeshed import DataclassInstance
@@ -33,6 +35,19 @@ elif sys.version_info < (3, 11):
     call_P = ParamSpec("call_P")
     def call(obj: caCallable[call_P, call_R], /, *args: call_P.args, **kwargs: call_P.kwargs) -> call_R:
         return obj(*args, **kwargs)
+
+############################################################################################################################
+
+logger = logging.getLogger(__name__)
+
+class always_upper_str(str):
+    def __new__(cls, *args, **kwargs):
+        value = str(*args, **kwargs).upper()
+        return super().__new__(cls, value)
+
+logging_levels = [name for name in dir(logging) if isinstance(logging.getLevelName(name), int)]
+
+logging_levels_case_insensitive = [always_upper_str(a) for a in logging_levels]
 
 ############################################################################################################################
 
@@ -65,14 +80,15 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
         if isinstance(field_type, type):
             arg_type = field_type
 
-        if isinstance(field_type, types.UnionType):
-            union_args = field_type.__args__
-            assert len(union_args) == 2
-            assert not arg_required
-            assert type(arg_default) in union_args
-            non_default_type = union_args[union_args[0] == type(arg_default)]
-            assert isinstance(non_default_type, type)
-            arg_type = non_default_type
+        if sys.version_info >= (3, 9):
+            if isinstance(field_type, types.UnionType):
+                union_args = field_type.__args__
+                assert len(union_args) == 2
+                assert not arg_required
+                assert type(arg_default) in union_args
+                non_default_type = union_args[union_args[0] == type(arg_default)]
+                assert isinstance(non_default_type, type)
+                arg_type = non_default_type
 
         if get_origin(field_type) is Union:
             union_args = field_type.__args__
@@ -237,6 +253,10 @@ def setup_default_types() -> None:
 
     inherit_stream_reader_and_writer(float, fractions.Fraction, float, fractions.Fraction)
 
+    # UUID
+
+    inherit_stream_reader_and_writer(uuid.UUID, str, uuid.UUID, str)
+
 ############################################################################################################################
 
 @call
@@ -342,14 +362,23 @@ def reader_and_writer_test() -> None:
 
 ############################################################################################################################
 
+put_rotate_type = TypeVar('put_rotate_type')
+
+def put_rotate(q: asyncio.Queue[put_rotate_type], v: put_rotate_type) -> None:
+    if q.full():
+        q.get_nowait()
+    q.put_nowait(v)
+
+############################################################################################################################
+
 @dataclass(frozen=True)
 class connection_info:
     src_host: str
     src_port: int
     dst_host: str
     dst_port: int
-    connection_id: bytes
-    client_id: bytes
+    connection_id: uuid.UUID
+    client_id: uuid.UUID
 
 setup_reader_and_writer_for_dataclass(connection_info)
 
@@ -362,7 +391,7 @@ setup_reader_and_writer_for_dataclass(datagram)
 
 @dataclass(frozen=True)
 class tcp_client_hello:
-    client_id: bytes
+    client_id: uuid.UUID
 
 setup_reader_and_writer_for_dataclass(tcp_client_hello)
 
@@ -381,16 +410,16 @@ async def server_main(args: server_args) -> None:
     
     @dataclass(frozen=True)
     class tcp_client_context:
-        client_id: bytes
+        client_id: uuid.UUID
         server_to_client_queue: asyncio.Queue[datagram] = field(
             default_factory=lambda: asyncio.Queue(
                 maxsize=args.datagram_buffer_len
             )
         )
 
-    tcp_client_contexts : dict[bytes, tcp_client_context] = {}
+    tcp_client_contexts : dict[uuid.UUID, tcp_client_context] = {}
 
-    def get_tcp_client_context(client_id: bytes) -> tcp_client_context:
+    def get_tcp_client_context(client_id: uuid.UUID) -> tcp_client_context:
         if client_id not in tcp_client_contexts:
             tcp_client_contexts[client_id] = tcp_client_context(client_id)
         return tcp_client_contexts[client_id]
@@ -422,10 +451,7 @@ async def server_main(args: server_args) -> None:
 
             client_context = get_tcp_client_context(client_id=connection.client_id)
 
-            if client_context.server_to_client_queue.full():
-                client_context.server_to_client_queue.get_nowait()
-            
-            client_context.server_to_client_queue.put_nowait(msg)
+            put_rotate(client_context.server_to_client_queue, msg)
 
         async def send_datagram(self, msg: datagram) -> None:
             transport = await self.transport_future
@@ -438,12 +464,12 @@ async def server_main(args: server_args) -> None:
             )
 
         def error_received(self, exc: Exception) -> None:
-            print('Error received:', exc, type(exc))
+            logger.warning(f'UDP server received an error: {exc!r}')
 
         def connection_lost(self, exc: Exception | None) -> None:
-            print('Connection lost:', exc, type(exc))
+            logger.warning(f'UDP server stopped with an error: {exc!r}')
 
-    udp_clients : dict[bytes, udp_client_protocol] = {}
+    udp_clients : dict[uuid.UUID, udp_client_protocol] = {}
 
     async def get_udp_client(msg: datagram) -> udp_client_protocol:
         if msg.connection.connection_id not in udp_clients:
@@ -507,17 +533,19 @@ class client_args:
 
 async def client_main(args: client_args) -> None:
 
-    addr_to_id : dict[tuple[str, int], bytes] = {}
+    addr_to_id : dict[tuple[str, int], uuid.UUID] = {}
 
     udp_to_tcp_queue: asyncio.Queue[datagram] = asyncio.Queue(maxsize=args.datagram_buffer_len)
 
-    client_id = random.randbytes(16)
+    client_id = uuid.uuid4()
+
 
     @dataclass(frozen=True)
     class udp_server_protocol(asyncio.DatagramProtocol):
         transport_future: asyncio.Future[asyncio.DatagramTransport] = field(default_factory=asyncio.Future)
 
         def connection_made(self, transport: asyncio.BaseTransport) -> None:
+            logger.info(f'UDP server started, assigning id={client_id}')
             self.transport_future.set_result(
                 cast(
                     asyncio.DatagramTransport,
@@ -531,8 +559,9 @@ async def client_main(args: client_args) -> None:
             addr = src_host, src_port
 
             if addr not in addr_to_id:
-                connection_id = random.randbytes(16)
+                connection_id = uuid.uuid4()
                 addr_to_id[addr] = connection_id
+                logger.info(f'new UDP connection from [{src_host}]:{src_port}, assigning id={connection_id}')
             
             connection_id = addr_to_id[addr]
 
@@ -545,16 +574,15 @@ async def client_main(args: client_args) -> None:
                 client_id=client_id,
             )
 
+            logger.debug(f'External datagram {len(data)} bytes from {connection}.')
+
             msg = datagram(
                 connection=connection,
                 data=data,
             )
 
-            if udp_to_tcp_queue.full():
-                udp_to_tcp_queue.get_nowait()
+            put_rotate(udp_to_tcp_queue, msg)
 
-            udp_to_tcp_queue.put_nowait(msg)
-        
         async def send_datagram(self, msg: datagram) -> None:
             transport = await self.transport_future
             transport.sendto(
@@ -566,10 +594,10 @@ async def client_main(args: client_args) -> None:
             )
 
         def error_received(self, exc: Exception) -> None:
-            print('Error received:', exc, type(exc))
+            logger.warning(f'UDP server received an error: {exc!r}')
 
         def connection_lost(self, exc: Exception | None) -> None:
-            print('Connection lost:', exc, type(exc))
+            logger.warning(f'UDP server stopped with an error: {exc!r}')
 
     loop = asyncio.get_running_loop()
 
@@ -604,7 +632,7 @@ async def client_main(args: client_args) -> None:
                 await one_tcp_attempt()
             except Exception:
                 err_text = traceback.format_exc()
-                print(err_text, file=sys.stderr)
+                # print(err_text, file=sys.stderr)
             await asyncio.sleep(args.reconnect_interval)
     
     async def run_workers() -> None:
@@ -626,6 +654,8 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
 
+    parser.add_argument('--log-level', default='INFO', required=False, choices=logging_levels_case_insensitive, type=always_upper_str)
+
     subparsers : subparsers_as_dataclass[Callable[[Any], Coroutine[Any, Any, None]]]
     subparsers = subparsers_as_dataclass(
         parser.add_subparsers(dest='mode', required=True)
@@ -637,10 +667,22 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    logging.basicConfig(
+        level=cast(str, args.log_level).upper(),
+        style='{',
+        format='{asctime} {levelname:^8s} {funcName}:{lineno} {message}',
+        # stream=...,
+    )
+
+    logger.debug(args)
+
     parser_name = args.mode
     assert isinstance(parser_name, str)
     handler, arg = subparsers.get_handler(args)
     
-    asyncio.run(handler(arg))
+    try:
+        asyncio.run(handler(arg))
+    except KeyboardInterrupt:
+        pass
 
 
