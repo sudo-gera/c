@@ -154,6 +154,22 @@ class subparsers_as_dataclass(Generic[subparsers_as_dataclass_handler_type]):
 
 ############################################################################################################################
 
+class print_count_on_exit:
+    def __init__(self, name: str) -> None:
+        self.value = 0
+        self.name = name
+    
+    def add(self, value: int) -> None:
+        self.value += value
+    
+    def __del__(self, *a: Any) -> None:
+        print(self.name, self.value)
+
+############################################################################################################################
+
+tcp_bytes_send_count = print_count_on_exit('tcp_bytes_send_count')
+tcp_bytes_recv_count = print_count_on_exit('tcp_bytes_recv_count')
+
 reader_from_stream_reader_signature = Callable[[asyncio.StreamReader], Awaitable[Any]]
 
 readers_from_stream_reader : dict[type[Any], reader_from_stream_reader_signature] = {}
@@ -244,11 +260,13 @@ def setup_default_types() -> None:
     @reads_from_stream_reader(bytes)
     async def read_bytes_from_stream_reader(reader: asyncio.StreamReader) -> bytes:
         data_len = int.from_bytes(await reader.readexactly(8), 'little')
-        data = await reader.readexactly(data_len)
-        return data
+        value = await reader.readexactly(data_len)
+        tcp_bytes_recv_count.add(8 + len(value))
+        return value
 
     @writes_to_stream_writer(bytes)
     async def write_bytes_to_stream_writer(writer: asyncio.StreamWriter, value: bytes) -> None:
+        tcp_bytes_send_count.add(8 + len(value))
         writer.write(len(value).to_bytes(8, 'little'))
         writer.write(value)
         # await writer.drain()
