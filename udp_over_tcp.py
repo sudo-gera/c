@@ -398,12 +398,30 @@ def reader_and_writer_test() -> None:
 
 ############################################################################################################################
 
+# async def write_large_chunk_to_stream_writer(writer: asyncio.StreamWriter, value: Any) -> None:
+#     mem_reader, mem_writer = await create_in_memory_stream()
+#     await write_to_stream_writer(mem_writer, value)
+#     mem_writer.close()
+#     await mem_writer.wait_closed()
+#     data = await mem_reader.read()
+#     assert isinstance(data, bytes)
+#     await write_to_stream_writer(writer, data)
+#     await writer.drain()
+
+# read_large_chunk_from_stream_reader_type_to_read = TypeVar('read_large_chunk_from_stream_reader_type_to_read')
+
+# async def read_large_chunk_from_stream_reader(reader: asyncio.StreamReader, type_to_read: type[read_large_chunk_from_stream_reader_type_to_read]) -> read_large_chunk_from_stream_reader_type_to_read:
+#     data = await read_from_stream_reader(reader, bytes)
+#     mem_reader, mem_writer = await create_in_memory_stream()
+#     mem_writer.write(data)
+#     mem_writer.close()
+#     await mem_writer.wait_closed()
+#     return await read_from_stream_reader(mem_reader, type_to_read)
+
+import pickle
+
 async def write_large_chunk_to_stream_writer(writer: asyncio.StreamWriter, value: Any) -> None:
-    mem_reader, mem_writer = await create_in_memory_stream()
-    await write_to_stream_writer(mem_writer, value)
-    mem_writer.close()
-    await mem_writer.wait_closed()
-    data = await mem_reader.read()
+    data = pickle.dumps(value)
     assert isinstance(data, bytes)
     await write_to_stream_writer(writer, data)
     await writer.drain()
@@ -412,11 +430,7 @@ read_large_chunk_from_stream_reader_type_to_read = TypeVar('read_large_chunk_fro
 
 async def read_large_chunk_from_stream_reader(reader: asyncio.StreamReader, type_to_read: type[read_large_chunk_from_stream_reader_type_to_read]) -> read_large_chunk_from_stream_reader_type_to_read:
     data = await read_from_stream_reader(reader, bytes)
-    mem_reader, mem_writer = await create_in_memory_stream()
-    mem_writer.write(data)
-    mem_writer.close()
-    await mem_writer.wait_closed()
-    return await read_from_stream_reader(mem_reader, type_to_read)
+    return cast(read_large_chunk_from_stream_reader_type_to_read, pickle.loads(data))
 
 ############################################################################################################################
 
@@ -820,8 +834,7 @@ async def client_main(args: client_args) -> None:
 
 ############################################################################################################################
 
-if __name__ == '__main__':
-
+def main(argv: list[str]) -> None:
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--log-level', default='INFO', required=False, choices=logging_levels_case_insensitive, type=always_upper_str)
@@ -835,7 +848,7 @@ if __name__ == '__main__':
 
     subparsers.add_subparser_from_dataclass('client', client_args, client_main)
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     logging.basicConfig(
         level=cast(str, args.log_level).upper(),
@@ -855,4 +868,5 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         pass
 
-
+if __name__ == '__main__':
+    main(sys.argv[1:])
