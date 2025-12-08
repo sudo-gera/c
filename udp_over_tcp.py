@@ -569,21 +569,15 @@ async def server_main(args: server_args) -> None:
             )
 
         def datagram_received(self, data: bytes, weird_src_addr: tuple[str | Any, int]) -> None:
-            src_host = weird_src_addr[0]
-            src_port = weird_src_addr[1]
-            assert isinstance(src_host, str)
-            addr = src_host, src_port
-
-            connection = self.connection_server_to_client
 
             msg = datagram(
-                connection=connection,
+                connection=self.connection_server_to_client,
                 data=data,
             )
 
             logger.debug('External datagram: %d bytes from %s.', len(msg.data), msg.connection)
 
-            client_context = get_tcp_client_context(client_id=connection.client_id)
+            client_context = get_tcp_client_context(client_id=msg.connection.client_id)
 
             put_rotate(client_context.server_to_client_queue, msg)
 
@@ -748,8 +742,7 @@ async def client_main(args: client_args) -> None:
 
             dst_host = random.choice(dst_hosts)
 
-            if len(dst_hosts) > 1:
-                logger.debug('DNS returned mulitple IPs, randomly selecting %r.', dst_host)
+            logger.debug('From IPs returned by DNS randomly selecting %r.', dst_host)
 
             connection = connection_info(
                 src_host=src_host,
