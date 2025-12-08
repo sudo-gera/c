@@ -476,11 +476,8 @@ async def server_main(args: server_args) -> None:
 
     @dataclass(frozen=True)
     class udp_client_protocol(asyncio.DatagramProtocol):
-        connection_client_to_server: connection_info
+        connection_server_to_client: connection_info
         transport_future: asyncio.Future[asyncio.DatagramTransport] = field(default_factory=asyncio.Future)
-
-        def __post_init__(self) -> None:
-            self.connection_server_to_client = self.connection_client_to_server.reverse()
 
         def connection_made(self, transport: asyncio.BaseTransport) -> None:
 
@@ -557,7 +554,9 @@ async def server_main(args: server_args) -> None:
 
             loop = asyncio.get_running_loop()
             transport, protocol = await loop.create_datagram_endpoint(
-                lambda: udp_client_protocol(msg.connection),
+                lambda: udp_client_protocol(
+                    connection_server_to_client=msg.connection.reverse(),
+                ),
                 remote_addr=(msg.connection.dst_host, msg.connection.dst_port),
             )
 
