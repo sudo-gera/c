@@ -13,6 +13,8 @@ import contextlib
 import logging
 import os
 import uuid
+import socket
+import ipaddress
 from typing import *
 from functools import *
 from itertools import *
@@ -371,6 +373,45 @@ def put_rotate(q: asyncio.Queue[put_rotate_type], v: put_rotate_type) -> None:
 
 ############################################################################################################################
 
+async def resolve_domain(domain: str) -> list[str]:
+    loop = asyncio.get_event_loop()
+    
+    addrinfo = await loop.run_in_executor(
+        None,
+        lambda: socket.getaddrinfo(domain, None, proto=socket.IPPROTO_TCP)
+    )
+    
+    result : set[str] = set()
+
+    for info in addrinfo:
+        ip = info[4][0]
+        assert isinstance(ip, str)
+        result.add(ip)
+
+    return list(result)
+
+############################################################################################################################
+
+def is_ip(host: str) -> bool:
+    try:
+        ipaddress.ip_address(host)
+        return True
+    except ValueError:
+        return False
+
+############################################################################################################################
+
+tasks : set[asyncio.Task[None]] = set()
+
+def fire(coro: Awaitable[Any]) -> None:
+    async def wrapper() -> None:
+        await coro
+    task : asyncio.Task[None] = asyncio.create_task(wrapper())
+    tasks.add(task)
+    task.add_done_callback(tasks.discard)
+
+############################################################################################################################
+
 @dataclass(frozen=True)
 class connection_info:
     src_host: str
@@ -485,11 +526,24 @@ async def server_main(args: server_args) -> None:
     async def get_udp_client(msg: datagram) -> udp_client_protocol:
         if msg.connection.connection_id not in udp_clients:
 
-            loop = asyncio.get_running_loop()
+            dst_hosts = [msg.connection.dst_host]
 
+            if not is_ip(dst_hosts[0]):
+                logger.debug(f'Resolving domain {dst_hosts[0]!r}...')
+                dst_hosts = await resolve_domain(dst_hosts[0])
+                logger.debug(f'Resolved into {dst_hosts}')
+
+            dst_host = random.choice(dst_hosts)
+
+            if len(dst_hosts) > 1:
+                logger.debug(f'DNS returned mulitple IPs, randomly selecting {dst_host!r}.')
+
+            dst_port = msg.connection.dst_port
+
+            loop = asyncio.get_running_loop()
             transport, protocol = await loop.create_datagram_endpoint(
                 lambda: udp_client_protocol(msg.connection),
-                remote_addr=(msg.connection.dst_host, msg.connection.dst_port),
+                remote_addr=(dst_host, dst_port),
             )
 
             udp_clients[msg.connection.connection_id] = protocol
@@ -550,6 +604,8 @@ class client_args:
     reconnect_interval: float
     workers: int
 
+    resolve_dns_on_client: bool = False
+
 async def client_main(args: client_args) -> None:
 
     addr_to_id : dict[tuple[str, int], uuid.UUID] = {}
@@ -557,6 +613,18 @@ async def client_main(args: client_args) -> None:
     udp_to_tcp_queue: asyncio.Queue[datagram] = asyncio.Queue(maxsize=args.datagram_buffer_len)
 
     client_id = uuid.uuid4()
+
+    dst_hosts = [args.udp_connect_host]
+    if not is_ip(dst_hosts[0]):
+        if args.resolve_dns_on_client:
+            logger.debug(f'Resolving {dst_hosts[0]!r}...')
+            dst_hosts = await resolve_domain(dst_hosts[0])
+            logger.debug(f'Resolved into {dst_hosts}')
+        else:
+            logger.debug(f'Domain {dst_hosts[0]!r} will be resolved on server.')
+    assert dst_hosts
+
+    dst_port = args.udp_connect_port
 
     @dataclass(frozen=True)
     class udp_server_protocol(asyncio.DatagramProtocol):
@@ -585,11 +653,16 @@ async def client_main(args: client_args) -> None:
             
             connection_id = addr_to_id[addr]
 
+            dst_host = random.choice(dst_hosts)
+
+            if len(dst_hosts) > 1:
+                logger.debug(f'DNS returned mulitple IPs, randomly selecting {dst_host!r}.')
+
             connection = connection_info(
                 src_host=src_host,
                 src_port=src_port,
-                dst_host=args.udp_connect_host,
-                dst_port=args.udp_connect_port,
+                dst_host=dst_host,
+                dst_port=dst_port,
                 connection_id=connection_id,
                 client_id=client_id,
             )
