@@ -534,6 +534,7 @@ class connection_info:
             +
             self.connection_id.bytes
         )
+        print(data, len(self.src_host), len(self.dst_host))
         assert len(data) == len(self.src_host) + len(self.dst_host) + 2 + 2 + 16 + 16 + 2
         return data
 
@@ -542,15 +543,17 @@ class connection_info:
         stream = io.BytesIO(data)
         src_host_len = int.from_bytes(stream.read(1), 'little')
         dst_host_len = int.from_bytes(stream.read(1), 'little')
+        print(data, src_host_len, dst_host_len)
         assert len(data) == src_host_len + dst_host_len + 2 + 2 + 16 + 16 + 2
+        assert uuid_bytes_len == 16
         try:
             return connection_info(
                 src_host=stream.read(src_host_len).decode(),
                 dst_host=stream.read(dst_host_len).decode(),
                 src_port=int.from_bytes(stream.read(2), 'little'),
                 dst_port=int.from_bytes(stream.read(2), 'little'),
-                client_id=uuid.UUID(stream.read(uuid_bytes_len).decode()),
-                connection_id=uuid.UUID(stream.read(uuid_bytes_len).decode()),
+                client_id=uuid.UUID(bytes=stream.read(uuid_bytes_len)),
+                connection_id=uuid.UUID(bytes=stream.read(uuid_bytes_len)),
             )
         finally:
             assert not stream.read()
