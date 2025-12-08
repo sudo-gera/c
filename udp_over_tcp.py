@@ -534,6 +534,7 @@ class connection_info:
             +
             self.connection_id.bytes
         )
+        assert len(data) == len(self.src_host) + len(self.dst_host) + 2 + 2 + 16 + 16
         return data
 
     @staticmethod
@@ -541,6 +542,7 @@ class connection_info:
         stream = io.BytesIO(data)
         src_host_len = int.from_bytes(stream.read(1), 'little')
         dst_host_len = int.from_bytes(stream.read(1), 'little')
+        assert len(data) == src_host_len + dst_host_len + 2 + 2 + 16 + 16
         try:
             return connection_info(
                 src_host=stream.read(src_host_len).decode(),
