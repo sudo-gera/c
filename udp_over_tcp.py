@@ -297,95 +297,96 @@ def setup_default_types() -> None:
 
 ############################################################################################################################
 
+# import asyncio
+# from asyncio import BaseTransport, Transport, StreamReader, StreamWriter
+# from asyncio import AbstractEventLoop
+
+
+class MemoryTransport(asyncio.Transport):
+    _extra: Dict[str, Any]
+    _protocol: asyncio.protocols.Protocol
+    _closed: bool
+    _write_buffer_size: int
+
+    def __init__(self, protocol: asyncio.protocols.Protocol, *, extra: Optional[Dict[str, Any]] = None) -> None:
+        super().__init__()
+        self._protocol = protocol
+        self._extra = extra or {}
+        self._closed = False
+        self._write_buffer_size = 0
+
+    # ----- Transport API -------------------------------------------------
+
+    def get_extra_info(self, name: str, default: Any = None) -> Any:
+        return self._extra.get(name, default)
+
+    def write(self, data: bytes | bytearray | memoryview) -> None:
+        if self._closed:
+            raise RuntimeError("Transport is closed")
+
+        self._write_buffer_size += len(data)
+        loop = asyncio.get_running_loop()
+        # Schedule delivery to mimic real async transports
+        loop.call_soon(self._deliver, data)
+
+    def _deliver(self, data: bytes | bytearray | memoryview) -> None:
+        try:
+            self._protocol.data_received(bytes(data))
+        finally:
+            self._write_buffer_size -= len(data)
+
+    def close(self) -> None:
+        if self._closed:
+            return
+        self._closed = True
+
+        loop = asyncio.get_running_loop()
+        loop.call_soon(self._protocol.eof_received)
+        loop.call_soon(self._protocol.connection_lost, None)
+
+    def is_closing(self) -> bool:
+        return self._closed
+
+    def can_write_eof(self) -> bool:
+        return False
+
+    def abort(self) -> None:
+        if self._closed:
+            return
+        self._closed = True
+        loop = asyncio.get_running_loop()
+        loop.call_soon(self._protocol.connection_lost, RuntimeError("aborted"))
+
+    # Optional but helps mypy for StreamWriter
+    def get_write_buffer_size(self) -> int:
+        return self._write_buffer_size
+
+    def set_write_buffer_limits(self, high: Optional[int] = None, low: Optional[int] = None) -> None:
+        # No backpressure in memory version
+        return
+
+
+async def create_in_memory_stream(
+    extra_info: Optional[Dict[str, Any]] = None,
+) -> tuple[asyncio.StreamReader, asyncio.StreamWriter]:
+    """
+    Create a pure in-memory pair compatible with StreamReader/StreamWriter.
+    Fully mypy-checked.
+    """
+
+    loop: asyncio.AbstractEventLoop = asyncio.get_running_loop()
+    reader: asyncio.StreamReader = asyncio.StreamReader()
+    protocol: asyncio.StreamReaderProtocol = asyncio.StreamReaderProtocol(reader)
+
+    transport: MemoryTransport = MemoryTransport(protocol, extra=extra_info)
+    protocol.connection_made(transport)
+
+    writer: asyncio.StreamWriter = asyncio.StreamWriter(transport, protocol, reader, loop)
+    return reader, writer
+
+
 @call
 def reader_and_writer_test() -> None:
-    import asyncio
-    from asyncio import BaseTransport, Transport, StreamReader, StreamWriter
-    from asyncio import AbstractEventLoop
-
-
-    class MemoryTransport(Transport):
-        _extra: Dict[str, Any]
-        _protocol: asyncio.protocols.Protocol
-        _closed: bool
-        _write_buffer_size: int
-
-        def __init__(self, protocol: asyncio.protocols.Protocol, *, extra: Optional[Dict[str, Any]] = None) -> None:
-            super().__init__()
-            self._protocol = protocol
-            self._extra = extra or {}
-            self._closed = False
-            self._write_buffer_size = 0
-
-        # ----- Transport API -------------------------------------------------
-
-        def get_extra_info(self, name: str, default: Any = None) -> Any:
-            return self._extra.get(name, default)
-
-        def write(self, data: bytes | bytearray | memoryview) -> None:
-            if self._closed:
-                raise RuntimeError("Transport is closed")
-
-            self._write_buffer_size += len(data)
-            loop = asyncio.get_running_loop()
-            # Schedule delivery to mimic real async transports
-            loop.call_soon(self._deliver, data)
-
-        def _deliver(self, data: bytes | bytearray | memoryview) -> None:
-            try:
-                self._protocol.data_received(bytes(data))
-            finally:
-                self._write_buffer_size -= len(data)
-
-        def close(self) -> None:
-            if self._closed:
-                return
-            self._closed = True
-
-            loop = asyncio.get_running_loop()
-            loop.call_soon(self._protocol.eof_received)
-            loop.call_soon(self._protocol.connection_lost, None)
-
-        def is_closing(self) -> bool:
-            return self._closed
-
-        def can_write_eof(self) -> bool:
-            return False
-
-        def abort(self) -> None:
-            if self._closed:
-                return
-            self._closed = True
-            loop = asyncio.get_running_loop()
-            loop.call_soon(self._protocol.connection_lost, RuntimeError("aborted"))
-
-        # Optional but helps mypy for StreamWriter
-        def get_write_buffer_size(self) -> int:
-            return self._write_buffer_size
-
-        def set_write_buffer_limits(self, high: Optional[int] = None, low: Optional[int] = None) -> None:
-            # No backpressure in memory version
-            return
-
-
-    async def create_in_memory_stream(
-        extra_info: Optional[Dict[str, Any]] = None,
-    ) -> tuple[StreamReader, StreamWriter]:
-        """
-        Create a pure in-memory pair compatible with StreamReader/StreamWriter.
-        Fully mypy-checked.
-        """
-
-        loop: AbstractEventLoop = asyncio.get_running_loop()
-        reader: StreamReader = StreamReader()
-        protocol: asyncio.StreamReaderProtocol = asyncio.StreamReaderProtocol(reader)
-
-        transport: MemoryTransport = MemoryTransport(protocol, extra=extra_info)
-        protocol.connection_made(transport)
-
-        writer: StreamWriter = StreamWriter(transport, protocol, reader, loop)
-        return reader, writer
-
     async def main() -> None:
         reader, writer = await create_in_memory_stream()
 
