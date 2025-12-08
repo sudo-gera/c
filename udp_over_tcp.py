@@ -165,8 +165,17 @@ class writes_to_stream_writer:
         writers_to_stream_writer[self.type_to_write] = func
         return func
 
+write_to_stream_writer_ongoing_requests = 0
+
 async def write_to_stream_writer(writer: asyncio.StreamWriter, value: Any) -> None:
-    await writers_to_stream_writer[type(value)](writer, value)
+    global write_to_stream_writer_ongoing_requests
+    write_to_stream_writer_ongoing_requests += 1
+    try:
+        await writers_to_stream_writer[type(value)](writer, value)
+        if write_to_stream_writer_ongoing_requests == 1:
+            await writer.drain()
+    finally:
+        write_to_stream_writer_ongoing_requests -= 1
 
 inherit_stream_reader_and_writer_new_type = TypeVar('inherit_stream_reader_and_writer_new_type')
 inherit_stream_reader_and_writer_old_type = TypeVar('inherit_stream_reader_and_writer_old_type')
@@ -233,7 +242,7 @@ def setup_default_types() -> None:
     async def write_bytes_to_stream_writer(writer: asyncio.StreamWriter, value: bytes) -> None:
         writer.write(len(value).to_bytes(8, 'little'))
         writer.write(value)
-        await writer.drain()
+        # await writer.drain()
 
     # bytearray
 
