@@ -493,8 +493,8 @@ async def server_main(args: server_args) -> None:
             )
 
         def datagram_received(self, data: bytes, weird_src_addr: tuple[str | Any, int]) -> None:
-            print(f'{weird_src_addr = !r}')
-            src_host, src_port = weird_src_addr
+            src_host = weird_src_addr[0]
+            src_port = weird_src_addr[1]
             assert isinstance(src_host, str)
             addr = src_host, src_port
 
