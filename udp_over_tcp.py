@@ -517,9 +517,9 @@ class tcp_client_hello:
 
 setup_reader_and_writer_for_dataclass(tcp_client_hello)
 
-@dataclass(frozen=True)
-class datagram_batch:
-    items: tuple[datagram, ...]
+# @dataclass(frozen=True)
+# class datagram_batch:
+#     items: tuple[datagram, ...]
 
 ############################################################################################################################
 
@@ -646,16 +646,23 @@ async def server_main(args: server_args) -> None:
 
                 async def recv_while_can() -> None:
                     while 1:
-                        msg_batch = await read_large_chunk_from_stream_reader(reader, datagram_batch)
+                        # msg_batch = await read_large_chunk_from_stream_reader(reader, datagram_batch)
 
-                        for msg in msg_batch.items:
-                            udp_client = await get_udp_client(msg)
-                            await udp_client.send_datagram(msg)
-                
+                        # for msg in msg_batch.items:
+                        #     udp_client = await get_udp_client(msg)
+                        #     await udp_client.send_datagram(msg)
+
+                        msg = await read_large_chunk_from_stream_reader(reader, datagram)
+
+                        udp_client = await get_udp_client(msg)
+                        await udp_client.send_datagram(msg)
+
                 async def send_while_can() -> None:
                     while 1:
-                        msg_list = await get_all(context.server_to_client_queue)
-                        await write_large_chunk_to_stream_writer(writer, datagram_batch(tuple(msg_list)))
+                        # msg_list = await get_all(context.server_to_client_queue)
+                        # await write_large_chunk_to_stream_writer(writer, datagram_batch(tuple(msg_list)))
+                        msg = await context.server_to_client_queue.get()
+                        await write_large_chunk_to_stream_writer(writer, msg)
                 
                 await asyncio.gather(
                     recv_while_can(),
@@ -798,15 +805,20 @@ async def client_main(args: client_args) -> None:
 
         async def recv_while_can() -> None:
             while 1:
-                msg_batch = await read_large_chunk_from_stream_reader(reader, datagram_batch)
+                # msg_batch = await read_large_chunk_from_stream_reader(reader, datagram_batch)
 
-                for msg in msg_batch.items:
-                    await protocol.send_datagram(msg)
+                # for msg in msg_batch.items:
+                #     await protocol.send_datagram(msg)
+                msg = await read_large_chunk_from_stream_reader(reader, datagram)
+
+                await protocol.send_datagram(msg)
         
         async def send_while_can() -> None:
             while 1:
-                msg_list = await get_all(udp_to_tcp_queue)
-                await write_large_chunk_to_stream_writer(writer, datagram_batch(tuple(msg_list)))
+                # msg_list = await get_all(udp_to_tcp_queue)
+                # await write_large_chunk_to_stream_writer(writer, datagram_batch(tuple(msg_list)))
+                msg = await udp_to_tcp_queue.get()
+                await write_large_chunk_to_stream_writer(writer, msg)
 
         await asyncio.gather(
             recv_while_can(),
