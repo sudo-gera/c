@@ -544,7 +544,7 @@ class connection_info:
         try:
             return connection_info(
                 src_host=stream.read(src_host_len).decode(),
-                dst_host=stream.read(src_host_len).decode(),
+                dst_host=stream.read(dst_host_len).decode(),
                 src_port=int.from_bytes(stream.read(2), 'little'),
                 dst_port=int.from_bytes(stream.read(2), 'little'),
                 client_id=uuid.UUID(stream.read(uuid_bytes_len).decode()),
