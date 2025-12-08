@@ -421,6 +421,15 @@ class connection_info:
     connection_id: uuid.UUID
     client_id: uuid.UUID
 
+    def reverse(self) -> connection_info:
+        return replace(
+            self,
+            src_host=self.dst_host,
+            src_port=self.dst_port,
+            dst_host=self.src_host,
+            dst_port=self.src_port,
+        )
+
 setup_reader_and_writer_for_dataclass(connection_info)
 
 @dataclass(frozen=True)
@@ -467,12 +476,15 @@ async def server_main(args: server_args) -> None:
 
     @dataclass(frozen=True)
     class udp_client_protocol(asyncio.DatagramProtocol):
-        connection: connection_info
+        connection_client_to_server: connection_info
         transport_future: asyncio.Future[asyncio.DatagramTransport] = field(default_factory=asyncio.Future)
+
+        def __post_init__(self) -> None:
+            self.connection_server_to_client = self.connection_client_to_server.reverse()
 
         def connection_made(self, transport: asyncio.BaseTransport) -> None:
 
-            connection_id = self.connection.connection_id
+            connection_id = self.connection_server_to_client.connection_id
 
             logger.info(f'UDP client for {connection_id = } connected.')
 
@@ -489,7 +501,7 @@ async def server_main(args: server_args) -> None:
             assert isinstance(src_host, str)
             addr = src_host, src_port
 
-            connection = self.connection
+            connection = self.connection_server_to_client
 
             msg = datagram(
                 connection=connection,
