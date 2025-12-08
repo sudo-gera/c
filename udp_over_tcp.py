@@ -16,6 +16,7 @@ import uuid
 import socket
 import ipaddress
 import io
+import time
 from typing import *
 from functools import *
 from itertools import *
@@ -392,12 +393,10 @@ def reader_and_writer_test() -> None:
 
 ############################################################################################################################
 
+import pickle
+
 async def write_large_chunk_to_stream_writer(writer: asyncio.StreamWriter, value: Any) -> None:
-    mem_reader, mem_writer = await create_in_memory_stream()
-    await write_to_stream_writer(mem_writer, value)
-    mem_writer.close()
-    await mem_writer.wait_closed()
-    data = await mem_reader.read()
+    data = pickle.dumps(value)
     assert isinstance(data, bytes)
     await write_to_stream_writer(writer, data)
     await writer.drain()
@@ -406,25 +405,7 @@ read_large_chunk_from_stream_reader_type_to_read = TypeVar('read_large_chunk_fro
 
 async def read_large_chunk_from_stream_reader(reader: asyncio.StreamReader, type_to_read: type[read_large_chunk_from_stream_reader_type_to_read]) -> read_large_chunk_from_stream_reader_type_to_read:
     data = await read_from_stream_reader(reader, bytes)
-    mem_reader, mem_writer = await create_in_memory_stream()
-    mem_writer.write(data)
-    mem_writer.close()
-    await mem_writer.wait_closed()
-    return await read_from_stream_reader(mem_reader, type_to_read)
-
-# import pickle
-
-# async def write_large_chunk_to_stream_writer(writer: asyncio.StreamWriter, value: Any) -> None:
-#     data = pickle.dumps(value)
-#     assert isinstance(data, bytes)
-#     await write_to_stream_writer(writer, data)
-#     await writer.drain()
-
-# read_large_chunk_from_stream_reader_type_to_read = TypeVar('read_large_chunk_from_stream_reader_type_to_read')
-
-# async def read_large_chunk_from_stream_reader(reader: asyncio.StreamReader, type_to_read: type[read_large_chunk_from_stream_reader_type_to_read]) -> read_large_chunk_from_stream_reader_type_to_read:
-#     data = await read_from_stream_reader(reader, bytes)
-#     return cast(read_large_chunk_from_stream_reader_type_to_read, pickle.loads(data))
+    return cast(read_large_chunk_from_stream_reader_type_to_read, pickle.loads(data))
 
 ############################################################################################################################
 
@@ -622,7 +603,21 @@ async def server_main(args: server_args) -> None:
         connection_server_to_client: connection_info
         transport_future: asyncio.Future[asyncio.DatagramTransport] = field(default_factory=asyncio.Future)
 
+        last_event_time: list[float] = field(default_factory=lambda: [time.monotonic()])
+        closed = False
+
+        async def timeout_checker(self) -> None:
+            while 1:
+                ct = time.monotonic()
+                if ct - self.last_event_time[0] > args.timeout:
+                    transport = await self.transport_future
+                    transport.abort()
+                    self.closed = True
+                    break
+
         def connection_made(self, transport: asyncio.BaseTransport) -> None:
+
+            self.last_event_time[0] = time.monotonic()
 
             connection_id = self.connection_server_to_client.connection_id
 
@@ -637,6 +632,8 @@ async def server_main(args: server_args) -> None:
 
         def datagram_received(self, data: bytes, weird_src_addr: tuple[str | Any, int]) -> None:
 
+            self.last_event_time[0] = time.monotonic()
+
             msg = datagram(
                 connection=self.connection_server_to_client,
                 data=data,
@@ -649,6 +646,8 @@ async def server_main(args: server_args) -> None:
             put_rotate(client_context.server_to_client_queue, msg)
 
         async def send_datagram(self, msg: datagram) -> None:
+
+            self.last_event_time[0] = time.monotonic()
 
             logger.debug('Internal datagram: %d bytes from %s.', len(msg.data), msg.connection)
 
@@ -667,7 +666,12 @@ async def server_main(args: server_args) -> None:
     udp_clients : dict[uuid.UUID, udp_client_protocol] = {}
 
     async def get_udp_client(msg: datagram) -> udp_client_protocol:
-        if msg.connection.connection_id not in udp_clients:
+        client = udp_clients.get(msg.connection.connection_id, None)
+
+        if client is not None and client.closed:
+            client = None
+
+        if client is None:
 
             dst_hosts = [msg.connection.dst_host]
 
@@ -698,6 +702,7 @@ async def server_main(args: server_args) -> None:
             )
 
             udp_clients[msg.connection.connection_id] = protocol
+
         return udp_clients[msg.connection.connection_id]
 
     async def on_tcp_connection(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
