@@ -9,6 +9,12 @@ service_name="$(
         basename "$service_file" | rev | tr -d '\n' | tr '.' $'\n' | tail -n +2 | tr '\n' '.' | rev
 )"
 
+if [[ "$command" != 'start' ]] && [[ "$command" != 'restart' ]] && [[ "$command" != 'stop' ]] && [[ "$command" != 'fg-start' ]] && [[ "$command" != 'fg-restart' ]] && [[ "$command" != 'fg-stop' ]]
+then
+    echo 'Unknown command'
+    exit 1
+fi
+
 if [[ "$command" == 'start' ]]
 then
     tmux -L service new-session -d -s "$service_name" 2>/dev/null
