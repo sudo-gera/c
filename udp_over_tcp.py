@@ -471,6 +471,20 @@ def fire(coro: Awaitable[Any]) -> None:
 
 ############################################################################################################################
 
+async def event_loop_checker() -> None:
+    ct = time.monotonic_ns()
+    while 1:
+        pt = ct
+        ct = time.monotonic_ns()
+        
+        was_sleeping = ct - pt
+        if was_sleeping > 0.2:
+            logger.warning('The event loop was blocked for %.3f seconds.', was_sleeping)
+
+        await asyncio.sleep(0.1)
+
+############################################################################################################################
+
 @dataclass(frozen=True)
 class connection_info:
     src_host: str
@@ -583,6 +597,8 @@ class server_args:
 
 async def server_main(args: server_args) -> None:
     
+    fire(event_loop_checker())
+
     @dataclass(frozen=True)
     class tcp_client_context:
         client_id: uuid.UUID
@@ -607,15 +623,23 @@ async def server_main(args: server_args) -> None:
         last_event_time: list[float] = field(default_factory=lambda: [time.monotonic()])
         closed = False
 
+        def __post_init__(self) -> None:
+            fire(self.timeout_checker())
+
         async def timeout_checker(self) -> None:
             while 1:
                 ct = time.monotonic()
-                if ct - self.last_event_time[0] > args.timeout:
+                time_from_last_event = ct - self.last_event_time[0]
+                time_till_closing_by_timeout = args.timeout - time_from_last_event
+                if time_till_closing_by_timeout < 0:
                     logger.info('Disconnecting UDP client with connection_id = %s by timeout.', self.connection_server_to_client.connection_id)
                     transport = await self.transport_future
                     transport.abort()
                     self.closed = True
+                    udp_clients.pop(self.connection_server_to_client.connection_id, None)
                     break
+                else:
+                    await asyncio.sleep(time_till_closing_by_timeout)
 
         def connection_made(self, transport: asyncio.BaseTransport) -> None:
 
@@ -777,6 +801,8 @@ class client_args:
     workers: int
 
 async def client_main(args: client_args) -> None:
+
+    fire(event_loop_checker())
 
     addr_to_id : dict[tuple[str, int], uuid.UUID] = {}
 
