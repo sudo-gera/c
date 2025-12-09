@@ -472,10 +472,10 @@ def fire(coro: Awaitable[Any]) -> None:
 ############################################################################################################################
 
 async def event_loop_checker() -> None:
-    ct = time.monotonic_ns()
+    ct = time.monotonic()
     while 1:
         pt = ct
-        ct = time.monotonic_ns()
+        ct = time.monotonic()
         
         was_sleeping = ct - pt
         if was_sleeping > 0.2:
