@@ -621,7 +621,6 @@ async def server_main(args: server_args) -> None:
         transport_future: asyncio.Future[asyncio.DatagramTransport] = field(default_factory=asyncio.Future)
 
         last_event_time: list[float] = field(default_factory=lambda: [time.monotonic()])
-        closed = False
 
         def __post_init__(self) -> None:
             fire(self.timeout_checker())
@@ -635,7 +634,6 @@ async def server_main(args: server_args) -> None:
                     logger.info('Disconnecting UDP client with connection_id = %s by timeout.', self.connection_server_to_client.connection_id)
                     transport = await self.transport_future
                     transport.abort()
-                    self.closed = True
                     udp_clients.pop(self.connection_server_to_client.connection_id, None)
                     break
                 else:
@@ -693,9 +691,6 @@ async def server_main(args: server_args) -> None:
 
     async def get_udp_client(msg: datagram) -> udp_client_protocol:
         client = udp_clients.get(msg.connection.connection_id, None)
-
-        if client is not None and client.closed:
-            client = None
 
         if client is None:
 
