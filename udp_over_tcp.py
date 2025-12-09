@@ -784,8 +784,6 @@ class client_args:
     reconnect_interval: float
     workers: int
 
-    resolve_dns_on_client: bool = False
-
 async def client_main(args: client_args) -> None:
 
     addr_to_id : dict[tuple[str, int], uuid.UUID] = {}
@@ -794,15 +792,9 @@ async def client_main(args: client_args) -> None:
 
     client_id = uuid.uuid4()
 
-    dst_hosts = [args.udp_connect_host]
-    if not is_ip(dst_hosts[0]):
-        if args.resolve_dns_on_client:
-            logger.debug('Resolving %r...', dst_hosts[0])
-            dst_hosts = await resolve_domain(dst_hosts[0])
-            logger.debug('Resolved into %r.', dst_hosts)
-        else:
-            logger.debug('Domain %r will be resolved on server.', dst_hosts[0])
-    assert dst_hosts
+    dst_host = args.udp_connect_host
+    if not is_ip(dst_host):
+        logger.debug('Domain %r will be resolved on server.', dst_host)
 
     dst_port = args.udp_connect_port
 
@@ -832,10 +824,6 @@ async def client_main(args: client_args) -> None:
                 logger.info('new UDP connection from [%s]:%d, assigning connection_id = %s.', src_host, src_port, connection_id)
             
             connection_id = addr_to_id[addr]
-
-            dst_host = random.choice(dst_hosts)
-
-            logger.debug('From IPs returned by DNS randomly selecting %r.', dst_host)
 
             connection = connection_info(
                 src_host=src_host,
