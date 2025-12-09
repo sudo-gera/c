@@ -17,6 +17,7 @@ import socket
 import ipaddress
 import io
 import time
+import errno
 from typing import *
 from functools import *
 from itertools import *
@@ -681,26 +682,38 @@ async def server_main(args: server_args) -> None:
                 dst_hosts = await resolve_domain(dst_hosts[0])
                 logger.debug('Resolved into %r.', dst_hosts)
 
-            dst_host = random.choice(dst_hosts)
+            random.shuffle(dst_hosts)
 
-            if len(dst_hosts) > 1:
-                logger.debug('DNS returned mulitple IPs, randomly selecting %r.', dst_host)
+            assert dst_hosts
 
-            msg = replace(
-                msg,
-                connection=replace(
-                    msg.connection,
-                    dst_host=dst_host,
+            for dst_host in dst_hosts:
+
+                logger.debug('From IPs returned by DNS randomly selecting %r.', dst_host)
+
+                msg = replace(
+                    msg,
+                    connection=replace(
+                        msg.connection,
+                        dst_host=dst_host,
+                    )
                 )
-            )
 
-            loop = asyncio.get_running_loop()
-            transport, protocol = await loop.create_datagram_endpoint(
-                lambda: udp_client_protocol(
-                    connection_server_to_client=msg.connection.reverse(),
-                ),
-                remote_addr=(msg.connection.dst_host, msg.connection.dst_port),
-            )
+                loop = asyncio.get_running_loop()
+                try:
+                    transport, protocol = await loop.create_datagram_endpoint(
+                        lambda: udp_client_protocol(
+                            connection_server_to_client=msg.connection.reverse(),
+                        ),
+                        remote_addr=(msg.connection.dst_host, msg.connection.dst_port),
+                    )
+                    break
+                except OSError as _exc:
+                    exc = _exc
+                    if exc.errno != errno.ENETUNREACH:
+                        raise
+            else:
+                raise exc
+
 
             udp_clients[msg.connection.connection_id] = protocol
 
