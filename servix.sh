@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e -u -o pipefail
+set -e -u -o pipefail -x
 
 command="$1"
 service_file="$2"
@@ -33,7 +33,7 @@ if [[ "${command:0:3}" != 'fg-' ]]
 then
     ses="_${RANDOM}_${RANDOM}_${RANDOM}_${RANDOM}"
     tmux -Lindependent new -ds "$ses"
-    tmux -Lindependent send-keys -t "$ses" -l "${0@Q} 'fg-'${command@Q} ${service_path@Q}; exit"$'\n'
+    tmux -Lindependent send-keys -t "$ses" -l "${0@Q} 'fg-'${command@Q} ${service_path@Q}; :exit"$'\n'
     exit
 fi
 
