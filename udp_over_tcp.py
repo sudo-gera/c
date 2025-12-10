@@ -478,10 +478,10 @@ async def event_loop_checker() -> None:
         ct = time.monotonic()
         
         was_sleeping = ct - pt
-        if was_sleeping > 0.2:
+        if was_sleeping > 2:
             logger.warning('The event loop was blocked for %.3f seconds.', was_sleeping)
 
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(1)
 
 ############################################################################################################################
 
@@ -597,7 +597,7 @@ class server_args:
 
 async def server_main(args: server_args) -> None:
     
-    fire(event_loop_checker())
+    # fire(event_loop_checker())
 
     @dataclass(frozen=True)
     class tcp_client_context:
@@ -797,7 +797,7 @@ class client_args:
 
 async def client_main(args: client_args) -> None:
 
-    fire(event_loop_checker())
+    # fire(event_loop_checker())
 
     addr_to_id : dict[tuple[str, int], uuid.UUID] = {}
 
