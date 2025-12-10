@@ -771,7 +771,7 @@ async def server_main(args: server_args) -> None:
                     client_id_str = str(context.client_id)
                 except Exception:
                     client_id_str = '(unknown)'
-                print(traceback.format_exc())
+                # print(traceback.format_exc())
                 logger.warning('TCP client %s stopped with an error: %r.', client_id_str, exc)
 
     async with await asyncio.start_server(on_tcp_connection, args.tcp_listen_host, args.tcp_listen_port) as server:
@@ -911,7 +911,7 @@ async def client_main(args: client_args) -> None:
             try:
                 await one_tcp_attempt(worker_num)
             except Exception as exc:
-                print(traceback.format_exc())
+                # print(traceback.format_exc())
                 logger.warning('TCP worker #%d stopped with an error: %r.', worker_num, exc)
             await asyncio.sleep(args.reconnect_interval)
     
