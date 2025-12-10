@@ -17,7 +17,7 @@ fi
 
 if [[ "$command" == 'start' ]]
 then
-    tmux -L service new-session -d -s "$service_name" 2>/dev/null
+    tmux -L "$service_name" new-session -d -s "$service_name" 2>/dev/null
 fi
 
 service_path="$(
@@ -45,7 +45,7 @@ fi
 
 if [[ "$command" != 'fg-start' ]]
 then
-    while tmux -L service kill-pane -t "$service_name"
+    while tmux -L "$service_name" kill-pane -t "$service_name"
     do sleep 0.2
     done
 fi
@@ -57,13 +57,13 @@ fi
 
 if [[ "$command" != 'fg-start' ]]
 then
-    tmux -L service new-session -d -s "$service_name" 2>/dev/null
+    tmux -L "$service_name" new-session -d -s "$service_name" 2>/dev/null
 fi
 
 function send(){
-    tmux -L service new-window   -t "$service_name"
+    tmux -L "$service_name" new-window   -t "$service_name"
     sleep 0.01
-    tmux -L service send-keys    -t "$service_name" -l "$1"$'\n'
+    tmux -L "$service_name" send-keys    -t "$service_name" -l "$1"$'\n'
 }
 
 source "$service_path"
