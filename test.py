@@ -1,18 +1,20 @@
-import os
 
-def main():
-    root_dir = "reports"
-    if not os.path.isdir(root_dir):
-        raise FileNotFoundError(f"{root_dir} does not exist")
+file = open('test.ppm', 'w')
 
-    for dirpath, dirnames, filenames in os.walk(root_dir):
-        for filename in filenames:
-            file_path = os.path.join(dirpath, filename)
-            with open(file_path) as file_file:
-                for line in file_file:
-                    if line=='virus\n':
-                         os.remove(file_path)
-                         break
+print('P6', file=file)
 
-if __name__ == "__main__":
-    main()
+width = 200
+
+height = 200
+
+print(width, height, file=file)
+
+print(255, file=file)
+
+file.flush()
+
+for i in range(height):
+    for j in range(width):
+        for a in [round(i / height * 255), round(j / height * 255), 0]:
+            file.buffer.write(a.to_bytes(1, 'big'))
+
