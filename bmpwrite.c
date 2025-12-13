@@ -1,31 +1,35 @@
 #include <stdio.h>
 
-void save_bmp32(const char* filepath, void* img, int width, int height){
-    int header[13]={
-        54 + 4 * width * height,
+struct pixel{
+    char blue, green, red, opacity;
+};
+
+void save_as_bmp(const char* filepath, int width, int height, struct pixel* pixels){
+    int sizeof_pixels = width * height * sizeof(struct pixel);
+    int header[13] = {
+        sizeof_pixels + 54,
         0, 54, 40,
         width, height,
-        0x200001
+        0x200001,
     };
-    FILE* f = fopen(filepath,"wb");
-    fwrite( "BM",   2,                    1,   f );
-    fwrite( header, sizeof(header),       1,   f );
-    fwrite( img,    width * height * 4,   1,   f );
-    fclose( f );
+    FILE* fp = fopen(filepath, "wb");
+    fwrite( "BM",   2,              1, fp );
+    fwrite( header, sizeof(header), 1, fp );
+    fwrite( pixels, sizeof_pixels,  1, fp );
+    fclose( fp );
 }
 
 int main() {
-    int w = 120, h = 100;
-    unsigned char img[w * h * 4];
-
-    for (int y = 0; y < h; y++) { // bottom to top
-        for (int x = 0; x < w; x++) { // left to right
-            img[(y*w+x)*4+0] = x*4; // B
-            img[(y*w+x)*4+1] = 0;   // G
-            img[(y*w+x)*4+2] = y*4; // R
-            img[(y*w+x)*4+3] = 255; // A
+    int width = 120, height = 80;
+    struct pixel img[height * width];
+    for (int y = 0; y < height; y++) { // bottom to top
+        for (int x = 0; x < width; x++) { // left to right
+            img[y * width + x].blue  = y * 255 / height;
+            img[y * width + x].green = x * 255 / width;
+            img[y * width + x].red   = 255 - y * 255 / height;
+            img[y * width + x].opacity = -1;
         }
     }
 
-    save_bmp32("out.bmp", img, w, h);
+    save_as_bmp("out.bmp", width, height, img);
 }
