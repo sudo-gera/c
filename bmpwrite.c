@@ -1,16 +1,21 @@
 #include <stdio.h>
 
-void save_bmp32(const char *fn, void *img, int w, int h){
-    int r[52]={54+4*w*h,0,54,40,w,h,0x200001};
-    FILE*f=fopen(fn,"wb");
-    fwrite("BM",1,2,f);
-    fwrite(r,52,1,f);
-    fwrite(img, w*h*4, 1, f);
-    fclose(f);
+void save_bmp32(const char* filepath, void* img, int width, int height){
+    int header[13]={
+        54 + 4 * width * height,
+        0, 54, 40,
+        width, height,
+        0x200001
+    };
+    FILE* f = fopen(filepath,"wb");
+    fwrite( "BM",   2,                    1,   f );
+    fwrite( header, sizeof(header),       1,   f );
+    fwrite( img,    width * height * 4,   1,   f );
+    fclose( f );
 }
 
 int main() {
-    int w = 64, h = 64;
+    int w = 120, h = 100;
     unsigned char img[w * h * 4];
 
     for (int y = 0; y < h; y++) { // bottom to top
