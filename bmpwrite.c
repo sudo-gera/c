@@ -10,11 +10,11 @@ void save_as_bmp(const char* path, int cols, int rows, const pixel* pixels) {
         perror(path);
         return;
     }
-    size_t size = cols * rows * sizeof(pixel);
+    int size = cols * rows * sizeof(pixel) + 54;
     int head[13] = {size, 0, 54, 40, cols, rows, 0x200001, 0, 0, 0, 0, 0, 0};
     fwrite("BM", 2, 1, fp);
     fwrite(head, sizeof(head), 1, fp);
-    fwrite(pixels, size, 1, fp);
+    fwrite(pixels, size - 54, 1, fp);
     fclose(fp);
 }
 
