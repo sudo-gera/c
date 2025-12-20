@@ -2,10 +2,10 @@
 triple:          'arm64-apple-darwin'
 binary-path:     a.out
 relocations:
-  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: __Z11save_as_bmpPKciiPK5pixel, symObjAddr: 0x0, symBinAddr: 0x100003584, symSize: 0x3A0 }
-  - { offsetInCU: 0x3B, offset: 0x3B, size: 0x8, addend: 0x0, symName: _.str, symObjAddr: 0x700, symBinAddr: 0x100003D80, symSize: 0x0 }
-  - { offsetInCU: 0x6B, offset: 0x6B, size: 0x8, addend: 0x0, symName: _.str.1, symObjAddr: 0x720, symBinAddr: 0x100003DA0, symSize: 0x0 }
-  - { offsetInCU: 0x7C, offset: 0x7C, size: 0x8, addend: 0x0, symName: _.str.2, symObjAddr: 0x740, symBinAddr: 0x100003DC0, symSize: 0x0 }
-  - { offsetInCU: 0x91, offset: 0x91, size: 0x8, addend: 0x0, symName: __Z11save_as_bmpPKciiPK5pixel, symObjAddr: 0x0, symBinAddr: 0x100003584, symSize: 0x3A0 }
-  - { offsetInCU: 0x349, offset: 0x349, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x3A0, symBinAddr: 0x100003924, symSize: 0x2C0 }
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _save_as_bmp, symObjAddr: 0x0, symBinAddr: 0x100002478, symSize: 0x884 }
+  - { offsetInCU: 0x3B, offset: 0x3B, size: 0x8, addend: 0x0, symName: _.str, symObjAddr: 0x17C0, symBinAddr: 0x100003D40, symSize: 0x0 }
+  - { offsetInCU: 0x66, offset: 0x66, size: 0x8, addend: 0x0, symName: _.str.1, symObjAddr: 0x17E0, symBinAddr: 0x100003D60, symSize: 0x0 }
+  - { offsetInCU: 0x77, offset: 0x77, size: 0x8, addend: 0x0, symName: _.str.2, symObjAddr: 0x1800, symBinAddr: 0x100003D80, symSize: 0x0 }
+  - { offsetInCU: 0x8C, offset: 0x8C, size: 0x8, addend: 0x0, symName: _save_as_bmp, symObjAddr: 0x0, symBinAddr: 0x100002478, symSize: 0x884 }
+  - { offsetInCU: 0x10E, offset: 0x10E, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x884, symBinAddr: 0x100002CFC, symSize: 0xE90 }
 ...

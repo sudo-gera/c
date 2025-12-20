@@ -19,7 +19,7 @@ void save_as_bmp(const char* path, int cols, int rows, const pixel* pixels) {
 }
 
 int main() {
-    int width = 120, height = 80;
+    int width = 1, height = 1;
     struct pixel img[height * width];
     for (int y = 0; y < height; y++) {     // bottom to top
         for (int x = 0; x < width; x++) {  // left to right
