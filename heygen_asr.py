@@ -89,7 +89,7 @@ async def check_curlconverter() -> None:
 
 async def read_curl_and_extract_requests() -> list[requests_request]:
     if sys.stdin.isatty():
-        print('devtools (F12) -> GET api2.heygen.com -> copy as curl -> rerun this with `pbpaste | this` or `this << EOF`')
+        print('https://heygen.com -> devtools (F12) -> GET api2.heygen.com -> copy as curl -> rerun this with `pbpaste | this` or `this << EOF`')
         exit()
     process = await asyncio.subprocess.create_subprocess_exec(
         'curlconverter',
@@ -306,7 +306,9 @@ async def asr(cookies: cookie_t, audio_file_mp3_url: str) -> str:
         output = await resp.json()
         pprint(output)
     
-    return output['data']['metadata']['text']
+    text = output['data']['metadata']['text']
+    assert isinstance(text, str)
+    return text
 
 #######################################################################
 
@@ -332,6 +334,19 @@ async def upload_file(cookies: cookie_t, data: bytes) -> str:
 #######################################################################
 #######################################################################
 
+async def check_ffmpeg() -> None:
+    process = await asyncio.subprocess.create_subprocess_exec(
+        'ffmpeg',
+        '-version', 
+        stdin=asyncio.subprocess.PIPE,
+        stdout=asyncio.subprocess.PIPE,
+    )
+    await process.communicate(input=b'')
+    assert process.returncode == 0
+
+#######################################################################
+#######################################################################
+
 async def main() -> None:
     parser = argparse.ArgumentParser()
 
@@ -344,6 +359,7 @@ async def main() -> None:
 
     await setup_requests()
     await check_curlconverter()
+    await check_ffmpeg()
 
     cookies = await get_cookies()
 
