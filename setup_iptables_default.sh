@@ -24,6 +24,8 @@ function modify_rules(){
 
     iptables -t nat "$rule_mod" REDSOCKS -p tcp -j REDIRECT --to-ports 12345
 
+    iptables -t nat "$rule_mod" OUTPUT -j REDSOCKS
+
     iptables -t nat "$rule_mod" PREROUTING -j REDSOCKS
 }
 
