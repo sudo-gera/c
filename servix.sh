@@ -17,7 +17,10 @@ fi
 
 if [[ "$command" == 'start' ]]
 then
-    tmux -L service new-session -d -s "$service_name" 2>/dev/null
+    if ! tmux -L service new-session -d -s "$service_name" 2>/dev/null
+    then
+        exit 0
+    fi
 fi
 
 service_path="$(
