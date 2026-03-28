@@ -13,6 +13,8 @@ import traceback
 import random
 import argparse
 import time
+import pathlib
+import re
 
 #######################################################################
 #######################################################################
@@ -347,12 +349,79 @@ async def check_ffmpeg() -> None:
 #######################################################################
 #######################################################################
 
+async def call_ffmpeg_to_detect_silence(path: pathlib.Path, noise_level_db: int, min_duration: float) -> str:
+    process = await asyncio.subprocess.create_subprocess_exec(
+        'ffmpeg',
+        '-loglevel',
+        'info',
+        '-i',
+        str(path.resolve()),
+        '-af',
+        f'silencedetect=noise={-noise_level_db}dB:d={min_duration}',
+        '-f',
+        'null',
+        '-',
+        stderr=asyncio.subprocess.PIPE,
+    )
+    _, stderr = await process.communicate()
+    assert process.returncode == 0
+    return stderr.decode()
+
+@dataclass(frozen=True)
+class silence_fragment:
+    start: float
+    end: float
+    duration: float
+    noise_level_db: int
+    min_duration: float
+
+async def detect_silence(path: pathlib.Path, noise_level_db: int, min_duration: float) -> None:
+    stderr = await call_ffmpeg_to_detect_silence(path, noise_level_db, min_duration)
+    lines = stderr.splitlines()
+    matched_lines = [
+        dict(
+            [
+                [
+                    g
+                    for g in m.groups()
+                    if isinstance(g, str)
+                ]
+                for m in [
+                    re.fullmatch(r'\s*silence_(\S+)\s*:\s*silence_(\S+)\s*', chunk)
+                    for chunk in line.split('|')
+                ]
+                if m is not None
+            ]
+        )
+        for line in [
+            m.groups()[0]
+            for m in [
+                re.fullmatch(r'^\[silencedetect\b[^]]*\]\s*(((silence_\w*)\s*:\s*([.0-9]*)\s*\|?\s*)+)$', line)
+                for line in lines
+            ]
+            if m is not None
+        ]
+        if isinstance(line, str)
+    ]
+    # silence_blocks = [
+    #             silence_fragment(**(s | e), noise_level_db=noise_level_db, min_duration=min_duration)
+    #     for s,e in zip(matched_lines, matched_lines[1:])
+    #         if set(s) == {'silence_start'} and set(e) == {'silence_end', 'silence_duration'}
+    # ]
+    # return silence_blocks
+
+# async def split_by_silence(path: pathlib.Path, maxduration_seconds: int = 300):
+#     await detect_silence(path, 25, 0.)
+
+#######################################################################
+#######################################################################
+
 async def main() -> None:
     parser = argparse.ArgumentParser()
 
     group = parser.add_mutually_exclusive_group(required=True)
 
-    group.add_argument('--url', help='url to use, required if no file is provided')
+    group.add_argument('--url', help='url to use, required if no file is provided (works only if audio is shorter than 5 min)')
     group.add_argument('--path', help='file to upload, required if no url is provided')
 
     args=parser.parse_args()
