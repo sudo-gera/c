@@ -1,0 +1,1 @@
+<stream:stream xmlns='jabber:client' to='cs.mipt.ru:55749' xmlns:stream='http://etherx.jabber.org/streams' version='1.0' from='example@cs.mipt.ru:55749' xml:lang='en'>
