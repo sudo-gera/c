@@ -1,123 +1,117 @@
-from itertools import *
-import random
-import math
-import io
+from __future__ import annotations
+from dataclasses import dataclass
+from types import *
+import abc
+from functools import *
+from enum import Enum
+import ast
+import sys
 
-import numpy as np
+class CanGetGrad(abc.ABC):
 
-def bmp_to_numpy(filepath: str, data: np.ndarray):
-    assert len(data.shape) == 3 and data.shape[2] == 4
+    @abc.abstractmethod
+    def grad(self) -> CanGetGrad:
+        ...
 
-    height: int
-    width: int
-    height, width, _ = data.shape
+    def __add__(self, other: CanGetGrad) -> CanGetGrad:
+        return Sum(self, other)
+    
+    def __mul__(self, other: CanGetGrad) -> CanGetGrad:
+        return Product(self, other)
 
-    header = np.zeros(shape=(26,), dtype=np.uint16)
-    header[6] = 40
-    header[8] = width
-    header[10] = height
-    header[13] = 32
+    @abc.abstractmethod
+    def ast(self) -> ast.AST:
+        ...
+
+@cache
+@dataclass(frozen=True)
+class Value(CanGetGrad):
+    value: float
+
+    def grad(self) -> CanGetGrad:
+        return Value(0)
+
+    def ast(self) -> ast.AST:
+        return ast.Constant(value=self.value)
+
+@cache
+@dataclass(frozen=True)
+class Variable(CanGetGrad):
+    id: str
+
+    def grad(self) -> CanGetGrad:
+        return Value(1)
+
+    def ast(self) -> ast.AST:
+        return ast.Name(id=self.id)
+
+@dataclass(frozen=True)
+class Sum(CanGetGrad):
+    f1: CanGetGrad
+    f2: CanGetGrad
+
+    def grad(self) -> CanGetGrad:
+        return Sum(
+            self.f1.grad(),
+            self.f2.grad()
+        )
+
+    def ast(self) -> ast.AST:
+        return ast.BinOp(
+            left=self.f1.ast(),
+            op=ast.Add(),
+            right=self.f2.ast(),
+        )
+
+@dataclass(frozen=True)
+class Product(CanGetGrad):
+    f1: CanGetGrad
+    f2: CanGetGrad
+
+    def grad(self) -> CanGetGrad:
+        return Sum(
+            Product(
+                self.f1.grad(),
+                self.f2,
+            ),
+            Product(
+                self.f1,
+                self.f2.grad(),
+            ),
+        )
+
+    def ast(self) -> ast.AST:
+        return ast.BinOp(
+            left=self.f1.ast(),
+            op=ast.Mult(),
+            right=self.f2.ast(),
+        )
+
+def ast_traversal(root: ast.AST):
+    if isinstance(root, ast.Expression):
+        return ast_traversal(root.body)
+    if isinstance(root, ast.BinOp):
+        if isinstance(root.op, ast.Add):
+            return ast_traversal(root.left) + ast_traversal(root.right)
+        if isinstance(root.op, ast.Mult):
+            return ast_traversal(root.left) * ast_traversal(root.right)
+    if isinstance(root, ast.Constant):
+        return Value(float(root.value))
+    if isinstance(root, ast.Name):
+        return Variable(root.id)
+
+    print(ast.dump(root, indent=4), file=sys.stderr)
+    assert False
+
+def symbolic_grad(expr: str):
+    tree = ast.parse(expr, mode='eval')
+    can_get_grad = ast_traversal(tree)
+    can_get_grad = can_get_grad.grad()
+    return ast.unparse(can_get_grad.ast())
+
+print(symbolic_grad('0+0*a'))
+# print(symbolic_grad(input()))
 
 
 
-    # header = np.zeros(shape=(13*4,), dtype=np.uint8)
 
-    # header[12] = 40
-    # header[16:24] = list(width.to_bytes(4, 'little') + height.to_bytes(4, 'little'))
-    # header[26] = 32
-
-    with open(filepath, 'wb') as file_:
-        file_.write(b'BM')
-        file_.write(header.tobytes())
-        file_.write(data.tobytes())
-
-
-    # b'BM' + np.
-
-    # file = io.BytesIO()
-    # file.write(b'BM')
-    # header_ints = np.array([
-    #     54 + 4 * width * height,
-    #     0, 54, 40,
-    #     width, height,
-    #     0x2_00_00_1
-    # ], dtype=np.uint32)
-    # header_ints += [0] * ( 13 - len(header_ints) )
-    # header_bytes = b''.join([
-    #     c.to_bytes(4, 'little')
-    #     for c in header_ints
-    # ])
-    # file.write(header_bytes)
-
-    # file.write(data.tobytes())
-
-    # file.seek(0)
-
-    # with open(filepath, 'wb') as file_:
-    #     file_.write(file.read())
-
-
-def save_as_bmp(width: int, height: int, pixels: dict[tuple[int, int], list[int]], filepath: str) -> None:
-
-
-    file = io.BytesIO()
-    file.write(b'BM')
-    header_ints = [
-        54 + 4 * width * height,
-        0, 54, 40,
-        width, height,
-        0x2_00_00_1
-    ]
-    header_ints += [0] * ( 13 - len(header_ints) )
-    header_bytes = b''.join([
-        c.to_bytes(4, 'little')
-        for c in header_ints
-    ])
-    file.write(header_bytes)
-    for y in range(height):
-        for x in range(width):
-            pixel = pixels[x, y][::-1] + [255]
-            for c in pixel:
-                file.write((c % 256).to_bytes(1, 'little'))
-
-    file.seek(0)
-
-    with open(filepath, 'wb') as file_:
-        file_.write(file.read())
-
-def norm(x: float) -> float:
-    n = math.exp(-1/2*x**2)
-    du = 2*math.pi
-    d = math.sqrt(du)
-    d=1
-    return n/d
-
-def main() -> None:
-    width = 1680
-
-    height = 1050
-    # height = width
-
-    # display : dict[tuple[int, int], list[int]] = {}
-
-    display = np.ndarray(shape=(height, width, 4), dtype=np.uint8)
-
-    for y in range(height):
-        for x in range(width):
-            display[y, x] = [round(255 * x / width), round(255 * y / height), 255, 255]
-            # display[y, x, :] = [x%256, 255, 255, 255]
-
-    # for q in range(64):
-    #     col = random.choice(range(width))
-    #     value = random.choice(range(1, 256))
-    #     for x in range(width):
-    #         for y in range(height):
-    #             for c in range(3):
-                    # display[x, y][c] -= round(norm((x - col)/3) * value)
-                        
-
-    bmp_to_numpy('out.bmp', display)
-
-    # save_as_bmp(width, height, display, 'out.bmp')
-
-main()
