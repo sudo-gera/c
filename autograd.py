@@ -13,17 +13,25 @@ class ICanGetGrad(abc.ABC):
     def grad(self, var: Variable) -> ICanGetGrad:
         ...
 
-    def __add__(self, other: ICanGetGrad) -> ICanGetGrad:
-        return Sum(self, other)
+    def __add__(self, other: object) -> ICanGetGrad:
+        if isinstance(other, ICanGetGrad):
+            return Sum(self, other)
+        return NotImplemented
     
-    def __sum__(self, other: ICanGetGrad) -> ICanGetGrad:
-        return Difference(self, other)
+    def __sub__(self, other: ICanGetGrad) -> ICanGetGrad:
+        if isinstance(other, ICanGetGrad):
+            return Difference(self, other)
+        return NotImplemented
     
     def __mul__(self, other: ICanGetGrad) -> ICanGetGrad:
-        return Product(self, other)
+        if isinstance(other, ICanGetGrad):
+            return Product(self, other)
+        return NotImplemented
 
     def __truediv__(self, other: ICanGetGrad) -> ICanGetGrad:
-        return Quotient(self, other)
+        if isinstance(other, ICanGetGrad):
+            return Quotient(self, other)
+        return NotImplemented
 
     @abc.abstractmethod
     def ast(self) -> ast.AST:
@@ -91,10 +99,7 @@ class Sum(IBinOp):
         return ast.Add()
 
     def grad(self, var: Variable) -> ICanGetGrad:
-        return Sum(
-            self.f1.grad(var),
-            self.f2.grad(var)
-        )
+        return self.f1.grad(var) + self.f2.grad(var)
 
 @dataclass(frozen=True)
 class Difference(IBinOp):
@@ -104,10 +109,7 @@ class Difference(IBinOp):
         return ast.Sub()
 
     def grad(self, var: Variable) -> ICanGetGrad:
-        return Difference(
-            self.f1.grad(var),
-            self.f2.grad(var)
-        )
+        return self.f1.grad(var) - self.f2.grad(var)
 
 @dataclass(frozen=True)
 class Product(IBinOp):
@@ -117,16 +119,7 @@ class Product(IBinOp):
         return ast.Mult()
 
     def grad(self, var: Variable) -> ICanGetGrad:
-        return Sum(
-            Product(
-                self.f1.grad(var),
-                self.f2,
-            ),
-            Product(
-                self.f1,
-                self.f2.grad(var),
-            ),
-        )
+        return self.f1.grad(var) * self.f2 + self.f1 * self.f2.grad(var)
 
 @dataclass(frozen=True)
 class Quotient(IBinOp):
@@ -136,22 +129,7 @@ class Quotient(IBinOp):
         return ast.Div()
 
     def grad(self, var: Variable) -> ICanGetGrad:
-        return Quotient(
-            Difference(
-                Product(
-                    self.f1.grad(var),
-                    self.f2,
-                ),
-                Product(
-                    self.f1,
-                    self.f2.grad(var),
-                ),
-            ),
-            Product(
-                self.f2,
-                self.f2,
-            )
-        )
+        return (self.f1.grad(var) * self.f2 - self.f1 * self.f2.grad(var)) / (self.f2 * self.f2)
 
 def ast_traversal(root: ast.AST) -> ICanGetGrad:
     if isinstance(root, ast.Expression):
@@ -184,8 +162,11 @@ def symbolic_grad(expr: str) -> dict[str, str]:
                 )
             ).ast()
         )
-        for variable in can_get_grad.variables()
+        for variable in sorted(can_get_grad.variables())
     }
+
+assert repr(symbolic_grad('x * y * z')) == "{'x': '(1 * y + x * 0) * z + x * y * 0', 'y': '(0 * y + x * 1) * z + x * y * 0', 'z': '(0 * y + x * 0) * z + x * y * 1'}"
+assert repr(symbolic_grad('x / y + y * 4 - y')) == "{'x': '(1 * y - x * 0) / (y * y) + (0 * 4.0 + y * 0) - 0', 'y': '(0 * y - x * 1) / (y * y) + (1 * 4.0 + y * 0) - 1'}"
 
 for variable, part_der in symbolic_grad(input()).items():
     print(f'{variable!r}: {part_der}')
