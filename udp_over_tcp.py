@@ -28,6 +28,9 @@ import types
 import typing
 import uuid
 
+
+############################################################################################################################
+
 if sys.version_info >= (3, 10) and TYPE_CHECKING:
     from _typeshed import DataclassInstance
 else:
@@ -43,6 +46,35 @@ elif sys.version_info < (3, 11):
     call_P = ParamSpec("call_P")
     def call(obj: caCallable[call_P, call_R], /, *args: call_P.args, **kwargs: call_P.kwargs) -> call_R:
         return obj(*args, **kwargs)
+
+############################################################################################################################
+
+tasks : set[asyncio.Task[None]] = set()
+
+def fire(coro: typing.Awaitable[Any]) -> None:
+    async def wrapper() -> None:
+        try:
+            await coro
+        except BaseException:
+            raise KeyboardInterrupt
+
+    task : asyncio.Task[Any] = asyncio.create_task(wrapper())
+    tasks.add(task)
+    task.add_done_callback(tasks.discard)
+
+############################################################################################################################
+
+logger = logging.getLogger(__name__)
+
+class always_upper_str(str):
+    def __new__(cls, *args: Any, **kwargs: Any) -> always_upper_str:
+        return super().__new__(cls,
+            super().__new__(cls, *args, **kwargs).upper()
+        )
+
+logging_levels = [name for name in dir(logging) if isinstance(logging.getLevelName(name), int)]
+
+logging_levels_case_insensitive = [always_upper_str(a) for a in logging_levels]
 
 ############################################################################################################################
 
@@ -66,19 +98,6 @@ def get_fields(dclass: DataclassInstance) -> list[dataclass_field]:
         process_one_filed(field)
         for field in fields(dclass)
     ]
-
-############################################################################################################################
-
-logger = logging.getLogger(__name__)
-
-class always_upper_str(str):
-    def __new__(cls, *args: Any, **kwargs: Any) -> always_upper_str:
-        value = str(*args, **kwargs).upper()
-        return super().__new__(cls, value)
-
-logging_levels = [name for name in dir(logging) if isinstance(logging.getLevelName(name), int)]
-
-logging_levels_case_insensitive = [always_upper_str(a) for a in logging_levels]
 
 ############################################################################################################################
 
@@ -460,17 +479,6 @@ def is_ip(host: str) -> bool:
 ############################################################################################################################
 
 uuid_bytes_len: Final = len(uuid.uuid4().bytes)
-
-############################################################################################################################
-
-tasks : set[asyncio.Task[None]] = set()
-
-def fire(coro: Awaitable[Any]) -> None:
-    async def wrapper() -> None:
-        await coro
-    task : asyncio.Task[None] = asyncio.create_task(wrapper())
-    tasks.add(task)
-    task.add_done_callback(tasks.discard)
 
 ############################################################################################################################
 
