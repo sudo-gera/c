@@ -192,15 +192,14 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
         if isinstance(field.type, type): # v: t and t is type not union
             arg_type = field.type
 
-        if sys.version_info >= (3, 9):
-            if isinstance(field.type, types.UnionType):
-                union_args = field.type.__args__
-                assert len(union_args) == 2
-                assert not arg_required
-                assert type(arg_default) in union_args
-                non_default_type = union_args[union_args[0] == type(arg_default)]
-                assert isinstance(non_default_type, type)
-                arg_type = non_default_type
+        if sys.version_info >= (3, 9) and isinstance(field.type, types.UnionType):
+            union_args = field.type.__args__
+            assert len(union_args) == 2
+            assert not arg_required
+            assert type(arg_default) in union_args
+            non_default_type = union_args[union_args[0] == type(arg_default)]
+            assert isinstance(non_default_type, type)
+            arg_type = non_default_type
 
         if get_origin(field.type) is Union:
             union_args = field.type.__args__
