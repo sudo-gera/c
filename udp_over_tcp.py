@@ -181,15 +181,15 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
         arg_type : type[Any]|None = None
         arg_default : Any = None
 
-        if field.field.default is not MISSING:
+        if field.field.default is not MISSING: # v: t = SOME_DEFAULT
             arg_default = field.field.default
             arg_required = False
         
-        if field.field.default_factory is not MISSING:
+        if field.field.default_factory is not MISSING: # v: t = field(default_factory=SOME_CALLABLE)
             arg_default = field.field.default_factory()
             arg_required = False
 
-        if isinstance(field.type, type):
+        if isinstance(field.type, type): # v: t and t is type not union
             arg_type = field.type
 
         if sys.version_info >= (3, 9):
