@@ -199,16 +199,18 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
             or
             typing.get_origin(field.type) is typing.Union  # typing.Optional[t], typing.Union[t, None], typing.Union[t, type(None)]
         ):
-            union_args = field.type.__args__
+            union_args = typing.get_args(field.type)
             assert len(union_args) == 2
-            assert not arg_required
+            assert not arg_required # has some default value
+            assert arg_default is None
             assert type(arg_default) in union_args
             non_default_type = union_args[union_args[0] == type(arg_default)]
             assert isinstance(non_default_type, type)
+            assert non_default_type is type(None)
+            assert arg_type is None
             arg_type = non_default_type
 
         assert arg_type is not None
-        assert arg_required is not None
 
         parser.add_argument(
             '--' + arg_name.replace('_', '-'),
@@ -216,6 +218,105 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
             type=arg_type,
             default=arg_default,
         )
+
+
+############################################################################################################################
+
+def dataclass_to_json(value: DataclassInstance) -> str:
+    check_dataclass_types(value)
+    return json.dumps(vars(value), indent=4)
+
+json_to_dataclass_t = TypeVar('json_to_dataclass_t', bound=DataclassInstance)
+
+def json_to_dataclass(data: str, dclass_type: type[json_to_dataclass_t]) -> json_to_dataclass_t:
+    d = json.loads(data)
+    assert isinstance(d, dict)
+    assert all([isinstance(k, str) for k in d])
+    return dict_to_dataclass(d, dclass_type)
+
+############################################################################################################################
+
+def dataclass_to_file(value: DataclassInstance, path: pathlib.Path) -> None:
+    data = dataclass_to_json(value)
+    with path.open('w') as file:
+        file.write(data)
+
+file_to_dataclass_t = TypeVar('file_to_dataclass_t', bound=DataclassInstance)
+
+def file_to_dataclass(path: pathlib.Path, dclass_type: type[file_to_dataclass_t]) -> file_to_dataclass_t:
+    if not path.exists():
+        with path.open('w') as file:
+            json.dump({}, file)
+    assert path.exists()
+    assert path.is_file()
+    with path.open('r') as file:
+        data = file.read()
+    return json_to_dataclass(data, dclass_type)
+
+############################################################################################################################
+
+class path_based_lock:
+    def __init__(self, path: pathlib.Path, force_new_lock: bool):
+        assert force_new_lock
+        self.__path = path
+        self.__is_locked = False
+        self.__update_future : asyncio.Future[None] | None = None
+
+    def checking_switch_to(self, new_val: bool) -> None:
+        assert self.__is_locked != new_val
+        self.__is_locked = new_val
+        if self.__update_future is not None:
+            self.__update_future.set_result(None)
+            self.__update_future = None
+
+    async def wait_for_update(self) -> None:
+        if self.__update_future is None:
+            self.__update_future = asyncio.Future()
+        await self.__update_future
+
+    def is_locked(self) -> bool:
+        return self.__is_locked
+
+@cache
+def get_path_based_lock(path: pathlib.Path) -> path_based_lock:
+    rpath = path.resolve()
+    if rpath != path:
+        return get_path_based_lock(rpath)
+    return path_based_lock(path, force_new_lock=True)
+
+############################################################################################################################
+
+mutexted_file_t = TypeVar('mutexted_file_t', bound=DataclassInstance)
+
+class locked_dataclass_file(typing.Generic[mutexted_file_t]):
+
+    def __init__(self, path: pathlib.Path, dclass_type: type[mutexted_file_t]) -> None:
+        self.__path = path
+        self.__dclass_type = dclass_type
+        self.__lock = get_path_based_lock(path)
+        self.__db : mutexted_file_t | None = None
+
+    def __enter__(self) -> mutexted_file_t:
+        self.__lock.checking_switch_to(True)
+        self.__db = file_to_dataclass(self.__path, self.__dclass_type)
+        return self.__db
+
+    def __exit__(self, exc_type: type[Any] | None, exc_value: Any, traceback: Any) -> None:
+        try:
+            if exc_type is None:
+                assert self.__db is not None
+                dataclass_to_file(self.__db, self.__path)
+        finally:
+            self.__db = None
+            self.__lock.checking_switch_to(False)
+
+    async def __aenter__(self) -> mutexted_file_t:
+        while self.__lock.is_locked():
+            await self.__lock.wait_for_update()
+        return self.__enter__()
+
+    async def __aexit__(self, exc_type: type[Any] | None, exc_value: Any, traceback: Any) -> None:
+        return self.__exit__(exc_type, exc_value, traceback)
 
 ############################################################################################################################
 
