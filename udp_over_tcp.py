@@ -78,6 +78,62 @@ logging_levels_case_insensitive = [always_upper_str(a) for a in logging_levels]
 
 ############################################################################################################################
 
+def isinstance_typing(value: Any, t: Any) -> bool:
+    try:
+        return isinstance(value, t)
+    except TypeError:
+        pass
+
+    origin = typing.get_origin(t)
+    args = typing.get_args(t)
+    assert origin is not None
+
+    if origin is Literal:
+        assert len(args) == 1
+        return bool(value == args[0])
+
+    if not isinstance_typing(value, origin):
+        return False
+
+    if origin is list:
+        assert len(args) == 1
+        return all([
+            isinstance_typing(v, args[0])
+            for v in value
+        ])
+
+    if origin is str:
+        assert len(args) == 1
+        return all([
+            isinstance_typing(v, args[0])
+            for v in value
+        ])
+
+    if origin is dict:
+        assert len(args) == 2
+        return all([
+            isinstance_typing(k, args[0]) and isinstance_typing(v, args[1])
+            for k, v in value.items()
+        ])
+
+    if origin is tuple:
+        if len(args) == 2 and args[1] is ...:
+            return all([
+                isinstance_typing(v, args[0])
+                for v in value
+            ])
+        else:
+            if len(args) != len(value):
+                return False
+            return all([
+                isinstance_typing(v, t)
+                for v, t in zip(value, args)
+            ])
+            
+    assert False
+
+############################################################################################################################
+
 @dataclass(frozen=True)
 class dataclass_field:
     field: Field[Any]
@@ -87,8 +143,10 @@ class dataclass_field:
 def get_fields(dclass: DataclassInstance) -> list[dataclass_field]:
 
     def process_one_filed(field: Field[Any]) -> dataclass_field:
-        assert isinstance(field.type, str)
-        field_type = eval(field.type)
+        if isinstance(field.type, str):
+            field_type = eval(field.type)
+        else:
+            field_type = field.type
         return dataclass_field(
             field=field,
             type=field_type,
@@ -99,14 +157,21 @@ def get_fields(dclass: DataclassInstance) -> list[dataclass_field]:
         for field in fields(dclass)
     ]
 
+def check_dataclass_types(data: DataclassInstance) -> None:
+
+    for field in get_fields(type(data)):
+        assert isinstance_typing(getattr(data, field.field.name), field.type)
+
+dict_to_dataclass_t = TypeVar('dict_to_dataclass_t', bound=DataclassInstance)
+
+def dict_to_dataclass(data: dict[str, Any], dclass_type: type[dict_to_dataclass_t]) -> dict_to_dataclass_t:
+
+    assert all([isinstance(k, str) for k in data])
+    result = dclass_type(**data)
+    check_dataclass_types(result)
+    return result
+
 ############################################################################################################################
-
-subparsers_as_dataclass_handler_type = TypeVar('subparsers_as_dataclass_handler_type')
-
-@dataclass(frozen=True)
-class subparsers_as_dataclass_parser_ctx(Generic[subparsers_as_dataclass_handler_type]):
-    dataclass: type[DataclassInstance]
-    handler: subparsers_as_dataclass_handler_type
 
 def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass: type[DataclassInstance]) -> None:
     for field in get_fields(args_dataclass):
@@ -156,6 +221,14 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
             default=arg_default,
         )
 
+############################################################################################################################
+
+subparsers_as_dataclass_handler_type = TypeVar('subparsers_as_dataclass_handler_type')
+
+@dataclass(frozen=True)
+class subparsers_as_dataclass_parser_ctx(Generic[subparsers_as_dataclass_handler_type]):
+    dataclass: type[DataclassInstance]
+    handler: subparsers_as_dataclass_handler_type
 
 class subparsers_as_dataclass(Generic[subparsers_as_dataclass_handler_type]):
 
