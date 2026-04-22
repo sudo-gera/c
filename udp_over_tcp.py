@@ -320,6 +320,29 @@ class locked_dataclass_file(typing.Generic[mutexted_file_t]):
 
 ############################################################################################################################
 
+class alive_or_raise:
+
+    def __init__(self) -> None:
+        self.mark_as_alive()
+        self.started = False
+
+    def mark_as_alive(self) -> None:
+        if not self.started:
+            fire(self.checker())
+            self.started = True
+        self.__last_alive_mark = time.time()
+
+    async def checker(self) -> None:
+        while 1:
+            await asyncio.sleep(1)
+            ct = time.time()
+            if ct - self.__last_alive_mark > 60:
+                raise KeyboardInterrupt
+
+alive = alive_or_raise()
+
+############################################################################################################################
+
 subparsers_as_dataclass_handler_type = TypeVar('subparsers_as_dataclass_handler_type')
 
 @dataclass(frozen=True)
@@ -778,6 +801,8 @@ class server_args:
 
 async def server_main(args: server_args) -> None:
 
+    alive.mark_as_alive()
+
     # fire(event_loop_checker())
 
     @dataclass(frozen=True)
@@ -933,13 +958,14 @@ async def server_main(args: server_args) -> None:
                 async def recv_while_can() -> None:
                     while 1:
                         msg = await read_large_chunk_from_stream_reader(reader, datagram)
-
+                        alive.mark_as_alive()
                         udp_client = await get_udp_client(msg)
                         await udp_client.send_datagram(msg)
 
                 async def send_while_can() -> None:
                     while 1:
                         msg = await context.server_to_client_queue.get()
+                        alive.mark_as_alive()
                         await write_large_chunk_to_stream_writer(writer, msg)
 
                 await asyncio.gather(
@@ -977,6 +1003,8 @@ class client_args:
     workers: int
 
 async def client_main(args: client_args) -> None:
+
+    alive.mark_as_alive()
 
     # fire(event_loop_checker())
 
@@ -1074,12 +1102,13 @@ async def client_main(args: client_args) -> None:
         async def recv_while_can() -> None:
             while 1:
                 msg = await read_large_chunk_from_stream_reader(reader, datagram)
-
+                alive.mark_as_alive()
                 await protocol.send_datagram(msg)
 
         async def send_while_can() -> None:
             while 1:
                 msg = await udp_to_tcp_queue.get()
+                alive.mark_as_alive()
                 await write_large_chunk_to_stream_writer(writer, msg)
 
         await asyncio.gather(
