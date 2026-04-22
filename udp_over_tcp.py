@@ -323,7 +323,7 @@ class locked_dataclass_file(typing.Generic[mutexted_file_t]):
 class alive_or_raise:
 
     def __init__(self) -> None:
-        self.mark_as_alive()
+        self.__last_alive_mark = time.time()
         self.started = False
 
     def mark_as_alive(self) -> None:
