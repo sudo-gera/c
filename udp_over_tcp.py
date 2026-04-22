@@ -129,7 +129,7 @@ def isinstance_typing(value: Any, t: Any) -> bool:
                 isinstance_typing(v, t)
                 for v, t in zip(value, args)
             ])
-            
+
     assert False
 
 ############################################################################################################################
@@ -184,7 +184,7 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
         if field.field.default is not MISSING: # v: t = SOME_DEFAULT
             arg_default = field.field.default
             arg_required = False
-        
+
         if field.field.default_factory is not MISSING: # v: t = field(default_factory=SOME_CALLABLE)
             arg_default = field.field.default_factory()
             arg_required = False
@@ -256,10 +256,10 @@ class print_count_on_exit:
     def __init__(self, name: str) -> None:
         self.value = 0
         self.name = name
-    
+
     def add(self, value: int) -> None:
         self.value += value
-    
+
     def __del__(self, *a: Any) -> None:
         print(self.name, self.value)
 
@@ -329,7 +329,7 @@ def setup_reader_and_writer_for_dataclass(cls: type[DataclassInstance]) -> None:
         async def read_one_field(field: dataclass_field) -> Any:
             value: Any = await read_from_stream_reader(reader, field.type)
             return value
-        
+
         return cls(
             **{
                 field.field.name: await read_one_field(field)
@@ -343,7 +343,7 @@ def setup_reader_and_writer_for_dataclass(cls: type[DataclassInstance]) -> None:
             field_value = getattr(value, field.field.name)
             assert type(field_value) == field.type
             await write_to_stream_writer(writer, field_value)
-    
+
 @call
 def setup_default_types() -> None:
     # bytes
@@ -525,12 +525,12 @@ async def get_all(q: asyncio.Queue[get_all_type]) -> list[get_all_type]:
 
 async def resolve_domain(domain: str) -> list[str]:
     loop = asyncio.get_event_loop()
-    
+
     addrinfo = await loop.run_in_executor(
         None,
         lambda: socket.getaddrinfo(domain, None, proto=socket.IPPROTO_TCP)
     )
-    
+
     result : set[str] = set()
 
     for info in addrinfo:
@@ -560,7 +560,7 @@ async def event_loop_checker() -> None:
     while 1:
         pt = ct
         ct = time.monotonic()
-        
+
         was_sleeping = ct - pt
         if was_sleeping > 2:
             logger.warning('The event loop was blocked for %.3f seconds.', was_sleeping)
@@ -680,7 +680,7 @@ class server_args:
     datagram_buffer_len: int
 
 async def server_main(args: server_args) -> None:
-    
+
     # fire(event_loop_checker())
 
     @dataclass(frozen=True)
@@ -844,12 +844,12 @@ async def server_main(args: server_args) -> None:
                     while 1:
                         msg = await context.server_to_client_queue.get()
                         await write_large_chunk_to_stream_writer(writer, msg)
-                
+
                 await asyncio.gather(
                     recv_while_can(),
                     send_while_can(),
                 )
-            
+
             except Exception as exc:
                 try:
                     client_id_str = str(context.client_id)
@@ -919,7 +919,7 @@ async def client_main(args: client_args) -> None:
                 connection_id = uuid.uuid4()
                 addr_to_id[addr] = connection_id
                 logger.info('new UDP connection from [%s]:%d, assigning connection_id = %s.', src_host, src_port, connection_id)
-            
+
             connection_id = addr_to_id[addr]
 
             connection = connection_info(
@@ -979,7 +979,7 @@ async def client_main(args: client_args) -> None:
                 msg = await read_large_chunk_from_stream_reader(reader, datagram)
 
                 await protocol.send_datagram(msg)
-        
+
         async def send_while_can() -> None:
             while 1:
                 msg = await udp_to_tcp_queue.get()
@@ -998,7 +998,7 @@ async def client_main(args: client_args) -> None:
                 # print(traceback.format_exc())
                 logger.warning('TCP worker #%d stopped with an error: %r.', worker_num, exc)
             await asyncio.sleep(args.reconnect_interval)
-    
+
     async def run_workers() -> None:
         await asyncio.gather(
             *[
@@ -1042,7 +1042,7 @@ def main(argv: list[str]) -> None:
     parser_name = args.mode
     assert isinstance(parser_name, str)
     handler, arg = subparsers.get_handler(args)
-    
+
     try:
         asyncio.run(handler(arg))
     except KeyboardInterrupt:
