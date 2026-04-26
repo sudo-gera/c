@@ -5,6 +5,7 @@ from functools import *
 from itertools import *
 from operator import *
 from typing import *
+from enum import *
 import argparse
 import asyncio
 import base64
@@ -28,7 +29,6 @@ import types
 import typing
 import uuid
 
-
 ############################################################################################################################
 
 if sys.version_info >= (3, 10) and TYPE_CHECKING:
@@ -49,6 +49,14 @@ elif sys.version_info < (3, 11):
 
 ############################################################################################################################
 
+checking_cast_t = TypeVar('checking_cast_t')
+
+def checking_cast(t: type[checking_cast_t], val: Any) -> checking_cast_t:
+    assert isinstance(val, t)
+    return val
+
+############################################################################################################################
+
 tasks : set[asyncio.Task[None]] = set()
 
 def fire(coro: typing.Awaitable[Any]) -> None:
@@ -62,19 +70,73 @@ def fire(coro: typing.Awaitable[Any]) -> None:
     tasks.add(task)
     task.add_done_callback(tasks.discard)
 
+gather_t_t = TypeVar('gather_t_t')
+gather_t1_t = TypeVar('gather_t1_t')
+gather_t2_t = TypeVar('gather_t2_t')
+gather_t3_t = TypeVar('gather_t3_t')
+gather_t4_t = TypeVar('gather_t4_t')
+gather_t5_t = TypeVar('gather_t5_t')
+gather_t6_t = TypeVar('gather_t6_t')
+gather_t7_t = TypeVar('gather_t7_t')
+gather_t8_t = TypeVar('gather_t8_t')
+gather_t9_t = TypeVar('gather_t9_t')
+
+@overload
+async def gather(v1: Awaitable[gather_t1_t], /) -> tuple[gather_t1_t]:
+    ...
+
+@overload
+async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], /) -> tuple[gather_t1_t, gather_t2_t]:
+    ...
+
+@overload
+async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t]:
+    ...
+
+@overload
+async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t]:
+    ...
+
+@overload
+async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t]:
+    ...
+
+@overload
+async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t]:
+    ...
+
+@overload
+async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], v7: Awaitable[gather_t7_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t, gather_t7_t]:
+    ...
+
+@overload
+async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], v7: Awaitable[gather_t7_t], v8: Awaitable[gather_t8_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t, gather_t7_t, gather_t8_t]:
+    ...
+
+async def gather(*coro: Awaitable[Any]) -> tuple[Any, ...]:
+    return tuple(await asyncio.gather(*coro))
+
 ############################################################################################################################
 
-logger = logging.getLogger(__name__)
+class LogLevelEnum(Enum):
+    CRITICAL = 50
+    FATAL = CRITICAL
+    ERROR = 40
+    WARNING = 30
+    WARN = WARNING
+    INFO = 20
+    DEBUG = 10
+    NOTSET = 0
 
-class always_upper_str(str):
-    def __new__(cls, *args: Any, **kwargs: Any) -> always_upper_str:
-        return super().__new__(cls,
-            super().__new__(cls, *args, **kwargs).upper()
-        )
-
-logging_levels = [name for name in dir(logging) if isinstance(logging.getLevelName(name), int)]
-
-logging_levels_case_insensitive = [always_upper_str(a) for a in logging_levels]
+def set_log_level(log_level: LogLevelEnum | int) -> None:
+    if isinstance(log_level, LogLevelEnum):
+        log_level = log_level.value
+    assert isinstance(log_level, int)
+    logging.basicConfig(
+        level=log_level,
+        style='{',
+        format='{asctime:s} {levelname:^8s} {funcName}:{lineno} {message}',
+    )
 
 ############################################################################################################################
 
@@ -89,8 +151,7 @@ def isinstance_typing(value: Any, t: Any) -> bool:
     assert origin is not None
 
     if origin is Literal:
-        assert len(args) == 1
-        return bool(value == args[0])
+        return value in args
 
     if not isinstance_typing(value, origin):
         return False
@@ -178,8 +239,9 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
 
         arg_name = field.field.name
         arg_required = True
-        arg_type : type[Any]|None = None
+        arg_type : Callable[[str], Any]|None = None
         arg_default : Any = None
+        arg_choices : Any = None
 
         if field.field.default is not MISSING: # v: t = SOME_DEFAULT
             arg_default = field.field.default
@@ -189,26 +251,46 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
             arg_default = field.field.default_factory()
             arg_required = False
 
-        if isinstance(field.type, type): # v: t and t is type not union
-            arg_type = field.type
+        target_type = field.type
 
         if (
             sys.version_info >= (3, 10)
             and
-            isinstance(field.type, types.UnionType)  # t | None
+            typing.get_origin(target_type) is types.UnionType  # t | None
             or
-            typing.get_origin(field.type) is typing.Union  # typing.Optional[t], typing.Union[t, None], typing.Union[t, type(None)]
+            typing.get_origin(target_type) is typing.Union  # typing.Optional[t], typing.Union[t, None], typing.Union[t, type(None)]
         ):
-            union_args = typing.get_args(field.type)
+            union_args = typing.get_args(target_type)
             assert len(union_args) == 2
-            assert not arg_required # has some default value
-            assert arg_default is None
-            assert type(arg_default) in union_args
-            non_default_type = union_args[union_args[0] == type(arg_default)]
-            assert isinstance(non_default_type, type)
-            assert non_default_type is type(None)
-            assert arg_type is None
-            arg_type = non_default_type
+            assert type(None) in union_args
+            target_type = union_args[union_args[0] == type(None)]
+            assert target_type is not None
+            arg_required = False
+
+        if isinstance(target_type, type):
+            if issubclass(target_type, Enum | EnumMeta):
+                enum_members = target_type.__members__
+                assert isinstance(enum_members, types.MappingProxyType)
+                enum_members_dict = {name: enum_members.get(name) for name in enum_members.keys()}
+                def get_enum(user_input: str) -> Enum | EnumMeta:
+                    if user_input not in enum_members_dict:
+                        raise ValueError
+                    enum = enum_members_dict[user_input]
+                    if not isinstance(enum, Enum | EnumMeta):
+                        raise ValueError
+                    return enum
+                arg_type=get_enum
+                arg_choices=list(map(get_enum, enum_members_dict))
+            else:
+                arg_type = target_type
+
+        elif typing.get_origin(target_type) is typing.Literal:
+            literal_args = typing.get_args(target_type)
+            literal_types = {type(arg) for arg in literal_args}
+            assert len(literal_types)
+            literal_type = literal_types.pop()
+            arg_choices = literal_args
+            arg_type = literal_type
 
         assert arg_type is not None
 
@@ -217,8 +299,8 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
             required=arg_required,
             type=arg_type,
             default=arg_default,
+            choices=arg_choices,
         )
-
 
 ############################################################################################################################
 
@@ -326,7 +408,7 @@ def can_use_event_loop() -> bool:
         return True
     except RuntimeError:
         return False
-    
+
 ############################################################################################################################
 
 class alive_or_raise:

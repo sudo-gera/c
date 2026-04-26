@@ -268,7 +268,6 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
             arg_required = False
 
         if isinstance(target_type, type):
-            # print(f"{target_type = }, {issubclass(target_type, Enum | EnumMeta)}")
             if issubclass(target_type, Enum | EnumMeta):
                 enum_members = target_type.__members__
                 assert isinstance(enum_members, types.MappingProxyType)
@@ -292,17 +291,15 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
             literal_type = literal_types.pop()
             arg_choices = literal_args
             arg_type = literal_type
-            
-        assert arg_type is not None
 
-        # print(f"{arg_name = }, {arg_type = }, {arg_choices = }, {arg_default = }")
+        assert arg_type is not None
 
         parser.add_argument(
             '--' + arg_name.replace('_', '-'),
             required=arg_required,
             type=arg_type,
             default=arg_default,
-            choices=arg_choices
+            choices=arg_choices,
         )
 
 ############################################################################################################################
@@ -411,7 +408,7 @@ def can_use_event_loop() -> bool:
         return True
     except RuntimeError:
         return False
-    
+
 ############################################################################################################################
 
 class alive_or_raise:
@@ -437,6 +434,7 @@ class alive_or_raise:
                 raise KeyboardInterrupt
             await asyncio.sleep(until_raise)
 
+############################################################################################################################
 ############################################################################################################################
 
 alive = alive_or_raise(60)
