@@ -1,100 +1,34 @@
-from __future__ import annotations
-from collections import *
-from dataclasses import *
-from functools import *
-from itertools import *
-from operator import *
-from typing import *
-from enum import *
-import argparse
-import asyncio
-import base64
-import contextlib
-import errno
-import fractions
-import io
-import ipaddress
-import json
-import logging
-import math
-import os
-import pathlib
-import random
-import socket
-import sys
-import textwrap
-import time
-import traceback
-import types
-import typing
-import uuid
+from h import *
 
-############################################################################################################################
+@cache
+def len_squares(n: int) -> int:
+    return len({x*x%n for x in range(0, n)})
 
-if sys.version_info >= (3, 10) and TYPE_CHECKING:
-    from _typeshed import DataclassInstance
-else:
-    DataclassInstance = Any
+for pn in range(1, 99):
+    n = reduce(mul, primes[1:pn+1])
+    print(pn, len_squares(n)/(n+0), (2/3)**pn)
 
-if sys.version_info < (3, 10):
-    def call(obj: Any, /, *args: Any, **kwargs: Any) -> Any:
-        return obj(*args, **kwargs)
+# # step_size = 100800
+# step_size = 1000003
+# d = 11
+# ns_gcd = None
+# try:
+#     for n in range(0, 9999999, step_size):
+#         if len_squares(n) < 0.011 * n:
+#             ns_gcd = n if ns_gcd is None else gcd(n, ns_gcd)
+#             print(n, n % (step_size*d), ns_gcd // step_size)
+# finally:
+#     ...
 
-elif sys.version_info < (3, 11):
-    from collections.abc import Callable as caCallable
-    call_R = TypeVar("call_R")
-    call_P = ParamSpec("call_P")
-    def call(obj: caCallable[call_P, call_R], /, *args: call_P.args, **kwargs: call_P.kwargs) -> call_R:
-        return obj(*args, **kwargs)
-
-############################################################################################################################
-
-checking_cast_t = TypeVar('checking_cast_t')
-
-def checking_cast(t: type[checking_cast_t], val: Any) -> checking_cast_t:
-    assert isinstance(val, t)
-    return val
-
-############################################################################################################################
-
-tasks : set[asyncio.Task[None]] = set()
-
-def fire(coro: typing.Awaitable[Any]) -> None:
-    async def wrapper() -> None:
-        try:
-            await coro
-        except BaseException:
-            raise KeyboardInterrupt
-
-    task : asyncio.Task[Any] = asyncio.create_task(wrapper())
-    tasks.add(task)
-    task.add_done_callback(tasks.discard)
-
-############################################################################################################################
-
-logger = logging.getLogger(__name__)
-
-class always_upper_str(str):
-    def __new__(cls, *args: Any, **kwargs: Any) -> always_upper_str:
-        return super().__new__(cls,
-            super().__new__(cls, *args, **kwargs).upper()
-        )
-
-logging_levels = [
-    'info', 111
-]
-
-class LogLevelEnumMeta(EnumMeta):
-    def __new__(mcs: Any, name: Any, bases: Any, attrs: Any) -> Any:
-        attrs_to_add = {    'info': 111}
-        print(attrs_to_add)
-        print(attrs)
-        attrs |= attrs_to_add
-        print(attrs)
-        return super().__new__(mcs, name, bases, attrs)
-
-class LogLevelEnum(Enum, metaclass=LogLevelEnumMeta):
-    pass
-
-print(LogLevelEnum.info)
-exit()
+# print(
+#     *[
+#         f"{round(v/n*100)*'#':100s} {v = :4d} {n = :4d} {v/n = :0.2f} {len(factor(n)) = }"
+#         for v,n in [
+#             (
+#                 len({x*x%n for x in range(0, n)}),
+#                 n
+#             )
+#             for n in range(1,9999)
+#         ]
+#     ], sep='\n'
+# )
