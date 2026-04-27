@@ -497,8 +497,10 @@ cmd_connection_ids : dict[uuid.UUID, tuple[asyncio.StreamReader, asyncio.StreamW
 async def connection_matcher(args: main_args) -> None:
     while True:
         await asyncio.sleep(0.1)
-        for tcp_id, tcp_connection in tcp_connection_ids.items():
-            for cmd_id, cmd_connection in cmd_connection_ids.items():
+        for tcp_id in tcp_connection_ids:
+            for cmd_id in cmd_connection_ids:
+                tcp_connection = tcp_connection_ids[tcp_id]
+                cmd_connection = cmd_connection_ids[cmd_id]
                 if isinstance(tcp_connection, tuple):
                     if isinstance(cmd_connection, tuple):
                         logging.debug(f'matching {tcp_id = } and {cmd_id}')
