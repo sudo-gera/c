@@ -128,7 +128,7 @@ class LogLevelEnum(Enum):
     DEBUG = 10
     NOTSET = 0
 
-def set_log_level(log_level: LogLevelEnum | int) -> None:
+def set_log_level(log_level: LogLevelEnum | int, **kwargs: Any) -> None:
     if isinstance(log_level, LogLevelEnum):
         log_level = log_level.value
     assert isinstance(log_level, int)
@@ -136,6 +136,7 @@ def set_log_level(log_level: LogLevelEnum | int) -> None:
         level=log_level,
         style='{',
         format='{asctime:s} {levelname:^8s} {funcName}:{lineno} {message}',
+        **kwargs,
     )
 
 ############################################################################################################################
@@ -436,63 +437,49 @@ class alive_or_raise:
 
 ############################################################################################################################
 
+@dataclass
+class main_args:
+    listen_host: str
+    listen_port: int
+    connect_host: str
+    connect_port: int
+    log_level: LogLevelEnum = LogLevelEnum.INFO
 
-import asyncio
-
-async def on_accepted(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
-    logging.debug('accepted')
-    try:
-        writer.write(b'_')
+async def copy(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+    while (data := await reader.read(2**16)):
+        logging.debug(f"data: {data!r}")
+        writer.write(data)
         await writer.drain()
-        logging.debug('after first write+drain')
-        while (data := await reader.read(2**16)):
-            logging.debug(f"read {repr(data)!r}")
-            writer.write(data)
-            await writer.drain()
-            logging.debug(f"after write+drain {repr(data)!r}")
-        writer.write_eof()
-    finally:
-        writer.close()
-        await writer.wait_closed()
-        logging.debug(f"closed accepted")
+    writer.write_eof()
 
-async def server():
-    server = await asyncio.start_server(on_accepted, '127.0.0.1', 28424)
-    async with server:
+async def on_client(args: main_args, accepted_reader: asyncio.StreamReader, accepted_writer: asyncio.StreamWriter) -> None:
+    logging.info('accepted')
+    try:
+        connected_reader, connected_writer = await asyncio.open_connection(args.connect_host, args.connect_port)
+        logging.info('connected')
+        try:
+            await gather(
+                copy(accepted_reader, connected_writer),
+                copy(connected_reader, accepted_writer),
+            )
+        finally:
+            connected_writer.close()
+            await connected_writer.wait_closed()
+            logging.info('connected closed')
+    finally:
+        accepted_writer.close()
+        await accepted_writer.wait_closed()
+        logging.info('accepted closed')
+
+async def main(args: main_args) -> None:
+    set_log_level(
+        args.log_level,
+    )
+
+    async with await asyncio.start_server(partial(on_client, args), args.listen_host, args.listen_port) as server:
         await server.serve_forever()
 
-async def one_client():
-    await asyncio.sleep(1)
-    reader, writer = await asyncio.open_connection('127.0.0.1', 28424)
-    logging.debug('connected')
-    try:
-        writer.write(b'_')
-        await writer.drain()
-        logging.debug('after first write+drain')
-        while (data := await reader.read()):
-            logging.debug(f"read {repr(data)!r}")
-            writer.write(data)
-            await writer.drain()
-            logging.debug(f"after write+drain {repr(data)!r}")
-        writer.write_eof()
-    finally:
-        writer.close()
-        await writer.wait_closed()
-        logging.debug(f"closed accepted")
-
-async def client():
-    while 1:
-        await asyncio.sleep(1)
-        fire(one_client())
-
-async def main():
-    set_log_level(LogLevelEnum.DEBUG)
-    server_task = asyncio.create_task(server())
-    client_task = asyncio.create_task(client())
-    # await asyncio.sleep(999999)
-    for q in range(4):
-        print('-'*1024**2, end='')
-
-asyncio.run(main())
-
-
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    setup_parser_from_dataclass(parser, main_args)
+    asyncio.run(main(main_args(**vars(parser.parse_args()))))
