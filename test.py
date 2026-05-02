@@ -489,9 +489,10 @@ async def main():
     set_log_level(LogLevelEnum.DEBUG)
     server_task = asyncio.create_task(server())
     client_task = asyncio.create_task(client())
-    # await asyncio.sleep(999999)
-    for q in range(4):
-        print('-'*1024**2, end='')
+    await asyncio.sleep(8)
+    for q in range(999999999):
+        await asyncio.sleep(0)
+        print('-'*80)
 
 asyncio.run(main())
 
