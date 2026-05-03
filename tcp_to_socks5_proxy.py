@@ -479,7 +479,7 @@ class main_args:
     forward_host: str
     forward_port: int
 
-    log_level: LogLevelEnum
+    log_level: LogLevelEnum = LogLevelEnum.INFO
 
 class addr_types(Enum):
     IPv4           = b'\x01'
