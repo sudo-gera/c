@@ -536,12 +536,12 @@ async def on_client(args: main_args, accepted_reader: asyncio.StreamReader, acce
 
             logging.info(f"sent socks5 request")
 
-            #                           . socks version
-            #                           |   . selected auth method
-            #                           |   |   . socks version
-            #                           |   |   |   . status code
-            #                           |   |   |   |   . reserved, must be \x00
-            #                           |   |   |   |   |
+            #                                  . socks version
+            #                                  |   . selected auth method
+            #                                  |   |   . socks version
+            #                                  |   |   |   . status code
+            #                                  |   |   |   |   . reserved, must be \x00
+            #                                  |   |   |   |   |
             await connected_reader.readexactly(1 + 1 + 1 + 1 + 1)
             addr_type = addr_types(await connected_reader.readexactly(1))
             if addr_type is addr_types.IPv4:
