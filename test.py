@@ -1,4 +1,5 @@
 from __future__ import annotations
+from collections.abc import Callable as caCallable
 from collections import *
 from dataclasses import *
 from functools import *
@@ -36,16 +37,31 @@ if sys.version_info >= (3, 10) and TYPE_CHECKING:
 else:
     DataclassInstance = Any
 
+############################################################################################################################
+
 if sys.version_info < (3, 10):
     def call(obj: Any, /, *args: Any, **kwargs: Any) -> Any:
         return obj(*args, **kwargs)
 
 elif sys.version_info < (3, 11):
-    from collections.abc import Callable as caCallable
     call_R = TypeVar("call_R")
     call_P = ParamSpec("call_P")
     def call(obj: caCallable[call_P, call_R], /, *args: call_P.args, **kwargs: call_P.kwargs) -> call_R:
         return obj(*args, **kwargs)
+
+############################################################################################################################
+
+from collections.abc import Callable as caCallable
+
+if sys.version_info < (3, 10):
+    typed_cache_T = TypeVar("typed_cache_T", bound=Callable[..., Any])
+    def typed_cache(func: typed_cache_T) -> typed_cache_T:
+        return cast(typed_cache_T, cache(func))
+else:
+    typed_cache_R = TypeVar("typed_cache_R")
+    typed_cache_P = ParamSpec("typed_cache_P")
+    def typed_cache(func: caCallable[typed_cache_P, typed_cache_R]) -> caCallable[typed_cache_P, typed_cache_R]:
+        return cast(caCallable[typed_cache_P, typed_cache_R], cache(func))
 
 ############################################################################################################################
 
@@ -200,8 +216,8 @@ class dataclass_field:
     field: Field[Any]
     type: Any
 
-@cache
-def get_fields(dclass: DataclassInstance) -> list[dataclass_field]:
+@typed_cache
+def get_fields(dclass: type[DataclassInstance]) -> list[dataclass_field]:
 
     def process_one_filed(field: Field[Any]) -> dataclass_field:
         if isinstance(field.type, str):
@@ -359,7 +375,7 @@ class path_based_lock:
     def is_locked(self) -> bool:
         return self.__is_locked
 
-@cache
+@typed_cache
 def get_path_based_lock(path: pathlib.Path) -> path_based_lock:
     rpath = path.resolve()
     if rpath != path:
@@ -436,64 +452,30 @@ class alive_or_raise:
 
 ############################################################################################################################
 
+if_main_parse_args_and_asyncio_run_arg = TypeVar('if_main_parse_args_and_asyncio_run_arg', bound=DataclassInstance)
 
-import asyncio
+def if_main_parse_args_and_asyncio_run(main: Callable[[if_main_parse_args_and_asyncio_run_arg], Any]) -> Any:
+    if __name__ != '__main__':
+        return
+    hints = typing.get_type_hints(main)
+    hints.pop('return', None)
+    assert len(hints) == 1
+    main_args = [*hints.values()][0]
+    assert not TYPE_CHECKING or isinstance(main_args, type)
+    parser = argparse.ArgumentParser()
+    setup_parser_from_dataclass(parser, main_args)
+    args = parser.parse_args()
+    asyncio.run(main(main_args(**vars(args))))
 
-async def on_accepted(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
-    logging.debug('accepted')
-    try:
-        writer.write(b'_')
-        await writer.drain()
-        logging.debug('after first write+drain')
-        while (data := await reader.read(2**16)):
-            logging.debug(f"read {repr(data)!r}")
-            writer.write(data)
-            await writer.drain()
-            logging.debug(f"after write+drain {repr(data)!r}")
-        writer.write_eof()
-    finally:
-        writer.close()
-        await writer.wait_closed()
-        logging.debug(f"closed accepted")
+############################################################################################################################
 
-async def server():
-    server = await asyncio.start_server(on_accepted, '127.0.0.1', 28424)
-    async with server:
-        await server.serve_forever()
+@dataclass(frozen=True)
+class main_args:
+    log_level: LogLevelEnum = LogLevelEnum.INFO
 
-async def one_client():
-    await asyncio.sleep(1)
-    reader, writer = await asyncio.open_connection('127.0.0.1', 28424)
-    logging.debug('connected')
-    try:
-        writer.write(b'_')
-        await writer.drain()
-        logging.debug('after first write+drain')
-        while (data := await reader.read()):
-            logging.debug(f"read {repr(data)!r}")
-            writer.write(data)
-            await writer.drain()
-            logging.debug(f"after write+drain {repr(data)!r}")
-        writer.write_eof()
-    finally:
-        writer.close()
-        await writer.wait_closed()
-        logging.debug(f"closed accepted")
+@if_main_parse_args_and_asyncio_run
+async def main(args: main_args) -> None:
+    set_log_level(args.log_level)
 
-async def client():
-    while 1:
-        await asyncio.sleep(1)
-        fire(one_client())
-
-async def main():
-    set_log_level(LogLevelEnum.DEBUG)
-    server_task = asyncio.create_task(server())
-    client_task = asyncio.create_task(client())
-    await asyncio.sleep(8)
-    for q in range(999999999):
-        await asyncio.sleep(0)
-        print('-'*80)
-
-asyncio.run(main())
-
+    logging.info('0')
 
