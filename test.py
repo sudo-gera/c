@@ -51,8 +51,6 @@ elif sys.version_info < (3, 11):
 
 ############################################################################################################################
 
-from collections.abc import Callable as caCallable
-
 if sys.version_info < (3, 10):
     typed_cache_T = TypeVar("typed_cache_T", bound=Callable[..., Any])
     def typed_cache(func: typed_cache_T) -> typed_cache_T:
