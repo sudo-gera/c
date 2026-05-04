@@ -565,6 +565,47 @@ async def socks5h(args: main_args, accepted_reader: asyncio.StreamReader, accept
             await connected_writer.wait_closed()
             logging.info(f"closing connected")
 
+async def http(args: main_args, accepted_reader: asyncio.StreamReader, accepted_writer: asyncio.StreamWriter, params: list[str]) -> None:
+
+        proxy_host, proxy_port_str, forward_host, forward_port_str, *basic = params
+        proxy_port = int(proxy_port_str)
+        forward_port = int(forward_port_str)
+
+        logging.info(f"connecting to {forward_host = !r} {forward_port = !r} via {proxy_host = !r} {proxy_port = !r}")
+
+        connected_reader, connected_writer = await asyncio.open_connection(proxy_host, proxy_port)
+        try:
+            logging.info(f"connected")
+
+            CRLF = '\r\n'
+
+            headers : list[str] = []
+
+            for line in basic:
+                headers.append("Proxy-Authorization: Basic "+line)
+
+            headers_str = ''.join([header + CRLF for header in headers])
+
+            data = f"CONNECT {forward_host}:{forward_port} HTTP/1.1{CRLF}{headers_str}{CRLF}"
+            connected_writer.write(data.encode())
+            await connected_writer.drain()
+
+            logging.info(f"sent http connect request")
+
+            await connected_reader.readuntil((CRLF+CRLF).encode())
+
+            logging.info(f"got http connect response")
+
+            await gather(
+                copy(accepted_reader, connected_writer),
+                copy(connected_reader, accepted_writer),
+            )
+
+        finally:
+            connected_writer.close()
+            await connected_writer.wait_closed()
+            logging.info(f"closing connected")
+
 protocol_handlers : list[
     Callable[
         [
@@ -577,6 +618,7 @@ protocol_handlers : list[
     ]
 ] = [
     socks5h,
+    http,
 ]
 
 async def on_client(args: main_args, accepted_reader: asyncio.StreamReader, accepted_writer: asyncio.StreamWriter) -> None:
