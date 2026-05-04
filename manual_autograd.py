@@ -32,11 +32,11 @@ class Tracer:
     value: ndarray
 
     @property
-    def _variables_count(self) -> int:
-        return reduce(mul, self._input_shape, 1)
+    def __variables_count(self) -> int:
+        return reduce(mul, self.__input_shape, 1)
 
     @property
-    def _input_shape(self) -> tuple[int, ...]:
+    def __input_shape(self) -> tuple[int, ...]:
         return cast(
             tuple[int, ...],
             self.jacobian.shape[len(self.value.shape):]
@@ -49,17 +49,21 @@ class Tracer:
             self.value.shape
         )
 
+    @property
+    def size(self) -> int:
+        return self.value.size
+
     def reshape(self, shape: tuple[int, ...]) -> Tracer:
         return Tracer(
-            self.jacobian.reshape(shape + self._input_shape),
+            self.jacobian.reshape(shape + self.__input_shape),
             self.value.reshape(shape),
         )
 
-    def _broadcast_to(self, shape: tuple[int, ...]) -> Tracer:
+    def __broadcast_to(self, shape: tuple[int, ...]) -> Tracer:
         return Tracer(
             np.broadcast_to(
                 self.jacobian,
-                shape + self._input_shape,
+                shape + self.__input_shape,
             ),
             np.broadcast_to(
                 self.value,
@@ -67,24 +71,36 @@ class Tracer:
             ),
         )
 
-    def _broadcast_value_to_jacobian(self, value: ndarray) -> ndarray:
+    def __broadcast_value_to_jacobian(self, value: ndarray) -> ndarray:
         return np.broadcast_to(
-            value.reshape(value.shape + (1, ) * len(self._input_shape)),
+            value.reshape(value.shape + (1, ) * len(self.__input_shape)),
             self.jacobian.shape,
         )
 
-    def constant(self, value: ndarray) -> Tracer:
+    def __constant(self, value: ndarray) -> Tracer:
         return Tracer(
-            np.zeros(value.shape + self._input_shape),
+            np.zeros(value.shape + self.__input_shape),
             value,
         )
 
     @staticmethod
-    def variable(value: ndarray) -> Tracer:
+    def __variable(value: ndarray) -> Tracer:
         return Tracer(
             np.eye(value.size).reshape(value.shape * 2),
             value,
         )
+
+    @staticmethod
+    def _value_and_jacobian(func: Callable[[ndarray | Tracer], ndarray | Tracer], x: ndarray) -> tuple[ndarray, ndarray]:
+
+        result = func(Tracer.__variable(x))
+
+        if isinstance(result, Tracer):
+            v, ja = result.value, result.jacobian
+        else:
+            v, ja = result, np.zeros(result.shape + x.shape)
+
+        return v, ja
 
     def __post_init__(self) -> None:
         if isinstance(self.value, np.ndarray):
@@ -99,7 +115,16 @@ class Tracer:
         return len(self.value)
 
     @staticmethod
+    def __broadcast_to_each_other(*ts: Tracer) -> tuple[Tracer, ...]:
+        value_shape = np.broadcast_shapes(*[t.shape for t in ts])
+        ts = tuple([t.__broadcast_to(value_shape) for t in ts])
+        assert len({t.shape for t in ts}) == 1
+        assert len({t.jacobian.shape for t in ts}) == 1
+        return ts
+
+    @staticmethod
     def __add(v1: Tracer, v2: Tracer) -> Tracer:
+        v1, v2 = Tracer.__broadcast_to_each_other(v1, v2)
         return Tracer(
             cast(ndarray, v1.jacobian + v2.jacobian),
             cast(ndarray, v1.value + v2.value),
@@ -107,16 +132,17 @@ class Tracer:
 
     def __add__(self, other: object) -> Tracer:
         if not isinstance(other, Tracer):
-            other = self.constant(np.array(other))
+            other = self.__constant(np.array(other))
         return Tracer.__add(self, other)
 
     def __radd__(self, other: object) -> Tracer:
         if not isinstance(other, Tracer):
-            other = self.constant(np.array(other))
+            other = self.__constant(np.array(other))
         return Tracer.__add(other, self)
 
     @staticmethod
     def __sub(v1: Tracer, v2: Tracer) -> Tracer:
+        v1, v2 = Tracer.__broadcast_to_each_other(v1, v2)
         return Tracer(
             cast(ndarray, v1.jacobian - v2.jacobian),
             cast(ndarray, v1.value - v2.value),
@@ -124,12 +150,12 @@ class Tracer:
 
     def __sub__(self, other: object) -> Tracer:
         if not isinstance(other, Tracer):
-            other = self.constant(np.array(other))
+            other = self.__constant(np.array(other))
         return Tracer.__sub(self, other)
 
     def __rsub__(self, other: object) -> Tracer:
         if not isinstance(other, Tracer):
-            other = self.constant(np.array(other))
+            other = self.__constant(np.array(other))
         return Tracer.__sub(other, self)
 
     def __neg__(self) -> Tracer:
@@ -140,17 +166,13 @@ class Tracer:
 
     @staticmethod
     def __mul(v1: Tracer, v2: Tracer) -> Tracer:
-        value_shape = np.broadcast_shapes(v1.shape, v2.shape)
-        v1 = v1._broadcast_to(value_shape)
-        v2 = v2._broadcast_to(value_shape)
-        assert v1.shape == v2.shape == value_shape
-        assert v1.jacobian.shape == v2.jacobian.shape
+        v1, v2 = Tracer.__broadcast_to_each_other(v1, v2)
         return Tracer(
             cast(
                 ndarray,
-                v1.jacobian * v1._broadcast_value_to_jacobian(v2.value)
+                v1.jacobian * v1.__broadcast_value_to_jacobian(v2.value)
                 +
-                v2.jacobian * v2._broadcast_value_to_jacobian(v1.value)
+                v2.jacobian * v2.__broadcast_value_to_jacobian(v1.value)
             ),
             cast(
                 ndarray,
@@ -160,25 +182,22 @@ class Tracer:
 
     def __mul__(self, other: object) -> Tracer:
         if not isinstance(other, Tracer):
-            other = self.constant(np.array(other))
+            other = self.__constant(np.array(other))
         return self.__mul(self, other)
 
     def __rmul__(self, other: object) -> Tracer:
         if not isinstance(other, Tracer):
-            other = self.constant(np.array(self))
+            other = self.__constant(np.array(other))
         return self.__mul(other, self)
 
     def __getitem__(self, index: Any) -> Tracer:
-        variables_count = self._variables_count
-        old_value = self.value
-        old_jacobian = self.jacobian
-        old_indexes = np.arange(old_value.size, dtype=np.int64).reshape(old_value.shape)
+        old_indexes = np.arange(self.value.size, dtype=np.int64).reshape(self.value.shape)
         new_indexes = old_indexes[index]
-        new_jacobian = np.empty((new_indexes.size, variables_count))
-        old_jacobian = old_jacobian.reshape((old_indexes.size, variables_count))
+        new_jacobian = np.empty((new_indexes.size, self.__variables_count))
+        old_jacobian = self.jacobian.reshape((old_indexes.size, self.__variables_count))
         for new_i, old_i in enumerate(new_indexes.flat):
             new_jacobian[new_i, :] = old_jacobian[old_i, :]
-        new_jacobian = new_jacobian.reshape(new_indexes.shape + self._input_shape)
+        new_jacobian = new_jacobian.reshape(new_indexes.shape + self.__input_shape)
         return Tracer(
             new_jacobian,
             cast(
@@ -186,19 +205,6 @@ class Tracer:
                 self.value[index]
             ),
         )
-
-    # def __sub__(self, other: object):
-    #     if not isinstance(other, MultiExprResult):
-    #         other = Constant(other)
-    #     return SubOperator(self, other)
-
-    # def __truediv__(self, other: object):
-    #     if not isinstance(other, MultiExprResult):
-    #         other = Constant(other)
-    #     return TrueDivOperator(self, other)
-
-    # def __neg__(self):
-    #     return NegOperator(self)
 
 def same(_a: Any, _s: Any) -> bool:
     a = np.array(_a)
@@ -211,12 +217,7 @@ def same(_a: Any, _s: Any) -> bool:
 
 def value_and_jacobian(func: Callable[[ndarray | Tracer], ndarray | Tracer], x: ndarray) -> tuple[ndarray, ndarray]:
 
-    result = func(Tracer.variable(x))
-
-    if isinstance(result, Tracer):
-        v, ja = result.value, result.jacobian
-    else:
-        v, ja = result, np.zeros(result.shape + x.shape)
+    v, ja = Tracer._value_and_jacobian(func, x)
 
     if original_j is not None:
         assert same( original_j(func)(x), ja)
@@ -467,4 +468,24 @@ if __name__ == '__main__':
         assert result.shape + value.shape == jacobian(f)(value).shape
         assert result.shape + value.shape == jac.shape
     test16()
+
+    def test17() -> None:
+        def f(x: ndarray | Tracer) -> ndarray:
+            return cast(
+                ndarray,
+                x.reshape((2,1))
+            )
+        value = np.array( [ [3, 5] ] )
+        result = np.array( [ [ 3 ], [ 5 ] ] )
+        jac = np.array(
+            [
+                [ [ [ 1, 0 ] ] ],
+                [ [ [ 0, 1 ] ] ]
+            ]
+        )
+        assert same(                                                    f (value), result )
+        assert same(                                          jacobian(f) (value),  jac )
+        assert result.shape + value.shape == jacobian(f)(value).shape
+        assert result.shape + value.shape == jac.shape
+    test17()
 
