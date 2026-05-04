@@ -32,11 +32,11 @@ class Tracer:
     value: ndarray
 
     @property
-    def variables_count(self) -> int:
-        return reduce(mul, self.input_shape, 1)
+    def _variables_count(self) -> int:
+        return reduce(mul, self._input_shape, 1)
 
     @property
-    def input_shape(self) -> tuple[int, ...]:
+    def _input_shape(self) -> tuple[int, ...]:
         return cast(
             tuple[int, ...],
             self.jacobian.shape[len(self.value.shape):]
@@ -51,15 +51,15 @@ class Tracer:
 
     def reshape(self, shape: tuple[int, ...]) -> Tracer:
         return Tracer(
-            self.jacobian.reshape(shape + self.input_shape),
+            self.jacobian.reshape(shape + self._input_shape),
             self.value.reshape(shape),
         )
 
-    def broadcast_to(self, shape: tuple[int, ...]) -> Tracer:
+    def _broadcast_to(self, shape: tuple[int, ...]) -> Tracer:
         return Tracer(
             np.broadcast_to(
                 self.jacobian,
-                shape + self.input_shape,
+                shape + self._input_shape,
             ),
             np.broadcast_to(
                 self.value,
@@ -67,15 +67,15 @@ class Tracer:
             ),
         )
 
-    def broadcast_value_to_jacobian(self, value: ndarray) -> ndarray:
+    def _broadcast_value_to_jacobian(self, value: ndarray) -> ndarray:
         return np.broadcast_to(
-            value.reshape(value.shape + (1, ) * len(self.input_shape)),
+            value.reshape(value.shape + (1, ) * len(self._input_shape)),
             self.jacobian.shape,
         )
 
     def constant(self, value: ndarray) -> Tracer:
         return Tracer(
-            np.zeros(value.shape + self.input_shape),
+            np.zeros(value.shape + self._input_shape),
             value,
         )
 
@@ -98,106 +98,78 @@ class Tracer:
     def __len__(self) -> int:
         return len(self.value)
 
+    @staticmethod
+    def __add(v1: Tracer, v2: Tracer) -> Tracer:
+        return Tracer(
+            cast(ndarray, v1.jacobian + v2.jacobian),
+            cast(ndarray, v1.value + v2.value),
+        )
+
     def __add__(self, other: object) -> Tracer:
         if not isinstance(other, Tracer):
             other = self.constant(np.array(other))
-        return Tracer(
-            cast(ndarray,
-                self.jacobian + other.jacobian
-            ),
-            cast(ndarray,
-                self.value + other.value
-            ),
-        )
+        return Tracer.__add(self, other)
 
     def __radd__(self, other: object) -> Tracer:
         if not isinstance(other, Tracer):
             other = self.constant(np.array(other))
+        return Tracer.__add(other, self)
+
+    @staticmethod
+    def __sub(v1: Tracer, v2: Tracer) -> Tracer:
         return Tracer(
-            cast(ndarray,
-                other.jacobian + self.jacobian
-            ),
-            cast(ndarray,
-                other.value + self.value
-            ),
+            cast(ndarray, v1.jacobian - v2.jacobian),
+            cast(ndarray, v1.value - v2.value),
         )
 
     def __sub__(self, other: object) -> Tracer:
         if not isinstance(other, Tracer):
             other = self.constant(np.array(other))
-        return Tracer(
-            cast(ndarray,
-                self.jacobian - other.jacobian
-            ),
-            cast(ndarray,
-                self.value - other.value
-            ),
-        )
+        return Tracer.__sub(self, other)
 
     def __rsub__(self, other: object) -> Tracer:
         if not isinstance(other, Tracer):
             other = self.constant(np.array(other))
-        return Tracer(
-            cast(ndarray,
-                other.jacobian - self.jacobian
-            ),
-            cast(ndarray,
-                other.value - self.value
-            ),
-        )
+        return Tracer.__sub(other, self)
 
     def __neg__(self) -> Tracer:
         return Tracer(
-            cast(ndarray,
-                - self.jacobian
+            cast(ndarray, -self.jacobian),
+            cast(ndarray, -self.value),
+        )
+
+    @staticmethod
+    def __mul(v1: Tracer, v2: Tracer) -> Tracer:
+        value_shape = np.broadcast_shapes(v1.shape, v2.shape)
+        v1 = v1._broadcast_to(value_shape)
+        v2 = v2._broadcast_to(value_shape)
+        assert v1.shape == v2.shape == value_shape
+        assert v1.jacobian.shape == v2.jacobian.shape
+        return Tracer(
+            cast(
+                ndarray,
+                v1.jacobian * v1._broadcast_value_to_jacobian(v2.value)
+                +
+                v2.jacobian * v2._broadcast_value_to_jacobian(v1.value)
             ),
-            cast(ndarray,
-                - self.value
+            cast(
+                ndarray,
+                v1.value * v2.value
             ),
         )
 
     def __mul__(self, other: object) -> Tracer:
         if not isinstance(other, Tracer):
             other = self.constant(np.array(other))
-        value_shape = np.broadcast_shapes(self.shape, other.shape)
-        self = self.broadcast_to(value_shape)
-        other = other.broadcast_to(value_shape)
-        assert self.shape == other.shape == value_shape
-        return Tracer(
-            cast(
-                ndarray,
-                self.jacobian * self.broadcast_value_to_jacobian(other.value)
-                +
-                other.jacobian * other.broadcast_value_to_jacobian(self.value)
-            ),
-            cast(
-                ndarray,
-                self.value * other.value
-            ),
-        )
+        return self.__mul(self, other)
 
     def __rmul__(self, other: object) -> Tracer:
         if not isinstance(other, Tracer):
             other = self.constant(np.array(self))
-        value_shape = np.broadcast_shapes(other.shape, self.shape)
-        other = other.broadcast_to(value_shape)
-        self = self.broadcast_to(value_shape)
-        assert other.shape == self.shape == value_shape
-        return Tracer(
-            cast(
-                ndarray,
-                other.jacobian * other.broadcast_value_to_jacobian(self.value)
-                +
-                self.jacobian * self.broadcast_value_to_jacobian(other.value)
-            ),
-            cast(
-                ndarray,
-                other.value * self.value
-            ),
-        )
+        return self.__mul(other, self)
 
     def __getitem__(self, index: Any) -> Tracer:
-        variables_count = self.variables_count
+        variables_count = self._variables_count
         old_value = self.value
         old_jacobian = self.jacobian
         old_indexes = np.arange(old_value.size, dtype=np.int64).reshape(old_value.shape)
@@ -206,7 +178,7 @@ class Tracer:
         old_jacobian = old_jacobian.reshape((old_indexes.size, variables_count))
         for new_i, old_i in enumerate(new_indexes.flat):
             new_jacobian[new_i, :] = old_jacobian[old_i, :]
-        new_jacobian = new_jacobian.reshape(new_indexes.shape + self.input_shape)
+        new_jacobian = new_jacobian.reshape(new_indexes.shape + self._input_shape)
         return Tracer(
             new_jacobian,
             cast(
