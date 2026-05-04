@@ -92,6 +92,12 @@ class Tracer:
         if isinstance(self.jacobian, np.ndarray):
             self.jacobian.flags.writeable=False
 
+    def __bool__(self) -> bool:
+        return bool(self.value)
+
+    def __len__(self) -> int:
+        return len(self.value)
+
     def __add__(self, other: object) -> Tracer:
         if not isinstance(other, Tracer):
             other = self.constant(np.array(other))
@@ -104,6 +110,51 @@ class Tracer:
             ),
         )
 
+    def __radd__(self, other: object) -> Tracer:
+        if not isinstance(other, Tracer):
+            other = self.constant(np.array(other))
+        return Tracer(
+            cast(ndarray,
+                other.jacobian + self.jacobian
+            ),
+            cast(ndarray,
+                other.value + self.value
+            ),
+        )
+
+    def __sub__(self, other: object) -> Tracer:
+        if not isinstance(other, Tracer):
+            other = self.constant(np.array(other))
+        return Tracer(
+            cast(ndarray,
+                self.jacobian - other.jacobian
+            ),
+            cast(ndarray,
+                self.value - other.value
+            ),
+        )
+
+    def __rsub__(self, other: object) -> Tracer:
+        if not isinstance(other, Tracer):
+            other = self.constant(np.array(other))
+        return Tracer(
+            cast(ndarray,
+                other.jacobian - self.jacobian
+            ),
+            cast(ndarray,
+                other.value - self.value
+            ),
+        )
+
+    def __neg__(self) -> Tracer:
+        return Tracer(
+            cast(ndarray,
+                - self.jacobian
+            ),
+            cast(ndarray,
+                - self.value
+            ),
+        )
 
     def __mul__(self, other: object) -> Tracer:
         if not isinstance(other, Tracer):
@@ -122,6 +173,26 @@ class Tracer:
             cast(
                 ndarray,
                 self.value * other.value
+            ),
+        )
+
+    def __rmul__(self, other: object) -> Tracer:
+        if not isinstance(other, Tracer):
+            other = self.constant(np.array(self))
+        value_shape = np.broadcast_shapes(other.shape, self.shape)
+        other = other.broadcast_to(value_shape)
+        self = self.broadcast_to(value_shape)
+        assert other.shape == self.shape == value_shape
+        return Tracer(
+            cast(
+                ndarray,
+                other.jacobian * other.broadcast_value_to_jacobian(self.value)
+                +
+                self.jacobian * self.broadcast_value_to_jacobian(other.value)
+            ),
+            cast(
+                ndarray,
+                other.value * self.value
             ),
         )
 
