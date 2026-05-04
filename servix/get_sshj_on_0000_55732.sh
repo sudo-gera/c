@@ -1,0 +1,1 @@
+send '( set -x ; while sleep 1 ; do date ; ssh sudo_gera@ssh-j.com -N -D 0.0.0.0:55732 -oStrictHostKeyChecking=no -oServerAliveInterval=15 -oExitOnForwardFailure=yes -oConnectTimeout=8 -oConnectionAttempts=1 -oPasswordAuthentication=no ; done )'
