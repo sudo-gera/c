@@ -6,7 +6,15 @@ from itertools import *
 from functools import *
 from operator import *
 import abc
-import numpy as np
+
+if TYPE_CHECKING:
+    import numpy as np
+    j_t = TypeVar('j_t')
+    def j(x: j_t) -> j_t:
+        return x
+else:
+    import autograd.numpy as np
+    from autograd import jacobian as j
 
 @dataclass(frozen=True)
 class Tracer:
@@ -14,12 +22,26 @@ class Tracer:
     value: np.ndarray[Any, Any]
     variables_count: int
 
+    @property
+    def input_shape(self) -> tuple[int, ...]:
+        return cast(
+            tuple[int, ...],
+            self.jacobian.shape[len(self.value.shape):]
+        )
+
+    @property
+    def shape(self) -> tuple[int, ...]:
+        return cast(
+            tuple[int, ...],
+            self.value.shape
+        )
+
     def __post_init__(self) -> None:
         if isinstance(self.value, np.ndarray):
             self.value.flags.writeable=False
         if isinstance(self.jacobian, np.ndarray):
             self.jacobian.flags.writeable=False
-    
+
     def __add__(self, other: object) -> Tracer:
         if not isinstance(other, Tracer):
             other = Constant(self.variables_count, np.array(other))
@@ -40,10 +62,6 @@ class Tracer:
             self.variables_count,
         )
 
-    @property
-    def shape(self) -> tuple[int, ...]:
-        return cast(tuple[int, ...], self.value.shape)
-
     # def __sub__(self, other: object):
     #     if not isinstance(other, MultiExprResult):
     #         other = Constant(other)
@@ -59,7 +77,7 @@ class Tracer:
 
 def Variable(variables_count: int, value: np.ndarray[Any, Any]) -> Tracer:
     return Tracer(
-        np.eye(value.size).reshape(value.shape + (value.size, )),
+        np.eye(value.size).reshape(value.shape * 2),
         value,
         variables_count,
     )
@@ -84,8 +102,8 @@ def AddOperator(variables_count: int, v1: Tracer, v2: Tracer) -> Tracer:
 
 def MulOperator(variables_count: int, v1: Tracer, v2: Tracer) -> Tracer:
     v1_value, v2_value = np.broadcast_arrays(v1.value, v2.value)
-    v1_jacobian = np.broadcast_to(v1.jacobian, v1_value.shape + (v1.variables_count, ))
-    v2_jacobian = np.broadcast_to(v2.jacobian, v2_value.shape + (v2.variables_count, ))
+    v1_jacobian = np.broadcast_to(v1.jacobian, v1_value.shape + v1.input_shape)
+    v2_jacobian = np.broadcast_to(v2.jacobian, v2_value.shape + v2.input_shape)
     return Tracer(
         cast(
             np.ndarray[Any, Any],
@@ -102,14 +120,14 @@ def GetItemOperator(variables_count: int, value: Tracer,    index: Any) -> Trace
     old_value = value.value
     old_jacobian = value.jacobian
     var_count = variables_count
-    assert old_jacobian.shape == old_value.shape + (var_count, )
+    # assert old_jacobian.shape == old_value.shape + (var_count, )
     old_indexes = np.arange(old_value.size, dtype=np.int64).reshape(old_value.shape)
     new_indexes = old_indexes[index]
     new_jacobian = np.empty((new_indexes.size, var_count))
     old_jacobian = old_jacobian.reshape((old_indexes.size, var_count))
     for new_i, old_i in enumerate(new_indexes.flat):
         new_jacobian[new_i, :] = old_jacobian[old_i, :]
-    new_jacobian = new_jacobian.reshape(new_indexes.shape + (var_count, ))
+    new_jacobian = new_jacobian.reshape(new_indexes.shape + value.input_shape)
     return Tracer(
         new_jacobian,
         cast(
@@ -137,15 +155,20 @@ def jacobian(func: Callable[[np.ndarray[Any, Any] | Tracer], np.ndarray[Any, Any
     return wrapper
 
 if __name__ == '__main__':
-    
+
+    def same(_a: Any, _s: Any) -> bool:
+        a = np.array(_a)
+        s = np.array(_s)
+        return a.shape == s.shape and np.allclose(a, s)
+
     def test1() -> None:
         def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any]:
             return np.array(5)
 
         value1, jacobian1 = value_and_jacobian(f, np.array(4))
         value2, jacobian2 = 5, 0
-        assert np.allclose(value1, value2)
-        assert np.allclose(jacobian1, jacobian2)
+        assert same(value1, value2)
+        assert same(jacobian1, jacobian2)
 
     test1()
 
@@ -157,8 +180,8 @@ if __name__ == '__main__':
             )
         value1, jacobian1 = value_and_jacobian(f, np.array(4))
         value2, jacobian2 = 4, 1
-        assert np.allclose(value1, value2)
-        assert np.allclose(jacobian1, jacobian2)
+        assert same(value1, value2)
+        assert same(jacobian1, jacobian2)
 
     test2()
 
@@ -170,8 +193,8 @@ if __name__ == '__main__':
             )
         value1, jacobian1 = value_and_jacobian(f, np.array(4))
         value2, jacobian2 = 7, 1
-        assert np.allclose(value1, value2)
-        assert np.allclose(jacobian1, jacobian2)
+        assert same(value1, value2)
+        assert same(jacobian1, jacobian2)
 
     test3()
 
@@ -183,8 +206,8 @@ if __name__ == '__main__':
             )
         value1, jacobian1 = value_and_jacobian(f, np.array(4))
         value2, jacobian2 = 12, 3
-        assert np.allclose(value1, value2)
-        assert np.allclose(jacobian1, jacobian2)
+        assert same(value1, value2)
+        assert same(jacobian1, jacobian2)
 
     test4()
 
@@ -196,8 +219,8 @@ if __name__ == '__main__':
             )
         value1, jacobian1 = value_and_jacobian(f, np.array((4, 5)))
         value2, jacobian2 = (4, 5), ((1, 0), (0, 1))
-        assert np.allclose(value1, value2)
-        assert np.allclose(jacobian1, jacobian2)
+        assert same(value1, value2)
+        assert same(jacobian1, jacobian2)
 
     test5()
 
@@ -209,8 +232,8 @@ if __name__ == '__main__':
             )
         value1, jacobian1 = value_and_jacobian(f, np.array((4, 5)))
         value2, jacobian2 = (16, 25), ((8, 0), (0, 10))
-        assert np.allclose(value1, value2)
-        assert np.allclose(jacobian1, jacobian2)
+        assert same(value1, value2)
+        assert same(jacobian1, jacobian2)
 
     test6()
 
@@ -222,8 +245,8 @@ if __name__ == '__main__':
             )
         value1, jacobian1 = value_and_jacobian(f, np.array((4, 5)))
         value2, jacobian2 = (20, 20), ((5, 5), (4, 4))
-        assert np.allclose(value1, value2)
-        assert np.allclose(jacobian1, jacobian2)
+        assert same(value1, value2)
+        assert same(jacobian1, jacobian2)
 
     test7()
 
@@ -235,8 +258,8 @@ if __name__ == '__main__':
             )
         value1, jacobian1 = value_and_jacobian(f, np.array((4, 5)))
         value2, jacobian2 = 4, (1, 0)
-        assert np.allclose(value1, value2)
-        assert np.allclose(jacobian1, jacobian2)
+        assert same(value1, value2)
+        assert same(jacobian1, jacobian2)
 
     test8()
 
@@ -248,8 +271,8 @@ if __name__ == '__main__':
             )
         value1, jacobian1 = value_and_jacobian(f, np.array((4, 5)))
         value2, jacobian2 = 5, (0, 1)
-        assert np.allclose(value1, value2)
-        assert np.allclose(jacobian1, jacobian2)
+        assert same(value1, value2)
+        assert same(jacobian1, jacobian2)
 
     test9()
 
@@ -261,8 +284,8 @@ if __name__ == '__main__':
             )
         value1, jacobian1 = value_and_jacobian(f, np.array((4, 5)))
         value2, jacobian2 = 9, (1, 1)
-        assert np.allclose(value1, value2)
-        assert np.allclose(jacobian1, jacobian2)
+        assert same(value1, value2)
+        assert same(jacobian1, jacobian2)
 
     test10()
 
@@ -274,8 +297,8 @@ if __name__ == '__main__':
             )
         value1, jacobian1 = value_and_jacobian(f, np.array((4, 5)))
         value2, jacobian2 = 20, (5, 4)
-        assert np.allclose(value1, value2)
-        assert np.allclose(jacobian1, jacobian2)
+        assert same(value1, value2)
+        assert same(jacobian1, jacobian2)
 
     test11()
 
@@ -295,8 +318,9 @@ if __name__ == '__main__':
                 [ [ 3,  0,  7,  0,], [ 0,  5,  7,  0,], ],
             ]
         )
-        assert np.allclose(                                                    f (value), result )
-        assert np.allclose(                                          jacobian(f) (value),  jac )
+        assert value.shape + result.shape == jac.shape
+        assert same(                                                    f (value), result )
+        assert same(                                          jacobian(f) (value),  jac )
 
     test12()
 
@@ -310,13 +334,13 @@ if __name__ == '__main__':
         result = np.array( [ [3, 5], [7, 11], [13, 17] ] )
         jac = np.array(
             [
-                [ [ 1,  0,  0,  0,  0,  0,], [ 0,  1,  0,  0,  0,  0,], ],
-                [ [ 0,  0,  1,  0,  0,  0,], [ 0,  0,  0,  1,  0,  0,], ],
-                [ [ 0,  0,  0,  0,  1,  0,], [ 0,  0,  0,  0,  0,  1,], ],
+                [ [ [ 1, 0 ], [ 0, 0 ], [ 0, 0, ] ], [ [ 0, 1 ], [ 0, 0 ], [ 0, 0 ] ] ],
+                [ [ [ 0, 0 ], [ 1, 0 ], [ 0, 0, ] ], [ [ 0, 0 ], [ 0, 1 ], [ 0, 0 ] ] ],
+                [ [ [ 0, 0 ], [ 0, 0 ], [ 1, 0, ] ], [ [ 0, 0 ], [ 0, 0 ], [ 0, 1 ] ] ],
             ]
         )
-        assert np.allclose(                                                    f (value), result )
-        assert np.allclose(                                          jacobian(f) (value),  jac )
+        assert same(                                                    f (value), result )
+        assert same(                                          jacobian(f) (value),  jac )
 
     test13()
 
@@ -328,15 +352,11 @@ if __name__ == '__main__':
                     x.reshape((1,2)) * x.reshape((2, 1))
                 )[0][1],
             )
-        value = np.array( [3, 5] )
+        value = np.array( [3., 5.] )
         result = np.array( 15 )
-        jac = np.array(
-            [
-                [ [ 3,  5, ], ],
-            ]
-        )
-        assert np.allclose(                                                    f (value), result )
-        assert np.allclose(                                          jacobian(f) (value),  jac )
+        jac = np.array( [ 3, 5 ] )
+        assert same(                                                    f (value), result )
+        assert same(                                          jacobian(f) (value),  jac )
 
     test14()
 
@@ -346,15 +366,11 @@ if __name__ == '__main__':
                 np.ndarray[Any, Any],
                 x[0] * x[1],
             )
-        value = np.array( [3, 5] )
+        value = np.array( [3., 5.] )
         result = np.array( 15 )
-        jac = np.array(
-            [
-                [ [ 5,  3, ], ],
-            ]
-        )
-        assert np.allclose(                                                    f (value), result )
-        assert np.allclose(                                          jacobian(f) (value),  jac )
+        jac = np.array( [ 5, 3 ] )
+        assert same(                                                    f (value), result )
+        assert same(                                          jacobian(f) (value),  jac )
 
     test15()
 
