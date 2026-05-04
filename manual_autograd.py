@@ -26,7 +26,10 @@ else:
 class Tracer:
     jacobian: np.ndarray[Any, Any]
     value: np.ndarray[Any, Any]
-    variables_count: int
+
+    @property
+    def variables_count(self) -> int:
+        return reduce(mul, self.input_shape, 1)
 
     @property
     def input_shape(self) -> tuple[int, ...]:
@@ -46,7 +49,6 @@ class Tracer:
         return Tracer(
             self.jacobian.reshape(shape + self.input_shape),
             self.value.reshape(shape),
-            self.variables_count,
         )
 
     def broadcast_to(self, shape: tuple[int, ...]) -> Tracer:
@@ -59,13 +61,18 @@ class Tracer:
                 self.value,
                 shape,
             ),
-            self.variables_count,
         )
 
     def broadcast_value_to_jacobian(self, value: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
         return np.broadcast_to(
             value.reshape(value.shape + (1, ) * len(self.input_shape)),
             self.jacobian.shape,
+        )
+
+    def constant(self, value: np.ndarray[Any, Any]) -> Tracer:
+        return Tracer(
+            np.zeros(value.shape + self.input_shape),
+            value,
         )
 
     def __post_init__(self) -> None:
@@ -76,16 +83,16 @@ class Tracer:
 
     def __add__(self, other: object) -> Tracer:
         if not isinstance(other, Tracer):
-            other = Constant(self.variables_count, np.array(other))
-        return AddOperator(self.variables_count, self, other)
+            other = self.constant(np.array(other))
+        return AddOperator(self, other)
 
     def __mul__(self, other: object) -> Tracer:
         if not isinstance(other, Tracer):
-            other = Constant(self.variables_count, np.array(other))
-        return MulOperator(self.variables_count, self, other)
+            other = self.constant(np.array(other))
+        return MulOperator(self, other)
 
     def __getitem__(self, index: Any) -> Tracer:
-        return GetItemOperator(self.variables_count, self, index)
+        return GetItemOperator(self, index)
 
     # def __sub__(self, other: object):
     #     if not isinstance(other, MultiExprResult):
@@ -100,21 +107,13 @@ class Tracer:
     # def __neg__(self):
     #     return NegOperator(self)
 
-def Variable(variables_count: int, value: np.ndarray[Any, Any]) -> Tracer:
+def Variable(value: np.ndarray[Any, Any]) -> Tracer:
     return Tracer(
         np.eye(value.size).reshape(value.shape * 2),
         value,
-        variables_count,
     )
 
-def Constant(variables_count: int, value: np.ndarray[Any, Any]) -> Tracer:
-    return Tracer(
-        np.array(0),
-        value,
-        variables_count,
-    )
-
-def AddOperator(variables_count: int, v1: Tracer, v2: Tracer) -> Tracer:
+def AddOperator(v1: Tracer, v2: Tracer) -> Tracer:
     return Tracer(
         cast(np.ndarray[Any, Any],
             v1.jacobian + v2.jacobian
@@ -122,10 +121,9 @@ def AddOperator(variables_count: int, v1: Tracer, v2: Tracer) -> Tracer:
         cast(np.ndarray[Any, Any],
             v1.value + v2.value
         ),
-        variables_count,
     )
 
-def MulOperator(variables_count: int, v1: Tracer, v2: Tracer) -> Tracer:
+def MulOperator(v1: Tracer, v2: Tracer) -> Tracer:
     value_shape = np.broadcast_shapes(v1.shape, v2.shape)
     v1 = v1.broadcast_to(value_shape)
     v2 = v2.broadcast_to(value_shape)
@@ -141,17 +139,16 @@ def MulOperator(variables_count: int, v1: Tracer, v2: Tracer) -> Tracer:
             np.ndarray[Any, Any],
             v1.value * v2.value
         ),
-        variables_count,
     )
 
-def GetItemOperator(variables_count: int, value: Tracer,    index: Any) -> Tracer:
+def GetItemOperator(value: Tracer,    index: Any) -> Tracer:
+    variables_count = value.variables_count
     old_value = value.value
     old_jacobian = value.jacobian
-    var_count = variables_count
     old_indexes = np.arange(old_value.size, dtype=np.int64).reshape(old_value.shape)
     new_indexes = old_indexes[index]
-    new_jacobian = np.empty((new_indexes.size, var_count))
-    old_jacobian = old_jacobian.reshape((old_indexes.size, var_count))
+    new_jacobian = np.empty((new_indexes.size, variables_count))
+    old_jacobian = old_jacobian.reshape((old_indexes.size, variables_count))
     for new_i, old_i in enumerate(new_indexes.flat):
         new_jacobian[new_i, :] = old_jacobian[old_i, :]
     new_jacobian = new_jacobian.reshape(new_indexes.shape + value.input_shape)
@@ -161,13 +158,12 @@ def GetItemOperator(variables_count: int, value: Tracer,    index: Any) -> Trace
             np.ndarray[Any, Any],
             value.value[index]
         ),
-        variables_count,
     )
 
 
 
 def value_and_jacobian(func: Callable[[np.ndarray[Any, Any] | Tracer], np.ndarray[Any, Any] | Tracer], x: np.ndarray[Any, Any]) -> tuple[np.ndarray[Any, Any], np.ndarray[Any, Any]]:
-    result = func(Variable(x.size, x))
+    result = func(Variable(x))
 
     if isinstance(result, Tracer):
         return result.value, result.jacobian
