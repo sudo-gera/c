@@ -155,15 +155,6 @@ class Tracer:
     # def __neg__(self):
     #     return NegOperator(self)
 
-def value_and_jacobian(func: Callable[[ndarray | Tracer], ndarray | Tracer], x: ndarray) -> tuple[ndarray, ndarray]:
-
-    result = func(Tracer.variable(x))
-
-    if isinstance(result, Tracer):
-        return result.value, result.jacobian
-    else:
-        return result, np.zeros(x.shape)
-
 def same(_a: Any, _s: Any) -> bool:
     a = np.array(_a)
     s = np.array(_s)
@@ -172,6 +163,17 @@ def same(_a: Any, _s: Any) -> bool:
     print(a)
     print(s)
     return False
+
+def value_and_jacobian(func: Callable[[ndarray | Tracer], ndarray | Tracer], x: ndarray) -> tuple[ndarray, ndarray]:
+
+    result = func(Tracer.variable(x))
+
+    if isinstance(result, Tracer):
+        v, ja = result.value, result.jacobian
+    else:
+        v, ja = result, np.zeros(x.shape)
+    assert same( j(func)(x), ja)
+    return v, ja
 
 def jacobian(func: Callable[[ndarray | Tracer], ndarray | Tracer]) -> Callable[[ndarray], ndarray]:
 
