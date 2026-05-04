@@ -83,14 +83,17 @@ def AddOperator(variables_count: int, v1: Tracer, v2: Tracer) -> Tracer:
     )
 
 def MulOperator(variables_count: int, v1: Tracer, v2: Tracer) -> Tracer:
+    v1_value, v2_value = np.broadcast_arrays(v1.value, v2.value)
+    v1_jacobian = np.broadcast_to(v1.jacobian, v1_value.shape + (v1.variables_count, ))
+    v2_jacobian = np.broadcast_to(v2.jacobian, v2_value.shape + (v2.variables_count, ))
     return Tracer(
         cast(
             np.ndarray[Any, Any],
-            v1.jacobian * v2.value + v1.value * v2.jacobian
+            v1_jacobian * v2_value + v1_value * v2_jacobian
         ),
         cast(
             np.ndarray[Any, Any],
-            v1.value * v2.value
+            v1_value * v2_value
         ),
         variables_count,
     )
@@ -336,4 +339,22 @@ if __name__ == '__main__':
         assert np.allclose(                                          jacobian(f) (value),  jac )
 
     test14()
+
+    def test15() -> None:
+        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any]:
+            return cast(
+                np.ndarray[Any, Any],
+                x[0] * x[1],
+            )
+        value = np.array( [3, 5] )
+        result = np.array( 15 )
+        jac = np.array(
+            [
+                [ [ 5,  3, ], ],
+            ]
+        )
+        assert np.allclose(                                                    f (value), result )
+        assert np.allclose(                                          jacobian(f) (value),  jac )
+
+    test15()
 
