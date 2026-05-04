@@ -126,8 +126,8 @@ class GetItemOperator(MultiExpr):
     def get_variables_count(self) -> int:
         return self.variables_count
 
-    def grad(self) -> np.ndarray[Any, Any]:
-        assert False
+    # def grad(self) -> np.ndarray[Any, Any]:
+    #     assert False
 
 
 #     def grad(self) -> MultiExpr:
