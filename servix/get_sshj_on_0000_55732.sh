@@ -1,1 +1,0 @@
-send '( set -x ; while sleep 1 ; do date ; ssh ssh-j -N -D 0.0.0.0:55732 -oStrictHostKeyChecking=no -oServerAliveInterval=15 -oExitOnForwardFailure=yes -oConnectTimeout=8 -oConnectionAttempts=1 -oPasswordAuthentication=no ; done )'
