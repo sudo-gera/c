@@ -194,7 +194,6 @@ if __name__ == '__main__':
         value2, jacobian2 = 5, 0
         assert same(value1, value2)
         assert same(jacobian1, jacobian2)
-
     test1()
 
     def test2() -> None:
@@ -207,7 +206,6 @@ if __name__ == '__main__':
         value2, jacobian2 = 4, 1
         assert same(value1, value2)
         assert same(jacobian1, jacobian2)
-
     test2()
 
     def test3() -> None:
@@ -216,11 +214,10 @@ if __name__ == '__main__':
                 ndarray,
                 x+3
             )
-        value1, jacobian1 = value_and_jacobian(f, np.array(4))
-        value2, jacobian2 = 7, 1
+        value1, jacobian1 = value_and_jacobian(f, np.array(4.))
+        value2, jacobian2 = 7., 1.
         assert same(value1, value2)
         assert same(jacobian1, jacobian2)
-
     test3()
 
     def test4() -> None:
@@ -229,11 +226,10 @@ if __name__ == '__main__':
                 ndarray,
                 x*3
             )
-        value1, jacobian1 = value_and_jacobian(f, np.array(4))
-        value2, jacobian2 = 12, 3
+        value1, jacobian1 = value_and_jacobian(f, np.array(4.))
+        value2, jacobian2 = 12., 3.
         assert same(value1, value2)
         assert same(jacobian1, jacobian2)
-
     test4()
 
     def test5() -> None:
@@ -242,11 +238,10 @@ if __name__ == '__main__':
                 ndarray,
                 x
             )
-        value1, jacobian1 = value_and_jacobian(f, np.array((4, 5)))
+        value1, jacobian1 = value_and_jacobian(f, np.array((4., 5.)))
         value2, jacobian2 = (4, 5), ((1, 0), (0, 1))
         assert same(value1, value2)
         assert same(jacobian1, jacobian2)
-
     test5()
 
     def test6() -> None:
@@ -255,11 +250,10 @@ if __name__ == '__main__':
                 ndarray,
                 x*x
             )
-        value1, jacobian1 = value_and_jacobian(f, np.array((4, 5)))
+        value1, jacobian1 = value_and_jacobian(f, np.array((4., 5.)))
         value2, jacobian2 = (16, 25), ((8, 0), (0, 10))
         assert same(value1, value2)
         assert same(jacobian1, jacobian2)
-
     test6()
 
     def test7() -> None:
@@ -268,11 +262,10 @@ if __name__ == '__main__':
                 ndarray,
                 x*x[::-1]
             )
-        value1, jacobian1 = value_and_jacobian(f, np.array((4, 5)))
+        value1, jacobian1 = value_and_jacobian(f, np.array((4., 5.)))
         value2, jacobian2 = (20, 20), ((5, 4), (5, 4))
         assert same(value1, value2)
         assert same(jacobian1, jacobian2)
-
     test7()
 
     def test8() -> None:
@@ -281,11 +274,10 @@ if __name__ == '__main__':
                 ndarray,
                 x[0]
             )
-        value1, jacobian1 = value_and_jacobian(f, np.array((4, 5)))
+        value1, jacobian1 = value_and_jacobian(f, np.array((4., 5.)))
         value2, jacobian2 = 4, (1, 0)
         assert same(value1, value2)
         assert same(jacobian1, jacobian2)
-
     test8()
 
     def test9() -> None:
@@ -294,11 +286,10 @@ if __name__ == '__main__':
                 ndarray,
                 x[1]
             )
-        value1, jacobian1 = value_and_jacobian(f, np.array((4, 5)))
+        value1, jacobian1 = value_and_jacobian(f, np.array((4., 5.)))
         value2, jacobian2 = 5, (0, 1)
         assert same(value1, value2)
         assert same(jacobian1, jacobian2)
-
     test9()
 
     def test10() -> None:
@@ -307,14 +298,13 @@ if __name__ == '__main__':
                 ndarray,
                 x[0]+x[1]
             )
-        value = np.array((4, 5))
+        value = np.array((4., 5.))
         value1, jacobian1 = value_and_jacobian(f, value)
-        value2, jacobian2 = np.array(9), np.array((1, 1))
+        value2, jacobian2 = np.array(9.), np.array((1., 1.))
         assert same(value1, value2)
         assert same(jacobian1, jacobian2)
         assert value1.shape + value.shape == jacobian1.shape
         assert value2.shape + value.shape == jacobian2.shape
-
     test10()
 
     def test11() -> None:
@@ -323,14 +313,13 @@ if __name__ == '__main__':
                 ndarray,
                 x[0]*x[1]
             )
-        value = np.array((4, 5))
+        value = np.array((4., 5.))
         value1, jacobian1 = value_and_jacobian(f, value)
         value2, jacobian2 = np.array(20), np.array((5, 4))
         assert same(value1, value2)
         assert same(jacobian1, jacobian2)
         assert value1.shape + value.shape == jacobian1.shape
         assert value2.shape + value.shape == jacobian2.shape
-
     test11()
 
     def test12() -> None:
