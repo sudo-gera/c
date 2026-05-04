@@ -33,12 +33,16 @@ class Tracer:
     def __getitem__(self, index: Any) -> Tracer:
         return GetItemOperator(self.variables_count, self, index)
 
-    def reshape(self, shape: tuple[int]) -> Tracer:
+    def reshape(self, shape: tuple[int, ...]) -> Tracer:
         return Tracer(
             self.jacobian.reshape(shape + (self.variables_count, )),
             self.value.reshape(shape),
             self.variables_count,
         )
+
+    @property
+    def shape(self) -> tuple[int, ...]:
+        return cast(tuple[int, ...], self.value.shape)
 
     # def __sub__(self, other: object):
     #     if not isinstance(other, MultiExprResult):
@@ -132,156 +136,203 @@ def jacobian(func: Callable[[np.ndarray[Any, Any] | Tracer], np.ndarray[Any, Any
 if __name__ == '__main__':
     
     def test1() -> None:
-        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any] | Tracer:
+        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any]:
             return np.array(5)
 
-        jacobian1, value1 = value_and_jacobian(f, np.array(4))
-        jacobian2, value2 = 5, 0
-        assert np.allclose(jacobian1, jacobian2)
+        value1, jacobian1 = value_and_jacobian(f, np.array(4))
+        value2, jacobian2 = 5, 0
         assert np.allclose(value1, value2)
+        assert np.allclose(jacobian1, jacobian2)
 
     test1()
 
     def test2() -> None:
-        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any] | Tracer:
-            return x
-        jacobian1, value1 = value_and_jacobian(f, np.array(4))
-        jacobian2, value2 = 4, 1
-        assert np.allclose(jacobian1, jacobian2)
-        assert np.allclose(value1, value2)
-
-    test2()
-
-    def test3() -> None:
-        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any] | Tracer:
-            return cast(
-                np.ndarray[Any, Any],
-                x+3
-            )
-        f = lambda x:x+3
-        jacobian1, value1 = value_and_jacobian(f, np.array(4))
-        jacobian2, value2 = 7, 1
-        assert np.allclose(jacobian1, jacobian2)
-        assert np.allclose(value1, value2)
-
-    test3()
-
-    def test4() -> None:
-        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any] | Tracer:
-            return cast(
-                np.ndarray[Any, Any],
-                x*3
-            )
-        jacobian1, value1 = value_and_jacobian(f, np.array(4))
-        jacobian2, value2 = 12, 3
-        assert np.allclose(jacobian1, jacobian2)
-        assert np.allclose(value1, value2)
-
-    test4()
-
-    def test5() -> None:
-        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any] | Tracer:
+        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any]:
             return cast(
                 np.ndarray[Any, Any],
                 x
             )
-        jacobian1, value1 = value_and_jacobian(f, np.array((4, 5)))
-        jacobian2, value2 = (4, 5), ((1, 0), (0, 1))
-        assert np.allclose(jacobian1, jacobian2)
+        value1, jacobian1 = value_and_jacobian(f, np.array(4))
+        value2, jacobian2 = 4, 1
         assert np.allclose(value1, value2)
+        assert np.allclose(jacobian1, jacobian2)
+
+    test2()
+
+    def test3() -> None:
+        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any]:
+            return cast(
+                np.ndarray[Any, Any],
+                x+3
+            )
+        value1, jacobian1 = value_and_jacobian(f, np.array(4))
+        value2, jacobian2 = 7, 1
+        assert np.allclose(value1, value2)
+        assert np.allclose(jacobian1, jacobian2)
+
+    test3()
+
+    def test4() -> None:
+        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any]:
+            return cast(
+                np.ndarray[Any, Any],
+                x*3
+            )
+        value1, jacobian1 = value_and_jacobian(f, np.array(4))
+        value2, jacobian2 = 12, 3
+        assert np.allclose(value1, value2)
+        assert np.allclose(jacobian1, jacobian2)
+
+    test4()
+
+    def test5() -> None:
+        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any]:
+            return cast(
+                np.ndarray[Any, Any],
+                x
+            )
+        value1, jacobian1 = value_and_jacobian(f, np.array((4, 5)))
+        value2, jacobian2 = (4, 5), ((1, 0), (0, 1))
+        assert np.allclose(value1, value2)
+        assert np.allclose(jacobian1, jacobian2)
 
     test5()
 
     def test6() -> None:
-        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any] | Tracer:
+        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any]:
             return cast(
                 np.ndarray[Any, Any],
                 x*x
             )
-        jacobian1, value1 = value_and_jacobian(f, np.array((4, 5)))
-        jacobian2, value2 = (16, 25), ((8, 0), (0, 10))
-        assert np.allclose(jacobian1, jacobian2)
+        value1, jacobian1 = value_and_jacobian(f, np.array((4, 5)))
+        value2, jacobian2 = (16, 25), ((8, 0), (0, 10))
         assert np.allclose(value1, value2)
+        assert np.allclose(jacobian1, jacobian2)
 
     test6()
 
     def test7() -> None:
-        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any] | Tracer:
+        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any]:
             return cast(
                 np.ndarray[Any, Any],
                 x*x[::-1]
             )
-        jacobian1, value1 = value_and_jacobian(f, np.array((4, 5)))
-        jacobian2, value2 = (20, 20), ((5, 5), (4, 4))
-        assert np.allclose(jacobian1, jacobian2)
+        value1, jacobian1 = value_and_jacobian(f, np.array((4, 5)))
+        value2, jacobian2 = (20, 20), ((5, 5), (4, 4))
         assert np.allclose(value1, value2)
+        assert np.allclose(jacobian1, jacobian2)
 
     test7()
 
     def test8() -> None:
-        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any] | Tracer:
+        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any]:
             return cast(
                 np.ndarray[Any, Any],
                 x[0]
             )
-        jacobian1, value1 = value_and_jacobian(f, np.array((4, 5)))
-        jacobian2, value2 = 4, (1, 0)
-        assert np.allclose(jacobian1, jacobian2)
+        value1, jacobian1 = value_and_jacobian(f, np.array((4, 5)))
+        value2, jacobian2 = 4, (1, 0)
         assert np.allclose(value1, value2)
+        assert np.allclose(jacobian1, jacobian2)
 
     test8()
 
     def test9() -> None:
-        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any] | Tracer:
+        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any]:
             return cast(
                 np.ndarray[Any, Any],
                 x[1]
             )
-        jacobian1, value1 = value_and_jacobian(f, np.array((4, 5)))
-        jacobian2, value2 = 5, (0, 1)
-        assert np.allclose(jacobian1, jacobian2)
+        value1, jacobian1 = value_and_jacobian(f, np.array((4, 5)))
+        value2, jacobian2 = 5, (0, 1)
         assert np.allclose(value1, value2)
+        assert np.allclose(jacobian1, jacobian2)
 
     test9()
 
     def test10() -> None:
-        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any] | Tracer:
+        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any]:
             return cast(
                 np.ndarray[Any, Any],
                 x[0]+x[1]
             )
-        jacobian1, value1 = value_and_jacobian(f, np.array((4, 5)))
-        jacobian2, value2 = 9, (1, 1)
-        assert np.allclose(jacobian1, jacobian2)
+        value1, jacobian1 = value_and_jacobian(f, np.array((4, 5)))
+        value2, jacobian2 = 9, (1, 1)
         assert np.allclose(value1, value2)
+        assert np.allclose(jacobian1, jacobian2)
 
     test10()
 
     def test11() -> None:
-        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any] | Tracer:
+        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any]:
             return cast(
                 np.ndarray[Any, Any],
                 x[0]*x[1]
             )
-        jacobian1, value1 = value_and_jacobian(f, np.array((4, 5)))
-        jacobian2, value2 = 20, (5, 4)
-        assert np.allclose(jacobian1, jacobian2)
+        value1, jacobian1 = value_and_jacobian(f, np.array((4, 5)))
+        value2, jacobian2 = 20, (5, 4)
         assert np.allclose(value1, value2)
+        assert np.allclose(jacobian1, jacobian2)
 
     test11()
 
     def test12() -> None:
-        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any] | Tracer:
+        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any]:
             return cast(
                 np.ndarray[Any, Any],
                 (
                     x.reshape((4,1)) * x.reshape((1,4))
-                )[1:3, 1:3]
+                ).reshape((8, 2))[3:5, :]
             )
-        value = ( (3, 5), (7, 11) )
-        assert np.allclose(                         f (value), np.array() )
-        assert np.allclose(               jacobian(f) (value), np.array() )
-        assert np.allclose(     jacobian(jacobian(f)) (value), np.array() )
+        value = np.array( [ [3, 5], [7, 11] ] )
+        result = np.array( [ [ 35, 55 ], [ 21, 35 ] ] )
+        jac = np.array(
+            [
+                [ [ 0,  5,  7,  0,], [ 0,  5,  0, 11,], ],
+                [ [ 3,  0,  7,  0,], [ 0,  5,  7,  0,], ],
+            ]
+        )
+        assert np.allclose(                                                    f (value), result )
+        assert np.allclose(                                          jacobian(f) (value),  jac )
 
     test12()
+
+    def test13() -> None:
+        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any]:
+            return cast(
+                np.ndarray[Any, Any],
+                x,
+            )
+        value = np.array( [ [3, 5], [7, 11], [13, 17] ] )
+        result = np.array( [ [3, 5], [7, 11], [13, 17] ] )
+        jac = np.array(
+            [
+                [ [ 1,  0,  0,  0,  0,  0,], [ 0,  1,  0,  0,  0,  0,], ],
+                [ [ 0,  0,  1,  0,  0,  0,], [ 0,  0,  0,  1,  0,  0,], ],
+                [ [ 0,  0,  0,  0,  1,  0,], [ 0,  0,  0,  0,  0,  1,], ],
+            ]
+        )
+        assert np.allclose(                                                    f (value), result )
+        assert np.allclose(                                          jacobian(f) (value),  jac )
+
+    test13()
+
+    def test14() -> None:
+        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any]:
+            return cast(
+                np.ndarray[Any, Any],
+                x.reshape((1,2)) * x.reshape((2, 1)),
+            )
+        value = np.array( [3, 5] )
+        result = np.array( [ [9, 15], [15, 25] ] )
+        jac = np.array(
+            [
+                [ [ 6,  0,], [ 3,  5, ], ],
+                [ [ 3,  5,], [ 0,  10,], ],
+            ]
+        )
+        assert np.allclose(                                                    f (value), result )
+        assert np.allclose(                                          jacobian(f) (value),  jac )
+
+    test14()
 
