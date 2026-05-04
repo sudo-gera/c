@@ -321,10 +321,12 @@ if __name__ == '__main__':
         def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any]:
             return cast(
                 np.ndarray[Any, Any],
-                x.reshape((1,2)) * x.reshape((2, 1)),
+                (
+                    x.reshape((1,2)) * x.reshape((2, 1))
+                )[0][1],
             )
         value = np.array( [3, 5] )
-        result = np.array( [ [9, 15], [15, 25] ] )
+        result = np.array( 15 )
         jac = np.array(
             [
                 [ [ 6,  0,], [ 3,  5, ], ],
