@@ -10,16 +10,18 @@ import abc
 if TYPE_CHECKING:
     import numpy as np
     j_t = TypeVar('j_t')
-    def j(x: j_t) -> j_t:
+    def original_j_f(x: j_t) -> j_t:
         return x
+    original_j = original_j_f if int is int else None
 else:
     try:
         import autograd.numpy as np
-        from autograd import jacobian as j
+        from autograd import jacobian as original_j
     except ImportError:
         import numpy as np
         j_t = TypeVar('j_t')
-        def j(x: j_t) -> j_t:
+        original_j = None
+        def original_j(x: j_t) -> j_t:
             return x
 
 ndarray = np.ndarray[Any, Any]
@@ -171,15 +173,17 @@ def value_and_jacobian(func: Callable[[ndarray | Tracer], ndarray | Tracer], x: 
     if isinstance(result, Tracer):
         v, ja = result.value, result.jacobian
     else:
-        v, ja = result, np.zeros(x.shape)
-    assert same( j(func)(x), ja)
+        v, ja = result, np.zeros(result.shape + x.shape)
+
+    if original_j is not None:
+        assert same( original_j(func)(x), ja)
+
     return v, ja
 
 def jacobian(func: Callable[[ndarray | Tracer], ndarray | Tracer]) -> Callable[[ndarray], ndarray]:
 
     def wrapper(x: ndarray) -> ndarray:
         result = value_and_jacobian(func, x)[1]
-        assert same(j(func)(x), result)
         return result
 
     return wrapper
@@ -188,10 +192,10 @@ if __name__ == '__main__':
 
     def test1() -> None:
         def f(x: ndarray | Tracer) -> ndarray:
-            return np.array(5)
+            return np.array([5])
 
-        value1, jacobian1 = value_and_jacobian(f, np.array(4))
-        value2, jacobian2 = 5, 0
+        value1, jacobian1 = value_and_jacobian(f, np.array([4]))
+        value2, jacobian2 = [5], [[0]]
         assert same(value1, value2)
         assert same(jacobian1, jacobian2)
     test1()
@@ -397,7 +401,6 @@ if __name__ == '__main__':
         jac = np.array( [ 5, 3 ] )
         assert same(                                                    f (value), result )
         assert same(                                          jacobian(f) (value),  jac )
-        assert same(                                                 j(f) (value),  jac )
         assert result.shape + value.shape == jac.shape
         assert result.shape + value.shape == jacobian(f)(value).shape
     test15()
