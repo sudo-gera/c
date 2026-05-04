@@ -329,8 +329,7 @@ if __name__ == '__main__':
         result = np.array( 15 )
         jac = np.array(
             [
-                [ [ 6,  0,], [ 3,  5, ], ],
-                [ [ 3,  5,], [ 0,  10,], ],
+                [ [ 3,  5, ], ],
             ]
         )
         assert np.allclose(                                                    f (value), result )
