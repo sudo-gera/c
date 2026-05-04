@@ -270,18 +270,18 @@ if __name__ == '__main__':
 
     test11()
 
-    # def test12() -> None:
-    #     def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any] | Tracer:
-    #         return cast(
-    #             np.ndarray[Any, Any],
+    def test12() -> None:
+        def f(x: np.ndarray[Any, Any] | Tracer) -> np.ndarray[Any, Any] | Tracer:
+            return cast(
+                np.ndarray[Any, Any],
+                (
+                    x.reshape((4,1)) * x.reshape((1,4))
+                )[1:3, 1:3]
+            )
+        value = ( (3, 5), (7, 11) )
+        assert np.allclose(                         f (value), np.array() )
+        assert np.allclose(               jacobian(f) (value), np.array() )
+        assert np.allclose(     jacobian(jacobian(f)) (value), np.array() )
 
-    #         )
-    #     value = ( (3, 5), (7, 11) )
-    #     jacobian(value)
-    #     jacobian1, value1 = value_and_jacobian(f, np.array((4, 5)))
-    #     jacobian2, value2 = 20, (5, 4)
-    #     assert np.allclose(jacobian1, jacobian2)
-    #     assert np.allclose(value1, value2)
-
-    # test12()
+    test12()
 
