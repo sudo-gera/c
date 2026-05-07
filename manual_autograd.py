@@ -148,10 +148,7 @@ class JustValue(IValue):
 
     def __neg__(self) -> JustValue:
         return JustValue(
-            cast(
-                ndarray,
-                -self.__value
-            )
+            -self.__value
         )
 
     def __getitem__(self, index: Any) -> JustValue:
