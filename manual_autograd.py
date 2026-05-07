@@ -286,16 +286,6 @@ class Tracer(IValue):
             v1.__value_level,
         )
 
-    def __add__(self, other: object) -> Tracer:
-        if not isinstance(other, Tracer):
-            other = self._from_constant(JustValue(np.array(other)))
-        return Tracer._add(self, other)
-
-    def __radd__(self, other: object) -> Tracer:
-        if not isinstance(other, Tracer):
-            other = self._from_constant(JustValue(np.array(other)))
-        return Tracer._add(other, self)
-
     @staticmethod
     def _sub(v1: Tracer, v2: Tracer) -> Tracer:
         assert v1.__value_level == v2.__value_level
@@ -305,16 +295,6 @@ class Tracer(IValue):
             v1.value - v2.value,
             v1.__value_level,
         )
-
-    def __sub__(self, other: object) -> Tracer:
-        if not isinstance(other, Tracer):
-            other = self._from_constant(JustValue(np.array(other)))
-        return Tracer._sub(self, other)
-
-    def __rsub__(self, other: object) -> Tracer:
-        if not isinstance(other, Tracer):
-            other = self._from_constant(JustValue(np.array(other)))
-        return Tracer._sub(other, self)
 
     def __neg__(self) -> Tracer:
         return Tracer(
@@ -334,16 +314,6 @@ class Tracer(IValue):
             v1.value * v2.value,
             v1.__value_level,
         )
-
-    def __mul__(self, other: object) -> Tracer:
-        if not isinstance(other, Tracer):
-            other = self._from_constant(JustValue(np.array(other)))
-        return self._mul(self, other)
-
-    def __rmul__(self, other: object) -> Tracer:
-        if not isinstance(other, Tracer):
-            other = self._from_constant(JustValue(np.array(other)))
-        return self._mul(other, self)
 
     def __getitem__(self, index: Any) -> Tracer:
         return Tracer(
