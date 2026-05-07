@@ -68,11 +68,6 @@ class IValue(ABC):
 
     @property
     @abstractmethod
-    def _value_level(self) -> int | float:
-        ...
-
-    @property
-    @abstractmethod
     def shape(self) -> tuple[int, ...]:
         ...
 
@@ -163,8 +158,6 @@ class JustValue(IValue):
     def _to_ndarray(self) -> ndarray:
         return self.__value
 
-    _value_level = float('inf')
-
     @staticmethod
     def _add(v1: JustValue, v2: JustValue) -> JustValue:
         return JustValue(
@@ -189,18 +182,9 @@ class JustValue(IValue):
 class Tracer(IValue):
     jacobian: IValue
     value: IValue
-    __value_level: int
-
-    @property
-    def _value_level(self) -> int | float:
-        return self.__value_level
 
     def __post_init__(self) -> None:
         assert self.jacobian.shape[:len(self.value.shape)] == self.value.shape
-        if isinstance(self.value, Tracer):
-            assert self.value.__value_level == self.__value_level + 1
-        if isinstance(self.jacobian, Tracer):
-            assert self.jacobian.__value_level == self.__value_level + 1
 
     @staticmethod
     def _from_variable_and_level(value: IValue, level: int) -> IValue:
@@ -209,7 +193,6 @@ class Tracer(IValue):
                 np.eye(value.size).reshape(value.shape * 2)
             ),
             value,
-            level,
         )
 
     @property
@@ -232,7 +215,6 @@ class Tracer(IValue):
         return Tracer(
             self.jacobian.reshape(shape + self.__input_shape),
             self.value.reshape(shape),
-            self.__value_level,
         )
 
     def broadcast_to(self, shape: tuple[int, ...]) -> Tracer:
@@ -243,7 +225,6 @@ class Tracer(IValue):
             self.value.broadcast_to(
                 shape,
             ),
-            self.__value_level,
         )
 
     def __broadcast_value_to_jacobian(self, value: IValue) -> IValue:
@@ -259,7 +240,6 @@ class Tracer(IValue):
                 np.zeros(value.shape + self.__input_shape)
             ),
             value,
-            self.__value_level,
         )
 
     def __bool__(self) -> bool:
@@ -278,48 +258,40 @@ class Tracer(IValue):
 
     @staticmethod
     def _add(v1: Tracer, v2: Tracer) -> Tracer:
-        assert v1.__value_level == v2.__value_level
         v1, v2 = Tracer.__broadcast_to_each_other(v1, v2)
         return Tracer(
             v1.jacobian + v2.jacobian,
             v1.value + v2.value,
-            v1.__value_level,
         )
 
     @staticmethod
     def _sub(v1: Tracer, v2: Tracer) -> Tracer:
-        assert v1.__value_level == v2.__value_level
         v1, v2 = Tracer.__broadcast_to_each_other(v1, v2)
         return Tracer(
             v1.jacobian - v2.jacobian,
             v1.value - v2.value,
-            v1.__value_level,
         )
 
     def __neg__(self) -> Tracer:
         return Tracer(
             -self.jacobian,
             -self.value,
-            self.__value_level,
         )
 
     @staticmethod
     def _mul(v1: Tracer, v2: Tracer) -> Tracer:
-        assert v1.__value_level == v2.__value_level
         v1, v2 = Tracer.__broadcast_to_each_other(v1, v2)
         return Tracer(
             v1.jacobian * v1.__broadcast_value_to_jacobian(v2.value)
             +
             v2.jacobian * v2.__broadcast_value_to_jacobian(v1.value),
             v1.value * v2.value,
-            v1.__value_level,
         )
 
     def __getitem__(self, index: Any) -> Tracer:
         return Tracer(
             self.jacobian[index],
             self.value[index],
-            self.__value_level,
         )
 
 ##############################################################################################
