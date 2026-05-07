@@ -440,9 +440,6 @@ if __name__ == '__main__':
                 assert same(f(x), result), "original autograd disagrees"
             return result
 
-    def value_and_jacobian(func: Callable[[ndarray | Tracer], ndarray | Tracer], x: ndarray) -> tuple[ndarray, ndarray]:
-        return cast(ndarray, func(x)), jacobian_test_wrapper(func)(x)
-
 ##############################################################################################
 
     def test1() -> None:
