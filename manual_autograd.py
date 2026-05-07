@@ -220,10 +220,6 @@ class Tracer(IValue):
         return self.value._to_ndarray
 
     @property
-    def __variables_count(self) -> int:
-        return reduce(mul, self.__input_shape, 1)
-
-    @property
     def __input_shape(self) -> tuple[int, ...]:
         return self.jacobian.shape[len(self.value.shape):]
 
