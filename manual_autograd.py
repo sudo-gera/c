@@ -357,15 +357,13 @@ class Tracer(IValue):
 
 ##############################################################################################
 
-def _jacobian_impl(level: int, func: Callable[[ndarray | Tracer], ndarray | Tracer], x_ndarray: ndarray) -> ndarray:
+def _jacobian_impl(level: int, func: Callable[[ndarray | IValue], ndarray | IValue], x_ndarray: ndarray) -> ndarray:
 
     x : IValue = JustValue(x_ndarray)
 
     for i in range(level)[::-1]:
         x = Tracer._from_variable_and_level(x, i)
     
-    assert isinstance(x, Tracer)
-
     result_any = func(x)
 
     result: IValue = result_any if isinstance(result_any, IValue) else JustValue(result_any)
@@ -383,12 +381,12 @@ def _jacobian_impl(level: int, func: Callable[[ndarray | Tracer], ndarray | Trac
 
 @dataclass(frozen=True)
 class manual_jacobian:
-    func: Callable[[ndarray | Tracer], ndarray | Tracer] | manual_jacobian
+    func: Callable[[ndarray | IValue], ndarray | IValue] | manual_jacobian
 
     def __call__(self, x: ndarray) -> ndarray:
         return _jacobian_impl(self._level(), self._func(), x)
     
-    def _func(self) -> Callable[[ndarray | Tracer], ndarray | Tracer]:
+    def _func(self) -> Callable[[ndarray | IValue], ndarray | IValue]:
         if isinstance(self.func, manual_jacobian):
             return self.func._func()
         return self.func
@@ -443,7 +441,7 @@ if __name__ == '__main__':
 ##############################################################################################
 
     def test1() -> None:
-        def f(x: ndarray | Tracer) -> ndarray:
+        def f(x: ndarray | IValue) -> ndarray:
             return np.array([5])
 
         value = np.array([4])
@@ -454,7 +452,7 @@ if __name__ == '__main__':
     test1()
 
     def test2() -> None:
-        def f(x: ndarray | Tracer) -> ndarray:
+        def f(x: ndarray | IValue) -> ndarray:
             return cast(
                 ndarray,
                 x
@@ -467,7 +465,7 @@ if __name__ == '__main__':
     test2()
 
     def test3() -> None:
-        def f(x: ndarray | Tracer) -> ndarray:
+        def f(x: ndarray | IValue) -> ndarray:
             return cast(
                 ndarray,
                 x+3
@@ -480,7 +478,7 @@ if __name__ == '__main__':
     test3()
 
     def test4() -> None:
-        def f(x: ndarray | Tracer) -> ndarray:
+        def f(x: ndarray | IValue) -> ndarray:
             return cast(
                 ndarray,
                 x*3
@@ -493,7 +491,7 @@ if __name__ == '__main__':
     test4()
 
     def test5() -> None:
-        def f(x: ndarray | Tracer) -> ndarray:
+        def f(x: ndarray | IValue) -> ndarray:
             return cast(
                 ndarray,
                 x
@@ -506,7 +504,7 @@ if __name__ == '__main__':
     test5()
 
     def test6() -> None:
-        def f(x: ndarray | Tracer) -> ndarray:
+        def f(x: ndarray | IValue) -> ndarray:
             return cast(
                 ndarray,
                 x*x
@@ -519,7 +517,7 @@ if __name__ == '__main__':
     test6()
 
     def test7() -> None:
-        def f(x: ndarray | Tracer) -> ndarray:
+        def f(x: ndarray | IValue) -> ndarray:
             return cast(
                 ndarray,
                 x*x[::-1]
@@ -532,7 +530,7 @@ if __name__ == '__main__':
     test7()
 
     def test8() -> None:
-        def f(x: ndarray | Tracer) -> ndarray:
+        def f(x: ndarray | IValue) -> ndarray:
             return cast(
                 ndarray,
                 x[0]
@@ -545,7 +543,7 @@ if __name__ == '__main__':
     test8()
 
     def test9() -> None:
-        def f(x: ndarray | Tracer) -> ndarray:
+        def f(x: ndarray | IValue) -> ndarray:
             return cast(
                 ndarray,
                 x[1]
@@ -558,7 +556,7 @@ if __name__ == '__main__':
     test9()
 
     def test10() -> None:
-        def f(x: ndarray | Tracer) -> ndarray:
+        def f(x: ndarray | IValue) -> ndarray:
             return cast(
                 ndarray,
                 x[0]+x[1]
@@ -573,7 +571,7 @@ if __name__ == '__main__':
     test10()
 
     def test11() -> None:
-        def f(x: ndarray | Tracer) -> ndarray:
+        def f(x: ndarray | IValue) -> ndarray:
             return cast(
                 ndarray,
                 x[0]*x[1]
@@ -588,7 +586,7 @@ if __name__ == '__main__':
     test11()
 
     def test12() -> None:
-        def f(x: ndarray | Tracer) -> ndarray:
+        def f(x: ndarray | IValue) -> ndarray:
             return cast(
                 ndarray,
                 (
@@ -607,14 +605,14 @@ if __name__ == '__main__':
                 ]
             ]
         )
-        assert same(                                                    f (value), result )
+        assert same(                                                                f  (value), result )
         assert same(result.shape + value.shape, jac.shape)
         assert same(result.shape + value.shape, jacobian_test_wrapper(f)(value).shape)
         assert same(                                          jacobian_test_wrapper(f) (value),  jac )
     test12()
 
     def test13() -> None:
-        def f(x: ndarray | Tracer) -> ndarray:
+        def f(x: ndarray | IValue) -> ndarray:
             return cast(
                 ndarray,
                 x,
@@ -628,14 +626,14 @@ if __name__ == '__main__':
                 [ [ [ 0, 0 ], [ 0, 0 ], [ 1, 0, ] ], [ [ 0, 0 ], [ 0, 0 ], [ 0, 1 ] ] ],
             ]
         )
-        assert same(                                                    f (value), result )
+        assert same(                                                                f  (value), result )
         assert same(                                          jacobian_test_wrapper(f) (value),  jac )
         assert result.shape + value.shape == jac.shape
         assert result.shape + value.shape == jacobian_test_wrapper(f)(value).shape
     test13()
 
     def test14() -> None:
-        def f(x: ndarray | Tracer) -> ndarray:
+        def f(x: ndarray | IValue) -> ndarray:
             return cast(
                 ndarray,
                 (
@@ -645,14 +643,14 @@ if __name__ == '__main__':
         value = np.array( [3., 5.] )
         result = np.array( 15 )
         jac = np.array( [ 5, 3 ] )
-        assert same(                                                    f (value), result )
+        assert same(                                                                f  (value), result )
         assert same(                                          jacobian_test_wrapper(f) (value),  jac )
         assert result.shape + value.shape == jac.shape
         assert result.shape + value.shape == jacobian_test_wrapper(f)(value).shape
     test14()
 
     def test15() -> None:
-        def f(x: ndarray | Tracer) -> ndarray:
+        def f(x: ndarray | IValue) -> ndarray:
             return cast(
                 ndarray,
                 x[0] * x[1],
@@ -660,14 +658,14 @@ if __name__ == '__main__':
         value = np.array( [3., 5.] )
         result = np.array( 15 )
         jac = np.array( [ 5, 3 ] )
-        assert same(                                                    f (value), result )
+        assert same(                                                                f  (value), result )
         assert same(                                          jacobian_test_wrapper(f) (value),  jac )
         assert result.shape + value.shape == jac.shape
         assert result.shape + value.shape == jacobian_test_wrapper(f)(value).shape
     test15()
 
     def test16() -> None:
-        def f(x: ndarray | Tracer) -> ndarray:
+        def f(x: ndarray | IValue) -> ndarray:
             return cast(
                 ndarray,
                 x.reshape((2,1))
@@ -680,14 +678,14 @@ if __name__ == '__main__':
                 [ [ [ 0, 1 ] ] ]
             ]
         )
-        assert same(                                                    f (value), result )
+        assert same(                                                                f  (value), result )
         assert same(                                          jacobian_test_wrapper(f) (value),  jac )
         assert result.shape + value.shape == jacobian_test_wrapper(f)(value).shape
         assert result.shape + value.shape == jac.shape
     test16()
 
     def test17() -> None:
-        def f(x: ndarray | Tracer) -> ndarray:
+        def f(x: ndarray | IValue) -> ndarray:
             return cast(
                 ndarray,
                 x.reshape((2,1))
@@ -700,14 +698,14 @@ if __name__ == '__main__':
                 [ [ [ 0, 1 ] ] ]
             ]
         )
-        assert same(                                                    f (value), result )
+        assert same(                                                                f  (value), result )
         assert same(                                          jacobian_test_wrapper(f) (value),  jac )
         assert result.shape + value.shape == jacobian_test_wrapper(f)(value).shape
         assert result.shape + value.shape == jac.shape
     test17()
 
     def test18() -> None:
-        def f(x: ndarray | Tracer) -> ndarray:
+        def f(x: ndarray | IValue) -> ndarray:
             return np.array([5])
 
         value = np.array( [4] )
@@ -722,7 +720,7 @@ if __name__ == '__main__':
     test18()
 
     def test19() -> None:
-        def f(x: ndarray | Tracer) -> ndarray:
+        def f(x: ndarray | IValue) -> ndarray:
             return np.array([5])
 
         value = np.array( [4, 7] )
@@ -740,7 +738,7 @@ if __name__ == '__main__':
     test19()
 
     def test19() -> None:
-        def f(x: ndarray | Tracer) -> ndarray:
+        def f(x: ndarray | IValue) -> ndarray:
             return cast(
                 ndarray,
                 x
@@ -761,7 +759,7 @@ if __name__ == '__main__':
     test19()
 
     def test20() -> None:
-        def f(x: ndarray | Tracer) -> ndarray:
+        def f(x: ndarray | IValue) -> ndarray:
             return cast(
                 ndarray,
                 (
