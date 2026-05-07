@@ -186,11 +186,6 @@ class JustValue(IValue):
             v1.__value * v2.__value
         )
 
-def to_value(x: ndarray | IValue) -> IValue:
-    if isinstance(x, IValue):
-        return x
-    return JustValue(x)
-
 ###########################################################################################################
 
 @dataclass(frozen=True)
