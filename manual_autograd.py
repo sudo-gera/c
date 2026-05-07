@@ -52,6 +52,12 @@ class IValue(ABC):
     def __rmul__(self, other: object) -> IValue:
         return IValue.__bin_op(other, self, JustValue._mul, Tracer._mul)
 
+    def __matmul__(self, other: object) -> IValue:
+        return IValue.__bin_op(self, other, JustValue._mul, Tracer._mul)
+
+    def __rmatmul__(self, other: object) -> IValue:
+        return IValue.__bin_op(other, self, JustValue._matmul, Tracer._matmul)
+
     @staticmethod
     def __bin_op(v1_object: object, v2_object: object, just_value_op: Callable[[JustValue, JustValue], IValue], tracer_op: Callable[[Tracer, Tracer], IValue]) -> IValue:
         v1 = v1_object if isinstance(v1_object, IValue) else JustValue(np.array(v1_object))
@@ -105,75 +111,81 @@ class IValue(ABC):
 
 @dataclass(frozen=True)
 class JustValue(IValue):
-    __value: ndarray
+    value: ndarray
 
     def __post_init__(self) -> None:
-        if isinstance(self.__value, np.ndarray):
-            self.__value.flags.writeable=False
+        if isinstance(self.value, np.ndarray):
+            self.value.flags.writeable=False
 
     @property
     def shape(self) -> tuple[int, ...]:
         return cast(
             tuple[int, ...],
-            self.__value.shape
+            self.value.shape
         )
 
     @property
     def size(self) -> int:
-        return self.__value.size
+        return self.value.size
 
     def reshape(self, shape: tuple[int, ...]) -> JustValue:
         return JustValue(
-            self.__value.reshape(shape)
+            self.value.reshape(shape)
         )
 
     def broadcast_to(self, shape: tuple[int, ...]) -> JustValue:
         return JustValue(
             np.broadcast_to(
-                self.__value,
+                self.value,
                 shape,
             )
         )
 
     def __len__(self) -> int:
-        return len(self.__value)
+        return len(self.value)
 
     def __bool__(self) -> bool:
-        return bool(self.__value)
+        return bool(self.value)
 
     def __neg__(self) -> JustValue:
         return JustValue(
-            -self.__value
+            -self.value
         )
 
     def __getitem__(self, index: Any) -> JustValue:
         return JustValue(
             cast(
                 ndarray,
-                self.__value[index]
+                self.value[index]
             )
         )
 
     @property
     def _to_ndarray(self) -> ndarray:
-        return self.__value
+        return self.value
 
     @staticmethod
     def _add(v1: JustValue, v2: JustValue) -> JustValue:
         return JustValue(
-            v1.__value + v2.__value
+            v1.value + v2.value
         )
 
     @staticmethod
     def _sub(v1: JustValue, v2: JustValue) -> JustValue:
         return JustValue(
-            v1.__value - v2.__value
+            v1.value - v2.value
         )
 
     @staticmethod
     def _mul(v1: JustValue, v2: JustValue) -> JustValue:
         return JustValue(
-            v1.__value * v2.__value
+            v1.value * v2.value
+        )
+
+    @staticmethod
+    def _matmul(v1: JustValue, v2: JustValue) -> JustValue:
+        return JustValue(
+            v1.value * v2.value
         )
 
 ###########################################################################################################
@@ -286,6 +298,14 @@ class Tracer(IValue):
             +
             v2.jacobian * v2.__broadcast_value_to_jacobian(v1.value),
             v1.value * v2.value,
+        )
+
+    @staticmethod
+    def _matmul(v1: Tracer, v2: Tracer) -> Tracer:
+        v1, v2 = Tracer.__broadcast_to_each_other(v1, v2)
+        return Tracer(
+            v1.jacobian @ v2.jacobian,
+            v1.value @ v2.value,
         )
 
     def __getitem__(self, index: Any) -> Tracer:
@@ -704,6 +724,51 @@ if __name__ == '__main__':
                 (
                     x.reshape((4,1)) * x.reshape((1,4))
                 ).reshape((8, 2))[3:5, :] - x
+            )
+
+        value = np.array( [ [3, 5], [7, 11] ] )
+        result0 = np.array( [[32, 50], [14, 24]] )
+        result1 = np.array( [[[[-1, 7], [5, 0]], [[0, 10], [0, 5]]], [[[7, 0], [2, 0]], [[0, 7], [5, -1]]]] )
+        result2 = np.array(
+            [
+                [
+                    [
+                        [[[0., 0.], [0., 0.]], [[0., 0.], [1., 0.]]],
+                        [[[0., 1.], [0., 0.]], [[0., 0.], [0., 0.]]]
+                    ],
+                    [
+                        [[[0., 0.], [0., 0.]], [[0., 0.], [0., 1.]]],
+                        [[[0., 0.], [0., 0.]], [[0., 1.], [0., 0.]]]
+                    ]
+                ],[
+                    [
+                        [[[0., 0.], [1., 0.]], [[0., 0.], [0., 0.]]],
+                        [[[1., 0.], [0., 0.]], [[0., 0.], [0., 0.]]]
+                    ], [
+                        [[[0., 0.], [0., 0.]], [[0., 0.], [1., 0.]]],
+                        [[[0., 1.], [0., 0.]], [[0., 0.], [0., 0.]]]
+                    ]
+                ]
+            ]
+        )
+
+        result3 = np.zeros((2,2,2,2,2,2,2,2))
+        assert same(                                                                     f   (value), result0  )
+        assert same(result0.shape + value.shape, result1.shape)
+        assert same(                                              jacobian_test_wrapper(f)   (value), result1  )
+        assert same(result1.shape + value.shape, result2.shape)
+        assert same(                        jacobian_test_wrapper(jacobian_test_wrapper(f))  (value), result2  )
+        assert same(result2.shape + value.shape, result3.shape)
+        assert same(  jacobian_test_wrapper(jacobian_test_wrapper(jacobian_test_wrapper(f))) (value), result3  )
+    test20()
+
+    def test20() -> None:
+        def f(x: ndarray | IValue) -> ndarray:
+            return cast(
+                ndarray,
+                (
+                    x
+                )
             )
 
         value = np.array( [ [3, 5], [7, 11] ] )
