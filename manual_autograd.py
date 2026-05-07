@@ -49,12 +49,30 @@ class IValue(ABC):
     # def jacobian_ndarray(self) -> ndarray:
     #     ...
 
-    # def __mul__(self, other: object) -> IValue:
-    #     if not isinstance(other, IValue):
-    #         other = JustValue(other)
-    #     assert isinstance(other, IValue)
+    def __mul__(self, other: object) -> IValue:
+        if not isinstance(other, IValue):
+            other = JustValue(np.array(other))
+        assert isinstance(other, IValue)
+        ivalue_mul(self, other)
 
-    #     higher_level = self if self._value_level > other._value_level else other
+    # @staticmethod
+    # def make_equal_level(v1: IValue, v2: IValue) -> tuple[IValue, IValue]:
+    #     if v1._value_level == v2._value_level:
+    #         return v1, v2
+
+    #     vmin = v1 if v1._value_level < v2._value_level else v2
+    #     vmax = v1 if v1._value_level > v2._value_level else v2
+
+    #     assert isinstance(vmin, Tracer)
+
+    #     if vmax._value_level != JustValue._value_level:
+    #         assert vmin._value_level + 1 == vmax._value_level
+        
+    #     vmax = vmin.upgrade(vmax)
+
+    #     return vmin, vmax if vmin is v1 else vmax, vmin
+
+
 
     #     return type(higher_level).mul(self, other)
 
@@ -156,9 +174,7 @@ class JustValue(IValue):
     def value_ivalue(self) -> IValue:
         return to_value(self.value_)
 
-    @property
-    def _value_level(self) -> int | float:
-        return float('inf')
+    _value_level = float('inf')
 
 def to_value(x: ndarray | IValue) -> IValue:
     if isinstance(x, IValue):
@@ -233,18 +249,14 @@ class Tracer(IValue):
             ),
         )
 
-    def __broadcast_value_to_jacobian(self, value: ndarray) -> ndarray:
-        return np.broadcast_to(
-            value.reshape(value.shape + (1, ) * len(self.__input_shape)),
-            self.jacobian_ndarray.shape,
+    def __broadcast_value_to_jacobian(self, value: IValue) -> IValue:
+        return value.reshape(
+            value.shape + (1, ) * len(self.__input_shape)
+        ).broadcast_to(
+            self.jacobian_ivalue.shape,
         )
 
-    @staticmethod
-    def handle_operator(v1: IValue, v2: IValue):
-        assert isinstance(v1, Tracer) or isinstance(v2, Tracer)
-
-
-    def __constant(self, value: ndarray) -> Tracer:
+    def _from_constant(self, value: JustValue) -> Tracer:
         return Tracer.from_just_value_or_ndarray(
             JustValue(
                 np.zeros(value.shape + self.__input_shape)
@@ -291,12 +303,12 @@ class Tracer(IValue):
 
     def __add__(self, other: object) -> Tracer:
         if not isinstance(other, Tracer):
-            other = self.__constant(np.array(other))
+            other = self._from_constant(JustValue(np.array(other)))
         return Tracer.__add(self, other)
 
     def __radd__(self, other: object) -> Tracer:
         if not isinstance(other, Tracer):
-            other = self.__constant(np.array(other))
+            other = self._from_constant(JustValue(np.array(other)))
         return Tracer.__add(other, self)
 
     @staticmethod
@@ -309,12 +321,12 @@ class Tracer(IValue):
 
     def __sub__(self, other: object) -> Tracer:
         if not isinstance(other, Tracer):
-            other = self.__constant(np.array(other))
+            other = self._from_constant(JustValue(np.array(other)))
         return Tracer.__sub(self, other)
 
     def __rsub__(self, other: object) -> Tracer:
         if not isinstance(other, Tracer):
-            other = self.__constant(np.array(other))
+            other = self._from_constant(JustValue(np.array(other)))
         return Tracer.__sub(other, self)
 
     def __neg__(self) -> Tracer:
@@ -329,9 +341,9 @@ class Tracer(IValue):
         return Tracer.from_just_value_or_ndarray(
             cast(
                 ndarray,
-                v1.jacobian_ndarray * v1.__broadcast_value_to_jacobian(v2.value_ndarray)
+                v1.jacobian_ndarray * v1.__broadcast_value_to_jacobian(v2.value_ivalue).value_ndarray
                 +
-                v2.jacobian_ndarray * v2.__broadcast_value_to_jacobian(v1.value_ndarray)
+                v2.jacobian_ndarray * v2.__broadcast_value_to_jacobian(v1.value_ivalue).value_ndarray
             ),
             cast(
                 ndarray,
@@ -339,18 +351,14 @@ class Tracer(IValue):
             ),
         )
 
-    @staticmethod
-    def mul(v1: IValue, v2: IValue):
-        Tracer.__mul(Tracer.ensure_tracer(v1), Tracer.ensure_tracer(v2))
-
     def __mul__(self, other: object) -> Tracer:
         if not isinstance(other, Tracer):
-            other = self.__constant(np.array(other))
+            other = self._from_constant(JustValue(np.array(other)))
         return self.__mul(self, other)
 
     def __rmul__(self, other: object) -> Tracer:
         if not isinstance(other, Tracer):
-            other = self.__constant(np.array(other))
+            other = self._from_constant(JustValue(np.array(other)))
         return self.__mul(other, self)
 
     def __getitem__(self, index: Any) -> Tracer:
