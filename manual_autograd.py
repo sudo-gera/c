@@ -1413,7 +1413,7 @@ if __name__ == '__main__':
         v = np.zeros_like(ws)
         for q in range(999):
             assert autograd_jacobian is not None
-            d = autograd_jacobian(f)(ws)
+            d = jacobian_test_wrapper(f)(ws)
             # print(f"err = {f(ws):5.3f} d(err) = {np_abs(d).sum():5.3f}")
             v = 0.9 * v - 1.0 * d
             ws = ws + v
