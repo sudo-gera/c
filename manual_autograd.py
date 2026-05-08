@@ -1325,6 +1325,7 @@ if __name__ == '__main__':
             )
 
         ws : ndarray = np.ones((18, 3, 3))
+        ws = np.arange(ws.size).reshape(ws.shape)
         ws = ws / ws.sum()
         for q in range(999):
             assert autograd_jacobian is not None
