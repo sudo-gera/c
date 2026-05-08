@@ -1074,6 +1074,8 @@ if __name__ == '__main__':
         assert same(                                                                     f   (value), result0  )
         assert same(result0.shape + value.shape, result1.shape)
         assert same(                                              jacobian_test_wrapper(f)   (value), result1  )
+        jacobian_test_wrapper(jacobian_test_wrapper(f))  (value)
+        jacobian_test_wrapper(jacobian_test_wrapper(jacobian_test_wrapper(f))) (value)
 
     test20()
 
