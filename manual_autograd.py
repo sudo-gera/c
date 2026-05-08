@@ -9,12 +9,12 @@ from abc import ABC, abstractmethod
 import numpy as np
 import numbers
 
-return_same_t = TypeVar('return_same_t')
+return_as_is_t = TypeVar('return_as_is_t')
 
-def return_same(x: return_same_t) -> return_same_t:
+def return_as_is(x: return_as_is_t) -> return_as_is_t:
     return x
 
-autograd_jacobian = return_same if TYPE_CHECKING and abs(hash('-')) > -1 else None
+autograd_jacobian = return_as_is if TYPE_CHECKING and abs(hash('-')) > -1 else None
 
 if not TYPE_CHECKING:
     try:
@@ -176,6 +176,14 @@ class IValue(ABC):
     def __pow__(self, other: float) -> IValue:
         ...
 
+    @abstractmethod
+    def _exp(self) -> IValue:
+        ...
+
+    @abstractmethod
+    def _log(self) -> IValue:
+        ...
+
 ###########################################################################################################
 
 def np_sign(value: ndarray | IValue) -> ndarray:
@@ -185,6 +193,46 @@ def np_sign(value: ndarray | IValue) -> ndarray:
         ndarray,
         np.sign(
             value
+        )
+    )
+
+###########################################################################################################
+
+log_t = TypeVar('log_t', bound=ndarray | IValue)
+
+def np_log(value: log_t) -> log_t:
+    if isinstance(value, IValue):
+        return cast(
+            log_t,
+            value._log()
+        )
+    return cast(
+        log_t,
+        np.log(
+            cast(
+                ndarray,
+                value
+            ),
+        )
+    )
+
+###########################################################################################################
+
+exp_t = TypeVar('exp_t', bound=ndarray | IValue)
+
+def np_exp(value: exp_t) -> exp_t:
+    if isinstance(value, IValue):
+        return cast(
+            exp_t,
+            value._exp()
+        )
+    return cast(
+        exp_t,
+        np.exp(
+            cast(
+                ndarray,
+                value
+            ),
         )
     )
 
@@ -469,6 +517,22 @@ class JustValue(IValue):
             )
         )
 
+    def _exp(self) -> IValue:
+        return JustValue(
+            cast(
+                ndarray,
+                np.exp(self.value)
+            )
+        )
+
+    def _log(self) -> IValue:
+        return JustValue(
+            cast(
+                ndarray,
+                np.log(self.value)
+            )
+        )
+
 ###########################################################################################################
 
 @dataclass(frozen=True)
@@ -664,6 +728,22 @@ class Tracer(IValue):
                 other * self.value ** (other-1)
             ) * self.jacobian,
             self.value ** other,
+        )
+
+    def _exp(self) -> IValue:
+        return Tracer(
+            self.__broadcast_value_to_jacobian(
+                self.value._exp()
+            ) * self.jacobian,
+            self.value._exp(),
+        )
+
+    def _log(self) -> IValue:
+        return Tracer(
+            1 / self.__broadcast_value_to_jacobian(
+                self.value._log()
+            ) * self.jacobian,
+            self.value._exp(),
         )
 
 ##############################################################################################
@@ -1260,49 +1340,49 @@ if __name__ == '__main__':
 
     def test19() -> None:
 
-        wslices = [
-            (0, slice(0, 2), slice(0, 3)),
-            (2, slice(0, 3), slice(0, 3)),
-            (4, slice(0, 3), slice(0, 3)),
-            (6, slice(0, 3), slice(0, 3)),
-            (8, slice(0, 3), slice(0, 3)),
-            (10, slice(0, 3), slice(0, 3)),
-            (12, slice(0, 3), slice(0, 3)),
-            (14, slice(0, 3), slice(0, 3)),
-            (16, slice(0, 3), slice(0, 1)),
-        ]
-
-        bslices = [
-            (1, 0, slice(0, 3)),
-            (3, 0, slice(0, 3)),
-            (5, 0, slice(0, 3)),
-            (7, 0, slice(0, 3)),
-            (9, 0, slice(0, 3)),
-            (11, 0, slice(0, 3)),
-            (13, 0, slice(0, 3)),
-            (15, 0, slice(0, 3)),
-            (17, 0, slice(0, 1)),
-        ]
-
-        assert len(wslices) == len(bslices)
-
         def leaky_relu(x: ndarray | IValue) -> ndarray | IValue:
             return np_abs(x) * 0.495 + x * 0.505
 
         def pow_act(x: ndarray | IValue) -> ndarray | IValue:
             return np_abs(x) ** 0.2 * np_sign(x)
 
-        def nerual_net(x: ndarray | IValue, ws: ndarray | IValue) -> ndarray | IValue:
+        def sigmoid(x: ndarray | IValue) -> ndarray | IValue:
+            return 1 / (1 + np_exp(-x))
+
+        def as_is_act(x: ndarray | IValue) -> ndarray | IValue:
+            return x
+
+        wslices = [
+            (0, slice(0, 2), slice(0, 3)),
+            (2, slice(0, 3), slice(0, 3)),
+            (4, slice(0, 3), slice(0, 1)),
+        ]
+
+        bslices = [
+            (1, 0, slice(0, 3)),
+            (3, 0, slice(0, 3)),
+            (5, 0, slice(0, 1)),
+        ]
+
+        activators = [
+            leaky_relu,
+            leaky_relu,
+            sigmoid,
+        ]
+
+        assert len(wslices) == len(bslices) == len(activators)
+
+        def neural_net(x: ndarray | IValue, ws: ndarray | IValue) -> ndarray | IValue:
             x = x.reshape((1, x.size))
-            for s, b in zip(wslices, bslices):
+            for s, b, act in zip(wslices, bslices, activators):
                 x = x @ ws[s] + ws[b]
-                x = pow_act(x)
+                x = act(x)
             x = x.reshape(())
             return x
 
         def error(x: ndarray | IValue, ws: ndarray | IValue, ans: ndarray) -> ndarray | IValue:
-            diff = (nerual_net(x, ws) - ans)
-            return (diff * diff).sum()
+            y = neural_net(x, ws)
+            return -(np_log(y) * ans + np_log(1 - y) * (1 - ans))
 
         training = [
             ([0, 0], 0),
@@ -1324,8 +1404,8 @@ if __name__ == '__main__':
                 avg_error(x)
             )
 
-        ws : ndarray = np.ones((18, 3, 3))
-        ws = np.arange(ws.size).reshape(ws.shape)
+        ws : ndarray = np.ones((6, 3, 3))
+        ws = np.arange(ws.size).reshape(ws.shape) - ws.size/2
         ws = ws / ws.sum()
         for q in range(999):
             assert autograd_jacobian is not None
@@ -1334,7 +1414,7 @@ if __name__ == '__main__':
             ws = ws - d * 0.1
 
         for x, ans in training:
-            print(x, nerual_net(np.array(x), ws), ans)
+            print(f"{x = }, {neural_net(np.array(x), ws) = :5.3f}, {ans = }")
 
     test19()
 
