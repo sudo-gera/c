@@ -791,10 +791,10 @@ class manual_jacobian:
 
 if __name__ == '__main__':
 
-    def same(_a: Any, _s: Any) -> bool:
+    def same(_a: Any, _s: Any, rtol: float = 1e-05, atol: float = 1e-08, equal_nan: bool = False) -> bool:
         a = np.array(_a)
         s = np.array(_s)
-        if a.shape == s.shape and np.allclose(a, s):
+        if a.shape == s.shape and np.allclose(a, s, rtol, atol, equal_nan):
             return True
         print()
         print()
@@ -1352,6 +1352,9 @@ if __name__ == '__main__':
         def as_is_act(x: ndarray | IValue) -> ndarray | IValue:
             return x
 
+        def tanh(x: ndarray | IValue) -> ndarray | IValue:
+            return (np_exp(x) - np_exp(-x)) / (np_exp(x) + np_exp(-x))
+
         wslices = [
             (0, slice(0, 2), slice(0, 3)),
             (2, slice(0, 3), slice(0, 3)),
@@ -1407,14 +1410,17 @@ if __name__ == '__main__':
         ws : ndarray = np.ones((6, 3, 3))
         ws = np.arange(ws.size).reshape(ws.shape) - ws.size/2
         ws = ws / ws.sum()
+        v = np.zeros_like(ws)
         for q in range(999):
             assert autograd_jacobian is not None
             d = autograd_jacobian(f)(ws)
-            print(f"err = {f(ws):5.3f} d(err) = {np_abs(d).sum():5.3f}")
-            ws = ws - d * 0.1
+            # print(f"err = {f(ws):5.3f} d(err) = {np_abs(d).sum():5.3f}")
+            v = 0.9 * v - 1.0 * d
+            ws = ws + v
 
         for x, ans in training:
-            print(f"{x = }, {neural_net(np.array(x), ws) = :5.3f}, {ans = }")
+            # print(f"{x = }, {neural_net(np.array(x), ws) = :5.3f}, {ans = }")
+            assert same(neural_net(np.array(x), ws), ans, atol=0.001)
 
     test21()
 
