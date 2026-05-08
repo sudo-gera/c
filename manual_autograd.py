@@ -36,35 +36,52 @@ class IValue(ABC):
         ...
 
     def __add__(self, other: object) -> IValue:
-        return IValue._bin_op(self, other, JustValue._add, Tracer._add)
+        v1, v2 = prepare_one_level(self, other)
+        return v1._add(v2)
 
     def __radd__(self, other: object) -> IValue:
-        return IValue._bin_op(other, self, JustValue._add, Tracer._add)
+        v1, v2 = prepare_one_level(other, self)
+        return v1._add(v2)
 
     def __sub__(self, other: object) -> IValue:
-        return IValue._bin_op(self, other, JustValue._sub, Tracer._sub)
+        v1, v2 = prepare_one_level(self, other)
+        return v1._sub(v2)
 
     def __rsub__(self, other: object) -> IValue:
-        return IValue._bin_op(other, self, JustValue._sub, Tracer._sub)
+        v1, v2 = prepare_one_level(other, self)
+        return v1._sub(v2)
 
     def __mul__(self, other: object) -> IValue:
-        return IValue._bin_op(self, other, JustValue._mul, Tracer._mul)
+        v1, v2 = prepare_one_level(self, other)
+        return v1._mul(v2)
 
     def __rmul__(self, other: object) -> IValue:
-        return IValue._bin_op(other, self, JustValue._mul, Tracer._mul)
+        v1, v2 = prepare_one_level(other, self)
+        return v1._mul(v2)
+
+    @abstractmethod
+    def _mul(self, other: IValue) -> IValue:
+        ...
+
+    @abstractmethod
+    def _add(self, other: IValue) -> IValue:
+        ...
+
+    @abstractmethod
+    def _sub(self, other: IValue) -> IValue:
+        ...
+
+    @abstractmethod
+    def _tensordot(self, other: IValue, axes: tuple[list[int], list[int]]) -> IValue:
+        ...
 
     @staticmethod
     def _bin_op(v1_object: object, v2_object: object, just_value_op: Callable[[JustValue, JustValue], IValue], tracer_op: Callable[[Tracer, Tracer], IValue]) -> IValue:
-        v1 = v1_object if isinstance(v1_object, IValue) else JustValue(np.array(v1_object))
-        v2 = v2_object if isinstance(v2_object, IValue) else JustValue(np.array(v2_object))
+        v1, v2 = prepare_one_level(v1_object, v2_object)
         if isinstance(v1, JustValue) and isinstance(v2, JustValue):
             return just_value_op(v1, v2)
-        if isinstance(v1, Tracer)    and isinstance(v2, Tracer):
+        if isinstance(v1, Tracer) and isinstance(v2, Tracer):
             return tracer_op(v1, v2)
-        if isinstance(v1, Tracer)    and isinstance(v2, JustValue):
-            return tracer_op(v1, v1._from_constant(v2))
-        if isinstance(v1, JustValue) and isinstance(v2, Tracer):
-            return tracer_op(v2._from_constant(v1), v2)
         assert False
 
     @property
@@ -122,6 +139,14 @@ class IValue(ABC):
         ...
 
 ###########################################################################################################
+
+def prepare_one_level(*arg_objects: object) -> tuple[IValue, ...]:
+    args = [arg if isinstance(arg, IValue) else JustValue(np.array(arg)) for arg in arg_objects]
+    tracers = [arg for arg in args if isinstance(arg, Tracer)]
+    if not tracers:
+        return tuple(args)
+    args = [tracers[0]._from_constant(arg) if isinstance(arg, JustValue) else arg for arg in args]
+    return tuple(args)
 
 transpose_t = TypeVar('transpose_t')
 
@@ -197,13 +222,9 @@ def tensordot(v1: object, v2: object, axes: Any = 2) -> object:
 
 def tensordot(v1: object | IValue, v2: object | IValue, axes: Any = 2) -> ndarray | IValue:
     parsed_axes = tensordot_parse_axes(shape(v1), shape(v2), axes)
-    # print(shape(v1), shape(v2), axes, parsed_axes)
     if isinstance(v1, IValue) or isinstance(v2, IValue):
-        def just_value_op(v1: JustValue, v2: JustValue) -> JustValue:
-            return JustValue._tensordot(v1, v2, parsed_axes)
-        def tracer_op(v1: Tracer, v2: Tracer) -> Tracer:
-            return Tracer._tensordot(v1, v2, parsed_axes)
-        return IValue._bin_op(v1, v2, just_value_op, tracer_op)
+        v1, v2 = prepare_one_level(v1, v2)
+        return v1._tensordot(v2, parsed_axes)
     return cast(
         ndarray,
         np.tensordot(
@@ -283,26 +304,26 @@ class JustValue(IValue):
     def _to_ndarray(self) -> ndarray:
         return self.value
 
-    @staticmethod
-    def _add(v1: JustValue, v2: JustValue) -> JustValue:
+    def _add(v1: JustValue, v2: IValue) -> JustValue:
+        assert isinstance(v2, JustValue)
         return JustValue(
             v1.value + v2.value
         )
 
-    @staticmethod
-    def _sub(v1: JustValue, v2: JustValue) -> JustValue:
+    def _sub(v1: JustValue, v2: IValue) -> JustValue:
+        assert isinstance(v2, JustValue)
         return JustValue(
             v1.value - v2.value
         )
 
-    @staticmethod
-    def _mul(v1: JustValue, v2: JustValue) -> JustValue:
+    def _mul(v1: JustValue, v2: IValue) -> JustValue:
+        assert isinstance(v2, JustValue)
         return JustValue(
             v1.value * v2.value
         )
 
-    @staticmethod
-    def _tensordot(v1: JustValue, v2: JustValue, axes: Any) -> JustValue:
+    def _tensordot(v1: JustValue, v2: IValue, axes: tuple[list[int], list[int]]) -> JustValue:
+        assert isinstance(v2, JustValue)
         return JustValue(
             cast(
                 ndarray,
@@ -406,16 +427,16 @@ class Tracer(IValue):
         assert len({t.jacobian.shape for t in ts}) == 1
         return ts
 
-    @staticmethod
-    def _add(v1: Tracer, v2: Tracer) -> Tracer:
+    def _add(v1: Tracer, v2: IValue) -> Tracer:
+        assert isinstance(v2, Tracer)
         v1, v2 = Tracer.__broadcast_to_each_other(v1, v2)
         return Tracer(
             v1.jacobian + v2.jacobian,
             v1.value + v2.value,
         )
 
-    @staticmethod
-    def _sub(v1: Tracer, v2: Tracer) -> Tracer:
+    def _sub(v1: Tracer, v2: IValue) -> Tracer:
+        assert isinstance(v2, Tracer)
         v1, v2 = Tracer.__broadcast_to_each_other(v1, v2)
         return Tracer(
             v1.jacobian - v2.jacobian,
@@ -431,8 +452,8 @@ class Tracer(IValue):
     def __pos__(self) -> Tracer:
         return self
 
-    @staticmethod
-    def _mul(v1: Tracer, v2: Tracer) -> Tracer:
+    def _mul(v1: Tracer, v2: IValue) -> Tracer:
+        assert isinstance(v2, Tracer)
         v1, v2 = Tracer.__broadcast_to_each_other(v1, v2)
         return Tracer(
             v1.jacobian * v1.__broadcast_value_to_jacobian(v2.value)
@@ -441,8 +462,8 @@ class Tracer(IValue):
             v1.value * v2.value,
         )
 
-    @staticmethod
-    def _tensordot(v1: Tracer, v2: Tracer, axes: tuple[list[int], list[int]]) -> Tracer:
+    def _tensordot(v1: Tracer, v2: IValue, axes: tuple[list[int], list[int]]) -> Tracer:
+        assert isinstance(v2, Tracer)
         tj1 = tensordot(
             v1.jacobian,
             v2.value,
