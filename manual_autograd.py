@@ -1338,7 +1338,7 @@ if __name__ == '__main__':
 
     test20()
 
-    def test19() -> None:
+    def test21() -> None:
 
         def leaky_relu(x: ndarray | IValue) -> ndarray | IValue:
             return np_abs(x) * 0.495 + x * 0.505
@@ -1416,5 +1416,5 @@ if __name__ == '__main__':
         for x, ans in training:
             print(f"{x = }, {neural_net(np.array(x), ws) = :5.3f}, {ans = }")
 
-    test19()
+    test21()
 
