@@ -7,6 +7,7 @@ from functools import *
 from operator import *
 from abc import ABC, abstractmethod
 import numpy as np
+import numbers
 
 return_same_t = TypeVar('return_same_t')
 
@@ -35,31 +36,25 @@ class IValue(ABC):
         ...
 
     def __add__(self, other: object) -> IValue:
-        return IValue.__bin_op(self, other, JustValue._add, Tracer._add)
+        return IValue._bin_op(self, other, JustValue._add, Tracer._add)
 
     def __radd__(self, other: object) -> IValue:
-        return IValue.__bin_op(other, self, JustValue._add, Tracer._add)
+        return IValue._bin_op(other, self, JustValue._add, Tracer._add)
 
     def __sub__(self, other: object) -> IValue:
-        return IValue.__bin_op(self, other, JustValue._sub, Tracer._sub)
+        return IValue._bin_op(self, other, JustValue._sub, Tracer._sub)
 
     def __rsub__(self, other: object) -> IValue:
-        return IValue.__bin_op(other, self, JustValue._sub, Tracer._sub)
+        return IValue._bin_op(other, self, JustValue._sub, Tracer._sub)
 
     def __mul__(self, other: object) -> IValue:
-        return IValue.__bin_op(self, other, JustValue._mul, Tracer._mul)
+        return IValue._bin_op(self, other, JustValue._mul, Tracer._mul)
 
     def __rmul__(self, other: object) -> IValue:
-        return IValue.__bin_op(other, self, JustValue._mul, Tracer._mul)
-
-    def __matmul__(self, other: object) -> IValue:
-        return IValue.__bin_op(self, other, JustValue._mul, Tracer._mul)
-
-    def __rmatmul__(self, other: object) -> IValue:
-        return IValue.__bin_op(other, self, JustValue._matmul, Tracer._matmul)
+        return IValue._bin_op(other, self, JustValue._mul, Tracer._mul)
 
     @staticmethod
-    def __bin_op(v1_object: object, v2_object: object, just_value_op: Callable[[JustValue, JustValue], IValue], tracer_op: Callable[[Tracer, Tracer], IValue]) -> IValue:
+    def _bin_op(v1_object: object, v2_object: object, just_value_op: Callable[[JustValue, JustValue], IValue], tracer_op: Callable[[Tracer, Tracer], IValue]) -> IValue:
         v1 = v1_object if isinstance(v1_object, IValue) else JustValue(np.array(v1_object))
         v2 = v2_object if isinstance(v2_object, IValue) else JustValue(np.array(v2_object))
         if isinstance(v1, JustValue) and isinstance(v2, JustValue):
@@ -79,11 +74,20 @@ class IValue(ABC):
 
     @property
     @abstractmethod
+    def ndim(self) -> int:
+        ...
+
+    @property
+    @abstractmethod
     def size(self) -> int:
         ...
 
     @abstractmethod
     def __neg__(self) -> IValue:
+        ...
+
+    @abstractmethod
+    def __pos__(self) -> IValue:
         ...
 
     @abstractmethod
@@ -107,6 +111,114 @@ class IValue(ABC):
     def __getitem__(self, index: Any) -> IValue:
         ...
 
+    def __matmul__(self, other: object) -> IValue:
+        return tensordot(self, other, ([-1], [-2]))
+
+    def __rmatmul__(self, other: object) -> IValue:
+        return tensordot(other, self, ([-1], [-2]))
+
+    @abstractmethod
+    def transpose(self, *axes: SupportsIndex | Iterable[SupportsIndex]) -> IValue:
+        ...
+
+###########################################################################################################
+
+transpose_t = TypeVar('transpose_t')
+
+def transpose(value: transpose_t, axes: Iterable[SupportsIndex] = ()) -> transpose_t:
+    if isinstance(value, IValue):
+        return cast(
+            transpose_t,
+            value.transpose(*axes)
+        )
+    return cast(
+        transpose_t,
+        np.transpose(
+            cast(
+                ndarray,
+                value
+            ),
+            list(axes)
+        )
+    )
+
+def shape(value: object) -> tuple[int, ...]:
+    if isinstance(value, IValue):
+        return value.shape
+    return np.shape(
+        cast(
+            ndarray,
+            value
+        )
+    )
+
+###########################################################################################################
+
+def tensordot_parse_axes(v1_shape: tuple[int, ...], v2_shape: tuple[int, ...], axes: Any) -> tuple[list[int], list[int]]:
+    v1_axes: Any
+    v2_axes: Any
+    try:
+        iter(axes)
+    except Exception:
+        v1_axes = list(range(-axes, 0))
+        v2_axes = list(range(0, axes))
+    else:
+        v1_axes, v2_axes = axes
+    try:
+        v1_axes = list(v1_axes)
+    except TypeError:
+        v1_axes = [v1_axes]
+    try:
+        v2_axes = list(v2_axes)
+    except TypeError:
+        v2_axes = [v2_axes]
+
+    assert len(v1_axes) == len(v2_axes)
+
+    for v1_axe, v2_axe in zip(v1_axes, v2_axes):
+        assert v1_shape[v1_axe] == v2_shape[v2_axe]
+
+    v1_axes = [v1_axe % len(v1_shape) for v1_axe in v1_axes]
+    v2_axes = [v2_axe % len(v2_shape) for v2_axe in v2_axes]
+
+    return v1_axes, v2_axes
+
+@overload
+def tensordot(v1: IValue, v2: object | IValue, axes: Any = 2) -> IValue:
+    ...
+
+@overload
+def tensordot(v1: object | IValue, v2: IValue, axes: Any = 2) -> IValue:
+    ...
+
+@overload
+def tensordot(v1: object, v2: object, axes: Any = 2) -> object:
+    ...
+
+def tensordot(v1: object | IValue, v2: object | IValue, axes: Any = 2) -> ndarray | IValue:
+    parsed_axes = tensordot_parse_axes(shape(v1), shape(v2), axes)
+    # print(shape(v1), shape(v2), axes, parsed_axes)
+    if isinstance(v1, IValue) or isinstance(v2, IValue):
+        def just_value_op(v1: JustValue, v2: JustValue) -> JustValue:
+            return JustValue._tensordot(v1, v2, parsed_axes)
+        def tracer_op(v1: Tracer, v2: Tracer) -> Tracer:
+            return Tracer._tensordot(v1, v2, parsed_axes)
+        return IValue._bin_op(v1, v2, just_value_op, tracer_op)
+    return cast(
+        ndarray,
+        np.tensordot(
+            cast(
+                ndarray,
+                v1,
+            ),
+            cast(
+                ndarray,
+                v2,
+            ),
+            parsed_axes
+        )
+    )
+
 ###########################################################################################################
 
 @dataclass(frozen=True)
@@ -123,6 +235,10 @@ class JustValue(IValue):
             tuple[int, ...],
             self.value.shape
         )
+
+    @property
+    def ndim(self) -> int:
+        return self.value.ndim
 
     @property
     def size(self) -> int:
@@ -151,6 +267,9 @@ class JustValue(IValue):
         return JustValue(
             -self.value
         )
+
+    def __pos__(self) -> JustValue:
+        return self
 
     def __getitem__(self, index: Any) -> JustValue:
         return JustValue(
@@ -183,9 +302,24 @@ class JustValue(IValue):
         )
 
     @staticmethod
-    def _matmul(v1: JustValue, v2: JustValue) -> JustValue:
+    def _tensordot(v1: JustValue, v2: JustValue, axes: Any) -> JustValue:
         return JustValue(
-            v1.value * v2.value
+            cast(
+                ndarray,
+                np.tensordot(
+                    v1.value,
+                    v2.value,
+                    axes,
+                )
+            )
+        )
+
+    def transpose(self, *axes: SupportsIndex | Iterable[SupportsIndex]) -> IValue:
+        parsed_axes = list(np.array(axes).flat)
+        parsed_axes = [axe % self.ndim for axe in parsed_axes]
+        # print(self.value.ndim, parsed_axes)
+        return JustValue(
+            self.value.transpose(*parsed_axes)
         )
 
 ###########################################################################################################
@@ -218,6 +352,10 @@ class Tracer(IValue):
     @property
     def shape(self) -> tuple[int, ...]:
         return self.value.shape
+
+    @property
+    def ndim(self) -> int:
+        return self.value.ndim
 
     @property
     def size(self) -> int:
@@ -290,6 +428,9 @@ class Tracer(IValue):
             -self.value,
         )
 
+    def __pos__(self) -> Tracer:
+        return self
+
     @staticmethod
     def _mul(v1: Tracer, v2: Tracer) -> Tracer:
         v1, v2 = Tracer.__broadcast_to_each_other(v1, v2)
@@ -301,17 +442,49 @@ class Tracer(IValue):
         )
 
     @staticmethod
-    def _matmul(v1: Tracer, v2: Tracer) -> Tracer:
-        v1, v2 = Tracer.__broadcast_to_each_other(v1, v2)
+    def _tensordot(v1: Tracer, v2: Tracer, axes: tuple[list[int], list[int]]) -> Tracer:
+        tj1 = tensordot(
+            v1.jacobian,
+            v2.value,
+            axes
+        )
+        v1_ndim = v1.ndim - len(axes[0])
+        in_ndim = len(v1.__input_shape)
+        v2_ndim = v2.ndim - len(axes[1])
+        assert tj1.ndim == v1_ndim + in_ndim + v2_ndim
+        tj1_old_axes = [*range(tj1.ndim)]
+        tj1_new_axes = (
+            tj1_old_axes[:v1_ndim]
+                +
+            tj1_old_axes[v1_ndim+in_ndim:]
+                +
+            tj1_old_axes[v1_ndim:v1_ndim+in_ndim]
+
+        )
+        assert set(tj1_new_axes) == set(tj1_old_axes)
+        assert len(set(tj1_new_axes)) == len(tj1_new_axes)
+        # print(tj1.ndim, tj1_new_axes)
+        tj1 = tj1.transpose(tj1_new_axes)
         return Tracer(
-            v1.jacobian @ v2.jacobian,
-            v1.value @ v2.value,
+            tj1 + tensordot(
+                v1.value,
+                v2.jacobian,
+                axes
+            ),
+            tensordot(v1.value, v2.value, axes),
         )
 
     def __getitem__(self, index: Any) -> Tracer:
         return Tracer(
             self.jacobian[index],
             self.value[index],
+        )
+
+    def transpose(self, *axes: SupportsIndex | Iterable[SupportsIndex]) -> IValue:
+        parsed_axes = [int(axe) % self.ndim for axe in list(np.array(axes).flat)]
+        return Tracer(
+            self.jacobian.transpose(parsed_axes + list(range(self.value.ndim, self.jacobian.ndim))),
+            self.value.transpose(parsed_axes),
         )
 
 ##############################################################################################
@@ -322,7 +495,7 @@ def _jacobian_impl(level: int, func: Callable[[ndarray | IValue], ndarray | IVal
 
     for i in range(level)[::-1]:
         x = Tracer._from_variable_and_level(x, i)
-    
+
     result_any = func(x)
 
     result: IValue = result_any if isinstance(result_any, IValue) else JustValue(result_any)
@@ -344,7 +517,7 @@ class manual_jacobian:
 
     def __call__(self, x: ndarray) -> ndarray:
         return _jacobian_impl(self._level(), self._func(), x)
-    
+
     def _func(self) -> Callable[[ndarray | IValue], ndarray | IValue]:
         if isinstance(self.func, manual_jacobian):
             return self.func._func()
@@ -387,7 +560,7 @@ if __name__ == '__main__':
         return False
 
     class jacobian_test_wrapper(manual_jacobian):
-        
+
         def __call__(self, x: ndarray) -> ndarray:
             result = super().__call__(x)
             if autograd_jacobian is not None:
@@ -767,43 +940,140 @@ if __name__ == '__main__':
             return cast(
                 ndarray,
                 (
-                    x
+                    x[0:5, 0:3] @ x[5:8, 0:2]
                 )
             )
 
-        value = np.array( [ [3, 5], [7, 11] ] )
-        result0 = np.array( [[32, 50], [14, 24]] )
-        result1 = np.array( [[[[-1, 7], [5, 0]], [[0, 10], [0, 5]]], [[[7, 0], [2, 0]], [[0, 7], [5, -1]]]] )
-        result2 = np.array(
+        value = np.array(
+            [
+                [ 2,  3,  5],
+                [ 7, 11, 13],
+                [17, 19, 23],
+                [29, 31, 37],
+                [41, 43, 47],
+
+                [53, 59, 61],
+                [67, 71, 73],
+                [79, 83, 89]
+            ]
+        )
+        result0 = np.array(
+            [
+                [ 702,  746],
+                [2135, 2273],
+                [3991, 4261],
+                [6537, 6983],
+                [8767, 9373]
+            ]
+        )
+        result1 = np.array(
             [
                 [
                     [
-                        [[[0., 0.], [0., 0.]], [[0., 0.], [1., 0.]]],
-                        [[[0., 1.], [0., 0.]], [[0., 0.], [0., 0.]]]
-                    ],
-                    [
-                        [[[0., 0.], [0., 0.]], [[0., 0.], [0., 1.]]],
-                        [[[0., 0.], [0., 0.]], [[0., 1.], [0., 0.]]]
-                    ]
-                ],[
-                    [
-                        [[[0., 0.], [1., 0.]], [[0., 0.], [0., 0.]]],
-                        [[[1., 0.], [0., 0.]], [[0., 0.], [0., 0.]]]
+                        [53., 67., 79.],
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [ 2.,  0.,  0.],
+                        [ 3.,  0.,  0.],
+                        [ 5.,  0.,  0.]
                     ], [
-                        [[[0., 0.], [0., 0.]], [[0., 0.], [1., 0.]]],
-                        [[[0., 1.], [0., 0.]], [[0., 0.], [0., 0.]]]
+                        [59., 71., 83.],
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [ 0.,  2.,  0.],
+                        [ 0.,  3.,  0.],
+                        [ 0.,  5.,  0.]
+                    ]
+                ], [
+                    [
+                        [ 0.,  0.,  0.],
+                        [53., 67., 79.],
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [ 7.,  0.,  0.],
+                        [11.,  0.,  0.],
+                        [13.,  0.,  0.]
+                    ], [
+                        [ 0.,  0.,  0.],
+                        [59., 71., 83.],
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [ 0.,  7.,  0.],
+                        [ 0., 11.,  0.],
+                        [ 0., 13.,  0.]
+                    ]
+                ], [
+                    [
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [53., 67., 79.],
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [17.,  0.,  0.],
+                        [19.,  0.,  0.],
+                        [23.,  0.,  0.]
+                    ], [
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [59., 71., 83.],
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [ 0., 17.,  0.],
+                        [ 0., 19.,  0.],
+                        [ 0., 23.,  0.]
+                    ]
+                ], [
+                    [
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [53., 67., 79.],
+                        [ 0.,  0.,  0.],
+                        [29.,  0.,  0.],
+                        [31.,  0.,  0.],
+                        [37.,  0.,  0.]
+                    ], [
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [59., 71., 83.],
+                        [ 0.,  0.,  0.],
+                        [ 0., 29.,  0.],
+                        [ 0., 31.,  0.],
+                        [ 0., 37.,  0.]
+                    ]
+                ], [
+                    [
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [53., 67., 79.],
+                        [41.,  0.,  0.],
+                        [43.,  0.,  0.],
+                        [47.,  0.,  0.]
+                    ], [
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [ 0.,  0.,  0.],
+                        [59., 71., 83.],
+                        [ 0., 41.,  0.],
+                        [ 0., 43.,  0.],
+                        [ 0., 47.,  0.]
                     ]
                 ]
             ]
         )
-
-        result3 = np.zeros((2,2,2,2,2,2,2,2))
         assert same(                                                                     f   (value), result0  )
         assert same(result0.shape + value.shape, result1.shape)
         assert same(                                              jacobian_test_wrapper(f)   (value), result1  )
-        assert same(result1.shape + value.shape, result2.shape)
-        assert same(                        jacobian_test_wrapper(jacobian_test_wrapper(f))  (value), result2  )
-        assert same(result2.shape + value.shape, result3.shape)
-        assert same(  jacobian_test_wrapper(jacobian_test_wrapper(jacobian_test_wrapper(f))) (value), result3  )
+
     test20()
 
