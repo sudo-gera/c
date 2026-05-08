@@ -258,6 +258,15 @@ def np_abs(value: abs_t) -> abs_t:
 
 ###########################################################################################################
 
+def np_clip(x: IValue | ndarray, lo: float, hi: float) -> IValue | ndarray:
+    return (
+        (x + lo + np_abs(x - lo)) / 2
+        - (x + hi + np_abs(x - hi)) / 2
+        + hi
+    )
+
+###########################################################################################################
+
 sum_t = TypeVar('sum_t', bound=ndarray | IValue)
 
 def np_sum(value: sum_t, axes: Iterable[SupportsIndex] | SupportsIndex | None = None) -> sum_t:
@@ -395,6 +404,7 @@ class JustValue(IValue):
     def __post_init__(self) -> None:
         if isinstance(self.value, np.ndarray):
             self.value.flags.writeable=False
+        assert self.value.dtype != object
 
     @property
     def shape(self) -> tuple[int, ...]:
@@ -659,7 +669,7 @@ class Tracer(IValue):
             v1.jacobian * v1.__broadcast_value_to_jacobian(v2.value)
             -
             v2.jacobian * v2.__broadcast_value_to_jacobian(v1.value),
-            v1.value * v2.value,
+            v1.value / v2.value,
         )
         tmp2 = tmp1.__broadcast_value_to_jacobian(v2.value)
         return Tracer(
@@ -740,10 +750,10 @@ class Tracer(IValue):
 
     def _log(self) -> IValue:
         return Tracer(
-            1 / self.__broadcast_value_to_jacobian(
-                self.value._log()
+            self.__broadcast_value_to_jacobian(
+                1 / self.value
             ) * self.jacobian,
-            self.value._exp(),
+            self.value._log(),
         )
 
 ##############################################################################################
@@ -826,7 +836,7 @@ if __name__ == '__main__':
                 f = self._func()
                 for i in range(self._level()):
                     f = autograd_jacobian(f)
-                assert same(f(x), result), "original autograd disagrees"
+                assert same(f(x), result), "!!!! original autograd disagrees !!!!"
             return result
 
 ##############################################################################################
@@ -1338,6 +1348,64 @@ if __name__ == '__main__':
 
     test20()
 
+    def test20() -> None:
+        def f(x: ndarray | IValue) -> ndarray:
+            return cast(
+                ndarray,
+                x[0] / x[1]
+            )
+
+        value = np.array( [7., 5.] )
+        result0 = np.array( 1.4 )
+        result1 = np.array( [0.2, -0.28] )
+        result2 = np.array(
+            [
+                [ 0.   , -0.04 ],
+                [-0.04 ,  0.112]
+            ]
+        )
+        result3 = np.array(
+            [
+                [
+                    [ 0.    ,  0.    ],
+                    [ 0.    ,  0.016 ]
+                ],
+                [
+                    [ 0.    ,  0.016 ],
+                    [ 0.016 , -0.0672]
+                ]
+            ]
+        )
+        assert same(                                                                     f   (value), result0  )
+        assert same(result0.shape + value.shape, result1.shape)
+        assert same(                                              jacobian_test_wrapper(f)   (value), result1  )
+        assert same(result1.shape + value.shape, result2.shape)
+        assert same(                        jacobian_test_wrapper(jacobian_test_wrapper(f))  (value), result2  )
+        assert same(result2.shape + value.shape, result3.shape)
+        assert same(  jacobian_test_wrapper(jacobian_test_wrapper(jacobian_test_wrapper(f))) (value), result3  )
+    test20()
+
+    def test20() -> None:
+        def f(x: ndarray | IValue) -> ndarray:
+            return cast(
+                ndarray,
+                np_log(x)
+            )
+
+        value = np.array( 25. )
+        result0 = np.array( 3.21887582 )
+        result1 = np.array( 0.04 )
+        result2 = np.array( -0.0016 )
+        result3 = np.array( 0.000128 )
+        assert same(                                                                     f   (value), result0  )
+        assert same(result0.shape + value.shape, result1.shape)
+        assert same(                                              jacobian_test_wrapper(f)   (value), result1  )
+        assert same(result1.shape + value.shape, result2.shape)
+        assert same(                        jacobian_test_wrapper(jacobian_test_wrapper(f))  (value), result2  )
+        assert same(result2.shape + value.shape, result3.shape)
+        assert same(  jacobian_test_wrapper(jacobian_test_wrapper(jacobian_test_wrapper(f))) (value), result3  )
+    test20()
+
     def test21() -> None:
 
         def leaky_relu(x: ndarray | IValue) -> ndarray | IValue:
@@ -1378,13 +1446,19 @@ if __name__ == '__main__':
         def neural_net(x: ndarray | IValue, ws: ndarray | IValue) -> ndarray | IValue:
             x = x.reshape((1, x.size))
             for s, b, act in zip(wslices, bslices, activators):
-                x = x @ ws[s] + ws[b]
+                assert isinstance(x, IValue) or x.dtype != object
+                x = ws[s].__rmatmul__(x)
+                assert isinstance(x, IValue) or x.dtype != object
+                x = x + ws[b]
+                assert isinstance(x, IValue) or x.dtype != object
                 x = act(x)
+                assert isinstance(x, IValue) or x.dtype != object
             x = x.reshape(())
             return x
 
         def error(x: ndarray | IValue, ws: ndarray | IValue, ans: ndarray) -> ndarray | IValue:
             y = neural_net(x, ws)
+            y = np_clip(y, 0.001, 0.999)
             return -(np_log(y) * ans + np_log(1 - y) * (1 - ans))
 
         training = [
