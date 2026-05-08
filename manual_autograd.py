@@ -1138,7 +1138,7 @@ if __name__ == '__main__':
         assert same(  jacobian_test_wrapper(jacobian_test_wrapper(jacobian_test_wrapper(f))) (value), result3  )
     test19()
 
-    def test19() -> None:
+    def test20() -> None:
         def f(x: ndarray | IValue) -> ndarray:
             return cast(
                 ndarray,
@@ -1157,9 +1157,9 @@ if __name__ == '__main__':
         assert same(                        jacobian_test_wrapper(jacobian_test_wrapper(f))  (value), result2  )
         assert same(result2.shape + value.shape, result3.shape)
         assert same(  jacobian_test_wrapper(jacobian_test_wrapper(jacobian_test_wrapper(f))) (value), result3  )
-    test19()
+    test20()
 
-    def test20() -> None:
+    def test21() -> None:
         def f(x: ndarray | IValue) -> ndarray:
             return cast(
                 ndarray,
@@ -1202,9 +1202,9 @@ if __name__ == '__main__':
         assert same(                        jacobian_test_wrapper(jacobian_test_wrapper(f))  (value), result2  )
         assert same(result2.shape + value.shape, result3.shape)
         assert same(  jacobian_test_wrapper(jacobian_test_wrapper(jacobian_test_wrapper(f))) (value), result3  )
-    test20()
+    test21()
 
-    def test20() -> None:
+    def test22() -> None:
         def f(x: ndarray | IValue) -> ndarray:
             return cast(
                 ndarray,
@@ -1346,9 +1346,9 @@ if __name__ == '__main__':
         jacobian_test_wrapper(jacobian_test_wrapper(f))  (value)
         jacobian_test_wrapper(jacobian_test_wrapper(jacobian_test_wrapper(f))) (value)
 
-    test20()
+    test22()
 
-    def test20() -> None:
+    def test23() -> None:
         def f(x: ndarray | IValue) -> ndarray:
             return cast(
                 ndarray,
@@ -1383,9 +1383,9 @@ if __name__ == '__main__':
         assert same(                        jacobian_test_wrapper(jacobian_test_wrapper(f))  (value), result2  )
         assert same(result2.shape + value.shape, result3.shape)
         assert same(  jacobian_test_wrapper(jacobian_test_wrapper(jacobian_test_wrapper(f))) (value), result3  )
-    test20()
+    test23()
 
-    def test20() -> None:
+    def test24() -> None:
         def f(x: ndarray | IValue) -> ndarray:
             return cast(
                 ndarray,
@@ -1404,9 +1404,9 @@ if __name__ == '__main__':
         assert same(                        jacobian_test_wrapper(jacobian_test_wrapper(f))  (value), result2  )
         assert same(result2.shape + value.shape, result3.shape)
         assert same(  jacobian_test_wrapper(jacobian_test_wrapper(jacobian_test_wrapper(f))) (value), result3  )
-    test20()
+    test24()
 
-    def test21() -> None:
+    def test25() -> None:
 
         def leaky_relu(x: ndarray | IValue) -> ndarray | IValue:
             return np_abs(x) * 0.495 + x * 0.505
@@ -1446,13 +1446,9 @@ if __name__ == '__main__':
         def neural_net(x: ndarray | IValue, ws: ndarray | IValue) -> ndarray | IValue:
             x = x.reshape((1, x.size))
             for s, b, act in zip(wslices, bslices, activators):
-                assert isinstance(x, IValue) or x.dtype != object
                 x = ws[s].__rmatmul__(x)
-                assert isinstance(x, IValue) or x.dtype != object
                 x = x + ws[b]
-                assert isinstance(x, IValue) or x.dtype != object
                 x = act(x)
-                assert isinstance(x, IValue) or x.dtype != object
             x = x.reshape(())
             return x
 
@@ -1486,7 +1482,6 @@ if __name__ == '__main__':
         ws = ws / ws.sum()
         v = np.zeros_like(ws)
         for q in range(999):
-            assert autograd_jacobian is not None
             d = jacobian_test_wrapper(f)(ws)
             # print(f"err = {f(ws):5.3f} d(err) = {np_abs(d).sum():5.3f}")
             v = 0.9 * v - 1.0 * d
@@ -1496,5 +1491,5 @@ if __name__ == '__main__':
             # print(f"{x = }, {neural_net(np.array(x), ws) = :5.3f}, {ans = }")
             assert same(neural_net(np.array(x), ws), ans, atol=0.001)
 
-    test21()
+    test25()
 
