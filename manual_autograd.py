@@ -59,6 +59,14 @@ class IValue(ABC):
         v1, v2 = prepare_one_level(other, self)
         return v1._mul(v2)
 
+    def __truediv__(self, other: object) -> IValue:
+        v1, v2 = prepare_one_level(self, other)
+        return v1._truediv(v2)
+
+    def __rtruediv__(self, other: object) -> IValue:
+        v1, v2 = prepare_one_level(other, self)
+        return v1._truediv(v2)
+
     @abstractmethod
     def _mul(self, other: IValue) -> IValue:
         ...
@@ -69,6 +77,10 @@ class IValue(ABC):
 
     @abstractmethod
     def _sub(self, other: IValue) -> IValue:
+        ...
+
+    @abstractmethod
+    def _truediv(self, other: IValue) -> IValue:
         ...
 
     @abstractmethod
@@ -111,7 +123,6 @@ class IValue(ABC):
     def reshape(self, shape: tuple[int, ...]) -> IValue:
         ...
 
-
     @abstractmethod
     def broadcast_to(self, shape: tuple[int, ...]) -> IValue:
         ...
@@ -129,14 +140,97 @@ class IValue(ABC):
         ...
 
     def __matmul__(self, other: object) -> IValue:
-        return tensordot(self, other, ([-1], [-2]))
+        return np_tensordot(self, other, ([-1], [-2]))
 
     def __rmatmul__(self, other: object) -> IValue:
-        return tensordot(other, self, ([-1], [-2]))
+        return np_tensordot(other, self, ([-1], [-2]))
 
     @abstractmethod
     def transpose(self, *axes: SupportsIndex | Iterable[SupportsIndex]) -> IValue:
         ...
+
+    def sum(self, axes: Any = None) -> IValue:
+        if axes is None:
+            axes = tuple(range(self.ndim))
+        assert axes is not None
+        try:
+            iter(axes)
+        except TypeError:
+            axes = (axes, )
+        axes = tuple([int(axe) for axe in axes])
+        assert isinstance(axes, tuple)
+        return self._sum(axes)
+
+    @abstractmethod
+    def _sum(self, axes: tuple[int]) -> IValue:
+        ...
+
+    @abstractmethod
+    def _sign(self) -> ndarray:
+        ...
+
+    def _abs(self) -> IValue:
+        return self * self._sign()
+
+    @abstractmethod
+    def __pow__(self, other: float) -> IValue:
+        ...
+
+###########################################################################################################
+
+def np_sign(value: ndarray | IValue) -> ndarray:
+    if isinstance(value, IValue):
+        return value._sign()
+    return cast(
+        ndarray,
+        np.sign(
+            value
+        )
+    )
+
+###########################################################################################################
+
+abs_t = TypeVar('abs_t', bound=ndarray | IValue)
+
+def np_abs(value: abs_t) -> abs_t:
+    if isinstance(value, IValue):
+        return cast(
+            abs_t,
+            value._abs()
+        )
+    return cast(
+        abs_t,
+        np.abs(
+            cast(
+                ndarray,
+                value
+            ),
+        )
+    )
+
+###########################################################################################################
+
+sum_t = TypeVar('sum_t', bound=ndarray | IValue)
+
+def np_sum(value: sum_t, axes: Iterable[SupportsIndex] | SupportsIndex | None = None) -> sum_t:
+    if isinstance(value, IValue):
+        return cast(
+            sum_t,
+            value.sum(axes)
+        )
+    return cast(
+        sum_t,
+        np.sum(
+            cast(
+                ndarray,
+                value
+            ),
+            cast(
+                None,
+                axes
+            )
+        )
+    )
 
 ###########################################################################################################
 
@@ -148,9 +242,11 @@ def prepare_one_level(*arg_objects: object) -> tuple[IValue, ...]:
     args = [tracers[0]._from_constant(arg) if isinstance(arg, JustValue) else arg for arg in args]
     return tuple(args)
 
+###########################################################################################################
+
 transpose_t = TypeVar('transpose_t')
 
-def transpose(value: transpose_t, axes: Iterable[SupportsIndex] = ()) -> transpose_t:
+def np_transpose(value: transpose_t, axes: Iterable[SupportsIndex] = ()) -> transpose_t:
     if isinstance(value, IValue):
         return cast(
             transpose_t,
@@ -167,7 +263,9 @@ def transpose(value: transpose_t, axes: Iterable[SupportsIndex] = ()) -> transpo
         )
     )
 
-def shape(value: object) -> tuple[int, ...]:
+###########################################################################################################
+
+def np_shape(value: object) -> tuple[int, ...]:
     if isinstance(value, IValue):
         return value.shape
     return np.shape(
@@ -209,19 +307,19 @@ def tensordot_parse_axes(v1_shape: tuple[int, ...], v2_shape: tuple[int, ...], a
     return v1_axes, v2_axes
 
 @overload
-def tensordot(v1: IValue, v2: object | IValue, axes: Any = 2) -> IValue:
+def np_tensordot(v1: IValue, v2: object | IValue, axes: Any = 2) -> IValue:
     ...
 
 @overload
-def tensordot(v1: object | IValue, v2: IValue, axes: Any = 2) -> IValue:
+def np_tensordot(v1: object | IValue, v2: IValue, axes: Any = 2) -> IValue:
     ...
 
 @overload
-def tensordot(v1: object, v2: object, axes: Any = 2) -> object:
+def np_tensordot(v1: object, v2: object, axes: Any = 2) -> object:
     ...
 
-def tensordot(v1: object | IValue, v2: object | IValue, axes: Any = 2) -> ndarray | IValue:
-    parsed_axes = tensordot_parse_axes(shape(v1), shape(v2), axes)
+def np_tensordot(v1: object | IValue, v2: object | IValue, axes: Any = 2) -> ndarray | IValue:
+    parsed_axes = tensordot_parse_axes(np_shape(v1), np_shape(v2), axes)
     if isinstance(v1, IValue) or isinstance(v2, IValue):
         v1, v2 = prepare_one_level(v1, v2)
         return v1._tensordot(v2, parsed_axes)
@@ -322,6 +420,12 @@ class JustValue(IValue):
             v1.value * v2.value
         )
 
+    def _truediv(v1: JustValue, v2: IValue) -> JustValue:
+        assert isinstance(v2, JustValue)
+        return JustValue(
+            v1.value / v2.value
+        )
+
     def _tensordot(v1: JustValue, v2: IValue, axes: tuple[list[int], list[int]]) -> JustValue:
         assert isinstance(v2, JustValue)
         return JustValue(
@@ -341,6 +445,28 @@ class JustValue(IValue):
         # print(self.value.ndim, parsed_axes)
         return JustValue(
             self.value.transpose(*parsed_axes)
+        )
+
+    def _sum(self, axes: tuple[int]) -> IValue:
+        return JustValue(
+            cast(
+                ndarray,
+                self.value.sum(axes)
+            )
+        )
+
+    def _sign(self) -> ndarray:
+        return cast(
+            ndarray,
+            np.sign(self.value)
+        )
+
+    def __pow__(self, other: float) -> IValue:
+        return JustValue(
+            cast(
+                ndarray,
+                self.value ** other
+            )
         )
 
 ###########################################################################################################
@@ -462,9 +588,24 @@ class Tracer(IValue):
             v1.value * v2.value,
         )
 
+    def _truediv(v1: Tracer, v2: IValue) -> Tracer:
+        assert isinstance(v2, Tracer)
+        v1, v2 = Tracer.__broadcast_to_each_other(v1, v2)
+        tmp1 = Tracer(
+            v1.jacobian * v1.__broadcast_value_to_jacobian(v2.value)
+            -
+            v2.jacobian * v2.__broadcast_value_to_jacobian(v1.value),
+            v1.value * v2.value,
+        )
+        tmp2 = tmp1.__broadcast_value_to_jacobian(v2.value)
+        return Tracer(
+            tmp1.jacobian / tmp2 / tmp2,
+            tmp1.value,
+        )
+
     def _tensordot(v1: Tracer, v2: IValue, axes: tuple[list[int], list[int]]) -> Tracer:
         assert isinstance(v2, Tracer)
-        tj1 = tensordot(
+        tj1 = np_tensordot(
             v1.jacobian,
             v2.value,
             axes
@@ -487,12 +628,12 @@ class Tracer(IValue):
         # print(tj1.ndim, tj1_new_axes)
         tj1 = tj1.transpose(tj1_new_axes)
         return Tracer(
-            tj1 + tensordot(
+            tj1 + np_tensordot(
                 v1.value,
                 v2.jacobian,
                 axes
             ),
-            tensordot(v1.value, v2.value, axes),
+            np_tensordot(v1.value, v2.value, axes),
         )
 
     def __getitem__(self, index: Any) -> Tracer:
@@ -506,6 +647,23 @@ class Tracer(IValue):
         return Tracer(
             self.jacobian.transpose(parsed_axes + list(range(self.value.ndim, self.jacobian.ndim))),
             self.value.transpose(parsed_axes),
+        )
+
+    def _sum(self, axes: tuple[int]) -> IValue:
+        return Tracer(
+            self.jacobian._sum(axes),
+            self.value._sum(axes),
+        )
+
+    def _sign(self) -> ndarray:
+        return self.value._sign()
+
+    def __pow__(self, other: float) -> IValue:
+        return Tracer(
+            self.__broadcast_value_to_jacobian(
+                other * self.value ** (other-1)
+            ) * self.jacobian,
+            self.value ** other,
         )
 
 ##############################################################################################
@@ -1099,4 +1257,83 @@ if __name__ == '__main__':
         jacobian_test_wrapper(jacobian_test_wrapper(jacobian_test_wrapper(f))) (value)
 
     test20()
+
+    def test19() -> None:
+
+        wslices = [
+            (0, slice(0, 2), slice(0, 3)),
+            (2, slice(0, 3), slice(0, 3)),
+            (4, slice(0, 3), slice(0, 3)),
+            (6, slice(0, 3), slice(0, 3)),
+            (8, slice(0, 3), slice(0, 3)),
+            (10, slice(0, 3), slice(0, 3)),
+            (12, slice(0, 3), slice(0, 3)),
+            (14, slice(0, 3), slice(0, 3)),
+            (16, slice(0, 3), slice(0, 1)),
+        ]
+
+        bslices = [
+            (1, 0, slice(0, 3)),
+            (3, 0, slice(0, 3)),
+            (5, 0, slice(0, 3)),
+            (7, 0, slice(0, 3)),
+            (9, 0, slice(0, 3)),
+            (11, 0, slice(0, 3)),
+            (13, 0, slice(0, 3)),
+            (15, 0, slice(0, 3)),
+            (17, 0, slice(0, 1)),
+        ]
+
+        assert len(wslices) == len(bslices)
+
+        def leaky_relu(x: ndarray | IValue) -> ndarray | IValue:
+            return np_abs(x) * 0.495 + x * 0.505
+
+        def pow_act(x: ndarray | IValue) -> ndarray | IValue:
+            return np_abs(x) ** 0.2 * np_sign(x)
+
+        def nerual_net(x: ndarray | IValue, ws: ndarray | IValue) -> ndarray | IValue:
+            x = x.reshape((1, x.size))
+            for s, b in zip(wslices, bslices):
+                x = x @ ws[s] + ws[b]
+                x = pow_act(x)
+            x = x.reshape(())
+            return x
+
+        def error(x: ndarray | IValue, ws: ndarray | IValue, ans: ndarray) -> ndarray | IValue:
+            diff = (nerual_net(x, ws) - ans)
+            return (diff * diff).sum()
+
+        training = [
+            ([0, 0], 0),
+            ([0, 1], 1),
+            ([1, 0], 1),
+            ([1, 1], 0),
+        ]
+
+        def avg_error(ws: ndarray | IValue) -> ndarray | float | IValue:
+            errs = [
+                error(np.array(x), ws, np.array(ans))
+                for x, ans in training
+            ]
+            return sum(errs) / len(errs)
+
+        def f(x: ndarray | IValue) -> ndarray:
+            return cast(
+                ndarray,
+                avg_error(x)
+            )
+
+        ws : ndarray = np.ones((18, 3, 3))
+        ws = ws / ws.sum()
+        for q in range(999):
+            assert autograd_jacobian is not None
+            d = autograd_jacobian(f)(ws)
+            print(f"err = {f(ws):5.3f} d(err) = {np_abs(d).sum():5.3f}")
+            ws = ws - d * 0.1
+
+        for x, ans in training:
+            print(x, nerual_net(np.array(x), ws), ans)
+
+    test19()
 
