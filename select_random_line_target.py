@@ -640,6 +640,7 @@ class one_connection_ctx:
         reader: asyncio.StreamReader | None = None
         writer: asyncio.StreamWriter | None = None
         pipe_reader: mutli_reader_pipe_reader | None = None
+        line: str | None = None
 
         async def process(self) -> None:
             self.reader, self.writer = await asyncio.open_connection(self.conn_ctx.args.line_host, self.conn_ctx.args.line_port)
@@ -650,6 +651,7 @@ class one_connection_ctx:
                 rline = rline.replace(rline_port, str(self.port).encode()[::-1], 1)
                 line = rline[::-1]
                 logging.debug(f"sending {line = !r} {self.port = }")
+                self.line = line
                 self.writer.write(line)
                 await self.writer.drain()
                 with mutli_reader_pipe_reader(self.conn_ctx.acc_to_con) as self.pipe_reader:
@@ -658,6 +660,9 @@ class one_connection_ctx:
                         self.wait_for_owner(),
                         self.write_to_connected_writer(),
                     )
+            except TabError as e:
+                if self.conn_ctx.owner_port == self.port:
+                    raise
             except Exception as e:
                 if self.conn_ctx.owner_port == self.port:
                     raise
@@ -695,6 +700,7 @@ class one_connection_ctx:
                     self.conn_ctx.owner_port = self.port
                     self.conn_ctx.wait_owner.set()
                     logging.debug(f"i am owner now {self.port = !r}")
+                    logging.info(f"succeeded with {self.line = !r}")
                 if self.conn_ctx.owner_port != self.port:
                     logging.debug(f"i am not owner {self.port = !r}")
                     return
