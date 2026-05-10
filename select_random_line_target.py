@@ -486,14 +486,15 @@ class mutli_reader_pipe_reader:
         self._pipe._readers.add(self)
         logging.debug(f"{len(self._pipe._readers) = }")
         self._entered = True
+        self._pipe._clear_buffer()
         return self
 
     def __exit__(self, *_: Any) -> None:
         assert self._entered
         assert not self._exited
         self._pipe._readers.remove(self)
-        self._pipe._clear_buffer()
         self._exited = True
+        self._pipe._clear_buffer()
         logging.debug(f"{len(self._pipe._readers) = }")
     
     def _what_can_read(self) -> bytes:
@@ -503,7 +504,7 @@ class mutli_reader_pipe_reader:
         buffer = self._pipe._buffer
         assert 0 <= can_read_bytes <= len(buffer)
         result = buffer[len(buffer) - can_read_bytes:]
-        print(f"{len(result) = } {len(buffer) = } {can_read_bytes = }")
+        logging.debug(f"{len(result) = } {len(buffer) = } {can_read_bytes = }")
         assert len(result) == can_read_bytes
         return bytes(result)
 
@@ -528,8 +529,9 @@ class mutli_reader_pipe_reader:
 
 class multi_reader_pipe:
 
-    def __init__(self, maxlen: int) -> None:
+    def __init__(self, maxlen: int, max_reader_count: int) -> None:
         self._maxlen = maxlen
+        self._max_reader_count = max_reader_count
         self._can_read_event = asyncio.Event()
         self._can_write_event = asyncio.Event()
         self._buffer = bytearray()
@@ -548,12 +550,11 @@ class multi_reader_pipe:
         assert result >= 0
         return result
 
-    async def blocking_write(self, data: bytes) -> bool:
+    async def blocking_write(self, data: bytes) -> None:
         if not data:
             self._has_eof = True
             self._can_read_event.set()
             self._can_read_event = asyncio.Event()
-            return True
         while data:
             while (
                 self._can_write_bytes == 0
@@ -562,15 +563,16 @@ class multi_reader_pipe:
             ):
                 await self._can_write_event.wait()
             if self._all_readers_closed:
-                return False
+                return
             can_write = self._can_write_bytes
             self._buffer += data[:can_write]
             self._can_read_event.set()
             self._can_read_event = asyncio.Event()
             data = data[can_write:]
-            return True
 
     def _clear_buffer(self) -> None:
+        if len(self._readers) < self._max_reader_count:
+            return
         if not self._readers:
             self._all_readers_closed = True
             return
@@ -584,6 +586,7 @@ class multi_reader_pipe:
         assert min_count >= self._bytes_removed_from_buffer
         to_remove = min_count - self._bytes_removed_from_buffer
         assert to_remove <= len(self._buffer)
+        logging.debug(f"clearing {to_remove = } bytes from buffer.")
         self._buffer = self._buffer[to_remove:]
         self._bytes_removed_from_buffer += to_remove
         self._can_write_event.set()
@@ -714,18 +717,23 @@ async def handle_accept(args: main_args, accepted_reader: asyncio.StreamReader, 
     try:
         line = await accepted_reader.readline()
         logging.info(f"accepted {line = !r}")
+        ports = [*range(args.min_port, args.max_port+1)]
         ctx = one_connection_ctx(
             args=args,
             line=line,
             reader=accepted_reader,
             writer=accepted_writer,
-            acc_to_con=multi_reader_pipe(2**16)
+            acc_to_con=multi_reader_pipe(2**16, len(ports))
         )
+        clients = [
+            one_connection_ctx.one_client_ctx(ctx, port)
+            for port in range(args.min_port, args.max_port+1)
+        ]
         await gather(
             ctx.read_from_accepted_reader(),
             *[
-                one_connection_ctx.one_client_ctx(ctx, port).process()
-                for port in range(args.min_port, args.max_port+1)
+                client.process()
+                for client in clients
             ]
         )
     finally:
