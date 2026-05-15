@@ -554,7 +554,7 @@ class Tracer(IValue):
         assert self.jacobian.shape[:len(self.value.shape)] == self.value.shape
 
     @staticmethod
-    def _from_variable_and_level(value: IValue, level: int) -> IValue:
+    def _from_variable_and_level(value: IValue) -> IValue:
         return Tracer(
             JustValue(
                 np.eye(value.size).reshape(value.shape * 2)
@@ -763,7 +763,7 @@ def _jacobian_impl(level: int, func: Callable[[ndarray | IValue], ndarray | IVal
     x : IValue = JustValue(x_ndarray)
 
     for i in range(level)[::-1]:
-        x = Tracer._from_variable_and_level(x, i)
+        x = Tracer._from_variable_and_level(x)
 
     result_any = func(x)
 
