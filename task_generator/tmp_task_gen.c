@@ -3,7 +3,7 @@
 #include <stdlib.h>
 typedef long long unsigned llu;
 int main(){
-    llu KEY=13065586037686516169LLU;
+    llu KEY=12823471176107002622LLU;
     for (llu q=0;q<167772;++q){
         KEY ^= KEY << 21;
         KEY ^= KEY >> 35;
