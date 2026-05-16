@@ -238,23 +238,8 @@ def np_exp(value: exp_t) -> exp_t:
 
 ###########################################################################################################
 
-abs_t = TypeVar('abs_t', bound=ndarray | IValue)
-
-def np_abs(value: abs_t) -> abs_t:
-    if isinstance(value, IValue):
-        return cast(
-            abs_t,
-            value._abs()
-        )
-    return cast(
-        abs_t,
-        np.abs(
-            cast(
-                ndarray,
-                value
-            ),
-        )
-    )
+def np_abs(value: ndarray | IValue) -> ndarray | IValue:
+    return value * np_sign(value)
 
 ###########################################################################################################
 
@@ -554,7 +539,7 @@ class Tracer(IValue):
         assert self.jacobian.shape[:len(self.value.shape)] == self.value.shape
 
     @staticmethod
-    def _from_variable_and_level(value: IValue) -> IValue:
+    def _from_variable(value: IValue) -> IValue:
         return Tracer(
             JustValue(
                 np.eye(value.size).reshape(value.shape * 2)
@@ -762,8 +747,8 @@ def _jacobian_impl(level: int, func: Callable[[ndarray | IValue], ndarray | IVal
 
     x : IValue = JustValue(x_ndarray)
 
-    for i in range(level)[::-1]:
-        x = Tracer._from_variable_and_level(x)
+    for i in range(level):
+        x = Tracer._from_variable(x)
 
     result_any = func(x)
 
