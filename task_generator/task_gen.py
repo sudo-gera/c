@@ -23,8 +23,7 @@ def key_id_to_key_name(key_id: int) -> str:
 
 def code_template(seed: int, line_begin: str, line_end: str, assign_symbol: str, numeric_suffix: str) -> str:
     random = Random(seed)
-    # code_ops_count = 256
-    code_ops_count = 1
+    code_ops_count = 256
     code = ""
     code += f"{line_begin}{key_id_to_key_name(0)} {assign_symbol} (KEY + 0{numeric_suffix}){line_end}" + "\n"
     for target_key_id in range(1, code_ops_count):
