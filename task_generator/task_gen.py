@@ -114,9 +114,9 @@ print(
             }}
             {ln+code_template(seed, line_begin='            llu ', line_end=';', assign_symbol='=', numeric_suffix='LLU')}
             if (RES == {Random().randint(0, 2**64-1)}LLU){{
-                printf("PASSWORD IS CORRECT{bs}n");
-            }}else{{
-                printf("PASSWORD IS INCORRECT{bs}n");
+                printf("ACCESS GRANTED{bs}n");
+            }}else{{ // same length
+                printf("WRONG PASSWORD{bs}n");
             }}
         }}
         """
