@@ -1,0 +1,1 @@
+send '( set -x ; while sleep 1 ; do date ; ssh -vvv yyy -N -D 0.0.0.0:20705 -oStrictHostKeyChecking=no -oServerAliveInterval=15 -oExitOnForwardFailure=yes -oConnectTimeout=8 -oConnectionAttempts=1 -oPasswordAuthentication=no ; done )'

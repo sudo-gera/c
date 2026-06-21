@@ -1,0 +1,1 @@
+send '( set -x ; while sleep 1 ; do date ; for pver in 13 12 11 10 ; do python3.$pver ~/c/select_random_line_target.py --listen-host 127.0.0.1 --listen-port 31173 --line-host 127.0.0.1 --line-port 20124 --min-port 10020 --max-port 10025 ; done ; done )'
