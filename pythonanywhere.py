@@ -8,9 +8,10 @@ async def recv_into_queue(ws: ClientConnection) -> None:
         chunk = await ws.recv()
         await recv_queue.put(chunk)
 
+recver : asyncio.Task[None] | None = None
+
 async def open_pythonanywhere_websocket(ws_url: str, first_ws_message: str) -> ClientConnection:
     ws = await connect(
-        # "wss://consoles-12.pythonanywhere.com/sj/887/f3x5zvu_/websocket",
         ws_url,
         origin="https://www.pythonanywhere.com",
         additional_headers={
@@ -25,20 +26,18 @@ async def open_pythonanywhere_websocket(ws_url: str, first_ws_message: str) -> C
             ),
         },
     )
+    global recver
+    recver = asyncio.create_task(recv_into_queue(ws))
     await ws.send(first_ws_message)
-    
-async def main():
-    ws = await open_pythonanywhere_websocket()
-
-    print(await ws.recv())
-
-    await ws.send('["\\u001b[asv0x1m98qlf4fd6q9xzafcdorhv62ry;45454587;;a"]')
-
-    t = asyncio.create_task(recver(ws))
-
     await asyncio.sleep(8)
+    while not recv_queue.empty():
+        recv_queue.get_nowait()
+    return ws
+    
+async def main(ws_url: str, first_ws_message: str):
+    ws = await open_pythonanywhere_websocket(ws_url, first_ws_message)
 
-    await ws.send('["pwd\\ns"]')
+    await ws.send('["curl -LO \'https://raw.githubusercontent.com/sudo-gera/c/b1a7b219005614bfb4cb75d2a088be43055e4c5a/raw_input.py\' ; python3 raw_input.py \\n"]')
 
     await asyncio.Future()
 
@@ -49,8 +48,8 @@ import sys
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--ws-url')
-parser.add_argument('--first-ws-message')
+parser.add_argument('--ws-url', required=True)
+parser.add_argument('--first-ws-message', required=True)
+args = parser.parse_args()
 
-
-asyncio.run(main())
+asyncio.run(main(args.ws_url, args.first_ws_message))
