@@ -31,7 +31,7 @@ async def open_pythonanywhere_websocket(ws_url: str, first_ws_message: str) -> C
     global recver
     recver = asyncio.create_task(recv_into_queue(ws))
     await ws.send(first_ws_message)
-    # await asyncio.sleep(1)
+    await asyncio.sleep(4)
     while not recv_queue.empty():
         recv_queue.get_nowait()
     return ws
@@ -76,6 +76,8 @@ async def main(ws_url: str, first_ws_message: str) -> None:
 
     ws = await open_pythonanywhere_websocket(ws_url, first_ws_message)
     try:
+        await ws.send(json.dumps(['']))
+
         out_task = asyncio.create_task(recv_into_stream(ws, sys.stdout))
 
         await reader_to_ws(stdin, ws)
