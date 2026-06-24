@@ -76,7 +76,17 @@ async def main(ws_url: str, first_ws_message: str) -> None:
 
     ws = await open_pythonanywhere_websocket(ws_url, first_ws_message)
     try:
-        await ws.send(json.dumps(['']))
+        await ws.send(json.dumps([
+            'curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/refs/heads/master/raw_input.py ; '
+            'curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/refs/heads/master/line_by_line_b64.py ; '
+            'clear ; sleep 8 ; python3 raw_input.py | python3 line_by_line_b64.py decode | nc 127.0.0.1 22 | python3 line_by_line_b64.py encode ; '
+            '\n'
+        ]))
+
+        await asyncio.sleep(4)
+        while not recv_queue.empty():
+            recv_queue.get_nowait()
+
 
         out_task = asyncio.create_task(recv_into_stream(ws, sys.stdout))
 

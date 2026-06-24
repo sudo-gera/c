@@ -29,7 +29,7 @@ if mode == 'encode':
         stdin = await get_stdin_reader()
 
         while (data := await stdin.read(60)):
-            print(base64.b64encode(data).decode())
+            print(base64.b64encode(data).decode(), end='\r\n', flush=True)
 
     asyncio.run(encode_main())
 if mode == 'decode':
