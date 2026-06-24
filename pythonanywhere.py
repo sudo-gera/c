@@ -1,4 +1,6 @@
+from typing import *
 import asyncio
+import json
 from websockets.asyncio.client import connect, ClientConnection
 
 recv_queue: asyncio.Queue[str | bytes] = asyncio.Queue(maxsize=64)
@@ -13,7 +15,7 @@ recver : asyncio.Task[None] | None = None
 async def open_pythonanywhere_websocket(ws_url: str, first_ws_message: str) -> ClientConnection:
     ws = await connect(
         ws_url,
-        origin="https://www.pythonanywhere.com",
+        origin=cast(None, "https://www.pythonanywhere.com"),
         additional_headers={
             "Sec-GPC": "1",
             "Cache-Control": "no-cache",
@@ -29,19 +31,56 @@ async def open_pythonanywhere_websocket(ws_url: str, first_ws_message: str) -> C
     global recver
     recver = asyncio.create_task(recv_into_queue(ws))
     await ws.send(first_ws_message)
-    await asyncio.sleep(8)
+    # await asyncio.sleep(1)
     while not recv_queue.empty():
         recv_queue.get_nowait()
     return ws
     
-async def main(ws_url: str, first_ws_message: str):
+async def get_stdin_reader() -> asyncio.StreamReader:
+    """
+    Creates and returns an asyncio.StreamReader for sys.stdin.
+    """
+    stream_reader = asyncio.StreamReader()
+    # StreamReaderProtocol acts as a bridge between the low-level transport/protocol API
+    # and the high-level StreamReader API.
+    protocol = asyncio.StreamReaderProtocol(stream_reader)
+    loop = asyncio.get_running_loop()
+    
+    # Connect the standard input pipe to the event loop and protocol
+    # The 'lambda: protocol' is a factory that the event loop uses to create the protocol instance.
+    await loop.connect_read_pipe(lambda: protocol, sys.stdin)
+    return stream_reader
+
+async def reader_to_ws(reader: asyncio.StreamReader, ws: ClientConnection) -> None:
+    while (data := await reader.read(2**64)):
+        await ws.send(json.dumps([data.decode()]))
+
+async def recv_into_stream(ws: ClientConnection, stream: IO[str]) -> None:
+    while 1:
+        data_ = await recv_queue.get()
+        if isinstance(data_, bytes):
+            data = data_.decode()
+        else:
+            data = data_
+        if data[0] == 'a':
+            data = data[1:]
+            objs = json.loads(data)
+            if isinstance(objs, list):
+                for obj in objs:
+                    if isinstance(obj, str):
+                        stream.write(obj)
+                        stream.flush()
+
+async def main(ws_url: str, first_ws_message: str) -> None:
+    stdin = await get_stdin_reader()
+
     ws = await open_pythonanywhere_websocket(ws_url, first_ws_message)
+    try:
+        out_task = asyncio.create_task(recv_into_stream(ws, sys.stdout))
 
-    await ws.send('["curl -LO \'https://raw.githubusercontent.com/sudo-gera/c/b1a7b219005614bfb4cb75d2a088be43055e4c5a/raw_input.py\' ; python3 raw_input.py \\n"]')
-
-    await asyncio.Future()
-
-    await ws.close()
+        await reader_to_ws(stdin, ws)
+    finally:
+        await ws.close()
 
 
 import sys
