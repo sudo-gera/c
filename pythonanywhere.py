@@ -71,16 +71,16 @@ async def recv_into_stream(ws: ClientConnection, stream: IO[str]) -> None:
                         stream.write(obj)
                         stream.flush()
 
-async def main(ws_url: str, first_ws_message: str) -> None:
+async def main(ws_url: str, first_ws_message: str, commit_hash: str) -> None:
     stdin = await get_stdin_reader()
 
     ws = await open_pythonanywhere_websocket(ws_url, first_ws_message)
     try:
         await ws.send(json.dumps([
-            'curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/refs/heads/master/raw_input.py ; '
-            'curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/refs/heads/master/line_by_line_b64.py ; '
-            'clear ; sleep 8 ; python3 raw_input.py | python3 line_by_line_b64.py decode | nc 127.0.0.1 22 | python3 line_by_line_b64.py encode ; '
-            '\n'
+            f'curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/{commit_hash}/raw_input.py ; '
+            f'curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/{commit_hash}/line_by_line_b64.py ; '
+            f'clear ; sleep 8 ; python3 line_by_line_b64.py decode | nc 127.0.0.1 9999 | python3 line_by_line_b64.py encode ; '
+            f'\n'
         ]))
 
         await asyncio.sleep(4)
@@ -101,6 +101,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--ws-url', required=True)
 parser.add_argument('--first-ws-message', required=True)
+parser.add_argument('--commit-hash', required=True)
 args = parser.parse_args()
 
-asyncio.run(main(args.ws_url, args.first_ws_message))
+asyncio.run(main(args.ws_url, args.first_ws_message, args.commit_hash))
