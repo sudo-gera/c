@@ -1,0 +1,1 @@
+python3 raw_input.py - | python3 pythonanywhere.py --ws-url "$websocket_url" --first-ws-message "$first_websocket_message"
