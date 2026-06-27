@@ -63,18 +63,26 @@ main() {
     )"
 
     socks_route="$(
-        printf 'echo %s %s %s %s %s\n#' $(ip route get "${SOCKS%:*}") | bash -$-
+        ip -j route get "${SOCKS%:*}" | jq -r '.[]|.dst+" via "+.gateway+" dev "+.prefsrc'
     )"
 
-    trap 'set +e ; ip link delete "$DEV" ; ip route del ${socks_route}' EXIT
+    socks_route_cleanup='true'
 
-    ip route add ${socks_route}
+    trap 'set +e ; ip link delete "$DEV" ; ${socks_route_cleanup}' EXIT
 
     ip tuntap add dev "${DEV}" mode tun
     ip addr add "${LOCAL}/${PREFLEN}" dev "${DEV}"
     ip link set "${DEV}" up
     ip route add 0.0.0.0/1 via "${PEER}" dev "${DEV}"
     ip route add 128.0.0.0/1 via "${PEER}" dev "${DEV}"
+
+    if [[ "$socks_route" != "$(
+        printf 'echo %s %s %s %s %s\n#' $(ip route get "${SOCKS%:*}") | bash -$-
+    )" ]]
+    then
+        socks_route_cleanup="ip route del ${socks_route}"
+        ip route add ${socks_route}
+    fi
 
     # runs in foreground
     # expects TUN to be created and does not clear it on exit
