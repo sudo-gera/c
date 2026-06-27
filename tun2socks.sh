@@ -63,7 +63,7 @@ main() {
     )"
 
     socks_route="$(
-        ip -j route get "${SOCKS%:*}" | jq -r '.[]|.dst+" via "+.gateway+" dev "+.prefsrc'
+        ip -j route get "${SOCKS%:*}" | jq -r '.[]|.dst+" via "+.gateway+" dev "+.dev'
     )"
 
     socks_route_cleanup='true'
@@ -77,7 +77,7 @@ main() {
     ip route add 128.0.0.0/1 via "${PEER}" dev "${DEV}"
 
     if [[ "$socks_route" != "$(
-        ip -j route get "${SOCKS%:*}" | jq -r '.[]|.dst+" via "+.gateway+" dev "+.prefsrc'
+        ip -j route get "${SOCKS%:*}" | jq -r '.[]|.dst+" via "+.gateway+" dev "+.dev'
     )" ]]
     then
         socks_route_cleanup="ip route del ${socks_route}"
