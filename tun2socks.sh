@@ -56,24 +56,13 @@ while getopts ":t:n:l:p:s:u:v:h" opt; do
     esac
 done
 
-cleanup() {
-    # if some command fails, others still go
-    # but errors are still printed to stderr to help debugging
-    set +e
-    # ip route del 0.0.0.0/1 via "${PEER}" dev "${DEV}"
-    # ip route del 128.0.0.0/1 via "${PEER}" dev "${DEV}"
-    # ip link set "${DEV}" down
-    # ip tuntap del dev "${DEV}" mode tun
-    ip link delete "$DEV"
-}
-
 main() {
     local MASK="$(
         m=$(( 2**32 - 2**32 / 2**${PREFLEN} ))
         echo "$(( m >> 24 & 255 )).$(( m >> 16 & 255 )).$(( m >> 8 & 255 )).$(( m & 255 ))"
     )"
 
-    trap cleanup EXIT # both success and failure cases
+    trap 'ip link delete "$DEV"' EXIT # both success and failure cases
 
     ip tuntap add dev "${DEV}" mode tun
     ip addr add "${LOCAL}/${PREFLEN}" dev "${DEV}"
