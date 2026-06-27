@@ -77,7 +77,7 @@ main() {
     ip route add 128.0.0.0/1 via "${PEER}" dev "${DEV}"
 
     if [[ "$socks_route" != "$(
-        printf 'echo %s %s %s %s %s\n#' $(ip route get "${SOCKS%:*}") | bash -$-
+        ip -j route get "${SOCKS%:*}" | jq -r '.[]|.dst+" via "+.gateway+" dev "+.prefsrc'
     )" ]]
     then
         socks_route_cleanup="ip route del ${socks_route}"
