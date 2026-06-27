@@ -1,4 +1,3 @@
-```
 #!/usr/bin/env bash
 set -xEeuo pipefail
 
@@ -97,6 +96,3 @@ main() {
 }
 
 main
-```
-
-find potential problems
