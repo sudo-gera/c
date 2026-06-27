@@ -62,7 +62,13 @@ main() {
         echo "$(( m >> 24 & 255 )).$(( m >> 16 & 255 )).$(( m >> 8 & 255 )).$(( m & 255 ))"
     )"
 
-    trap 'ip link delete "$DEV"' EXIT # both success and failure cases
+    local socks_route="$(
+        printf 'echo %s %s %s %s %s\n#' $(ip route get "${SOCKS%:*}") | bash -$-
+    )"
+
+    trap 'set +e ; ip link delete "$DEV" ; ip route del ${socks_route}' EXIT
+
+    ip route add ${socks_route}
 
     ip tuntap add dev "${DEV}" mode tun
     ip addr add "${LOCAL}/${PREFLEN}" dev "${DEV}"
