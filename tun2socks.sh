@@ -62,7 +62,7 @@ main() {
         echo "$(( m >> 24 & 255 )).$(( m >> 16 & 255 )).$(( m >> 8 & 255 )).$(( m & 255 ))"
     )"
 
-    local socks_route="$(
+    socks_route="$(
         printf 'echo %s %s %s %s %s\n#' $(ip route get "${SOCKS%:*}") | bash -$-
     )"
 
