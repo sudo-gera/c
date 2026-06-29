@@ -13,7 +13,7 @@ def binary_io_read1(stream: typing.IO[bytes], l: int) -> bytes:
 if mode == 'encode':
     to_read = (80 - len(prefix)) // 4 * 3
 
-    while (data := binary_io_read1(sys.stdin.buffer, 2**16)):
+    while (data := binary_io_read1(sys.stdin.buffer, to_read)):
         sys.stdout.buffer.write(prefix)
         sys.stdout.buffer.write(base64.b64encode(data))
         sys.stdout.buffer.write(b'\r\n')
