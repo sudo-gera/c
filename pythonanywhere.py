@@ -44,8 +44,6 @@ async def wait_and_flush_recv_queue(delay: float) -> None:
     await asyncio.sleep(delay)
     flush_recv_queue()
 
-recver : asyncio.Task[None] | None = None
-
 async def open_pythonanywhere_websocket(ws_url: str, first_ws_message: str) -> ClientConnection:
     ws = await connect(
         ws_url,
@@ -62,8 +60,7 @@ async def open_pythonanywhere_websocket(ws_url: str, first_ws_message: str) -> C
             ),
         },
     )
-    global recver
-    recver = asyncio.create_task(recv_into_queue(ws))
+    fire(recv_into_queue(ws))
     await ws.send(first_ws_message)
     return ws
     
