@@ -130,21 +130,20 @@ async def main(cookie: str, console_url: str, commit_hash: str) -> None:
 
     first_ws_message = json.dumps(['\x1b['f"{session_id};{console_id};;a"])
 
-    print(f"{endpoint = !r} {session_id = !r} {console_id = !r} {ws_url = !r} {first_ws_message = !r}", file=sys.stderr)
+    # print(f"{endpoint = !r} {session_id = !r} {console_id = !r} {ws_url = !r} {first_ws_message = !r}", file=sys.stderr)
 
     ws = await open_pythonanywhere_websocket(ws_url, first_ws_message)
     try:
-        n='\n'
-        await ws.send(json.dumps([
-            f'\x03'
-        ]))
 
+        await ws.send(json.dumps([f'\x03']))
         await asyncio.sleep(1)
-
+        await ws.send(json.dumps([f'tmux']))
+        await asyncio.sleep(1)
         await ws.send(json.dumps([
             f"curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/{commit_hash}/raw_input.py ; "
             f"curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/{commit_hash}/line_by_line_b64.py ; "
             f"curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/{commit_hash}/debug_tcp_forwarding.py ; "
+            f"curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/{commit_hash}/slow_pipe.py ; "
             f"clear ; sleep 2 ; stty -echo ; "
             f"python3 line_by_line_b64.py decode '>>> ' | nc 127.0.0.1 22 | python3 line_by_line_b64.py encode '<<< ' ; "
             f"\n"
