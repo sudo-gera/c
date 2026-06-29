@@ -7,6 +7,7 @@ import typing
 import ast
 import random
 import shlex
+import yarl
 from websockets.asyncio.client import connect, ClientConnection
 import websockets.exceptions
 import pathlib
@@ -104,16 +105,21 @@ async def recv_into_stream(ws: ClientConnection, stream: IO[str]) -> None:
                         stream.write(obj)
                         stream.flush()
 
-async def main(cookie: str, console_url: str, remote_host: str, remote_port: str) -> None:
+async def main(cookie: str, console_id: str, remote_host: str, remote_port: str) -> None:
     stdin = await get_stdin_reader()
 
-    frame_url = os.path.join(console_url, 'frame')
-
-    headers = {
-        "Cookie": cookie
-    }
-
     async with aiohttp.ClientSession() as session:
+        headers = {
+            "Cookie": cookie
+        }
+
+        async with session.get('https://www.pythonanywhere.com/', headers=headers) as resp:
+            assert resp.ok
+            url = resp.url
+        
+        console_url = str(url.join(yarl.URL(f"consoles/{console_id}")))
+        frame_url = os.path.join(console_url, 'frame')
+
         async with session.get(frame_url, headers=headers) as resp:
             assert resp.ok
             data = await resp.read()
@@ -166,9 +172,9 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--cookie', required=True)
-parser.add_argument('--console-url', required=True)
+parser.add_argument('--console-id', required=True)
 parser.add_argument('--remote-host', required=True)
 parser.add_argument('--remote-port', required=True)
 args = parser.parse_args()
 
-asyncio.run(main(args.cookie, args.console_url, args.remote_host, args.remote_port))
+asyncio.run(main(args.cookie, args.console_id, args.remote_host, args.remote_port))
