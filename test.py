@@ -1,54 +1,15 @@
-import numpy as np
+#!/usr/bin/env python3
 
-X = np.array([
-    [0,0],
-    [0,1],
-    [1,0],
-    [1,1]
-], dtype=float)
+import sys
+import base64
 
-y = np.array([
-    [0],
-    [1],
-    [1],
-    [0]
-], dtype=float)
+CHUNK_SIZE = 4096
 
-def sigmoid(x):
-    return 1/(1+np.exp(-x))
+while True:
+    chunk = sys.stdin.buffer.read1(CHUNK_SIZE)
+    if not chunk:
+        break
 
-def dsigmoid(a):
-    return a*(1-a)
-
-np.random.seed(42)
-
-W1 = np.random.randn(2,4) * 0.5
-b1 = np.zeros((1,4))
-
-W2 = np.random.randn(4,1) * 0.5
-b2 = np.zeros((1,1))
-
-lr = 0.1
-
-for epoch in range(50000):
-    # Forward
-    h = sigmoid(X @ W1 + b1)
-    o = sigmoid(h @ W2 + b2)
-
-    # Backward
-    d_o = (y - o) * dsigmoid(o)
-    d_h = (d_o @ W2.T) * dsigmoid(h)
-
-    W2 += lr * h.T @ d_o
-    b2 += lr * np.sum(d_o, axis=0, keepdims=True)
-
-    W1 += lr * X.T @ d_h
-    b1 += lr * np.sum(d_h, axis=0, keepdims=True)
-
-    if epoch % 5000 == 0:
-        loss = np.mean((y - o)**2)
-        print(epoch, loss)
-
-print("\nPredictions:")
-for x, p in zip(X, o):
-    print(x.astype(int), "->", round(float(p[0]), 4))
+    encoded = base64.b64encode(chunk)
+    sys.stdout.buffer.write(encoded + b"\n")
+    sys.stdout.buffer.flush()

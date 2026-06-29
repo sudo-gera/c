@@ -112,6 +112,7 @@ async def main(ws_url: str, first_ws_message: str, commit_hash: str) -> None:
         await ws.send(json.dumps([
             f"curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/{commit_hash}/raw_input.py ; "
             f"curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/{commit_hash}/line_by_line_b64.py ; "
+            f"curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/{commit_hash}/debug_tcp_forwarding.py ; "
             f"clear ; sleep 2 ; "
             f"python3 line_by_line_b64.py decode '>>> ' | nc 127.0.0.1 22 | python3 line_by_line_b64.py encode '<<< ' ; "
             f"\n"
