@@ -6,6 +6,7 @@ import aiohttp
 import typing
 import ast
 import random
+import shlex
 from websockets.asyncio.client import connect, ClientConnection
 import websockets.exceptions
 
@@ -99,7 +100,7 @@ async def recv_into_stream(ws: ClientConnection, stream: IO[str]) -> None:
                         stream.write(obj)
                         stream.flush()
 
-async def main(cookie: str, console_url: str, commit_hash: str) -> None:
+async def main(cookie: str, console_url: str, commit_hash: str, remote_host: str, remote_port: str) -> None:
     stdin = await get_stdin_reader()
 
     frame_url = os.path.join(console_url, 'frame')
@@ -130,22 +131,16 @@ async def main(cookie: str, console_url: str, commit_hash: str) -> None:
 
     first_ws_message = json.dumps(['\x1b['f"{session_id};{console_id};;a"])
 
-    # print(f"{endpoint = !r} {session_id = !r} {console_id = !r} {ws_url = !r} {first_ws_message = !r}", file=sys.stderr)
-
     ws = await open_pythonanywhere_websocket(ws_url, first_ws_message)
     try:
 
         await ws.send(json.dumps([f'\x03']))
         await asyncio.sleep(1)
-        await ws.send(json.dumps([f'tmux']))
-        await asyncio.sleep(1)
         await ws.send(json.dumps([
-            f"curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/{commit_hash}/raw_input.py ; "
             f"curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/{commit_hash}/line_by_line_b64.py ; "
-            f"curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/{commit_hash}/debug_tcp_forwarding.py ; "
             f"curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/{commit_hash}/slow_pipe.py ; "
             f"clear ; sleep 2 ; stty -echo ; "
-            f"python3 line_by_line_b64.py decode '>>> ' | nc 127.0.0.1 22 | python3 line_by_line_b64.py encode '<<< ' ; "
+            f"python3 line_by_line_b64.py decode '>>> ' | nc {shlex.join([remote_host, remote_port])} | python3 slow_pipe.py 16384 | python3 line_by_line_b64.py encode '<<< ' ; "
             f"\n"
         ]))
 
@@ -165,6 +160,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--cookie', required=True)
 parser.add_argument('--console-url', required=True)
 parser.add_argument('--commit-hash', required=True)
+parser.add_argument('--remote-host', required=True)
+parser.add_argument('--remote-port', required=True)
 args = parser.parse_args()
 
-asyncio.run(main(args.cookie, args.console_url, args.commit_hash))
+asyncio.run(main(args.cookie, args.console_url, args.commit_hash, args.remote_host, args.remote_port))
