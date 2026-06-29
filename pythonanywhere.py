@@ -31,11 +31,11 @@ async def recv_into_queue(ws: ClientConnection) -> None:
         else:
             await recv_queue.put(chunk)
 
-def flush_recv_queue():
+def flush_recv_queue() -> None:
     while not recv_queue.empty():
         recv_queue.get_nowait()
 
-async def wait_and_flush_recv_queue(delay: float):
+async def wait_and_flush_recv_queue(delay: float) -> None:
     await asyncio.sleep(delay)
     flush_recv_queue()
 
