@@ -9,6 +9,10 @@ import random
 import shlex
 from websockets.asyncio.client import connect, ClientConnection
 import websockets.exceptions
+import pathlib
+
+this_file = pathlib.Path(__file__).resolve()
+this_dir = this_file.parent
 
 tasks : set[asyncio.Task[None]] = set()
 
@@ -100,7 +104,7 @@ async def recv_into_stream(ws: ClientConnection, stream: IO[str]) -> None:
                         stream.write(obj)
                         stream.flush()
 
-async def main(cookie: str, console_url: str, commit_hash: str, remote_host: str, remote_port: str) -> None:
+async def main(cookie: str, console_url: str, remote_host: str, remote_port: str) -> None:
     stdin = await get_stdin_reader()
 
     frame_url = os.path.join(console_url, 'frame')
@@ -137,8 +141,12 @@ async def main(cookie: str, console_url: str, commit_hash: str, remote_host: str
         await ws.send(json.dumps([f'\x03']))
         await asyncio.sleep(1)
         await ws.send(json.dumps([
-            f"curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/{commit_hash}/line_by_line_b64.py ; "
-            f"curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/{commit_hash}/slow_pipe.py ; "
+            f"tee << EOFEOF > line_by_line_b64.py\n"
+            f"{this_file.with_name('line_by_line_b64.py').open().read()}\n"
+            f"EOFEOF\n"
+            f"tee << EOFEOF > slow_pipe.py\n"
+            f"{this_file.with_name('slow_pipe.py').open().read()}\n"
+            f"EOFEOF\n"
             f"clear ; sleep 2 ; stty -echo ; "
             f"python3 line_by_line_b64.py decode '>>> ' | nc {shlex.join([remote_host, remote_port])} | python3 slow_pipe.py 16384 | python3 line_by_line_b64.py encode '<<< ' ; "
             f"\n"
@@ -159,9 +167,8 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--cookie', required=True)
 parser.add_argument('--console-url', required=True)
-parser.add_argument('--commit-hash', required=True)
 parser.add_argument('--remote-host', required=True)
 parser.add_argument('--remote-port', required=True)
 args = parser.parse_args()
 
-asyncio.run(main(args.cookie, args.console_url, args.commit_hash, args.remote_host, args.remote_port))
+asyncio.run(main(args.cookie, args.console_url, args.remote_host, args.remote_port))
