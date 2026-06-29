@@ -1,7 +1,11 @@
 from typing import *
 import asyncio
 import json
+import os
+import aiohttp
 import typing
+import ast
+import random
 from websockets.asyncio.client import connect, ClientConnection
 import websockets.exceptions
 
@@ -26,6 +30,7 @@ async def recv_into_queue(ws: ClientConnection) -> None:
     while 1:
         try:
             chunk = await ws.recv()
+            # print(repr(chunk), file=sys.stderr)
         except websockets.exceptions.ConnectionClosedOK:
             break
         else:
@@ -97,8 +102,38 @@ async def recv_into_stream(ws: ClientConnection, stream: IO[str]) -> None:
                         stream.write(obj)
                         stream.flush()
 
-async def main(ws_url: str, first_ws_message: str, commit_hash: str) -> None:
+async def main(cookie: str, console_url: str, commit_hash: str) -> None:
     stdin = await get_stdin_reader()
+
+    frame_url = os.path.join(console_url, 'frame')
+
+    headers = {
+        "Cookie": cookie
+    }
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(frame_url, headers=headers) as resp:
+            assert resp.ok
+            data = await resp.read()
+
+    loaders = [line for line in data.splitlines() if b'Anywhere.LoadConsole' in line]
+    assert len(loaders) == 1
+    module = ast.parse(loaders[0].strip())
+    assert isinstance(module, ast.Module)
+    assert isinstance(module.body, list)
+    assert len(module.body) == 1
+    assert isinstance(module.body[0], ast.Expr)
+    assert isinstance(module.body[0].value, ast.Call)
+    assert isinstance(module.body[0].value.args, list)
+    assert all([isinstance(c, ast.Constant) for c in module.body[0].value.args[:3]])
+    endpoint, session_id, console_id, *_ = [c.value for c in module.body[0].value.args[:3] if isinstance(c, ast.Constant)]
+
+    g = "abcdefghijklmnopqrstuvwxyz0123456789_"
+    ws_url = f"wss://{endpoint}/sj/{random.randint(0, 999):03d}/{''.join([random.choice(g) for _ in range(8)])}/websocket"
+
+    first_ws_message = json.dumps(['\x1b['f"{session_id};{console_id};;a"])
+
+    print(f"{endpoint = !r} {session_id = !r} {console_id = !r} {ws_url = !r} {first_ws_message = !r}", file=sys.stderr)
 
     ws = await open_pythonanywhere_websocket(ws_url, first_ws_message)
     try:
@@ -113,7 +148,7 @@ async def main(ws_url: str, first_ws_message: str, commit_hash: str) -> None:
             f"curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/{commit_hash}/raw_input.py ; "
             f"curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/{commit_hash}/line_by_line_b64.py ; "
             f"curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/{commit_hash}/debug_tcp_forwarding.py ; "
-            f"clear ; sleep 2 ; "
+            f"clear ; sleep 2 ; stty -echo ; "
             f"python3 line_by_line_b64.py decode '>>> ' | nc 127.0.0.1 22 | python3 line_by_line_b64.py encode '<<< ' ; "
             f"\n"
         ]))
@@ -131,9 +166,9 @@ import sys
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--ws-url', required=True)
-parser.add_argument('--first-ws-message', required=True)
+parser.add_argument('--cookie', required=True)
+parser.add_argument('--console-url', required=True)
 parser.add_argument('--commit-hash', required=True)
 args = parser.parse_args()
 
-asyncio.run(main(args.ws_url, args.first_ws_message, args.commit_hash))
+asyncio.run(main(args.cookie, args.console_url, args.commit_hash))
