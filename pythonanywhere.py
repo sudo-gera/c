@@ -1,14 +1,43 @@
 from typing import *
 import asyncio
 import json
+import typing
 from websockets.asyncio.client import connect, ClientConnection
+import websockets.exceptions
+
+tasks : set[asyncio.Task[None]] = set()
+
+def fire(coro: typing.Awaitable[Any]) -> None:
+    async def wrapper() -> None:
+        try:
+            await coro
+        except asyncio.CancelledError:
+            pass
+        except BaseException:
+            raise KeyboardInterrupt
+
+    task : asyncio.Task[Any] = asyncio.create_task(wrapper())
+    tasks.add(task)
+    task.add_done_callback(tasks.discard)
 
 recv_queue: asyncio.Queue[str | bytes] = asyncio.Queue(maxsize=64)
 
 async def recv_into_queue(ws: ClientConnection) -> None:
     while 1:
-        chunk = await ws.recv()
-        await recv_queue.put(chunk)
+        try:
+            chunk = await ws.recv()
+        except websockets.exceptions.ConnectionClosedOK:
+            break
+        else:
+            await recv_queue.put(chunk)
+
+def flush_recv_queue():
+    while not recv_queue.empty():
+        recv_queue.get_nowait()
+
+async def wait_and_flush_recv_queue(delay: float):
+    await asyncio.sleep(delay)
+    flush_recv_queue()
 
 recver : asyncio.Task[None] | None = None
 
@@ -31,9 +60,6 @@ async def open_pythonanywhere_websocket(ws_url: str, first_ws_message: str) -> C
     global recver
     recver = asyncio.create_task(recv_into_queue(ws))
     await ws.send(first_ws_message)
-    await asyncio.sleep(4)
-    while not recv_queue.empty():
-        recv_queue.get_nowait()
     return ws
     
 async def get_stdin_reader() -> asyncio.StreamReader:
@@ -76,19 +102,24 @@ async def main(ws_url: str, first_ws_message: str, commit_hash: str) -> None:
 
     ws = await open_pythonanywhere_websocket(ws_url, first_ws_message)
     try:
+        n='\n'
         await ws.send(json.dumps([
-            f'curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/{commit_hash}/raw_input.py ; '
-            f'curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/{commit_hash}/line_by_line_b64.py ; '
-            f'clear ; sleep 8 ; python3 line_by_line_b64.py decode | nc 127.0.0.1 9999 | python3 line_by_line_b64.py encode ; '
-            f'\n'
+            f'\x03'
         ]))
 
-        await asyncio.sleep(4)
-        while not recv_queue.empty():
-            recv_queue.get_nowait()
+        await asyncio.sleep(1)
 
+        await ws.send(json.dumps([
+            f"curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/{commit_hash}/raw_input.py ; "
+            f"curl -sSLO https://raw.githubusercontent.com/sudo-gera/c/{commit_hash}/line_by_line_b64.py ; "
+            f"clear ; sleep 2 ; "
+            f"python3 line_by_line_b64.py decode '>>> ' | nc 127.0.0.1 9999 | python3 line_by_line_b64.py encode '<<< ' ; "
+            f"\n"
+        ]))
 
-        out_task = asyncio.create_task(recv_into_stream(ws, sys.stdout))
+        await wait_and_flush_recv_queue(2)
+
+        fire(recv_into_stream(ws, sys.stdout))
 
         await reader_to_ws(stdin, ws)
     finally:

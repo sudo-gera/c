@@ -3,6 +3,7 @@ import sys
 import base64
 
 mode = sys.argv[1]
+prefix = sys.argv[2]
 
 assert mode in ['encode', 'decode']
 
@@ -28,7 +29,10 @@ if mode == 'encode':
         global stdin
         stdin = await get_stdin_reader()
 
-        while (data := await stdin.read(60)):
+        to_read = (80 - len(prefix)) // 4 * 3
+
+        while (data := await stdin.read(to_read)):
+            sys.stdout.write(prefix)
             sys.stdout.buffer.write(base64.b64encode(data))
             sys.stdout.buffer.write(b'\r\n')
             sys.stdout.buffer.flush()
@@ -40,7 +44,7 @@ if mode == 'decode':
         stdin = await get_stdin_reader()
 
         while (data := await stdin.readline()):
-            sys.stdout.buffer.write(base64.b64decode(data))
+            sys.stdout.buffer.write(base64.b64decode(data[len(prefix.encode()):]))
             sys.stdout.flush()
 
     asyncio.run(encode_main())
