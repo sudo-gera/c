@@ -96,8 +96,11 @@ main() {
     fi
 
     while IFS= read -r route; do
-        socks_route_cleanup="${socks_route_cleanup} ; ip route del ${route}"
-        ip route add ${route}
+        if [ -n "$route" ]
+        then
+            socks_route_cleanup="${socks_route_cleanup} ; ip route del ${route}"
+            ip route add ${route}
+        fi
     done <<< "$default_routes"
 
     # runs in foreground
