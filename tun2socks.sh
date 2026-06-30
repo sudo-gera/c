@@ -6,6 +6,7 @@ LOCAL=10.240.128.2
 PEER=10.240.128.1
 SOCKS=127.0.0.1:1080
 UDPGW=127.0.0.1:7300
+EXCLUDE=''
 LOGLEVEL=info
 
 DEV=badvpntun${RANDOM}
@@ -23,14 +24,15 @@ Options:
   -n PREFLEN    peer-to-peer virtual network prefix len (default: $PREFLEN)
   -l a.b.c.d    IP for local tun (default: $LOCAL)
   -p e.f.g.h    IP for tun2socks virtual router (default: $PEER)
-  -s IP:PORT    SOCKS5 server, required to be IP not hostname (default: $SOCKS)
+  -s IP:PORT    SOCKS5 server, required to be IP not hostname, auto excluded if needed (default: $SOCKS)
   -u IP:PORT    UDPGW server relative to socks5 server (default: $UDPGW)
+  -e IPs        space-separated IPs to exclude (default: '' + socks IP if it would be routed into TUN otherwise)
   -v LEVEL      Log level (0-5/none/error/warning/notice/info/debug) (default: $LOGLEVEL)
   -h            Show this help
 EOF
 }
 
-while getopts ":t:n:l:p:s:u:v:h" opt; do
+while getopts ":t:n:l:p:s:u:e:v:h" opt; do
     case "$opt" in
         t) DEV=$OPTARG ;;
         n) PREFLEN=$OPTARG ;;
@@ -38,6 +40,7 @@ while getopts ":t:n:l:p:s:u:v:h" opt; do
         p) PEER=$OPTARG ;;
         s) SOCKS=$OPTARG ;;
         u) UDPGW=$OPTARG ;;
+        e) EXCLUDE=$OPTARG ;;
         v) LOGLEVEL=$OPTARG ;;
         h)
             usage
@@ -62,8 +65,15 @@ main() {
         echo "$(( m >> 24 & 255 )).$(( m >> 16 & 255 )).$(( m >> 8 & 255 )).$(( m & 255 ))"
     )"
 
-    socks_route="$(
-        ip -j route get "${SOCKS%:*}" | jq -r '.[]|.dst+" via "+.gateway+" dev "+.dev'
+    default_routes="$(
+        for ip in $EXCLUDE
+        do
+            ip -j route get "${ip}" | jq -r '.[]|.dst+(if .gateway then " via "+.gateway else "" end)+" dev "+.dev'
+        done
+    )"
+
+    socks_default_route="$(
+        ip -j route get "${SOCKS%:*}" | jq -r '.[]|.dst+(if .gateway then " via "+.gateway else "" end)+" dev "+.dev'
     )"
 
     socks_route_cleanup='true'
@@ -76,13 +86,19 @@ main() {
     ip route add 0.0.0.0/1 via "${PEER}" dev "${DEV}"
     ip route add 128.0.0.0/1 via "${PEER}" dev "${DEV}"
 
-    if [[ "$socks_route" != "$(
-        ip -j route get "${SOCKS%:*}" | jq -r '.[]|.dst+" via "+.gateway+" dev "+.dev'
+
+    if [[ "$socks_default_route" != "$(
+        ip -j route get "${SOCKS%:*}" | jq -r '.[]|.dst+(if .gateway then " via "+.gateway else "" end)+" dev "+.dev'
     )" ]]
     then
-        socks_route_cleanup="ip route del ${socks_route}"
-        ip route add ${socks_route}
+        socks_route_cleanup="ip route del ${socks_default_route}"
+        ip route add ${socks_default_route}
     fi
+
+    while IFS= read -r route; do
+        socks_route_cleanup="${socks_route_cleanup} ; ip route del ${route}"
+        ip route add ${route}
+    done <<< "$default_routes"
 
     # runs in foreground
     # expects TUN to be created and does not clear it on exit
