@@ -78,7 +78,7 @@ main() {
 
     socks_route_cleanup='true'
 
-    trap 'set +e ; ip link delete "$DEV" ; eval "${socks_route_cleanup}"' EXIT
+    trap 'set +e ; ip link delete "$DEV" ; eval "${socks_route_cleanup}"' EXIT HUP TERM INT
 
     ip tuntap add dev "${DEV}" mode tun
     ip addr add "${LOCAL}/${PREFLEN}" dev "${DEV}"
