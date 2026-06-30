@@ -87,16 +87,16 @@ main() {
     ip route add 128.0.0.0/1 via "${PEER}" dev "${DEV}"
 
 
-    if [[ "$socks_default_route" != "$(
+    if [ "$socks_default_route" != "$(
         ip -j route get "${SOCKS%:*}" | jq -r '.[]|.dst+(if .gateway then " via "+.gateway else "" end)+" dev "+.dev'
-    )" ]]
+    )" ]
     then
         socks_route_cleanup="ip route del ${socks_default_route}"
         ip route add ${socks_default_route}
     fi
 
     while IFS= read -r route; do
-        if [ -n "$route" ]
+        if [[ -n "$route" ]]
         then
             socks_route_cleanup="${socks_route_cleanup} ; ip route del ${route}"
             ip route add ${route}
