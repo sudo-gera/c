@@ -2,19 +2,20 @@
 #include <string_view>
 #include <memory>
 
-struct IExprMiddleend {
+struct IExprWrapper {
     virtual void print(std::ostream& out) const = 0;
+    virtual size_t strength() const = 0;
 
-    virtual ~IExprMiddleend() = default;
+    virtual ~IExprWrapper() = default;
 };
 
 template<typename wrapped>
-struct ExprMiddleend : IExprMiddleend {
+struct ExprWrapper : IExprWrapper {
     wrapped v;
 
     template<typename...Args>
     requires std::is_constructible_v<wrapped, Args...>
-    ExprMiddleend(Args&&...args):
+    ExprWrapper(Args&&...args):
         v(std::forward<Args>(args)...)
     {}
 
@@ -23,64 +24,180 @@ struct ExprMiddleend : IExprMiddleend {
         ! std::is_constructible_v<wrapped, Args...>
         && std::is_aggregate_v<wrapped>
     )
-    ExprMiddleend(Args&&...args):
+    ExprWrapper(Args&&...args):
         v{std::forward<Args>(args)...}
     {}
 
     void print(std::ostream& out) const {
-        v.print(out);
+        return v.print(out);
+    }
+
+    virtual size_t strength() const {
+        return v.strength();
     }
 };
 
-struct ExprFrontend {
-    std::shared_ptr<IExprMiddleend> data;
+struct Expr {
+    std::shared_ptr<IExprWrapper> data;
 
     void print(std::ostream& out) const {
         return data->print(out);
     }
+
+    size_t strength() const {
+        return data->strength();
+    }
 };
 
 template<typename backend, typename...Args>
-ExprFrontend make_expr(Args&&...args) {
-    return ExprFrontend{
+Expr make_expr(Args&&...args) {
+    return Expr{
         std::make_shared<
-            ExprMiddleend<
+            ExprWrapper<
                 backend
             >
         >(std::forward<Args>(args)...)
     };
 }
 
-std::ostream& operator<<(std::ostream& out, const ExprFrontend& thing) {
+std::ostream& operator<<(std::ostream& out, const Expr& thing) {
     thing.print(out);
     return out;
 }
 
 ////////////////////////////////////////////////////////////////////////////
 
-struct ValExprBackend {
+struct ValExpr {
     double val;
 
     void print(std::ostream& out) const {
         out << val;
     }
-};
 
-struct SumExprBackend {
-    ExprFrontend first, second;
-
-    void print(std::ostream& out) const {
-        out << "(" << first << ") + (" << second << ")";
+    size_t strength() const {
+        return 0-1LLU;
     }
 };
 
-ExprFrontend operator+(const ExprFrontend& left, const ExprFrontend& right) {
-    return make_expr<SumExprBackend>(left, right);
+struct VarExpr {
+    std::string_view name;
+
+    void print(std::ostream& out) const {
+        out << name;
+    }
+
+    size_t strength() const {
+        return 0-1LLU;
+    }
+};
+
+struct SumExpr {
+    Expr first, second;
+
+    void print(std::ostream& out) const {
+        if (first.strength() < strength()) {
+            out << "(" << first << ")";
+        } else {
+            out << first;
+        }
+        out << " + ";
+        if (second.strength() > strength()) {
+            out << second;
+        } else {
+            out << "(" << second << ")";
+        }
+    }
+
+    size_t strength() const {
+        return 10;
+    }
+};
+
+Expr operator+(const Expr& left, const Expr& right) {
+    return make_expr<SumExpr>(left, right);
+}
+
+struct DifrerenceExpr {
+    Expr first, second;
+
+    void print(std::ostream& out) const {
+        if (first.strength() < strength()) {
+            out << "(" << first << ")";
+        } else {
+            out << first;
+        }
+        out << " - ";
+        if (second.strength() > strength()) {
+            out << second;
+        } else {
+            out << "(" << second << ")";
+        }
+    }
+
+    size_t strength() const {
+        return 10;
+    }
+};
+
+Expr operator-(const Expr& left, const Expr& right) {
+    return make_expr<DifrerenceExpr>(left, right);
+}
+
+struct ProductExpr {
+    Expr first, second;
+
+    void print(std::ostream& out) const {
+        if (first.strength() < strength()) {
+            out << "(" << first << ")";
+        } else {
+            out << first;
+        }
+        out << " * ";
+        if (second.strength() > strength()) {
+            out << second;
+        } else {
+            out << "(" << second << ")";
+        }
+    }
+
+    size_t strength() const {
+        return 20;
+    }
+};
+
+Expr operator*(const Expr& left, const Expr& right) {
+    return make_expr<ProductExpr>(left, right);
+}
+
+struct QuotientExpr {
+    Expr first, second;
+
+    void print(std::ostream& out) const {
+        if (first.strength() < strength()) {
+            out << "(" << first << ")";
+        } else {
+            out << first;
+        }
+        out << " / ";
+        if (second.strength() > strength()) {
+            out << second;
+        } else {
+            out << "(" << second << ")";
+        }
+    }
+
+    size_t strength() const {
+        return 20;
+    }
+};
+
+Expr operator/(const Expr& left, const Expr& right) {
+    return make_expr<QuotientExpr>(left, right);
 }
 
 int main(){
     std::cout << (
-        make_expr<ValExprBackend>(3.4) + make_expr<ValExprBackend>(0.1) + make_expr<ValExprBackend>(0.2)
+        make_expr<ValExpr>(3.4) - make_expr<ValExpr>(0.1) + make_expr<ValExpr>(0.2)
     ) << std::endl;
 }
 
