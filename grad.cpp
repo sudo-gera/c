@@ -1,16 +1,42 @@
 #include <iostream>
 #include <string_view>
 #include <memory>
+#include <unordered_set>
 
+template<typename Expr>
 struct IExprWrapper {
+    virtual ~IExprWrapper() = default;
     virtual void print(std::ostream& out) const = 0;
+
     virtual size_t strength() const = 0;
 
-    virtual ~IExprWrapper() = default;
+    virtual Expr partial_derivative(const std::string_view& name) const = 0;
+
+    virtual void get_all_names(std::unordered_set<std::string_view>& names) const = 0;
+};
+
+struct Expr {
+    std::shared_ptr<IExprWrapper<Expr>> data;
+
+    void print(std::ostream& out) const {
+        return data->print(out);
+    }
+
+    size_t strength() const {
+        return data->strength();
+    }
+
+    Expr partial_derivative(const std::string_view& name) const {
+        return data->partial_derivative(name);
+    }
+
+    void get_all_names(std::unordered_set<std::string_view>& names) const {
+        return data->get_all_names(names);
+    }
 };
 
 template<typename wrapped>
-struct ExprWrapper : IExprWrapper {
+struct ExprWrapper : IExprWrapper<Expr> {
     wrapped v;
 
     template<typename...Args>
@@ -28,24 +54,20 @@ struct ExprWrapper : IExprWrapper {
         v{std::forward<Args>(args)...}
     {}
 
-    void print(std::ostream& out) const {
+    void print(std::ostream& out) const override {
         return v.print(out);
     }
 
-    virtual size_t strength() const {
+    size_t strength() const override {
         return v.strength();
     }
-};
 
-struct Expr {
-    std::shared_ptr<IExprWrapper> data;
-
-    void print(std::ostream& out) const {
-        return data->print(out);
+    Expr partial_derivative(const std::string_view& name) const override {
+        return v.partial_derivative(name);
     }
 
-    size_t strength() const {
-        return data->strength();
+    void get_all_names(std::unordered_set<std::string_view>& names) const override {
+        return v.get_all_names(names);
     }
 };
 
@@ -67,6 +89,13 @@ std::ostream& operator<<(std::ostream& out, const Expr& thing) {
 
 ////////////////////////////////////////////////////////////////////////////
 
+Expr operator+(const Expr& left, const Expr& right);
+Expr operator-(const Expr& left, const Expr& right);
+Expr operator*(const Expr& left, const Expr& right);
+Expr operator/(const Expr& left, const Expr& right);
+
+////////////////////////////////////////////////////////////////////////////
+
 struct ValExpr {
     double val;
 
@@ -77,17 +106,35 @@ struct ValExpr {
     size_t strength() const {
         return 0-1LLU;
     }
+
+    Expr partial_derivative(const std::string_view& name) const {
+        return make_expr<ValExpr>(0.0);
+    }
+
+    void get_all_names(std::unordered_set<std::string_view>&) const {}
 };
 
 struct VarExpr {
-    std::string_view name;
+    std::string_view name_;
 
     void print(std::ostream& out) const {
-        out << name;
+        out << name_;
     }
 
     size_t strength() const {
         return 0-1LLU;
+    }
+
+    Expr partial_derivative(const std::string_view& name) const {
+        if (name == name_) {
+            return make_expr<ValExpr>(1.0);
+        } else {
+            return make_expr<ValExpr>(0.0);
+        }
+    }
+
+    void get_all_names(std::unordered_set<std::string_view>& names) const {
+        names.insert(name_);
     }
 };
 
@@ -111,11 +158,16 @@ struct SumExpr {
     size_t strength() const {
         return 10;
     }
-};
 
-Expr operator+(const Expr& left, const Expr& right) {
-    return make_expr<SumExpr>(left, right);
-}
+    Expr partial_derivative(const std::string_view& name) const {
+        return first.partial_derivative(name) + second.partial_derivative(name);
+    }
+
+    void get_all_names(std::unordered_set<std::string_view>& names) const {
+        first.get_all_names(names);
+        second.get_all_names(names);
+    }
+};
 
 struct DifrerenceExpr {
     Expr first, second;
@@ -137,11 +189,17 @@ struct DifrerenceExpr {
     size_t strength() const {
         return 10;
     }
-};
 
-Expr operator-(const Expr& left, const Expr& right) {
-    return make_expr<DifrerenceExpr>(left, right);
-}
+    Expr partial_derivative(const std::string_view& name) const {
+        return first.partial_derivative(name) - second.partial_derivative(name);
+    }
+
+
+    void get_all_names(std::unordered_set<std::string_view>& names) const {
+        first.get_all_names(names);
+        second.get_all_names(names);
+    }
+};
 
 struct ProductExpr {
     Expr first, second;
@@ -163,11 +221,16 @@ struct ProductExpr {
     size_t strength() const {
         return 20;
     }
-};
 
-Expr operator*(const Expr& left, const Expr& right) {
-    return make_expr<ProductExpr>(left, right);
-}
+    Expr partial_derivative(const std::string_view& name) const {
+        return first.partial_derivative(name) * second + first * second.partial_derivative(name);
+    }
+
+    void get_all_names(std::unordered_set<std::string_view>& names) const {
+        first.get_all_names(names);
+        second.get_all_names(names);
+    }
+};
 
 struct QuotientExpr {
     Expr first, second;
@@ -189,15 +252,45 @@ struct QuotientExpr {
     size_t strength() const {
         return 20;
     }
+
+    Expr partial_derivative(const std::string_view& name) const {
+        return (
+            first.partial_derivative(name) * second - first * second.partial_derivative(name)
+        ) / second / second;
+    }
+
+    void get_all_names(std::unordered_set<std::string_view>& names) const {
+        first.get_all_names(names);
+        second.get_all_names(names);
+    }
 };
+
+////////////////////////////////////////////////////////////////////////////
+
+Expr operator+(const Expr& left, const Expr& right) {
+    return make_expr<SumExpr>(left, right);
+}
+
+Expr operator-(const Expr& left, const Expr& right) {
+    return make_expr<DifrerenceExpr>(left, right);
+}
+
+Expr operator*(const Expr& left, const Expr& right) {
+    return make_expr<ProductExpr>(left, right);
+}
 
 Expr operator/(const Expr& left, const Expr& right) {
     return make_expr<QuotientExpr>(left, right);
 }
 
+////////////////////////////////////////////////////////////////////////////
+
 int main(){
     std::cout << (
-        make_expr<ValExpr>(3.4) - make_expr<ValExpr>(0.1) + make_expr<ValExpr>(0.2)
-    ) << std::endl;
+        make_expr<VarExpr>("aaa") / make_expr<VarExpr>("sss")
+    ).partial_derivative("aaa") << std::endl;
+    std::cout << (
+        make_expr<VarExpr>("aaa") / make_expr<VarExpr>("sss")
+    ).partial_derivative("sss") << std::endl;
 }
 
