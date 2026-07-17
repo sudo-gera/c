@@ -1,229 +1,68 @@
-#ifndef assert
-#include <assert.h>
-#endif
-#include <arpa/inet.h>
-#include <ctype.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <inttypes.h>
-#include <iso646.h>
-#include <memory.h>
-#include <netinet/in.h>
-#include <pthread.h>
-#include <sched.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#if __has_include(<sys/epoll.h>)
-    #include <sys/epoll.h>
-#endif
-#include <sys/mman.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/syscall.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <tgmath.h>
-#include <unistd.h>
+#include <stdio.h>
+#include <assert.h>
+#include <stdint.h>
+#include <inttypes.h>
 
-#ifdef print
-#undef print
-#endif
+#define tmpbuf(...)                         \
+    (({                                     \
+         char tmpbuf[65537];                \
+         memset(tmpbuf, 0, sizeof(tmpbuf)); \
+         do {                               \
+             __VA_ARGS__                    \
+         } while (0);                       \
+         struct {                           \
+             char d[sizeof(tmpbuf)];        \
+         } s;                               \
+         memcpy(s.d, tmpbuf, sizeof(s.d));  \
+         s;                                 \
+     }).d)
 
-#ifdef write
-#undef write
-#endif
+// clang-format off
+#define fmt_one_get_fstr(...)
+#define fmt_one_get_args(...) __VA_OPT__(,) __VA_ARGS__); fmt_one_get_fstr(
+#define fmt_one_for_tmpbuf(x)                                                  \
+snprintf(                                                                      \
+    tmpbuf + strlen(tmpbuf),                                                   \
+    sizeof(tmpbuf) - strlen(tmpbuf),                                           \
+    fmt_one_get_fstr x ""                                                      \
+    fmt_one_get_args x ""                                                      \
+)
+// clang-format on
 
-struct array_s {
-    size_t mem_size;
-    size_t el_count;
-    char data[0];
-};
+#define fmt_00(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_01(__VA_ARGS__))
+#define fmt_01(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_02(__VA_ARGS__))
+#define fmt_02(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_03(__VA_ARGS__))
+#define fmt_03(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_04(__VA_ARGS__))
+#define fmt_04(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_05(__VA_ARGS__))
+#define fmt_05(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_06(__VA_ARGS__))
+#define fmt_06(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_07(__VA_ARGS__))
+#define fmt_07(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_08(__VA_ARGS__))
+#define fmt_08(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_09(__VA_ARGS__))
+#define fmt_09(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_10(__VA_ARGS__))
+#define fmt_10(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_11(__VA_ARGS__))
+#define fmt_11(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_12(__VA_ARGS__))
+#define fmt_12(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_13(__VA_ARGS__))
+#define fmt_13(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_14(__VA_ARGS__))
+#define fmt_14(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_15(__VA_ARGS__))
+#define fmt_15(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_16(__VA_ARGS__))
+#define fmt_16(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_17(__VA_ARGS__))
+#define fmt_17(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_18(__VA_ARGS__))
+#define fmt_18(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_19(__VA_ARGS__))
+#define fmt_19(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_20(__VA_ARGS__))
+#define fmt_20(x) fmt_one_for_tmpbuf(x)
 
-static inline size_t len(void *a) {
-    if (a == NULL) {
-        return 0;
-    }
-    return ((struct array_s *)(a))[-1].el_count;
+#define fmt(...) tmpbuf(__VA_OPT__(fmt_00(__VA_ARGS__)))
+#define outfmt(...) fputs(fmt(__VA_ARGS__), stdout)
+#define errfmt(...) fputs(fmt(__VA_ARGS__), stdout)
+#define outfmtln(...) outfmt(__VA_ARGS__ __VA_OPT__(, )() "\n")
+#define errfmtln(...) errfmt(__VA_ARGS__ __VA_OPT__(, )() "\n")
+
+int main() {
+    size_t val1 = -1;
+    ssize_t val2 = -1;
+    uint64_t val3 = 1;
+    outfmtln(() "val1-1 = ", (--val1) "%zu; val2-1 = ", (--val2) "%zd; val3-1 = ", (--val3) "%" PRIu64 ";");
+    outfmtln(() "val1-2 = ", (--val1) "%zu; val2-2 = ", (--val2) "%zd; val3-2 = ", (--val3) "%" PRIu64 ";");
+    outfmtln(() "val1-3 = ", (--val1) "%zu; val2-3 = ", (--val2) "%zd; val3-3 = ", (--val3) "%" PRIu64 ";");
 }
-
-static inline void del(void *a) {
-    if (a != NULL) {
-        free(((struct array_s *)(a)) - 1);
-    }
-}
-
-static inline struct array_s *resize_f(struct array_s **vp, size_t el_size, size_t n) {
-    if (*vp == NULL) {
-        *vp = (struct array_s *)calloc(1, sizeof(struct array_s));
-        assert(*vp);
-        *vp += 1;
-    }
-    struct array_s *a = *vp - 1;
-    assert(a->data == *(char **)vp);
-    if (a->mem_size < n + 1) {
-        size_t cur_size = a->mem_size * el_size;
-        size_t new_size;
-        if (a->mem_size * 2 > n) {
-            new_size = a->mem_size * 2 * el_size;
-        } else {
-            new_size = (n + 1) * el_size;
-        }
-        a = (struct array_s *)realloc(a, sizeof(struct array_s) + new_size);
-        assert(a);
-        memset(a->data + a->mem_size * el_size, 0, new_size - cur_size);
-        a->mem_size = new_size / el_size;
-    }
-    a->el_count = n;
-    *vp = a + 1;
-    return a + 1;
-}
-/////// resize(a, n) is resize_f(&a, sizeof(a[0]), n)
-#ifdef __cplusplus
-    template<typename T>
-    auto resize(const T& a,uint64_t n){
-        return (resize_f((struct array_s **)&(a), sizeof((a)[0]), (n)));
-    }
-    template<typename T,typename Y>
-    auto append(const T& a,const Y& s){
-        return (resize((a), len(a) + 1), (a)[len(a) - 1] = (s));
-    }
-    template<typename T>
-    auto pop(const T& a){
-        return (resize((a), len(a) - 1), (a)[len(a)]);
-    }
-    template<typename T>
-    auto&back(const T& a){
-        return ((a)[len(a)-1]);
-    }
-#else
-    #define resize(a, ...) (resize_f((struct array_s **)&(a), sizeof((a)[0]), (__VA_ARGS__)))
-    #define append(a, ...) (resize((a), len(a) + 1), (a)[len(a) - 1] = (__VA_ARGS__))
-    #define pop(a) (resize((a), len(a) - 1), (a)[len(a)])
-    #define back(a) ((a)[len(a)-1])
-#endif
-
-static inline int64_t getint() {
-    int sign = 1;
-    int c;
-    size_t res = 0;
-    while (c = getchar_unlocked(), isspace(c))
-        ;
-    if (c == '-') {
-        sign = -1;
-    } else {
-        res = c - '0';
-    }
-    while (c = getchar_unlocked(), isdigit(c)) {
-        res *= 10;
-        res += c - '0';
-    }
-    return (int64_t)(res)*sign;
-}
-
-static inline void putint(uint64_t out) {
-    if (out > (1LLU << 63) - 1) {
-        putchar_unlocked('-');
-        out = 1 + ~out;
-    }
-    char data[44];
-    char *dend = data;
-    while (out) {
-        *++dend = (unsigned)('0') + out % 10;
-        out /= 10;
-    }
-    if (dend == data) {
-        putchar_unlocked('0');
-    }
-    for (; dend != data; --dend) {
-        putchar_unlocked(*dend);
-    }
-}
-
-static inline void print(uint64_t out) {
-    putint(out);
-    putchar('\n');
-}
-
-#define min(a,s) ((a)<(s)?(a):(s))
-#define max(a,s) ((a)>(s)?(a):(s))
-
-typedef int (*cmp_f_t)(const void *, const void *);
-
-char* get_line(){
-    char*str=0;
-    int c=0;
-    while ((c=getchar(),c!=EOF)){
-        append(str,c);
-    }
-    return str;
-}
-
-#define elif else if
-
-#define _str(x) #x
-#define m_str(x) _str(x)
-#define perr if (errno){perror(__FILE__ " " m_str(__LINE__));errno=0;}
-
-///////////////////////////////////////////////////end of lib
-
-// #define fmt(...) __VA_OPT__()
-
-// #define fmt_(...) (({ \
-//  struct { char fmt__data[65536]; } fmt__data;\
-//  memset(fmt__data.fmt__data, 0, sizeof(fmt__data.fmt__data)); \
-//  snprintf(fmt__data.fmt__data + strlen(fmt__data.fmt__data), sizeof(fmt__data.fmt__data) - strlen(fmt__data.fmt__data), __VA_ARGS__); \
-//  snprintf(fmt__data.fmt__data + strlen(fmt__data.fmt__data), sizeof(fmt__data.fmt__data) - strlen(fmt__data.fmt__data), __VA_ARGS__); \
-//  snprintf(fmt__data.fmt__data + strlen(fmt__data.fmt__data), sizeof(fmt__data.fmt__data) - strlen(fmt__data.fmt__data), __VA_ARGS__); \
-//  fmt__data; \
-// }).fmt__data)
-
-// int main(){
-//  write(1, fmt("%d", 20));
-// }
-
-// #define macro_map(...)                      __VA_OPT__(              macro_map_00(__VA_ARGS__))
-// #define macro_map_00(x, ...) macro_map_f(x) __VA_OPT__(macro_map_sep macro_map_01(__VA_ARGS__))
-// #define macro_map_01(x, ...) macro_map_f(x) __VA_OPT__(macro_map_sep macro_map_02(__VA_ARGS__))
-// #define macro_map_02(x, ...) macro_map_f(x) __VA_OPT__(macro_map_sep macro_map_03(__VA_ARGS__))
-// #define macro_map_03(x, ...) macro_map_f(x) __VA_OPT__(macro_map_sep macro_map_04(__VA_ARGS__))
-// #define macro_map_04(x, ...) macro_map_f(x) __VA_OPT__(macro_map_sep macro_map_05(__VA_ARGS__))
-// #define macro_map_05(x, ...) macro_map_f(x) __VA_OPT__(macro_map_sep macro_map_06(__VA_ARGS__))
-// #define macro_map_06(x, ...) macro_map_f(x) __VA_OPT__(macro_map_sep macro_map_07(__VA_ARGS__))
-// #define macro_map_07(x, ...) macro_map_f(x) __VA_OPT__(macro_map_sep macro_map_08(__VA_ARGS__))
-// #define macro_map_08(x, ...) macro_map_f(x) __VA_OPT__(macro_map_sep macro_map_09(__VA_ARGS__))
-// #define macro_map_09(x, ...) macro_map_f(x) __VA_OPT__(macro_map_sep macro_map_10(__VA_ARGS__))
-// #define macro_map_10(x, ...) macro_map_f(x) __VA_OPT__(macro_map_sep macro_map_11(__VA_ARGS__))
-// #define macro_map_11(x, ...) macro_map_f(x) __VA_OPT__(macro_map_sep macro_map_12(__VA_ARGS__))
-// #define macro_map_12(x, ...) macro_map_f(x) __VA_OPT__(macro_map_sep macro_map_13(__VA_ARGS__))
-// #define macro_map_13(x, ...) macro_map_f(x) __VA_OPT__(macro_map_sep macro_map_14(__VA_ARGS__))
-// #define macro_map_14(x, ...) macro_map_f(x) __VA_OPT__(macro_map_sep macro_map_15(__VA_ARGS__))
-// #define macro_map_15(x, ...) macro_map_f(x) __VA_OPT__(macro_map_sep macro_map_16(__VA_ARGS__))
-// #define macro_map_16(x, ...) macro_map_f(x) __VA_OPT__(macro_map_sep macro_map_17(__VA_ARGS__))
-// #define macro_map_17(x, ...) macro_map_f(x) __VA_OPT__(macro_map_sep macro_map_18(__VA_ARGS__))
-// #define macro_map_18(x, ...) macro_map_f(x) __VA_OPT__(macro_map_sep macro_map_19(__VA_ARGS__))
-// ___
-// #define macro_map_f(...) [__VA_ARGS__]
-// #define macro_map_sep -
-// macro_map(0,1,2)
-// #undef macro_map_f
-// #undef macro_map_sep
-// #define macro_map_f(...) {__VA_ARGS__}
-// #define macro_map_sep =
-// macro_map(0,1,2)
-// ___
-
-#define fmt_code_to_ds(...)                 
-    (({                                             \
-        char fmtd[65537];
-        memset(fmtd, 0, sizeof(fmtd));
-        __VA_ARGS__;
-        struct {
-            char d[sizeof(fmtd)];
-        } {fmtd};
-    }))
