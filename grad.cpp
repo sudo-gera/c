@@ -2,6 +2,10 @@
 #include <string_view>
 #include <memory>
 #include <unordered_set>
+#include <cassert>
+#include <vector>
+#include <tuple>
+#include <cstring>
 
 struct IExpr;
 using Expr = std::shared_ptr<const IExpr>;
@@ -270,113 +274,195 @@ Expr operator/(const Expr& left, const Expr& right) {
 
 ////////////////////////////////////////////////////////////////////////////
 
-struct IParser {
-    virtual ~IParser() = default;
-    virtual bool parse_impl(const char*& begin, const char* end) const = 0;
+template<typename ParserContext>
+struct IParser;
 
-    bool parse_whole(const char* begin, const char* end = nullptr) const {
-        if (end == nullptr) {
-            end = begin + strlen(begin);
-        }
-        return parse(begin, end) and begin == end;
+template<typename ParserContext>
+using Parser = std::shared_ptr<const IParser<ParserContext>>;
+
+struct NonCopyable {
+    NonCopyable() = default;
+    NonCopyable(const NonCopyable&) = delete;             // Deletes copy ctor
+    NonCopyable& operator=(const NonCopyable&) = delete;  // Deletes copy assignment
+    NonCopyable(NonCopyable&&) = default;                 // Keeps move ctor
+    NonCopyable& operator=(NonCopyable&&) = default;      // Keeps move assignment
+};
+
+template <typename Arg>
+struct ParserContextContents {
+    const char* begin_;
+    const char* end_ = nullptr;
+    std::vector<Arg> args = {};
+};
+
+struct IParserContext : NonCopyable {
+    virtual ~IParserContext() = default;
+    virtual const char*&begin() = 0;
+    virtual const char*& end() = 0;
+    virtual size_t args_size() = 0;
+    virtual void args_resize(size_t size) = 0;
+    virtual void process_callback(void(*callback)(void*, size_t), size_t args_backup) = 0;
+};
+
+template <typename Arg>
+struct ParserContext : ParserContextContents<Arg>, IParserContext {
+
+    template <typename... Args>
+    ParserContext(Args&&... args) : ParserContextContents<Arg>{std::forward<Args>(args)...} {
     }
 
-    bool parse(const char*& begin, const char* end = nullptr) const {
-        if (end == nullptr) {
-            end = begin + strlen(begin);
+    const char*& begin() {
+        return this->begin_;
+    }
+
+    const char*& end() {
+        return this->end_;
+    }
+
+    size_t args_size() {
+        return this->args.size();
+    }
+
+    void args_resize(size_t size) {
+        return this->args.resize(size);
+    }
+
+    void process_callback(void(*callback)(void*, size_t), size_t args_backup) {
+        callback(this->args.data() + args_backup, this->args.size() - args_backup);
+    }
+
+    template <typename Backend, typename... Args>
+    static Parser<ParserContext> make_parser(Args&&... args) {
+        return Parser<ParserContext>{
+            std::make_shared<Backend>(
+                (ParserContext*)nullptr,
+                std::forward<Args>(args)...
+            )
+        };
+    }
+
+    template <template <typename...> class Backend, typename... Args>
+    static auto make_parser(Args&&... args) {
+        return Parser<ParserContext>(
+            std::make_shared<
+                decltype(
+                    Backend(
+                        (ParserContext*)nullptr,
+                        std::forward<Args>(args)...
+                    )
+                )
+            >(
+                (ParserContext*)nullptr,
+                std::forward<Args>(args)...
+            )
+        );
+    }
+};
+
+template<typename ParserContext>
+struct IParser {
+    virtual ~IParser() = default;
+
+    virtual bool parse_impl(IParserContext& ctx) const = 0;
+
+    bool parse_whole(IParserContext& ctx) const {
+        if (ctx.end() == nullptr) {
+            ctx.end() = ctx.begin() + strlen(ctx.begin());
         }
-        const char* begin_backup = begin;
-        if (parse_impl(begin, end)) {
+        return parse(ctx) and ctx.begin() == ctx.end();
+    }
+
+    bool parse(IParserContext& ctx) const {
+        if (ctx.end() == nullptr) {
+            ctx.end() = ctx.begin() + strlen(ctx.begin());
+        }
+        const char* begin_backup = ctx.begin();
+        size_t args_backup = ctx.args_size();
+        if (parse_impl(ctx)) {
             return true;
         }
-        begin = begin_backup;
+        ctx.begin() = begin_backup;
+        ctx.args_resize(args_backup);
         return false;
     }
 };
 
-using Parser = std::shared_ptr<IParser>;
-
-template <typename Backend, typename... Args>
-Parser make_parser(Args&&... args) {
-    return Parser{std::make_shared<Backend>(std::forward<Args>(args)...)};
-}
-
-template <template <typename...> class Backend, typename... Args>
-auto make_parser(Args&&... args) {
-    return Parser{std::make_shared<decltype(Backend(std::forward<Args>(args)...))>(std::forward<Args>(args)...)};
-}
-
-Parser operator+(const Parser& left, const Parser& right);
-Parser operator|(const Parser& left, const Parser& right);
-Parser operator~(const Parser& item);
+template<typename ParserContext>
+Parser<ParserContext> operator+(const Parser<ParserContext>& left, const Parser<ParserContext>& right);
+template<typename ParserContext>
+Parser<ParserContext> operator|(const Parser<ParserContext>& left, const Parser<ParserContext>& right);
+template<typename ParserContext>
+Parser<ParserContext> operator~(const Parser<ParserContext>& item);
 
 ////////////////////////////////////////////////////////////////////////////
 
 struct EpsilonParserContents {};
 
-struct EpsilonParser : EpsilonParserContents, IParser {
+template<typename ParserContext>
+struct EpsilonParser : EpsilonParserContents, IParser<ParserContext> {
 
     template <typename... Args>
-    EpsilonParser(Args&&... args) : EpsilonParserContents{std::forward<Args>(args)...} {
+    EpsilonParser(ParserContext*, Args&&... args) : EpsilonParserContents{std::forward<Args>(args)...} {
     }
 
-    bool parse_impl(const char*&, const char*) const {
+    bool parse_impl(IParserContext&) const {
         return true;
     }
 };
 
-template <typename F>
+template <typename F, typename ParserContext>
 struct TestSignedCharFuncParserContents {
     F f;
 };
 
-template <typename F>
-struct TestSignedCharFuncParser : TestSignedCharFuncParserContents<F>, IParser {
+template <typename F, typename ParserContext>
+struct TestSignedCharFuncParser : TestSignedCharFuncParserContents<F, ParserContext>, IParser<ParserContext> {
 
     template <typename... Args>
-    TestSignedCharFuncParser(Args&&... args) : TestSignedCharFuncParserContents<F>{std::forward<Args>(args)...} {
+    TestSignedCharFuncParser(ParserContext*, Args&&... args) : TestSignedCharFuncParserContents<F, ParserContext>{std::forward<Args>(args)...} {
     }
 
-    bool parse_impl(const char*& begin, const char* end) const {
-        return begin != end and TestSignedCharFuncParserContents<F>::f(begin[0]) and begin++;
+    bool parse_impl(IParserContext& ctx) const {
+        return ctx.begin() != ctx.end() and this->f(ctx.begin()[0]) and ctx.begin()++;
     }
 };
 
-template <typename F>
-TestSignedCharFuncParser(F) -> TestSignedCharFuncParser<F>;
+template <typename F, typename ParserContext>
+TestSignedCharFuncParser(ParserContext*, F) -> TestSignedCharFuncParser<F, ParserContext>;
 
-template <typename F>
+template <typename F, typename ParserContext>
 struct TestUnsignedCharFuncParserContents {
     F f;
 };
 
-template <typename F>
-struct TestUnsignedCharFuncParser : TestUnsignedCharFuncParserContents<F>, IParser {
+template <typename F, typename ParserContext>
+struct TestUnsignedCharFuncParser : TestUnsignedCharFuncParserContents<F, ParserContext>, IParser<ParserContext> {
 
     template <typename... Args>
-    TestUnsignedCharFuncParser(Args&&... args) : TestUnsignedCharFuncParserContents<F>{std::forward<Args>(args)...} {
+    TestUnsignedCharFuncParser(ParserContext*, Args&&... args) : TestUnsignedCharFuncParserContents<F, ParserContext>{std::forward<Args>(args)...} {
     }
 
-    bool parse_impl(const char*& begin, const char* end) const {
-        return begin != end and TestUnsignedCharFuncParserContents<F>::f((unsigned char)(begin[0])) and begin++;
+    bool parse_impl(IParserContext& ctx) const {
+        return ctx.begin() != ctx.end() and this->f((unsigned char)(ctx.begin()[0])) and ctx.begin()++;
     }
 };
 
-template <typename F>
-TestUnsignedCharFuncParser(F) -> TestUnsignedCharFuncParser<F>;
+template <typename F, typename ParserContext>
+TestUnsignedCharFuncParser(ParserContext*, F) -> TestUnsignedCharFuncParser<F, ParserContext>;
 
 struct CharParserContents {
     char item;
 };
 
-struct CharParser : CharParserContents, IParser {
+template<typename ParserContext>
+struct CharParser : CharParserContents, IParser<ParserContext> {
 
     template <typename... Args>
-    CharParser(Args&&... args) : CharParserContents{std::forward<Args>(args)...} {
+    CharParser(ParserContext*, Args&&... args) : CharParserContents{std::forward<Args>(args)...} {
     }
 
-    bool parse_impl(const char*& begin, const char* end) const {
-        return begin != end and item == begin[0] and begin++;
+    bool parse_impl(IParserContext& ctx) const {
+        return ctx.begin() != ctx.end() and this->item == ctx.begin()[0] and ctx.begin()++;
     }
 };
 
@@ -384,118 +470,141 @@ struct CharRangeParserContents {
     char lowest, highest;
 };
 
-struct CharRangeParser : CharRangeParserContents, IParser {
+template<typename ParserContext>
+struct CharRangeParser : CharRangeParserContents, IParser<ParserContext> {
 
     template <typename... Args>
-    CharRangeParser(Args&&... args) : CharRangeParserContents{std::forward<Args>(args)...} {
+    CharRangeParser(ParserContext*, Args&&... args) : CharRangeParserContents{std::forward<Args>(args)...} {
     }
 
-    bool parse_impl(const char*& begin, const char* end) const {
-        return begin != end and lowest <= begin[0] and begin[0] <= highest and begin++;
+    bool parse_impl(IParserContext& ctx) const {
+        return ctx.begin() != ctx.end() and this->lowest <= ctx.begin()[0] and ctx.begin()[0] <= this->highest and ctx.begin()++;
     }
 };
 
 ////////////////////////////////////////////////////////////////////////////
 
+template<typename ParserContext>
 struct ConcatParserContents {
-    Parser left, right;
+    Parser<ParserContext> left, right;
 };
 
-struct ConcatParser : ConcatParserContents, IParser {
+template<typename ParserContext>
+struct ConcatParser : ConcatParserContents<ParserContext>, IParser<ParserContext> {
 
     template <typename... Args>
-    ConcatParser(Args&&... args) : ConcatParserContents{std::forward<Args>(args)...} {
+    ConcatParser(ParserContext*, Args&&... args) : ConcatParserContents<ParserContext>{std::forward<Args>(args)...} {
     }
 
-    bool parse_impl(const char*& begin, const char* end) const {
-        return left->parse(begin, end) && right->parse(begin, end);
+    bool parse_impl(IParserContext& ctx) const {
+        return this->left->parse(ctx) && this->right->parse(ctx);
     }
 };
 
+template<typename ParserContext>
 struct AlternativesParserContents {
-    Parser left, right;
+    Parser<ParserContext> left, right;
 };
 
-struct AlternativesParser : AlternativesParserContents, IParser {
+template<typename ParserContext>
+struct AlternativesParser : AlternativesParserContents<ParserContext>, IParser<ParserContext> {
 
     template <typename... Args>
-    AlternativesParser(Args&&... args) : AlternativesParserContents{std::forward<Args>(args)...} {
+    AlternativesParser(ParserContext*, Args&&... args) : AlternativesParserContents<ParserContext>{std::forward<Args>(args)...} {
     }
 
-    bool parse_impl(const char*& begin, const char* end) const {
-        return left->parse(begin, end) || right->parse(begin, end);
+    bool parse_impl(IParserContext& ctx) const {
+        return this->left->parse(ctx) || this->right->parse(ctx);
     }
 };
 
+template<typename ParserContext>
 struct StarParserContents {
-    Parser item;
+    Parser<ParserContext> item;
 };
 
-struct StarParser : StarParserContents, IParser {
+template<typename ParserContext>
+struct StarParser : StarParserContents<ParserContext>, IParser<ParserContext> {
 
     template <typename... Args>
-    StarParser(Args&&... args) : StarParserContents{std::forward<Args>(args)...} {
+    StarParser(ParserContext*, Args&&... args) : StarParserContents<ParserContext>{std::forward<Args>(args)...} {
     }
 
-    bool parse_impl(const char*& begin, const char* end) const {
-        while (item->parse(begin, end))
+    bool parse_impl(IParserContext& ctx) const {
+        while (this->item->parse(ctx))
             ;
         return true;
     }
 };
 
-template<typename C>
+template <typename C, typename ParserContext>
 struct CallbackParserContents {
+    Parser<ParserContext> item;
     C callback;
 };
 
-template<typename C>
-struct CallbackParser : CallbackParserContents<C>, IParser {
+template <typename C, typename ParserContext>
+struct CallbackParser : CallbackParserContents<C, ParserContext>, IParser<ParserContext> {
 
     template <typename... Args>
-    CallbackParser(Args&&... args) : CallbackParserContents<C>{std::forward<Args>(args)...} {
+    CallbackParser(ParserContext*, Args&&... args) : CallbackParserContents<C, ParserContext>{std::forward<Args>(args)...} {
     }
 
-    bool parse_impl(const char*& begin, const char* end) const {
-        return item->parse(begin, end);
+    bool parse_impl(IParserContext& ctx) const {
+        // size_t args_backup = ctx.args_size();
+        // if (this->item->parse(ctx)){
+        //     ctx.process_callback(
+        //         [&](auto& args_vec){
+        //             this->callback;
+        //         },
+        //         args_backup
+        //     );
+        // }
+        return this->item->parse(ctx);
     }
 };
 
 ////////////////////////////////////////////////////////////////////////////
 
-Parser operator+(const Parser& left, const Parser& right) {
-    return make_parser<ConcatParser>(left, right);
+template<typename ParserContext>
+Parser<ParserContext> operator+(const Parser<ParserContext>& left, const Parser<ParserContext>& right) {
+    return ParserContext::template make_parser<ConcatParser>(left, right);
 }
 
-Parser operator|(const Parser& left, const Parser& right) {
-    return make_parser<AlternativesParser>(left, right);
+template<typename ParserContext>
+Parser<ParserContext> operator|(const Parser<ParserContext>& left, const Parser<ParserContext>& right) {
+    return ParserContext::template make_parser<AlternativesParser>(left, right);
 }
 
-Parser operator~(const Parser& item) {
-    return make_parser<StarParser>(item);
+template<typename ParserContext>
+Parser<ParserContext> operator~(const Parser<ParserContext>& item) {
+    return ParserContext::template make_parser<StarParser>(item);
 }
 
 ////////////////////////////////////////////////////////////////////////////
+
+struct E {};
 
 int main() {
     std::cout << (make_expr<VarExpr>("aaa") / make_expr<VarExpr>("sss"))->partial_derivative("aaa") << std::endl;
     std::cout << (make_expr<VarExpr>("aaa") / make_expr<VarExpr>("sss"))->partial_derivative("sss") << std::endl;
 
-    Parser lower_parser = make_parser<TestUnsignedCharFuncParser>(islower);
-    Parser upper_parser = make_parser<TestUnsignedCharFuncParser>(isupper);
-    Parser alpha_parser = make_parser<TestUnsignedCharFuncParser>(isalpha);
-    Parser digit_parser = make_parser<TestUnsignedCharFuncParser>(isdigit);
-    Parser alnum_parser = make_parser<TestUnsignedCharFuncParser>(isalnum);
-    Parser space_parser = make_parser<TestUnsignedCharFuncParser>(isspace);
-    Parser lpar_parser  = make_parser<CharParser>('(');
-    Parser rpar_parser  = make_parser<CharParser>(')');
-    Parser plus_parser  = make_parser<CharParser>('+');
-    Parser minus_parser = make_parser<CharParser>('-');
-    Parser star_parser  = make_parser<CharParser>('*');
-    Parser slash_parser = make_parser<CharParser>('/');
-    Parser identifier_parser = alpha_parser + ~alnum_parser;
-    Parser number_parser = digit_parser + ~digit_parser;
-    Parser spaces_parser = ~space_parser;
     auto data = "Hello123";
-    std::cout << identifier_parser->parse_whole(data, data + strlen(data)) << std::endl;
+    ParserContext<E> ctx(data);
+    auto lower_parser = decltype(ctx)::make_parser<TestUnsignedCharFuncParser>(islower);
+    auto upper_parser = decltype(ctx)::make_parser<TestUnsignedCharFuncParser>(isupper);
+    auto alpha_parser = decltype(ctx)::make_parser<TestUnsignedCharFuncParser>(isalpha);
+    auto digit_parser = decltype(ctx)::make_parser<TestUnsignedCharFuncParser>(isdigit);
+    auto alnum_parser = decltype(ctx)::make_parser<TestUnsignedCharFuncParser>(isalnum);
+    auto space_parser = decltype(ctx)::make_parser<TestUnsignedCharFuncParser>(isspace);
+    auto lpar_parser  = decltype(ctx)::make_parser<CharParser>('(');
+    auto rpar_parser  = decltype(ctx)::make_parser<CharParser>(')');
+    auto plus_parser  = decltype(ctx)::make_parser<CharParser>('+');
+    auto minus_parser = decltype(ctx)::make_parser<CharParser>('-');
+    auto star_parser  = decltype(ctx)::make_parser<CharParser>('*');
+    auto slash_parser = decltype(ctx)::make_parser<CharParser>('/');
+    auto identifier_parser = alpha_parser + ~alnum_parser;
+    auto number_parser = digit_parser + ~digit_parser;
+    auto spaces_parser = ~space_parser;
+    std::cout << identifier_parser->parse_whole(ctx) << std::endl;
 }
