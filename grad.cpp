@@ -28,7 +28,20 @@ struct ExprWrapper : IExprWrapper {
     template<typename...Args>
     requires (
         ! std::is_constructible_v<Wrapped, Args...>
-        && std::is_aggregate_v<Wrapped>
+        && requires(Args&&...args) {
+            (wrapped{std::forward<Args>(args)...});
+        }
+    )
+    ExprWrapper(Args&&...args):
+        wrapped{std::forward<Args>(args)...}
+    {}
+
+    template<typename...Args>
+    requires (
+        ! std::is_constructible_v<Wrapped, Args...>
+        && requires(Args&&...args) {
+            (wrapped{{std::forward<Args>(args)...}};
+        }
     )
     ExprWrapper(Args&&...args):
         wrapped{std::forward<Args>(args)...}
