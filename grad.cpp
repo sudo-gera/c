@@ -306,11 +306,11 @@ auto make_parser(Args&&... args) {
     return Parser{std::make_shared<decltype(Backend(std::forward<Args>(args)...))>(std::forward<Args>(args)...)};
 }
 
-////////////////////////////////////////////////////////////////////////////
-
 Parser operator+(const Parser& left, const Parser& right);
 Parser operator|(const Parser& left, const Parser& right);
 Parser operator~(const Parser& item);
+
+////////////////////////////////////////////////////////////////////////////
 
 struct EpsilonParserContents {};
 
@@ -395,6 +395,8 @@ struct CharRangeParser : CharRangeParserContents, IParser {
     }
 };
 
+////////////////////////////////////////////////////////////////////////////
+
 struct ConcatParserContents {
     Parser left, right;
 };
@@ -439,6 +441,23 @@ struct StarParser : StarParserContents, IParser {
         while (item->parse(begin, end))
             ;
         return true;
+    }
+};
+
+template<typename C>
+struct CallbackParserContents {
+    C callback;
+};
+
+template<typename C>
+struct CallbackParser : CallbackParserContents<C>, IParser {
+
+    template <typename... Args>
+    CallbackParser(Args&&... args) : CallbackParserContents<C>{std::forward<Args>(args)...} {
+    }
+
+    bool parse_impl(const char*& begin, const char* end) const {
+        return item->parse(begin, end);
     }
 };
 
