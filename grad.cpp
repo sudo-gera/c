@@ -363,16 +363,16 @@ template<typename ParserContext>
 struct IParser {
     virtual ~IParser() = default;
 
-    virtual bool parse_impl(IParserContext& ctx) const = 0;
+    virtual bool parse_impl(ParserContext& ctx) const = 0;
 
-    bool parse_whole(IParserContext& ctx) const {
+    bool parse_whole(ParserContext& ctx) const {
         if (ctx.end() == nullptr) {
             ctx.end() = ctx.begin() + strlen(ctx.begin());
         }
         return parse(ctx) and ctx.begin() == ctx.end();
     }
 
-    bool parse(IParserContext& ctx) const {
+    bool parse(ParserContext& ctx) const {
         if (ctx.end() == nullptr) {
             ctx.end() = ctx.begin() + strlen(ctx.begin());
         }
@@ -422,7 +422,7 @@ struct TestSignedCharFuncParser : TestSignedCharFuncParserContents<F, ParserCont
     TestSignedCharFuncParser(ParserContext*, Args&&... args) : TestSignedCharFuncParserContents<F, ParserContext>{std::forward<Args>(args)...} {
     }
 
-    bool parse_impl(IParserContext& ctx) const {
+    bool parse_impl(ParserContext& ctx) const {
         return ctx.begin() != ctx.end() and this->f(ctx.begin()[0]) and ctx.begin()++;
     }
 };
@@ -442,7 +442,7 @@ struct TestUnsignedCharFuncParser : TestUnsignedCharFuncParserContents<F, Parser
     TestUnsignedCharFuncParser(ParserContext*, Args&&... args) : TestUnsignedCharFuncParserContents<F, ParserContext>{std::forward<Args>(args)...} {
     }
 
-    bool parse_impl(IParserContext& ctx) const {
+    bool parse_impl(ParserContext& ctx) const {
         return ctx.begin() != ctx.end() and this->f((unsigned char)(ctx.begin()[0])) and ctx.begin()++;
     }
 };
@@ -461,7 +461,7 @@ struct CharParser : CharParserContents, IParser<ParserContext> {
     CharParser(ParserContext*, Args&&... args) : CharParserContents{std::forward<Args>(args)...} {
     }
 
-    bool parse_impl(IParserContext& ctx) const {
+    bool parse_impl(ParserContext& ctx) const {
         return ctx.begin() != ctx.end() and this->item == ctx.begin()[0] and ctx.begin()++;
     }
 };
@@ -477,7 +477,7 @@ struct CharRangeParser : CharRangeParserContents, IParser<ParserContext> {
     CharRangeParser(ParserContext*, Args&&... args) : CharRangeParserContents{std::forward<Args>(args)...} {
     }
 
-    bool parse_impl(IParserContext& ctx) const {
+    bool parse_impl(ParserContext& ctx) const {
         return ctx.begin() != ctx.end() and this->lowest <= ctx.begin()[0] and ctx.begin()[0] <= this->highest and ctx.begin()++;
     }
 };
@@ -496,7 +496,7 @@ struct ConcatParser : ConcatParserContents<ParserContext>, IParser<ParserContext
     ConcatParser(ParserContext*, Args&&... args) : ConcatParserContents<ParserContext>{std::forward<Args>(args)...} {
     }
 
-    bool parse_impl(IParserContext& ctx) const {
+    bool parse_impl(ParserContext& ctx) const {
         return this->left->parse(ctx) && this->right->parse(ctx);
     }
 };
@@ -513,7 +513,7 @@ struct AlternativesParser : AlternativesParserContents<ParserContext>, IParser<P
     AlternativesParser(ParserContext*, Args&&... args) : AlternativesParserContents<ParserContext>{std::forward<Args>(args)...} {
     }
 
-    bool parse_impl(IParserContext& ctx) const {
+    bool parse_impl(ParserContext& ctx) const {
         return this->left->parse(ctx) || this->right->parse(ctx);
     }
 };
@@ -530,7 +530,7 @@ struct StarParser : StarParserContents<ParserContext>, IParser<ParserContext> {
     StarParser(ParserContext*, Args&&... args) : StarParserContents<ParserContext>{std::forward<Args>(args)...} {
     }
 
-    bool parse_impl(IParserContext& ctx) const {
+    bool parse_impl(ParserContext& ctx) const {
         while (this->item->parse(ctx))
             ;
         return true;
@@ -550,7 +550,7 @@ struct CallbackParser : CallbackParserContents<C, ParserContext>, IParser<Parser
     CallbackParser(ParserContext*, Args&&... args) : CallbackParserContents<C, ParserContext>{std::forward<Args>(args)...} {
     }
 
-    bool parse_impl(IParserContext& ctx) const {
+    bool parse_impl(ParserContext& ctx) const {
         // size_t args_backup = ctx.args_size();
         // if (this->item->parse(ctx)){
         //     ctx.process_callback(
