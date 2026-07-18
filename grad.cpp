@@ -3,11 +3,11 @@
 #include <memory>
 #include <unordered_set>
 
-struct IExprWrapper;
-using Expr = std::shared_ptr<const IExprWrapper>;
+struct IExpr;
+using Expr = std::shared_ptr<const IExpr>;
 
-struct IExprWrapper {
-    virtual ~IExprWrapper() = default;
+struct IExpr {
+    virtual ~IExpr() = default;
 
     virtual void print(std::ostream& out) const = 0;
     virtual size_t strength() const = 0;
@@ -15,89 +15,41 @@ struct IExprWrapper {
     virtual void get_all_names(std::unordered_set<std::string_view>& names) const = 0;
 };
 
-template<typename Wrapped>
-struct ExprWrapper : IExprWrapper {
-    const Wrapped wrapped;
-
-    template<typename...Args>
-    requires std::is_constructible_v<Wrapped, Args...>
-    ExprWrapper(Args&&...args):
-        wrapped(std::forward<Args>(args)...)
-    {}
-
-    template<typename...Args>
-    requires (
-        ! std::is_constructible_v<Wrapped, Args...>
-        && requires(Args&&...args) {
-            (wrapped{std::forward<Args>(args)...});
-        }
-    )
-    ExprWrapper(Args&&...args):
-        wrapped{std::forward<Args>(args)...}
-    {}
-
-    template<typename...Args>
-    requires (
-        ! std::is_constructible_v<Wrapped, Args...>
-        && requires(Args&&...args) {
-            (wrapped{{std::forward<Args>(args)...}};
-        }
-    )
-    ExprWrapper(Args&&...args):
-        wrapped{std::forward<Args>(args)...}
-    {}
-
-    void print(std::ostream& out) const override {
-        return wrapped.print(out);
-    }
-
-    size_t strength() const override {
-        return wrapped.strength();
-    }
-
-    Expr partial_derivative(const std::string_view& name) const override {
-        return wrapped.partial_derivative(name);
-    }
-
-    void get_all_names(std::unordered_set<std::string_view>& names) const override {
-        return wrapped.get_all_names(names);
-    }
-};
-
-template<typename Backend, typename...Args>
-Expr make_expr(Args&&...args) {
-    return Expr{
-        std::make_shared<
-            ExprWrapper<
-                Backend
-            >
-        >(std::forward<Args>(args)...)
-    };
-}
-
-std::ostream& operator<<(std::ostream& out, const Expr& mid) {
-    mid->print(out);
-    return out;
+template <typename Backend, typename... Args>
+Expr make_expr(Args&&... args) {
+    return Expr{std::make_shared<Backend>(std::forward<Args>(args)...)};
 }
 
 ////////////////////////////////////////////////////////////////////////////
+
+std::ostream& operator<<(std::ostream& out, const Expr& item) {
+    item->print(out);
+    return out;
+}
 
 Expr operator+(const Expr& left, const Expr& right);
 Expr operator-(const Expr& left, const Expr& right);
 Expr operator*(const Expr& left, const Expr& right);
 Expr operator/(const Expr& left, const Expr& right);
 
-////////////////////////////////////////////////////////////////////////////
-
-enum expr_operator_levels: size_t {
+enum expr_operator_levels : size_t {
     add_sub = 1111,
     mul_div = 2222,
     constant = 9999,
     variable = 7777,
 };
 
-struct ValExpr {
+////////////////////////////////////////////////////////////////////////////
+
+struct ValExprContents {
     double val;
+};
+
+struct ValExpr : ValExprContents, IExpr {
+
+    template <typename... Args>
+    ValExpr(Args&&... args) : ValExprContents{std::forward<Args>(args)...} {
+    }
 
     void print(std::ostream& out) const {
         out << val;
@@ -111,11 +63,19 @@ struct ValExpr {
         return make_expr<ValExpr>(0.0);
     }
 
-    void get_all_names(std::unordered_set<std::string_view>&) const {}
+    void get_all_names(std::unordered_set<std::string_view>&) const {
+    }
 };
 
-struct VarExpr {
+struct VarExprContents {
     std::string_view name_;
+};
+
+struct VarExpr : VarExprContents, IExpr {
+
+    template <typename... Args>
+    VarExpr(Args&&... args) : VarExprContents{std::forward<Args>(args)...} {
+    }
 
     void print(std::ostream& out) const {
         out << name_;
@@ -138,8 +98,15 @@ struct VarExpr {
     }
 };
 
-struct SumExpr {
+struct SumExprContents {
     Expr first, second;
+};
+
+struct SumExpr : SumExprContents, IExpr {
+
+    template <typename... Args>
+    SumExpr(Args&&... args) : SumExprContents{std::forward<Args>(args)...} {
+    }
 
     void print(std::ostream& out) const {
         if (first->strength() < strength()) {
@@ -169,8 +136,15 @@ struct SumExpr {
     }
 };
 
-struct DifferenceExpr {
+struct DifferenceExprContents {
     Expr first, second;
+};
+
+struct DifferenceExpr : DifferenceExprContents, IExpr {
+
+    template <typename... Args>
+    DifferenceExpr(Args&&... args) : DifferenceExprContents{std::forward<Args>(args)...} {
+    }
 
     void print(std::ostream& out) const {
         if (first->strength() < strength()) {
@@ -194,15 +168,21 @@ struct DifferenceExpr {
         return first->partial_derivative(name) - second->partial_derivative(name);
     }
 
-
     void get_all_names(std::unordered_set<std::string_view>& names) const {
         first->get_all_names(names);
         second->get_all_names(names);
     }
 };
 
-struct ProductExpr {
+struct ProductExprContents {
     Expr first, second;
+};
+
+struct ProductExpr : ProductExprContents, IExpr {
+
+    template <typename... Args>
+    ProductExpr(Args&&... args) : ProductExprContents{std::forward<Args>(args)...} {
+    }
 
     void print(std::ostream& out) const {
         if (first->strength() < strength()) {
@@ -232,8 +212,15 @@ struct ProductExpr {
     }
 };
 
-struct QuotientExpr {
+struct QuotientExprContents {
     Expr first, second;
+};
+
+struct QuotientExpr : QuotientExprContents, IExpr {
+
+    template <typename... Args>
+    QuotientExpr(Args&&... args) : QuotientExprContents{std::forward<Args>(args)...} {
+    }
 
     void print(std::ostream& out) const {
         if (first->strength() < strength()) {
@@ -254,9 +241,7 @@ struct QuotientExpr {
     }
 
     Expr partial_derivative(const std::string_view& name) const {
-        return (
-            first->partial_derivative(name) * second - first * second->partial_derivative(name)
-        ) / second / second;
+        return (first->partial_derivative(name) * second - first * second->partial_derivative(name)) / second / second;
     }
 
     void get_all_names(std::unordered_set<std::string_view>& names) const {
@@ -285,20 +270,21 @@ Expr operator/(const Expr& left, const Expr& right) {
 
 ////////////////////////////////////////////////////////////////////////////
 
-template<typename Parser>
-struct IParserWrapper {
-    virtual ~IParserWrapper() = default;
-    virtual bool parse_impl(const char*& begin, const char* end) = 0;
-};
+struct IParser {
+    virtual ~IParser() = default;
+    virtual bool parse_impl(const char*& begin, const char* end) const = 0;
 
-struct Parser {
-    std::shared_ptr<IParserWrapper<Parser>> wrapped;
-
-    bool parse_test(const char* begin, const char* end) {
+    bool parse_whole(const char* begin, const char* end = nullptr) const {
+        if (end == nullptr) {
+            end = begin + strlen(begin);
+        }
         return parse(begin, end) and begin == end;
     }
 
-    bool parse(const char*& begin, const char* end) {
+    bool parse(const char*& begin, const char* end = nullptr) const {
+        if (end == nullptr) {
+            end = begin + strlen(begin);
+        }
         const char* begin_backup = begin;
         if (parse_impl(begin, end)) {
             return true;
@@ -306,196 +292,191 @@ struct Parser {
         begin = begin_backup;
         return false;
     }
-
-    bool parse_impl(const char*& begin, const char* end) {
-        return wrapped->parse_impl(begin, end);
-    }
 };
 
-template<typename Wrapped>
-struct ParserWrapper: IParserWrapper<Parser> {
-    Wrapped wrapped;
+using Parser = std::shared_ptr<IParser>;
 
-    template<typename...Args>
-    requires std::is_constructible_v<Wrapped, Args...>
-    ParserWrapper(Args&&...args):
-        wrapped(std::forward<Args>(args)...)
-    {}
-
-    template<typename...Args>
-    requires (
-        ! std::is_constructible_v<Wrapped, Args...>
-        && std::is_aggregate_v<Wrapped>
-    )
-    ParserWrapper(Args&&...args):
-        wrapped{std::forward<Args>(args)...}
-    {}
-
-    bool parse_impl(const char*& begin, const char* end) override {
-        return wrapped.parse_impl(begin, end);
-    }
-};
-
-template<typename Backend, typename...Args>
-Parser make_parser(Args&&...args) {
-    return Parser{
-        std::make_shared<
-            ParserWrapper<
-                Backend
-            >
-        >(std::forward<Args>(args)...)
-    };
+template <typename Backend, typename... Args>
+Parser make_parser(Args&&... args) {
+    return Parser{std::make_shared<Backend>(std::forward<Args>(args)...)};
 }
 
-template<template <typename...> class Backend, typename...Args>
-auto make_parser(Args&&...args)
-requires(
-    requires(Args&&...args){
-        (Backend(
-            std::forward<Args>(args)...
-        ));
-    }
-)
-{
-    return Parser{
-        std::make_shared<
-            ParserWrapper<
-                decltype(
-                    Backend(
-                        std::forward<Args>(args)...
-                    )
-                )
-            >
-        >(std::forward<Args>(args)...)
-    };
-}
-
-template<template <typename...> class Backend, typename...Args>
-auto make_parser(Args&&...args)
-requires(
-    requires(Args&&...args){
-        (Backend{
-            std::forward<Args>(args)...
-        });
-    }
-)
-{
-    return Parser{
-        std::make_shared<
-            ParserWrapper<
-                decltype(
-                    Backend{
-                        std::forward<Args>(args)...
-                    }
-                )
-            >
-        >(std::forward<Args>(args)...)
-    };
+template <template <typename...> class Backend, typename... Args>
+auto make_parser(Args&&... args) {
+    return Parser{std::make_shared<decltype(Backend(std::forward<Args>(args)...))>(std::forward<Args>(args)...)};
 }
 
 ////////////////////////////////////////////////////////////////////////////
 
-Parser operator&(const Parser& left, const Parser& right);
+Parser operator+(const Parser& left, const Parser& right);
 Parser operator|(const Parser& left, const Parser& right);
-Parser operator~(const Parser& mid);
+Parser operator~(const Parser& item);
 
-struct EpsilonParser {
+struct EpsilonParserContents {};
 
-    bool parse_impl(const char*&, const char*) {
+struct EpsilonParser : EpsilonParserContents, IParser {
+
+    template <typename... Args>
+    EpsilonParser(Args&&... args) : EpsilonParserContents{std::forward<Args>(args)...} {
+    }
+
+    bool parse_impl(const char*&, const char*) const {
         return true;
     }
 };
 
-template<typename F>
-struct TestSignedCharFuncParser {
+template <typename F>
+struct TestSignedCharFuncParserContents {
     F f;
+};
 
-    bool parse_impl(const char*& begin, const char* end) {
-        return begin != end and f(begin[0]) and begin++;
+template <typename F>
+struct TestSignedCharFuncParser : TestSignedCharFuncParserContents<F>, IParser {
+
+    template <typename... Args>
+    TestSignedCharFuncParser(Args&&... args) : TestSignedCharFuncParserContents<F>{std::forward<Args>(args)...} {
+    }
+
+    bool parse_impl(const char*& begin, const char* end) const {
+        return begin != end and TestSignedCharFuncParserContents<F>::f(begin[0]) and begin++;
     }
 };
 
 template <typename F>
 TestSignedCharFuncParser(F) -> TestSignedCharFuncParser<F>;
 
-template<typename F>
-struct TestUnsignedCharFuncParser {
+template <typename F>
+struct TestUnsignedCharFuncParserContents {
     F f;
+};
 
-    bool parse_impl(const char*& begin, const char* end) {
-        return begin != end and f((unsigned char)(begin[0])) and begin++;
+template <typename F>
+struct TestUnsignedCharFuncParser : TestUnsignedCharFuncParserContents<F>, IParser {
+
+    template <typename... Args>
+    TestUnsignedCharFuncParser(Args&&... args) : TestUnsignedCharFuncParserContents<F>{std::forward<Args>(args)...} {
+    }
+
+    bool parse_impl(const char*& begin, const char* end) const {
+        return begin != end and TestUnsignedCharFuncParserContents<F>::f((unsigned char)(begin[0])) and begin++;
     }
 };
 
 template <typename F>
 TestUnsignedCharFuncParser(F) -> TestUnsignedCharFuncParser<F>;
 
-struct CharRangeParser {
-    char lowest, highest;
+struct CharParserContents {
+    char item;
+};
 
-    bool parse_impl(const char*& begin, const char* end) {
+struct CharParser : CharParserContents, IParser {
+
+    template <typename... Args>
+    CharParser(Args&&... args) : CharParserContents{std::forward<Args>(args)...} {
+    }
+
+    bool parse_impl(const char*& begin, const char* end) const {
+        return begin != end and item == begin[0] and begin++;
+    }
+};
+
+struct CharRangeParserContents {
+    char lowest, highest;
+};
+
+struct CharRangeParser : CharRangeParserContents, IParser {
+
+    template <typename... Args>
+    CharRangeParser(Args&&... args) : CharRangeParserContents{std::forward<Args>(args)...} {
+    }
+
+    bool parse_impl(const char*& begin, const char* end) const {
         return begin != end and lowest <= begin[0] and begin[0] <= highest and begin++;
     }
 };
 
-struct ConcatParser {
+struct ConcatParserContents {
     Parser left, right;
+};
 
-    bool parse_impl(const char*& begin, const char* end) {
-        return left.parse(begin, end) && right.parse(begin, end);
+struct ConcatParser : ConcatParserContents, IParser {
+
+    template <typename... Args>
+    ConcatParser(Args&&... args) : ConcatParserContents{std::forward<Args>(args)...} {
+    }
+
+    bool parse_impl(const char*& begin, const char* end) const {
+        return left->parse(begin, end) && right->parse(begin, end);
     }
 };
 
-struct AlternativeParser {
+struct AlternativesParserContents {
     Parser left, right;
+};
 
-    bool parse_impl(const char*& begin, const char* end) {
-        return left.parse(begin, end) || right.parse(begin, end);
+struct AlternativesParser : AlternativesParserContents, IParser {
+
+    template <typename... Args>
+    AlternativesParser(Args&&... args) : AlternativesParserContents{std::forward<Args>(args)...} {
+    }
+
+    bool parse_impl(const char*& begin, const char* end) const {
+        return left->parse(begin, end) || right->parse(begin, end);
     }
 };
 
-struct StarParser {
-    Parser mid;
+struct StarParserContents {
+    Parser item;
+};
 
-    bool parse_impl(const char*& begin, const char* end) {
-        while (mid.parse(begin, end));
+struct StarParser : StarParserContents, IParser {
+
+    template <typename... Args>
+    StarParser(Args&&... args) : StarParserContents{std::forward<Args>(args)...} {
+    }
+
+    bool parse_impl(const char*& begin, const char* end) const {
+        while (item->parse(begin, end))
+            ;
         return true;
     }
 };
 
 ////////////////////////////////////////////////////////////////////////////
 
-Parser operator&(const Parser& left, const Parser& right) {
+Parser operator+(const Parser& left, const Parser& right) {
     return make_parser<ConcatParser>(left, right);
 }
 
 Parser operator|(const Parser& left, const Parser& right) {
-    return make_parser<AlternativeParser>(left, right);
+    return make_parser<AlternativesParser>(left, right);
 }
 
-Parser operator~(const Parser& mid) {
-    return make_parser<StarParser>(mid);
+Parser operator~(const Parser& item) {
+    return make_parser<StarParser>(item);
 }
 
 ////////////////////////////////////////////////////////////////////////////
 
-int main(){
-    std::cout << (
-        make_expr<VarExpr>("aaa") / make_expr<VarExpr>("sss")
-    )->partial_derivative("aaa") << std::endl;
-    std::cout << (
-        make_expr<VarExpr>("aaa") / make_expr<VarExpr>("sss")
-    )->partial_derivative("sss") << std::endl;
+int main() {
+    std::cout << (make_expr<VarExpr>("aaa") / make_expr<VarExpr>("sss"))->partial_derivative("aaa") << std::endl;
+    std::cout << (make_expr<VarExpr>("aaa") / make_expr<VarExpr>("sss"))->partial_derivative("sss") << std::endl;
 
-
-    Parser lower_parser = make_parser<CharRangeParser>('a', 'z');
-    Parser upper_parser = make_parser<CharRangeParser>('A', 'Z');
-    Parser alpha_parser = lower_parser | upper_parser;
-    Parser digit_parser = make_parser<CharRangeParser>('0', '9');
-    Parser alnum_parser = alpha_parser | digit_parser;
-    Parser identifier_parser = alpha_parser & ~alnum_parser;
+    Parser lower_parser = make_parser<TestUnsignedCharFuncParser>(islower);
+    Parser upper_parser = make_parser<TestUnsignedCharFuncParser>(isupper);
+    Parser alpha_parser = make_parser<TestUnsignedCharFuncParser>(isalpha);
+    Parser digit_parser = make_parser<TestUnsignedCharFuncParser>(isdigit);
+    Parser alnum_parser = make_parser<TestUnsignedCharFuncParser>(isalnum);
+    Parser space_parser = make_parser<TestUnsignedCharFuncParser>(isspace);
+    Parser lpar_parser  = make_parser<CharParser>('(');
+    Parser rpar_parser  = make_parser<CharParser>(')');
+    Parser plus_parser  = make_parser<CharParser>('+');
+    Parser minus_parser = make_parser<CharParser>('-');
+    Parser star_parser  = make_parser<CharParser>('*');
+    Parser slash_parser = make_parser<CharParser>('/');
+    Parser identifier_parser = alpha_parser + ~alnum_parser;
+    Parser number_parser = digit_parser + ~digit_parser;
+    Parser spaces_parser = ~space_parser;
     auto data = "Hello123";
-    std::cout << identifier_parser.parse_test(data, data+strlen(data)) << std::endl;
+    std::cout << identifier_parser->parse_whole(data, data + strlen(data)) << std::endl;
 }
-
-
