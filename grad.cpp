@@ -7,9 +7,14 @@
 #include <tuple>
 #include <cstring>
 #include <algorithm>
+#include <cmath>
+#include <optional>
+#include <utility>
+#include <concepts>
 
 bool double_equal(double a, double b, double epsilon = 1e-9) {
-    return std::fabs(a - b) <= epsilon * std::max(std::fabs(a), std::fabs(b));
+    return std::fabs(a - b) <= epsilon *
+           std::max({1.0, std::fabs(a), std::fabs(b)});
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -462,6 +467,7 @@ struct ParsingContextContents {
     const char* end = nullptr;
     std::vector<Arg> args = {};
     size_t depth = 0;
+    const char* maxbegin = nullptr;
 };
 
 template <typename Arg_>
@@ -509,7 +515,7 @@ struct IParser {
 
     virtual bool parse_impl(ParsingContext& ctx) const = 0;
 
-    std::optional<typename ParsingContext::Arg> parse_whole(ParsingContext ctx) const {
+    std::optional<typename ParsingContext::Arg> parse_whole(ParsingContext& ctx) const {
         if (ctx.end == nullptr) {
             ctx.end = ctx.begin + strlen(ctx.begin);
         }
@@ -526,17 +532,21 @@ struct IParser {
         }
         const char* begin_backup = ctx.begin;
         size_t args_backup = ctx.args.size();
-        // std::cout << std::string(ctx.depth, ' ') << *this << "\tentering " << ctx.begin << std::endl;
+        ctx.maxbegin = std::max({ctx.begin, ctx.maxbegin});
+        std::cout << std::string(ctx.depth, ' ') << *this << "\tentering " << ctx.begin << "?" << ctx.maxbegin - ctx.begin << std::endl;
         ++ctx.depth;
         if (parse_impl(ctx)) {
             --ctx.depth;
-            // std::cout << std::string(ctx.depth, ' ') << *this << "\t+exiting " << ctx.begin << std::endl;
+            ctx.maxbegin = std::max({ctx.begin, ctx.maxbegin});
+            std::cout << std::string(ctx.depth, ' ') << *this << "\t+exiting " << ctx.begin << "?" << ctx.maxbegin - ctx.begin << std::endl;
             return true;
         }
         --ctx.depth;
-        // std::cout << std::string(ctx.depth, ' ') << *this << "\t-exiting " << ctx.begin << std::endl;
+        ctx.maxbegin = std::max({ctx.begin, ctx.maxbegin});
+        std::cout << std::string(ctx.depth, ' ') << *this << "\t-exiting " << ctx.begin << "?" << ctx.maxbegin - ctx.begin << std::endl;
         ctx.begin = begin_backup;
         ctx.args.resize(args_backup);
+        std::cout << std::string(ctx.depth, ' ') << *this << "\t-exiting " << ctx.begin << "?" << ctx.maxbegin - ctx.begin << std::endl;
         return false;
     }
 
@@ -1023,7 +1033,15 @@ Parser<parsing_context_for_expr> parentheses_parser() {
 int main() {
     std::string input;
     std::getline(std::cin, input);
-    auto expr = expr_parser()->parse_whole(ParsingContext<Expr>(input.c_str())).value();
+    const char* input_cstr = input.c_str();
+    auto ctx = parsing_context_for_expr(input_cstr);
+    auto expr_opt = expr_parser()->parse_whole(ctx);
+    if (not expr_opt) {
+        std::cerr << "Syntax error at pos " << ctx.maxbegin << "." << std::endl;
+        std::cerr << "Syntax error at pos " << ctx.maxbegin - input_cstr << "." << std::endl;
+        return 1;
+    }
+    auto expr = expr_opt.value();
     std::unordered_set<std::string_view> names;
     expr->get_all_names(names);
     for (auto&& name : names) {
