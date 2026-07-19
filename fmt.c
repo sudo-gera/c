@@ -20,14 +20,14 @@
 
 // clang-format off
 #define fmt_one_get_fstr(...)
-#define fmt_one_get_args(...) __VA_OPT__(,) __VA_ARGS__); fmt_one_get_fstr(
+#define fmt_one_get_args(...) __VA_OPT__(,) __VA_ARGS__); (void)(
 #define fmt_one_for_tmpbuf(x)                                                  \
 snprintf(                                                                      \
     tmpbuf + strlen(tmpbuf),                                                   \
     sizeof(tmpbuf) - strlen(tmpbuf),                                           \
     fmt_one_get_fstr x ""                                                      \
     fmt_one_get_args x ""                                                      \
-)
+);
 // clang-format on
 
 #define fmt_00(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_01(__VA_ARGS__))
