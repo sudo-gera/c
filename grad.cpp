@@ -13,8 +13,7 @@
 #include <concepts>
 
 bool double_equal(double a, double b, double epsilon = 1e-9) {
-    return std::fabs(a - b) <= epsilon *
-           std::max({1.0, std::fabs(a), std::fabs(b)});
+    return std::fabs(a - b) <= epsilon * std::max({1.0, std::fabs(a), std::fabs(b)});
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -533,20 +532,24 @@ struct IParser {
         const char* begin_backup = ctx.begin;
         size_t args_backup = ctx.args.size();
         ctx.maxbegin = std::max({ctx.begin, ctx.maxbegin});
-        // std::cout << std::string(ctx.depth, ' ') << *this << "\tentering " << ctx.begin << "?" << ctx.maxbegin - ctx.begin << std::endl;
+        // std::cout << std::string(ctx.depth, ' ') << *this << "\tentering " << ctx.begin << "?" << ctx.maxbegin -
+        // ctx.begin << std::endl;
         ++ctx.depth;
         if (parse_impl(ctx)) {
             --ctx.depth;
             ctx.maxbegin = std::max({ctx.begin, ctx.maxbegin});
-            // std::cout << std::string(ctx.depth, ' ') << *this << "\t+exiting " << ctx.begin << "?" << ctx.maxbegin - ctx.begin << std::endl;
+            // std::cout << std::string(ctx.depth, ' ') << *this << "\t+exiting " << ctx.begin << "?" << ctx.maxbegin -
+            // ctx.begin << std::endl;
             return true;
         }
         --ctx.depth;
         ctx.maxbegin = std::max({ctx.begin, ctx.maxbegin});
-        // std::cout << std::string(ctx.depth, ' ') << *this << "\t-exiting " << ctx.begin << "?" << ctx.maxbegin - ctx.begin << std::endl;
+        // std::cout << std::string(ctx.depth, ' ') << *this << "\t-exiting " << ctx.begin << "?" << ctx.maxbegin -
+        // ctx.begin << std::endl;
         ctx.begin = begin_backup;
         ctx.args.resize(args_backup);
-        // std::cout << std::string(ctx.depth, ' ') << *this << "\t-exiting " << ctx.begin << "?" << ctx.maxbegin - ctx.begin << std::endl;
+        // std::cout << std::string(ctx.depth, ' ') << *this << "\t-exiting " << ctx.begin << "?" << ctx.maxbegin -
+        // ctx.begin << std::endl;
         return false;
     }
 
