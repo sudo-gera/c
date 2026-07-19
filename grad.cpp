@@ -205,7 +205,7 @@ struct SumExpr : SumExprContents, IExpr {
     void print(std::ostream& out) const {
         first->print_in_pars(out, first->strength() < strength());
         out << " + ";
-        first->print_in_pars(out, second->strength() <= strength());
+        second->print_in_pars(out, second->strength() <= strength());
     }
 
     size_t strength() const {
@@ -254,7 +254,7 @@ struct DifferenceExpr : DifferenceExprContents, IExpr {
     void print(std::ostream& out) const {
         first->print_in_pars(out, first->strength() < strength());
         out << " - ";
-        first->print_in_pars(out, second->strength() <= strength());
+        second->print_in_pars(out, second->strength() <= strength());
     }
 
     size_t strength() const {
@@ -314,7 +314,7 @@ struct ProductExpr : ProductExprContents, IExpr {
     void print(std::ostream& out) const {
         first->print_in_pars(out, first->strength() < strength());
         out << " * ";
-        first->print_in_pars(out, second->strength() <= strength());
+        second->print_in_pars(out, second->strength() <= strength());
     }
 
     size_t strength() const {
@@ -375,7 +375,7 @@ struct QuotientExpr : QuotientExprContents, IExpr {
     void print(std::ostream& out) const {
         first->print_in_pars(out, first->strength() < strength());
         out << " / ";
-        first->print_in_pars(out, second->strength() <= strength());
+        second->print_in_pars(out, second->strength() <= strength());
     }
 
     size_t strength() const {
