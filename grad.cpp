@@ -25,6 +25,15 @@ struct IExpr : std::enable_shared_from_this<IExpr>{
     virtual Expr partial_derivative(const std::string_view& name) const = 0;
     virtual void get_all_names(std::unordered_set<std::string_view>& names) const = 0;
     virtual Expr optimize() const = 0;
+    void print_in_pars(std::ostream& out, bool with_pars = false) const {
+        if (with_pars) {
+            out << "(";
+            print(out);
+            out << ")";
+        }else{
+            print(out);
+        }
+    }
 };
 
 template <typename Backend, typename... Args>
@@ -133,11 +142,7 @@ struct UnaryPlusExpr : UnaryPlusExprContents, IExpr {
 
     void print(std::ostream& out) const {
         out << "+";
-        if (item->strength() < strength()) {
-            out << "(" << item << ")";
-        } else {
-            out << item;
-        }
+        item->print_in_pars(out, item->strength() < strength());
     }
 
     size_t strength() const {
@@ -169,11 +174,7 @@ struct UnaryMinusExpr : UnaryMinusExprContents, IExpr {
 
     void print(std::ostream& out) const {
         out << "-";
-        if (item->strength() < strength()) {
-            out << "(" << item << ")";
-        } else {
-            out << item;
-        }
+        item->print_in_pars(out, item->strength() < strength());
     }
 
     size_t strength() const {
@@ -202,17 +203,9 @@ struct SumExpr : SumExprContents, IExpr {
     }
 
     void print(std::ostream& out) const {
-        if (first->strength() < strength()) {
-            out << "(" << first << ")";
-        } else {
-            out << first;
-        }
+        first->print_in_pars(out, first->strength() < strength());
         out << " + ";
-        if (second->strength() > strength()) {
-            out << second;
-        } else {
-            out << "(" << second << ")";
-        }
+        first->print_in_pars(out, second->strength() <= strength());
     }
 
     size_t strength() const {
@@ -259,17 +252,9 @@ struct DifferenceExpr : DifferenceExprContents, IExpr {
     }
 
     void print(std::ostream& out) const {
-        if (first->strength() < strength()) {
-            out << "(" << first << ")";
-        } else {
-            out << first;
-        }
+        first->print_in_pars(out, first->strength() < strength());
         out << " - ";
-        if (second->strength() > strength()) {
-            out << second;
-        } else {
-            out << "(" << second << ")";
-        }
+        first->print_in_pars(out, second->strength() <= strength());
     }
 
     size_t strength() const {
@@ -327,17 +312,9 @@ struct ProductExpr : ProductExprContents, IExpr {
     }
 
     void print(std::ostream& out) const {
-        if (first->strength() < strength()) {
-            out << "(" << first << ")";
-        } else {
-            out << first;
-        }
+        first->print_in_pars(out, first->strength() < strength());
         out << " * ";
-        if (second->strength() > strength()) {
-            out << second;
-        } else {
-            out << "(" << second << ")";
-        }
+        first->print_in_pars(out, second->strength() <= strength());
     }
 
     size_t strength() const {
@@ -396,17 +373,9 @@ struct QuotientExpr : QuotientExprContents, IExpr {
     }
 
     void print(std::ostream& out) const {
-        if (first->strength() < strength()) {
-            out << "(" << first << ")";
-        } else {
-            out << first;
-        }
+        first->print_in_pars(out, first->strength() < strength());
         out << " / ";
-        if (second->strength() > strength()) {
-            out << second;
-        } else {
-            out << "(" << second << ")";
-        }
+        first->print_in_pars(out, second->strength() <= strength());
     }
 
     size_t strength() const {
