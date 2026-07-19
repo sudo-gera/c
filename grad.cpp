@@ -533,20 +533,20 @@ struct IParser {
         const char* begin_backup = ctx.begin;
         size_t args_backup = ctx.args.size();
         ctx.maxbegin = std::max({ctx.begin, ctx.maxbegin});
-        std::cout << std::string(ctx.depth, ' ') << *this << "\tentering " << ctx.begin << "?" << ctx.maxbegin - ctx.begin << std::endl;
+        // std::cout << std::string(ctx.depth, ' ') << *this << "\tentering " << ctx.begin << "?" << ctx.maxbegin - ctx.begin << std::endl;
         ++ctx.depth;
         if (parse_impl(ctx)) {
             --ctx.depth;
             ctx.maxbegin = std::max({ctx.begin, ctx.maxbegin});
-            std::cout << std::string(ctx.depth, ' ') << *this << "\t+exiting " << ctx.begin << "?" << ctx.maxbegin - ctx.begin << std::endl;
+            // std::cout << std::string(ctx.depth, ' ') << *this << "\t+exiting " << ctx.begin << "?" << ctx.maxbegin - ctx.begin << std::endl;
             return true;
         }
         --ctx.depth;
         ctx.maxbegin = std::max({ctx.begin, ctx.maxbegin});
-        std::cout << std::string(ctx.depth, ' ') << *this << "\t-exiting " << ctx.begin << "?" << ctx.maxbegin - ctx.begin << std::endl;
+        // std::cout << std::string(ctx.depth, ' ') << *this << "\t-exiting " << ctx.begin << "?" << ctx.maxbegin - ctx.begin << std::endl;
         ctx.begin = begin_backup;
         ctx.args.resize(args_backup);
-        std::cout << std::string(ctx.depth, ' ') << *this << "\t-exiting " << ctx.begin << "?" << ctx.maxbegin - ctx.begin << std::endl;
+        // std::cout << std::string(ctx.depth, ' ') << *this << "\t-exiting " << ctx.begin << "?" << ctx.maxbegin - ctx.begin << std::endl;
         return false;
     }
 
@@ -596,31 +596,6 @@ struct TestSignedCharFuncParser : TestSignedCharFuncParserContents<F, ParsingCon
 };
 
 template <typename F, typename ParsingContext>
-TestSignedCharFuncParser(ParsingContext*, F) -> TestSignedCharFuncParser<F, ParsingContext>;
-
-template <typename F, typename ParsingContext>
-struct TestUnsignedCharFuncParserContents {
-    F f;
-};
-
-template <typename F, typename ParsingContext>
-struct TestUnsignedCharFuncParser : TestUnsignedCharFuncParserContents<F, ParsingContext>, IParser<ParsingContext> {
-
-    template <typename... Args>
-    TestUnsignedCharFuncParser(ParsingContext*, Args&&... args)
-        : TestUnsignedCharFuncParserContents<F, ParsingContext>{std::forward<Args>(args)...} {
-    }
-
-    bool parse_impl(ParsingContext& ctx) const {
-        return ctx.begin != ctx.end and this->f((unsigned char)(ctx.begin[0])) and ctx.begin++;
-    }
-
-    void print(std::ostream& out) const {
-        out << __PRETTY_FUNCTION__;
-    }
-};
-
-template <typename F, typename ParsingContext>
 TestUnsignedCharFuncParser(ParsingContext*, F) -> TestUnsignedCharFuncParser<F, ParsingContext>;
 
 struct CharParserContents {
@@ -640,26 +615,6 @@ struct CharParser : CharParserContents, IParser<ParsingContext> {
 
     void print(std::ostream& out) const {
         out << __PRETTY_FUNCTION__ << "('" << this->item << "')";
-    }
-};
-
-struct CharRangeParserContents {
-    char lowest, highest;
-};
-
-template <typename ParsingContext>
-struct CharRangeParser : CharRangeParserContents, IParser<ParsingContext> {
-
-    template <typename... Args>
-    CharRangeParser(ParsingContext*, Args&&... args) : CharRangeParserContents{std::forward<Args>(args)...} {
-    }
-
-    bool parse_impl(ParsingContext& ctx) const {
-        return ctx.begin != ctx.end and this->lowest <= ctx.begin[0] and ctx.begin[0] <= this->highest and ctx.begin++;
-    }
-
-    void print(std::ostream& out) const {
-        out << __PRETTY_FUNCTION__ << "('" << this->lower << "', '" << this->highest << "')";
     }
 };
 
@@ -857,14 +812,6 @@ std::ostream& operator<<(std::ostream& out, const IParser<ParsingContext>& item)
 
 using parsing_context_for_expr = ParsingContext<Expr>;
 
-Parser<parsing_context_for_expr> lower_parser() {
-    return parsing_context_for_expr::make_parser<TestUnsignedCharFuncParser>(islower) << __PRETTY_FUNCTION__;
-}
-
-Parser<parsing_context_for_expr> upper_parser() {
-    return parsing_context_for_expr::make_parser<TestUnsignedCharFuncParser>(isupper) << __PRETTY_FUNCTION__;
-}
-
 Parser<parsing_context_for_expr> alpha_parser() {
     return parsing_context_for_expr::make_parser<TestUnsignedCharFuncParser>(isalpha) << __PRETTY_FUNCTION__;
 }
@@ -1037,8 +984,7 @@ int main() {
     auto ctx = parsing_context_for_expr(input_cstr);
     auto expr_opt = expr_parser()->parse_whole(ctx);
     if (not expr_opt) {
-        std::cerr << "Syntax error at pos " << ctx.maxbegin << "." << std::endl;
-        std::cerr << "Syntax error at pos " << ctx.maxbegin - input_cstr << "." << std::endl;
+        std::cerr << "Syntax error at pos " << ctx.maxbegin - input_cstr + 1 << "." << std::endl;
         return 1;
     }
     auto expr = expr_opt.value();
