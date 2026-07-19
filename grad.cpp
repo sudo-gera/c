@@ -17,7 +17,7 @@ bool double_equal(double a, double b, double epsilon = 1e-9) {
 struct IExpr;
 using Expr = std::shared_ptr<const IExpr>;
 
-struct IExpr : std::enable_shared_from_this<IExpr>{
+struct IExpr : std::enable_shared_from_this<IExpr> {
     virtual ~IExpr() = default;
 
     virtual void print(std::ostream& out) const = 0;
@@ -30,7 +30,7 @@ struct IExpr : std::enable_shared_from_this<IExpr>{
             out << "(";
             print(out);
             out << ")";
-        }else{
+        } else {
             print(out);
         }
     }
@@ -189,7 +189,7 @@ struct UnaryMinusExpr : UnaryMinusExprContents, IExpr {
         item->get_all_names(names);
     }
 
-    Expr optimize() const ;
+    Expr optimize() const;
 };
 
 struct SumExprContents {
@@ -224,15 +224,15 @@ struct SumExpr : SumExprContents, IExpr {
     Expr optimize() const {
         auto first_o = first->optimize();
         auto second_o = second->optimize();
-        if (auto first_a = dynamic_cast<const ValExpr*>(first_o.get())){
-            if (auto second_a = dynamic_cast<const ValExpr*>(second_o.get())){
+        if (auto first_a = dynamic_cast<const ValExpr*>(first_o.get())) {
+            if (auto second_a = dynamic_cast<const ValExpr*>(second_o.get())) {
                 return make_expr<ValExpr>(first_a->val + second_a->val);
             }
             if (double_equal(first_a->val, 0)) {
                 return second_o;
             }
         }
-        if (auto second_a = dynamic_cast<const ValExpr*>(second_o.get())){
+        if (auto second_a = dynamic_cast<const ValExpr*>(second_o.get())) {
             if (double_equal(second_a->val, 0)) {
                 return first_o;
             }
@@ -273,15 +273,15 @@ struct DifferenceExpr : DifferenceExprContents, IExpr {
     Expr optimize() const {
         auto first_o = first->optimize();
         auto second_o = second->optimize();
-        if (auto first_a = dynamic_cast<const ValExpr*>(first_o.get())){
-            if (auto second_a = dynamic_cast<const ValExpr*>(second_o.get())){
+        if (auto first_a = dynamic_cast<const ValExpr*>(first_o.get())) {
+            if (auto second_a = dynamic_cast<const ValExpr*>(second_o.get())) {
                 return make_expr<ValExpr>(first_a->val - second_a->val);
             }
             if (double_equal(first_a->val, 0)) {
                 return make_expr<UnaryMinusExpr>(second_o)->optimize();
             }
         }
-        if (auto second_a = dynamic_cast<const ValExpr*>(second_o.get())){
+        if (auto second_a = dynamic_cast<const ValExpr*>(second_o.get())) {
             if (double_equal(second_a->val, 0)) {
                 return first_o;
             }
@@ -292,10 +292,10 @@ struct DifferenceExpr : DifferenceExprContents, IExpr {
 
 Expr UnaryMinusExpr::optimize() const {
     auto item_o = item->optimize();
-    if (auto item_a = dynamic_cast<const ValExpr*>(item_o.get())){
+    if (auto item_a = dynamic_cast<const ValExpr*>(item_o.get())) {
         return make_expr<ValExpr>(-item_a->val);
     }
-    if (auto item_a = dynamic_cast<const DifferenceExpr*>(item_o.get())){
+    if (auto item_a = dynamic_cast<const DifferenceExpr*>(item_o.get())) {
         return make_expr<DifferenceExpr>(item_a->second, item_a->first)->optimize();
     }
     return make_expr<UnaryMinusExpr>(item_o);
@@ -333,8 +333,8 @@ struct ProductExpr : ProductExprContents, IExpr {
     Expr optimize() const {
         auto first_o = first->optimize();
         auto second_o = second->optimize();
-        if (auto first_a = dynamic_cast<const ValExpr*>(first_o.get())){
-            if (auto second_a = dynamic_cast<const ValExpr*>(second_o.get())){
+        if (auto first_a = dynamic_cast<const ValExpr*>(first_o.get())) {
+            if (auto second_a = dynamic_cast<const ValExpr*>(second_o.get())) {
                 return make_expr<ValExpr>(first_a->val * second_a->val);
             }
             if (double_equal(first_a->val, -1)) {
@@ -347,7 +347,7 @@ struct ProductExpr : ProductExprContents, IExpr {
                 return second_o;
             }
         }
-        if (auto second_a = dynamic_cast<const ValExpr*>(second_o.get())){
+        if (auto second_a = dynamic_cast<const ValExpr*>(second_o.get())) {
             if (double_equal(second_a->val, -1)) {
                 return make_expr<UnaryMinusExpr>(first_o)->optimize();
             }
@@ -394,15 +394,15 @@ struct QuotientExpr : QuotientExprContents, IExpr {
     Expr optimize() const {
         auto first_o = first->optimize();
         auto second_o = second->optimize();
-        if (auto first_a = dynamic_cast<const ValExpr*>(first_o.get())){
-            if (auto second_a = dynamic_cast<const ValExpr*>(second_o.get())){
+        if (auto first_a = dynamic_cast<const ValExpr*>(first_o.get())) {
+            if (auto second_a = dynamic_cast<const ValExpr*>(second_o.get())) {
                 return make_expr<ValExpr>(first_a->val / second_a->val);
             }
             if (double_equal(first_a->val, 0)) {
                 return make_expr<ValExpr>(0.0);
             }
         }
-        if (auto second_a = dynamic_cast<const ValExpr*>(second_o.get())){
+        if (auto second_a = dynamic_cast<const ValExpr*>(second_o.get())) {
             if (double_equal(second_a->val, -1)) {
                 return make_expr<UnaryMinusExpr>(first_o)->optimize();
             }
@@ -1026,7 +1026,7 @@ int main() {
     auto expr = expr_parser()->parse_whole(ParsingContext<Expr>(input.c_str())).value();
     std::unordered_set<std::string_view> names;
     expr->get_all_names(names);
-    for (auto&& name: names) {
+    for (auto&& name : names) {
         std::cout << name << ": " << expr->optimize()->partial_derivative(name)->optimize() << std::endl;
     }
 }
