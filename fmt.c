@@ -22,15 +22,16 @@
 #define fmt_one_cat_impl(x, ...) x ## __VA_ARGS__
 #define fmt_one_remove(...)
 
-#define fmt_one_nothing_fmt_one_replace
-#define fmt_one_replace(...) fmt_one_replace
-#define fmt_one_get_fstr(...) fmt_one_cat(fmt_one_nothing_, fmt_one_replace __VA_ARGS__ "")
+#define fmt_nothing_fmt_self_replace
+#define fmt_self_replace(...) fmt_self_replace
+#define fmt_arg_to_printf_fstr(...) fmt_one_cat(fmt_nothing_, fmt_self_replace __VA_ARGS__ "")
+
+#define fmt_one__w_
 #define fmt_one_1(...) _w_ (__VA_ARGS__) ,
 #define fmt_one_get_args(x) fmt_one_2(fmt_one_cat(fmt_one_, fmt_one_1 x))
 #define fmt_one_fmt_one_1 (),
 #define fmt_one_2(...) fmt_one_3(__VA_ARGS__)
 #define fmt_one_3(a, s) fmt_one_4 a
-#define fmt_one__w_
 #define fmt_one_4(...) __VA_OPT__(,) __VA_ARGS__
 
 // clang-format off
@@ -38,7 +39,7 @@
 snprintf(                                                                      \
     tmpbuf + strlen(tmpbuf),                                                   \
     sizeof(tmpbuf) - strlen(tmpbuf),                                           \
-    fmt_one_get_fstr(x)                                                        \
+    fmt_arg_to_printf_fstr(x)                                                        \
     fmt_one_get_args(x)                                                        \
 );
 // clang-format on
