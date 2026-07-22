@@ -52,19 +52,19 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-#define _fmt_fstr_nothing__fmt_fstr_self_replace
-#define _fmt_fstr_self_replace(...) _fmt_fstr_self_replace
-#define fmt_arg_to_printf_fstr(...) concat(_fmt_fstr_nothing_, _fmt_fstr_self_replace __VA_ARGS__ "")
+#define _fmt_split__fmt_split_fix_args (),
+#define _fmt_split__nothing
+#define _fmt_split_fix_args(...) _nothing(__VA_ARGS__),
+#define _fmt_split_concat(x) concat(_fmt_split_, _fmt_split_fix_args x)
+#define _fmt_split_parse(f, x) f(x)
+#define _fmt_split_call_on_parsed(f, x) _fmt_split_parse(f, _fmt_split_concat(x))
 
-#define _fmt_args__fmt_args_fix_args (),
+#define _fmt_get_fstr(args, fstr) fstr ""
 #define _fmt_args_drop_pars(...) __VA_OPT__(, ) __VA_ARGS__
-#define _fmt_args_drop_fstr(args, fstr) _fmt_args_drop_pars args
-#define _fmt_args_split(...) _fmt_args_drop_fstr(__VA_ARGS__)
-#define _fmt_args_nothing
-#define _fmt_args_fix_args(...) nothing(__VA_ARGS__),
-#define fmt_arg_to_printf_args(x) _fmt_args_split(concat(_fmt_args_, _fmt_args_fix_args x))
+#define _fmt_get_args(args, fstr) _fmt_args_drop_pars args
+#define _fmt_get(part, x) _fmt_split_call_on_parsed(_fmt_get_##part, x)
 
-#define fmt_arg_to_printf_fstr_args(x) fmt_arg_to_printf_fstr(x) fmt_arg_to_printf_args(x)
+#define fmt_arg_to_printf_fstr_args(x) _fmt_get(fstr, x) _fmt_get(args, x)
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -134,7 +134,7 @@ int main() {
     uint64_t val3 = 1;
     outfmtln("val1-1 = ", (--val1) "%zu; val2-1 = ", (--val2) "%zd; val3-1 = ", (8, --val3) "%0*" PRIu64 ";");
     outfmtln("val1-2 ", (M) "%s ", (--val1) "%zu; val2-2 = ", (--val2) "%zd; val3-2 = ", (--val3) "%" PRIu64 ";");
-    puts(fmt("val1-3 = ", (--val1) "%zu; val2-3 = ", (--val2) "%zd; val3-3 = ", (--val3) "%" PRIu64 ";"));
+    puts(fmt("val1-3 = ", (--val1) "%zu; val2-3 = ", (--val2) "%zd; val3-3 = ", (--val3) "%" PRIu64 ";", ()));
     char* buffers[16];
     buffers[0] = fmt((65536, 0) "%0*d");
     buffers[1] = fmt((65536, 1) "%0*d");
