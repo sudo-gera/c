@@ -35,12 +35,16 @@
 
 // clang-format off
 #define fmt_one_for_tmpbuf(x)                                                  \
-snprintf(                                                                      \
-    tmpbuf + strlen(tmpbuf),                                                   \
-    sizeof(tmpbuf) - strlen(tmpbuf),                                           \
+_fmt_last = snprintf(                                                          \
+    _fmt_pos,                                                                  \
+    _fmt_left,                                                                 \
     fmt_arg_to_printf_fstr(x)                                                  \
     fmt_arg_to_printf_args(x)                                                  \
-);
+);                                                                             \
+if (_fmt_last < 0) { fputs("fmt format error\n", stderr); break; }             \
+if (_fmt_last > _fmt_left ) { fputs("fmt overflow\n", stderr); break; }        \
+_fmt_pos += _fmt_last;                                                         \
+_fmt_left -= _fmt_last;
 // clang-format on
 
 #define fmt_00(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_01(__VA_ARGS__))
@@ -65,7 +69,12 @@ snprintf(                                                                      \
 #define fmt_19(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_20(__VA_ARGS__))
 #define fmt_20(x) fmt_one_for_tmpbuf(x)
 
-#define fmt(...) tmpbuf(__VA_OPT__(fmt_00(__VA_ARGS__)))
+#define fmt(...) tmpbuf(                                \
+    char* _fmt_pos = tmpbuf;                            \
+    size_t _fmt_left = sizeof(tmpbuf);                  \
+    int _fmt_last = 0;                                  \
+    __VA_OPT__(fmt_00(__VA_ARGS__))                     \
+)
 #define outfmt(...) fputs(fmt(__VA_ARGS__), stdout)
 #define errfmt(...) fputs(fmt(__VA_ARGS__), stdout)
 #define outfmtln(...) outfmt(__VA_ARGS__ __VA_OPT__(, )() "\n")
