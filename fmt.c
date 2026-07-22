@@ -18,15 +18,27 @@
          s;                                 \
      }).d)
 
+#define fmt_one_cat(x, ...) fmt_one_cat_impl(x, __VA_ARGS__)
+#define fmt_one_cat_impl(x, ...) x ## __VA_ARGS__
+#define fmt_one_remove(...)
+
+#define fmt_one_nothing_fmt_one_replace
+#define fmt_one_replace(...) fmt_one_replace
+#define fmt_one_get_fstr(...) fmt_one_cat(fmt_one_nothing_, fmt_one_replace __VA_ARGS__ "")
+#define fmt_one_1(...) _w_ (__VA_ARGS__) ,
+#define fmt_one_get_args(x) fmt_one_2(fmt_one_cat(fmt_one_, fmt_one_1 x))
+#define fmt_one_fmt_one_1 (),
+#define fmt_one_2(...) fmt_one_3(__VA_ARGS__)
+#define fmt_one_3(a, s) fmt_one_4 a
+#define fmt_one__w_
+#define fmt_one_4(...) __VA_OPT__(,) __VA_ARGS__
+
 // clang-format off
-#define fmt_one_get_fstr(...)
-#define fmt_one_get_args_impl(...) __VA_OPT__(,) __VA_ARGS__ fmt_one_get_fstr(
-#define fmt_one_get_args(x) fmt_one_get_args_impl x"")
 #define fmt_one_for_tmpbuf(x)                                                  \
 snprintf(                                                                      \
     tmpbuf + strlen(tmpbuf),                                                   \
     sizeof(tmpbuf) - strlen(tmpbuf),                                           \
-    fmt_one_get_fstr x ""                                                      \
+    fmt_one_get_fstr(x)                                                        \
     fmt_one_get_args(x)                                                        \
 );
 // clang-format on
@@ -59,11 +71,13 @@ snprintf(                                                                      \
 #define outfmtln(...) outfmt(__VA_ARGS__ __VA_OPT__(, )() "\n")
 #define errfmtln(...) errfmt(__VA_ARGS__ __VA_OPT__(, )() "\n")
 
+#define M "-"
+
 int main() {
     size_t val1 = -1;
     ssize_t val2 = -1;
     uint64_t val3 = 1;
-    outfmtln(() "val1-1 = ", (--val1) "%zu; val2-1 = ", (--val2) "%zd; val3-1 = ", (--val3) "%" PRIu64 ";");
-    outfmtln(() "val1-2 = ", (--val1) "%zu; val2-2 = ", (--val2) "%zd; val3-2 = ", (--val3) "%" PRIu64 ";");
-    outfmtln(() "val1-3 = ", (--val1) "%zu; val2-3 = ", (--val2) "%zd; val3-3 = ", (--val3) "%" PRIu64 ";");
+    outfmtln( "val1-1 = ", (--val1) "%zu; val2-1 = ", (--val2) "%zd; val3-1 = ", (--val3) "%" PRIu64 ";");
+    outfmtln( "val1-2 = ", (--val1) "%zu; val2-2 = ", (--val2) "%zd; val3-2 = ", (--val3) "%" PRIu64 ";");
+    outfmtln( "val1-3 = ", (--val1) "%zu; val2-3 = ", (--val2) "%zd; val3-3 = ", (--val3) "%" PRIu64 ";");
 }
