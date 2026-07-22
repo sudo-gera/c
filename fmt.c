@@ -33,19 +33,20 @@
 #define fmt_args_fix_args(...) nothing(__VA_ARGS__),
 #define fmt_arg_to_printf_args(x) fmt_args_split(fmt_cat(fmt_args_, fmt_args_fix_args x))
 
-// clang-format off
-#define fmt_one_for_tmpbuf(x)                                                  \
-_fmt_last = snprintf(                                                          \
-    _fmt_pos,                                                                  \
-    _fmt_left,                                                                 \
-    fmt_arg_to_printf_fstr(x)                                                  \
-    fmt_arg_to_printf_args(x)                                                  \
-);                                                                             \
-if (_fmt_last < 0) { fputs("fmt format error\n", stderr); break; }             \
-if (_fmt_last > _fmt_left ) { fputs("fmt overflow\n", stderr); break; }        \
-_fmt_pos += _fmt_last;                                                         \
-_fmt_left -= _fmt_last;
-// clang-format on
+#define fmt_one_for_tmpbuf(x)                                                                       \
+    _fmt_last = snprintf(_fmt_pos, _fmt_left, fmt_arg_to_printf_fstr(x) fmt_arg_to_printf_args(x)); \
+    if (_fmt_last < 0) {                                                                            \
+        fputs("fmt format error\n", stderr);                                                        \
+        tmpbuf[0] = 0;                                                                              \
+        break;                                                                                      \
+    }                                                                                               \
+    if (_fmt_last >= _fmt_left) {                                                                   \
+        fputs("fmt overflow\n", stderr);                                                            \
+        tmpbuf[0] = 0;                                                                              \
+        break;                                                                                      \
+    }                                                                                               \
+    _fmt_pos += _fmt_last;                                                                          \
+    _fmt_left -= _fmt_last;
 
 #define fmt_00(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_01(__VA_ARGS__))
 #define fmt_01(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_02(__VA_ARGS__))
@@ -69,16 +70,18 @@ _fmt_left -= _fmt_last;
 #define fmt_19(x, ...) fmt_one_for_tmpbuf(x) __VA_OPT__(fmt_20(__VA_ARGS__))
 #define fmt_20(x) fmt_one_for_tmpbuf(x)
 
-#define fmt(...) tmpbuf(                                \
-    char* _fmt_pos = tmpbuf;                            \
-    size_t _fmt_left = sizeof(tmpbuf);                  \
-    int _fmt_last = 0;                                  \
-    __VA_OPT__(fmt_00(__VA_ARGS__))                     \
-)
+#define fmt(...) \
+    tmpbuf(char* _fmt_pos = tmpbuf; int _fmt_left = sizeof(tmpbuf); int _fmt_last = 0; __VA_OPT__(fmt_00(__VA_ARGS__)))
 #define outfmt(...) fputs(fmt(__VA_ARGS__), stdout)
-#define errfmt(...) fputs(fmt(__VA_ARGS__), stdout)
-#define outfmtln(...) outfmt(__VA_ARGS__ __VA_OPT__(, )() "\n")
-#define errfmtln(...) errfmt(__VA_ARGS__ __VA_OPT__(, )() "\n")
+#define errfmt(...) fputs(fmt(__VA_ARGS__), stderr)
+#define outfmtln(...)                                                                                                  \
+    outfmt(__VA_ARGS__ __VA_OPT__(                                                                                     \
+        , )() "                                                                                                      " \
+              "                                        \n")
+#define errfmtln(...)                                                                                                  \
+    errfmt(__VA_ARGS__ __VA_OPT__(                                                                                     \
+        , )() "                                                                                                      " \
+              "                                        \n")
 
 #define M "-"
 
