@@ -52,17 +52,17 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-#define fmt_fstr_nothing_fmt_fstr_self_replace
-#define fmt_fstr_self_replace(...) fmt_fstr_self_replace
-#define fmt_arg_to_printf_fstr(...) concat(fmt_fstr_nothing_, fmt_fstr_self_replace __VA_ARGS__ "")
+#define _fmt_fstr_nothing__fmt_fstr_self_replace
+#define _fmt_fstr_self_replace(...) _fmt_fstr_self_replace
+#define fmt_arg_to_printf_fstr(...) concat(_fmt_fstr_nothing_, _fmt_fstr_self_replace __VA_ARGS__ "")
 
-#define fmt_args_fmt_args_fix_args (),
-#define fmt_args_drop_pars(...) __VA_OPT__(, ) __VA_ARGS__
-#define fmt_args_drop_fstr(args, fstr) fmt_args_drop_pars args
-#define fmt_args_split(...) fmt_args_drop_fstr(__VA_ARGS__)
-#define fmt_args_nothing
-#define fmt_args_fix_args(...) nothing(__VA_ARGS__),
-#define fmt_arg_to_printf_args(x) fmt_args_split(concat(fmt_args_, fmt_args_fix_args x))
+#define _fmt_args__fmt_args_fix_args (),
+#define _fmt_args_drop_pars(...) __VA_OPT__(, ) __VA_ARGS__
+#define _fmt_args_drop_fstr(args, fstr) _fmt_args_drop_pars args
+#define _fmt_args_split(...) _fmt_args_drop_fstr(__VA_ARGS__)
+#define _fmt_args_nothing
+#define _fmt_args_fix_args(...) nothing(__VA_ARGS__),
+#define fmt_arg_to_printf_args(x) _fmt_args_split(concat(_fmt_args_, _fmt_args_fix_args x))
 
 #define fmt_arg_to_printf_fstr_args(x) fmt_arg_to_printf_fstr(x) fmt_arg_to_printf_args(x)
 
