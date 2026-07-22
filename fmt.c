@@ -18,29 +18,28 @@
          s;                                 \
      }).d)
 
-#define fmt_one_cat(x, ...) fmt_one_cat_impl(x, __VA_ARGS__)
-#define fmt_one_cat_impl(x, ...) x ## __VA_ARGS__
-#define fmt_one_remove(...)
+#define fmt_cat(x, ...) fmt_cat_impl(x, __VA_ARGS__)
+#define fmt_cat_impl(x, ...) x##__VA_ARGS__
 
-#define fmt_nothing_fmt_self_replace
-#define fmt_self_replace(...) fmt_self_replace
-#define fmt_arg_to_printf_fstr(...) fmt_one_cat(fmt_nothing_, fmt_self_replace __VA_ARGS__ "")
+#define fmt_fstr_nothing_fmt_fstr_self_replace
+#define fmt_fstr_self_replace(...) fmt_fstr_self_replace
+#define fmt_arg_to_printf_fstr(...) fmt_cat(fmt_fstr_nothing_, fmt_fstr_self_replace __VA_ARGS__ "")
 
-#define fmt_one__w_
-#define fmt_one_1(...) _w_ (__VA_ARGS__) ,
-#define fmt_one_get_args(x) fmt_one_2(fmt_one_cat(fmt_one_, fmt_one_1 x))
-#define fmt_one_fmt_one_1 (),
-#define fmt_one_2(...) fmt_one_3(__VA_ARGS__)
-#define fmt_one_3(a, s) fmt_one_4 a
-#define fmt_one_4(...) __VA_OPT__(,) __VA_ARGS__
+#define fmt_args_fmt_args_fix_args (),
+#define fmt_args_drop_pars(...) __VA_OPT__(, ) __VA_ARGS__
+#define fmt_args_drop_fstr(args, fstr) fmt_args_drop_pars args
+#define fmt_args_split(...) fmt_args_drop_fstr(__VA_ARGS__)
+#define fmt_args_nothing
+#define fmt_args_fix_args(...) nothing(__VA_ARGS__),
+#define fmt_arg_to_printf_args(x) fmt_args_split(fmt_cat(fmt_args_, fmt_args_fix_args x))
 
 // clang-format off
 #define fmt_one_for_tmpbuf(x)                                                  \
 snprintf(                                                                      \
     tmpbuf + strlen(tmpbuf),                                                   \
     sizeof(tmpbuf) - strlen(tmpbuf),                                           \
-    fmt_arg_to_printf_fstr(x)                                                        \
-    fmt_one_get_args(x)                                                        \
+    fmt_arg_to_printf_fstr(x)                                                  \
+    fmt_arg_to_printf_args(x)                                                  \
 );
 // clang-format on
 
@@ -78,7 +77,7 @@ int main() {
     size_t val1 = -1;
     ssize_t val2 = -1;
     uint64_t val3 = 1;
-    outfmtln( "val1-1 = ", (--val1) "%zu; val2-1 = ", (--val2) "%zd; val3-1 = ", (--val3) "%" PRIu64 ";");
-    outfmtln( "val1-2 = ", (--val1) "%zu; val2-2 = ", (--val2) "%zd; val3-2 = ", (--val3) "%" PRIu64 ";");
-    outfmtln( "val1-3 = ", (--val1) "%zu; val2-3 = ", (--val2) "%zd; val3-3 = ", (--val3) "%" PRIu64 ";");
+    outfmtln("val1-1 = ", (--val1) "%zu; val2-1 = ", (--val2) "%zd; val3-1 = ", (--val3) "%" PRIu64 ";");
+    outfmtln("val1-2 = ", (--val1) "%zu; val2-2 = ", (--val2) "%zd; val3-2 = ", (--val3) "%" PRIu64 ";");
+    outfmtln("val1-3 = ", (--val1) "%zu; val2-3 = ", (--val2) "%zd; val3-3 = ", (--val3) "%" PRIu64 ";");
 }
