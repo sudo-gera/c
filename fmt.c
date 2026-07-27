@@ -63,6 +63,8 @@
 #define _fmt_args_drop_pars(...) __VA_OPT__(, ) __VA_ARGS__
 #define _fmt_get_args(args, fstr) _fmt_args_drop_pars args
 #define _fmt_get(part, x) _fmt_split_call_on_parsed(_fmt_get_##part, x)
+#define fmt_get_fstr(x) _fmt_get(fstr, x)
+#define fmt_get_args(x) _fmt_get(args, x)
 
 #define fmt_arg_to_printf_fstr_args(x) _fmt_get(fstr, x) _fmt_get(args, x)
 
@@ -125,6 +127,8 @@
 #define outfmtln(...) outfmt(__VA_ARGS__ __VA_OPT__(, ) "\n")
 #define errfmtln(...) errfmt(__VA_ARGS__ __VA_OPT__(, ) "\n")
 
+#define fmt_to_printf(...) macro_map(fmt_get_fstr __VA_OPT__(,) __VA_ARGS__) macro_map(fmt_get_args __VA_OPT__(,) __VA_ARGS__)
+
 ///////////////////////////////////////////////////////////////////////////////////////
 
 #if __INCLUDE_LEVEL__ == 0
@@ -136,7 +140,7 @@ int main() {
     uint64_t val3 = 1;
     outfmtln("val1-1 = ", (--val1) "%zu; val2-1 = ", (--val2) "%zd; val3-1 = ", (8, --val3) "%0*" PRIu64 ";");
     outfmtln("val1-2 ", (M) "%s ", (--val1) "%zu; val2-2 = ", (--val2) "%zd; val3-2 = ", (--val3) "%" PRIu64 ";");
-    puts(fmt("val1-3 = ", (--val1) "%zu; val2-3 = ", (--val2) "%zd; val3-3 = ", (--val3) "%" PRIu64 ";", ()));
+    puts(fmt("val1-3 = ", (--val1) "%zu; val2-3 = ", (--val2) "%zd; val3-3 = ", (--val3) "%" PRIu64 ";"));
     char* buffers[16];
     buffers[0] = fmt((65536, 0) "%0*d");
     buffers[1] = fmt((65536, 1) "%0*d");
@@ -159,6 +163,7 @@ int main() {
             outfmtln("Error: buffers[", (i) "%zu] is lost.");
         }
     }
+    printf(fmt_to_printf("val1-4 = ", (--val1) "%zu; val2-4 = ", (--val2) "%zd; val3-4 = ", (--val3) "%" PRIu64 ";\n"));
 }
 
 #endif
