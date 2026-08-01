@@ -31,16 +31,36 @@ def fire(coro: typing.Awaitable[Any]) -> None:
     task.add_done_callback(tasks.discard)
 
 recv_queue: asyncio.Queue[str | bytes] = asyncio.Queue(maxsize=64)
+send_queue: asyncio.Queue[str | bytes] = asyncio.Queue(maxsize=64)
 
 async def recv_into_queue(ws: ClientConnection) -> None:
     while 1:
         try:
             chunk = await ws.recv()
-            # print(repr(chunk), file=sys.stderr)
+            print(f"recving {chunk!r}", file=sys.stderr)
         except websockets.exceptions.ConnectionClosedOK:
             break
         else:
             await recv_queue.put(chunk)
+
+send_chunk_size = 256
+
+async def slow_send_from_queue(ws: ClientConnection) -> None:
+    while 1:
+        data = await send_queue.get()
+        for c in range(0, len(data), send_chunk_size):
+            await asyncio.sleep(0.01)
+            chunk = data[c:c+send_chunk_size]
+            print(f"sending {chunk!r}", file=sys.stderr)
+            await ws.send(
+                json.dumps(
+                    [chunk]
+                )
+            )
+
+async def flush_send_queue() -> None:
+    while not send_queue.empty():
+        await asyncio.sleep(0.01)
 
 def flush_recv_queue() -> None:
     while not recv_queue.empty():
@@ -67,6 +87,7 @@ async def open_pythonanywhere_websocket(ws_url: str, first_ws_message: str) -> C
         },
     )
     fire(recv_into_queue(ws))
+    fire(slow_send_from_queue(ws))
     await ws.send(first_ws_message)
     return ws
     
@@ -87,7 +108,8 @@ async def get_stdin_reader() -> asyncio.StreamReader:
 
 async def reader_to_ws(reader: asyncio.StreamReader, ws: ClientConnection) -> None:
     while (data := await reader.read(2**64)):
-        await ws.send(json.dumps([data.decode()]))
+        await send_queue.put(data.decode())
+        await flush_send_queue()
 
 async def recv_into_stream(ws: ClientConnection, stream: IO[str]) -> None:
     while 1:
@@ -105,7 +127,7 @@ async def recv_into_stream(ws: ClientConnection, stream: IO[str]) -> None:
                         stream.write(obj)
                         stream.flush()
 
-async def main(cookie: str, console_id: str, remote_host: str, remote_port: str) -> None:
+async def main(cookie: str, console_id: str, remote_host: str, remote_port: str, validate_args: bool) -> None:
     stdin = await get_stdin_reader()
 
     async with aiohttp.ClientSession() as session:
@@ -117,10 +139,16 @@ async def main(cookie: str, console_id: str, remote_host: str, remote_port: str)
             assert resp.ok
             url = resp.url
         
+        if validate_args:
+            return
+
         console_url = str(url.join(yarl.URL(f"consoles/{console_id}")))
         frame_url = os.path.join(console_url, 'frame')
 
         async with session.get(frame_url, headers=headers) as resp:
+            if not resp.ok:
+                print(resp.status, file=sys.stderr)
+                print(resp.text, file=sys.stderr)
             assert resp.ok
             data = await resp.read()
 
@@ -144,20 +172,24 @@ async def main(cookie: str, console_id: str, remote_host: str, remote_port: str)
     ws = await open_pythonanywhere_websocket(ws_url, first_ws_message)
     try:
 
-        await ws.send(json.dumps([f'\x03']))
+        await asyncio.sleep(4)
+        # await ws.send('"\u001b[8;26;163t"')
+        await send_queue.put(f'\x03')
+        await flush_send_queue()
         await asyncio.sleep(1)
-        await ws.send(json.dumps([
+        await send_queue.put(
             f"tee << EOFEOF > line_by_line_b64.py\n"
             f"{this_file.with_name('line_by_line_b64.py').open().read()}\n"
             f"EOFEOF\n"
             f"tee << EOFEOF > slow_pipe.py\n"
             f"{this_file.with_name('slow_pipe.py').open().read()}\n"
             f"EOFEOF\n"
-            f"clear ; sleep 2 ; stty -echo ; "
-            f"python3 line_by_line_b64.py decode '>>> ' | nc {shlex.join([remote_host, remote_port])} | python3 slow_pipe.py 16384 | python3 line_by_line_b64.py encode '<<< ' ; "
+            f": clear ; sleep 2 ; : stty -echo ; "
+            f"( trap 'stty sane' EXIT TERM HUP INT ; python3 line_by_line_b64.py decode '>>> ' | nc {shlex.join([remote_host, remote_port])} | python3 slow_pipe.py 16384 | python3 line_by_line_b64.py encode '<<< ' )"
             f"\n"
-        ]))
+        )
 
+        await flush_send_queue()
         await wait_and_flush_recv_queue(2)
 
         fire(recv_into_stream(ws, sys.stdout))
@@ -175,6 +207,7 @@ parser.add_argument('--cookie', required=True)
 parser.add_argument('--console-id', required=True)
 parser.add_argument('--remote-host', required=True)
 parser.add_argument('--remote-port', required=True)
+parser.add_argument('--validate-args', action='store_true')
 args = parser.parse_args()
 
-asyncio.run(main(args.cookie, args.console_id, args.remote_host, args.remote_port))
+asyncio.run(main(args.cookie, args.console_id, args.remote_host, args.remote_port, args.validate_args))
