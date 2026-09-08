@@ -42,7 +42,10 @@ if [[ "${command:0:3}" != 'fg-' ]]
 then
     ses="_${RANDOM}_${RANDOM}_${RANDOM}_${RANDOM}"
     tmux -Lindependent new -ds "$ses"
-    tmux -Lindependent send-keys -t "$ses" -l "export HISTFILE=/dev/null ; ${0@Q} 'fg-'${command@Q} ${service_path@Q}; exit"$'\n'
+    sleep 0.01
+    tmux -Lindependent send-keys -t "$ses" -l "export HISTFILE=/dev/null"$'\n'
+    sleep 0.01
+    tmux -Lindependent send-keys -t "$ses" -l "${0@Q} 'fg-'${command@Q} ${service_path@Q}; exit"$'\n'
     exit
 fi
 
@@ -65,6 +68,8 @@ fi
 
 function send(){
     tmux -L service new-window   -t "$service_name"
+    sleep 0.01
+    tmux -L service send-keys    -t "$service_name" -l "export HISTFILE=/dev/null"$'\n'
     sleep 0.01
     tmux -L service send-keys    -t "$service_name" -l "$1"$'\n'
 }
