@@ -468,3 +468,34 @@ def if_main_parse_args_and_asyncio_run(main: Callable[[if_main_parse_args_and_as
 
 ############################################################################################################################
 
+@dataclass
+class main_args:
+    tcp_listen_host: str
+    tcp_listen_port: int
+    tcp_connect_host: str
+    tcp_connect_port: int
+    log_level: LogLevelEnum
+
+async def on_connect(args: main_args, a_reader: asyncio.StreamReader, a_writer: asyncio.StreamWriter) -> None:
+    try:
+        logging.info(f"Accepted")
+
+
+    finally:
+        a_writer.close()
+        await a_writer.wait_closed()
+
+async def main(args: main_args) -> None:
+
+    set_log_level(args.log_level)
+
+    async with await asyncio.start_server(partial(on_connect, args), args.tcp_listen_host, args.tcp_listen_port) as server:
+        await server.serve_forever()
+
+if_main_parse_args_and_asyncio_run(main)
+
+
+
+
+
+

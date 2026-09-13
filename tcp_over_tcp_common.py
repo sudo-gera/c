@@ -468,3 +468,16 @@ def if_main_parse_args_and_asyncio_run(main: Callable[[if_main_parse_args_and_as
 
 ############################################################################################################################
 
+@dataclass
+class Transport(abc.ABC):
+    reader: asyncio.StreamReader
+    writer: asyncio.StreamWriter
+
+    async def main(self):
+        ...
+    
+    @contextlib.asynccontextmanager
+    async def 
+
+
+

@@ -468,3 +468,97 @@ def if_main_parse_args_and_asyncio_run(main: Callable[[if_main_parse_args_and_as
 
 ############################################################################################################################
 
+ca
+
+@dataclass
+class main_args:
+    tcp_listen_host: str
+    tcp_listen_port: int
+    tcp_connect_host: str
+    tcp_connect_port: int
+    log_level: LogLevelEnum
+
+@dataclass
+class worker_shared_context:
+    tcp_connect_host: str
+    tcp_connect_port: int
+    send_queue: asyncio.Queue[None]
+    recv_queue: asyncio.Queue[None]
+
+@dataclass
+class WorkerOneAttempt:
+    ctx: worker_shared_context
+    reader: asyncio.StreamReader
+    writer: asyncio.StreamWriter
+    index: int
+
+    async def read_loop(self):
+        while data := await self.reader.read():
+            await self.ctx.recv_queue.put(data)
+
+    async def write_loop(self):
+        while data := await self.ctx.send_queue.get():
+            await self.writer.write(data)
+
+    async def keep_alive(self):
+
+    async def loop(self):
+        await gather(
+            self.read_loop(),
+            self.write_loop(),
+        )
+
+@dataclass
+class NoKeepAliveWorker:
+    ctx: worker_shared_context
+    index: int
+
+    async def loop(self) -> None:
+
+        while 1:
+            
+            reader, writer = asyncio.open_connection(self.ctx.tcp_connect_host, self.ctx.tcp_connect_port)
+            try:
+                logging.info(f"[Worker {index:2d}] connected",)
+
+                attempt = WorkerOneAttempt(reader, writer)
+
+                await gather(
+                    ctx = self.ctx,
+                    reader = attempt.read_loop(),
+                    writer = attempt.write_loop(),
+                    index = self.index,
+                )
+
+            finally:
+                writer.close()
+                await writer.wait_closed()
+
+
+# class Workers:
+    
+
+
+async def on_connect(args: main_args, a_reader: asyncio.StreamReader, a_writer: asyncio.StreamWriter) -> None:
+    try:
+        logging.info(f"Accepted")
+
+        
+    finally:
+        a_writer.close()
+        await a_writer.wait_closed()
+
+async def main(args: main_args) -> None:
+
+    set_log_level(args.log_level)
+
+    async with await asyncio.start_server(partial(on_connect, args), args.tcp_listen_host, args.tcp_listen_port) as server:
+        await server.serve_forever()
+
+if_main_parse_args_and_asyncio_run(main)
+
+
+
+
+
+
