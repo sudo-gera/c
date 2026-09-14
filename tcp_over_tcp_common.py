@@ -469,15 +469,62 @@ def if_main_parse_args_and_asyncio_run(main: Callable[[if_main_parse_args_and_as
 ############################################################################################################################
 
 @dataclass
-class Transport(abc.ABC):
+# class Transport(abc.ABC):
+class Transport():
     reader: asyncio.StreamReader
     writer: asyncio.StreamWriter
+    on_recv: Callable[[bytes], None]
 
-    async def main(self):
-        ...
+    async def _write_chunk(self, data: bytes, drain: bool) -> None:
+        self.writer.write(data)
+        if drain:
+            await self.writer.drain()
+
+    async def _read_chunk(self, len: int) -> bytes:
+        return await self.reader.readexactly(len)
+
+
+    async def _write_sized(self, data: bytes, drain: bool) -> None:
+        await self._write_chunk(len(data).to_bytes(8, 'big'), drain=False)
+        await self._write_chunk(data, drain=drain)
+
+    async def _read_sized(self) -> bytes:
+        size = int.from_bytes(await self._read_chunk(8), 'big')
+        return await self._read_chunk(size)
+
+
+    async def _write_alive_data(self, data: bytes, drain: bool) -> None:
+        await self._write_sized(b'\0' + data, drain=drain)
     
-    @contextlib.asynccontextmanager
-    async def 
+    async def _write_alive_once(self, drain: bool) -> None:
+        await self._write_sized(b'\1', drain=drain)
+
+    async def _read_alive_data(self) -> None:
+        while True:
+            data = await self._read_sized()
+            if data[0]:
+                continue
+            else:
+                return data[1:]
 
 
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    async def loop(self) -> AsyncGenerator[None, None]:
+        ...
 
