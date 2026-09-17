@@ -468,6 +468,8 @@ def if_main_parse_args_and_asyncio_run(main: Callable[[if_main_parse_args_and_as
 
 ############################################################################################################################
 
+import tcp_over_tcp_common
+
 @dataclass
 class main_args:
     tcp_listen_host: str
@@ -476,14 +478,16 @@ class main_args:
     tcp_connect_port: int
     log_level: LogLevelEnum
 
-async def on_connect(args: main_args, a_reader: asyncio.StreamReader, a_writer: asyncio.StreamWriter) -> None:
+async def on_connect(args: main_args, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
     try:
         logging.info(f"Accepted")
-
-
+        transport_id = await reader.readexactly(16)
+        logging.info(f"Accepted {transport_id.hex() = !r}")
+        transport = tcp_over_tcp_common.transports[transport_id]
+        await transport.run(reader, writer)
     finally:
-        a_writer.close()
-        await a_writer.wait_closed()
+        writer.close()
+        await writer.wait_closed()
 
 async def main(args: main_args) -> None:
 

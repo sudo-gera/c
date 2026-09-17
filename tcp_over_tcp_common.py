@@ -133,398 +133,271 @@ async def gather(*coro: Awaitable[Any]) -> tuple[Any, ...]:
 
 ############################################################################################################################
 
-class LogLevelEnum(Enum):
-    CRITICAL = 50
-    FATAL = CRITICAL
-    ERROR = 40
-    WARNING = 30
-    WARN = WARNING
-    INFO = 20
-    DEBUG = 10
-    NOTSET = 0
-
-def set_log_level(log_level: LogLevelEnum | int) -> None:
-    if isinstance(log_level, LogLevelEnum):
-        log_level = log_level.value
-    assert isinstance(log_level, int)
-    logging.basicConfig(
-        level=log_level,
-        style='{',
-        format='{asctime:s} {levelname:^8s} {funcName}:{lineno} {message}',
-    )
-
-############################################################################################################################
-
-def isinstance_typing(value: Any, t: Any) -> bool:
-    try:
-        return isinstance(value, t)
-    except TypeError:
-        pass
-
-    origin = typing.get_origin(t)
-    args = typing.get_args(t)
-    assert origin is not None
-
-    if origin is Literal:
-        return value in args
-
-    if not isinstance_typing(value, origin):
-        return False
-
-    if origin is list:
-        assert len(args) == 1
-        return all([
-            isinstance_typing(v, args[0])
-            for v in value
-        ])
-
-    if origin is str:
-        assert len(args) == 1
-        return all([
-            isinstance_typing(v, args[0])
-            for v in value
-        ])
-
-    if origin is dict:
-        assert len(args) == 2
-        return all([
-            isinstance_typing(k, args[0]) and isinstance_typing(v, args[1])
-            for k, v in value.items()
-        ])
-
-    if origin is tuple:
-        if len(args) == 2 and args[1] is ...:
-            return all([
-                isinstance_typing(v, args[0])
-                for v in value
-            ])
-        else:
-            if len(args) != len(value):
-                return False
-            return all([
-                isinstance_typing(v, t)
-                for v, t in zip(value, args)
-            ])
-
-    assert False
-
-############################################################################################################################
-
 @dataclass(frozen=True)
-class dataclass_field:
-    field: Field[Any]
-    type: Any
-
-@typed_cache
-def get_fields(dclass: type[DataclassInstance]) -> list[dataclass_field]:
-
-    def process_one_filed(field: Field[Any]) -> dataclass_field:
-        if isinstance(field.type, str):
-            field_type = eval(field.type)
-        else:
-            field_type = field.type
-        return dataclass_field(
-            field=field,
-            type=field_type,
-        )
-
-    return [
-        process_one_filed(field)
-        for field in fields(dclass)
-    ]
-
-def check_dataclass_types(data: DataclassInstance) -> None:
-
-    for field in get_fields(type(data)):
-        assert isinstance_typing(getattr(data, field.field.name), field.type)
-
-dict_to_dataclass_t = TypeVar('dict_to_dataclass_t', bound=DataclassInstance)
-
-def dict_to_dataclass(data: dict[str, Any], dclass_type: type[dict_to_dataclass_t]) -> dict_to_dataclass_t:
-
-    assert all([isinstance(k, str) for k in data])
-    result = dclass_type(**data)
-    check_dataclass_types(result)
-    return result
-
-############################################################################################################################
-
-def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass: type[DataclassInstance]) -> None:
-    for field in get_fields(args_dataclass):
-
-        arg_name = field.field.name
-        arg_required = True
-        arg_type : Callable[[str], Any]|None = None
-        arg_default : Any = None
-        arg_choices : Any = None
-
-        if field.field.default is not MISSING: # v: t = SOME_DEFAULT
-            arg_default = field.field.default
-            arg_required = False
-
-        if field.field.default_factory is not MISSING: # v: t = field(default_factory=SOME_CALLABLE)
-            arg_default = field.field.default_factory()
-            arg_required = False
-
-        target_type = field.type
-
-        if (
-            sys.version_info >= (3, 10)
-            and
-            typing.get_origin(target_type) is types.UnionType  # t | None
-            or
-            typing.get_origin(target_type) is typing.Union  # typing.Optional[t], typing.Union[t, None], typing.Union[t, type(None)]
-        ):
-            union_args = typing.get_args(target_type)
-            assert len(union_args) == 2
-            assert type(None) in union_args
-            target_type = union_args[union_args[0] == type(None)]
-            assert target_type is not None
-            arg_required = False
-
-        if isinstance(target_type, type):
-            if issubclass(target_type, Enum | EnumMeta):
-                enum_members = target_type.__members__
-                assert isinstance(enum_members, types.MappingProxyType)
-                enum_members_dict = {name: enum_members.get(name) for name in enum_members.keys()}
-                def get_enum(user_input: str) -> Enum | EnumMeta:
-                    if user_input not in enum_members_dict:
-                        raise ValueError
-                    enum = enum_members_dict[user_input]
-                    if not isinstance(enum, Enum | EnumMeta):
-                        raise ValueError
-                    return enum
-                arg_type=get_enum
-                arg_choices=list(map(get_enum, enum_members_dict))
-            else:
-                arg_type = target_type
-
-        elif typing.get_origin(target_type) is typing.Literal:
-            literal_args = typing.get_args(target_type)
-            literal_types = {type(arg) for arg in literal_args}
-            assert len(literal_types)
-            literal_type = literal_types.pop()
-            arg_choices = literal_args
-            arg_type = literal_type
-
-        assert arg_type is not None
-
-        parser.add_argument(
-            '--' + arg_name.replace('_', '-'),
-            required=arg_required,
-            type=arg_type,
-            default=arg_default,
-            choices=arg_choices,
-        )
-
-############################################################################################################################
-
-def dataclass_to_json(value: DataclassInstance) -> str:
-    check_dataclass_types(value)
-    return json.dumps(vars(value), indent=4)
-
-json_to_dataclass_t = TypeVar('json_to_dataclass_t', bound=DataclassInstance)
-
-def json_to_dataclass(data: str, dclass_type: type[json_to_dataclass_t]) -> json_to_dataclass_t:
-    d = json.loads(data)
-    assert isinstance(d, dict)
-    assert all([isinstance(k, str) for k in d])
-    return dict_to_dataclass(d, dclass_type)
-
-############################################################################################################################
-
-def dataclass_to_file(value: DataclassInstance, path: pathlib.Path) -> None:
-    data = dataclass_to_json(value)
-    with path.open('w') as file:
-        file.write(data)
-
-file_to_dataclass_t = TypeVar('file_to_dataclass_t', bound=DataclassInstance)
-
-def file_to_dataclass(path: pathlib.Path, dclass_type: type[file_to_dataclass_t]) -> file_to_dataclass_t:
-    if not path.exists():
-        with path.open('w') as file:
-            json.dump({}, file)
-    assert path.exists()
-    assert path.is_file()
-    with path.open('r') as file:
-        data = file.read()
-    return json_to_dataclass(data, dclass_type)
-
-############################################################################################################################
-
-class path_based_lock:
-    def __init__(self, path: pathlib.Path, force_new_lock: bool):
-        assert force_new_lock
-        self.__path = path
-        self.__is_locked = False
-        self.__update_future : asyncio.Future[None] | None = None
-
-    def checking_switch_to(self, new_val: bool) -> None:
-        assert self.__is_locked != new_val
-        self.__is_locked = new_val
-        if self.__update_future is not None:
-            self.__update_future.set_result(None)
-            self.__update_future = None
-
-    async def wait_for_update(self) -> None:
-        if self.__update_future is None:
-            self.__update_future = asyncio.Future()
-        await self.__update_future
-
-    def is_locked(self) -> bool:
-        return self.__is_locked
-
-@typed_cache
-def get_path_based_lock(path: pathlib.Path) -> path_based_lock:
-    rpath = path.resolve()
-    if rpath != path:
-        return get_path_based_lock(rpath)
-    return path_based_lock(path, force_new_lock=True)
-
-############################################################################################################################
-
-mutexted_file_t = TypeVar('mutexted_file_t', bound=DataclassInstance)
-
-class locked_dataclass_file(typing.Generic[mutexted_file_t]):
-
-    def __init__(self, path: pathlib.Path, dclass_type: type[mutexted_file_t]) -> None:
-        self.__path = path
-        self.__dclass_type = dclass_type
-        self.__lock = get_path_based_lock(path)
-        self.__db : mutexted_file_t | None = None
-
-    def __enter__(self) -> mutexted_file_t:
-        self.__lock.checking_switch_to(True)
-        self.__db = file_to_dataclass(self.__path, self.__dclass_type)
-        return self.__db
-
-    def __exit__(self, exc_type: type[Any] | None, exc_value: Any, traceback: Any) -> None:
-        try:
-            if exc_type is None:
-                assert self.__db is not None
-                dataclass_to_file(self.__db, self.__path)
-        finally:
-            self.__db = None
-            self.__lock.checking_switch_to(False)
-
-    async def __aenter__(self) -> mutexted_file_t:
-        while self.__lock.is_locked():
-            await self.__lock.wait_for_update()
-        return self.__enter__()
-
-    async def __aexit__(self, exc_type: type[Any] | None, exc_value: Any, traceback: Any) -> None:
-        return self.__exit__(exc_type, exc_value, traceback)
-
-############################################################################################################################
-
-def can_use_event_loop() -> bool:
-    try:
-        loop = asyncio.get_running_loop()
-        return True
-    except RuntimeError:
-        return False
-
-############################################################################################################################
-
-class alive_or_raise:
-
-    def __init__(self, timeout: float) -> None:
-        self.__timeout = timeout
-        self.__started = False
-        self.mark_as_alive()
-
-    def mark_as_alive(self) -> None:
-
-        if not self.__started and can_use_event_loop():
-            fire(self.__checker())
-            self.__started = True
-
-        self.__raise_at = time.time() + self.__timeout
-
-    async def __checker(self) -> None:
-        while 1:
-            current_time = time.time()
-            until_raise = self.__raise_at - current_time
-            if until_raise <= 0:
-                raise KeyboardInterrupt
-            await asyncio.sleep(until_raise)
-
-############################################################################################################################
-
-if_main_parse_args_and_asyncio_run_arg = TypeVar('if_main_parse_args_and_asyncio_run_arg', bound=DataclassInstance)
-
-def if_main_parse_args_and_asyncio_run(main: Callable[[if_main_parse_args_and_asyncio_run_arg], Any]) -> Any:
-    if __name__ != '__main__':
-        return
-    hints = typing.get_type_hints(main)
-    hints.pop('return', None)
-    assert len(hints) == 1
-    main_args = [*hints.values()][0]
-    assert not TYPE_CHECKING or isinstance(main_args, type)
-    parser = argparse.ArgumentParser()
-    setup_parser_from_dataclass(parser, main_args)
-    args = parser.parse_args()
-    asyncio.run(main(main_args(**vars(args))))
-
-############################################################################################################################
+class Config:
+    alive_interval: float
+    count_max: float
+    cache_chunks: int
 
 @dataclass
-# class Transport(abc.ABC):
-class Transport():
-    reader: asyncio.StreamReader
-    writer: asyncio.StreamWriter
-    on_recv: Callable[[bytes], None]
+class _TransportChunked(abc.ABC):
+    __reader: asyncio.StreamReader
+    __writer: asyncio.StreamWriter
 
-    async def _write_chunk(self, data: bytes, drain: bool) -> None:
-        self.writer.write(data)
+    async def __write_chunk(self, data: bytes, drain: bool) -> None:
+        self.__writer.write(data)
         if drain:
-            await self.writer.drain()
+            await self.__writer.drain()
 
-    async def _read_chunk(self, len: int) -> bytes:
-        return await self.reader.readexactly(len)
+    async def __read_chunk(self, len: int) -> bytes:
+        return await self.__reader.readexactly(len)
 
+    async def aclose(self) -> None:
+        self.__writer.close()
+        await self.__writer.wait_closed()
 
-    async def _write_sized(self, data: bytes, drain: bool) -> None:
-        await self._write_chunk(len(data).to_bytes(8, 'big'), drain=False)
-        await self._write_chunk(data, drain=drain)
+@dataclass
+class _TransportSized(abc.ABC):
+    __wrapped: _TransportChunked
 
-    async def _read_sized(self) -> bytes:
-        size = int.from_bytes(await self._read_chunk(8), 'big')
-        return await self._read_chunk(size)
+    async def __write_sized(self, data: bytes | int, drain: bool) -> None:
+        if isinstance(data, int):
+            encoded = 2**64 + ~data
+            if not data < encoded:
+                raise ValueError(f"Value of {data = } is too big.")
+            await self.__wrapped.__write_chunk(encoded.to_bytes(8, 'big'), drain=drain)
+        else:
+            await self.__wrapped.__write_chunk(len(data).to_bytes(8, 'big'), drain=False)
+            await self.__wrapped.__write_chunk(data, drain=drain)
 
+    async def __read_sized(self) -> bytes | int:
+        size = int.from_bytes(await self.__wrapped.__read_chunk(8), 'big')
+        decoded = 2**64 + ~size
+        if decoded < size:
+            return decoded
+        return await self.__wrapped.__read_chunk(size)
 
-    async def _write_alive_data(self, data: bytes, drain: bool) -> None:
-        await self._write_sized(b'\0' + data, drain=drain)
-    
-    async def _write_alive_once(self, drain: bool) -> None:
-        await self._write_sized(b'\1', drain=drain)
+    async def aclose(self) -> None:
+        await self.__wrapped.aclose()
 
-    async def _read_alive_data(self) -> None:
+@dataclass
+class TransportKeepAlive(abc.ABC):
+    __wrapped: _TransportSized
+    __conf: Config
+    __on_recv: Callable[[bytes], None]
+    __send_queue: asyncio.Queue[bytes]
+    __last_alive: float = field(default_factory=time.monotonic)
+
+    async def __write_loop(self) -> None:
         while True:
-            data = await self._read_sized()
-            if data[0]:
+            data = await self.__send_queue.get()
+            await self.__wrapped.__write_sized(data, True)
+
+    async def __write_alive_loop(self) -> None:
+        while True:
+            await self.__wrapped.__write_sized(0, drain=True)
+            await asyncio.sleep(self.__conf.alive_interval)
+
+    async def __read_loop(self) -> None:
+        while True:
+            data = await self.__wrapped.__read_sized()
+            if isinstance(data, bytes):
+                self.__on_recv(data)
                 continue
-            else:
-                return data[1:]
+            if data == 0:
+                self.__last_alive = time.monotonic()
+            raise ValueError(f"Unknown value for {data = !r}")
 
+    async def __check_loop(self) -> None:
+        while True:
+            current_time = time.monotonic()
+            if current_time - self.__last_alive > self.__conf.alive_interval * ( self.__conf.count_max + 1 ):
+                raise TabError
 
+    async def loop(self) -> None:
+        # try:
+        await gather(
+            self.__write_loop(),
+            self.__write_alive_loop(),
+            self.__read_loop(),
+            self.__check_loop(),
+        )
+        # finally:
+        #     self.aclose()
+
+    async def aclose(self) -> None:
+        await self.__wrapped.aclose()
+
+@dataclass
+class _MultiTransport:
+    conf: Config
+    on_recv: Callable[[bytes], None]
+    __send_queue: asyncio.Queue[bytes] = field(default_factory=partial(asyncio.Queue, maxsize=8))
+
+    async def run(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+        transport = TransportKeepAlive(
+            _TransportSized(
+                _TransportChunked(
+                    reader,
+                    writer,
+                ),
+            ),
+            self.conf,
+            self.on_recv,
+            self.__send_queue,
+        )
+        await transport.loop()
+
+    async def write(self, data: bytes) -> None:
+        await self.__send_queue.put(data)
+
+@dataclass
+class _DeliveryMessagesTransport:
+    conf: Config
+    on_recv_data: Callable[[int, bytes], None]
+    on_recv_ack: Callable[[int], None]
+    __wrapped: _MultiTransport = cast(_MultiTransport, ...)
+
+    def __on_recv(self, data: bytes) -> None:
+        index, data = int.from_bytes(data[:8], 'big'), data[8:]
+        ack_index = 2**64 + ~index
+        if ack_index < index:
+            self.on_recv_ack(ack_index)
+        else:
+            self.on_recv_data(ack_index, data)
+
+    def __post_init__(self) -> None:
+
+        self.__wrapped = _MultiTransport(
+            self.conf,
+            self.__on_recv,
+        )
+
+    async def write_data(self, index: int, data: bytes) -> None:
+        await self.__wrapped.write(index.to_bytes(8, 'big') + data)
+
+    async def write_ack(self, index: int) -> None:
+        await self.__wrapped.write((2**64 + ~index).to_bytes(8, 'big'))
+
+    async def run(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+        return await self.__wrapped.run(reader, writer)
+
+@dataclass
+class RecvBuffer:
+    size: int
+
+    __data: dict[int, bytes] = field(default_factory=dict)
+    __event = field(default_factory=asyncio.Event)
+    __consumed = 0
+
+    def __notify(self) -> None:
+        self.__event.set()
+        self.__event.clear()
+
+    def maybe_add_to_cache(self, index: int, data: bytes) -> None:
+        if index < self.__consumed:
+            return
+        self.__data[index] = data
+        if len(self.__data) > self.size * 2:
+            self.__data = dict(
+                sorted(
+                    self.__data.items()
+                )[:self.size]
+            )
+        self.__notify()
+
+    async def read(self) -> bytes:
+        while True:
+            if self.__consumed in self.__data:
+                value = self.__data.pop(self.__consumed)
+                self.__consumed += 1
+                self.__notify()
+                return value
+            await self.__event.wait()
+
+@dataclass
+class SendBuffer:
+    size: int
+
+    __data: dict[int, bytes] = field(default_factory=dict)
+    __externally_written: int = 0
+    __event = field(default_factory=asyncio.Event)
+    __last_selected: int = 0
+
+    def __notify(self) -> None:
+        self.__event.set()
+        self.__event.clear()
+
+    async def write(self, data: bytes) -> None:
+        index = self.__externally_written
+        self.__externally_written += 1
+
+        while True:
+            if len(self.__data) < self.size:
+                self.__data[index] = data
+                self.__notify()
+                return
+            await self.__event.wait()
+
+    def mark_as_delivered(self, index: int) -> None:
+        self.__data.pop(index, None)
+        self.__notify()
     
+    async def select_message_to_send(self) -> tuple[int, bytes]:
 
+        for attempt in range(self.__last_selected+1, self.__externally_written):
+            if attempt in self.__data:
+                self.__last_selected = attempt
+                return self.__last_selected, self.__data[self.__last_selected]
 
+        while not self.__data:
+            await self.__event.wait()
+        
+        self.__last_selected = min(self.__data.keys())
+        return self.__last_selected, self.__data[self.__last_selected]
 
+class RetryTransport:
+    conf: Config
 
+    __send_buffer: SendBuffer = cast(SendBuffer, ...)
+    __recv_buffer: RecvBuffer = cast(RecvBuffer, ...)
+    __wrapped: _DeliveryMessagesTransport = cast(_DeliveryMessagesTransport, ...)
 
+    def __on_recv_data(self, index: int, data: bytes) -> None:
+        self.__recv_buffer.maybe_add_to_cache(index, data)
+        fire(self.__wrapped.write_ack(index))
 
+    def __on_recv_ack(self, index: int) -> None:
+        self.__send_buffer.mark_as_delivered(index)
 
+    def __post_init__(self) -> None:
+        self.__send_buffer = SendBuffer(self.conf.cache_chunks)
+        self.__recv_buffer = RecvBuffer(self.conf.cache_chunks)
+        self.__wrapped = _DeliveryMessagesTransport(
+            self.conf,
+            self.__on_recv_data,
+            self.__on_recv_ack,
+        )
+        fire(self.__loop())
 
+    async def run(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+        return await self.__wrapped.run(reader, writer)
 
+    async def __internal_send_loop(self) -> None:
+        while True:
+            index, data = await self.__send_buffer.select_message_to_send()
+            await self.__wrapped.write_data(index, data)
+    
+    async def read(self) -> bytes:
+        return await self.__recv_buffer.read()
+    
+    async def write(self, data: bytes) -> None:
+        await self.__send_buffer.write(data)
 
+    async def __loop(self) -> None:
+        await gather(
+            self.__internal_send_loop(),
+        )
 
-
-
-
-
-
-    async def loop(self) -> AsyncGenerator[None, None]:
-        ...
+transports: defaultdict[bytes, RetryTransport] = defaultdict(RetryTransport)
 
