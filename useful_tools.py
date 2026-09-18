@@ -244,7 +244,7 @@ def dict_to_dataclass(data: dict[str, Any], dclass_type: type[dict_to_dataclass_
     assert all([isinstance(k, str) for k in data])
     result = dclass_type(**data)
     check_dataclass_types(result)
-    return cast(dict_to_dataclass_t, result)
+    return cast(dict_to_dataclass_t, cast(None, result))
 
 ############################################################################################################################
 

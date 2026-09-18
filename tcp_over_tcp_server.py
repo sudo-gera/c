@@ -85,7 +85,27 @@ def fire(coro: typing.Awaitable[Any]) -> None:
     tasks.add(task)
     task.add_done_callback(tasks.discard)
 
-gather_t_t = TypeVar('gather_t_t')
+############################################################################################################################
+
+_gather_awaitable_wrapper_t = TypeVar('_gather_awaitable_wrapper_t')
+
+def _gather_awaitable_wrapper(awaitable: Awaitable[_gather_awaitable_wrapper_t]) -> asyncio.Task[_gather_awaitable_wrapper_t]:
+    async def wrapper() -> _gather_awaitable_wrapper_t:
+        return await awaitable
+    return asyncio.create_task(wrapper())
+
+async def _gather_impl(*awaitables: Awaitable[Any]) -> tuple[Any, ...]:
+    tasks = [
+        _gather_awaitable_wrapper(awaitable)
+        for awaitable in awaitables
+    ]
+    try:
+        return tuple(await asyncio.gather(*tasks))
+    finally:
+        for task in tasks:
+            task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
+
 gather_t1_t = TypeVar('gather_t1_t')
 gather_t2_t = TypeVar('gather_t2_t')
 gather_t3_t = TypeVar('gather_t3_t')
@@ -97,39 +117,43 @@ gather_t8_t = TypeVar('gather_t8_t')
 gather_t9_t = TypeVar('gather_t9_t')
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], /) -> tuple[gather_t1_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], /) -> tuple[gather_t1_t]:
     ...
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], /) -> tuple[gather_t1_t, gather_t2_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], /) -> tuple[gather_t1_t, gather_t2_t]:
     ...
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t]:
     ...
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t]:
     ...
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t]:
     ...
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t]:
     ...
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], v7: Awaitable[gather_t7_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t, gather_t7_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], v7: Awaitable[gather_t7_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t, gather_t7_t]:
     ...
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], v7: Awaitable[gather_t7_t], v8: Awaitable[gather_t8_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t, gather_t7_t, gather_t8_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], v7: Awaitable[gather_t7_t], v8: Awaitable[gather_t8_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t, gather_t7_t, gather_t8_t]:
     ...
 
-async def gather(*coro: Awaitable[Any]) -> tuple[Any, ...]:
-    return tuple(await asyncio.gather(*coro))
+@overload
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], v7: Awaitable[gather_t7_t], v8: Awaitable[gather_t8_t], v9: Awaitable[gather_t9_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t, gather_t7_t, gather_t8_t, gather_t9_t]:
+    ...
+
+async def gather_and_cancel(*coro: Awaitable[Any]) -> tuple[Any, ...]:
+    return tuple(await _gather_impl(*coro))
 
 ############################################################################################################################
 
@@ -245,7 +269,7 @@ def dict_to_dataclass(data: dict[str, Any], dclass_type: type[dict_to_dataclass_
     assert all([isinstance(k, str) for k in data])
     result = dclass_type(**data)
     check_dataclass_types(result)
-    return result
+    return cast(dict_to_dataclass_t, cast(None, result))
 
 ############################################################################################################################
 
@@ -283,7 +307,7 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
             arg_required = False
 
         if isinstance(target_type, type):
-            if issubclass(target_type, Enum | EnumMeta):
+            if issubclass(target_type, Enum) or issubclass(target_type, EnumMeta):
                 enum_members = target_type.__members__
                 assert isinstance(enum_members, types.MappingProxyType)
                 enum_members_dict = {name: enum_members.get(name) for name in enum_members.keys()}
@@ -291,7 +315,7 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
                     if user_input not in enum_members_dict:
                         raise ValueError
                     enum = enum_members_dict[user_input]
-                    if not isinstance(enum, Enum | EnumMeta):
+                    if not isinstance(enum, Enum) and not isinstance(enum, EnumMeta):
                         raise ValueError
                     return enum
                 arg_type=get_enum
@@ -469,6 +493,7 @@ def if_main_parse_args_and_asyncio_run(main: Callable[[if_main_parse_args_and_as
 ############################################################################################################################
 
 import tcp_over_tcp_common
+import tcp_over_tcp_transport
 
 @dataclass
 class main_args:
@@ -476,25 +501,71 @@ class main_args:
     tcp_listen_port: int
     tcp_connect_host: str
     tcp_connect_port: int
-    log_level: LogLevelEnum
+    log_level: LogLevelEnum = LogLevelEnum.DEBUG
+    alive_interval: float = 15
+    max_keepalives_without_answer: int = 1
+    cache_chunks: int = 256
+    max_chunk_size: int = 2**40
 
-async def on_connect(args: main_args, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+@dataclass
+class context:
+    args: main_args
+    transports: tcp_over_tcp_transport.AcceptedTransports
+    routes: dict[uuid.UUID, tcp_over_tcp_common.connection]
+
+async def create_connection(ctx: context, conn: tcp_over_tcp_common.connection) -> None:
+    reader, writer = await asyncio.open_connection(ctx.args.tcp_connect_host, ctx.args.tcp_connect_port)
     try:
-        logging.info(f"Accepted")
-        transport_id = await reader.readexactly(16)
-        logging.info(f"Accepted {transport_id.hex() = !r}")
-        transport = tcp_over_tcp_common.transports[transport_id]
-        await transport.run(reader, writer)
+        logging.info(f"Client connected: {conn.connection_id = }")
+
+        await tcp_over_tcp_common.route(ctx.routes, conn, reader, writer)
+
     finally:
         writer.close()
         await writer.wait_closed()
+        logging.info(f"Client closed: {conn.connection_id = }")
+
+async def on_new_transport(ctx: context, transport: tcp_over_tcp_transport.ITransport) -> None:
+
+    while True:
+        connection_id, data = await tcp_over_tcp_common.parse_input_messge(transport)
+        conn = ctx.routes.get(connection_id, None)
+        if conn is None:
+            conn = tcp_over_tcp_common.connection(
+                connection_id,
+                transport,
+            )
+            fire(create_connection(ctx, conn))
+        if conn is None:
+            raise TypeError(f"something went wrong")
+        await conn.is_routed.wait()
+        ctx.routes[connection_id].queue.put_nowait(data)
 
 async def main(args: main_args) -> None:
 
     set_log_level(args.log_level)
 
-    async with await asyncio.start_server(partial(on_connect, args), args.tcp_listen_host, args.tcp_listen_port) as server:
-        await server.serve_forever()
+    conf = tcp_over_tcp_transport.Config(
+        args.alive_interval,
+        args.max_keepalives_without_answer,
+        args.cache_chunks,
+        args.max_chunk_size,
+    )
+
+    ctx = context(
+        args,
+        cast(tcp_over_tcp_transport.AcceptedTransports, ...),
+        {},
+    )
+
+    transports = tcp_over_tcp_transport.AcceptedTransports(
+        conf,
+        partial(on_new_transport, ctx),
+    )
+
+    ctx.transports = transports
+
+    await asyncio.Future()
 
 if_main_parse_args_and_asyncio_run(main)
 

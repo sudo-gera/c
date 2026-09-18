@@ -269,7 +269,7 @@ def dict_to_dataclass(data: dict[str, Any], dclass_type: type[dict_to_dataclass_
     assert all([isinstance(k, str) for k in data])
     result = dclass_type(**data)
     check_dataclass_types(result)
-    return cast(dict_to_dataclass_t, result)
+    return cast(dict_to_dataclass_t, cast(None, result))
 
 ############################################################################################################################
 
@@ -493,6 +493,7 @@ def if_main_parse_args_and_asyncio_run(main: Callable[[if_main_parse_args_and_as
 ############################################################################################################################
 
 import tcp_over_tcp_common
+import tcp_over_tcp_transport
 
 @dataclass
 class main_args:
@@ -509,8 +510,8 @@ class main_args:
 @dataclass
 class context:
     args: main_args
-    transports: tcp_over_tcp_common.ConnectedTransports
-    routes: dict[uuid.UUID, asyncio.Queue[bytes]]
+    transports: tcp_over_tcp_transport.ConnectedTransports
+    routes: dict[uuid.UUID, tcp_over_tcp_common.connection]
 
 async def start_transport(ctx: context) -> None:
     while True:
@@ -525,58 +526,41 @@ async def start_transport(ctx: context) -> None:
 
 async def on_connect(ctx: context, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
     try:
-        connection_id = uuid.uuid4()
-        logging.info(f"Client accepted: {connection_id = }")
+        conn = tcp_over_tcp_common.connection(
+            uuid.uuid4(),
+            ctx.transports.wrapped,
+        )
+        logging.info(f"Client accepted: {conn.connection_id = }")
 
-        ctx.routes[connection_id] = asyncio.Queue()
-        try:
-            async def to_transport():
-                while (data := await reader.read(2**16)):
-                    await ctx.transports.wrapped.write(data)
-                await ctx.transports.wrapped.write(data)
-
-            async def from_transport():
-                while (data := await ctx.routes[connection_id].get()):
-                    writer.write(data)
-                    await writer.drain()
-                await writer.write_eof()
-
-            await gather_and_cancel(
-                to_transport(),
-                from_transport(),
-            )
-        finally:
-            del ctx.routes[connection_id]
+        await tcp_over_tcp_common.route(ctx.routes, conn, reader, writer)
     finally:
         writer.close()
         await writer.wait_closed()
-        logging.info(f"Client closed: {connection_id = }")
+        logging.info(f"Client closed: {conn.connection_id = }")
 
-async def router(ctx: context) -> None:
+async def router(ctx: context, transport: tcp_over_tcp_transport.ITransport) -> None:
     while True:
-        data = ctx.transports.wrapped.read()
-        if len(data) < tcp_over_tcp_common.uuid_bytes_size:
-            raise ValueError(f"Got small chunk: {data = !r}")
-        connection_id, data = uuid.UUID(bytes=data[:tcp_over_tcp_common.uuid_bytes_size]), data[tcp_over_tcp_common.uuid_bytes_size:]
+        connection_id, data = await tcp_over_tcp_common.parse_input_messge(transport)
         if connection_id not in ctx.routes:
             logging.warning(f"Ignoring data for {connection_id = !r}")
-        ctx.routes[connection_id].put_nowait(data)
+        else:
+            ctx.routes[connection_id].queue.put_nowait(data)
 
 async def start_server(ctx: context) -> None:
 
-    set_log_level(ctx.args.log_level)
-
-    async with await asyncio.start_server(partial(on_connect, ctx.args, ctx.transports), ctx.args.tcp_listen_host, ctx.args.tcp_listen_port) as server:
+    async with await asyncio.start_server(partial(on_connect, ctx), ctx.args.tcp_listen_host, ctx.args.tcp_listen_port) as server:
         await server.serve_forever()
 
 async def main(args: main_args) -> None:
-    conf = tcp_over_tcp_common.Config(
+    set_log_level(args.log_level)
+
+    conf = tcp_over_tcp_transport.Config(
         args.alive_interval,
         args.max_keepalives_without_answer,
         args.cache_chunks,
         args.max_chunk_size,
     )
-    transports = tcp_over_tcp_common.ConnectedTransport(conf)
+    transports = tcp_over_tcp_transport.ConnectedTransports(conf)
 
     ctx = context(
         args,
@@ -585,7 +569,7 @@ async def main(args: main_args) -> None:
     )
 
     await gather_and_cancel(
-        router(ctx),
+        router(ctx, transports.wrapped),
         start_server(ctx),
         start_transport(ctx),
     )
