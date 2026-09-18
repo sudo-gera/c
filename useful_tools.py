@@ -85,7 +85,6 @@ def fire(coro: typing.Awaitable[Any]) -> None:
     tasks.add(task)
     task.add_done_callback(tasks.discard)
 
-gather_t_t = TypeVar('gather_t_t')
 gather_t1_t = TypeVar('gather_t1_t')
 gather_t2_t = TypeVar('gather_t2_t')
 gather_t3_t = TypeVar('gather_t3_t')
@@ -245,7 +244,7 @@ def dict_to_dataclass(data: dict[str, Any], dclass_type: type[dict_to_dataclass_
     assert all([isinstance(k, str) for k in data])
     result = dclass_type(**data)
     check_dataclass_types(result)
-    return result
+    return cast(dict_to_dataclass_t, result)
 
 ############################################################################################################################
 
@@ -283,7 +282,7 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
             arg_required = False
 
         if isinstance(target_type, type):
-            if issubclass(target_type, Enum | EnumMeta):
+            if issubclass(target_type, Enum) or issubclass(target_type, EnumMeta):
                 enum_members = target_type.__members__
                 assert isinstance(enum_members, types.MappingProxyType)
                 enum_members_dict = {name: enum_members.get(name) for name in enum_members.keys()}
@@ -291,7 +290,7 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
                     if user_input not in enum_members_dict:
                         raise ValueError
                     enum = enum_members_dict[user_input]
-                    if not isinstance(enum, Enum | EnumMeta):
+                    if not isinstance(enum, Enum) and not isinstance(enum, EnumMeta):
                         raise ValueError
                     return enum
                 arg_type=get_enum
@@ -419,10 +418,11 @@ class locked_dataclass_file(typing.Generic[mutexted_file_t]):
 
 def can_use_event_loop() -> bool:
     try:
-        loop = asyncio.get_running_loop()
-        return True
+        asyncio.get_running_loop()
     except RuntimeError:
         return False
+    else:
+        return True
 
 ############################################################################################################################
 

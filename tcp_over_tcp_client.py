@@ -85,7 +85,27 @@ def fire(coro: typing.Awaitable[Any]) -> None:
     tasks.add(task)
     task.add_done_callback(tasks.discard)
 
-gather_t_t = TypeVar('gather_t_t')
+############################################################################################################################
+
+_gather_awaitable_wrapper_t = TypeVar('_gather_awaitable_wrapper_t')
+
+def _gather_awaitable_wrapper(awaitable: Awaitable[_gather_awaitable_wrapper_t]) -> asyncio.Task[_gather_awaitable_wrapper_t]:
+    async def wrapper() -> _gather_awaitable_wrapper_t:
+        return await awaitable
+    return asyncio.create_task(wrapper())
+
+async def _gather_impl(*awaitables: Awaitable[Any]) -> tuple[Any, ...]:
+    tasks = [
+        _gather_awaitable_wrapper(awaitable)
+        for awaitable in awaitables
+    ]
+    try:
+        return tuple(await asyncio.gather(*tasks))
+    finally:
+        for task in tasks:
+            task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
+
 gather_t1_t = TypeVar('gather_t1_t')
 gather_t2_t = TypeVar('gather_t2_t')
 gather_t3_t = TypeVar('gather_t3_t')
@@ -97,39 +117,43 @@ gather_t8_t = TypeVar('gather_t8_t')
 gather_t9_t = TypeVar('gather_t9_t')
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], /) -> tuple[gather_t1_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], /) -> tuple[gather_t1_t]:
     ...
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], /) -> tuple[gather_t1_t, gather_t2_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], /) -> tuple[gather_t1_t, gather_t2_t]:
     ...
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t]:
     ...
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t]:
     ...
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t]:
     ...
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t]:
     ...
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], v7: Awaitable[gather_t7_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t, gather_t7_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], v7: Awaitable[gather_t7_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t, gather_t7_t]:
     ...
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], v7: Awaitable[gather_t7_t], v8: Awaitable[gather_t8_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t, gather_t7_t, gather_t8_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], v7: Awaitable[gather_t7_t], v8: Awaitable[gather_t8_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t, gather_t7_t, gather_t8_t]:
     ...
 
-async def gather(*coro: Awaitable[Any]) -> tuple[Any, ...]:
-    return tuple(await asyncio.gather(*coro))
+@overload
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], v7: Awaitable[gather_t7_t], v8: Awaitable[gather_t8_t], v9: Awaitable[gather_t9_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t, gather_t7_t, gather_t8_t, gather_t9_t]:
+    ...
+
+async def gather_and_cancel(*coro: Awaitable[Any]) -> tuple[Any, ...]:
+    return tuple(await _gather_impl(*coro))
 
 ############################################################################################################################
 
@@ -245,7 +269,7 @@ def dict_to_dataclass(data: dict[str, Any], dclass_type: type[dict_to_dataclass_
     assert all([isinstance(k, str) for k in data])
     result = dclass_type(**data)
     check_dataclass_types(result)
-    return result
+    return cast(dict_to_dataclass_t, result)
 
 ############################################################################################################################
 
@@ -283,7 +307,7 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
             arg_required = False
 
         if isinstance(target_type, type):
-            if issubclass(target_type, Enum | EnumMeta):
+            if issubclass(target_type, Enum) or issubclass(target_type, EnumMeta):
                 enum_members = target_type.__members__
                 assert isinstance(enum_members, types.MappingProxyType)
                 enum_members_dict = {name: enum_members.get(name) for name in enum_members.keys()}
@@ -291,7 +315,7 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
                     if user_input not in enum_members_dict:
                         raise ValueError
                     enum = enum_members_dict[user_input]
-                    if not isinstance(enum, Enum | EnumMeta):
+                    if not isinstance(enum, Enum) and not isinstance(enum, EnumMeta):
                         raise ValueError
                     return enum
                 arg_type=get_enum
@@ -468,7 +492,7 @@ def if_main_parse_args_and_asyncio_run(main: Callable[[if_main_parse_args_and_as
 
 ############################################################################################################################
 
-ca
+import tcp_over_tcp_common
 
 @dataclass
 class main_args:
@@ -476,84 +500,96 @@ class main_args:
     tcp_listen_port: int
     tcp_connect_host: str
     tcp_connect_port: int
-    log_level: LogLevelEnum
+    log_level: LogLevelEnum = LogLevelEnum.DEBUG
+    alive_interval: float = 15
+    max_keepalives_without_answer: int = 1
+    cache_chunks: int = 256
+    max_chunk_size: int = 2**40
 
 @dataclass
-class worker_shared_context:
-    tcp_connect_host: str
-    tcp_connect_port: int
-    send_queue: asyncio.Queue[None]
-    recv_queue: asyncio.Queue[None]
+class context:
+    args: main_args
+    transports: tcp_over_tcp_common.ConnectedTransports
+    routes: dict[uuid.UUID, asyncio.Queue[bytes]]
 
-@dataclass
-class WorkerOneAttempt:
-    ctx: worker_shared_context
-    reader: asyncio.StreamReader
-    writer: asyncio.StreamWriter
-    index: int
+async def start_transport(ctx: context) -> None:
+    while True:
+        reader, writer = await asyncio.open_connection(ctx.args.tcp_connect_host, ctx.args.tcp_connect_port)
+        try:
+            logging.info(f"Transport connected")
+            await ctx.transports.no_owning_connect(reader, writer)
+        finally:
+            writer.close()
+            await writer.wait_closed()
+            logging.info(f"Transport closed")
 
-    async def read_loop(self):
-        while data := await self.reader.read():
-            await self.ctx.recv_queue.put(data)
-
-    async def write_loop(self):
-        while data := await self.ctx.send_queue.get():
-            await self.writer.write(data)
-
-    async def keep_alive(self):
-
-    async def loop(self):
-        await gather(
-            self.read_loop(),
-            self.write_loop(),
-        )
-
-@dataclass
-class NoKeepAliveWorker:
-    ctx: worker_shared_context
-    index: int
-
-    async def loop(self) -> None:
-
-        while 1:
-            
-            reader, writer = asyncio.open_connection(self.ctx.tcp_connect_host, self.ctx.tcp_connect_port)
-            try:
-                logging.info(f"[Worker {index:2d}] connected",)
-
-                attempt = WorkerOneAttempt(reader, writer)
-
-                await gather(
-                    ctx = self.ctx,
-                    reader = attempt.read_loop(),
-                    writer = attempt.write_loop(),
-                    index = self.index,
-                )
-
-            finally:
-                writer.close()
-                await writer.wait_closed()
-
-
-# class Workers:
-    
-
-
-async def on_connect(args: main_args, a_reader: asyncio.StreamReader, a_writer: asyncio.StreamWriter) -> None:
+async def on_connect(ctx: context, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
     try:
-        logging.info(f"Accepted")
+        connection_id = uuid.uuid4()
+        logging.info(f"Client accepted: {connection_id = }")
 
-        
+        ctx.routes[connection_id] = asyncio.Queue()
+        try:
+            async def to_transport():
+                while (data := await reader.read(2**16)):
+                    await ctx.transports.wrapped.write(data)
+                await ctx.transports.wrapped.write(data)
+
+            async def from_transport():
+                while (data := await ctx.routes[connection_id].get()):
+                    writer.write(data)
+                    await writer.drain()
+                await writer.write_eof()
+
+            await gather_and_cancel(
+                to_transport(),
+                from_transport(),
+            )
+        finally:
+            del ctx.routes[connection_id]
     finally:
-        a_writer.close()
-        await a_writer.wait_closed()
+        writer.close()
+        await writer.wait_closed()
+        logging.info(f"Client closed: {connection_id = }")
+
+async def router(ctx: context) -> None:
+    while True:
+        data = ctx.transports.wrapped.read()
+        if len(data) < tcp_over_tcp_common.uuid_bytes_size:
+            raise ValueError(f"Got small chunk: {data = !r}")
+        connection_id, data = uuid.UUID(bytes=data[:tcp_over_tcp_common.uuid_bytes_size]), data[tcp_over_tcp_common.uuid_bytes_size:]
+        if connection_id not in ctx.routes:
+            logging.warning(f"Ignoring data for {connection_id = !r}")
+        ctx.routes[connection_id].put_nowait(data)
+
+async def start_server(ctx: context) -> None:
+
+    set_log_level(ctx.args.log_level)
+
+    async with await asyncio.start_server(partial(on_connect, ctx.args, ctx.transports), ctx.args.tcp_listen_host, ctx.args.tcp_listen_port) as server:
+        await server.serve_forever()
 
 async def main(args: main_args) -> None:
+    conf = tcp_over_tcp_common.Config(
+        args.alive_interval,
+        args.max_keepalives_without_answer,
+        args.cache_chunks,
+        args.max_chunk_size,
+    )
+    transports = tcp_over_tcp_common.ConnectedTransport(conf)
 
-    set_log_level(args.log_level)
+    ctx = context(
+        args,
+        transports,
+        {},
+    )
 
-    async with await asyncio.start_server(partial(on_connect, args), args.tcp_listen_host, args.tcp_listen_port) as server:
-        await server.serve_forever()
+    await gather_and_cancel(
+        router(ctx),
+        start_server(ctx),
+        start_transport(ctx),
+    )
+
 
 if_main_parse_args_and_asyncio_run(main)
 
