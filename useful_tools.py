@@ -223,7 +223,7 @@ def set_log_level(log_level: LogLevelEnum | int) -> None:
     logging.basicConfig(
         level=log_level,
         style='{',
-        format='{asctime:s} {levelname:^8s} {funcName}:{lineno} {message}',
+        format='{asctime:s} {levelname:^8s} {funcName:>32s}:{lineno:<8d} {message}',
     )
 
 ############################################################################################################################

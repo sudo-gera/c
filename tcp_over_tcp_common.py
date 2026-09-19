@@ -223,7 +223,7 @@ def set_log_level(log_level: LogLevelEnum | int) -> None:
     logging.basicConfig(
         level=log_level,
         style='{',
-        format='{asctime:s} {levelname:^8s} {funcName}:{lineno} {message}',
+        format='{asctime:s} {levelname:^8s} {funcName:>32s}:{lineno:<8d} {message}',
     )
 
 ############################################################################################################################
@@ -544,31 +544,31 @@ class connection:
     async def write_message(self, data: bytes) -> None:
         await self.transport.write(self.connection_id.bytes + data)
 
+    async def conn_route_loop(self, ctx: context, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+        ctx.routes[self.connection_id] = self
+        try:
+            self.is_routed.set()
+            async def to_transport() -> None:
+                while (data := await reader.read(2**16)):
+                    await self.write_message(data)
+                await self.write_message(data)
+
+            async def from_transport() -> None:
+                while (data := await self.queue.get()):
+                    writer.write(data)
+                    await writer.drain()
+                writer.write_eof()
+
+            await gather_and_cancel(
+                to_transport(),
+                from_transport(),
+            )
+        finally:
+            del ctx.routes[self.connection_id]
+
 @dataclass
 class context:
     routes: dict[uuid.UUID, connection] = field(default_factory=dict)
-
-async def conn_route_loop(ctx: context, conn: connection, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
-    ctx.routes[conn.connection_id] = conn
-    try:
-        conn.is_routed.set()
-        async def to_transport() -> None:
-            while (data := await reader.read(2**16)):
-                await conn.write_message(data)
-            await conn.write_message(data)
-
-        async def from_transport() -> None:
-            while (data := await conn.queue.get()):
-                writer.write(data)
-                await writer.drain()
-            writer.write_eof()
-
-        await gather_and_cancel(
-            to_transport(),
-            from_transport(),
-        )
-    finally:
-        del ctx.routes[conn.connection_id]
 
 class INewConnectionHandler(abc.ABC):
     

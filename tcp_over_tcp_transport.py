@@ -223,7 +223,7 @@ def set_log_level(log_level: LogLevelEnum | int) -> None:
     logging.basicConfig(
         level=log_level,
         style='{',
-        format='{asctime:s} {levelname:^8s} {funcName}:{lineno} {message}',
+        format='{asctime:s} {levelname:^8s} {funcName:>32s}:{lineno:<8d} {message}',
     )
 
 ############################################################################################################################
@@ -546,12 +546,13 @@ class _reject_concurrent:
             terminate(f"Internal invariant is broken")
         self.__locked = False
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, kw_only=True)
 class Config:
-    alive_interval: float
-    max_keepalives_without_answer: int
-    cache_chunks: int
-    max_chunk_size: int
+    alive_interval: float = 15
+    max_keepalives_without_answer: int = 1
+    cache_chunks: int = 256
+    max_chunk_size: int = 2**40
+    resend_interval: float = 1
 
     def __post_init__(self) -> None:
         if self.alive_interval <= 0:
@@ -564,6 +565,8 @@ class Config:
             raise ValueError("max_chunk_size must be > 0")
         if self.max_chunk_size >= 2**64-1:
             raise ValueError("max_chunk_size must be < 2**64-1")
+        if self.resend_interval <= 0:
+            raise ValueError("resend_interval must be > 0")
 
 @dataclass
 class _TransportChunked(abc.ABC):
@@ -632,9 +635,8 @@ class _TransportKeepAlive(abc.ABC):
     async def __read_loop(self) -> None:
         while True:
             data = await self.wrapped.read_sized()
-            if data is None:
-                self.__last_alive = time.monotonic()
-            else:
+            self.__last_alive = time.monotonic()
+            if data is not None:
                 self.on_recv(data)
                 continue
 
@@ -767,35 +769,51 @@ class RecvBuffer:
     def recv_if_can(self, index: int, data: bytes) -> bool:
         if index in range(self._consumed, self._consumed + self.size):
             with self._data as d:
-                d.setdefault(index, data)
+                if index in d:
+                    logging.debug(F"Chunk {index:20d}: recv duplicate")
+                else:
+                    logging.debug(F"Chunk {index:20d}: recv first")
+                    d[index] = data
             return True
         else:
             # Send ACK to old messages to remove them from sender retransmission loop.
-            return index < self._consumed
+            if index < self._consumed:
+                logging.debug(F"Chunk {index:20d}: too old")
+                return True
+            else:
+                logging.debug(F"Chunk {index:20d}: too new")
+                return False
+                
 
     async def read(self) -> bytes:
         while True:
             await self._data._wait_until(lambda d: self._consumed in d)
             with self._data as d:
                 value = d.pop(self._consumed)
+                logging.debug(F"Chunk {self._consumed:20d}: consumed")
                 self._consumed += 1
                 return value
 
 @dataclass
 class SendBuffer:
     size: int
+    resend_interval: float
+    on_send: Callable[[int, bytes], Awaitable[Any]]
 
     _data: observable_data[dict[int, bytes]] = field(default_factory=lambda: observable_data(dict()))
     _externally_written: int = 0
-    _message_selector: AsyncGenerator[tuple[int, bytes], None] = cast(AsyncGenerator[tuple[int, bytes], None], ...)
+    # _message_selector: AsyncGenerator[tuple[int, bytes], None] = cast(AsyncGenerator[tuple[int, bytes], None], ...)
 
     def __post_init__(self) -> None:
         if self.size <= 0:
             raise ValueError("size must be positive")
-        self._message_selector = self.__message_selector()
 
-    async def __message_selector(self) -> AsyncGenerator[tuple[int, bytes], None]:
+    async def select_message_to_send(self) -> None:
+        next_attempt_at = time.monotonic()
         while True:
+            await asyncio.sleep(next_attempt_at - time.monotonic())
+            next_attempt_at += self.resend_interval
+
             await self._data._wait_until(lambda d: bool(d))
             with self._data as d:
                 min_d_keys = min(d.keys())
@@ -803,7 +821,8 @@ class SendBuffer:
                 with self._data as d:
                     value = d.get(index, None)
                 if value is not None:
-                    yield index, value
+                    logging.debug(F"Chunk {index:20d}: sending to transport")
+                    await self.on_send(index, value)
 
     async def write(self, data: bytes) -> None:
         await self._data._wait_until(lambda d: len(d) < self.size)
@@ -813,15 +832,14 @@ class SendBuffer:
             index = self._externally_written
             self._externally_written += 1
 
+            logging.debug(F"Chunk {index:20d}: written to send buffer")
             d[index] = data
             return
 
     def mark_as_delivered(self, index: int) -> None:
+        logging.debug(F"Chunk {index:20d}: received ACK")
         with self._data as d:
             d.pop(index, None)
-
-    async def select_message_to_send(self) -> tuple[int, bytes]:
-        return await self._message_selector.asend(None)
 
 class ITransport(abc.ABC):
     # part of public interface
@@ -845,13 +863,17 @@ class _RetryTransport(ITransport):
     _acks_to_send: asyncio.Queue[int] = field(default_factory=asyncio.Queue)
 
     def __post_init__(self) -> None:
-        self._send_buffer = SendBuffer(self.conf.cache_chunks)
-        self._recv_buffer = RecvBuffer(self.conf.cache_chunks)
         self._wrapped = _DeliveryMessagesTransport(
             self.conf,
             self.__on_recv_data,
             self.__on_recv_ack,
         )
+        self._send_buffer = SendBuffer(
+            self.conf.cache_chunks,
+            self.conf.resend_interval,
+            self._wrapped.write_data,
+        )
+        self._recv_buffer = RecvBuffer(self.conf.cache_chunks)
 
     def __on_recv_data(self, index: int, data: bytes) -> None:
         if self._recv_buffer.recv_if_can(index, data):
@@ -901,9 +923,7 @@ class _RetryTransport(ITransport):
                     fire(async_raise(e), halt_on_exception=False)
 
     async def __internal_send_loop(self) -> None:
-        while True:
-            index, data = await self._send_buffer.select_message_to_send()
-            await self._wrapped.write_data(index, data)
+        await self._send_buffer.select_message_to_send()
 
 @dataclass
 class _DebuggerTransport(ITransport):

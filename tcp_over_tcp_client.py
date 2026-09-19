@@ -223,7 +223,7 @@ def set_log_level(log_level: LogLevelEnum | int) -> None:
     logging.basicConfig(
         level=log_level,
         style='{',
-        format='{asctime:s} {levelname:^8s} {funcName}:{lineno} {message}',
+        format='{asctime:s} {levelname:^8s} {funcName:>32s}:{lineno:<8d} {message}',
     )
 
 ############################################################################################################################
@@ -535,17 +535,14 @@ def if_main_parse_args_and_asyncio_run(main: Callable[[if_main_parse_args_and_as
 import tcp_over_tcp_common
 import tcp_over_tcp_transport
 
-@dataclass
-class main_args:
+@dataclass(frozen=True)
+class main_args(tcp_over_tcp_transport.Config):
     tcp_listen_host: str
     tcp_listen_port: int
     tcp_connect_host: str
     tcp_connect_port: int
-    log_level: LogLevelEnum = LogLevelEnum.DEBUG
-    alive_interval: float = 15
-    max_keepalives_without_answer: int = 1
-    cache_chunks: int = 256
-    max_chunk_size: int = 2**40
+    reconnect_interval: float
+    log_level: LogLevelEnum
 
 @dataclass
 class context:
@@ -555,44 +552,39 @@ class context:
 
 async def start_transport(ctx: context) -> None:
     while True:
-        reader, writer = await asyncio.open_connection(ctx.args.tcp_connect_host, ctx.args.tcp_connect_port)
         try:
-            logging.info(f"Transport connected")
-            await ctx.transports.no_owning_connect(reader, writer)
-        finally:
-            writer.close()
-            await writer.wait_closed()
-            logging.info(f"Transport closed")
+            reader, writer = await asyncio.open_connection(ctx.args.tcp_connect_host, ctx.args.tcp_connect_port)
+            try:
+                logging.info(f"Transport connected")
+                await ctx.transports.no_owning_connect(reader, writer)
+            finally:
+                writer.close()
+                await writer.wait_closed()
+                logging.info(f"Transport closed")
+        except Exception as e:
+            logging.warning(f"Transport error: {e!r}")
+        await asyncio.sleep(ctx.args.reconnect_interval)
 
 async def on_client_connect(ctx: context, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
     try:
-        conn = tcp_over_tcp_common.connection(
-            uuid.uuid4(),
-            ctx.transports.wrapped,
-        )
-        logging.info(f"Client accepted: {conn.connection_id = }")
-
-        await tcp_over_tcp_common.conn_route_loop(ctx.ctx, conn, reader, writer)
-    finally:
-        writer.close()
-        await writer.wait_closed()
-        logging.info(f"Client closed: {conn.connection_id = }")
-
-@dataclass
-class NewConnectionHandler(tcp_over_tcp_common.INewConnectionHandler):
-    ctx: context
-
-    async def create_connection(self, conn: tcp_over_tcp_common.connection) -> None:
-        reader, writer = await asyncio.open_connection(self.ctx.args.tcp_connect_host, self.ctx.args.tcp_connect_port)
         try:
-            logging.info(f"Client connected: {conn.connection_id = }")
+            conn = tcp_over_tcp_common.connection(
+                uuid.uuid4(),
+                ctx.transports.wrapped,
+            )
+            logging.info(f"Client accepted: {conn.connection_id = }")
 
-            await tcp_over_tcp_common.conn_route_loop(self.ctx.ctx, conn, reader, writer)
-
+            await conn.conn_route_loop(ctx.ctx, reader, writer)
         finally:
             writer.close()
             await writer.wait_closed()
             logging.info(f"Client closed: {conn.connection_id = }")
+    except Exception as e:
+        logging.warning(f"Transport error: {e!r}")
+
+@dataclass
+class NewConnectionHandler(tcp_over_tcp_common.INewConnectionHandler):
+    ctx: context
 
     async def handle_new_connection(self, transport: tcp_over_tcp_transport.ITransport, connection_id: uuid.UUID) -> tcp_over_tcp_common.connection | None:
         logging.warning(f"Ignoring data for {connection_id = !r}")
@@ -611,10 +603,11 @@ async def main(args: main_args) -> None:
     set_log_level(args.log_level)
 
     conf = tcp_over_tcp_transport.Config(
-        args.alive_interval,
-        args.max_keepalives_without_answer,
-        args.cache_chunks,
-        args.max_chunk_size,
+        alive_interval = args.alive_interval,
+        max_keepalives_without_answer = args.max_keepalives_without_answer,
+        cache_chunks = args.cache_chunks,
+        max_chunk_size = args.max_chunk_size,
+        resend_interval = args.resend_interval,
     )
     transports = tcp_over_tcp_transport.ConnectedTransports(conf)
 
