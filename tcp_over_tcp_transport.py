@@ -719,47 +719,25 @@ class _DeliveryMessagesTransport:
 
 @dataclass
 class lock_less_condition:
-    _event: asyncio.Event = field(default_factory=asyncio.Event)
+    _fut: asyncio.Future[None] | None = None
 
-    def notify(self) -> None:
-        # fires all futures from internal list
-        self._event.set()
-        # does not unfire them but clears the flag for new ones
-        self._event.clear()
+    def notify_all(self) -> None:
+        if self._fut is not None:
+            self._fut.set_result(None)
+            self.fut = None
 
-    async def wait(self) -> None:
-        # 1. Creates future.
-        # 2. Puts future into internal list.
-        # only after that
-        # 3. Releases event loop for other tasks by awaiting the future.
-        await self._event.wait()
-
-observable_data_t = TypeVar('observable_data_t')
-
-@dataclass
-class observable_data(Generic[observable_data_t]):
-    _value: observable_data_t
-    _cond: lock_less_condition = field(default_factory=lock_less_condition)
-
-    async def _wait_until(self, predicate: Callable[[observable_data_t], bool]) -> None:
-        # When using this function,
-        # make sure that `predicate` depends only on passed value.
-        # Otherwise might get a deadlock, because
-        # you would not be notified when other values change.
-        while not predicate(self._value):
-            await self._cond.wait()
-
-    def __enter__(self) -> observable_data_t:
-        return self._value
-    
-    def __exit__(self, *_: Any) -> None:
-        self._cond.notify()
+    async def wait_until(self, predicate: callable[[], bool]) -> None:
+        while not predicate():
+            if self._fut is None:
+                self._fut = asyncio.Future()
+            await self._fut
 
 @dataclass
 class RecvBuffer:
     size: int
 
-    _data: observable_data[dict[int, bytes]] = field(default_factory=lambda: observable_data(dict()))
+    _cond: lock_less_condition = field(default_factory=lock_less_condition)
+    _data: dict[int, bytes] = field(default_factory=dict)
     _consumed = 0
 
     def __post_init__(self) -> None:
@@ -768,31 +746,31 @@ class RecvBuffer:
 
     def recv_if_can(self, index: int, data: bytes) -> bool:
         if index in range(self._consumed, self._consumed + self.size):
-            with self._data as d:
-                if index in d:
-                    logging.debug(F"Chunk {index:20d}: recv duplicate")
-                else:
-                    logging.debug(F"Chunk {index:20d}: recv first")
-                    d[index] = data
+            if index in self._data:
+                logging.debug(F"Chunk {index:20d}: recv duplicate")
+            else:
+                logging.debug(F"Chunk {index:20d}: recv first")
+                self._data[index] = data
+                self._cond.notify_all()
             return True
         else:
-            # Send ACK to old messages to remove them from sender retransmission loop.
             if index < self._consumed:
                 logging.debug(F"Chunk {index:20d}: too old")
+                # Send ACK to old messages to remove them from sender retransmission loop.
                 return True
             else:
                 logging.debug(F"Chunk {index:20d}: too new")
                 return False
-                
+
 
     async def read(self) -> bytes:
         while True:
-            await self._data._wait_until(lambda d: self._consumed in d)
-            with self._data as d:
-                value = d.pop(self._consumed)
-                logging.debug(F"Chunk {self._consumed:20d}: consumed")
-                self._consumed += 1
-                return value
+            await self._data._wait_until(lambda: self._consumed in self._data)
+            value = self._data.pop(self._consumed)
+            self._cond.notify_all()
+            logging.debug(F"Chunk {self._consumed:20d}: consumed")
+            self._consumed += 1
+            return value
 
 @dataclass
 class SendBuffer:
@@ -800,29 +778,54 @@ class SendBuffer:
     resend_interval: float
     on_send: Callable[[int, bytes], Awaitable[Any]]
 
-    _data: observable_data[dict[int, bytes]] = field(default_factory=lambda: observable_data(dict()))
+    _data: dict[int, bytes] = field(default_factory=dict)
+    _cond: lock_less_condition = field(default_factory=lock_less_condition)
     _externally_written: int = 0
-    # _message_selector: AsyncGenerator[tuple[int, bytes], None] = cast(AsyncGenerator[tuple[int, bytes], None], ...)
+    _current_attempt_num: int = 0
 
     def __post_init__(self) -> None:
         if self.size <= 0:
             raise ValueError("size must be positive")
 
-    async def select_message_to_send(self) -> None:
+    async def attempt_notifier(self) -> None:
         next_attempt_at = time.monotonic()
         while True:
             await asyncio.sleep(next_attempt_at - time.monotonic())
             next_attempt_at += self.resend_interval
+            self._current_attempt_num += 1
+            self._cond.notify_all()
+
+    async def __select_message_to_send(self) -> None:
+        while True:
 
             await self._data._wait_until(lambda d: bool(d))
-            with self._data as d:
-                min_d_keys = min(d.keys())
-            for index in range(min_d_keys, self._externally_written):
-                with self._data as d:
-                    value = d.get(index, None)
-                if value is not None:
-                    logging.debug(F"Chunk {index:20d}: sending to transport")
-                    await self.on_send(index, value)
+
+            current_attempt_num = self._current_attempt_num
+
+            for index in count(min(self._data.keys())):
+                
+                if index not in self._data:
+                    if index < self._externally_written:
+                        continue
+                    else:
+                        await self._data._wait_until(
+                            lambda: (
+                                index in self._data
+                                    or
+                                self._current_attempt_num != current_attempt_num
+                            )
+                        )
+                        if self._current_attempt_num != current_attempt_num:
+                            break
+
+                value = self._data[index]
+                logging.debug(F"Chunk {index:20d}: sending to transport")
+                await self.on_send(index, value)
+
+    async def loop(self) -> None:
+        await gather_and_cancel(
+            self.__select_message_to_send(),
+        )
 
     async def write(self, data: bytes) -> None:
         await self._data._wait_until(lambda d: len(d) < self.size)
@@ -923,7 +926,7 @@ class _RetryTransport(ITransport):
                     fire(async_raise(e), halt_on_exception=False)
 
     async def __internal_send_loop(self) -> None:
-        await self._send_buffer.select_message_to_send()
+        await self._send_buffer.loop()
 
 @dataclass
 class _DebuggerTransport(ITransport):
