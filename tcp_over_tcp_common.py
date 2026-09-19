@@ -532,6 +532,9 @@ def if_main_parse_args_and_asyncio_run(main: Callable[[if_main_parse_args_and_as
 
 ############################################################################################################################
 
+# This file is not a security layer.
+# Authentication and encryption must be handled on other layers.
+
 import tcp_over_tcp_transport
 
 @dataclass
@@ -539,32 +542,27 @@ class connection:
     connection_id: uuid.UUID
     transport: tcp_over_tcp_transport.ITransport
     queue: asyncio.Queue[bytes] = field(default_factory=asyncio.Queue)
-    is_routed: asyncio.Event = field(default_factory=asyncio.Event)
 
     async def write_message(self, data: bytes) -> None:
         await self.transport.write(self.connection_id.bytes + data)
 
     async def conn_route_loop(self, ctx: context, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
-        ctx.routes[self.connection_id] = self
-        try:
-            self.is_routed.set()
-            async def to_transport() -> None:
-                while (data := await reader.read(2**16)):
-                    await self.write_message(data)
+        async def to_transport() -> None:
+            while (data := await reader.read(2**16)):
                 await self.write_message(data)
+            await self.write_message(data)
 
-            async def from_transport() -> None:
-                while (data := await self.queue.get()):
-                    writer.write(data)
-                    await writer.drain()
-                writer.write_eof()
+        async def from_transport() -> None:
+            while (data := await self.queue.get()):
+                writer.write(data)
+                await writer.drain()
+            writer.write_eof()
 
-            await gather_and_cancel(
-                to_transport(),
-                from_transport(),
-            )
-        finally:
-            del ctx.routes[self.connection_id]
+        # wait for latter result or first error
+        await gather_and_cancel(
+            to_transport(),
+            from_transport(),
+        )
 
 @dataclass
 class context:
@@ -587,6 +585,6 @@ async def route_incoming_messages(ctx: context, transport: tcp_over_tcp_transpor
         if conn is None:
             conn = await new_conn_handler.handle_new_connection(transport, connection_id)
         if conn is None:
-            return
+            continue
         ctx.routes[connection_id].queue.put_nowait(data)
 

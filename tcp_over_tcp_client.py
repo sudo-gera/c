@@ -532,6 +532,9 @@ def if_main_parse_args_and_asyncio_run(main: Callable[[if_main_parse_args_and_as
 
 ############################################################################################################################
 
+# This file is not a security layer.
+# Authentication and encryption must be handled on other layers.
+
 import tcp_over_tcp_common
 import tcp_over_tcp_transport
 
@@ -574,8 +577,10 @@ async def on_client_connect(ctx: context, reader: asyncio.StreamReader, writer: 
             )
             logging.info(f"Client accepted: {conn.connection_id = }")
 
+            ctx.ctx.routes[conn.connection_id] = conn
             await conn.conn_route_loop(ctx.ctx, reader, writer)
         finally:
+            ctx.ctx.routes.pop(conn.connection_id, None)
             writer.close()
             await writer.wait_closed()
             logging.info(f"Client closed: {conn.connection_id = }")

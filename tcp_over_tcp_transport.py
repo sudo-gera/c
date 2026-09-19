@@ -532,6 +532,9 @@ def if_main_parse_args_and_asyncio_run(main: Callable[[if_main_parse_args_and_as
 
 ############################################################################################################################
 
+# This file is not a security layer.
+# Authentication and encryption must be handled on other layers.
+
 @dataclass
 class _reject_concurrent:
     __locked: bool = False
@@ -552,7 +555,7 @@ class Config:
     max_keepalives_without_answer: int = 1
     cache_chunks: int = 256
     max_chunk_size: int = 2**40
-    resend_interval: float = 1
+    resend_interval: float = 8
 
     def __post_init__(self) -> None:
         if self.alive_interval <= 0:
@@ -612,7 +615,10 @@ class _TransportKeepAlive(abc.ABC):
     send_queue: asyncio.Queue[bytes]
 
     __last_alive: float = field(default_factory=time.monotonic)
-    __alive_queue: asyncio.Queue[None] = field(default_factory=lambda: asyncio.Queue(maxsize=8))
+    __alive_queue: asyncio.Queue[None] = cast(asyncio.Queue[None], ...)
+
+    def __post_init__(self) -> None:
+        self.__alive_queue: asyncio.Queue[None] = asyncio.Queue(maxsize=self.conf.max_keepalives_without_answer*2+8)
 
     async def __write_loop(self) -> None:
         while True:
@@ -723,10 +729,11 @@ class lock_less_condition:
 
     def notify_all(self) -> None:
         if self._fut is not None:
-            self._fut.set_result(None)
-            self.fut = None
+            fut = self._fut
+            self._fut = None
+            fut.set_result(None)
 
-    async def wait_until(self, predicate: callable[[], bool]) -> None:
+    async def wait_until(self, predicate: Callable[[], bool]) -> None:
         while not predicate():
             if self._fut is None:
                 self._fut = asyncio.Future()
@@ -765,7 +772,7 @@ class RecvBuffer:
 
     async def read(self) -> bytes:
         while True:
-            await self._data._wait_until(lambda: self._consumed in self._data)
+            await self._cond.wait_until(lambda: self._consumed in self._data)
             value = self._data.pop(self._consumed)
             self._cond.notify_all()
             logging.debug(F"Chunk {self._consumed:20d}: consumed")
@@ -782,12 +789,13 @@ class SendBuffer:
     _cond: lock_less_condition = field(default_factory=lock_less_condition)
     _externally_written: int = 0
     _current_attempt_num: int = 0
+    _heap: list[tuple[float, int, bytes]] = []
 
     def __post_init__(self) -> None:
         if self.size <= 0:
             raise ValueError("size must be positive")
 
-    async def attempt_notifier(self) -> None:
+    async def __attempt_notifier(self) -> None:
         next_attempt_at = time.monotonic()
         while True:
             await asyncio.sleep(next_attempt_at - time.monotonic())
@@ -797,8 +805,7 @@ class SendBuffer:
 
     async def __select_message_to_send(self) -> None:
         while True:
-
-            await self._data._wait_until(lambda d: bool(d))
+            await self._cond.wait_until(lambda: bool(self._data))
 
             current_attempt_num = self._current_attempt_num
 
@@ -808,7 +815,7 @@ class SendBuffer:
                     if index < self._externally_written:
                         continue
                     else:
-                        await self._data._wait_until(
+                        await self._cond.wait_until(
                             lambda: (
                                 index in self._data
                                     or
@@ -825,24 +832,25 @@ class SendBuffer:
     async def loop(self) -> None:
         await gather_and_cancel(
             self.__select_message_to_send(),
+            self.__attempt_notifier(),
         )
 
     async def write(self, data: bytes) -> None:
-        await self._data._wait_until(lambda d: len(d) < self.size)
+        await self._cond.wait_until(lambda: len(self._data) < self.size)
 
-        with self._data as d:
+        index = self._externally_written
+        self._externally_written += 1
 
-            index = self._externally_written
-            self._externally_written += 1
+        logging.debug(F"Chunk {index:20d}: written to send buffer")
+        self._data[index] = data
+        self._cond.notify_all()
 
-            logging.debug(F"Chunk {index:20d}: written to send buffer")
-            d[index] = data
-            return
+        return
 
     def mark_as_delivered(self, index: int) -> None:
         logging.debug(F"Chunk {index:20d}: received ACK")
-        with self._data as d:
-            d.pop(index, None)
+        self._data.pop(index, None)
+        self._cond.notify_all()
 
 class ITransport(abc.ABC):
     # part of public interface
@@ -853,6 +861,10 @@ class ITransport(abc.ABC):
 
     @abc.abstractmethod
     async def write(self, data: bytes) -> None:
+        ...
+
+    @abc.abstractmethod
+    async def _no_owning_run(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
         ...
 
 @dataclass
@@ -885,7 +897,7 @@ class _RetryTransport(ITransport):
     def __on_recv_ack(self, index: int) -> None:
         self._send_buffer.mark_as_delivered(index)
 
-    async def no_owning_run(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+    async def _no_owning_run(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
         self.__loop_starter()
         return await self._wrapped.no_owning_run(reader, writer)
 
@@ -923,7 +935,7 @@ class _RetryTransport(ITransport):
                 except Exception as e:
                     # Failure to send ACK can be ignored
                     # Make asyncio print stack to console
-                    fire(async_raise(e), halt_on_exception=False)
+                    logging.warning(f"Sending ACK error: {e!r}")
 
     async def __internal_send_loop(self) -> None:
         await self._send_buffer.loop()
@@ -944,8 +956,8 @@ class _DebuggerTransport(ITransport):
     def __post_init__(self) -> None:
         self._wrapped = _RetryTransport(self.conf)
 
-    async def no_owning_run(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
-        return await self._wrapped.no_owning_run(reader, writer)
+    async def _no_owning_run(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+        return await self._wrapped._no_owning_run(reader, writer)
 
     async def read(self) -> bytes:
         data = await self._wrapped.read()
@@ -973,10 +985,11 @@ class AcceptedTransports:
     conf: Config
     on_new_transport: Callable[[ITransport], object]
 
-    _accepted_transports: dict[uuid.UUID, _DebuggerTransport] = field(default_factory=dict)
+    _accepted_transports: dict[uuid.UUID, ITransport] = field(default_factory=dict)
 
     async def no_owning_accept(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
         # part of public interface
+        # This UUID is not for authentication.
         transport_id = uuid.UUID(bytes=await reader.readexactly(uuid_bytes_size))
         writer.write(transport_id.bytes)
         await writer.drain()
@@ -988,14 +1001,14 @@ class AcceptedTransports:
                     self._accepted_transports[transport_id]
                 )
             )
-        await self._accepted_transports[transport_id].no_owning_run(reader, writer)
+        await self._accepted_transports[transport_id]._no_owning_run(reader, writer)
 
 @dataclass
 class ConnectedTransports:
     # part of public interface
     conf: Config
     transport_id: uuid.UUID = field(default_factory=uuid.uuid4)
-    wrapped: _DebuggerTransport = cast(_DebuggerTransport, ...)
+    wrapped: ITransport = cast(ITransport, ...)
 
     def __post_init__(self) -> None:
         self.wrapped = _DebuggerTransport(self.conf)
@@ -1007,5 +1020,5 @@ class ConnectedTransports:
         transport_id = uuid.UUID(bytes=await reader.readexactly(len(self.transport_id.bytes)))
         if self.transport_id != transport_id:
             raise ValueError(f"Server {transport_id = } is not expected {self.transport_id = }")
-        await self.wrapped.no_owning_run(reader, writer)
+        await self.wrapped._no_owning_run(reader, writer)
 

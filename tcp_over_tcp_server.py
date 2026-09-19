@@ -532,6 +532,9 @@ def if_main_parse_args_and_asyncio_run(main: Callable[[if_main_parse_args_and_as
 
 ############################################################################################################################
 
+# This file is not a security layer.
+# Authentication and encryption must be handled on other layers.
+
 import tcp_over_tcp_common
 import tcp_over_tcp_transport
 
@@ -554,24 +557,28 @@ class NewConnectionHandler(tcp_over_tcp_common.INewConnectionHandler):
     ctx: context
 
     async def create_connection(self, conn: tcp_over_tcp_common.connection) -> None:
-        reader, writer = await asyncio.open_connection(self.ctx.args.tcp_connect_host, self.ctx.args.tcp_connect_port)
         try:
-            logging.info(f"Client connected: {conn.connection_id = }")
+            reader, writer = await asyncio.open_connection(self.ctx.args.tcp_connect_host, self.ctx.args.tcp_connect_port)
+            try:
+                logging.info(f"Client connected: {conn.connection_id = }")
 
-            await conn.conn_route_loop(self.ctx.ctx, reader, writer)
+                await conn.conn_route_loop(self.ctx.ctx, reader, writer)
 
-        finally:
-            writer.close()
-            await writer.wait_closed()
-            logging.info(f"Client closed: {conn.connection_id = }")
+            finally:
+                self.ctx.ctx.routes.pop(conn.connection_id, None)
+                writer.close()
+                await writer.wait_closed()
+                logging.info(f"Client closed: {conn.connection_id = }")
+        except Exception as e:
+            logging.warning(f"Client error: {e!r}")
 
     async def handle_new_connection(self, transport: tcp_over_tcp_transport.ITransport, connection_id: uuid.UUID) -> tcp_over_tcp_common.connection | None:
         conn = tcp_over_tcp_common.connection(
             connection_id,
             transport,
         )
+        self.ctx.ctx.routes[conn.connection_id] = conn
         fire(self.create_connection(conn))
-        await conn.is_routed.wait()
         return conn
 
 async def on_connect(ctx: context, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
@@ -585,7 +592,7 @@ async def on_connect(ctx: context, reader: asyncio.StreamReader, writer: asyncio
             await writer.wait_closed()
             logging.info(f"Transport closed")
     except Exception as e:
-        logging.warning(f"Transport error: {type(e).__name__}({e!r})")
+        logging.warning(f"Transport error: {e!r}")
 
 async def start_server(ctx: context) -> None:
 
