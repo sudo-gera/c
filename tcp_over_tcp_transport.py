@@ -107,6 +107,14 @@ class _TransportSized:
         if data is None:
             await self._wrapped.write_chunk(bytes([255]*8))
         else:
+            # We join size to data into single blob
+            # because `wrapped.write()` does not guarantee that
+            # multiple calls arrive in same order.
+            # But it guarantees that passed blob
+            # is treated as a whole object,
+            # so in would not be split,
+            # and on other side we can expect (size and data),
+            # not (size, keep alive, data).
             data = len(data).to_bytes(8, 'big') + data
             await self._wrapped.write_chunk(data)
 
@@ -259,46 +267,6 @@ class lock_less_condition:
             await self._fut
 
 @dataclass
-class RecvBuffer:
-    size: int
-
-    _cond: lock_less_condition = field(default_factory=lock_less_condition)
-    _data: dict[int, bytes] = field(default_factory=dict)
-    _consumed = 0
-
-    def __post_init__(self) -> None:
-        if self.size <= 0:
-            raise ValueError("size must be positive")
-
-    def recv_if_can(self, index: int, data: bytes) -> bool:
-        if index in range(self._consumed, self._consumed + self.size):
-            if index in self._data:
-                logging.debug(F"Chunk {index:20d}: recv duplicate")
-            else:
-                logging.debug(F"Chunk {index:20d}: recv first")
-                self._data[index] = data
-                self._cond.notify_all()
-            return True
-        else:
-            if index < self._consumed:
-                logging.debug(F"Chunk {index:20d}: too old")
-                # Send ACK to old messages to remove them from sender retransmission loop.
-                return True
-            else:
-                logging.debug(F"Chunk {index:20d}: too new")
-                return False
-
-
-    async def read(self) -> bytes:
-        while True:
-            await self._cond.wait_until(lambda: self._consumed in self._data)
-            value = self._data.pop(self._consumed)
-            self._cond.notify_all()
-            logging.debug(F"Chunk {self._consumed:20d}: consumed")
-            self._consumed += 1
-            return value
-
-@dataclass
 class SendBuffer:
     size: int
     resend_interval: float
@@ -358,6 +326,46 @@ class SendBuffer:
         logging.debug(F"Chunk {index:20d}: received ACK")
         self._data.pop(index, None)
         self._cond.notify_all()
+
+@dataclass
+class RecvBuffer:
+    size: int
+
+    _cond: lock_less_condition = field(default_factory=lock_less_condition)
+    _data: dict[int, bytes] = field(default_factory=dict)
+    _consumed = 0
+
+    def __post_init__(self) -> None:
+        if self.size <= 0:
+            raise ValueError("size must be positive")
+
+    def recv_if_can(self, index: int, data: bytes) -> bool:
+        if index in range(self._consumed, self._consumed + self.size):
+            if index in self._data:
+                logging.debug(F"Chunk {index:20d}: recv duplicate")
+            else:
+                logging.debug(F"Chunk {index:20d}: recv first")
+                self._data[index] = data
+                self._cond.notify_all()
+            return True
+        else:
+            if index < self._consumed:
+                logging.debug(F"Chunk {index:20d}: too old")
+                # Send ACK to old messages to remove them from sender retransmission loop.
+                return True
+            else:
+                logging.debug(F"Chunk {index:20d}: too new")
+                return False
+
+
+    async def read(self) -> bytes:
+        while True:
+            await self._cond.wait_until(lambda: self._consumed in self._data)
+            value = self._data.pop(self._consumed)
+            self._cond.notify_all()
+            logging.debug(F"Chunk {self._consumed:20d}: consumed")
+            self._consumed += 1
+            return value
 
 class ITransport(abc.ABC):
     # part of public interface
