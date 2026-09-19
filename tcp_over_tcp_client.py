@@ -30,6 +30,7 @@ import types
 import typing
 import uuid
 import abc
+import zlib
 
 ############################################################################################################################
 
@@ -49,6 +50,9 @@ elif sys.version_info < (3, 11):
     call_P = ParamSpec("call_P")
     def call(obj: caCallable[call_P, call_R], /, *args: call_P.args, **kwargs: call_P.kwargs) -> call_R:
         return obj(*args, **kwargs)
+
+else:
+    from operator import call
 
 ############################################################################################################################
 
@@ -70,16 +74,61 @@ def checking_cast(t: type[checking_cast_t], val: Any) -> checking_cast_t:
     assert isinstance(val, t)
     return val
 
+
+############################################################################################################################
+
+uuid_bytes_size = len(uuid.uuid4().bytes)
+uuid_hex_size = len(uuid.uuid4().hex)
+uuid_str_size = len(str(uuid.uuid4()))
+
+############################################################################################################################
+
+async def async_raise(e: BaseException) -> NoReturn:
+    raise e
+
+############################################################################################################################
+
+def terminate(message: str) -> NoReturn:
+    # Call it when it seems that this branch is unreachable.
+    # asyncio cannot find the difference
+    # between KeyboardInterrupt from SIGINT and from here.
+    # In both cases it would stop event loop
+    # and reraise this exception from `asyncio.run()` invocation.
+    # Not using `Exception`-based exceptions, because asyncio would
+    # print `Unhandled exception` to stderr without actually stopping.
+    # If you call it from `except` block,
+    # python would print stacks of both exceptions, joined by
+    # 'During handling of the above exception, another exception occurred:'
+    raise KeyboardInterrupt(message)
+
+############################################################################################################################
+
+def can_use_event_loop() -> bool:
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        return False
+    else:
+        return True
+
 ############################################################################################################################
 
 tasks : set[asyncio.Task[None]] = set()
 
-def fire(coro: typing.Awaitable[Any]) -> None:
+def fire(coro: typing.Awaitable[Any], halt_on_exception: bool = True) -> None:
+    if not can_use_event_loop():
+        terminate(f"Attempt to call `fire()` without event loop.")
     async def wrapper() -> None:
         try:
             await coro
-        except BaseException:
-            raise KeyboardInterrupt
+        except asyncio.CancelledError:
+            raise
+        except BaseException as e:
+            if halt_on_exception:
+                terminate(f"Background task failed: {type(e).__name__}({e})")
+            else:
+                # asyncio would print it to console and ignore
+                raise
 
     task : asyncio.Task[Any] = asyncio.create_task(wrapper())
     tasks.add(task)
@@ -441,15 +490,6 @@ class locked_dataclass_file(typing.Generic[mutexted_file_t]):
 
 ############################################################################################################################
 
-def can_use_event_loop() -> bool:
-    try:
-        loop = asyncio.get_running_loop()
-        return True
-    except RuntimeError:
-        return False
-
-############################################################################################################################
-
 class alive_or_raise:
 
     def __init__(self, timeout: float) -> None:
@@ -511,7 +551,7 @@ class main_args:
 class context:
     args: main_args
     transports: tcp_over_tcp_transport.ConnectedTransports
-    routes: dict[uuid.UUID, tcp_over_tcp_common.connection]
+    ctx: tcp_over_tcp_common.context
 
 async def start_transport(ctx: context) -> None:
     while True:
@@ -524,7 +564,7 @@ async def start_transport(ctx: context) -> None:
             await writer.wait_closed()
             logging.info(f"Transport closed")
 
-async def on_connect(ctx: context, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+async def on_client_connect(ctx: context, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
     try:
         conn = tcp_over_tcp_common.connection(
             uuid.uuid4(),
@@ -532,23 +572,39 @@ async def on_connect(ctx: context, reader: asyncio.StreamReader, writer: asyncio
         )
         logging.info(f"Client accepted: {conn.connection_id = }")
 
-        await tcp_over_tcp_common.route(ctx.routes, conn, reader, writer)
+        await tcp_over_tcp_common.conn_route_loop(ctx.ctx, conn, reader, writer)
     finally:
         writer.close()
         await writer.wait_closed()
         logging.info(f"Client closed: {conn.connection_id = }")
 
-async def router(ctx: context, transport: tcp_over_tcp_transport.ITransport) -> None:
-    while True:
-        connection_id, data = await tcp_over_tcp_common.parse_input_messge(transport)
-        if connection_id not in ctx.routes:
-            logging.warning(f"Ignoring data for {connection_id = !r}")
-        else:
-            ctx.routes[connection_id].queue.put_nowait(data)
+@dataclass
+class NewConnectionHandler(tcp_over_tcp_common.INewConnectionHandler):
+    ctx: context
+
+    async def create_connection(self, conn: tcp_over_tcp_common.connection) -> None:
+        reader, writer = await asyncio.open_connection(self.ctx.args.tcp_connect_host, self.ctx.args.tcp_connect_port)
+        try:
+            logging.info(f"Client connected: {conn.connection_id = }")
+
+            await tcp_over_tcp_common.conn_route_loop(self.ctx.ctx, conn, reader, writer)
+
+        finally:
+            writer.close()
+            await writer.wait_closed()
+            logging.info(f"Client closed: {conn.connection_id = }")
+
+    async def handle_new_connection(self, transport: tcp_over_tcp_transport.ITransport, connection_id: uuid.UUID) -> tcp_over_tcp_common.connection | None:
+        logging.warning(f"Ignoring data for {connection_id = !r}")
+        return None
 
 async def start_server(ctx: context) -> None:
 
-    async with await asyncio.start_server(partial(on_connect, ctx), ctx.args.tcp_listen_host, ctx.args.tcp_listen_port) as server:
+    async with await asyncio.start_server(
+        lambda reader, writer: fire(on_client_connect(ctx, reader, writer)),
+        ctx.args.tcp_listen_host,
+        ctx.args.tcp_listen_port,
+    ) as server:
         await server.serve_forever()
 
 async def main(args: main_args) -> None:
@@ -565,11 +621,15 @@ async def main(args: main_args) -> None:
     ctx = context(
         args,
         transports,
-        {},
+        tcp_over_tcp_common.context(),
     )
 
     await gather_and_cancel(
-        router(ctx, transports.wrapped),
+        tcp_over_tcp_common.route_incoming_messages(
+            ctx.ctx,
+            ctx.transports.wrapped,
+            NewConnectionHandler(ctx),
+        ),
         start_server(ctx),
         start_transport(ctx),
     )

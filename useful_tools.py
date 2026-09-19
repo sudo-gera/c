@@ -30,6 +30,7 @@ import types
 import typing
 import uuid
 import abc
+import zlib
 
 ############################################################################################################################
 
@@ -49,6 +50,9 @@ elif sys.version_info < (3, 11):
     call_P = ParamSpec("call_P")
     def call(obj: caCallable[call_P, call_R], /, *args: call_P.args, **kwargs: call_P.kwargs) -> call_R:
         return obj(*args, **kwargs)
+
+else:
+    from operator import call
 
 ############################################################################################################################
 
@@ -70,20 +74,86 @@ def checking_cast(t: type[checking_cast_t], val: Any) -> checking_cast_t:
     assert isinstance(val, t)
     return val
 
+
+############################################################################################################################
+
+uuid_bytes_size = len(uuid.uuid4().bytes)
+uuid_hex_size = len(uuid.uuid4().hex)
+uuid_str_size = len(str(uuid.uuid4()))
+
+############################################################################################################################
+
+async def async_raise(e: BaseException) -> NoReturn:
+    raise e
+
+############################################################################################################################
+
+def terminate(message: str) -> NoReturn:
+    # Call it when it seems that this branch is unreachable.
+    # asyncio cannot find the difference
+    # between KeyboardInterrupt from SIGINT and from here.
+    # In both cases it would stop event loop
+    # and reraise this exception from `asyncio.run()` invocation.
+    # Not using `Exception`-based exceptions, because asyncio would
+    # print `Unhandled exception` to stderr without actually stopping.
+    # If you call it from `except` block,
+    # python would print stacks of both exceptions, joined by
+    # 'During handling of the above exception, another exception occurred:'
+    raise KeyboardInterrupt(message)
+
+############################################################################################################################
+
+def can_use_event_loop() -> bool:
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        return False
+    else:
+        return True
+
 ############################################################################################################################
 
 tasks : set[asyncio.Task[None]] = set()
 
-def fire(coro: typing.Awaitable[Any]) -> None:
+def fire(coro: typing.Awaitable[Any], halt_on_exception: bool = True) -> None:
+    if not can_use_event_loop():
+        terminate(f"Attempt to call `fire()` without event loop.")
     async def wrapper() -> None:
         try:
             await coro
-        except BaseException:
-            raise KeyboardInterrupt
+        except asyncio.CancelledError:
+            raise
+        except BaseException as e:
+            if halt_on_exception:
+                terminate(f"Background task failed: {type(e).__name__}({e})")
+            else:
+                # asyncio would print it to console and ignore
+                raise
 
     task : asyncio.Task[Any] = asyncio.create_task(wrapper())
     tasks.add(task)
     task.add_done_callback(tasks.discard)
+
+############################################################################################################################
+
+_gather_awaitable_wrapper_t = TypeVar('_gather_awaitable_wrapper_t')
+
+def _gather_awaitable_wrapper(awaitable: Awaitable[_gather_awaitable_wrapper_t]) -> asyncio.Task[_gather_awaitable_wrapper_t]:
+    async def wrapper() -> _gather_awaitable_wrapper_t:
+        return await awaitable
+    return asyncio.create_task(wrapper())
+
+async def _gather_impl(*awaitables: Awaitable[Any]) -> tuple[Any, ...]:
+    tasks = [
+        _gather_awaitable_wrapper(awaitable)
+        for awaitable in awaitables
+    ]
+    try:
+        return tuple(await asyncio.gather(*tasks))
+    finally:
+        for task in tasks:
+            task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
 
 gather_t1_t = TypeVar('gather_t1_t')
 gather_t2_t = TypeVar('gather_t2_t')
@@ -96,39 +166,43 @@ gather_t8_t = TypeVar('gather_t8_t')
 gather_t9_t = TypeVar('gather_t9_t')
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], /) -> tuple[gather_t1_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], /) -> tuple[gather_t1_t]:
     ...
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], /) -> tuple[gather_t1_t, gather_t2_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], /) -> tuple[gather_t1_t, gather_t2_t]:
     ...
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t]:
     ...
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t]:
     ...
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t]:
     ...
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t]:
     ...
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], v7: Awaitable[gather_t7_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t, gather_t7_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], v7: Awaitable[gather_t7_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t, gather_t7_t]:
     ...
 
 @overload
-async def gather(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], v7: Awaitable[gather_t7_t], v8: Awaitable[gather_t8_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t, gather_t7_t, gather_t8_t]:
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], v7: Awaitable[gather_t7_t], v8: Awaitable[gather_t8_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t, gather_t7_t, gather_t8_t]:
     ...
 
-async def gather(*coro: Awaitable[Any]) -> tuple[Any, ...]:
-    return tuple(await asyncio.gather(*coro))
+@overload
+async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], v7: Awaitable[gather_t7_t], v8: Awaitable[gather_t8_t], v9: Awaitable[gather_t9_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t, gather_t7_t, gather_t8_t, gather_t9_t]:
+    ...
+
+async def gather_and_cancel(*coro: Awaitable[Any]) -> tuple[Any, ...]:
+    return tuple(await _gather_impl(*coro))
 
 ############################################################################################################################
 
@@ -413,16 +487,6 @@ class locked_dataclass_file(typing.Generic[mutexted_file_t]):
 
     async def __aexit__(self, exc_type: type[Any] | None, exc_value: Any, traceback: Any) -> None:
         return self.__exit__(exc_type, exc_value, traceback)
-
-############################################################################################################################
-
-def can_use_event_loop() -> bool:
-    try:
-        asyncio.get_running_loop()
-    except RuntimeError:
-        return False
-    else:
-        return True
 
 ############################################################################################################################
 
