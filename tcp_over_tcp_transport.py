@@ -62,7 +62,7 @@ class Config:
     max_missing_alives: int = 1
     cache_chunks: int = 256
     max_chunk_size: int = 2**40
-    resend_interval: float = 8
+    resend_interval: float = 2
     disable_encryption: bool = False
     disable_authentication: bool = False
 

@@ -49,37 +49,39 @@ import tcp_over_tcp_transport
 class connection:
     connection_id: uuid.UUID
     transport: tcp_over_tcp_transport.ITransport
-    queue: asyncio.Queue[bytes] = field(default_factory=asyncio.Queue)
+    queue: asyncio.Queue[bytes] | None = field(default_factory=lambda: asyncio.Queue(maxsize=8))
 
     async def write_message(self, data: bytes) -> None:
         await self.transport.write(self.connection_id.bytes + data)
 
     async def conn_route_loop(self, ctx: context, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+        try:
+            # While ITransport supports sending b'' as separate message,
+            # TCP does not and never will.
+            # In TCP b'' always means EOF.
+            # So we can send b'' to other end to mean EOF.
 
-        # While ITransport supports sending b'' as separate message,
-        # TCP does not and never will.
-        # In TCP b'' always means EOF.
-        # So we can send b'' to other end to mean EOF.
-
-        async def to_transport() -> None:
-            while (data := await reader.read(2**16)):
+            async def to_transport() -> None:
+                while (data := await reader.read(2**16)):
+                    await self.write_message(data)
                 await self.write_message(data)
-            await self.write_message(data)
 
-        async def from_transport() -> None:
-            while (data := await self.queue.get()):
-                writer.write(data)
-                await writer.drain()
-            if writer.can_write_eof():
-                writer.write_eof()
+            async def from_transport() -> None:
+                while self.queue is not None and (data := await self.queue.get()):
+                    writer.write(data)
+                    await writer.drain()
+                if writer.can_write_eof():
+                    writer.write_eof()
 
-        # Wait for latter result or first error.
-        # In case of half-duplex connection,
-        # one loop stops and we wait for other one.
-        await wait_until_all_complete_or_cancel_on_exc(
-            to_transport(),
-            from_transport(),
-        )
+            # Wait for latter result or first error.
+            # In case of half-duplex connection,
+            # one loop stops and we wait for other one.
+            await wait_until_all_complete_or_cancel_on_exc(
+                to_transport(),
+                from_transport(),
+            )
+        finally:
+            self.queue = None
 
 @dataclass
 class context:
@@ -103,5 +105,8 @@ async def route_incoming_messages(ctx: context, transport: tcp_over_tcp_transpor
             conn = await new_conn_handler.handle_new_connection(transport, connection_id)
         if conn is None:
             continue
-        ctx.routes[connection_id].queue.put_nowait(data)
+        if conn.queue is not None:
+            await conn.queue.put(data)
+        else:
+            logging.debug(f"Client {conn.connection_id = } is closed and cannot recv data.")
 
