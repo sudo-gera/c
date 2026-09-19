@@ -62,7 +62,7 @@ class Config:
     max_missing_alives: int = 1
     cache_chunks: int = 256
     max_chunk_size: int = 2**40
-    resend_interval: float = 2
+    resend_interval: float = 15
     disable_encryption: bool = False
     disable_authentication: bool = False
 
@@ -266,6 +266,35 @@ class lock_less_condition:
                 self._fut = asyncio.Future()
             await self._fut
 
+timetable_t = TypeVar('timetable_t')
+
+class timetable(Generic[timetable_t]):
+
+    _heap: list[tuple[float, int, timetable_t]] = field(default_factory=list)
+    _cond: lock_less_condition = field(default_factory=lock_less_condition)
+    _fut: asyncio.Future[None] = field(default_factory=asyncio.Future)
+    _lock: asyncio.Lock = asyncio.Lock()
+    _index = 0  # prevents comparing data
+
+    def put(self, at_monotonic: float, data: timetable_t) -> None:
+        heapq.heappush(self._heap, (at_monotonic, self._index, data))
+        self._index += 1
+        self._cond.notify_all()
+        # Wake if someone is currently waiting.
+        # Intentionally lost wake up otherwise.
+        if not self._fut.done():
+            self._fut.set_result(None)
+
+    async def get(self) -> timetable_t:
+        async with self._lock:
+            while True:
+                await self._cond.wait_until(lambda: bool(self._heap))
+                sleep_until = self._heap[0][0]
+                if sleep_until <= time.monotonic():
+                    return heapq.heappop(self._heap)[-1]
+                self._fut = asyncio.Future()
+                await asyncio.wait_for(self._fut, sleep_until - time.monotonic())
+
 @dataclass
 class SendBuffer:
     size: int
@@ -276,23 +305,16 @@ class SendBuffer:
     _externally_written: int = 0
     _cond: lock_less_condition = field(default_factory=lock_less_condition)
     _heap: list[tuple[float, int]] = field(default_factory=list)
+    _fut: asyncio.Future[None] = field(default_factory=asyncio.Future)
+    _table: timetable[int] = field(default_factory=timetable)
 
     def __post_init__(self) -> None:
         if self.size <= 0:
             raise ValueError("size must be positive")
 
-    async def __heap_notifier(self) -> None:
-        while True:
-            await self._cond.wait_until(lambda: bool(self._heap))
-            await asyncio.sleep(self._heap[0][0] - time.monotonic())
-            self._cond.notify_all()
-
     async def __select_message_to_send(self) -> None:
         while True:
-            await self._cond.wait_until(lambda: bool(self._heap and self._heap[0][0] <= time.monotonic()))
-            
-            send_at, index = heapq.heappop(self._heap)
-            self._cond.notify_all()
+            index = await self._table.get()
 
             if index not in self._data:
                 continue
@@ -301,12 +323,13 @@ class SendBuffer:
             logging.debug(F"Chunk {index:20d}: sending to transport")
             await self.on_send(index, data)
 
-            heapq.heappush(self._heap, (time.monotonic() + self.resend_interval, index))
-            self._cond.notify_all()
+            if index not in self._data:
+                continue
+
+            self._table.put(time.monotonic() + self.resend_interval, index)
 
     async def loop(self) -> None:
         await wait_until_all_complete_or_cancel_on_exc(
-            self.__heap_notifier(),
             self.__select_message_to_send(),
         )
 
@@ -316,11 +339,11 @@ class SendBuffer:
         index = self._externally_written
         self._externally_written += 1
 
-        heapq.heappush(self._heap, (time.monotonic(), index))
         self._data[index] = data
+        self._cond.notify_all()
 
         logging.debug(F"Chunk {index:20d}: written to send buffer")
-        self._cond.notify_all()
+        self._table.put(time.monotonic(), index)
 
     def mark_as_delivered(self, index: int) -> None:
         logging.debug(F"Chunk {index:20d}: received ACK")
@@ -459,7 +482,7 @@ class _RetryTransport(ITransport):
         await self._send_buffer.loop()
 
 @dataclass
-class _DebuggerTransport(ITransport):
+class _ChecksumTransport(ITransport):
     # Intention to catch reorderings and broken packets.
     # No intention of cryptographic security.
 
@@ -512,7 +535,7 @@ class AcceptedTransports:
         writer.write(transport_id.bytes)
         await writer.drain()
         if transport_id not in self._accepted_transports:
-            self._accepted_transports[transport_id] = _DebuggerTransport(self.conf)
+            self._accepted_transports[transport_id] = _ChecksumTransport(self.conf)
             asyncio.get_running_loop().call_soon(
                 partial(
                     self.on_new_transport,
@@ -529,7 +552,7 @@ class ConnectedTransports:
     wrapped: ITransport = cast(ITransport, ...)
 
     def __post_init__(self) -> None:
-        self.wrapped = _DebuggerTransport(self.conf)
+        self.wrapped = _ChecksumTransport(self.conf)
 
     async def no_owning_connect(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
         # part of public interface

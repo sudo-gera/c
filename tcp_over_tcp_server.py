@@ -72,6 +72,7 @@ class NewConnectionHandler(tcp_over_tcp_common.INewConnectionHandler):
                 await conn.conn_route_loop(self.ctx.ctx, reader, writer)
 
             finally:
+                self.ctx.ctx.routes.pop(conn.connection_id, None)
                 writer.close()
                 await writer.wait_closed()
                 logging.info(f"Client closed: {conn.connection_id = }")

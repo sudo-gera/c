@@ -49,25 +49,23 @@ import tcp_over_tcp_transport
 class connection:
     connection_id: uuid.UUID
     transport: tcp_over_tcp_transport.ITransport
-    queue: asyncio.Queue[bytes] | None = field(default_factory=lambda: asyncio.Queue(maxsize=8))
+    queue: asyncio.Queue[bytes|None] = field(default_factory=lambda: asyncio.Queue(maxsize=8))
 
-    async def write_message(self, data: bytes) -> None:
-        await self.transport.write(self.connection_id.bytes + data)
+    async def write_message(self, data: bytes | None) -> None:
+        if data is None:
+            await self.transport.write(self.connection_id.bytes + b'\x01')
+        else:
+            await self.transport.write(self.connection_id.bytes + b'\x00' + data)
 
     async def conn_route_loop(self, ctx: context, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
         try:
-            # While ITransport supports sending b'' as separate message,
-            # TCP does not and never will.
-            # In TCP b'' always means EOF.
-            # So we can send b'' to other end to mean EOF.
-
             async def to_transport() -> None:
                 while (data := await reader.read(2**16)):
                     await self.write_message(data)
-                await self.write_message(data)
+                await self.write_message(None)
 
             async def from_transport() -> None:
-                while self.queue is not None and (data := await self.queue.get()):
+                while (data := await self.queue.get()) is not None:
                     writer.write(data)
                     await writer.drain()
                 if writer.can_write_eof():
@@ -81,7 +79,7 @@ class connection:
                 from_transport(),
             )
         finally:
-            self.queue = None
+            ctx.routes.pop(self.connection_id, None)
 
 @dataclass
 class context:
@@ -99,14 +97,16 @@ async def route_incoming_messages(ctx: context, transport: tcp_over_tcp_transpor
         data = await transport.read()
         if len(data) < uuid_bytes_size:
             raise ValueError(f"Got small chunk: {data = !r}")
-        connection_id, data = uuid.UUID(bytes=data[:uuid_bytes_size]), data[uuid_bytes_size:]
+        connection_id, msgtype, data = uuid.UUID(bytes=data[:uuid_bytes_size]), data[uuid_bytes_size:uuid_bytes_size+1], data[uuid_bytes_size+1:]
         conn = ctx.routes.get(connection_id, None)
-        if conn is None:
+        if conn is None and msgtype == b'\x02':
             conn = await new_conn_handler.handle_new_connection(transport, connection_id)
         if conn is None:
+            logging.warning(f"Client {connection_id = } does not exist.")
             continue
-        if conn.queue is not None:
-            await conn.queue.put(data)
+        if msgtype == b'\x01':
+            await conn.queue.put(None)
         else:
-            logging.debug(f"Client {conn.connection_id = } is closed and cannot recv data.")
+            await conn.queue.put(data)                
+
 
