@@ -31,504 +31,11 @@ import typing
 import uuid
 import abc
 import zlib
+import heapq
 
 ############################################################################################################################
 
-if sys.version_info >= (3, 10) and TYPE_CHECKING:
-    from _typeshed import DataclassInstance
-else:
-    DataclassInstance = Any
-
-############################################################################################################################
-
-if sys.version_info < (3, 10):
-    def call(obj: Any, /, *args: Any, **kwargs: Any) -> Any:
-        return obj(*args, **kwargs)
-
-elif sys.version_info < (3, 11):
-    call_R = TypeVar("call_R")
-    call_P = ParamSpec("call_P")
-    def call(obj: caCallable[call_P, call_R], /, *args: call_P.args, **kwargs: call_P.kwargs) -> call_R:
-        return obj(*args, **kwargs)
-
-else:
-    from operator import call
-
-############################################################################################################################
-
-if sys.version_info < (3, 10):
-    typed_cache_T = TypeVar("typed_cache_T", bound=Callable[..., Any])
-    def typed_cache(func: typed_cache_T) -> typed_cache_T:
-        return cast(typed_cache_T, cache(func))
-else:
-    typed_cache_R = TypeVar("typed_cache_R")
-    typed_cache_P = ParamSpec("typed_cache_P")
-    def typed_cache(func: caCallable[typed_cache_P, typed_cache_R]) -> caCallable[typed_cache_P, typed_cache_R]:
-        return cast(caCallable[typed_cache_P, typed_cache_R], cache(func))
-
-############################################################################################################################
-
-checking_cast_t = TypeVar('checking_cast_t')
-
-def checking_cast(t: type[checking_cast_t], val: Any) -> checking_cast_t:
-    assert isinstance(val, t)
-    return val
-
-
-############################################################################################################################
-
-uuid_bytes_size = len(uuid.uuid4().bytes)
-uuid_hex_size = len(uuid.uuid4().hex)
-uuid_str_size = len(str(uuid.uuid4()))
-
-############################################################################################################################
-
-async def async_raise(e: BaseException) -> NoReturn:
-    raise e
-
-############################################################################################################################
-
-def terminate(message: str) -> NoReturn:
-    # Call it when it seems that this branch is unreachable.
-    # asyncio cannot find the difference
-    # between KeyboardInterrupt from SIGINT and from here.
-    # In both cases it would stop event loop
-    # and reraise this exception from `asyncio.run()` invocation.
-    # Not using `Exception`-based exceptions, because asyncio would
-    # print `Unhandled exception` to stderr without actually stopping.
-    # If you call it from `except` block,
-    # python would print stacks of both exceptions, joined by
-    # 'During handling of the above exception, another exception occurred:'
-    raise KeyboardInterrupt(message)
-
-############################################################################################################################
-
-def can_use_event_loop() -> bool:
-    try:
-        asyncio.get_running_loop()
-    except RuntimeError:
-        return False
-    else:
-        return True
-
-############################################################################################################################
-
-tasks : set[asyncio.Task[None]] = set()
-
-def fire(coro: typing.Awaitable[Any], halt_on_exception: bool = True) -> None:
-    if not can_use_event_loop():
-        terminate(f"Attempt to call `fire()` without event loop.")
-    async def wrapper() -> None:
-        try:
-            await coro
-        except asyncio.CancelledError:
-            raise
-        except BaseException as e:
-            if halt_on_exception:
-                terminate(f"Background task failed: {type(e).__name__}({e})")
-            else:
-                # asyncio would print it to console and ignore
-                raise
-
-    task : asyncio.Task[Any] = asyncio.create_task(wrapper())
-    tasks.add(task)
-    task.add_done_callback(tasks.discard)
-
-############################################################################################################################
-
-_gather_awaitable_wrapper_t = TypeVar('_gather_awaitable_wrapper_t')
-
-def _gather_awaitable_wrapper(awaitable: Awaitable[_gather_awaitable_wrapper_t]) -> asyncio.Task[_gather_awaitable_wrapper_t]:
-    async def wrapper() -> _gather_awaitable_wrapper_t:
-        return await awaitable
-    return asyncio.create_task(wrapper())
-
-async def _gather_impl(*awaitables: Awaitable[Any]) -> tuple[Any, ...]:
-    tasks = [
-        _gather_awaitable_wrapper(awaitable)
-        for awaitable in awaitables
-    ]
-    try:
-        return tuple(await asyncio.gather(*tasks))
-    finally:
-        for task in tasks:
-            task.cancel()
-        await asyncio.gather(*tasks, return_exceptions=True)
-
-gather_t1_t = TypeVar('gather_t1_t')
-gather_t2_t = TypeVar('gather_t2_t')
-gather_t3_t = TypeVar('gather_t3_t')
-gather_t4_t = TypeVar('gather_t4_t')
-gather_t5_t = TypeVar('gather_t5_t')
-gather_t6_t = TypeVar('gather_t6_t')
-gather_t7_t = TypeVar('gather_t7_t')
-gather_t8_t = TypeVar('gather_t8_t')
-gather_t9_t = TypeVar('gather_t9_t')
-
-@overload
-async def gather_and_cancel(v1: Awaitable[gather_t1_t], /) -> tuple[gather_t1_t]:
-    ...
-
-@overload
-async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], /) -> tuple[gather_t1_t, gather_t2_t]:
-    ...
-
-@overload
-async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t]:
-    ...
-
-@overload
-async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t]:
-    ...
-
-@overload
-async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t]:
-    ...
-
-@overload
-async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t]:
-    ...
-
-@overload
-async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], v7: Awaitable[gather_t7_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t, gather_t7_t]:
-    ...
-
-@overload
-async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], v7: Awaitable[gather_t7_t], v8: Awaitable[gather_t8_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t, gather_t7_t, gather_t8_t]:
-    ...
-
-@overload
-async def gather_and_cancel(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], v7: Awaitable[gather_t7_t], v8: Awaitable[gather_t8_t], v9: Awaitable[gather_t9_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t, gather_t7_t, gather_t8_t, gather_t9_t]:
-    ...
-
-async def gather_and_cancel(*coro: Awaitable[Any]) -> tuple[Any, ...]:
-    return tuple(await _gather_impl(*coro))
-
-############################################################################################################################
-
-class LogLevelEnum(Enum):
-    CRITICAL = 50
-    FATAL = CRITICAL
-    ERROR = 40
-    WARNING = 30
-    WARN = WARNING
-    INFO = 20
-    DEBUG = 10
-    NOTSET = 0
-
-def set_log_level(log_level: LogLevelEnum | int) -> None:
-    if isinstance(log_level, LogLevelEnum):
-        log_level = log_level.value
-    assert isinstance(log_level, int)
-    logging.basicConfig(
-        level=log_level,
-        style='{',
-        format='{asctime:s} {levelname:^8s} {funcName:>32s}:{lineno:<8d} {message}',
-    )
-
-############################################################################################################################
-
-def isinstance_typing(value: Any, t: Any) -> bool:
-    try:
-        return isinstance(value, t)
-    except TypeError:
-        pass
-
-    origin = typing.get_origin(t)
-    args = typing.get_args(t)
-    assert origin is not None
-
-    if origin is Literal:
-        return value in args
-
-    if not isinstance_typing(value, origin):
-        return False
-
-    if origin is list:
-        assert len(args) == 1
-        return all([
-            isinstance_typing(v, args[0])
-            for v in value
-        ])
-
-    if origin is str:
-        assert len(args) == 1
-        return all([
-            isinstance_typing(v, args[0])
-            for v in value
-        ])
-
-    if origin is dict:
-        assert len(args) == 2
-        return all([
-            isinstance_typing(k, args[0]) and isinstance_typing(v, args[1])
-            for k, v in value.items()
-        ])
-
-    if origin is tuple:
-        if len(args) == 2 and args[1] is ...:
-            return all([
-                isinstance_typing(v, args[0])
-                for v in value
-            ])
-        else:
-            if len(args) != len(value):
-                return False
-            return all([
-                isinstance_typing(v, t)
-                for v, t in zip(value, args)
-            ])
-
-    assert False
-
-############################################################################################################################
-
-@dataclass(frozen=True)
-class dataclass_field:
-    field: Field[Any]
-    type: Any
-
-@typed_cache
-def get_fields(dclass: type[DataclassInstance]) -> list[dataclass_field]:
-
-    def process_one_filed(field: Field[Any]) -> dataclass_field:
-        if isinstance(field.type, str):
-            field_type = eval(field.type)
-        else:
-            field_type = field.type
-        return dataclass_field(
-            field=field,
-            type=field_type,
-        )
-
-    return [
-        process_one_filed(field)
-        for field in fields(dclass)
-    ]
-
-def check_dataclass_types(data: DataclassInstance) -> None:
-
-    for field in get_fields(type(data)):
-        assert isinstance_typing(getattr(data, field.field.name), field.type)
-
-dict_to_dataclass_t = TypeVar('dict_to_dataclass_t', bound=DataclassInstance)
-
-def dict_to_dataclass(data: dict[str, Any], dclass_type: type[dict_to_dataclass_t]) -> dict_to_dataclass_t:
-
-    assert all([isinstance(k, str) for k in data])
-    result = dclass_type(**data)
-    check_dataclass_types(result)
-    return cast(dict_to_dataclass_t, cast(None, result))
-
-############################################################################################################################
-
-def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass: type[DataclassInstance]) -> None:
-    for field in get_fields(args_dataclass):
-
-        arg_name = field.field.name
-        arg_required = True
-        arg_type : Callable[[str], Any]|None = None
-        arg_default : Any = None
-        arg_choices : Any = None
-
-        if field.field.default is not MISSING: # v: t = SOME_DEFAULT
-            arg_default = field.field.default
-            arg_required = False
-
-        if field.field.default_factory is not MISSING: # v: t = field(default_factory=SOME_CALLABLE)
-            arg_default = field.field.default_factory()
-            arg_required = False
-
-        target_type = field.type
-
-        if (
-            sys.version_info >= (3, 10)
-            and
-            typing.get_origin(target_type) is types.UnionType  # t | None
-            or
-            typing.get_origin(target_type) is typing.Union  # typing.Optional[t], typing.Union[t, None], typing.Union[t, type(None)]
-        ):
-            union_args = typing.get_args(target_type)
-            assert len(union_args) == 2
-            assert type(None) in union_args
-            target_type = union_args[union_args[0] == type(None)]
-            assert target_type is not None
-            arg_required = False
-
-        if isinstance(target_type, type):
-            if issubclass(target_type, Enum) or issubclass(target_type, EnumMeta):
-                enum_members = target_type.__members__
-                assert isinstance(enum_members, types.MappingProxyType)
-                enum_members_dict = {name: enum_members.get(name) for name in enum_members.keys()}
-                def get_enum(user_input: str) -> Enum | EnumMeta:
-                    if user_input not in enum_members_dict:
-                        raise ValueError
-                    enum = enum_members_dict[user_input]
-                    if not isinstance(enum, Enum) and not isinstance(enum, EnumMeta):
-                        raise ValueError
-                    return enum
-                arg_type=get_enum
-                arg_choices=list(map(get_enum, enum_members_dict))
-            else:
-                arg_type = target_type
-
-        elif typing.get_origin(target_type) is typing.Literal:
-            literal_args = typing.get_args(target_type)
-            literal_types = {type(arg) for arg in literal_args}
-            assert len(literal_types)
-            literal_type = literal_types.pop()
-            arg_choices = literal_args
-            arg_type = literal_type
-
-        assert arg_type is not None
-
-        parser.add_argument(
-            '--' + arg_name.replace('_', '-'),
-            required=arg_required,
-            type=arg_type,
-            default=arg_default,
-            choices=arg_choices,
-        )
-
-############################################################################################################################
-
-def dataclass_to_json(value: DataclassInstance) -> str:
-    check_dataclass_types(value)
-    return json.dumps(vars(value), indent=4)
-
-json_to_dataclass_t = TypeVar('json_to_dataclass_t', bound=DataclassInstance)
-
-def json_to_dataclass(data: str, dclass_type: type[json_to_dataclass_t]) -> json_to_dataclass_t:
-    d = json.loads(data)
-    assert isinstance(d, dict)
-    assert all([isinstance(k, str) for k in d])
-    return dict_to_dataclass(d, dclass_type)
-
-############################################################################################################################
-
-def dataclass_to_file(value: DataclassInstance, path: pathlib.Path) -> None:
-    data = dataclass_to_json(value)
-    with path.open('w') as file:
-        file.write(data)
-
-file_to_dataclass_t = TypeVar('file_to_dataclass_t', bound=DataclassInstance)
-
-def file_to_dataclass(path: pathlib.Path, dclass_type: type[file_to_dataclass_t]) -> file_to_dataclass_t:
-    if not path.exists():
-        with path.open('w') as file:
-            json.dump({}, file)
-    assert path.exists()
-    assert path.is_file()
-    with path.open('r') as file:
-        data = file.read()
-    return json_to_dataclass(data, dclass_type)
-
-############################################################################################################################
-
-class path_based_lock:
-    def __init__(self, path: pathlib.Path, force_new_lock: bool):
-        assert force_new_lock
-        self.__path = path
-        self.__is_locked = False
-        self.__update_future : asyncio.Future[None] | None = None
-
-    def checking_switch_to(self, new_val: bool) -> None:
-        assert self.__is_locked != new_val
-        self.__is_locked = new_val
-        if self.__update_future is not None:
-            self.__update_future.set_result(None)
-            self.__update_future = None
-
-    async def wait_for_update(self) -> None:
-        if self.__update_future is None:
-            self.__update_future = asyncio.Future()
-        await self.__update_future
-
-    def is_locked(self) -> bool:
-        return self.__is_locked
-
-@typed_cache
-def get_path_based_lock(path: pathlib.Path) -> path_based_lock:
-    rpath = path.resolve()
-    if rpath != path:
-        return get_path_based_lock(rpath)
-    return path_based_lock(path, force_new_lock=True)
-
-############################################################################################################################
-
-mutexted_file_t = TypeVar('mutexted_file_t', bound=DataclassInstance)
-
-class locked_dataclass_file(typing.Generic[mutexted_file_t]):
-
-    def __init__(self, path: pathlib.Path, dclass_type: type[mutexted_file_t]) -> None:
-        self.__path = path
-        self.__dclass_type = dclass_type
-        self.__lock = get_path_based_lock(path)
-        self.__db : mutexted_file_t | None = None
-
-    def __enter__(self) -> mutexted_file_t:
-        self.__lock.checking_switch_to(True)
-        self.__db = file_to_dataclass(self.__path, self.__dclass_type)
-        return self.__db
-
-    def __exit__(self, exc_type: type[Any] | None, exc_value: Any, traceback: Any) -> None:
-        try:
-            if exc_type is None:
-                assert self.__db is not None
-                dataclass_to_file(self.__db, self.__path)
-        finally:
-            self.__db = None
-            self.__lock.checking_switch_to(False)
-
-    async def __aenter__(self) -> mutexted_file_t:
-        while self.__lock.is_locked():
-            await self.__lock.wait_for_update()
-        return self.__enter__()
-
-    async def __aexit__(self, exc_type: type[Any] | None, exc_value: Any, traceback: Any) -> None:
-        return self.__exit__(exc_type, exc_value, traceback)
-
-############################################################################################################################
-
-class alive_or_raise:
-
-    def __init__(self, timeout: float) -> None:
-        self.__timeout = timeout
-        self.__started = False
-        self.mark_as_alive()
-
-    def mark_as_alive(self) -> None:
-
-        if not self.__started and can_use_event_loop():
-            fire(self.__checker())
-            self.__started = True
-
-        self.__raise_at = time.time() + self.__timeout
-
-    async def __checker(self) -> None:
-        while 1:
-            current_time = time.time()
-            until_raise = self.__raise_at - current_time
-            if until_raise <= 0:
-                raise KeyboardInterrupt
-            await asyncio.sleep(until_raise)
-
-############################################################################################################################
-
-if_main_parse_args_and_asyncio_run_arg = TypeVar('if_main_parse_args_and_asyncio_run_arg', bound=DataclassInstance)
-
-def if_main_parse_args_and_asyncio_run(main: Callable[[if_main_parse_args_and_asyncio_run_arg], Any]) -> Any:
-    if __name__ != '__main__':
-        return
-    hints = typing.get_type_hints(main)
-    hints.pop('return', None)
-    assert len(hints) == 1
-    main_args = [*hints.values()][0]
-    assert not TYPE_CHECKING or isinstance(main_args, type)
-    parser = argparse.ArgumentParser()
-    setup_parser_from_dataclass(parser, main_args)
-    args = parser.parse_args()
-    asyncio.run(main(main_args(**vars(args))))
+from tcp_over_tcp_useful_tools import terminate, wait_until_all_complete_or_cancel_on_exc, can_use_event_loop, fire, uuid_bytes_size
 
 ############################################################################################################################
 
@@ -552,16 +59,18 @@ class _reject_concurrent:
 @dataclass(frozen=True, kw_only=True)
 class Config:
     alive_interval: float = 15
-    max_keepalives_without_answer: int = 1
+    max_missing_alives: int = 1
     cache_chunks: int = 256
     max_chunk_size: int = 2**40
     resend_interval: float = 8
+    disable_encryption: bool = False
+    disable_authentication: bool = False
 
     def __post_init__(self) -> None:
         if self.alive_interval <= 0:
             raise ValueError("alive_interval must be > 0")
-        if self.max_keepalives_without_answer < 0:
-            raise ValueError("count_max must be >= 0")
+        if self.max_missing_alives < 0:
+            raise ValueError("wait_until_all_complete_or_cancel_on_exc must be >= 0")
         if self.cache_chunks <= 0:
             raise ValueError("cache_chunks must be > 0")
         if self.max_chunk_size <= 0:
@@ -570,6 +79,10 @@ class Config:
             raise ValueError("max_chunk_size must be < 2**64-1")
         if self.resend_interval <= 0:
             raise ValueError("resend_interval must be > 0")
+        if not self.disable_encryption:
+            raise ValueError("Encryption is not supported.")
+        if not self.disable_authentication:
+            raise ValueError("Authentication is not supported.")
 
 @dataclass
 class _TransportChunked(abc.ABC):
@@ -618,7 +131,7 @@ class _TransportKeepAlive(abc.ABC):
     __alive_queue: asyncio.Queue[None] = cast(asyncio.Queue[None], ...)
 
     def __post_init__(self) -> None:
-        self.__alive_queue: asyncio.Queue[None] = asyncio.Queue(maxsize=self.conf.max_keepalives_without_answer*2+8)
+        self.__alive_queue: asyncio.Queue[None] = asyncio.Queue(maxsize=self.conf.max_missing_alives*2+8)
 
     async def __write_loop(self) -> None:
         while True:
@@ -649,14 +162,14 @@ class _TransportKeepAlive(abc.ABC):
     async def __check_loop(self) -> None:
         while True:
             current_time = time.monotonic()
-            max_delay_since_last_alive = self.conf.alive_interval * ( self.conf.max_keepalives_without_answer + 1 )
+            max_delay_since_last_alive = self.conf.alive_interval * ( self.conf.max_missing_alives + 1 )
             until_timeout = self.__last_alive + max_delay_since_last_alive - current_time
             if until_timeout <= 0:
                 raise RuntimeError(f"Timeout: No keepalive signals for {current_time - self.__last_alive} seconds.")
             await asyncio.sleep(until_timeout)
 
     async def loop(self) -> None:
-        await gather_and_cancel(
+        await wait_until_all_complete_or_cancel_on_exc(
             self.__write_loop(),
             self.__queue_alive_loop(),
             self.__write_alive_loop(),
@@ -721,10 +234,16 @@ class _DeliveryMessagesTransport:
         await self._wrapped.write(b'\x01' + index.to_bytes(8, 'big'))
 
     async def no_owning_run(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+        # This function is allowed to be called in parallel by different streams.
+        # Different messages intentionally can be sent via different `wrapped`s.
+        # This class does not guarantee delivery or order.
         return await self._wrapped.no_owning_run(reader, writer)
 
 @dataclass
 class lock_less_condition:
+    # Not thread safe.
+    # Requires event loop to be cooperative.
+
     _fut: asyncio.Future[None] | None = None
 
     def notify_all(self) -> None:
@@ -786,53 +305,41 @@ class SendBuffer:
     on_send: Callable[[int, bytes], Awaitable[Any]]
 
     _data: dict[int, bytes] = field(default_factory=dict)
-    _cond: lock_less_condition = field(default_factory=lock_less_condition)
     _externally_written: int = 0
-    _current_attempt_num: int = 0
-    _heap: list[tuple[float, int, bytes]] = []
+    _cond: lock_less_condition = field(default_factory=lock_less_condition)
+    _heap: list[tuple[float, int]] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         if self.size <= 0:
             raise ValueError("size must be positive")
 
-    async def __attempt_notifier(self) -> None:
-        next_attempt_at = time.monotonic()
+    async def __heap_notifier(self) -> None:
         while True:
-            await asyncio.sleep(next_attempt_at - time.monotonic())
-            next_attempt_at += self.resend_interval
-            self._current_attempt_num += 1
+            await self._cond.wait_until(lambda: bool(self._heap))
+            await asyncio.sleep(self._heap[0][0] - time.monotonic())
             self._cond.notify_all()
 
     async def __select_message_to_send(self) -> None:
         while True:
-            await self._cond.wait_until(lambda: bool(self._data))
+            await self._cond.wait_until(lambda: bool(self._heap and self._heap[0][0] <= time.monotonic()))
+            
+            send_at, index = heapq.heappop(self._heap)
+            self._cond.notify_all()
 
-            current_attempt_num = self._current_attempt_num
+            if index not in self._data:
+                continue
 
-            for index in count(min(self._data.keys())):
-                
-                if index not in self._data:
-                    if index < self._externally_written:
-                        continue
-                    else:
-                        await self._cond.wait_until(
-                            lambda: (
-                                index in self._data
-                                    or
-                                self._current_attempt_num != current_attempt_num
-                            )
-                        )
-                        if self._current_attempt_num != current_attempt_num:
-                            break
+            data = self._data[index]
+            logging.debug(F"Chunk {index:20d}: sending to transport")
+            await self.on_send(index, data)
 
-                value = self._data[index]
-                logging.debug(F"Chunk {index:20d}: sending to transport")
-                await self.on_send(index, value)
+            heapq.heappush(self._heap, (time.monotonic() + self.resend_interval, index))
+            self._cond.notify_all()
 
     async def loop(self) -> None:
-        await gather_and_cancel(
+        await wait_until_all_complete_or_cancel_on_exc(
+            self.__heap_notifier(),
             self.__select_message_to_send(),
-            self.__attempt_notifier(),
         )
 
     async def write(self, data: bytes) -> None:
@@ -841,11 +348,11 @@ class SendBuffer:
         index = self._externally_written
         self._externally_written += 1
 
-        logging.debug(F"Chunk {index:20d}: written to send buffer")
+        heapq.heappush(self._heap, (time.monotonic(), index))
         self._data[index] = data
-        self._cond.notify_all()
 
-        return
+        logging.debug(F"Chunk {index:20d}: written to send buffer")
+        self._cond.notify_all()
 
     def mark_as_delivered(self, index: int) -> None:
         logging.debug(F"Chunk {index:20d}: received ACK")
@@ -898,6 +405,9 @@ class _RetryTransport(ITransport):
         self._send_buffer.mark_as_delivered(index)
 
     async def _no_owning_run(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+        # This function is allowed to be called in parallel by different streams.
+        # Different messages intentionally can be sent via different `wrapped`s.
+        # This class guarantees delivery and order.
         self.__loop_starter()
         return await self._wrapped.no_owning_run(reader, writer)
 
@@ -919,7 +429,7 @@ class _RetryTransport(ITransport):
             fire(self.__loop(), halt_on_exception=True)
 
     async def __loop(self) -> None:
-        await gather_and_cancel(
+        await wait_until_all_complete_or_cancel_on_exc(
             self.__internal_send_loop(),
             self.__ack_send_loop(),
         )
@@ -942,10 +452,8 @@ class _RetryTransport(ITransport):
 
 @dataclass
 class _DebuggerTransport(ITransport):
-    # Temporary wrapper to debug implementation.
     # Intention to catch reorderings and broken packets.
     # No intention of cryptographic security.
-    # This class might be removed in production.
 
     conf: Config
 
@@ -957,6 +465,7 @@ class _DebuggerTransport(ITransport):
         self._wrapped = _RetryTransport(self.conf)
 
     async def _no_owning_run(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+        # This function is allowed to be called in parallel by different streams.
         return await self._wrapped._no_owning_run(reader, writer)
 
     async def read(self) -> bytes:
@@ -989,6 +498,7 @@ class AcceptedTransports:
 
     async def no_owning_accept(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
         # part of public interface
+        # This function is allowed to be called in parallel by different streams.
         # This UUID is not for authentication.
         transport_id = uuid.UUID(bytes=await reader.readexactly(uuid_bytes_size))
         writer.write(transport_id.bytes)
@@ -1015,6 +525,7 @@ class ConnectedTransports:
 
     async def no_owning_connect(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
         # part of public interface
+        # This function is allowed to be called in parallel by different streams.
         writer.write(self.transport_id.bytes)
         await writer.drain()
         transport_id = uuid.UUID(bytes=await reader.readexactly(len(self.transport_id.bytes)))
