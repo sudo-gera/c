@@ -35,7 +35,7 @@ import heapq
 
 ############################################################################################################################
 
-from tcp_over_tcp_useful_tools import wait_until_all_complete_or_cancel_on_exc, uuid_bytes_size
+from tcp_over_tcp_useful_tools import wait_until_all_complete_or_cancel_on_exc, uuid_bytes_size, terminate
 
 ############################################################################################################################
 
@@ -49,37 +49,56 @@ import tcp_over_tcp_transport
 class connection:
     connection_id: uuid.UUID
     transport: tcp_over_tcp_transport.ITransport
+    reader: asyncio.StreamReader
+    writer: asyncio.StreamWriter
+    ctx: context
+    
     queue: asyncio.Queue[bytes|None] = field(default_factory=lambda: asyncio.Queue(maxsize=8))
 
-    async def write_message(self, data: bytes | None) -> None:
-        if data is None:
-            await self.transport.write(self.connection_id.bytes + b'\x01')
+    async def write_message(self, data: bytes | int) -> None:
+        if isinstance(data, int):
+            if data == 0:
+                terminate(f"data cannot be 0")
+            await self.transport.write(self.connection_id.bytes + data.to_bytes(1, 'big'))
         else:
             await self.transport.write(self.connection_id.bytes + b'\x00' + data)
 
-    async def conn_route_loop(self, ctx: context, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+    async def conn_loop(self) -> None:
         try:
-            async def to_transport() -> None:
-                while (data := await reader.read(2**16)):
-                    await self.write_message(data)
-                await self.write_message(None)
+            try:
+                self.ctx.routes[self.connection_id] = self
+                try:
+                    await self.write_message(2)
 
-            async def from_transport() -> None:
-                while (data := await self.queue.get()) is not None:
-                    writer.write(data)
-                    await writer.drain()
-                if writer.can_write_eof():
-                    writer.write_eof()
+                    async def to_transport() -> None:
+                        while (data := await self.reader.read(2**16)):
+                            await self.write_message(data)
+                        await self.write_message(1)
 
-            # Wait for latter result or first error.
-            # In case of half-duplex connection,
-            # one loop stops and we wait for other one.
-            await wait_until_all_complete_or_cancel_on_exc(
-                to_transport(),
-                from_transport(),
-            )
+                    async def from_transport() -> None:
+                        while (data := await self.queue.get()) is not None:
+                            self.writer.write(data)
+                            await self.writer.drain()
+                        if self.writer.can_write_eof():
+                            self.writer.write_eof()
+
+                    # Wait for latter result or first error.
+                    # In case of half-duplex connection,
+                    # one loop stops and we wait for other one.
+                    await wait_until_all_complete_or_cancel_on_exc(
+                        to_transport(),
+                        from_transport(),
+                    )
+                finally:
+                    self.ctx.routes.pop(self.connection_id, None)
+            finally:
+                self.writer.close()
+                await self.writer.wait_closed()
+        except Exception as e:
+            logging.warning(f"Transport error: {e!r}")
         finally:
-            ctx.routes.pop(self.connection_id, None)
+            logging.info(f"Client closed: {self.connection_id = }")
+        
 
 @dataclass
 class context:

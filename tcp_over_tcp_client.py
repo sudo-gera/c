@@ -76,25 +76,15 @@ async def start_transport(ctx: context) -> None:
         await asyncio.sleep(ctx.args.reconnect_interval)
 
 async def on_client_connect(ctx: context, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
-    try:
-        try:
-            conn = tcp_over_tcp_common.connection(
-                uuid.uuid4(),
-                ctx.transports.wrapped,
-            )
-            logging.info(f"Client accepted: {conn.connection_id = }")
-
-            ctx.ctx.routes[conn.connection_id] = conn
-            try:
-                await conn.conn_route_loop(ctx.ctx, reader, writer)
-            finally:
-                ctx.ctx.routes.pop(conn.connection_id, None)
-                logging.info(f"Client closed: {conn.connection_id = }")
-        finally:
-            writer.close()
-            await writer.wait_closed()
-    except Exception as e:
-        logging.warning(f"Transport error: {e!r}")
+    conn = tcp_over_tcp_common.connection(
+        uuid.uuid4(),
+        ctx.transports.wrapped,
+        reader,
+        writer,
+        ctx.ctx,
+    )
+    logging.info(f"Client accepted: {conn.connection_id = }")
+    await conn.conn_loop()
 
 @dataclass
 class NewConnectionHandler(tcp_over_tcp_common.INewConnectionHandler):

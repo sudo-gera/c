@@ -64,26 +64,22 @@ class NewConnectionHandler(tcp_over_tcp_common.INewConnectionHandler):
     ctx: context
 
     async def create_connection(self, conn: tcp_over_tcp_common.connection) -> None:
-        try:
-            reader, writer = await asyncio.open_connection(self.ctx.args.tcp_connect_host, self.ctx.args.tcp_connect_port)
-            try:
-                logging.info(f"Client connected: {conn.connection_id = }")
-
-                await conn.conn_route_loop(self.ctx.ctx, reader, writer)
-
-            finally:
-                self.ctx.ctx.routes.pop(conn.connection_id, None)
-                writer.close()
-                await writer.wait_closed()
-                logging.info(f"Client closed: {conn.connection_id = }")
-        except Exception as e:
-            logging.warning(f"Client error: {e!r}")
+        await conn.conn_loop()
 
     async def handle_new_connection(self, transport: tcp_over_tcp_transport.ITransport, connection_id: uuid.UUID) -> tcp_over_tcp_common.connection | None:
+        try:
+            reader, writer = await asyncio.open_connection(self.ctx.args.tcp_connect_host, self.ctx.args.tcp_connect_port)
+        except Exception as e:
+            logging.warning(f"Client error: {e!r}")
+            return None
         conn = tcp_over_tcp_common.connection(
             connection_id,
             transport,
+            reader,
+            writer,
+            self.ctx.ctx,
         )
+        logging.info(f"Client connected: {conn.connection_id = }")
         self.ctx.ctx.routes[conn.connection_id] = conn
         fire(self.create_connection(conn))
         return conn

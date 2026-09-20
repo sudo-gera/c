@@ -268,12 +268,13 @@ class lock_less_condition:
 
 timetable_t = TypeVar('timetable_t')
 
+@dataclass
 class timetable(Generic[timetable_t]):
 
     _heap: list[tuple[float, int, timetable_t]] = field(default_factory=list)
     _cond: lock_less_condition = field(default_factory=lock_less_condition)
     _fut: asyncio.Future[None] = field(default_factory=asyncio.Future)
-    _lock: asyncio.Lock = asyncio.Lock()
+    _lock: asyncio.Lock = field(default_factory=asyncio.Lock)
     _index = 0  # prevents comparing data
 
     def put(self, at_monotonic: float, data: timetable_t) -> None:
@@ -293,7 +294,10 @@ class timetable(Generic[timetable_t]):
                 if sleep_until <= time.monotonic():
                     return heapq.heappop(self._heap)[-1]
                 self._fut = asyncio.Future()
-                await asyncio.wait_for(self._fut, sleep_until - time.monotonic())
+                try:
+                    await asyncio.wait_for(self._fut, sleep_until - time.monotonic())
+                except asyncio.TimeoutError:
+                    pass
 
 @dataclass
 class SendBuffer:
