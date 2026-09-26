@@ -1,83 +1,124 @@
-import argparse
-import json
-import mimetypes
-from pathlib import Path
-from urllib.parse import urlparse, parse_qs, unquote
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from __future__ import annotations
+from fractions import Fraction
+from dataclasses import *
 
-ROOT = Path(".")
+@dataclass(frozen=True)
+class Expr:
+    mul: Fraction
+    add: Fraction
 
+    def __mul__(self, value: Fraction | int) -> Expr:
+        value = Fraction(value)
+        return Expr(
+            self.mul * value,
+            self.add * value,
+        )
 
-class FileServer(BaseHTTPRequestHandler):
-    def do_GET(self):
-        query = parse_qs(urlparse(self.path).query)
-        requested = query.get("path", [None])[0]
+    def __rmul__(self, value: Fraction | int) -> Expr:
+        return self * value
 
-        if requested is None:
-            self.send_error(400, "Missing ?path= parameter")
-            return
+    def __truediv__(self, value: Fraction | int) -> Expr:
+        value = 1 / Fraction(value)
+        return self * value
 
-        # Treat ?path= as relative to ROOT.
-        path = (ROOT / unquote(requested).lstrip("/")).resolve()
+    def __add__(self, value: Fraction | int) -> Expr:
+        value = Fraction(value)
+        return Expr(
+            self.mul,
+            self.add + value,
+        )
 
-        # # Prevent ../ from escaping ROOT.
-        # try:
-        #     path.relative_to(ROOT)
-        # except ValueError:
-        #     self.send_error(403, "Forbidden")
-        #     return
+    def __radd__(self, value: Fraction | int) -> Expr:
+        return self + value
 
-        if not path.exists():
-            self.send_error(404, "Not Found")
-            return
-
-        if path.is_dir():
-            self.send_directory(path)
+    def __mod__(self, value: Fraction | int) -> Fraction:
+        value = Fraction(value)
+        if self.mul % value == 0:
+            return self.add % value
         else:
-            self.send_file(path)
+            raise TabError
 
-    def send_directory(self, path):
-        entries = [
-            {
-                "name": p.name,
-                "type": "directory" if p.is_dir() else "file",
-                "size": p.stat().st_size if p.is_file() else None,
-            }
-            for p in sorted(path.iterdir(), key=lambda p: (not p.is_dir(), p.name.lower()))
-        ]
-
-        body = json.dumps(entries, indent=2).encode()
-
-        self.send_response(200)
-        self.send_header("Content-Type", "application/json; charset=utf-8")
-        self.send_header("Content-Length", len(body))
-        self.end_headers()
-        self.wfile.write(body)
-
-    def send_file(self, path):
-        body = path.read_bytes()
-        content_type = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
-
-        self.send_response(200)
-        self.send_header("Content-Type", content_type)
-        self.send_header("Content-Length", len(body))
-        self.end_headers()
-        self.wfile.write(body)
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--root", default='.')
-    parser.add_argument("--host", default="127.0.0.1")
-    parser.add_argument("--port", type=int, default=8080)
-    args = parser.parse_args()
-
-    ROOT = Path(args.root).resolve()
-
-    server = HTTPServer((args.host, args.port), FileServer)
-    print(f"Serving {ROOT} on http://[{args.host}]:{args.port}")
-
+    def __floordiv__(self, val: Expr) -> Expr:
+        mul = self.mul / val.mul
+        add = self.add - mul * val.add
+        return Expr(mul, add)
+    
+def divizor(expr: Expr) -> Expr:
+    original = expr
     try:
-        server.serve_forever()
-    except KeyboardInterrupt:
-        pass
+        while True:
+            if expr % 2 == 0:
+                expr = expr / 2
+            else:
+                expr = expr * 3 + 1
+    except TabError:
+        return expr
+        # return expr // original
+
+def to_radix_list(value: int, base: int) -> list[int]:
+    z=abs(value)
+    x=z
+    if bin(base).count('1')==1:
+        s=list(bin(z)[2:][::-1])
+        s=[int(w) for w in s]
+        l=len(bin(base))-3
+        while len(s)%l:
+            s.append(0)
+        r=[]
+        s=s[::-1]
+        for w in range(0,len(s),l):
+            a=0
+            for t in range(l):
+                a*=2
+                a+=s[w+t]
+            r.append(a)
+        if not r:
+            r=[0]
+        s=r
+    else:
+        s=[]
+        while z:
+            s.append(z%base)
+            z//=base
+        if not s:
+            s=[0]
+        s=s[::-1]
+    if value<0:
+        s = [-w for w in s]
+    return s
+
+def to_radix(q: int, e: int) -> str:
+    s=to_radix_list(q,e)
+    s=''.join(["0123456789abcdefghijklmnopqrstuvwxyz".upper()[w] for w in s])
+    return s
+
+modulo = 8
+
+for i in range(modulo):
+    f = divizor(Expr(modulo, i))
+    assert int(f.mul) == f.mul
+    assert int(f.add) == f.add
+    a=f"{to_radix(modulo, 2):0>8} * k + {to_radix(i, 2):0>8}   ->    {to_radix(int(f.mul), 3):0>8s} * k + {to_radix(int(f.add), 3):0>12s}"
+    a=''.join(
+        [
+            '\x1b[90m0\x1b[0m'
+                if c == '0' else
+            '\x1b[92m1\x1b[0m'
+                if c == '1' else
+            '\x1b[96m2\x1b[0m'
+                if c == '2' else
+            c
+            for c in a
+        ]
+    )
+    print(a)
+
+
+
+
+
+
+
+
+
+
