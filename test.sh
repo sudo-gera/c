@@ -1,2 +1,3 @@
-#!/usr/bin/env bash
-date >> ~/test.txt
+
+
+echo "${BASH_SOURCE[0]}"

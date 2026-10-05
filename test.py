@@ -1,124 +1,101 @@
-from __future__ import annotations
-from fractions import Fraction
-from dataclasses import *
+import json
+import os
+from tqdm import tqdm
+from collections import defaultdict as dd
 
-@dataclass(frozen=True)
-class Expr:
-    mul: Fraction
-    add: Fraction
+filename = '../doc_j.json'
+file_size = os.path.getsize(filename)
 
-    def __mul__(self, value: Fraction | int) -> Expr:
-        value = Fraction(value)
-        return Expr(
-            self.mul * value,
-            self.add * value,
-        )
+times: dd[int, int] = dd(int)
 
-    def __rmul__(self, value: Fraction | int) -> Expr:
-        return self * value
-
-    def __truediv__(self, value: Fraction | int) -> Expr:
-        value = 1 / Fraction(value)
-        return self * value
-
-    def __add__(self, value: Fraction | int) -> Expr:
-        value = Fraction(value)
-        return Expr(
-            self.mul,
-            self.add + value,
-        )
-
-    def __radd__(self, value: Fraction | int) -> Expr:
-        return self + value
-
-    def __mod__(self, value: Fraction | int) -> Fraction:
-        value = Fraction(value)
-        if self.mul % value == 0:
-            return self.add % value
-        else:
-            raise TabError
-
-    def __floordiv__(self, val: Expr) -> Expr:
-        mul = self.mul / val.mul
-        add = self.add - mul * val.add
-        return Expr(mul, add)
-    
-def divizor(expr: Expr) -> Expr:
-    original = expr
-    try:
-        while True:
-            if expr % 2 == 0:
-                expr = expr / 2
-            else:
-                expr = expr * 3 + 1
-    except TabError:
-        return expr
-        # return expr // original
-
-def to_radix_list(value: int, base: int) -> list[int]:
-    z=abs(value)
-    x=z
-    if bin(base).count('1')==1:
-        s=list(bin(z)[2:][::-1])
-        s=[int(w) for w in s]
-        l=len(bin(base))-3
-        while len(s)%l:
-            s.append(0)
-        r=[]
-        s=s[::-1]
-        for w in range(0,len(s),l):
-            a=0
-            for t in range(l):
-                a*=2
-                a+=s[w+t]
-            r.append(a)
-        if not r:
-            r=[0]
-        s=r
-    else:
-        s=[]
-        while z:
-            s.append(z%base)
-            z//=base
-        if not s:
-            s=[0]
-        s=s[::-1]
-    if value<0:
-        s = [-w for w in s]
-    return s
-
-def to_radix(q: int, e: int) -> str:
-    s=to_radix_list(q,e)
-    s=''.join(["0123456789abcdefghijklmnopqrstuvwxyz".upper()[w] for w in s])
-    return s
-
-modulo = 8
-
-for i in range(modulo):
-    f = divizor(Expr(modulo, i))
-    assert int(f.mul) == f.mul
-    assert int(f.add) == f.add
-    a=f"{to_radix(modulo, 2):0>8} * k + {to_radix(i, 2):0>8}   ->    {to_radix(int(f.mul), 3):0>8s} * k + {to_radix(int(f.add), 3):0>12s}"
-    a=''.join(
-        [
-            '\x1b[90m0\x1b[0m'
-                if c == '0' else
-            '\x1b[92m1\x1b[0m'
-                if c == '1' else
-            '\x1b[96m2\x1b[0m'
-                if c == '2' else
-            c
-            for c in a
-        ]
-    )
-    print(a)
+# unit='B' and unit_scale=True automatically format bytes to KB, MB, or GB
+with open(filename, "r", encoding="utf-8") as f, tqdm(
+    total=file_size, unit="B", unit_scale=True, desc="Reading file"
+) as pbar:
+    for line in f:
+        pbar.update(len(line.encode("utf-8")))
 
 
+        data = json.loads(line)
 
+        match data:
+            case {
+                '_id': {
+                    '$oid': id_oid,
+                    **id_empty_rest
+                },
+                'fsId': fsid,
+                'kktRegId': kkdregid,
+                'subtype': subtype,
+                'receiveDate': {
+                    '$date': receivedate_date,
+                    **receivedate_empty_rest,
+                },
+                'protocolVersion': protocolversion,
+                'ofdId': ofdid,
+                'protocolSubversion': protocolSubversion,
+                'content': {
+                    'fiscalDriveNumber': content_fiscalDriveNumber,
+                    'rawData': content_rawData,
+                    'kktRegId': content_kttregid,
+                    'userInn': content_userinn,
+                    'fiscalSign': content_fiscalsign,
+                    'fiscalDocumentNumber': content_fiscalDocumentNumber,
+                    'dateTime': {
+                        '$date': content_datetime_date,
+                        **content_datetime_rest,
+                    },
+                    **content_rest,
+                },
+                'documentId': documentid,
+                **empty_rest,
+            } if (True
+                and isinstance(id_oid, str)
+                and not id_empty_rest
+                and isinstance(fsid, str)
+                and isinstance(kkdregid, str)
+                and isinstance(subtype, str)
+                and isinstance(receivedate_date, int)
+                and not receivedate_empty_rest
+                and isinstance(protocolversion, int|str)
+                and isinstance(ofdid, str)
+                and isinstance(protocolSubversion, int)
+                and isinstance(content_fiscalDriveNumber, str)
+                and isinstance(content_rawData, str)
+                and isinstance(content_kttregid, str)
+                and isinstance(content_userinn, str)
+                and isinstance(content_fiscalsign, int)
+                and isinstance(content_fiscalDocumentNumber, int)
+                and isinstance(content_datetime_date, int)
+                and not content_datetime_rest
+                and isinstance(documentid, int)
+                and not empty_rest
+            ):
+                if subtype == 'receipt':
+                    match content_rest:
+                        case {
+                            'shiftNumber': content_shiftNumber,
+                            'cashTotalSum': content_cashTotalSum,
+                            'receiptCode': content_receiptCode,
+                            'taxationType': content_taxationType,
+                            'requestNumber': content_requestNumber,
+                            'ecashTotalSum': content_ecashTotalSum,
+                            'operationType': content_operationType,
+                            **content_rest,
+                        } if (True
+                            and isinstance(content_shiftNumber, int)
+                            and isinstance(content_cashTotalSum, int)
+                            and isinstance(content_receiptCode, int)
+                            and isinstance(content_taxationType, int | list)
+                            and isinstance(content_requestNumber, int)
+                            and isinstance(content_ecashTotalSum, int)
+                            and isinstance(content_operationType, int)
+                        ):
+                            ...
+                        case data:
+                            raise TabError(data)
+                times[content_datetime_date] += 1
+            case data:
+                raise TabError(data)
 
-
-
-
-
-
-
+print(*sorted(dict(zip(*[*zip(*times.items())][::-1])).items()), sep='\n')
