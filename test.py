@@ -6,7 +6,11 @@ from collections import defaultdict as dd
 filename = '../doc_j.json'
 file_size = os.path.getsize(filename)
 
+tid: dd[tuple[int, int], int] = dd(int)
+
 times: dd[int, int] = dd(int)
+ids: dd[int, int] = dd(int)
+id_oids: dd[str, int] = dd(int)
 
 # unit='B' and unit_scale=True automatically format bytes to KB, MB, or GB
 with open(filename, "r", encoding="utf-8") as f, tqdm(
@@ -95,7 +99,13 @@ with open(filename, "r", encoding="utf-8") as f, tqdm(
                         case data:
                             raise TabError(data)
                 times[content_datetime_date] += 1
+                ids[documentid] += 1
+                tid[content_datetime_date, documentid] += 1
+                id_oids[id_oid] += 1
             case data:
                 raise TabError(data)
 
-print(*sorted(dict(zip(*[*zip(*times.items())][::-1])).items()), sep='\n')
+# print(*sorted(dict(zip(*[*zip(*times.items())][::-1])).items()), sep='\n')
+# print(*sorted(dict(zip(*[*zip(*ids.items())][::-1])).items()), sep='\n')
+# print(*sorted(dict(zip(*[*zip(*tid.items())][::-1])).items()), sep='\n')
+print(*sorted(dict(zip(*[*zip(*id_oids.items())][::-1])).items()), sep='\n')
