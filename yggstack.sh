@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # setup-yggstack.sh — idempotent Yggstack config bootstrap
 set -euo pipefail
 
