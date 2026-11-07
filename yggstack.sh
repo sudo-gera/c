@@ -1,6 +1,6 @@
 #!/bin/sh
 # setup-yggstack.sh — idempotent Yggstack config bootstrap
-set -eu
+set -euo pipefail
 
 YGGSTACK="$HOME/yggstack"
 DIR="$HOME/.yggstack"
@@ -9,6 +9,9 @@ CONF="$DIR/config.conf"
 PUB="$DIR/public.key"
 ADDR="$DIR/address.txt"
 DAEMON="$DIR/daemon.sh"
+
+"$YGGSTACK" --help >/dev/null
+jq --help >/dev/null
 
 # 1. Create ~/.yggstack with .ssh-like permissions (dir => 700)
 if [ ! -d "$DIR" ]; then
