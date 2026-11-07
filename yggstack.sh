@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # setup-yggstack.sh — idempotent Yggstack config bootstrap
 set -euo pipefail
 
@@ -10,8 +10,25 @@ PUB="$DIR/public.key"
 ADDR="$DIR/address.txt"
 DAEMON="$DIR/daemon.sh"
 
-"$YGGSTACK" --help >/dev/null
-jq --help >/dev/null
+# 0. Preflight: verify required commands are available
+missing=0
+
+if [ ! -x "$YGGSTACK" ]; then
+    echo "Error: yggstack binary not found or not executable: $YGGSTACK" >&2
+    echo "       Download it to $YGGSTACK and chmod +x it." >&2
+    missing=1
+fi
+
+if ! command -v jq >/dev/null 2>&1; then
+    echo "Error: jq is not installed or not in PATH." >&2
+    echo "       Install it via your package manager (e.g. apt install jq, brew install jq)." >&2
+    missing=1
+fi
+
+if [ "$missing" -ne 0 ]; then
+    echo "Aborting: missing required dependencies." >&2
+    exit 1
+fi
 
 # 1. Create ~/.yggstack with .ssh-like permissions (dir => 700)
 if [ ! -d "$DIR" ]; then
