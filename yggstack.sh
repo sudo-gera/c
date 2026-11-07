@@ -58,8 +58,19 @@ fi
 if [ ! -f "$DAEMON" ]; then
     echo "Generating $DAEMON..."
     cat > "$DAEMON" <<'EOF'
-#!/bin/sh
+#!/usr/bin/env bash
 # daemon.sh — start yggstack with the config in this directory.
+#
+# SECURITY WARNING — NO GROUP PASSWORD, NO ACL
+#   Yggstack does NOT support GroupPassword (unlike mainline Yggdrasil).
+#   Every port you expose with -remote-tcp / -remote-udp is reachable by
+#   ANY node on the public Yggdrasil network. There is no shared-secret,
+#   password, or firewall barrier in Yggstack itself — treat every
+#   exposed port as world-wide accessible.
+#
+#   If you need access control, put the service behind an authenticating
+#   proxy (Traefik with basic-auth / mTLS, WireGuard-in-Yggdrasil, etc.)
+#   rather than relying on Yggstack.
 #
 # ADD PORT FORWARDING FLAGS HERE (before or instead of the trailing "$@").
 #
