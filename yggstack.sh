@@ -8,6 +8,7 @@ KEY="$DIR/private.key"
 CONF="$DIR/config.conf"
 PUB="$DIR/public.key"
 ADDR="$DIR/address.txt"
+DAEMON="$DIR/daemon.sh"
 
 # 1. Create ~/.yggstack with .ssh-like permissions (dir => 700)
 if [ ! -d "$DIR" ]; then
@@ -33,11 +34,50 @@ if [ ! -f "$CONF" ]; then
     )
 fi
 
-# 4. Always enforce permissions, even on pre-existing files
+# 4. Generate daemon.sh if missing (user-editable — never overwritten)
+if [ ! -f "$DAEMON" ]; then
+    echo "Generating $DAEMON..."
+    cat > "$DAEMON" <<'EOF'
+#!/bin/sh
+# daemon.sh — start yggstack with the config in this directory.
+#
+# ADD PORT FORWARDING FLAGS HERE (before or instead of the trailing "$@").
+#
+#   Expose local ports to the Yggdrasil network:
+#     -remote-tcp  22                             # same port on both ends
+#     -remote-tcp  2022:22                        # local 22 -> remote 2022
+#     -remote-tcp  22:192.168.1.1:2022            # explicit target host
+#     -remote-udp  5353                           # UDP equivalent
+#
+#   Forward local ports to a remote Yggdrasil node:
+#     -local-tcp   22:[200:dead:beef::1]:22
+#     -local-tcp   127.0.0.1:22:[200:dead:beef::1]:22
+#     -local-udp   22:[200:dead:beef::1]:2022
+#
+#   Optional SOCKS proxy (TCP):
+#     -socks       :1080                          # or /tmp/yggstack.sock
+#
+# Example (uncomment / adapt):
+#     -remote-tcp  22 \
+#     -remote-tcp  443:192.168.1.10:8443 \
+#     -socks       :1080 \
+#
+# DO NOT run multiple yggstack processes with the same config file.
+#   They will all share the same IPv6 address
+#   and conflict with each other.
+
+exec "$HOME/yggstack" \
+    -useconffile "$HOME/.yggstack/config.conf" \
+    "$@"
+EOF
+fi
+
+# 5. Always enforce permissions, even on pre-existing files
 chmod 700 "$DIR"
 chmod 600 "$KEY" "$CONF"
+chmod 755 "$DAEMON"
 
-# 5. Always re-derive public key + address from the current config
+# 6. Always re-derive public key + address from the current config
 echo "Extracting public key and address from $CONF..."
 ( umask 077
   "$YGGSTACK" -useconf -publickey < "$CONF" > "$PUB"
@@ -50,3 +90,4 @@ echo "  private key: $KEY"
 echo "  public key:  $PUB"
 echo "  config:      $CONF"
 echo "  address:     $ADDR"
+echo "  daemon:      $DAEMON"
