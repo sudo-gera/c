@@ -507,7 +507,7 @@ async def socks5h(args: main_args, accepted_reader: asyncio.StreamReader, accept
                 if ip.version == 4:
                     addr_type = addr_types.IPv4
                 elif ip.version == 6:
-                    addr_type = addr_types.IPv4
+                    addr_type = addr_types.IPv6
                 else:
                     assert False
             except ValueError:
@@ -529,31 +529,39 @@ async def socks5h(args: main_args, accepted_reader: asyncio.StreamReader, accept
             #                         |   |   |   |   |   |      |                 . addr value
             #                         |   |   |   |   |   |      |                 |      . port
             #                         |   |   |   |   |   |      |                 |      |
-            connected_writer.write(b'\x05\x01\x00\x05\x01\x00' + addr_type.value + addr + port)
+            socks5_proxy_request = b'\x05\x01\x00\x05\x01\x00' + addr_type.value + addr + port
+            logging.info(f"{socks5_proxy_request = }")
+            connected_writer.write(socks5_proxy_request)
             await connected_writer.drain()
 
             logging.info(f"sent socks5 request")
 
-            #                                  . socks version
-            #                                  |   . selected auth method
-            #                                  |   |   . socks version
-            #                                  |   |   |   . status code
-            #                                  |   |   |   |   . reserved, must be \x00
-            #                                  |   |   |   |   |
-            await connected_reader.readexactly(1 + 1 + 1 + 1 + 1)
-            addr_type = addr_types(await connected_reader.readexactly(1))
+            socks5_proxy_response = b''
+
+            #                                                           . socks version
+            #                                                           |   . selected auth method
+            #                                                           |   |   . socks version
+            #                                                           |   |   |   . status code
+            #                                                           |   |   |   |   . reserved, must be \x00
+            #                                                           |   |   |   |   |   . addr type
+            #                                                           |   |   |   |   |   |
+            socks5_proxy_response += await connected_reader.readexactly(1 + 1 + 1 + 1 + 1 + 1)
+
+            addr_type = addr_types(socks5_proxy_response[-1:])
             if addr_type is addr_types.IPv4:
-                await connected_reader.readexactly(4)
+                socks5_proxy_response += await connected_reader.readexactly(4)
             elif addr_type is addr_types.domain_name:
-                l, = await connected_reader.readexactly(1)
-                await connected_reader.readexactly(l)
+                socks5_proxy_response += await connected_reader.readexactly(1)
+                l = socks5_proxy_response[-1]
+                socks5_proxy_response += await connected_reader.readexactly(l)
             elif addr_type is addr_types.IPv6:
-                await connected_reader.readexactly(16)
+                socks5_proxy_response += await connected_reader.readexactly(16)
             else:
                 assert False
-            await connected_reader.readexactly(2)
+            socks5_proxy_response += await connected_reader.readexactly(2)
 
             logging.info(f"got socks5 response")
+            logging.info(f"{socks5_proxy_response = }")
 
             await gather(
                 copy(accepted_reader, connected_writer),
