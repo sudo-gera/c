@@ -405,9 +405,15 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
             literal_args = typing.get_args(target_type)
             literal_types = {type(arg) for arg in literal_args}
             assert len(literal_types)
-            literal_type = literal_types.pop()
+            for arg_type in literal_types:
+                if all([
+                    isinstance(a, arg_type)
+                    for a in literal_args
+                ]):
+                    break
+            else:
+                raise Exception(f"Cannot find common type for {target_type!r}")
             arg_choices = literal_args
-            arg_type = literal_type
 
         assert arg_type is not None
 
@@ -416,6 +422,7 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
                 arg_action='store_false'
             else:
                 arg_action='store_true'
+            arg_required = False
 
         if arg_action is not None:
             parser.add_argument(
