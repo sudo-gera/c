@@ -1,165 +1,599 @@
-import json
-import os
-from tqdm import tqdm
-from collections import defaultdict as dd
+#!/usr/bin/env python3
+from __future__ import annotations
+from collections.abc import Callable as caCallable
+from collections import *
+from dataclasses import *
+from functools import *
+from itertools import *
+from operator import *
 from typing import *
+from enum import *
+import argparse
+import asyncio
+import base64
+import contextlib
+import errno
+import fractions
+import io
+import ipaddress
+import json
+import logging
+import math
+import os
+import pathlib
+import random
+import re
+import socket
+import sys
+import textwrap
+import time
+import traceback
+import types
+import typing
+import uuid
+import abc
+import zlib
+import heapq
 
-filename = '../doc_j.json'
-file_size = os.path.getsize(filename)
+############################################################################################################################
 
-# tid: dd[tuple[int, int], int] = dd(int)
+if sys.version_info >= (3, 10) and TYPE_CHECKING:
+    from _typeshed import DataclassInstance
+else:
+    DataclassInstance = Any
 
-# times: dd[int, int] = dd(int)
-# ids: dd[int, int] = dd(int)
-# id_oids: dd[str, int] = dd(int)
-# kkt_inn_time: dd[tuple[str, str, int], int] = dd(int)
-# subtypes: set[str] = set()
-# kkt_inn_time_data: dd[tuple[str, str, int], list[Any]] = dd(list)
+############################################################################################################################
 
-aaaa: list[dict[str, Any]] = []
+if sys.version_info < (3, 10):
+    def call(obj: Any, /, *args: Any, **kwargs: Any) -> Any:
+        return obj(*args, **kwargs)
 
-# unit='B' and unit_scale=True automatically format bytes to KB, MB, or GB
-with open(filename, "r", encoding="utf-8") as f, tqdm(
-    total=file_size, unit="B", unit_scale=True, desc="Reading file"
-) as pbar:
-    for line in f:
-        pbar.update(len(line.encode("utf-8")))
+elif sys.version_info < (3, 11):
+    call_R = TypeVar("call_R")
+    call_P = ParamSpec("call_P")
+    def call(obj: caCallable[call_P, call_R], /, *args: call_P.args, **kwargs: call_P.kwargs) -> call_R:
+        return obj(*args, **kwargs)
 
+else:
+    from operator import call
 
-        data = json.loads(line)
-        aaaa.append(data)
+############################################################################################################################
 
-        match data:
-            case {
-                '_id': {
-                    '$oid': id_oid,
-                    **id_empty_rest
-                },
-                'fsId': fsid,
-                'kktRegId': kktregid,
-                'subtype': subtype,
-                'receiveDate': {
-                    '$date': receivedate_date,
-                    **receivedate_empty_rest,
-                },
-                'protocolVersion': protocolversion,
-                'ofdId': ofdid,
-                'protocolSubversion': protocolSubversion,
-                'content': {
-                    'fiscalDriveNumber': content_fiscalDriveNumber,
-                    'rawData': content_rawData,
-                    'kktRegId': content_kttregid,
-                    'userInn': content_userinn,
-                    'fiscalSign': content_fiscalsign,
-                    'fiscalDocumentNumber': content_fiscalDocumentNumber,
-                    'dateTime': {
-                        '$date': content_datetime_date,
-                        **content_datetime_rest,
-                    },
-                    **content_rest,
-                },
-                'documentId': documentid,
-                **empty_rest,
-            } if (True
-                and isinstance(id_oid, str)
-                and not id_empty_rest
-                and isinstance(fsid, str)
-                and isinstance(kktregid, str)
-                and isinstance(subtype, str)
-                and isinstance(receivedate_date, int)
-                and not receivedate_empty_rest
-                and isinstance(protocolversion, int|str)
-                and isinstance(ofdid, str)
-                and isinstance(protocolSubversion, int)
-                and isinstance(content_fiscalDriveNumber, str)
-                and isinstance(content_rawData, str)
-                and isinstance(content_kttregid, str)
-                and isinstance(content_userinn, str)
-                and isinstance(content_fiscalsign, int)
-                and isinstance(content_fiscalDocumentNumber, int)
-                and isinstance(content_datetime_date, int)
-                and not content_datetime_rest
-                and isinstance(documentid, int)
-                and not empty_rest
-            ):
-                if subtype == 'receipt':
-                    match content_rest:
-                        case {
-                            'shiftNumber': content_shiftNumber,
-                            'cashTotalSum': content_cashTotalSum,
-                            'receiptCode': content_receiptCode,
-                            'taxationType': content_taxationType,
-                            'requestNumber': content_requestNumber,
-                            'ecashTotalSum': content_ecashTotalSum,
-                            'operationType': content_operationType,
-                            **content_rest,
-                        } if (True
-                            and isinstance(content_shiftNumber, int)
-                            and isinstance(content_cashTotalSum, int)
-                            and isinstance(content_receiptCode, int)
-                            and isinstance(content_taxationType, int | list)
-                            and isinstance(content_requestNumber, int)
-                            and isinstance(content_ecashTotalSum, int)
-                            and isinstance(content_operationType, int)
-                        ):
-                            ...
-                        case data:
-                            raise TabError(data)
-                # if subtype in ['receipt', 'openShift', 'closeShift']:
-                #     times[content_datetime_date] += 1
-                #     ids[documentid] += 1
-                #     tid[content_datetime_date, documentid] += 1
-                #     id_oids[id_oid] += 1
-                #     kkt_inn_time[kktregid, content_userinn, content_datetime_date] += 1
-                #     if (kktregid, content_userinn, content_datetime_date) == ('0000001655050213', '2225074005', 1479896700000):
-                #         kkt_inn_time_data[kktregid, content_userinn, content_datetime_date].append(data)
-                # else:
-                #     subtypes.add(subtype)
-            case data:
-                raise TabError(data)
+if sys.version_info < (3, 10):
+    typed_cache_T = TypeVar("typed_cache_T", bound=Callable[..., Any])
+    def typed_cache(func: typed_cache_T) -> typed_cache_T:
+        return cast(typed_cache_T, cache(func))
+else:
+    typed_cache_R = TypeVar("typed_cache_R")
+    typed_cache_P = ParamSpec("typed_cache_P")
+    def typed_cache(func: caCallable[typed_cache_P, typed_cache_R]) -> caCallable[typed_cache_P, typed_cache_R]:
+        return cast(caCallable[typed_cache_P, typed_cache_R], cache(func))
 
-# # print(*sorted(dict(zip(*[*zip(*times.items())][::-1])).items()), sep='\n')
-# # print(*sorted(dict(zip(*[*zip(*ids.items())][::-1])).items()), sep='\n')
-# # print(*sorted(dict(zip(*[*zip(*tid.items())][::-1])).items()), sep='\n')
-# # print(*sorted(dict(zip(*[*zip(*id_oids.items())][::-1])).items()), sep='\n')
-# print(*sorted(dict(zip(*[*zip(*kkt_inn_time.items())][::-1])).items()), sep='\n')
-# print(subtypes)
-# for (kkt, inn, time),v in kkt_inn_time.items():
-#     if v > 1:
-#         print((kkt, inn, time))
+############################################################################################################################
 
-# # for vv in kkt_inn_time_data.values():
-# #     for vvv in vv:
-# #         print(vvv['subtype'])
+checking_cast_t = TypeVar('checking_cast_t')
 
+def checking_cast(t: type[checking_cast_t], val: Any) -> checking_cast_t:
+    assert isinstance(val, t)
+    return val
 
+############################################################################################################################
 
-import itertools
+def get_terminal_size() -> tuple[int, int] | None:
+    try:
+        with open('/dev/tty', 'w+') as tty:
+            return os.get_terminal_size(tty.fileno())
+    except OSError:
+        return None
 
-for (kkt, inn), kkt_inn_group_iter in itertools.groupby(aaaa, key=lambda data: (data['kktRegId'], data['content']['userInn'])):
-    if inn == '5007091422':
-        kkt_inn_group_els = list(kkt_inn_group_iter)
+############################################################################################################################
 
-        kkt_inn_group_els.sort(key=lambda x: x['content']['dateTime']['$date'])
+uuid_bytes_size = len(uuid.uuid4().bytes)
+uuid_hex_size = len(uuid.uuid4().hex)
+uuid_str_size = len(str(uuid.uuid4()))
 
-        for date, date_group_iter in itertools.groupby(kkt_inn_group_els, key=lambda data: data['receiveDate']['$date']):
-            date_group_els = list(date_group_iter)
+############################################################################################################################
 
-            for x in date_group_els:
-                # print(x)
-                print(x['subtype'], x['kktRegId'], x['content']['userInn'], x['content']['dateTime']['$date'], sep='\t')
+false = False
+true = True
+null = None
 
-            # if any(
-            #     data['subtype'] == 'receipt'
-            #     for data in date_group_els
-            # ):
-            #     if any(
-            #         data['subtype'] == 'openShift'
-            #         for data in date_group_els
-            #     ) or any(
-            #         data['subtype'] == 'closeShift'
-            #         for data in date_group_els
-            #     ):
-            #         print(date_group_els)
+############################################################################################################################
 
+async def async_raise(e: BaseException) -> NoReturn:
+    raise e
 
+############################################################################################################################
+
+def terminate(message: str) -> NoReturn:
+    # Call it when it seems that this branch is unreachable.
+    # asyncio cannot find the difference
+    # between KeyboardInterrupt from SIGINT and from here.
+    # In both cases it would stop event loop
+    # and reraise this exception from `asyncio.run()` invocation.
+    # Not using `Exception`-based exceptions, because asyncio would
+    # print `Unhandled exception` to stderr without actually stopping.
+    # If you call it from `except` block,
+    # python would print stacks of both exceptions, joined by
+    # 'During handling of the above exception, another exception occurred:'
+    raise KeyboardInterrupt(message)
+
+############################################################################################################################
+
+def can_use_event_loop() -> bool:
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        return False
+    else:
+        return True
+
+############################################################################################################################
+
+tasks : set[asyncio.Task[None]] = set()
+
+def fire(coro: typing.Awaitable[Any], halt_on_exception: bool = True) -> None:
+    if not can_use_event_loop():
+        terminate(f"Attempt to call `fire()` without event loop.")
+    async def wrapper() -> None:
+        try:
+            await coro
+        except asyncio.CancelledError:
+            raise
+        except BaseException as e:
+            if halt_on_exception:
+                terminate(f"Background task failed: {type(e).__name__}({e})")
+            else:
+                # asyncio would print it to console and ignore
+                raise
+
+    task : asyncio.Task[Any] = asyncio.create_task(wrapper())
+    tasks.add(task)
+    task.add_done_callback(tasks.discard)
+
+############################################################################################################################
+
+_gather_awaitable_wrapper_t = TypeVar('_gather_awaitable_wrapper_t')
+
+def _gather_awaitable_wrapper(awaitable: Awaitable[_gather_awaitable_wrapper_t]) -> asyncio.Task[_gather_awaitable_wrapper_t]:
+    async def wrapper() -> _gather_awaitable_wrapper_t:
+        return await awaitable
+    return asyncio.create_task(wrapper())
+
+async def _gather_impl(*awaitables: Awaitable[Any]) -> tuple[Any, ...]:
+    tasks = [
+        _gather_awaitable_wrapper(awaitable)
+        for awaitable in awaitables
+    ]
+    try:
+        # Waits until first excetion or until last result
+        return tuple(await asyncio.gather(*tasks))
+    finally:
+        for task in tasks:
+            task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
+
+gather_t1_t = TypeVar('gather_t1_t')
+gather_t2_t = TypeVar('gather_t2_t')
+gather_t3_t = TypeVar('gather_t3_t')
+gather_t4_t = TypeVar('gather_t4_t')
+gather_t5_t = TypeVar('gather_t5_t')
+gather_t6_t = TypeVar('gather_t6_t')
+gather_t7_t = TypeVar('gather_t7_t')
+gather_t8_t = TypeVar('gather_t8_t')
+gather_t9_t = TypeVar('gather_t9_t')
+
+@overload
+async def wait_until_all_complete_or_cancel_on_exc(v1: Awaitable[gather_t1_t], /) -> tuple[gather_t1_t]:
+    ...
+
+@overload
+async def wait_until_all_complete_or_cancel_on_exc(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], /) -> tuple[gather_t1_t, gather_t2_t]:
+    ...
+
+@overload
+async def wait_until_all_complete_or_cancel_on_exc(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t]:
+    ...
+
+@overload
+async def wait_until_all_complete_or_cancel_on_exc(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t]:
+    ...
+
+@overload
+async def wait_until_all_complete_or_cancel_on_exc(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t]:
+    ...
+
+@overload
+async def wait_until_all_complete_or_cancel_on_exc(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t]:
+    ...
+
+@overload
+async def wait_until_all_complete_or_cancel_on_exc(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], v7: Awaitable[gather_t7_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t, gather_t7_t]:
+    ...
+
+@overload
+async def wait_until_all_complete_or_cancel_on_exc(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], v7: Awaitable[gather_t7_t], v8: Awaitable[gather_t8_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t, gather_t7_t, gather_t8_t]:
+    ...
+
+@overload
+async def wait_until_all_complete_or_cancel_on_exc(v1: Awaitable[gather_t1_t], v2: Awaitable[gather_t2_t], v3: Awaitable[gather_t3_t], v4: Awaitable[gather_t4_t], v5: Awaitable[gather_t5_t], v6: Awaitable[gather_t6_t], v7: Awaitable[gather_t7_t], v8: Awaitable[gather_t8_t], v9: Awaitable[gather_t9_t], /) -> tuple[gather_t1_t, gather_t2_t, gather_t3_t, gather_t4_t, gather_t5_t, gather_t6_t, gather_t7_t, gather_t8_t, gather_t9_t]:
+    ...
+
+async def wait_until_all_complete_or_cancel_on_exc(*coro: Awaitable[Any]) -> tuple[Any, ...]:
+    # Waits until first excetion or until last result
+    return tuple(await _gather_impl(*coro))
+
+gather = wait_until_all_complete_or_cancel_on_exc
+
+############################################################################################################################
+
+class LogLevelEnum(Enum):
+    CRITICAL = 50
+    FATAL = CRITICAL
+    ERROR = 40
+    WARNING = 30
+    WARN = WARNING
+    INFO = 20
+    DEBUG = 10
+    NOTSET = 0
+
+def set_log_level(log_level: LogLevelEnum | int) -> None:
+    if isinstance(log_level, LogLevelEnum):
+        log_level = log_level.value
+    assert isinstance(log_level, int)
+    logging.basicConfig(
+        level=log_level,
+        style='{',
+        format='{asctime:s} {levelname:^8s} {funcName:>32s}:{lineno:<8d} {message}',
+    )
+
+############################################################################################################################
+
+def isinstance_typing(value: Any, t: Any) -> bool:
+    try:
+        return isinstance(value, t)
+    except TypeError:
+        pass
+
+    origin = typing.get_origin(t)
+    args = typing.get_args(t)
+    assert origin is not None
+
+    if origin is Literal:
+        return value in args
+
+    if not isinstance_typing(value, origin):
+        return False
+
+    if origin is list:
+        assert len(args) == 1
+        return all([
+            isinstance_typing(v, args[0])
+            for v in value
+        ])
+
+    if origin is str:
+        assert len(args) == 1
+        return all([
+            isinstance_typing(v, args[0])
+            for v in value
+        ])
+
+    if origin is dict:
+        assert len(args) == 2
+        return all([
+            isinstance_typing(k, args[0]) and isinstance_typing(v, args[1])
+            for k, v in value.items()
+        ])
+
+    if origin is tuple:
+        if len(args) == 2 and args[1] is ...:
+            return all([
+                isinstance_typing(v, args[0])
+                for v in value
+            ])
+        else:
+            if len(args) != len(value):
+                return False
+            return all([
+                isinstance_typing(v, t)
+                for v, t in zip(value, args)
+            ])
+
+    assert False
+
+############################################################################################################################
+
+@dataclass(frozen=True)
+class dataclass_field:
+    field: Field[Any]
+    type: Any
+
+@typed_cache
+def get_fields(dclass: type[DataclassInstance]) -> list[dataclass_field]:
+
+    def process_one_filed(field: Field[Any]) -> dataclass_field:
+        if isinstance(field.type, str):
+            field_type = eval(field.type)
+        else:
+            field_type = field.type
+        return dataclass_field(
+            field=field,
+            type=field_type,
+        )
+
+    return [
+        process_one_filed(field)
+        for field in fields(dclass)
+    ]
+
+def check_dataclass_types(data: DataclassInstance) -> None:
+
+    for field in get_fields(type(data)):
+        assert isinstance_typing(getattr(data, field.field.name), field.type)
+
+dict_to_dataclass_t = TypeVar('dict_to_dataclass_t', bound=DataclassInstance)
+
+def dict_to_dataclass(data: dict[str, Any], dclass_type: type[dict_to_dataclass_t]) -> dict_to_dataclass_t:
+
+    assert all([isinstance(k, str) for k in data])
+    result = dclass_type(**data)
+    check_dataclass_types(result)
+    return cast(dict_to_dataclass_t, cast(None, result))
+
+############################################################################################################################
+
+def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass: type[DataclassInstance]) -> None:
+    for field in get_fields(args_dataclass):
+
+        arg_name = field.field.name
+        arg_required = True
+        arg_type : Callable[[str], Any]|None = None
+        arg_default : Any = None
+        arg_choices : Any = None
+        arg_action: Any = None
+
+        if field.field.default is not MISSING: # v: t = SOME_DEFAULT
+            arg_default = field.field.default
+            arg_required = False
+
+        if field.field.default_factory is not MISSING: # v: t = field(default_factory=SOME_CALLABLE)
+            arg_default = field.field.default_factory()
+            arg_required = False
+
+        target_type = field.type
+
+        if (
+            sys.version_info >= (3, 10)
+            and
+            typing.get_origin(target_type) is types.UnionType  # t | None
+            or
+            typing.get_origin(target_type) is typing.Union  # typing.Optional[t], typing.Union[t, None], typing.Union[t, type(None)]
+        ):
+            union_args = typing.get_args(target_type)
+            assert len(union_args) == 2
+            assert type(None) in union_args
+            target_type = union_args[union_args[0] == type(None)]
+            assert target_type is not None
+            arg_required = False
+
+        if isinstance(target_type, type):
+            if issubclass(target_type, Enum) or issubclass(target_type, EnumMeta):
+                enum_members = target_type.__members__
+                assert isinstance(enum_members, types.MappingProxyType)
+                enum_members_dict = {name: enum_members.get(name) for name in enum_members.keys()}
+                def get_enum(user_input: str) -> Enum | EnumMeta:
+                    if user_input not in enum_members_dict:
+                        raise ValueError
+                    enum = enum_members_dict[user_input]
+                    if not isinstance(enum, Enum) and not isinstance(enum, EnumMeta):
+                        raise ValueError
+                    return enum
+                arg_type=get_enum
+                arg_choices=list(map(get_enum, enum_members_dict))
+            else:
+                if get_origin(target_type) is list:  # list[t]
+                    assert len(get_args(target_type)) == 1
+                    arg_type = get_args(target_type)[0]
+                    arg_action = 'append'
+                    arg_required = False
+                    arg_default = []
+                else:
+                    arg_type = target_type
+
+        elif typing.get_origin(target_type) is typing.Literal:
+            literal_args = typing.get_args(target_type)
+            literal_types = {type(arg) for arg in literal_args}
+            assert len(literal_types)
+            literal_type = literal_types.pop()
+            arg_choices = literal_args
+            arg_type = literal_type
+
+        assert arg_type is not None
+
+        if arg_type is bool:
+            if arg_default:
+                arg_action='store_false'
+            else:
+                arg_action='store_true'
+
+        if arg_action is not None:
+            parser.add_argument(
+                '--' + arg_name.replace('_', '-'),
+                required=arg_required,
+                default=arg_default,
+                action=arg_action,
+            )
+        else:
+            parser.add_argument(
+                '--' + arg_name.replace('_', '-'),
+                required=arg_required,
+                type=arg_type,
+                default=arg_default,
+                choices=arg_choices,
+            )
+
+############################################################################################################################
+
+def dataclass_to_json(value: DataclassInstance) -> str:
+    check_dataclass_types(value)
+    return json.dumps(vars(value), indent=4)
+
+json_to_dataclass_t = TypeVar('json_to_dataclass_t', bound=DataclassInstance)
+
+def json_to_dataclass(data: str, dclass_type: type[json_to_dataclass_t]) -> json_to_dataclass_t:
+    d = json.loads(data)
+    assert isinstance(d, dict)
+    assert all([isinstance(k, str) for k in d])
+    return dict_to_dataclass(d, dclass_type)
+
+############################################################################################################################
+
+def dataclass_to_file(value: DataclassInstance, path: pathlib.Path) -> None:
+    data = dataclass_to_json(value)
+    with path.open('w') as file:
+        file.write(data)
+
+file_to_dataclass_t = TypeVar('file_to_dataclass_t', bound=DataclassInstance)
+
+def file_to_dataclass(path: pathlib.Path, dclass_type: type[file_to_dataclass_t]) -> file_to_dataclass_t:
+    if not path.exists():
+        with path.open('w') as file:
+            json.dump({}, file)
+    assert path.exists()
+    assert path.is_file()
+    with path.open('r') as file:
+        data = file.read()
+    return json_to_dataclass(data, dclass_type)
+
+############################################################################################################################
+
+class path_based_lock:
+    def __init__(self, path: pathlib.Path, force_new_lock: bool):
+        assert force_new_lock
+        self.__path = path
+        self.__is_locked = False
+        self.__update_future : asyncio.Future[None] | None = None
+
+    def checking_switch_to(self, new_val: bool) -> None:
+        assert self.__is_locked != new_val
+        self.__is_locked = new_val
+        if self.__update_future is not None:
+            self.__update_future.set_result(None)
+            self.__update_future = None
+
+    async def wait_for_update(self) -> None:
+        if self.__update_future is None:
+            self.__update_future = asyncio.Future()
+        await self.__update_future
+
+    def is_locked(self) -> bool:
+        return self.__is_locked
+
+@typed_cache
+def get_path_based_lock(path: pathlib.Path) -> path_based_lock:
+    rpath = path.resolve()
+    if rpath != path:
+        return get_path_based_lock(rpath)
+    return path_based_lock(path, force_new_lock=True)
+
+############################################################################################################################
+
+mutexted_file_t = TypeVar('mutexted_file_t', bound=DataclassInstance)
+
+class locked_dataclass_file(typing.Generic[mutexted_file_t]):
+
+    def __init__(self, path: pathlib.Path, dclass_type: type[mutexted_file_t]) -> None:
+        self.__path = path
+        self.__dclass_type = dclass_type
+        self.__lock = get_path_based_lock(path)
+        self.__db : mutexted_file_t | None = None
+
+    def __enter__(self) -> mutexted_file_t:
+        self.__lock.checking_switch_to(True)
+        self.__db = file_to_dataclass(self.__path, self.__dclass_type)
+        return self.__db
+
+    def __exit__(self, exc_type: type[Any] | None, exc_value: Any, traceback: Any) -> None:
+        try:
+            if exc_type is None:
+                assert self.__db is not None
+                dataclass_to_file(self.__db, self.__path)
+        finally:
+            self.__db = None
+            self.__lock.checking_switch_to(False)
+
+    async def __aenter__(self) -> mutexted_file_t:
+        while self.__lock.is_locked():
+            await self.__lock.wait_for_update()
+        return self.__enter__()
+
+    async def __aexit__(self, exc_type: type[Any] | None, exc_value: Any, traceback: Any) -> None:
+        return self.__exit__(exc_type, exc_value, traceback)
+
+############################################################################################################################
+
+class alive_or_raise:
+
+    def __init__(self, timeout: float) -> None:
+        self.__timeout = timeout
+        self.__started = False
+        self.mark_as_alive()
+
+    def mark_as_alive(self) -> None:
+
+        if not self.__started and can_use_event_loop():
+            fire(self.__checker())
+            self.__started = True
+
+        self.__raise_at = time.time() + self.__timeout
+
+    async def __checker(self) -> None:
+        while 1:
+            current_time = time.time()
+            until_raise = self.__raise_at - current_time
+            if until_raise <= 0:
+                raise KeyboardInterrupt
+            await asyncio.sleep(until_raise)
+
+############################################################################################################################
+
+if_main_parse_args_and_asyncio_run_arg = TypeVar('if_main_parse_args_and_asyncio_run_arg', bound=DataclassInstance)
+
+def if_main_parse_args_and_asyncio_run(main: Callable[[if_main_parse_args_and_asyncio_run_arg], Any]) -> Any:
+    if __name__ != '__main__':
+        return
+    hints = typing.get_type_hints(main)
+    hints.pop('return', None)
+    assert len(hints) == 1
+    main_args = [*hints.values()][0]
+    assert not TYPE_CHECKING or isinstance(main_args, type)
+    parser = argparse.ArgumentParser()
+    setup_parser_from_dataclass(parser, main_args)
+    args = parser.parse_args()
+    asyncio.run(main(main_args(**vars(args))))
+
+############################################################################################################################
+
+@dataclass
+class main_args:
+    ...
+
+@if_main_parse_args_and_asyncio_run
+async def main(args: main_args) -> None:
+    process = await asyncio.create_subprocess_exec(
+        str(pathlib.Path.home()/'yggstack'), '-useconf',
+        stdin=asyncio.subprocess.PIPE,
+    )
+    process.stdin.write(b'{}')
+    process.stdin.write_eof()
+    await process.stdin.drain()
+    try:
+        await process.wait()
+    finally:
+        try:
+            process.terminate()
+        except ProcessLookupError:
+            pass
+        await process.wait()
+    

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from __future__ import annotations
 from collections.abc import Callable as caCallable
 from collections import *
@@ -21,6 +22,7 @@ import math
 import os
 import pathlib
 import random
+import re
 import socket
 import sys
 import textwrap
@@ -75,12 +77,26 @@ def checking_cast(t: type[checking_cast_t], val: Any) -> checking_cast_t:
     assert isinstance(val, t)
     return val
 
+############################################################################################################################
+
+def get_terminal_size() -> tuple[int, int] | None:
+    try:
+        with open('/dev/tty', 'w+') as tty:
+            return os.get_terminal_size(tty.fileno())
+    except OSError:
+        return None
 
 ############################################################################################################################
 
 uuid_bytes_size = len(uuid.uuid4().bytes)
 uuid_hex_size = len(uuid.uuid4().hex)
 uuid_str_size = len(str(uuid.uuid4()))
+
+############################################################################################################################
+
+false = False
+true = True
+null = None
 
 ############################################################################################################################
 
@@ -206,6 +222,8 @@ async def wait_until_all_complete_or_cancel_on_exc(v1: Awaitable[gather_t1_t], v
 async def wait_until_all_complete_or_cancel_on_exc(*coro: Awaitable[Any]) -> tuple[Any, ...]:
     # Waits until first excetion or until last result
     return tuple(await _gather_impl(*coro))
+
+gather = wait_until_all_complete_or_cancel_on_exc
 
 ############################################################################################################################
 
@@ -374,7 +392,14 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
                 arg_type=get_enum
                 arg_choices=list(map(get_enum, enum_members_dict))
             else:
-                arg_type = target_type
+                if get_origin(target_type) is list:  # list[t]
+                    assert len(get_args(target_type)) == 1
+                    arg_type = get_args(target_type)[0]
+                    arg_action = 'append'
+                    arg_required = False
+                    arg_default = []
+                else:
+                    arg_type = target_type
 
         elif typing.get_origin(target_type) is typing.Literal:
             literal_args = typing.get_args(target_type)
