@@ -259,7 +259,7 @@ def get_fields(dclass: type[DataclassInstance]) -> list[dataclass_field]:
 
     def process_one_filed(field: Field[Any]) -> dataclass_field:
         if isinstance(field.type, str):
-            field_type = eval(field.type)
+            field_type = get_type_hints(dclass)[field.name]
         else:
             field_type = field.type
         return dataclass_field(
@@ -308,6 +308,13 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
             assert target_type is not None
             arg_required = False
 
+        if get_origin(target_type) is list:  # list[t]
+            assert len(get_args(target_type)) == 1
+            arg_type = get_args(target_type)[0]
+            arg_action = 'append'
+            arg_required = False
+            arg_default = []
+
         if isinstance(target_type, type):
             if issubclass(target_type, Enum) or issubclass(target_type, EnumMeta):
                 enum_members = target_type.__members__
@@ -323,14 +330,7 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
                 arg_type=get_enum
                 arg_choices=list(map(get_enum, enum_members_dict))
             else:
-                if get_origin(target_type) is list:  # list[t]
-                    assert len(get_args(target_type)) == 1
-                    arg_type = get_args(target_type)[0]
-                    arg_action = 'append'
-                    arg_required = False
-                    arg_default = []
-                else:
-                    arg_type = target_type
+                arg_type = target_type
 
         elif typing.get_origin(target_type) is typing.Literal:
             literal_args = typing.get_args(target_type)
@@ -418,7 +418,7 @@ async def run_yggstack(args: main_args, on_line: Callable[[str], Any], stdin: st
         process.stdin.write_eof()
         await process.stdin.drain()
         while data := await process.stdout.readline():
-            on_line(data.decode())
+            on_line(data.decode(errors='replace'))
     except BaseException:
         try:
             process.terminate()
@@ -427,7 +427,7 @@ async def run_yggstack(args: main_args, on_line: Callable[[str], Any], stdin: st
         raise
     finally:
         await process.wait()
-    # assert process.returncode == 0
+    assert process.returncode == 0
 
 async def yggstack_get_conf(args: main_args) -> dict[str, Any]:
     lines: list[str] = []
@@ -447,7 +447,7 @@ class OneProcess:
 
     def on_line(self, line: str) -> None:
         logging.debug(repr(line))
-        if (match := re.search(r'\s*\bConnected\b\s*\b(in|out)bound:\s*([a-fA-F0-9:]*)@.*,\s*\bsource\b', line)):
+        if (match := re.search(r'\bConnected\b\s*\b(in|out)bound:\s*([a-fA-F0-9:]*)@', line)):
             peer_ip = ipaddress.ip_address(match.group(2))
             assert isinstance(peer_ip, ipaddress.IPv6Address)
             if peer_ip != self.peer_ip:
@@ -486,8 +486,8 @@ class OneProcess:
 
 @if_main_parse_args_and_asyncio_run
 async def main(args: main_args) -> None:
-    print(args)
     set_log_level(args.log_level)
+    logging.debug(args)
 
     conf = await yggstack_get_conf(args)
     conf |= {
@@ -518,6 +518,6 @@ async def main(args: main_args) -> None:
         except Exception as e:
             logging.error('\n'+traceback.format_exc())
             # print(repr(e))
-        await asyncio.sleep(1)
+        await asyncio.sleep(0.1)
 
 
