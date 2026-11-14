@@ -237,15 +237,37 @@ class LogLevelEnum(Enum):
     DEBUG = 10
     NOTSET = 0
 
+log_prefix_len: int | None = None
+
 def set_log_level(log_level: LogLevelEnum | int) -> None:
+
     if isinstance(log_level, LogLevelEnum):
         log_level = log_level.value
     assert isinstance(log_level, int)
+
     logging.basicConfig(
         level=log_level,
         style='{',
         format='{asctime:s} {levelname:^8s} {funcName:>32s}:{lineno:<8d} {message}',
     )
+
+    record = logging.LogRecord(
+        name="my_app",
+        level=logging.ERROR,
+        pathname=__file__,
+        lineno=15,
+        msg="",
+        args=(),
+        exc_info=None,
+        func="connect",
+    )
+
+    global log_prefix_len
+
+    formatter = logging.root.handlers[0].formatter
+    assert formatter is not None
+
+    log_prefix_len = len(formatter.format(record))
 
 ############################################################################################################################
 
@@ -420,8 +442,10 @@ def setup_parser_from_dataclass(parser: argparse.ArgumentParser, args_dataclass:
         if arg_type is bool:
             if arg_default:
                 arg_action='store_false'
+                arg_default=True
             else:
                 arg_action='store_true'
+                arg_default=False
             arg_required = False
 
         if arg_action is not None:
